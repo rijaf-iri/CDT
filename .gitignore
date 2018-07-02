@@ -39,3 +39,5 @@ rsconnect/
 .*
 !/.gitignore
 !/.gitattributes
+
+R/cdtTest_import.R
