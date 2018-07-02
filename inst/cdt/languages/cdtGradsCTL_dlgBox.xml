@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> GrADS Data Descriptor File </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Settings </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Directory containing the NetCDF data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> File to save the descriptor file </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Date Range </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Start date </text>
+        </label>
+        <label id="5">
+            <text lang="en"> End date </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Year </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Day </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path of the file to save the GrADS Data Descriptor File </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path of the file to save the GrADS Data Descriptor File </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> No input data found </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Provide the file to save the GrADS Data Descriptor File </text>
+        </content>
+        <content id="3">
+            <text lang="en"> You have to set the netcdf files parameters </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Creating GrADS data descriptor file finished successfully </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Creating GrADS data descriptor file failed </text>
+        </content>
+        <content id="6">
+            <text lang="en"> No netcdf files found </text>
+        </content>
+        <content id="7">
+            <text lang="en"> No netcdf data sample found </text>
+        </content>
+    </message>
+</dialog_box>

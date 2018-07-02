@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> NetCDF Data - Settings </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Date Range </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Start date </text>
+        </label>
+        <label id="3">
+            <text lang="en"> End date </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Year </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Netcdf data sample file </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Netcdf data filenames format </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Start and end date of the netcdf data to be aggregated </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start and end date of the netcdf data to be aggregated </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> File containing a sample of the data in netcdf </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the filename format of netcdf data, example: </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the filename format of netcdf data, example: </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> You have to provide a sample file </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Wrong filename format </text>
+        </content>
+    </message>
+</dialog_box>

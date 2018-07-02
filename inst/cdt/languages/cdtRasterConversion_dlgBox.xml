@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Raster data format conversion </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Data conversion </text>
+        </label>
+        <label id="2">
+            <text lang="en"> FROM </text>
+        </label>
+        <label id="3">
+            <text lang="en"> TO </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Input/Output Directory </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Directory containing the .nc files </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Directory containing the .tif files </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Directory containing the .bil/.hdr files </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Directory to save converted data </text>
+        </label>
+        <label id="9">
+            <text lang="en"> NetCDF Options </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Provide the full path of the directory containing the input data </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Provide the full path of the directory to save results </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Converting data format finished successfully </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Converting data format failed </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Raster data format conversion ...... </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Files not found: </text>
+        </content>
+    </message>
+</dialog_box>

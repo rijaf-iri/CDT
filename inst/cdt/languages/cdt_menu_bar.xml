@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu_bar>
+    <menu id="file">
+        <submenu id="0">
+            <text lang="en"> File </text>
+            <text lang="fr"> Fichier </text>
+        </submenu>
+        <submenu id="1">
+            <text lang="en"> Open data.frame </text>
+        </submenu>
+        <submenu id="2">
+            <text lang="en"> Open netcdf file </text>
+        </submenu>
+        <submenu id="3">
+            <text lang="en"> Open ESRI Shapefile </text>
+        </submenu>
+        <submenu id="4">
+            <text lang="en"> Open QC/Homogenization session </text>
+        </submenu>
+        <submenu id="5">
+            <text lang="en"> Save QC/Homogenization session </text>
+        </submenu>
+        <submenu id="6">
+            <text lang="en"> Save table </text>
+            <text lang="fr"> Sauvegarder le tableau </text>
+        </submenu>
+        <submenu id="7">
+            <text lang="en"> Save table As... </text>
+            <text lang="fr"> Sauvegarder le tableau sous... </text>
+        </submenu>
+        <submenu id="8">
+            <text lang="en"> Save Image As... </text>
+            <text lang="fr"> Sauvegarder l'image sous... </text>
+        </submenu>
+        <submenu id="9">
+            <text lang="en"> Configuration </text>
+        </submenu>
+        <submenu id="10">
+            <text lang="en"> Quit CDT </text>
+            <text lang="fr"> Quitter CDT </text>
+        </submenu>
+    </menu>
+    <menu id="data.preparation">
+        <submenu id="0">
+            <text lang="en"> Data Preparation </text>
+            <text lang="fr"> Préparation Données </text>
+        </submenu>
+        <submenu id="1">
+            <text lang="en"> Format CDTs Input Data </text>
+        </submenu>
+        <submenu id="2">
+            <text lang="en"> Merge two CDT Station Data </text>
+        </submenu>
+        <submenu id="3">
+            <text lang="en"> Filtering CDT Data </text>
+        </submenu>
+        <submenu id="4">
+            <text lang="en"> Transform NetCDF files into CDT Dataset </text>
+        </submenu>
+        <submenu id="5">
+            <text lang="en"> Download DEM </text>
+        </submenu>
+        <submenu id="6">
+            <text lang="en"> Download Country boundary </text>
+        </submenu>
+        <submenu id="7">
+            <text lang="en"> Download RFE data </text>
+        </submenu>
+        <submenu id="8">
+            <text lang="en"> Filling missing dekadal temperature values </text>
+        </submenu>
+        <submenu id="9">
+            <text lang="en"> Data Format Conversion </text>
+        </submenu>
+        <submenu id="9-1">
+            <text lang="en"> Conversion to CPT data format </text>
+        </submenu>
+        <submenu id="9-2">
+            <text lang="en"> Converting NetCDF/GeoTIFF/ESRI .hdr Labelled </text>
+        </submenu>
+        <submenu id="9-3">
+            <text lang="en"> Create GrADS Descriptor File from CDT NetCDF files </text>
+        </submenu>
+    </menu>
+    <menu id="aggregate.data">
+        <submenu id="0">
+            <text lang="en"> Aggregate Data </text>
+            <text lang="fr"> Agrégation Données </text>
+        </submenu>
+        <submenu id="1">
+            <text lang="en"> Aggregating Time Series </text>
+        </submenu>
+        <submenu id="2">
+            <text lang="en"> Aggregate/Disaggregate Spatial NetCDF data </text>
+        </submenu>
+    </menu>
+    <menu id="quality.control">
+        <submenu id="0">
+            <text lang="en"> Quality Control </text>
+            <text lang="fr"> Contrôle Qualité </text>
+        </submenu>
+        <submenu id="1">
+            <text lang="en"> Assess Data Availability </text>
+        </submenu>
+        <submenu id="2">
+            <text lang="en"> Check Stations Coordinates </text>
+        </submenu>
+        <submenu id="3">
+            <text lang="en"> QC stations data </text>
+        </submenu>
+        <submenu id="3-1">
+            <text lang="en"> Rainfall </text>
+        </submenu>
+        <submenu id="3-1-1">
+            <text lang="en"> False-Zeros check </text>
+        </submenu>
+        <submenu id="3-1-2">
+            <text lang="en"> Outliers Check </text>
+        </submenu>
+        <submenu id="3-2">
+            <text lang="en"> Temperatures </text>
+        </submenu>
+        <submenu id="4">
+            <text lang="en"> Aggregate zeros checked stations </text>
+        </submenu>
+        <submenu id="5">
+            <text lang="en"> Aggregate checked stations </text>
+        </submenu>
+        <submenu id="6">
+            <text lang="en"> Homogeneity Test </text>
+        </submenu>
+        <submenu id="6-1">
+            <text lang="en"> RHtestsV4 </text>
+        </submenu>
+        <submenu id="6-2">
+            <text lang="en"> CDT Homogenization Methods </text>
+        </submenu>
+        <submenu id="7">
+            <text lang="en"> Aggregate homogenized stations </text>
+        </submenu>
+    </menu>
+    <menu id="merging.data">
+        <submenu id="0">
+            <text lang="en"> Merging Data </text>
+            <text lang="fr"> Fusion des Données </text>
+        </submenu>
+        <submenu id="1">
+            <text lang="en"> Spatial Interpolation </text>
+        </submenu>
+        <submenu id="2">
+            <text lang="en"> Temperature - Reanalysis Downscaling </text>
+        </submenu>
+        <submenu id="2-1">
+            <text lang="en"> Compute Downscaling Coefficients </text>
+        </submenu>
+        <submenu id="2-2">
+            <text lang="en"> Reanalysis Downscaling </text>
+        </submenu>
+        <submenu id="3">
+            <text lang="en"> Merging </text>
+        </submenu>
+        <submenu id="3-1">
+            <text lang="en"> Merging Rainfall </text>
+        </submenu>
+        <submenu id="3-2">
+            <text lang="en"> Merging Temperature </text>
+        </submenu>
+        <submenu id="4">
+            <text lang="en"> Merging - Advanced </text>
+        </submenu>
+        <submenu id="4-1">
+            <text lang="en"> Merging Rainfall </text>
+        </submenu>
+        <submenu id="4-1-1">
+            <text lang="en"> Compute mean Gauge-RFE bias </text>
+        </submenu>
+        <submenu id="4-1-2">
+            <text lang="en"> Apply bias correction </text>
+        </submenu>
+        <submenu id="4-1-3">
+            <text lang="en"> Compute Spatio-temporal Trend Coefficients </text>
+        </submenu>
+        <submenu id="4-1-4">
+            <text lang="en"> Merging Data </text>
+        </submenu>
+        <submenu id="4-2">
+            <text lang="en"> Merging Temperature </text>
+        </submenu>
+        <submenu id="4-2-1">
+            <text lang="en"> Compute Bias Coefficients </text>
+        </submenu>
+        <submenu id="4-2-2">
+            <text lang="en"> Apply bias correction </text>
+        </submenu>
+        <submenu id="4-2-3">
+            <text lang="en"> Compute Spatio-temporal Trend Coefficients </text>
+        </submenu>
+        <submenu id="4-2-4">
+            <text lang="en"> Merging Data </text>
+        </submenu>
+        <submenu id="5">
+            <text lang="en"> Scale merged data </text>
+        </submenu>
+        <submenu id="6">
+            <text lang="en"> Updating dekadal Rainfall </text>
+        </submenu>
+        <submenu id="7">
+            <text lang="en"> Validation method </text>
+        </submenu>
+        <submenu id="7-1">
+            <text lang="en"> Hold-Out Validation </text>
+        </submenu>
+        <submenu id="7-1-1">
+            <text lang="en"> Precipitation </text>
+        </submenu>
+        <submenu id="7-1-2">
+            <text lang="en"> Temperature </text>
+        </submenu>
+        <submenu id="7-2">
+            <text lang="en"> Leave-One-Out Cross-Validation </text>
+        </submenu>
+        <submenu id="7-2-1">
+            <text lang="en"> Precipitation </text>
+        </submenu>
+        <submenu id="7-2-2">
+            <text lang="en"> Temperature </text>
+        </submenu>
+    </menu>
+    <menu id="data.analysis">
+        <submenu id="0">
+            <text lang="en"> Data Analysis </text>
+            <text lang="fr"> Analyse Données </text>
+        </submenu>
+        <submenu id="1">
+            <text lang="en"> Data Extraction </text>
+        </submenu>
+        <submenu id="2">
+            <text lang="en"> Summary Statistics </text>
+        </submenu>
+        <submenu id="3">
+            <text lang="en"> Derived Climate Variables </text>
+        </submenu>
+        <submenu id="3-1">
+            <text lang="en"> Temperature Variables </text>
+        </submenu>
+        <submenu id="3-2">
+            <text lang="en"> Potential Evapotranspiration </text>
+        </submenu>
+        <submenu id="3-3">
+            <text lang="en"> Water Balance </text>
+        </submenu>
+        <submenu id="4">
+            <text lang="en"> Compute Climatologies </text>
+        </submenu>
+        <submenu id="4-1">
+            <text lang="en"> Climatologies </text>
+        </submenu>
+        <submenu id="4-2">
+            <text lang="en"> Anomalies </text>
+        </submenu>
+        <submenu id="5">
+            <text lang="en"> Spatial Analysis </text>
+        </submenu>
+        <submenu id="6">
+            <text lang="en"> Daily Rainfall Analysis </text>
+        </submenu>
+        <submenu id="7">
+            <text lang="en"> Rain Season Characteristics </text>
+        </submenu>
+        <submenu id="7-1">
+            <text lang="en"> Season Onset </text>
+        </submenu>
+        <submenu id="7-2">
+            <text lang="en"> Season Cessation </text>
+        </submenu>
+        <submenu id="7-3">
+            <text lang="en"> Season Length </text>
+        </submenu>
+        <submenu id="8">
+            <text lang="en"> PICSA </text>
+        </submenu>
+        <submenu id="9">
+            <text lang="en"> Climate Extremes Indices </text>
+        </submenu>
+        <submenu id="9-1">
+            <text lang="en"> Precipitation </text>
+        </submenu>
+        <submenu id="9-2">
+            <text lang="en"> Temperature </text>
+        </submenu>
+        <submenu id="10">
+            <text lang="en"> Drought Indices </text>
+        </submenu>
+        <submenu id="10-1">
+            <text lang="en"> Standardized Precipitation Index (SPI) </text>
+        </submenu>
+        <submenu id="10-2">
+            <text lang="en"> Standardized Precipitation Evapotranspiration Index (SPEI) </text>
+        </submenu>
+        <submenu id="10-3">
+            <text lang="en"> Deciles </text>
+        </submenu>
+    </menu>
+    <menu id="plot.data">
+        <submenu id="0">
+            <text lang="en"> Plot Data </text>
+            <text lang="fr"> Visualisation </text>
+        </submenu>
+        <submenu id="1">
+            <text lang="en"> Plot CDT Station Data </text>
+        </submenu>
+        <submenu id="2">
+            <text lang="en"> Plot CDT Gridded Dataset </text>
+        </submenu>
+        <submenu id="3">
+            <text lang="en"> Plot NetCDF Data (One File) </text>
+        </submenu>
+        <submenu id="4">
+            <text lang="en"> Plot NetCDF Data (Sequential Files) </text>
+        </submenu>
+        <submenu id="5">
+            <text lang="en"> Plot NetCDF Data (Several Files) </text>
+        </submenu>
+        <submenu id="6">
+            <text lang="en"> Plot Merging Outputs </text>
+        </submenu>
+    </menu>
+    <menu id="help">
+        <submenu id="0">
+            <text lang="en"> Help </text>
+            <text lang="fr"> Aide </text>
+        </submenu>
+        <submenu id="1">
+            <text lang="en"> CDT User Guide </text>
+        </submenu>
+        <submenu id="2">
+            <text lang="en"> About CDT </text>
+        </submenu>
+    </menu>
+</menu_bar>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Dekadal Temperature Gap Filling </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Temperature data file </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Directory of adjusted reanalysis files </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Settings </text>
+        </label>
+        <label id="4">
+            <text lang="en"> File to save filled data </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Date Range </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Start date </text>
+        </label>
+        <label id="7">
+            <text lang="en"> End date </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Year </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Dekad </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Minimum length non missing data </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Minimum length </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> File containing the station temperature data in CDT format </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the adjusted reanalysis files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the adjusted reanalysis files </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> NetCDF files settings </text>
+            </status>
+            <tooltip>
+                <text lang="en"> NetCDF files settings </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Enter the full path of the file to save the filled data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path of the file to save result </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Browse here the full path of file to save the filled data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse here the full path of the file to save result </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Start and end date to fill missing dekadal temperature values </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start and end date to fill missing dekadal temperature values </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Minimum length (between 10 and 20) of non missing data \n to be used to perform the regression </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum length (between 10 and 20) of non missing data \n to be used to perform the regression </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Select the file containing the dekadal temperature data </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Browse or enter the path to directory containing the netcdf temperature files </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Browse or enter the path to the file to save results </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Dekad must be 1, 2 or 3 </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Filling missing dekadal temperature values finished successfully </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Filling missing dekadal temperature values failed </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Read dekadal temperature data ....... </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Reading dekadal temperature data finished </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Dekadal temperature data not found </text>
+        </content>
+        <content id="9a">
+            <text lang="en"> No netcdf sample data found </text>
+        </content>
+        <content id="10">
+            <text lang="en"> All extracted data are missing </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Filling missing values ....... </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Gap filling failed: date range from station data and netcdf did not match </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Gap filling failed: data too short to perform regression </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Unable to fill missing values, not enough station data </text>
+        </content>
+    </message>
+</dialog_box>

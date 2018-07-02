@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Image export options </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> File to save the image </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Image properties </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Units </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Resolution </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Width </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Height </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> File to save the image is missing </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Unable to save the image </text>
+        </content>
+    </message>
+</dialog_box>

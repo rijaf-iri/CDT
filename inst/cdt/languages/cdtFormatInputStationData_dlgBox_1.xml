@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Multiple Files - Settings </text>
+    </title>
+    <widget>
+        <radiobutton id="1">
+            <radio id="1">
+                <text lang="en"> One variable </text>
+            </radio>
+            <radio id="2">
+                <text lang="en"> Rain Tmax Tmin </text>
+            </radio>
+        </radiobutton>
+        <checkbutton id="1">
+            <text lang="en"> Include elevation data </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> File Format </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Dates Format </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Directory of Station data files </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Station Data Files Sample </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Station Coordinates File </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> The file contains 1 variable </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The file contains 1 variable </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> The file contains Rain, Tmax and Tmin in this order </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The file contains Rain, Tmax and Tmin in this order </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Dates are grouped </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Dates are grouped </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Dates are separated by space, tabulation or CSV format </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Dates are separated by space, tabulation or CSV format </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the station files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the station files </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> File containing a sample of data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> File containing the ids and coordinates of the stations </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Include elevation data into the output CDT format </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Include elevation data into the output CDT format </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Select or enter the directory containing the STN files </text>
+        </content>
+        <content id="2">
+            <text lang="en"> You have to provide a sample file </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Select the file containing the coordinates </text>
+        </content>
+    </message>
+</dialog_box>

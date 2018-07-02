@@ -1,0 +1,9 @@
+{
+    "bbox": {
+        "minlon": 42,
+        "maxlon": 52,
+        "minlat": -26,
+        "maxlat": -12
+    },
+    "dir2save": ""
+}

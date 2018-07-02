@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-1.1/highlight.js"></script>
+<link href="libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">CDT User Guide</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    CDT
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="cdt_file_menu.html">CDT GUI</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="cdt_data_input.html">CDT Data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Preparation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="format_cdt_data.html">Format CDTs Input Data</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="assess_data_availability.html">Assess Data Availability</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="aggregate_TS.html">Aggregating Time Series</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="download_data.html">Download Data</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="fill_na_temp.html">Filling missing dekadal temperature values</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Quality Control
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="check_stations_coords.html">Check Stations Coordinates</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="quality_control.html">Quality Control</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="homogeneity_test.html">Homogeneity Test</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Merging Data
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="merging_rainfall.html">Merging Rainfall</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="merging_temperature.html">Merging Temperature</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="update_dekadal_rainfall.html">Updating Dekadal Rainfall</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="validation.html">Validation</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/rijaf/CDT">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<div id="toc-index" class="toc-index-class">
+<h1 id="cdt-gui"><a href="cdt_file_menu.html">CDT GUI</a></h1>
+<h2 id="cdt-main-window"><a href="cdt_file_menu.html#cdt.main.win">CDT Main Window</a></h2>
+<h3 id="menu-bar"><a href="cdt_file_menu.html#menu.bar">Menu Bar</a></h3>
+<h3 id="toolbars"><a href="cdt_file_menu.html#toolbars">Toolbars</a></h3>
+<h3 id="open-files"><a href="cdt_file_menu.html#open.files">Open Files</a></h3>
+<h3 id="input-and-command-panels"><a href="cdt_file_menu.html#cmd.panel">Input and Command Panels</a></h3>
+<h3 id="map-and-table-view"><a href="cdt_file_menu.html#map.view">Map and Table View</a></h3>
+<h3 id="output-message"><a href="cdt_file_menu.html#out.msg">Output Message</a></h3>
+<h3 id="status-bar"><a href="cdt_file_menu.html#status.bar">Status Bar</a></h3>
+<h1 id="cdt-input-data-format"><a href="cdt_data_input.html">CDT Input Data Format</a></h1>
+<h2 id="data-format-with-several-stations"><a href="cdt_data_input.html#cdt.format.data">Data format with several stations</a></h2>
+<h2 id="input-series-for-one-station"><a href="cdt_data_input.html#cdt.ts.data">Input series for one station</a></h2>
+<h2 id="coordinates-data"><a href="cdt_data_input.html#cdt.coords.data">Coordinates data</a></h2>
+<h2 id="netcdf-data"><a href="cdt_data_input.html#cdt.ncdf.data">NetCDF data</a></h2>
+<h2 id="netcdf-filename-format"><a href="cdt_data_input.html#cdt.ncdf.ffrmt">NetCDF filename format</a></h2>
+<h1 id="format-cdt-input-data"><a href="format_cdt_data.html">Format CDT Input data</a></h1>
+<h2 id="multiple-files"><a href="format_cdt_data.html#multiple.files">Multiple Files</a></h2>
+<h2 id="single-file"><a href="format_cdt_data.html#single.file">Single File</a></h2>
+<h2 id="merge-two-cdt-data-format"><a href="format_cdt_data.html#merge.2cdt.data">Merge two CDT data format</a></h2>
+<h1 id="assess-data-availability"><a href="assess_data_availability.html">Assess Data Availability</a></h1>
+<h1 id="aggregating-time-series"><a href="aggregate_TS.html">Aggregating Time Series</a></h1>
+<h1 id="download-data"><a href="download_data.html">Download data</a></h1>
+<h2 id="download-satellite-rainfall-estimates-data-rfe"><a href="download_data.html#down.rfe">Download satellite rainfall estimates data (RFE)</a></h2>
+<h2 id="download-digital-elevation-model-data-dem"><a href="download_data.html#down.dem">Download Digital Elevation Model data (DEM)</a></h2>
+<h2 id="download-country-boundary"><a href="download_data.html#down.shp">Download country boundary</a></h2>
+<h1 id="filling-missing-dekadal-temperature-values"><a href="fill_na_temp.html">Filling missing dekadal temperature values</a></h1>
+<h1 id="check-stations-coordinates"><a href="check_stations_coords.html">Check Stations Coordinates</a></h1>
+<h1 id="merging-rainfall"><a href="merging_rainfall.html">Merging Rainfall</a></h1>
+<h2 id="bias-calculation"><a href="merging_rainfall.html#rr.calc.bias">Bias calculation</a></h2>
+<h2 id="apply-bias-correction"><a href="merging_rainfall.html#rr.apply.bias">Apply bias correction</a></h2>
+<h2 id="compute-spatio-temporal-trend-coefficients"><a href="merging_rainfall.html#rr.calc.lmcoef">Compute Spatio-temporal Trend Coefficients</a></h2>
+<h2 id="merging-data"><a href="merging_rainfall.html#rr.merge.data">Merging Data</a></h2>
+<h1 id="merging-temperatures"><a href="merging_temperature.html">Merging Temperatures</a></h1>
+<h2 id="compute-downscaling-coefficients"><a href="merging_temperature.html#tt.calc.dcoef">Compute Downscaling Coefficients</a></h2>
+<h2 id="reanalysis-downscaling"><a href="merging_temperature.html#tt.downscale">Reanalysis Downscaling</a></h2>
+<h2 id="bias-calculation-1"><a href="merging_temperature.html#tt.calc.bias">Bias calculation</a></h2>
+<h2 id="apply-bias-correction-1"><a href="merging_temperature.html#tt.apply.bias">Apply bias correction</a></h2>
+<h2 id="compute-spatio-temporal-trend-coefficients-1"><a href="merging_temperature.html#tt.calc.lmcoef">Compute Spatio-temporal Trend Coefficients</a></h2>
+<h2 id="merging-data-1"><a href="merging_temperature.html#tt.merge.data">Merging Data</a></h2>
+<h1 id="updating-dekadal-rainfall"><a href="update_dekadal_rainfall.html">Updating dekadal rainfall</a></h1>
+<h1 id="validation"><a href="validation.html">Validation</a></h1>
+</div>
+<hr />
+<p>Generated on : April 03, 2017, 11:29</p>
+
+<footer class="navbar navbar-inverse  navbar-fixed-bottom">
+    <p>
+        <small class="footer">
+           <a href="index.html">Climate Data Tools, 2017</a> &nbsp;
+           <a  class="navbar-footer" href="https://iri.columbia.edu/"><img src="images/common/iri_logo_full.gif" alt="IRI"/></a> 
+         </small>
+    </p>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "libs/mathjax-local/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Single File - Settings </text>
+    </title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Coordinates included in the data </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Include elevation data </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Station data file </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Station coordinates file </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Column Index </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Data column number </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Choose the file containing the station data to be formated </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> 'Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> 'Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Choose the file containing the station coordinates </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Include elevation data into the output CDT format </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Include elevation data into the output CDT format </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Column index containing the station ID </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Column index containing the station ID </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Column index from which observed data start </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Column index from which observed data start </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Column index containing the longitude </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Column index containing the longitude </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Column index containing the latitude </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Column index containing the latitude </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Column index containing the elevation data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Column index containing the elevation data </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Column index containing the years </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Column index containing the years </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Column index containing the months </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Column index containing the months </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> Column index containing the days or dekad </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Column index containing the days or dekad </text>
+            </tooltip>
+        </content>
+        <content id="14">
+            <status>
+                <text lang="en"> Number of column containing the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Number of column containing the data </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Select the file containing the observed data </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Select the file containing the coordinates </text>
+        </content>
+    </message>
+</dialog_box>

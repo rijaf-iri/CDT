@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Data Import Options </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Data Information </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Select Variable </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Variable: </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Longitude: </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Latitude: </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Unable to open file: </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Select longitude variable </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Select latitude variable </text>
+        </content>
+    </message>
+</dialog_box>

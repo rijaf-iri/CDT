@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Data Import Options </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Delimiters </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Header </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Start import at row </text>
+        </label>
+        <label id="4">
+            <text lang="en"> First row as header </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Preview of </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Missing Value </text>
+        </label>
+        <radiobutton id="1">
+            <radio id="1">
+                <text lang="en"> Tab </text>
+            </radio>
+            <radio id="2">
+                <text lang="en"> Space </text>
+            </radio>
+            <radio id="3">
+                <text lang="en"> Semicolon </text>
+            </radio>
+            <radio id="4">
+                <text lang="en"> Comma </text>
+            </radio>
+            <radio id="5">
+                <text lang="en"> Other: </text>
+            </radio>
+        </radiobutton>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Unable to open file: </text>
+        </content>
+    </message>
+</dialog_box>

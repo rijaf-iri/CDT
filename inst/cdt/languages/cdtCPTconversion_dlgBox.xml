@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Conversion to CPT Format </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> CDT stations data format </text>
+            </option>
+            <option id="2">
+                <text lang="en"> NetCDF gridded data </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Settings </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Format of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> File containing stations data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Directory of the NetCDF files </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Field Name </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Field Units </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Missing Value </text>
+        </label>
+        <label id="7">
+            <text lang="en"> File to save the output </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the stations data in CDT format </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the stations data in CDT format </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Enter the full path of the file to save the result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path of the file to save the result </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> No input data found </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Provide the file to save results </text>
+        </content>
+        <content id="3">
+            <text lang="en"> You have to set the netcdf files parameters </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Converting data into CPT data format finished successfully </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Converting data into CPT data format failed </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Conversion to CPT data format ...... </text>
+        </content>
+        <content id="7">
+            <text lang="en"> No netcdf data sample found </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No netcdf files found </text>
+        </content>
+    </message>
+</dialog_box>

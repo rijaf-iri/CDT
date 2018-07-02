@@ -1,0 +1,52 @@
+{
+    "Windows": {
+        // Use a different Tcl/Tk installation: true
+        // Use default Tcl/Tk (comes with R): false
+        "UseOtherTclTk": false,
+
+        // If UseOtherTclTk is true, full path to Tcl bin directory
+        "Tclbin": "C:/Tcl/bin",
+
+        // Tktable located under auto_path, installed with the Tcl/Tk library
+        "Tktable.auto": true,
+        // Full path to Tktable package
+        // Leave blank if "Tktable.auto" is true
+        "Tktable.path": "",
+
+        // Bwidget located under auto_path, installed with the Tcl/Tk library
+        "Bwidget.auto": true,
+        // Full path to Bwidget
+        // Leave blank if "Bwidget.auto" is true
+        "Bwidget.path": ""
+    },
+    "MacOS": {
+        // Tktable located under auto_path, installed with the Tcl/Tk library
+        "Tktable.auto": true,
+        // Full path to Tktable package
+        // Leave blank if "Tktable.auto" is true
+        "Tktable.path": "",
+        // "Tktable.path": "/opt/local/lib/Tktable2.10",
+        // "Tktable.path": "/Library/Tcl/teapot/package/macosx10.5-i386-x86_64/lib/Tktable2.11",
+
+        // Bwidget located under auto_path, installed with the Tcl/Tk library
+        "Bwidget.auto": false,
+        // Full path to Bwidget
+        // Leave blank if "Bwidget.auto" is true
+        // "Bwidget.path": ""
+        // "Bwidget.path": "/opt/local/lib/BWidget"
+        "Bwidget.path": "/Library/Tcl/teapot/package/tcl/lib/BWidget1.9.8"
+    },
+    "Linux": {
+        // Tktable located under auto_path, installed with the Tcl/Tk library
+        "Tktable.auto": true,
+        // Full path to Tktable package
+        // Leave blank if "Tktable.auto" is true        
+        "Tktable.path": "",
+
+        // Bwidget located under auto_path, installed with the Tcl/Tk library
+        "Bwidget.auto": true,
+        // Full path to Bwidget
+        // Leave blank if "Bwidget.auto" is true
+        "Bwidget.path": ""
+    }
+}

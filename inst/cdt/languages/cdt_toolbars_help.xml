@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tools_bar>
+    <widget>
+        <label id="1">
+            <text lang="en"> Width: </text>
+            <text lang="fr"> Largeur: </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Height: </text>
+            <text lang="fr"> Hauteur: </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Open file format: txt, csv, ... </text>
+                <text lang="fr"> Ouvrir un ficher en format: txt, csv, ... </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Open file </text>
+                <text lang="fr"> Ouvrir un fichier </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Save image </text>
+                <text lang="fr"> Enregistrer l'image </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Save image </text>
+                <text lang="fr"> Enregistrer l'image </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Open table </text>
+                <text lang="fr"> Ouvrir un tableau </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Open table </text>
+                <text lang="fr"> Ouvrir un tableau </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Save table </text>
+                <text lang="fr"> Enregistrer le tableau </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Save table </text>
+                <text lang="fr"> Enregistrer le tableau </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Execute the append task </text>
+                <text lang="fr"> Exécuter la tâche en cours </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Execute </text>
+                <text lang="fr"> Exécuter </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Horizontal scale factor for image size </text>
+                <text lang="fr"> Facteur d'échelle horizontal pour la taille de l'image </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Horizontal scale factor for image size </text>
+                <text lang="fr"> Facteur d'échelle horizontal pour la taille de l'image </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Vertical scale factor for image size </text>
+                <text lang="fr"> Facteur d'échelle vertical pour la taille de l'image </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Vertical scale factor for image size </text>
+                <text lang="fr"> Facteur d'échelle vertical pour la taille de l'image </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Redraw plot </text>
+                <text lang="fr"> Redessine l'image active </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Redraw plot </text>
+                <text lang="fr"> Redessine l'image active </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Close active Tab </text>
+                <text lang="fr"> Fermer l'onglet courant </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Close active Tab </text>
+                <text lang="fr"> Fermer l'onglet courant </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Quit CDT </text>
+                <text lang="fr"> Quitter CDT </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Quit CDT </text>
+                <text lang="fr"> Quitter CDT </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Table saved successfully </text>
+            <text lang="fr"> Le tableau est enregistré avec succès </text>
+        </content>
+        <content id="2">
+            <text lang="en"> The table could not be saved </text>
+            <text lang="fr"> Le tableau n'a pas pu être enregistré correctement </text>
+        </content>
+    </message>
+</tools_bar>

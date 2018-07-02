@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Configurations </text>
+    </title>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> CDT Configuration </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Tcl Configuration </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Save </text>
+            <text lang="fr"> Enregistrer </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Cancel </text>
+            <text lang="fr"> Annuler </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Language </text>
+            <text lang="fr"> Langue </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Missing values code </text>
+            <text lang="fr"> Code des valeurs manquantes </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Anomaly missing values code </text>
+            <text lang="fr"> Valeurs manquantes (Anomalie) </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Set working directory </text>
+            <text lang="fr"> Changer répertoire de travail </text>
+        </label>
+        <checkbutton id="1">
+            <text lang="en"> Use default Tcl with R </text>
+            <text lang="fr"> Utiliser Tcl par défaut de R </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Tktable installed with Tcl/Tk </text>
+            <text lang="fr"> Tktable installé avec Tcl/Tk </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Bwidget installed with Tcl/Tk </text>
+            <text lang="fr"> Bwidget installé avec Tcl/Tk </text>
+        </checkbutton>
+        <label id="5">
+            <text lang="en"> Tcl binaries path (bin) </text>
+            <text lang="fr"> Chemin des binaires Tcl (bin) </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Tktable library path </text>
+            <text lang="fr"> Chemin du bibliothèque Tktable </text>
+        </label>
+        <label id="7">
+            <text lang="en"> BWidget library path </text>
+            <text lang="fr"> Chemin du bibliothèque BWidget </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Specify here the missing value code </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Specify here the missing value code </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Specify here the missing value code for anomalies data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Specify here the missing value code for anomalies data </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Check this box if you want to use other Tcl/Tk installation </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if you want to use other Tcl/Tk installation </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Specify the full path to Tcl binaries installation (bin) </text>
+                <text lang="fr"> Indiquez le chemin complet de l'installation des binaires de Tcl (bin) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Specify the full path to Tcl binaries installation (bin) </text>
+                <text lang="fr"> Indiquez le chemin complet de l'installation des binaires de Tcl (bin) </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Check this box if Tktable is located under auto_path, installed with the Tcl/Tk library </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if Tktable is located under auto_path, installed with the Tcl/Tk library </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Specify the full path to Tktable directory </text>
+                <text lang="fr"> Indiquez le chemin complet du répertoire Tktable </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Specify the full path to Tktable directory </text>
+                <text lang="fr"> Indiquez le chemin complet du répertoire Tktable </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Check this box if Bwidget located under auto_path, installed with the Tcl/Tk library </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if Bwidget located under auto_path, installed with the Tcl/Tk library </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Specify the full path to BWidget directory </text>
+                <text lang="fr"> Indiquez le chemin complet du répertoire BWidget </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Specify the full path to BWidget directory </text>
+                <text lang="fr"> Indiquez le chemin complet du répertoire BWidget </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en">
+                Changing "Tcl Configuration" needs a new R session to take effect. \nChanging "CDT Configuration - Language" needs to restart CDT to take effect
+            </text>
+        </content>
+        <content id="2">
+            <text lang="en"> No input path for Tcl/Tk binary directory </text>
+        </content>
+        <content id="3">
+            <text lang="en"> does not exist </text>
+            <text lang="fr"> n'exist pas </text>
+        </content>
+        <content id="4">
+            <text lang="en"> No input path for Tktable </text>
+        </content>
+        <content id="5">
+            <text lang="en"> No input path for Bwidget </text>
+        </content>
+    </message>
+</dialog_box>

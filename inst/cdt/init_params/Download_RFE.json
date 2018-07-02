@@ -1,0 +1,19 @@
+{
+    "rfe.data": "10-DAYS TAMSATv2",
+    "IRI.DL": true,
+    "date": {
+        "year1": 2017,
+        "mon1": 1,
+        "day1": 1,
+        "year2": 2017,
+        "mon2": 12,
+        "day2": 3
+    },
+    "bbox": {
+        "minlon": 42,
+        "maxlon": 52,
+        "minlat": -26,
+        "maxlat": -12
+    },
+    "dir2save": ""
+}

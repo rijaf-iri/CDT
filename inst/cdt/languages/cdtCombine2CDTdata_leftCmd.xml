@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <widget>
+        <label id="1">
+            <text lang="en"> CDT station data format #1 </text>
+        </label>
+        <label id="2">
+            <text lang="en"> CDT station data format #2 </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File to save merged data </text>
+        </label>
+        <button id="1">
+            <text lang="en"> Merge Data </text>
+        </button>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Merge data ........... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Merging CDT data finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Merging CDT data failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> The input data is not in a standard unambiguous CDT format </text>
+        </content>
+        <content id="5">
+            <text lang="en"> The two data have different time step </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Different Values </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Different station coordinates </text>
+        </content>
+    </message>
+</panel_cmd>

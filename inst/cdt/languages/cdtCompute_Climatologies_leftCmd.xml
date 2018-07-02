@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Climatologies </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Maps </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Graphs </text>
+        </tab>
+        <tab id="4">
+            <text lang="en"> Boundaries </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> CDT stations data format </text>
+            </option>
+            <option id="2">
+                <text lang="en"> CDT dataset format (gridded) </text>
+            </option>
+            <option id="3">
+                <text lang="en"> NetCDF gridded data </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Mean </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Standard deviation </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Settings </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Calculate </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Climatologies data already computed </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Add boundaries to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Time step of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Input Data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing stations data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Index file (*.rds) of the dataset </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Directory of the NetCDF files </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Format </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Base Period </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Start </text>
+        </label>
+        <label id="9">
+            <text lang="en"> End </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Minimum number of years </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Centered time window </text>
+        </label>
+        <label id="12">
+            <text lang="en"> days </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Directory to save results </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Climatologies data </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Climatology Map </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Climatology Graph </text>
+        </label>
+        <label id="17">
+            <text lang="en"> Station/Coordinates </text>
+        </label>
+        <label id="18">
+            <text lang="en"> Boundaries </text>
+        </label>
+        <label id="19">
+            <text lang="en"> Select station to plot </text>
+        </label>
+        <label id="20">
+            <text lang="en"> Enter longitude and latitude to plot </text>
+        </label>
+        <label id="21">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="22">
+            <text lang="en"> Latitude </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the file containing the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the input data </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Enter the start year of the base period </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the start year of the base period </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Enter the end year of the base period </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the end year of the base period </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Enter the minimum number of years with non missing values to calculate the climatology </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the minimum number of years with non missing values to calculate the climatology </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> The daily climatology is calculated using a centered (2 x window + 1) time window </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The daily climatology is calculated using a centered (2 x window + 1) time window </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> You have to set the netcdf files parameters </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Calculate climatology ...... </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Climatology calculation finished successfully </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Climatology calculation failed </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Unable to load climatology data </text>
+        </content>
+        <content id="6">
+            <text lang="en"> did not find </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Invalid base period </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No enough data to calculate climatologies </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="10">
+            <text lang="en"> The data time step is not </text>
+        </content>
+        <content id="11">
+            <text lang="en"> No sample data found </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Station not found </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Coordinates outside of data range </text>
+        </content>
+        <content id="14">
+            <text lang="en"> xlim: month must be between 1 and 12 </text>
+        </content>
+        <content id="15">
+            <text lang="en"> xlim: pentad must be between 1 and 6 </text>
+        </content>
+        <content id="16">
+            <text lang="en"> xlim: dekad must be 1, 2 or 3 </text>
+        </content>
+        <content id="17">
+            <text lang="en"> xlim: invalid date </text>
+        </content>
+        <content id="18">
+            <text lang="en"> NetCDF data not found </text>
+        </content>
+    </message>
+</panel_cmd>

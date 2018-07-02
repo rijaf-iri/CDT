@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Rainy Season </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Maps </text>
+        </tab>
+        <tab id="4">
+            <text lang="en"> Graphs </text>
+        </tab>
+        <tab id="5">
+            <text lang="en"> Boundaries </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> CDT stations data format </text>
+            </option>
+            <option id="2">
+                <text lang="en"> CDT dataset format (gridded) </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> One </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Multiple </text>
+            </option>
+        </combobox>
+        <combobox id="3">
+            <option id="1">
+                <text lang="en"> Latitude </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Shapefile </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Create Onset Criteria </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Help </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Calculate Onset </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Onset data already computed </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Add boundaries to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Input Data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Format </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing stations daily Precip data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> File containing stations daily PET data </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Index file (*.rds) for daily Precip data </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Index file (*.rds) for daily PET data </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Directory to save results </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Region </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Subdivision from </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Number of subdivisions belong latitude </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Latitudes: </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Shapefile for subdivision of regions </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Attribute to be used to split the region </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Onset Definition </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Onset method </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Earliest onset date </text>
+        </label>
+        <label id="17">
+            <text lang="en"> Day </text>
+        </label>
+        <label id="18">
+            <text lang="en"> Threshold for a rainy day </text>
+        </label>
+        <label id="19">
+            <text lang="en"> Rainfall total </text>
+        </label>
+        <label id="20">
+            <text lang="en"> over </text>
+        </label>
+        <label id="21">
+            <text lang="en"> days </text>
+        </label>
+        <label id="22">
+            <text lang="en"> exceeding (fraction) </text>
+        </label>
+        <label id="23">
+            <text lang="en"> of the evaporation </text>
+        </label>
+        <label id="24">
+            <text lang="en"> with at least </text>
+        </label>
+        <label id="25">
+            <text lang="en"> rain days </text>
+        </label>
+        <label id="26">
+            <text lang="en"> Dry Spell not exceeding </text>
+        </label>
+        <label id="27">
+            <text lang="en"> in the next </text>
+        </label>
+        <label id="28">
+            <text lang="en"> Latest possible date </text>
+        </label>
+        <label id="29">
+            <text lang="en"> Onset data </text>
+        </label>
+        <label id="30">
+            <text lang="en"> Onset Map </text>
+        </label>
+        <label id="31">
+            <text lang="en"> Onset Graph </text>
+        </label>
+        <label id="32">
+            <text lang="en"> Station/Coordinates </text>
+        </label>
+        <label id="33">
+            <text lang="en"> Boundaries </text>
+        </label>
+        <label id="34">
+            <text lang="en"> Select a station to plot </text>
+        </label>
+        <label id="35">
+            <text lang="en"> Enter longitude and latitude to plot </text>
+        </label>
+        <label id="36">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="37">
+            <text lang="en"> Latitude </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the daily precipitation </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the daily precipitation </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Invalid latitude </text>
+        </content>
+        <content id="2">
+            <text lang="en"> 1: Onset criterion based on "Total rainfall" </text>
+        </content>
+        <content id="3">
+            <text lang="en"> 2: Onset criterion based on "Fraction of evapotranspiration" </text>
+        </content>
+        <content id="4">
+            <text lang="en"> 3: Onset criterion based on "Minimum number of rainy days" </text>
+        </content>
+        <content id="5">
+            <text lang="en"> 4: Onset criterion based on "Dry spell lengths" </text>
+        </content>
+        <content id="6">
+            <text lang="en"> 5: Onset criterion based on "Number of rainy days and spell lengths" </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Invalid input found on onset definition criteria </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Calculate Season Onset ...... </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Season Onset calculation finished successfully </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Season Onset calculation failed </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Unable to load onset data </text>
+        </content>
+        <content id="12">
+            <text lang="en"> not found </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Station not found </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Coordinates outside of data range </text>
+        </content>
+        <content id="15">
+            <text lang="en"> Provide the potential evapotranspiration data </text>
+        </content>
+        <content id="16">
+            <text lang="en"> did not find </text>
+        </content>
+        <content id="17">
+            <text lang="en"> Precip and PET stations do not match </text>
+        </content>
+        <content id="18">
+            <text lang="en"> Precip and PET dates do not match </text>
+        </content>
+        <content id="19">
+            <text lang="en"> No polygons found </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="21">
+            <text lang="en"> Precip dataset is not a daily data </text>
+        </content>
+        <content id="22">
+            <text lang="en"> PET dataset is not a daily data </text>
+        </content>
+        <content id="23">
+            <text lang="en"> Precip and PET have different resolution or bbox </text>
+        </content>
+        <content id="24">
+            <text lang="en"> Precip and PET have different chunk size </text>
+        </content>
+        <content id="25">
+            <text lang="en"> Precip and PET dates do not match </text>
+        </content>
+    </message>
+</panel_cmd>

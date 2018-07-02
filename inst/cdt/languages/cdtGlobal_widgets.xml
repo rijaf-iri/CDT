@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<global_wdgt>
+    <widget>
+        <button id="1">
+            <text lang="en"> OK </text>
+            <text lang="fr"> OK </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Cancel </text>
+            <text lang="fr"> Annuler </text>
+        </button>
+        <button id="3">
+            <text lang="en"> PLOT </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Options </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Open Files </text>
+            <text lang="fr"> Fichiers Ouverts </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Remove data </text>
+            <text lang="fr"> Supprimer les données </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Open in table </text>
+            <text lang="fr"> Ouvrir dans un tableau </text>
+        </label>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Hourly data </text>
+                <text lang="fr"> Données horaires </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Daily data </text>
+                <text lang="fr"> Données journalières </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Pentad data </text>
+                <text lang="fr"> Données pentadaire </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Dekadal data </text>
+                <text lang="fr"> Données décadaire </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Monthly data </text>
+                <text lang="fr"> Données mensuelles </text>
+            </option>
+            <option id="6">
+                <text lang="en"> Annual data </text>
+                <text lang="fr"> Données annuelles </text>
+            </option>
+            <option id="7">
+                <text lang="en"> Seasonal data </text>
+                <text lang="fr"> Données saisonnières </text>
+            </option>
+            <option id="8">
+                <text lang="en"> Rolling Seasonal data </text>
+                <text lang="fr"> Données saisonnières glissantes </text>
+            </option>
+        </combobox>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Unable to read file: </text>
+            <text lang="fr"> Le fichier n'a pas pu être ouvert: </text>
+        </content>
+        <content id="2">
+            <text lang="en"> The table could not be saved correctly </text>
+            <text lang="fr"> Le tableau n'a pas pu être enregistré correctement </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Table saved successfully </text>
+            <text lang="fr"> Le tableau est enregistré avec succès </text>
+        </content>
+        <content id="4">
+            <text lang="en"> File already exists </text>
+            <text lang="fr"> Le fichier existe déjà </text>
+        </content>
+        <content id="5">
+            <text lang="en"> This type of data can not be displayed on a table </text>
+        </content>
+        <content id="6">
+            <text lang="en"> This type of data can not be saved as a table </text>
+        </content>
+    </message>
+</global_wdgt>

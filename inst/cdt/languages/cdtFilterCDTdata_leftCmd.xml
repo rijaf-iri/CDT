@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <widget>
+        <label id="1">
+            <text lang="en"> Input CDT data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Filter Stations with </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Non-missing values </text>
+        </label>
+        <label id="4">
+            <text lang="en"> File to save filtered data </text>
+        </label>
+        <button id="1">
+            <text lang="en"> Filter Data </text>
+        </button>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Filtering data ........... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Filtering CDT data finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Filtering CDT data failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> No input CDT data found </text>
+        </content>
+        <content id="5">
+            <text lang="en"> The input data is not in a standard unambiguous CDT format </text>
+        </content>
+    </message>
+</panel_cmd>
