@@ -1,11 +1,11 @@
 
-OnsetCalc.plotOnsetMaps <- function(){
+SeasonLengthCalc.plotSeasLenMaps <- function(){
 	don <- .cdtData$EnvData$varData$map
 	dataMapOp <- .cdtData$EnvData$dataMapOp
 
 	## titre
 	if(!dataMapOp$title$user){
-		titre <- paste("Starting dates of the rainy season:", str_trim(tclvalue(.cdtData$EnvData$donDate)))
+		titre <- paste("Season length:", str_trim(tclvalue(.cdtData$EnvData$donDate)))
 	}else titre <- dataMapOp$title$title
 
 	#################
@@ -26,9 +26,7 @@ OnsetCalc.plotOnsetMaps <- function(){
 	lab.breaks <- brks$legend.axis$labels
 
 	## legend label
-	donDates <- format(.cdtData$EnvData$output$start.date, "%Y")
-	idt <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
-	legendLabel <- format(lab.breaks + .cdtData$EnvData$output$start.date[idt], '%d-%b')
+	legendLabel <- lab.breaks
 
 	#################
 	### shape files
@@ -101,16 +99,16 @@ OnsetCalc.plotOnsetMaps <- function(){
 
 #######################################
 
-OnsetCalc.plotOnsetGraph <- function(){
+SeasonLengthCalc.plotSeasLenGraph <- function(){
 	TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
 	if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
 		ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
 		if(length(ixy) == 0){
-			Insert.Messages.Out(.cdtData$EnvData[['message']][['13']], format = TRUE)
+			Insert.Messages.Out("Station not found", format = TRUE)
 			return(NULL)
 		}
-		don <- .cdtData$EnvData$varData$data[, ixy]
+		don <- as.numeric(.cdtData$EnvData$varData$data[, ixy])
 		.cdtData$EnvData$location <- paste0("Station: ", .cdtData$EnvData$output$data$id[ixy])
 		titre <- paste0("(", .cdtData$EnvData$output$data$id[ixy], ")")
 	}else{
@@ -126,22 +124,20 @@ OnsetCalc.plotOnsetGraph <- function(){
 		ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
 
 		if(is.na(ilo) | is.na(ila)){
-			Insert.Messages.Out(.cdtData$EnvData[['message']][['14']], format = TRUE)
+			Insert.Messages.Out("Coordinates outside of data range", format = TRUE)
 			return(NULL)
 		}
 		ixy <- ilo + length(xlon) * (ila - 1)
 
 		don <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, do.par = FALSE)
-		don <- as.Date(don$data[, 1], origin = "1970-1-1")
+		don <- as.numeric(don$data[, 1])
 		.cdtData$EnvData$location <- paste0("Longitude: ", round(ilon, 5), ", Latitude: ", round(ilat, 5))
 		titre <- ""
 	}
 
-	don <- as.numeric(don - .cdtData$EnvData$output$start.date)
 	daty <- as.numeric(format(.cdtData$EnvData$output$start.date, "%Y"))
-	origindate <- as.character(.cdtData$EnvData$output$start.date[1])
 
-	titre <- paste("Starting dates of the rainy season", titre)
+	titre <- paste("Season length", titre)
 
 	#########
 
@@ -173,7 +169,7 @@ OnsetCalc.plotOnsetGraph <- function(){
 	#########
 
 	if(GRAPHTYPE == "Line"){
-		graphs.plot.line(daty, don, xlim = xlim, ylim = ylim, origindate = origindate,
+		graphs.plot.line(daty, don, xlim = xlim, ylim = ylim, origindate = NULL,
 						xlab = xlab, ylab = ylab, ylab.sub = NULL,
 						title = titre, title.position = titre.pos, axis.font = 1,
 						plotl = optsgph$plot, legends = NULL,
@@ -181,7 +177,7 @@ OnsetCalc.plotOnsetGraph <- function(){
 	}
 
 	if(GRAPHTYPE == "Barplot"){
-		graphs.plot.bar(daty, don, xlim = xlim, ylim = ylim, origindate = origindate,
+		graphs.plot.bar(daty, don, xlim = xlim, ylim = ylim, origindate = NULL,
 						xlab = xlab, ylab = ylab, ylab.sub = NULL,
 						title = titre, title.position = titre.pos, axis.font = 1,
 						barcol = optsgph$colors$col,
@@ -191,11 +187,11 @@ OnsetCalc.plotOnsetGraph <- function(){
 
 ##############################################################################
 
-OnsetCalc.Display.Maps <- function(){
+SeasonLengthCalc.Display.Maps <- function(){
 	if(is.null(.cdtData$EnvData)) return(NULL)
 	if(is.null(.cdtData$EnvData$output)) return(NULL)
 
-	imgContainer <- CDT.Display.Map.inter(OnsetCalc.plotOnsetMaps, .cdtData$EnvData$tab$dataMap, 'Onset-Map')
+	imgContainer <- CDT.Display.Map.inter(SeasonLengthCalc.plotSeasLenMaps, .cdtData$EnvData$tab$dataMap, 'Season Length-Map')
 	.cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
 
 	###############
@@ -214,9 +210,8 @@ OnsetCalc.Display.Maps <- function(){
 		}
 
 		if(xyid$plotTS){
-			imgContainer1 <- CDT.Display.Graph(OnsetCalc.plotOnsetGraph, .cdtData$EnvData$tab$dataGraph, 'Onset-Graph')
+			imgContainer1 <- CDT.Display.Graph(SeasonLengthCalc.plotSeasLenGraph, .cdtData$EnvData$tab$dataGraph, 'Season Length-Graph')
 			.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$dataGraph)
 		}
 	})
 }
-

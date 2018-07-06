@@ -15,7 +15,6 @@ computeWB_getParams <- function(){
 
 	# xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_WB_dlgBox.xml")
 	# lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-	lang.dlg <- NULL
 
 	############################################
 
@@ -336,12 +335,12 @@ computeWB_getParams <- function(){
 	###############
 	tkconfigure(bt.wb.1stday, command = function(){
 		.cdtData$GalParams$wb[["file"]] <- computeWB_get.WB.SWHC(tt, .cdtData$GalParams$wb[["file"]],
-															str_trim(tclvalue(DataType)), "WB", lang.dlg)
+																str_trim(tclvalue(DataType)), "WB")
 	})
 
 	tkconfigure(bt.wb.swhc, command = function(){
 		.cdtData$GalParams$swhc[["file"]] <- computeWB_get.WB.SWHC(tt, .cdtData$GalParams$swhc[["file"]],
-															str_trim(tclvalue(DataType)), "SWHC", lang.dlg)
+																	str_trim(tclvalue(DataType)), "SWHC")
 	})
 
 	###############
@@ -425,10 +424,8 @@ computeWB_getParams <- function(){
 			.cdtData$GalParams$wb$multi <- switch(tclvalue(use.multi.wb), '0' = FALSE, '1' = TRUE)
 			.cdtData$GalParams$swhc$multi <- switch(tclvalue(use.multi.swhc), '0' = FALSE, '1' = TRUE)
 
-			if(tclvalue(use.multi.wb) == 0)
-				.cdtData$GalParams$wb$wb1 <- as.numeric(str_trim(tclvalue(start.wb)))
-			if(tclvalue(use.multi.swhc) == 0)
-				.cdtData$GalParams$swhc$cap.max <- as.numeric(str_trim(tclvalue(capacity.max)))
+			.cdtData$GalParams$wb$wb1 <- as.numeric(str_trim(tclvalue(start.wb)))
+			.cdtData$GalParams$swhc$cap.max <- as.numeric(str_trim(tclvalue(capacity.max)))
 
 			# .cdtData$GalParams$message <- lang.dlg[['message']]
 
@@ -474,8 +471,7 @@ computeWB_getParams <- function(){
 
 ############################################################
 
-computeWB_get.WB.SWHC <- function(parent.win, Parameters,
-								dataType, donne, lang.dlg)
+computeWB_get.WB.SWHC <- function(parent.win, Parameters, dataType, donne)
 {
 	listOpenFiles <- openFile_ttkcomboList()
 	if(WindowsOS()){
@@ -485,6 +481,9 @@ computeWB_get.WB.SWHC <- function(parent.win, Parameters,
 		largeur <- 34
 		largeur1 <- 30
 	}
+
+	# xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_WB_dlgBox_1.xml")
+	# lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
 	###################
 

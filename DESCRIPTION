@@ -13,9 +13,11 @@ License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 Depends: 
+    R (>= 3.2.0),
     ncdf4,
     sp
 Imports: 
+    R.utils,
     grid,
     lattice,
     latticeExtra,

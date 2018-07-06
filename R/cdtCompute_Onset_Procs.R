@@ -79,7 +79,7 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
 
 		##################
 
-		onset <- cdt.Season.Onset(prec$data, etp$data, daty, subdiv, criteria, GeneralParameters$min.frac)
+		onset <- cdt.Season.Onset(daty, subdiv, criteria, prec$data, etp$data, GeneralParameters$min.frac)
 		onset.num <- onset$onset.num
 		start.date <- onset$start.date
 		onset <- onset$onset.date
@@ -117,13 +117,13 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
 		close(con)
 
 		##################
-		con <- gzfile(file.cdt.prec, compression = 7)
+		con <- gzfile(file.cdt.prec, compression = 9)
 		open(con, "wb")
 		saveRDS(prec$data, con)
 		close(con)
 
 		if(!is.null(etp)){
-			con <- gzfile(file.cdt.etp, compression = 7)
+			con <- gzfile(file.cdt.etp, compression = 9)
 			open(con, "wb")
 			saveRDS(etp$data, con)
 			close(con)
@@ -263,8 +263,8 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
 			subdiv <- subdiv[divexist]
 			criteria <- criteria[divexist]
 
-			onset <- cdt.Season.Onset(rr.data, et.data, prec$dateInfo$date,
-									subdiv, criteria, GeneralParameters$min.frac)
+			onset <- cdt.Season.Onset(prec$dateInfo$date, subdiv, criteria,
+									rr.data, et.data, GeneralParameters$min.frac)
 			start.date <- onset$start.date
 			onset <- onset$onset.num
 

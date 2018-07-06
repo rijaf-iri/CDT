@@ -61,6 +61,17 @@
                 <text lang="fr"> Données saisonnières glissantes </text>
             </option>
         </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> CDT stations data format </text>
+            </option>
+            <option id="2">
+                <text lang="en"> CDT dataset format (gridded) </text>
+            </option>
+            <option id="3">
+                <text lang="en"> NetCDF gridded data </text>
+            </option>
+        </combobox>
     </widget>
     <message>
         <content id="1">

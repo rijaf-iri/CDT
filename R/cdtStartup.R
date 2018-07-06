@@ -566,7 +566,7 @@ startCDT <- function(wd = NA, lang = NA){
 					refreshCDT()
 					spinbox.state(state = 'normal')
 					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# CessationCalcPanelCmd()
+						CessationCalcPanelCmd()
 						.cdtEnv$tcl$data$lcmd.frame <- 1
 					}
 				})
@@ -581,7 +581,7 @@ startCDT <- function(wd = NA, lang = NA){
 					refreshCDT()
 					spinbox.state(state = 'normal')
 					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# SeasonLengthCalcPanelCmd()
+						SeasonLengthCalcPanelCmd()
 						.cdtEnv$tcl$data$lcmd.frame <- 1
 					}
 				})

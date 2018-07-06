@@ -34,17 +34,23 @@
                 <text lang="en"> Shapefile </text>
             </option>
         </combobox>
+        <button id="0">
+            <text lang="en"> Water Balance setting </text>
+        </button>
         <button id="1">
-            <text lang="en"> Create Onset Criteria </text>
+            <text lang="en"> Create Cessation Criteria </text>
         </button>
         <button id="2">
             <text lang="en"> Help </text>
         </button>
         <button id="3">
-            <text lang="en"> Calculate Onset </text>
+            <text lang="en"> Calculate Cessation </text>
         </button>
+        <checkbutton id="0">
+            <text lang="en"> Water balance data already computed </text>
+        </checkbutton>
         <checkbutton id="1">
-            <text lang="en"> Onset data already computed </text>
+            <text lang="en"> Cessation data already computed </text>
         </checkbutton>
         <checkbutton id="2">
             <text lang="en"> Add boundaries to Map </text>
@@ -56,15 +62,21 @@
             <text lang="en"> Format </text>
         </label>
         <label id="3">
-            <text lang="en"> File containing stations daily Precip data </text>
+            <text lang="en"> File containing stations daily water balance </text>
         </label>
         <label id="4">
+            <text lang="en"> File containing stations daily Precip data </text>
+        </label>
+        <label id="4-a">
             <text lang="en"> File containing stations daily PET data </text>
         </label>
         <label id="5">
-            <text lang="en"> Index file (*.rds) for daily Precip data </text>
+            <text lang="en"> Index file (*.rds) for daily water balance </text>
         </label>
         <label id="6">
+            <text lang="en"> Index file (*.rds) for daily Precip data </text>
+        </label>
+        <label id="6-a">
             <text lang="en"> Index file (*.rds) for daily PET data </text>
         </label>
         <label id="7">
@@ -89,58 +101,52 @@
             <text lang="en"> Attribute to be used to split the region </text>
         </label>
         <label id="14">
-            <text lang="en"> Onset Definition </text>
+            <text lang="en"> Cessation Definition </text>
         </label>
         <label id="15">
-            <text lang="en"> Onset method </text>
+            <text lang="en"> Cessation method </text>
         </label>
         <label id="16">
-            <text lang="en"> Earliest onset date </text>
+            <text lang="en"> Earliest cessation date </text>
         </label>
         <label id="17">
             <text lang="en"> Day </text>
         </label>
         <label id="18">
-            <text lang="en"> Threshold for a rainy day </text>
+            <text lang="en"> Water balance drops below </text>
         </label>
         <label id="19">
-            <text lang="en"> Rainfall total </text>
+            <text lang="en"> for a period of </text>
         </label>
         <label id="20">
-            <text lang="en"> over </text>
-        </label>
-        <label id="21">
             <text lang="en"> days </text>
         </label>
-        <label id="22">
-            <text lang="en"> exceeding (fraction) </text>
-        </label>
-        <label id="23">
-            <text lang="en"> of the evaporation </text>
-        </label>
-        <label id="24">
-            <text lang="en"> with at least </text>
-        </label>
-        <label id="25">
-            <text lang="en"> rain days </text>
-        </label>
-        <label id="26">
-            <text lang="en"> Dry Spell not exceeding </text>
-        </label>
-        <label id="27">
-            <text lang="en"> in the next </text>
-        </label>
-        <label id="28">
+        <label id="21">
             <text lang="en"> Latest possible date </text>
         </label>
+        <label id="22-a">
+            <text lang="en"> Detection method </text>
+        </label>
+        <label id="22">
+            <text lang="en"> Accumulated </text>
+        </label>
+        <label id="23">
+            <text lang="en"> precipitation </text>
+        </label>
+        <label id="24">
+            <text lang="en"> less than </text>
+        </label>
+        <label id="25">
+            <text lang="en"> of the evapotranspiration </text>
+        </label>
         <label id="29">
-            <text lang="en"> Onset data </text>
+            <text lang="en"> Cessation data </text>
         </label>
         <label id="30">
-            <text lang="en"> Onset Map </text>
+            <text lang="en"> Cessation Map </text>
         </label>
         <label id="31">
-            <text lang="en"> Onset Graph </text>
+            <text lang="en"> Cessation Graph </text>
         </label>
         <label id="32">
             <text lang="en"> Station/Coordinates </text>
@@ -172,13 +178,21 @@
         </content>
         <content id="2">
             <status>
+                <text lang="en"> Select the file containing the daily water balance </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the daily water balance </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
                 <text lang="en"> Select the file containing the daily precipitation </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file containing the daily precipitation </text>
             </tooltip>
         </content>
-        <content id="3">
+        <content id="3-a">
             <status>
                 <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
             </status>
@@ -188,13 +202,21 @@
         </content>
         <content id="4">
             <status>
+                <text lang="en"> Enter the full path to the file &lt;daily water balance dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;daily water balance dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
                 <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
             </tooltip>
         </content>
-        <content id="5">
+        <content id="5-a">
             <status>
                 <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
             </status>
@@ -232,34 +254,25 @@
             <text lang="en"> Invalid latitude </text>
         </content>
         <content id="2">
-            <text lang="en"> 1: Onset criterion based on "Total rainfall" </text>
+            <text lang="en"> 1: Cessation using "Water Balance" </text>
         </content>
         <content id="3">
-            <text lang="en"> 2: Onset criterion based on "Fraction of evapotranspiration" </text>
-        </content>
-        <content id="4">
-            <text lang="en"> 3: Onset criterion based on "Minimum number of rainy days" </text>
-        </content>
-        <content id="5">
-            <text lang="en"> 4: Onset criterion based on "Dry spell lengths" </text>
-        </content>
-        <content id="6">
-            <text lang="en"> 5: Onset criterion based on "Number of rainy days and spell lengths" </text>
+            <text lang="en"> 2: Cessation criterion based on "Fraction of evapotranspiration" </text>
         </content>
         <content id="7">
-            <text lang="en"> Invalid input found on onset definition criteria </text>
+            <text lang="en"> Invalid input found on cessation definition criteria </text>
         </content>
         <content id="8">
-            <text lang="en"> Calculate Season Onset ...... </text>
+            <text lang="en"> Calculate Season Cessation ...... </text>
         </content>
         <content id="9">
-            <text lang="en"> Season Onset calculation finished successfully </text>
+            <text lang="en"> Season Cessation calculation finished successfully </text>
         </content>
         <content id="10">
-            <text lang="en"> Season Onset calculation failed </text>
+            <text lang="en"> Season Cessation calculation failed </text>
         </content>
         <content id="11">
-            <text lang="en"> Unable to load onset data </text>
+            <text lang="en"> Unable to load cessation data </text>
         </content>
         <content id="12">
             <text lang="en"> not found </text>
@@ -271,7 +284,10 @@
             <text lang="en"> Coordinates outside of data range </text>
         </content>
         <content id="15">
-            <text lang="en"> Provide the potential evapotranspiration data </text>
+            <text lang="en"> Provide the daily precipitation data </text>
+        </content>
+        <content id="15-a">
+            <text lang="en"> Provide the daily potential evapotranspiration data </text>
         </content>
         <content id="16">
             <text lang="en"> did not find </text>
@@ -289,19 +305,73 @@
             <text lang="en"> Unable to read </text>
         </content>
         <content id="21">
-            <text lang="en"> Precip dataset is not a daily data </text>
+            <text lang="en"> Water balance dataset is not a daily data </text>
         </content>
         <content id="22">
+            <text lang="en"> Precip dataset is not a daily data </text>
+        </content>
+        <content id="22-a">
             <text lang="en"> PET dataset is not a daily data </text>
         </content>
         <content id="23">
             <text lang="en"> Precip and PET have different resolution or bbox </text>
         </content>
+        <content id="23-a">
+            <text lang="en"> Water balance, Precip and PET have different resolution or bbox </text>
+        </content>
         <content id="24">
             <text lang="en"> Precip and PET have different chunk size </text>
         </content>
+        <content id="24-a">
+            <text lang="en"> Water balance, Precip and PET have different chunk size </text>
+        </content>
         <content id="25">
             <text lang="en"> Precip and PET dates do not match </text>
+        </content>
+        <content id="25-a">
+            <text lang="en"> Water balance, Precip and PET dates do not match </text>
+        </content>
+        <content id="26">
+            <text lang="en"> No data found </text>
+        </content>
+        <content id="27">
+            <text lang="en"> No water balance data found </text>
+        </content>
+        <content id="28">
+            <text lang="en"> No Precip data found </text>
+        </content>
+        <content id="29">
+            <text lang="en"> No PET data found </text>
+        </content>
+        <content id="30">
+            <text lang="en"> Precip and WB stations do not match </text>
+        </content>
+        <content id="31">
+            <text lang="en"> Precip and WB dates do not match </text>
+        </content>
+        <content id="32">
+            <text lang="en"> SWHC, Precip and PET stations do not match </text>
+        </content>
+        <content id="33">
+            <text lang="en"> Initial water balance, Precip and PET stations do not match </text>
+        </content>
+        <content id="34">
+            <text lang="en"> Compute water balance ..... </text>
+        </content>
+        <content id="34-a">
+            <text lang="en"> Computing water balance finished </text>
+        </content>
+        <content id="35">
+            <text lang="en"> No SWHC data found </text>
+        </content>
+        <content id="35-a">
+            <text lang="en"> SWHC, Precip and PET have different resolution or bbox </text>
+        </content>
+        <content id="36">
+            <text lang="en"> No initial water balance data found </text>
+        </content>
+        <content id="36-a">
+            <text lang="en"> Initial water balance, Precip and PET have different resolution or bbox </text>
         </content>
     </message>
 </panel_cmd>

@@ -80,7 +80,7 @@ climatologiesCalcPanelCmd <- function(){
 		frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['2']], relief = 'groove')
 
 		DataType <- tclVar()
-		CbdatatypeVAL <- lang.dlg[['combobox']][['1']]
+		CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:3]
 		datatypeVAL <- c('cdtstation', 'cdtdataset', 'cdtnetcdf')
 		tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% GeneralParameters$data.type]
 

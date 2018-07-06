@@ -109,7 +109,7 @@ AggregateTS_GetInfo <- function(){
 	frDataType <- ttklabelframe(frAGGRTS, text = lang.dlg[['label']][['5']], labelanchor = "nw", relief = "groove", borderwidth = 2)
 
 	DataType <- tclVar()
-	CbdatatypeVAL <- lang.dlg[['combobox']][['1']]
+	CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:3]
 	datatypeVAL <- c('cdtstation', 'cdtdataset', 'cdtnetcdf')
 	tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% .cdtData$GalParams$data.type]
 

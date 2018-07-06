@@ -1,5 +1,5 @@
 
-OnsetCalcPanelCmd <- function(){
+CessationCalcPanelCmd <- function(){
 	listOpenFiles <- openFile_ttkcomboList()
 	if(WindowsOS()){
 		largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
@@ -16,22 +16,26 @@ OnsetCalcPanelCmd <- function(){
 	}
 
 	MOIS <- format(ISOdate(2014, 1:12, 1), "%b")
-	GeneralParameters <- list(data.type = "cdtstation", 
-							cdtstation = list(prec = "", etp = ""),
-							cdtdataset = list(prec = "", etp = ""),
-							onset.def = list(method = 5, thres.rain.day = 0.85,
-											total.days = 5, rain.total = 20,
-											min.rain.day = 3, dryspell = 7, dryspell.days = 21,
-											evapo.frac = 0.5,
-											earliest = list(month = 9, day = 1),
-											latest = list(month = 11, day = 30)),
+	GeneralParameters <- list(data.type = "cdtstation", wb.data = TRUE,
+							cdtstation = list(wb = "", prec = "", etp = ""),
+							cdtdataset = list(wb = "", prec = "", etp = ""),
+							wb.pars = list(hdate = list(start.month = 1, start.day = 1, separate.year = FALSE),
+											wb = list(wb1 = 0, multi = FALSE, file = ""),
+											swhc = list(cap.max = 100, multi = FALSE, file = "")),
+							onset.def = list(method = 1, min.wb = 5,
+											total.days = 3, thres.rain.day = 0.85, 
+											accum.method = 1, accum.day = 10, evapo.frac = 0.5,
+											earliest = list(month = 12, day = 15),
+											latest = list(month = 2, day = 15)),
 							min.frac = 0.95,
 							onset.reg = list(region = "One", subdiv = "Latitude",
 											lat = list(nb = 2, div = list(8)),
 											shp = list(file = "", attr = "")),
 							output = "")
 
-	xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Onset_leftCmd.xml")
+	GeneralParameters$onset.criteria[[1]]$method <- 1
+
+	xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Cessation_leftCmd.xml")
 	lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 	.cdtData$EnvData$message <- lang.dlg[['message']]
 
@@ -40,6 +44,7 @@ OnsetCalcPanelCmd <- function(){
 	.cdtEnv$tcl$main$cmd.frame <- tkframe(.cdtEnv$tcl$main$panel.left)
 
 	tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
+
 	cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
 	cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
 	cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
@@ -47,6 +52,7 @@ OnsetCalcPanelCmd <- function(){
 	cmd.tab5 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['5']])
 
 	bwRaiseTab(tknote.cmd, cmd.tab1)
+
 	tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
 	tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
 	tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
@@ -73,32 +79,53 @@ OnsetCalcPanelCmd <- function(){
 		datatypeVAL <- c('cdtstation', 'cdtdataset')
 		tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% GeneralParameters$data.type]
 
+		water.balanceOK <- tclVar(GeneralParameters$wb.data)
+
 		if(GeneralParameters$data.type == 'cdtstation'){
+			input.WB <- tclVar(GeneralParameters$cdtstation$wb)
 			input.Prec <- tclVar(GeneralParameters$cdtstation$prec)
 			input.Etp <- tclVar(GeneralParameters$cdtstation$etp)
-			txt.INPrec <- lang.dlg[['label']][['3']]
-			txt.INEtp <- lang.dlg[['label']][['4']]
+			txt.INWB <- lang.dlg[['label']][['3']]
+			txt.INPrec <- lang.dlg[['label']][['4']]
+			txt.INEtp <- lang.dlg[['label']][['4-a']]
 		}else{
+			input.WB <- tclVar(GeneralParameters$cdtdataset$wb)
 			input.Prec <- tclVar(GeneralParameters$cdtdataset$prec)
 			input.Etp <- tclVar(GeneralParameters$cdtdataset$etp)
-			txt.INPrec <- lang.dlg[['label']][['5']]
-			txt.INEtp <- lang.dlg[['label']][['6']]
+			txt.INWB <- lang.dlg[['label']][['5']]
+			txt.INPrec <- lang.dlg[['label']][['6']]
+			txt.INEtp <- lang.dlg[['label']][['6-a']]
 		}
+		txt.INWB.var <- tclVar(txt.INWB)
 		txt.INPrec.var <- tclVar(txt.INPrec)
 		txt.INEtp.var <- tclVar(txt.INEtp)
 
+		stateWB <- 'normal'
+		statePrec <- 'disabled'
 		stateETP <- 'disabled'
+		statesetWB <- 'disabled'
 
 		txt.datatype <- tklabel(frameInData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
 		cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
+		chk.WBdata <- tkcheckbutton(frameInData, variable = water.balanceOK, text = lang.dlg[['checkbutton']][['0']], anchor = 'w', justify = 'left')
+
+		bt.setWB <- ttkbutton(frameInData, text = lang.dlg[['button']][['0']], state = statesetWB)
+
+		txt.INWB <- tklabel(frameInData, text = tclvalue(txt.INWB.var), textvariable = txt.INWB.var, anchor = 'w', justify = 'left')
+		if(GeneralParameters$data.type == 'cdtstation'){
+			cb.en.INWB <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.WB, width = largeur1, state = stateWB)
+		}else{
+			cb.en.INWB <- tkentry(frameInData, textvariable = input.WB, width = largeur2, state = stateWB)
+		}
+		bt.INWB <- tkbutton(frameInData, text = "...", state = stateWB)
 
 		txt.INPrec <- tklabel(frameInData, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
 		if(GeneralParameters$data.type == 'cdtstation'){
-			cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
+			cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1, state = statePrec)
 		}else{
-			cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
+			cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2, state = statePrec)
 		}
-		bt.INPrec <- tkbutton(frameInData, text = "...")
+		bt.INPrec <- tkbutton(frameInData, text = "...", state = statePrec)
 
 		txt.INEtp <- tklabel(frameInData, text = tclvalue(txt.INEtp.var), textvariable = txt.INEtp.var, anchor = 'w', justify = 'left')
 		if(GeneralParameters$data.type == 'cdtstation'){
@@ -110,6 +137,25 @@ OnsetCalcPanelCmd <- function(){
 
 		############
 
+		tkconfigure(bt.setWB, command = function(){
+			GeneralParameters[["wb.pars"]] <<- computeWB_Cessation(GeneralParameters[["wb.pars"]], str_trim(tclvalue(DataType)))
+		})
+
+		tkconfigure(bt.INWB, command = function(){
+			if(GeneralParameters$data.type == 'cdtstation'){
+				dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
+				if(!is.null(dat.opfiles)){
+					update.OpenFiles('ascii', dat.opfiles)
+					listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+					tclvalue(input.WB) <- dat.opfiles[[1]]
+					lapply(list(cb.en.INWB, cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
+				}
+			}else{
+				path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+				tclvalue(input.WB) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+			}
+		})
+
 		tkconfigure(bt.INPrec, command = function(){
 			if(GeneralParameters$data.type == 'cdtstation'){
 				dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
@@ -117,7 +163,7 @@ OnsetCalcPanelCmd <- function(){
 					update.OpenFiles('ascii', dat.opfiles)
 					listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
 					tclvalue(input.Prec) <- dat.opfiles[[1]]
-					lapply(list(cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
+					lapply(list(cb.en.INWB, cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
 				}
 			}else{
 				path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -132,7 +178,7 @@ OnsetCalcPanelCmd <- function(){
 					update.OpenFiles('ascii', dat.opfiles)
 					listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
 					tclvalue(input.Etp) <- dat.opfiles[[1]]
-					lapply(list(cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
+					lapply(list(cb.en.INWB, cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
 				}
 			}else{
 				path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -143,25 +189,36 @@ OnsetCalcPanelCmd <- function(){
 		############
 		tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.INPrec, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(cb.en.INPrec, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(bt.INPrec, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.INEtp, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(cb.en.INEtp, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(bt.INEtp, row = 4, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(chk.WBdata, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(txt.INWB, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.en.INWB, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.INWB, row = 3, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+		tkgrid(bt.setWB, row = 4, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		tkgrid(txt.INPrec, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.en.INPrec, row = 6, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.INPrec, row = 6, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(txt.INEtp, row = 7, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.en.INEtp, row = 8, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.INEtp, row = 8, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
 		############
 
 		helpWidget(cb.datatype, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
 
 		if(GeneralParameters$data.type == 'cdtstation'){
-			helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
-			helpWidget(cb.en.INEtp, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+			helpWidget(cb.en.INWB, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+			helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+			helpWidget(cb.en.INEtp, lang.dlg[['tooltip']][['3-a']], lang.dlg[['status']][['3']])
+			helpWidget(bt.INWB, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 			helpWidget(bt.INPrec, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 			helpWidget(bt.INEtp, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 		}else{
-			helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
-			helpWidget(cb.en.INEtp, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+			helpWidget(cb.en.INWB, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+			helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+			helpWidget(cb.en.INEtp, lang.dlg[['tooltip']][['5-a']], lang.dlg[['status']][['5']])
+			helpWidget(bt.INWB, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 			helpWidget(bt.INPrec, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 			helpWidget(bt.INEtp, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 		}
@@ -169,30 +226,68 @@ OnsetCalcPanelCmd <- function(){
 		############
 
 		tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
+			tkdestroy(cb.en.INWB)
+			tclvalue(input.WB) <- ''
 			tkdestroy(cb.en.INPrec)
 			tclvalue(input.Prec) <- ''
-
 			tkdestroy(cb.en.INEtp)
 			tclvalue(input.Etp) <- ''
 
-			stateETP <- 'disabled'
+			omethods <- sapply(GeneralParameters$onset.criteria, "[[", "method")
+			if(all(omethods == 1)){
+				if(tclvalue(water.balanceOK) == "1"){
+					stateWB <- 'normal'
+					statePrec <- 'disabled'
+					stateETP <- 'disabled'
+					statesetWB <- 'disabled'
+				}else{
+					stateWB <- 'disabled'
+					statePrec <- 'normal'
+					stateETP <- 'normal'
+					statesetWB <- 'normal'
+				}
+			}else if(all(omethods != 1)){
+				stateWB <- 'disabled'
+				statePrec <- 'normal'
+				stateETP <- 'normal'
+				statesetWB <- 'disabled'
+			}else{
+				stateWB <- 'normal'
+				statePrec <- 'normal'
+				stateETP <- 'normal'
+				statesetWB <- 'normal'
+			}
+
+			tkconfigure(bt.setWB, state = statesetWB)
 
 			###
 			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-				tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['3']]
-				tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['4']]
+				tclvalue(txt.INWB.var) <- lang.dlg[['label']][['3']]
+				tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['4']]
+				tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['4-a']]
 
-				cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
+				cb.en.INWB <<- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.WB, width = largeur1, state = stateWB)
+				cb.en.INPrec <<- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1, state = statePrec)
 				cb.en.INEtp <<- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Etp, width = largeur1, state = stateETP)
 
 				######
-				tkconfigure(bt.INPrec, command = function(){
+				tkconfigure(bt.INWB, command = function(){
+					dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
+					if(!is.null(dat.opfiles)){
+						update.OpenFiles('ascii', dat.opfiles)
+						listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+						tclvalue(input.WB) <- dat.opfiles[[1]]
+						lapply(list(cb.en.INWB, cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
+					}
+				})
+
+				tkconfigure(bt.INPrec, state = statePrec, command = function(){
 					dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
 					if(!is.null(dat.opfiles)){
 						update.OpenFiles('ascii', dat.opfiles)
 						listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
 						tclvalue(input.Prec) <- dat.opfiles[[1]]
-						lapply(list(cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
+						lapply(list(cb.en.INWB, cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
 					}
 				})
 
@@ -202,27 +297,36 @@ OnsetCalcPanelCmd <- function(){
 						update.OpenFiles('ascii', dat.opfiles)
 						listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
 						tclvalue(input.Etp) <- dat.opfiles[[1]]
-						lapply(list(cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
+						lapply(list(cb.en.INWB, cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
 					}
 				})
 
 				######
-				helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
-				helpWidget(cb.en.INEtp, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+				helpWidget(cb.en.INWB, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+				helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+				helpWidget(cb.en.INEtp, lang.dlg[['tooltip']][['3-a']], lang.dlg[['status']][['3']])
+				helpWidget(bt.INWB, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 				helpWidget(bt.INPrec, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 				helpWidget(bt.INEtp, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 			}
 
 			###
 			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-				tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['5']]
-				tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['6']]
+				tclvalue(txt.INWB.var) <- lang.dlg[['label']][['5']]
+				tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['6']]
+				tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['6-a']]
 
-				cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
+				cb.en.INWB <<- tkentry(frameInData, textvariable = input.WB, width = largeur2, state = stateWB)
+				cb.en.INPrec <<- tkentry(frameInData, textvariable = input.Prec, width = largeur2, state = statePrec)
 				cb.en.INEtp <<- tkentry(frameInData, textvariable = input.Etp, width = largeur2, state = stateETP)
 
 				######
-				tkconfigure(bt.INPrec, command = function(){
+				tkconfigure(bt.INWB, command = function(){
+					path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+					tclvalue(input.WB) <- if(path.rds %in% c("", "NA")) "" else path.rds
+				})
+
+				tkconfigure(bt.INPrec, state = statePrec, command = function(){
 					path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
 					tclvalue(input.Prec) <- if(path.rds %in% c("", "NA")) "" else path.rds
 				})
@@ -233,15 +337,56 @@ OnsetCalcPanelCmd <- function(){
 				})
 
 				######
-				helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
-				helpWidget(cb.en.INEtp, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+				helpWidget(cb.en.INWB, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+				helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+				helpWidget(cb.en.INEtp, lang.dlg[['tooltip']][['5-a']], lang.dlg[['status']][['5']])
+				helpWidget(bt.INWB, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 				helpWidget(bt.INPrec, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 				helpWidget(bt.INEtp, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 			}
 
 			#######
-			tkgrid(cb.en.INPrec, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-			tkgrid(cb.en.INEtp, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(cb.en.INWB, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(cb.en.INPrec, row = 6, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(cb.en.INEtp, row = 8, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+		})
+
+		############
+
+		tkbind(chk.WBdata, "<Button-1>", function(){
+			omethods <- sapply(GeneralParameters$onset.criteria, "[[", "method")
+			if(all(omethods == 1)){
+				if(tclvalue(water.balanceOK) == "0"){
+					stateWB <- 'normal'
+					statePrec <- 'disabled'
+					stateETP <- 'disabled'
+					statesetWB <- 'disabled'
+				}else{
+					stateWB <- 'disabled'
+					statePrec <- 'normal'
+					stateETP <- 'normal'
+					statesetWB <- 'normal'
+				}
+			}else if(all(omethods != 1)){
+				statePrec <- 'normal'
+				stateETP <- 'normal'
+				stateWB <- 'disabled'
+				statesetWB <- 'disabled'
+			}else{
+				stateWB <- 'normal'
+				statePrec <- 'normal'
+				stateETP <- 'normal'
+				statesetWB <- 'normal'
+			}
+
+			tkconfigure(bt.setWB, state = statesetWB)
+
+			tkconfigure(cb.en.INWB, state = stateWB)
+			tkconfigure(bt.INWB, state = stateWB)
+			tkconfigure(cb.en.INPrec, state = statePrec)
+			tkconfigure(bt.INPrec, state = statePrec)
+			tkconfigure(cb.en.INEtp, state = stateETP)
+			tkconfigure(bt.INEtp, state = stateETP)
 		})
 
 		############################################
@@ -344,7 +489,7 @@ OnsetCalcPanelCmd <- function(){
 							update.OpenFiles('shp', shp.opfiles)
 							tclvalue(shp.file) <- shp.opfiles[[1]]
 							listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-							lapply(list(cb.shp.file, cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
+							lapply(list(cb.shp.file, cb.en.INWB, cb.en.INPrec), tkconfigure, values = unlist(listOpenFiles))
 							tcl('update')
 
 							shpf <- getShpOpenData(shp.file)
@@ -420,7 +565,7 @@ OnsetCalcPanelCmd <- function(){
 				})
 
 				######
-				tkgrid(bt.create.subdv, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+				tkgrid(bt.create.subdv, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 			}else{
 				tcl("update", "idletasks")
 				ONSET.vars[[1]] <<- OnsetDefinitionCriteria(subfr2, GeneralParameters$onset.def)
@@ -437,34 +582,33 @@ OnsetCalcPanelCmd <- function(){
 
 			#########
 			onset.method <- tclVar(Parameters$method)
+
 			mon1 <- as.numeric(str_trim(Parameters$earliest$month))
 			onset.start.mon <- tclVar(MOIS[mon1])
 			onset.start.day <- tclVar(Parameters$earliest$day)
-			thres.rain.day <- tclVar(Parameters$thres.rain.day)
-			total.rain <- tclVar(Parameters$rain.total)
+
+			min.wb <- tclVar(Parameters$min.wb)
 			total.days <- tclVar(Parameters$total.days)
+			thres.rain.day <- tclVar(Parameters$thres.rain.day)
+
+			accum.method <- tclVar(Parameters$accum.method)
+			accum.day <- tclVar(Parameters$accum.day)
 			evapo.frac <- tclVar(Parameters$evapo.frac)
-			min.rain.day <- tclVar(Parameters$min.rain.day)
-			dryspell <- tclVar(Parameters$dryspell)
-			dryspell.days <- tclVar(Parameters$dryspell.days)
+
 			mon2 <- as.numeric(str_trim(Parameters$latest$month))
 			onset.late.mon <- tclVar(MOIS[mon2])
 			onset.late.day <- tclVar(Parameters$latest$day)
 
 			##########
-
 			frMethod <- tkframe(frameOnset)
 			txt.method <- tklabel(frMethod, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
-			cb.method <- ttkcombobox(frMethod, values = 1:5, textvariable = onset.method, width = 3, justify = 'center')
+			cb.method <- ttkcombobox(frMethod, values = 1:2, textvariable = onset.method, width = 3, justify = 'center')
 			bt.method <- tkbutton(frMethod, text = lang.dlg[['button']][['2']])
 			tkgrid(txt.method, cb.method, bt.method)
 
 			tkconfigure(bt.method, command = function(){
 				Insert.Messages.Out(lang.dlg[['message']][['2']])
 				Insert.Messages.Out(lang.dlg[['message']][['3']])
-				Insert.Messages.Out(lang.dlg[['message']][['4']])
-				Insert.Messages.Out(lang.dlg[['message']][['5']])
-				Insert.Messages.Out(lang.dlg[['message']][['6']])
 			})
 
 			frEarliest <- tkframe(frameOnset)
@@ -474,51 +618,40 @@ OnsetCalcPanelCmd <- function(){
 			cb.early2 <- ttkcombobox(frEarliest, values = 1:31, textvariable = onset.start.day, width = 2)
 			tkgrid(txt.early1, cb.early1, txt.early2, cb.early2)
 
-			frThresRain <- tkframe(frameOnset)
-			txt.thresr1 <- tklabel(frThresRain, text = lang.dlg[['label']][['18']], anchor = 'w', justify = 'left')
-			en.thresr <- tkentry(frThresRain, textvariable = thres.rain.day, width = 4)
-			txt.thresr2 <- tklabel(frThresRain, text = "mm", anchor = 'w', justify = 'left')
-			tkgrid(txt.thresr1, en.thresr, txt.thresr2)
+			# mthd1
+			frMinWB <- tkframe(frameOnset)
+			txt.minwb1 <- tklabel(frMinWB, text = lang.dlg[['label']][['18']], anchor = 'w', justify = 'left')
+			en.minwb <- tkentry(frMinWB, textvariable = min.wb, width = 4)
+			txt.minwb2 <- tklabel(frMinWB, text = "mm", anchor = 'w', justify = 'left')
+			tkgrid(txt.minwb1, en.minwb, txt.minwb2)
 
-			frRainTotal <- tkframe(frameOnset)
-			txt.raintot1 <- tklabel(frRainTotal, text = lang.dlg[['label']][['19']], anchor = 'w', justify = 'left')
-			en.raintot1 <- tkentry(frRainTotal, textvariable = total.rain, width = 4)
-			txt.raintot2 <- tklabel(frRainTotal, text = "mm", anchor = 'w', justify = 'left')
-			txt.raintot3 <- tklabel(frRainTotal, text = lang.dlg[['label']][['20']], anchor = 'w', justify = 'left')
-			en.raintot2 <- tkentry(frRainTotal, textvariable = total.days, width = 3)
-			txt.raintot4 <- tklabel(frRainTotal, text = lang.dlg[['label']][['21']], anchor = 'w', justify = 'left')
-			tkgrid(txt.raintot1, en.raintot1, txt.raintot2, txt.raintot3, en.raintot2, txt.raintot4)
+			frWinDay <- tkframe(frameOnset)
+			txt.winday1 <- tklabel(frWinDay, text = lang.dlg[['label']][['19']], anchor = 'w', justify = 'left')
+			en.winday <- tkentry(frWinDay, textvariable = total.days, width = 3)
+			txt.winday2 <- tklabel(frWinDay, text = lang.dlg[['label']][['20']], anchor = 'w', justify = 'left')
+			tkgrid(txt.winday1, en.winday, txt.winday2)
 
 			# mthd 2
+			frAccMTH <- tkframe(frameOnset)
+			txt.AccMTH <- tklabel(frAccMTH, text = lang.dlg[['label']][['22-a']], anchor = 'w', justify = 'left')
+			cb.AccMTH <- ttkcombobox(frAccMTH, values = 1:2, textvariable = accum.method, width = 2)
+			tkgrid(txt.AccMTH, cb.AccMTH)
+
+			frAccRR <- tkframe(frameOnset)
+			txt.AccRR1 <- tklabel(frAccRR, text = lang.dlg[['label']][['22']], anchor = 'w', justify = 'left')
+			en.AccRR <- tkentry(frAccRR, textvariable = accum.day, width = 3)
+			txt.AccRR2 <- tklabel(frAccRR, text = paste(lang.dlg[['label']][['20']], lang.dlg[['label']][['23']]), anchor = 'w', justify = 'left')
+			tkgrid(txt.AccRR1, en.AccRR, txt.AccRR2)
+
 			frEvapo <- tkframe(frameOnset)
-			txt.evapo1 <- tklabel(frEvapo, text = lang.dlg[['label']][['22']], anchor = 'w', justify = 'left')
+			txt.evapo1 <- tklabel(frEvapo, text = lang.dlg[['label']][['24']], anchor = 'w', justify = 'left')
 			en.evapo <- tkentry(frEvapo, textvariable = evapo.frac, width = 4)
-			txt.evapo2 <- tklabel(frEvapo, text = lang.dlg[['label']][['23']], anchor = 'w', justify = 'left')
+			txt.evapo2 <- tklabel(frEvapo, text = lang.dlg[['label']][['25']], anchor = 'w', justify = 'left')
 			tkgrid(txt.evapo1, en.evapo, txt.evapo2)
 
-			# mthd 3
-			frMinDays <- tkframe(frameOnset)
-			txt.minday1 <- tklabel(frMinDays, text = lang.dlg[['label']][['24']], anchor = 'w', justify = 'left')
-			en.minday <- tkentry(frMinDays, textvariable = min.rain.day, width = 3)
-			txt.minday2 <- tklabel(frMinDays, text = lang.dlg[['label']][['25']], anchor = 'w', justify = 'left')
-			tkgrid(txt.minday1, en.minday, txt.minday2)
-
-			# mthd 4
-			frDrySpell <- tkframe(frameOnset)
-			txt.dryspl1 <- tklabel(frDrySpell, text = lang.dlg[['label']][['26']], anchor = 'w', justify = 'left')
-			en.dryspl <- tkentry(frDrySpell, textvariable = dryspell, width = 3)
-			txt.dryspl2 <- tklabel(frDrySpell, text = lang.dlg[['label']][['21']], anchor = 'w', justify = 'left')
-			tkgrid(txt.dryspl1, en.dryspl, txt.dryspl2)
-
-			frDrySpell1 <- tkframe(frameOnset)
-			txt.dryspld1 <- tklabel(frDrySpell1, text = lang.dlg[['label']][['27']], anchor = 'w', justify = 'left')
-			en.dryspld <- tkentry(frDrySpell1, textvariable = dryspell.days, width = 3)
-			txt.dryspld2 <- tklabel(frDrySpell1, text = lang.dlg[['label']][['21']], anchor = 'w', justify = 'left')
-			tkgrid(txt.dryspld1, en.dryspld, txt.dryspld2)
-
-			########
+			##
 			frLastest <- tkframe(frameOnset)
-			txt.late1 <- tklabel(frLastest, text = lang.dlg[['label']][['28']], anchor = 'w', justify = 'left')
+			txt.late1 <- tklabel(frLastest, text = lang.dlg[['label']][['21']], anchor = 'w', justify = 'left')
 			cb.late1 <- ttkcombobox(frLastest, values = MOIS, textvariable = onset.late.mon, width = 4)
 			txt.late2 <- tklabel(frLastest, text = lang.dlg[['label']][['17']], anchor = 'w', justify = 'left')
 			cb.late2 <- ttkcombobox(frLastest, values = 1:31, textvariable = onset.late.day, width = 2)
@@ -527,58 +660,57 @@ OnsetCalcPanelCmd <- function(){
 			########
 			tkgrid(frMethod, row = 0, sticky = 'we')
 			tkgrid(frEarliest, row = 1, sticky = 'we')
-			tkgrid(frThresRain, row = 2, sticky = 'we')
-			tkgrid(frRainTotal, row = 3, sticky = 'we')
+			tkgrid(frMinWB, row = 2, sticky = 'we')
+			tkgrid(frWinDay, row = 3, sticky = 'we')
 
-			tkgrid(frMinDays, row = 5, sticky = 'we')
-			tkgrid(frDrySpell, row = 6, sticky = 'we')
-			tkgrid(frDrySpell1, row = 7, sticky = 'we')
-
-			tkgrid(frLastest, row = 8, sticky = 'we')
+			tkgrid(frLastest, row = 5, sticky = 'we')
 
 			########
-
 			tkbind(cb.method, "<<ComboboxSelected>>", function(){
+				tkdestroy(frMinWB)
+				tkdestroy(frWinDay)
+				tkdestroy(frAccMTH)
+				tkdestroy(frAccRR)
 				tkdestroy(frEvapo)
-				tkdestroy(frMinDays)
-				tkdestroy(frDrySpell)
-				tkdestroy(frDrySpell1)
+
+				if(str_trim(tclvalue(onset.method)) == '1'){
+					frMinWB <<- tkframe(frameOnset)
+					txt.minwb1 <- tklabel(frMinWB, text = lang.dlg[['label']][['18']], anchor = 'w', justify = 'left')
+					en.minwb <- tkentry(frMinWB, textvariable = min.wb, width = 4)
+					txt.minwb2 <- tklabel(frMinWB, text = "mm", anchor = 'w', justify = 'left')
+					tkgrid(txt.minwb1, en.minwb, txt.minwb2)
+
+					frWinDay <<- tkframe(frameOnset)
+					txt.winday1 <- tklabel(frWinDay, text = lang.dlg[['label']][['19']], anchor = 'w', justify = 'left')
+					en.winday <- tkentry(frWinDay, textvariable = total.days, width = 3)
+					txt.winday2 <- tklabel(frWinDay, text = lang.dlg[['label']][['20']], anchor = 'w', justify = 'left')
+					tkgrid(txt.winday1, en.winday, txt.winday2)
+
+					tkgrid(frMinWB, row = 2, sticky = 'we')
+					tkgrid(frWinDay, row = 3, sticky = 'we')
+				}
 
 				if(str_trim(tclvalue(onset.method)) == '2'){
+					frAccMTH <<- tkframe(frameOnset)
+					txt.AccMTH <- tklabel(frAccMTH, text = lang.dlg[['label']][['22-a']], anchor = 'w', justify = 'left')
+					cb.AccMTH <- ttkcombobox(frAccMTH, values = 1:2, textvariable = accum.method, width = 2)
+					tkgrid(txt.AccMTH, cb.AccMTH)
+
+					frAccRR <<- tkframe(frameOnset)
+					txt.AccRR1 <- tklabel(frAccRR, text = lang.dlg[['label']][['22']], anchor = 'w', justify = 'left')
+					en.AccRR <- tkentry(frAccRR, textvariable = accum.day, width = 3)
+					txt.AccRR2 <- tklabel(frAccRR, text = paste(lang.dlg[['label']][['20']], lang.dlg[['label']][['23']]), anchor = 'w', justify = 'left')
+					tkgrid(txt.AccRR1, en.AccRR, txt.AccRR2)
+
 					frEvapo <<- tkframe(frameOnset)
-					txt.evapo1 <- tklabel(frEvapo, text = lang.dlg[['label']][['22']], anchor = 'w', justify = 'left')
+					txt.evapo1 <- tklabel(frEvapo, text = lang.dlg[['label']][['24']], anchor = 'w', justify = 'left')
 					en.evapo <- tkentry(frEvapo, textvariable = evapo.frac, width = 4)
-					txt.evapo2 <- tklabel(frEvapo, text = lang.dlg[['label']][['23']], anchor = 'w', justify = 'left')
+					txt.evapo2 <- tklabel(frEvapo, text = lang.dlg[['label']][['25']], anchor = 'w', justify = 'left')
 					tkgrid(txt.evapo1, en.evapo, txt.evapo2)
 
+					tkgrid(frAccMTH, row = 2, sticky = 'we')
+					tkgrid(frAccRR, row = 3, sticky = 'we')
 					tkgrid(frEvapo, row = 4, sticky = 'we')
-				}
-				if(str_trim(tclvalue(onset.method)) %in% c('3', '4', '5')){
-					if(str_trim(tclvalue(onset.method)) %in% c('3', '5')){
-						frMinDays <<- tkframe(frameOnset)
-						txt.minday1 <- tklabel(frMinDays, text = lang.dlg[['label']][['24']], anchor = 'w', justify = 'left')
-						en.minday <- tkentry(frMinDays, textvariable = min.rain.day, width = 3)
-						txt.minday2 <- tklabel(frMinDays, text = lang.dlg[['label']][['25']], anchor = 'w', justify = 'left')
-						tkgrid(txt.minday1, en.minday, txt.minday2)
-
-						tkgrid(frMinDays, row = 5, sticky = 'we')
-					}
-					if(str_trim(tclvalue(onset.method)) %in% c('4', '5')){
-						frDrySpell <<- tkframe(frameOnset)
-						txt.dryspl1 <- tklabel(frDrySpell, text = lang.dlg[['label']][['26']], anchor = 'w', justify = 'left')
-						en.dryspl <- tkentry(frDrySpell, textvariable = dryspell, width = 3)
-						txt.dryspl2 <- tklabel(frDrySpell, text = lang.dlg[['label']][['21']], anchor = 'w', justify = 'left')
-						tkgrid(txt.dryspl1, en.dryspl, txt.dryspl2)
-
-						frDrySpell1 <<- tkframe(frameOnset)
-						txt.dryspld1 <- tklabel(frDrySpell1, text = lang.dlg[['label']][['27']], anchor = 'w', justify = 'left')
-						en.dryspld <- tkentry(frDrySpell1, textvariable = dryspell.days, width = 3)
-						txt.dryspld2 <- tklabel(frDrySpell1, text = lang.dlg[['label']][['21']], anchor = 'w', justify = 'left')
-						tkgrid(txt.dryspld1, en.dryspld, txt.dryspld2)
-
-						tkgrid(frDrySpell, row = 6, sticky = 'we')
-						tkgrid(frDrySpell1, row = 7, sticky = 'we')
-					}
 				}
 			})
 
@@ -589,9 +721,9 @@ OnsetCalcPanelCmd <- function(){
 			########
 			return(list(frame = frameOnset,
 						onset.def = list(method = onset.method,
-										total.days = total.days, rain.total = total.rain,
-										thres.rain.day = thres.rain.day, min.rain.day = min.rain.day,
-										dryspell = dryspell, dryspell.days = dryspell.days,
+										min.wb = min.wb, total.days = total.days,
+										thres.rain.day = thres.rain.day,
+										accum.method = accum.method, accum.day = accum.day,
 										evapo.frac = evapo.frac,
 										earliest = list(month = onset.start.mon, day = onset.start.day),
 										latest = list(month = onset.late.mon, day = onset.late.day))
@@ -601,6 +733,9 @@ OnsetCalcPanelCmd <- function(){
 		##############################################
 
 		frameRegion <- tkframe(calcOnset.frame1)
+
+		onset.region <- tclVar(GeneralParameters$onset.reg$region)
+		onset.subdiv <- tclVar(GeneralParameters$onset.reg$subdiv)
 
 		onset.region <- tclVar()
 		CbregionDIV <- lang.dlg[['combobox']][['2']]
@@ -664,13 +799,16 @@ OnsetCalcPanelCmd <- function(){
 
 		tkconfigure(bt.CalcOnset, command = function(){
 			GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+			GeneralParameters$wb.data <- switch(tclvalue(water.balanceOK), '0' = FALSE, '1' = TRUE)
 
 			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+				GeneralParameters$cdtstation$wb <- str_trim(tclvalue(input.WB))
 				GeneralParameters$cdtstation$prec <- str_trim(tclvalue(input.Prec))
 				GeneralParameters$cdtstation$etp <- str_trim(tclvalue(input.Etp))
 			}
 
 			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+				GeneralParameters$cdtdataset$wb <- str_trim(tclvalue(input.WB))
 				GeneralParameters$cdtdataset$prec <- str_trim(tclvalue(input.Prec))
 				GeneralParameters$cdtdataset$etp <- str_trim(tclvalue(input.Etp))
 			}
@@ -696,12 +834,11 @@ OnsetCalcPanelCmd <- function(){
 														x <- x$onset.def
 														list(
 															method = as.numeric(str_trim(tclvalue(x$method))),
+															min.wb = as.numeric(str_trim(tclvalue(x$min.wb))),
 															total.days = as.numeric(str_trim(tclvalue(x$total.days))),
-															rain.total = as.numeric(str_trim(tclvalue(x$rain.total))),
 															thres.rain.day = as.numeric(str_trim(tclvalue(x$thres.rain.day))),
-															min.rain.day = as.numeric(str_trim(tclvalue(x$min.rain.day))),
-															dryspell = as.numeric(str_trim(tclvalue(x$dryspell))),
-															dryspell.days = as.numeric(str_trim(tclvalue(x$dryspell.days))),
+															accum.method = as.numeric(str_trim(tclvalue(x$accum.method))),
+															accum.day = as.numeric(str_trim(tclvalue(x$accum.day))),
 															evapo.frac = as.numeric(str_trim(tclvalue(x$evapo.frac))),
 															earliest = list(month = which(MOIS %in% str_trim(tclvalue(x$earliest$month))),
 																			day = as.numeric(str_trim(tclvalue(x$earliest$day)))),
@@ -716,26 +853,69 @@ OnsetCalcPanelCmd <- function(){
 				Insert.Messages.Out(lang.dlg[['message']][['7']], format = TRUE)
 				return(NULL)
 			}
+			GeneralParameters$onset.criteria <<- GeneralParameters$onset.criteria
 
-			etp.data <- FALSE
+			prec.data <- FALSE
 			omethods <- sapply(GeneralParameters$onset.criteria, "[[", "method")
-			if(any(omethods == 2)){
+			if(any(omethods != 1) | (any(omethods == 1) & !GeneralParameters$wb.data)){
 				if(GeneralParameters$data.type == 'cdtstation'){
-					if(GeneralParameters$cdtstation$etp == "") etp.data <- TRUE
+					if(GeneralParameters$cdtstation$prec == "" |
+						GeneralParameters$cdtstation$etp == "") prec.data <- TRUE
 				}else{
-					if(GeneralParameters$cdtdataset$etp == "") etp.data <- TRUE
+					if(GeneralParameters$cdtdataset$prec == "" |
+						GeneralParameters$cdtdataset$etp == "") prec.data <- TRUE
 				}
 			}
 
-			if(etp.data){
-				tkmessageBox(message = lang.dlg[['message']][['15']], icon = "warning", type = "ok")
+			if(prec.data){
+				tkmessageBox(message = paste0(lang.dlg[['message']][['15']], '\n', lang.dlg[['message']][['15-a']]), icon = "warning", type = "ok")
+				stateWB <- if(any(omethods == 1) & GeneralParameters$wb.data) 'normal' else 'disabled'
+				tkconfigure(cb.en.INWB, state = stateWB)
+				tkconfigure(bt.INWB, state = stateWB)
+				statesetWB <- if(any(omethods == 1) & !GeneralParameters$wb.data) 'normal' else 'disabled'
+				tkconfigure(bt.setWB, state = statesetWB)
+
+				tkconfigure(cb.en.INPrec, state = 'normal')
+				tkconfigure(bt.INPrec, state = 'normal')
 				tkconfigure(cb.en.INEtp, state = 'normal')
 				tkconfigure(bt.INEtp, state = 'normal')
 				return(NULL)
 			}else{
-				tkconfigure(cb.en.INEtp, state = 'disabled')
-				tkconfigure(bt.INEtp, state = 'disabled')
+				if(all(omethods == 1)){
+					if(GeneralParameters$wb.data){
+						stateWB <- 'normal'
+						statePrec <- 'disabled'
+						stateETP <- 'disabled'
+						statesetWB <- 'disabled'
+					}else{
+						stateWB <- 'disabled'
+						statePrec <- 'normal'
+						stateETP <- 'normal'
+						statesetWB <- 'normal'
+					}
+				}else if(all(omethods != 1)){
+					stateWB <- 'disabled'
+					statePrec <- 'normal'
+					stateETP <- 'normal'
+					statesetWB <- 'disabled'
+				}else{
+					stateWB <- 'normal'
+					statePrec <- 'normal'
+					stateETP <- 'normal'
+					statesetWB <- 'normal'
+				}
+
+				tkconfigure(bt.setWB, state = statesetWB)
+
+				tkconfigure(cb.en.INWB, state = stateWB)
+				tkconfigure(bt.INWB, state = stateWB)
+				tkconfigure(cb.en.INPrec, state = statePrec)
+				tkconfigure(bt.INPrec, state = statePrec)
+				tkconfigure(cb.en.INEtp, state = stateETP)
+				tkconfigure(bt.INEtp, state = stateETP)
 			}
+
+			assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
 			Insert.Messages.Out(lang.dlg[['message']][['8']])
 
@@ -743,7 +923,7 @@ OnsetCalcPanelCmd <- function(){
 			tcl('update')
 			ret <- tryCatch(
 				{
-					compute_SeasonOnset_Procs(GeneralParameters)
+					compute_SeasonCessation_Procs(GeneralParameters)
 				},
 				warning = function(w) warningFun(w),
 				error = function(e) errorFun(e),
@@ -829,6 +1009,7 @@ OnsetCalcPanelCmd <- function(){
 			stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
 			tkconfigure(bt.CalcOnset, state = stateCaclBut)
 		})
+
 		##############################################
 
 		frameDataMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['30']], relief = 'groove')
@@ -869,7 +1050,7 @@ OnsetCalcPanelCmd <- function(){
 		tkconfigure(bt.data.maps, command = function(){
 			if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != "" &
 				!is.null(.cdtData$EnvData$varData))
-					OnsetCalc.Display.Maps()
+					CessationCalc.Display.Maps()
 		})
 
 		tkconfigure(bt.data.Index.prev, command = function(){
@@ -883,7 +1064,7 @@ OnsetCalcPanelCmd <- function(){
 				ret <- try(read.Data.Map(), silent = TRUE)
 				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-				OnsetCalc.Display.Maps()
+				CessationCalc.Display.Maps()
 			}
 		})
 
@@ -898,7 +1079,7 @@ OnsetCalcPanelCmd <- function(){
 				ret <- try(read.Data.Map(), silent = TRUE)
 				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-				OnsetCalc.Display.Maps()
+				CessationCalc.Display.Maps()
 			}
 		})
 
@@ -974,7 +1155,7 @@ OnsetCalcPanelCmd <- function(){
 
 		tkconfigure(bt.TsGraph.plot, command = function(){
 			if(!is.null(.cdtData$EnvData$varData)){
-				imgContainer <- CDT.Display.Graph(OnsetCalc.plotOnsetGraph, .cdtData$EnvData$tab$dataGraph, 'Onset-Graph')
+				imgContainer <- CDT.Display.Graph(CessationCalc.plotCessationGraph, .cdtData$EnvData$tab$dataGraph, 'Cessation-Graph')
 				.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
 			}
 		})
@@ -1087,7 +1268,7 @@ OnsetCalcPanelCmd <- function(){
 					if(istn < 1) istn <- length(stnIDTSPLOT)
 					tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
 
-					imgContainer <- CDT.Display.Graph(OnsetCalc.plotOnsetGraph, .cdtData$EnvData$tab$dataGraph, 'Onset-Graph')
+					imgContainer <- CDT.Display.Graph(CessationCalc.plotCessationGraph, .cdtData$EnvData$tab$dataGraph, 'Cessation-Graph')
 					.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
 				}
 			})
@@ -1099,7 +1280,7 @@ OnsetCalcPanelCmd <- function(){
 					if(istn > length(stnIDTSPLOT)) istn <- 1
 					tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
 
-					imgContainer <- CDT.Display.Graph(OnsetCalc.plotOnsetGraph, .cdtData$EnvData$tab$dataGraph, 'Onset-Graph')
+					imgContainer <- CDT.Display.Graph(CessationCalc.plotCessationGraph, .cdtData$EnvData$tab$dataGraph, 'Cessation-Graph')
 					.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
 				}
 			})
@@ -1149,7 +1330,7 @@ OnsetCalcPanelCmd <- function(){
 		idt <- which(format(.cdtData$EnvData$output$start.date, "%Y") == this.daty)
 
 		if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-			filePathData <- file.path(.cdtData$EnvData$PathData, "CDTDATASET/ONSET.rds")
+			filePathData <- file.path(.cdtData$EnvData$PathData, "CDTDATASET/CESSATION.rds")
 			if(!file.exists(filePathData)){
 				Insert.Messages.Out(paste(filePathData, lang.dlg[['message']][['12']]), format = TRUE)
 				return(NULL)
@@ -1187,7 +1368,7 @@ OnsetCalcPanelCmd <- function(){
 			}
 		}else{
 			filePathData <- file.path(.cdtData$EnvData$PathData, "DATA_NetCDF",
-							paste0("onset_", format(.cdtData$EnvData$output$start.date[idt], "%Y%m%d"), ".nc"))
+							paste0("cessation_", format(.cdtData$EnvData$output$start.date[idt], "%Y%m%d"), ".nc"))
 			if(!file.exists(filePathData)){
 				Insert.Messages.Out(paste(filePathData, lang.dlg[['message']][['12']]), format = TRUE)
 				return(NULL)

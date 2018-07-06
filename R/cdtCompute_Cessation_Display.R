@@ -1,11 +1,11 @@
 
-OnsetCalc.plotOnsetMaps <- function(){
+CessationCalc.plotCessationMaps <- function(){
 	don <- .cdtData$EnvData$varData$map
 	dataMapOp <- .cdtData$EnvData$dataMapOp
 
 	## titre
 	if(!dataMapOp$title$user){
-		titre <- paste("Starting dates of the rainy season:", str_trim(tclvalue(.cdtData$EnvData$donDate)))
+		titre <- paste("Ending dates of the rainy season:", str_trim(tclvalue(.cdtData$EnvData$donDate)))
 	}else titre <- dataMapOp$title$title
 
 	#################
@@ -25,7 +25,6 @@ OnsetCalc.plotOnsetMaps <- function(){
 	breaks1 <- brks$legend.axis$at
 	lab.breaks <- brks$legend.axis$labels
 
-	## legend label
 	donDates <- format(.cdtData$EnvData$output$start.date, "%Y")
 	idt <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
 	legendLabel <- format(lab.breaks + .cdtData$EnvData$output$start.date[idt], '%d-%b')
@@ -101,7 +100,7 @@ OnsetCalc.plotOnsetMaps <- function(){
 
 #######################################
 
-OnsetCalc.plotOnsetGraph <- function(){
+CessationCalc.plotCessationGraph <- function(){
 	TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
 	if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
@@ -141,7 +140,7 @@ OnsetCalc.plotOnsetGraph <- function(){
 	daty <- as.numeric(format(.cdtData$EnvData$output$start.date, "%Y"))
 	origindate <- as.character(.cdtData$EnvData$output$start.date[1])
 
-	titre <- paste("Starting dates of the rainy season", titre)
+	titre <- paste("Ending dates of the rainy season", titre)
 
 	#########
 
@@ -191,11 +190,11 @@ OnsetCalc.plotOnsetGraph <- function(){
 
 ##############################################################################
 
-OnsetCalc.Display.Maps <- function(){
+CessationCalc.Display.Maps <- function(){
 	if(is.null(.cdtData$EnvData)) return(NULL)
 	if(is.null(.cdtData$EnvData$output)) return(NULL)
 
-	imgContainer <- CDT.Display.Map.inter(OnsetCalc.plotOnsetMaps, .cdtData$EnvData$tab$dataMap, 'Onset-Map')
+	imgContainer <- CDT.Display.Map.inter(CessationCalc.plotCessationMaps, .cdtData$EnvData$tab$dataMap, 'Cessation-Map')
 	.cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
 
 	###############
@@ -214,9 +213,8 @@ OnsetCalc.Display.Maps <- function(){
 		}
 
 		if(xyid$plotTS){
-			imgContainer1 <- CDT.Display.Graph(OnsetCalc.plotOnsetGraph, .cdtData$EnvData$tab$dataGraph, 'Onset-Graph')
+			imgContainer1 <- CDT.Display.Graph(CessationCalc.plotCessationGraph, .cdtData$EnvData$tab$dataGraph, 'Cessation-Graph')
 			.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$dataGraph)
 		}
 	})
 }
-
