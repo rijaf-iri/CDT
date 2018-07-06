@@ -17,3 +17,12 @@ library(devtools)
 install_github("rijaf-iri/CDT")
 ```
 
+## Usage
+
+``` r
+# load  CDT library
+library(CDT)
+
+# Start CDT
+startCDT()
+```
