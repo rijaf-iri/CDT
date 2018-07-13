@@ -320,7 +320,7 @@ OnsetCalcPanelCmd <- function(){
 					tkbind(cb.lat.sub, "<<ComboboxSelected>>", function(){
 						for(i in seq_along(lat.subdiv)) tkdestroy(en.lat.div[[i]])
 						en.lat.div <<- NULL
-						lat.subdiv  <<- vector('list', length = as.numeric(str_trim(tclvalue(lat.nbdiv))) - 1)
+						lat.subdiv <<- vector('list', length = as.numeric(str_trim(tclvalue(lat.nbdiv))) - 1)
 						for(i in seq_along(lat.subdiv)) lat.subdiv[[i]] <<- tclVar()
 						for(i in seq_along(lat.subdiv)) en.lat.div[[i]] <<- tkentry(fr.lat.sub, textvariable = lat.subdiv[[i]], width = 4)
 						for(i in seq_along(lat.subdiv)){
@@ -643,7 +643,7 @@ OnsetCalcPanelCmd <- function(){
 		shp.attr <- tclVar(GeneralParameters$onset.reg$shp$attr)
 		shp.AttrTable <- tclVar()
 		lat.nbdiv <- tclVar(GeneralParameters$onset.reg$lat$nb)
-		lat.subdiv  <- vector('list', length = GeneralParameters$onset.reg$lat$nb - 1)
+		lat.subdiv <- vector('list', length = GeneralParameters$onset.reg$lat$nb - 1)
 		for(i in seq_along(lat.subdiv)) lat.subdiv[[i]] <- tclVar(GeneralParameters$onset.reg$lat$div[[i]])
 
 		innerRegDef <- tkframe(frameRegDef)

@@ -31,10 +31,9 @@ computeWB_getParams <- function(){
 	frdatatype <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
 
 	DataType <- tclVar()
-	CbdatatypeVAL <- c('CDT stations data format', 'CDT dataset format (gridded)')
-	tclvalue(DataType) <- switch(.cdtData$GalParams$data.type,
-								'cdtstation' = CbdatatypeVAL[1],
-								'cdtdataset' = CbdatatypeVAL[2])
+	CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
+	datatypeVAL <- c('cdtstation', 'cdtdataset')
+	tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% .cdtData$GalParams$data.type]
 
 	txt.datatyp <- tklabel(frdatatype, text = 'Format of input data', anchor = 'w', justify = 'left')
 	cb.datatyp <- ttkcombobox(frdatatype, values = CbdatatypeVAL, textvariable = DataType, width = largeur1)
@@ -55,7 +54,7 @@ computeWB_getParams <- function(){
 		tclvalue(input.Prec) <- ''
 
 		###
-		if(str_trim(tclvalue(DataType)) == 'CDT stations data format'){
+		if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 			tclvalue(txt.INEtp.var) <- 'File containing stations daily PET data'
 			tclvalue(txt.INPrec.var) <- 'File containing stations daily Precip data'
 
@@ -96,7 +95,7 @@ computeWB_getParams <- function(){
 		}
 
 		###
-		if(str_trim(tclvalue(DataType)) == 'CDT dataset format (gridded)'){
+		if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
 			tclvalue(txt.INEtp.var) <- 'Index file (*.rds) for daily PET data'
 			tclvalue(txt.INPrec.var) <- 'Index file (*.rds) for daily Precip data'
 
@@ -127,7 +126,7 @@ computeWB_getParams <- function(){
 		}
 
 		#######
-		if(str_trim(tclvalue(DataType)) == 'CDT stations data format'){
+		if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 			txtSaveHelp <- 'Enter the full path of the file to save the result'
 			tclvalue(fileORdir) <- 'File to save the result'
 			isFile <- TRUE
@@ -190,7 +189,7 @@ computeWB_getParams <- function(){
 				tclvalue(input.Prec) <- dat.opfiles[[1]]
 				lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
 			}
-		}else if(.cdtData$GalParams$data.type == 'cdtdataset'){
+		}else{
 			path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
 			tclvalue(input.Prec) <- if(path.rds %in% c("", "NA")) "" else path.rds
 		}
@@ -401,16 +400,14 @@ computeWB_getParams <- function(){
 			tkmessageBox(message = "Choose a directory or enter the file to save results", icon = "warning", type = "ok")
 			tkwait.window(tt)
 		}else{
-			.cdtData$GalParams$data.type <- switch(str_trim(tclvalue(DataType)),
-												'CDT stations data format' = 'cdtstation',
-												'CDT dataset format (gridded)' = 'cdtdataset')
+			.cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
 
-			if(str_trim(tclvalue(DataType)) == 'CDT stations data format'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 				.cdtData$GalParams$cdtstation$etp <- str_trim(tclvalue(input.Etp))
 				.cdtData$GalParams$cdtstation$prec <- str_trim(tclvalue(input.Prec))
 			}
 
-			if(str_trim(tclvalue(DataType)) == 'CDT dataset format (gridded)'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
 				.cdtData$GalParams$cdtdataset$etp <- str_trim(tclvalue(input.Etp))
 				.cdtData$GalParams$cdtdataset$prec <- str_trim(tclvalue(input.Prec))
 			}
@@ -485,6 +482,8 @@ computeWB_get.WB.SWHC <- function(parent.win, Parameters, dataType, donne)
 	# xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_WB_dlgBox_1.xml")
 	# lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
+	CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
+
 	###################
 
 	tt <- tktoplevel()
@@ -500,13 +499,13 @@ computeWB_get.WB.SWHC <- function(parent.win, Parameters, dataType, donne)
 
 	input.file <- tclVar(Parameters)
 
-	if(dataType == 'CDT stations data format'){
+	if(dataType == CbdatatypeVAL[1]){
 		if(donne == "WB"){
 			LABL <- "CDT stations file of the Water Balance on day 1"
-			TXTA <- "CDT stations data format file  containing the water balance on the first day of calculation, the data must have the same stations as the Precipitation and PET data"
+			TXTA <- "CDT stations data format file containing the water balance on the first day of calculation, the data must have the same stations as the Precipitation and PET data"
 		}else{
 			LABL <- "CDT stations file containing the SWHC data"
-			TXTA <- "CDT station data format file  containing the soil water holding capacity data, the data must have the same stations as the Precipitation and PET data"
+			TXTA <- "CDT station data format file containing the soil water holding capacity data, the data must have the same stations as the Precipitation and PET data"
 		}
 	}else{
 		if(donne == "WB"){
@@ -524,7 +523,7 @@ computeWB_get.WB.SWHC <- function(parent.win, Parameters, dataType, donne)
 	txta.WB <- tktext(frFF, bg = "white", font = "courier", cursor = "", wrap = "word", height = 7, width = largeur1)
 
 	tkconfigure(bt.WB, command = function(){
-		if(dataType == 'CDT stations data format'){
+		if(dataType == CbdatatypeVAL[1]){
 			dat.opfiles <- getOpenFiles(tt)
 			if(!is.null(dat.opfiles)){
 				update.OpenFiles('ascii', dat.opfiles)

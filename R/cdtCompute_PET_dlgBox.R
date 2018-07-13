@@ -604,7 +604,7 @@ computePET_getParams <- function(){
 			.cdtData$GalParams$Tstep <- switch(str_trim(tclvalue(timeSteps)), 
 												'Daily data' = 'daily',
 												'Pentad data' = 'pentad',
-												'Dekadal data' =  'dekadal',
+												'Dekadal data' = 'dekadal',
 												'Monthly data' = 'monthly')
 			.cdtData$GalParams$method <- switch(str_trim(tclvalue(ref.evap)),
 												'Hargreaves' = 'HAR',

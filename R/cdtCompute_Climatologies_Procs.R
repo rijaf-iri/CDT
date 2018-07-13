@@ -5,6 +5,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
 		return(NULL)
 	}
 
+	allyears <- GeneralParameters$climato$allyears
 	year1 <- GeneralParameters$climato$start
 	year2 <- GeneralParameters$climato$end
 	minyear <- GeneralParameters$climato$minyear
@@ -25,42 +26,68 @@ climatologiesCalcProcs <- function(GeneralParameters){
 		if(is.null(don)) return(NULL)
 
 		daty <- don$dates
-		year <- as.numeric(substr(daty, 1, 4))
+	}
 
-		if(length(unique(year)) < minyear){
-			Insert.Messages.Out(.cdtData$EnvData[['message']][['8']], format = TRUE)
+	if(GeneralParameters$data.type == "cdtdataset"){
+		don <- try(readRDS(GeneralParameters$cdtdataset$index), silent = TRUE)
+		if(inherits(don, "try-error")){
+			Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['9']], GeneralParameters$cdtdataset$index), format = TRUE)
+			return(NULL)
+		}
+		if(freqData != don$TimeStep){
+			Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['10']], freqData), format = TRUE)
 			return(NULL)
 		}
 
-		### Clim
-		iyear <- year >= year1 & year <= year2
-		daty <- daty[iyear]
+		daty <- don$dateInfo$date
+	}
+
+	if(GeneralParameters$data.type == "cdtnetcdf"){
+		sdon <- getNCDFSampleData(GeneralParameters$cdtnetcdf$sample)
+		if(is.null(sdon)){
+			Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], format = TRUE)
+			return(NULL)
+		}
+
+		months <- 1:12
+		start.date <- as.Date("1900-1-1")
+		end.date <- as.Date("2050-12-31")
+
+		don.DIR <- GeneralParameters$cdtnetcdf$dir
+		don.Format <- GeneralParameters$cdtnetcdf$format
+		don.errmsg <- .cdtData$EnvData[['message']][['18']]
+		donInfo <- ncFilesInfo(freqData, start.date, end.date, months, don.DIR, don.Format, don.errmsg)
+		if(is.null(donInfo)) return(NULL)
+		donInfo$ncinfo <- list(xo = sdon$ilon, yo = sdon$ilat, varid = sdon$varid)
+
+		donInfo$dates <- donInfo$dates[donInfo$exist]
+		donInfo$nc.files <- donInfo$nc.files[donInfo$exist]
+		donInfo$exist <- donInfo$exist[donInfo$exist]
+
+		daty <- donInfo$dates
+	}
+
+	#####################################################
+
+	year <- as.numeric(substr(daty, 1, 4))
+
+	if(length(unique(year)) < minyear){
+		Insert.Messages.Out(.cdtData$EnvData[['message']][['8']], format = TRUE)
+		return(NULL)
+	}
+
+	### Climato index
+	iyear <- if(allyears) rep(TRUE, length(year)) else year >= year1 & year <= year2
+	daty <- daty[iyear]
+	index <- cdt.index.Climatologies(daty, freqData, xwin)
+
+	#####################################################
+
+	if(GeneralParameters$data.type == "cdtstation"){
 		don$data <- don$data[iyear, , drop = FALSE]
-		index <- cdt.index.Climatologies(daty, freqData, xwin)
-
-		## Check for each tstep
-		div <- if(freqData == "daily") 2 * xwin + 1 else 1
-		Tstep.miss <- (sapply(index$index, length) / div) < minyear
-
-		dat.clim <- lapply(seq_along(index$id), function(jj){
-			if(Tstep.miss[jj]){
-				tmp <- rep(NA, ncol(don$data))
-				 return(list(moy = tmp, sds = tmp))
-			}
-			xx <- don$data[index$index[[jj]], , drop = FALSE]
-			ina <- (colSums(!is.na(xx))/div) <  minyear
-			moy <- colMeans(xx, na.rm = TRUE)
-			sds <- colSds(xx, na.rm = TRUE)
-			moy[ina] <- NA
-			sds[ina] <- NA
-			rm(xx)
-			list(moy = moy, sds = sds)
-		})
-
-		dat.moy <- do.call(rbind, lapply(dat.clim, "[[", "moy"))
-		dat.sds <- do.call(rbind, lapply(dat.clim, "[[", "sds"))
-		dat.moy <- round(dat.moy, 1)
-		dat.sds <- round(dat.sds, 1)
+		dat.clim <- .cdt.Climatologies(index, don$data, minyear, freqData, xwin)
+		dat.moy <- round(dat.clim$mean, 1)
+		dat.sds <- round(dat.clim$sd, 1)
 
 		rm(dat.clim)
 
@@ -120,35 +147,6 @@ climatologiesCalcProcs <- function(GeneralParameters){
 	#####################################################
 
 	if(GeneralParameters$data.type == "cdtdataset"){
-		don <- try(readRDS(GeneralParameters$cdtdataset$index), silent = TRUE)
-		if(inherits(don, "try-error")){
-			Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['9']], GeneralParameters$cdtdataset$index), format = TRUE)
-			return(NULL)
-		}
-		if(freqData != don$TimeStep){
-			Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['10']], freqData), format = TRUE)
-			return(NULL)
-		}
-
-		daty <- don$dateInfo$date
-		year <- as.numeric(substr(daty, 1, 4))
-
-		if(length(unique(year)) < minyear){
-			Insert.Messages.Out(.cdtData$EnvData[['message']][['8']], format = TRUE)
-			return(NULL)
-		}
-
-		### Clim
-		iyear <- year >= year1 & year <= year2
-		daty <- daty[iyear]
-		index <- cdt.index.Climatologies(daty, freqData, xwin)
-
-		## Check for each tstep
-		div <- if(freqData == "daily") 2 * xwin + 1 else 1
-		Tstep.miss <- (sapply(index$index, length) / div) < minyear
-
-		#########################################
-
 		outDIR <- file.path(GeneralParameters$out.dir, "CLIMATOLOGY_data")
 		dir.create(outDIR, showWarnings = FALSE, recursive = TRUE)
 		out.dat.index <- gzfile(file.path(outDIR, "Climatology.rds"), compression = 7)
@@ -201,38 +199,18 @@ climatologiesCalcProcs <- function(GeneralParameters){
 		do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
 		do.parCALC <- if(do.parChunk) FALSE else TRUE
 
-		toExports <- c("readCdtDatasetChunk.sequence", "writeCdtDatasetChunk.sequence", "doparallel")
-		packages <- c("doParallel")
-
 		is.parallel <- doparallel(do.parCALC & (length(chunkcalc) > 10))
 		`%parLoop%` <- is.parallel$dofun
-		ret <- foreach(jj = seq_along(chunkcalc), .export = toExports, .packages = packages) %parLoop% {
+		ret <- foreach(jj = seq_along(chunkcalc), .packages = "doParallel") %parLoop% {
 			don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, do.par = do.parChunk)
 			don.data <- don.data[don$dateInfo$index, , drop = FALSE]
 			don.data <- don.data[iyear, , drop = FALSE]
 
-			dat.clim <- lapply(seq_along(index$id), function(j){
-				if(Tstep.miss[jj]){
-					tmp <- rep(NA, ncol(don.data))
-					 return(list(moy = tmp, sds = tmp))
-				}
+			dat.clim <- .cdt.Climatologies(index, don.data, minyear, freqData, xwin)
 
-				xx <- don.data[index$index[[j]], , drop = FALSE]
-				ina <- (colSums(!is.na(xx)) / div) <  minyear
-				moy <- colMeans(xx, na.rm = TRUE)
-				sds <- matrixStats::colSds(xx, na.rm = TRUE)
-				moy[ina] <- NA
-				sds[ina] <- NA
-				rm(xx)
-				list(moy = moy, sds = sds)
-			})
-
-			dat.moy <- do.call(rbind, lapply(dat.clim, "[[", "moy"))
-			dat.sds <- do.call(rbind, lapply(dat.clim, "[[", "sds"))
-
-			writeCdtDatasetChunk.sequence(dat.moy, chunkcalc[[jj]], index.out, datadir1, do.par = do.parChunk)
-			writeCdtDatasetChunk.sequence(dat.sds, chunkcalc[[jj]], index.out, datadir2, do.par = do.parChunk)
-			rm(dat.clim, dat.moy, dat.sds, don.data); gc()
+			writeCdtDatasetChunk.sequence(dat.clim$mean, chunkcalc[[jj]], index.out, datadir1, do.par = do.parChunk)
+			writeCdtDatasetChunk.sequence(dat.clim$sd, chunkcalc[[jj]], index.out, datadir2, do.par = do.parChunk)
+			rm(dat.clim, don.data); gc()
 		}
 		if(is.parallel$stop) stopCluster(is.parallel$cluster)
 
@@ -272,46 +250,6 @@ climatologiesCalcProcs <- function(GeneralParameters){
 	#####################################################
 
 	if(GeneralParameters$data.type == "cdtnetcdf"){
-		sdon <- getNCDFSampleData(GeneralParameters$cdtnetcdf$sample)
-		if(is.null(sdon)){
-			Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], format = TRUE)
-			return(NULL)
-		}
-
-		months <- 1:12
-		start.date <- as.Date("1900-1-1")
-		end.date <- as.Date("2050-12-31")
-
-		don.DIR <- GeneralParameters$cdtnetcdf$dir
-		don.Format <- GeneralParameters$cdtnetcdf$format
-		don.errmsg <- .cdtData$EnvData[['message']][['18']]
-		donInfo <- ncFilesInfo(freqData, start.date, end.date, months, don.DIR, don.Format, don.errmsg)
-		if(is.null(donInfo)) return(NULL)
-		donInfo$ncinfo <- list(xo = sdon$ilon, yo = sdon$ilat, varid = sdon$varid)
-
-		donInfo$dates <- donInfo$dates[donInfo$exist]
-		donInfo$nc.files <- donInfo$nc.files[donInfo$exist]
-		donInfo$exist <- donInfo$exist[donInfo$exist]
-
-		daty <- donInfo$dates
-		year <- as.numeric(substr(daty, 1, 4))
-
-		if(length(unique(year)) < minyear){
-			Insert.Messages.Out(.cdtData$EnvData[['message']][['8']], format = TRUE)
-			return(NULL)
-		}
-
-		### Clim
-		iyear <- year >= year1 & year <= year2
-		daty <- daty[iyear]
-		index <- cdt.index.Climatologies(daty, freqData, xwin)
-
-		## Check for each tstep
-		div <- if(freqData == "daily") 2 * xwin + 1 else 1
-		Tstep.miss <- (sapply(index$index, length) / div) < minyear
-
-		#########################################
-
 		outDIR <- file.path(GeneralParameters$out.dir, "CLIMATOLOGY_data")
 		dir.create(outDIR, showWarnings = FALSE, recursive = TRUE)
 		out.dat.index <- gzfile(file.path(outDIR, "Climatology.rds"), compression = 7)
@@ -402,6 +340,9 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
 		#########################################
 
+		div <- if(freqData == "daily") 2 * xwin + 1 else 1
+		Tstep.miss <- (sapply(index$index, length) / div) < minyear
+
 		ret <- lapply(seq_along(index$index), function(jj){
 			if(Tstep.miss[jj]){
 				dat.moy <- rep(NA, len.lon * len.lat)
@@ -420,6 +361,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
 				dat.moy <- colMeans(dat.clim, na.rm = TRUE)
 				dat.moy[ina] <- NA
+				dat.moy[is.nan(dat.moy)] <- NA
 				dat.sds <- colSds(dat.clim, na.rm = TRUE)
 				dat.sds[ina] <- NA
 				rm(dat.clim)

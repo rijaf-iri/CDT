@@ -122,7 +122,7 @@ image.plot_Legend_pars <- function(Zmat, user.levels, user.colors, preset.colors
 	breaks1 <- if(user.levels$equidist) seq(0, 1, length.out = length(breaks)) else breaks
 
 	Zmat <- Zmat + 1e-15
-	Zrange <- range(Zmat, na.rm = TRUE)
+	Zrange <- if(all(is.na(Zmat))) c(0, 1) else range(Zmat, na.rm = TRUE)
 
 	brks0 <- range(brks0)
 	brks1 <- range(breaks)

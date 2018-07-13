@@ -62,12 +62,9 @@ spatialAnalysisPanelCmd <- function(){
 		frameTimeS <- ttklabelframe(subfr1, text = "Time step of input data", relief = 'groove')
 
 		timeSteps <- tclVar()
-		CbperiodVAL <- c('Daily data', 'Pentad data', 'Dekadal data', 'Monthly data')
-		tclvalue(timeSteps) <- switch(GeneralParameters$in.tstep, 
-										'daily' = CbperiodVAL[1],
-										'pentad' = CbperiodVAL[2],
-										'dekadal' = CbperiodVAL[3],
-										'monthly' = CbperiodVAL[4])
+		CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:5]
+		periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
+		tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$in.tstep]
 
 		cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, width = largeur1)
 
@@ -81,10 +78,10 @@ spatialAnalysisPanelCmd <- function(){
 		frameData <- ttklabelframe(subfr1, text = "Input Data", relief = 'groove')
 
 		DataType <- tclVar()
-		CbdatatypeVAL <- c('CDT stations data format', 'CDT dataset format (gridded)')
-		tclvalue(DataType) <- switch(GeneralParameters$data.type,
-									'cdtstation' = CbdatatypeVAL[1], 
-									'cdtdataset' = CbdatatypeVAL[2])
+		CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
+		datatypeVAL <- c('cdtstation', 'cdtdataset')
+		tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% GeneralParameters$data.type]
+
 		file.stnfl <- tclVar(GeneralParameters$in.file)
 
 		if(GeneralParameters$data.type == 'cdtstation')
@@ -142,7 +139,7 @@ spatialAnalysisPanelCmd <- function(){
 			tkdestroy(cb.stnfl)
 			tclvalue(file.stnfl) <- ''
 
-			if(tclvalue(DataType) == 'CDT stations data format'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 				tclvalue(fileINdir) <- 'File containing stations input data'
 
 				cb.stnfl <- ttkcombobox(frameData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
@@ -162,7 +159,7 @@ spatialAnalysisPanelCmd <- function(){
 				status.bar.display(cb.stnfl, 'Select the file containing the input data')
 			}
 
-			if(tclvalue(DataType) == 'CDT dataset format (gridded)'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
 				tclvalue(fileINdir) <- 'Index file (*.rds) of the dataset'
 
 				cb.stnfl <- tkentry(frameData, textvariable = file.stnfl, width = largeur2)
@@ -185,6 +182,9 @@ spatialAnalysisPanelCmd <- function(){
 
 		frameAggr <- ttklabelframe(subfr1, text = "Time series aggregation", relief = 'groove')
 
+		AGGRFUN <- c("mean", "sum", "count")
+		OPRFUN <- c(">=", ">", "<=", "<")
+
 		aggr.fun <- tclVar(GeneralParameters$aggr.series$aggr.fun)
 		min.frac <- tclVar(GeneralParameters$aggr.series$min.frac)
 		opr.fun <- tclVar(GeneralParameters$aggr.series$opr.fun)
@@ -194,11 +194,11 @@ spatialAnalysisPanelCmd <- function(){
 		stateo2 <- if(str_trim(GeneralParameters$aggr.series$aggr.fun) == "count") 'normal' else 'disabled'
 
 		txt.aggfun <- tklabel(frameAggr, text = 'Function', anchor = 'w', justify = 'left')
-		cb.aggfun <- ttkcombobox(frameAggr, values = c("mean", "sum", "count"), textvariable = aggr.fun, width = 6, state = 'readonly')
+		cb.aggfun <- ttkcombobox(frameAggr, values = AGGRFUN, textvariable = aggr.fun, width = 6, state = 'readonly')
 		txt.minfrac <- tklabel(frameAggr, text = 'Min.Frac', anchor = 'w', justify = 'left')
 		en.minfrac <- tkentry(frameAggr, textvariable = min.frac, width = 6)
 		txt.opfun <- tklabel(frameAggr, text = 'Operator', anchor = 'w', justify = 'left')
-		cb.opfun <- ttkcombobox(frameAggr, values = c(">=", ">", "<=", "<"), textvariable = opr.fun, width = 6, state = stateo1)
+		cb.opfun <- ttkcombobox(frameAggr, values = OPRFUN, textvariable = opr.fun, width = 6, state = stateo1)
 		txt.opthres <- tklabel(frameAggr, text = 'Threshold', anchor = 'w', justify = 'left')
 		en.opthres <- tkentry(frameAggr, textvariable = opr.thres, width = 6, width = 6, state = stateo2)
 
@@ -233,7 +233,7 @@ spatialAnalysisPanelCmd <- function(){
 
 		file.save1 <- tclVar(GeneralParameters$out.dir)
 
-		txt.file.save <- tklabel(frameDirSav, text = "Directory to save results",  anchor = 'w', justify = 'left')
+		txt.file.save <- tklabel(frameDirSav, text = "Directory to save results", anchor = 'w', justify = 'left')
 		en.file.save <- tkentry(frameDirSav, textvariable = file.save1, width = largeur2)
 		bt.file.save <- tkbutton(frameDirSav, text = "...")
 
@@ -280,12 +280,12 @@ spatialAnalysisPanelCmd <- function(){
 			state2 <- if(GeneralParameters$time.series$nseq.years) 'normal' else 'disabled'
 		}
 
-		chk.allYears <- tkcheckbutton(frameYear, variable = allYears, text =  "Use all years from the input data", anchor = 'w', justify = 'left') #, width = largeur3
+		chk.allYears <- tkcheckbutton(frameYear, variable = allYears, text = "Use all years from the input data", anchor = 'w', justify = 'left')
 		txt.startYear <- tklabel(frameYear, text = "Start Year", anchor = 'e', justify = 'right')
 		en.startYear <- tkentry(frameYear, textvariable = startYear, width = 6, state = state0)
 		txt.endYear <- tklabel(frameYear, text = "End Year", anchor = 'e', justify = 'right')
 		en.endYear <- tkentry(frameYear, textvariable = endYear, width = 6, state = state0)
-		chk.customYear <- tkcheckbutton(frameYear, variable = nseqYears, text =  "Customized Years", anchor = 'w', justify = 'left', state = state1)
+		chk.customYear <- tkcheckbutton(frameYear, variable = nseqYears, text = "Customized Years", anchor = 'w', justify = 'left', state = state1)
 		bt.customYear <- tkbutton(frameYear, text = "Custom", state = state2)
 
 		tkconfigure(bt.customYear, command = function(){
@@ -348,12 +348,10 @@ spatialAnalysisPanelCmd <- function(){
 
 		frameOut <- ttklabelframe(subfr2, text = "Output Time series", relief = 'groove')
 
-		OUTSeries <- c('Monthly', 'Seasonal', 'Annual')
+		CboutSeriesVAL <- c('Monthly', 'Seasonal', 'Annual')
+		outSeriesVAL <- c('monthly', 'seasonal', 'annual')
 		out.series <- tclVar()
-		tclvalue(out.series) <- switch(GeneralParameters$time.series$out.series, 
-										'monthly' = OUTSeries[1],
-										'seasonal' = OUTSeries[2], 
-										'annual' = OUTSeries[3])
+		tclvalue(out.series) <- CboutSeriesVAL[outSeriesVAL %in% GeneralParameters$time.series$out.series]
 
 		mon1 <- as.numeric(str_trim(GeneralParameters$time.series$start.month))
 		mon2 <- as.numeric(str_trim(GeneralParameters$time.series$end.month))
@@ -378,20 +376,20 @@ spatialAnalysisPanelCmd <- function(){
 		}
 		endMonth <- tclVar(MOIS[mon2])
 
-		txt.outTS <- tklabel(frameOut, text = "Time step",  anchor = 'e', justify = 'right')
-		cb.outTS <- ttkcombobox(frameOut, values = OUTSeries, textvariable = out.series, width = 10)
+		txt.outTS <- tklabel(frameOut, text = "Time step", anchor = 'e', justify = 'right')
+		cb.outTS <- ttkcombobox(frameOut, values = CboutSeriesVAL, textvariable = out.series, width = 10)
 		txt.lenSeas <- tklabel(frameOut, text = 'Width')
 		spin.lenSeas <- ttkspinbox(frameOut, from = 1, to = 12, increment = 1, justify = 'center', width = 2, state = stateOut)
 		tkset(spin.lenSeas, GeneralParameters$time.series$len.seas)
 
-		txt.Month <- tklabel(frameOut, text = "Months to process",  anchor = 'w', justify = 'left')
+		txt.Month <- tklabel(frameOut, text = "Months to process", anchor = 'w', justify = 'left')
 		fr.Month <- tkframe(frameOut)
 
-		txt.startMonth <- tklabel(fr.Month, text = "From",  anchor = 'e', justify = 'right')
+		txt.startMonth <- tklabel(fr.Month, text = "From", anchor = 'e', justify = 'right')
 		cb.startMonth <- ttkcombobox(fr.Month, values = MOIS, textvariable = startMonth, width = 10, state = stateMon1)
 		txt.endMonth <- tklabel(fr.Month, text = "to")
 		cb.endMonth <- ttkcombobox(fr.Month, values = MOIS, textvariable = endMonth, width = 10, state = stateMon2)
-		chk.customMonth <- tkcheckbutton(fr.Month, variable = nseqMonths, text =  "Customized Months", anchor = 'w', justify = 'left', state = stateMon3)
+		chk.customMonth <- tkcheckbutton(fr.Month, variable = nseqMonths, text = "Customized Months", anchor = 'w', justify = 'left', state = stateMon3)
 		bt.customMonth <- tkbutton(fr.Month, text = "Custom", state = stateMon4)
 
 		tkconfigure(bt.customMonth, command = function(){
@@ -431,10 +429,10 @@ spatialAnalysisPanelCmd <- function(){
 
 		##############
 		tkbind(cb.outTS, "<<ComboboxSelected>>", function(){
-			stateOut <- if(str_trim(tclvalue(out.series)) == 'Seasonal') "normal" else "disabled"
+			stateOut <- if(str_trim(tclvalue(out.series)) == CboutSeriesVAL[2]) "normal" else "disabled"
 			tkconfigure(spin.lenSeas, state = stateOut)
 
-			if(str_trim(tclvalue(out.series)) == 'Monthly'){
+			if(str_trim(tclvalue(out.series)) == CboutSeriesVAL[1]){
 				stateMon1 <- "normal"
 				stateMon2 <- "normal"
 				stateMon3 <- "normal"
@@ -450,8 +448,8 @@ spatialAnalysisPanelCmd <- function(){
 			tkconfigure(chk.customMonth, state = stateMon3)
 			tkconfigure(bt.customMonth, state = stateMon4)
 
-			if(str_trim(tclvalue(out.series)) %in% c('Seasonal', 'Annual')){
-				len <- if(str_trim(tclvalue(out.series)) == 'Seasonal') as.numeric(str_trim(tclvalue(tkget(spin.lenSeas)))) else 12
+			if(str_trim(tclvalue(out.series)) %in% CboutSeriesVAL[2:3]){
+				len <- if(str_trim(tclvalue(out.series)) == CboutSeriesVAL[2]) as.numeric(str_trim(tclvalue(tkget(spin.lenSeas)))) else 12
 				mon1 <- which(MOIS %in% str_trim(tclvalue(startMonth)))
 				mon2 <- (mon1 + len - 1) %% 12
 				mon2[mon2 == 0] <- 12
@@ -460,7 +458,7 @@ spatialAnalysisPanelCmd <- function(){
 		})
 
 		tkbind(spin.lenSeas, "<ButtonRelease-1>", function(){
-			if(str_trim(tclvalue(out.series)) == 'Seasonal'){
+			if(str_trim(tclvalue(out.series)) == CboutSeriesVAL[2]){
 				len <- as.numeric(str_trim(tclvalue(tkget(spin.lenSeas))))
 				mon1 <- which(MOIS %in% str_trim(tclvalue(startMonth)))
 				mon2 <- (mon1 + len - 1) %% 12
@@ -470,7 +468,7 @@ spatialAnalysisPanelCmd <- function(){
 		})
 
 		tkbind(spin.lenSeas, "<FocusOut>", function(){
-			if(str_trim(tclvalue(out.series)) == 'Seasonal'){
+			if(str_trim(tclvalue(out.series)) == CboutSeriesVAL[2]){
 				len <- as.numeric(str_trim(tclvalue(tkget(spin.lenSeas))))
 				mon1 <- which(MOIS %in% str_trim(tclvalue(startMonth)))
 				mon2 <- (mon1 + len - 1) %% 12
@@ -480,7 +478,7 @@ spatialAnalysisPanelCmd <- function(){
 		})
 
 		tkbind(chk.customMonth, "<Button-1>", function(){
-			if(str_trim(tclvalue(out.series)) == 'Monthly'){
+			if(str_trim(tclvalue(out.series)) == CboutSeriesVAL[1]){
 				stateMon <- if(tclvalue(nseqMonths) == '1') 'normal' else 'disabled'
 				stateMon4 <- if(tclvalue(nseqMonths) == '1') 'disabled' else 'normal'
 				tkconfigure(cb.startMonth, state = stateMon)
@@ -490,8 +488,8 @@ spatialAnalysisPanelCmd <- function(){
 		})
 
 		tkbind(cb.startMonth, "<<ComboboxSelected>>", function(){
-			if(str_trim(tclvalue(out.series)) %in% c('Seasonal', 'Annual')){
-				len <- if(tclvalue(out.series) == 'Seasonal') as.numeric(str_trim(tclvalue(tkget(spin.lenSeas)))) else 12
+			if(str_trim(tclvalue(out.series)) %in% CboutSeriesVAL[2:3]){
+				len <- if(tclvalue(out.series) == CboutSeriesVAL[2]) as.numeric(str_trim(tclvalue(tkget(spin.lenSeas)))) else 12
 				mon1 <- which(MOIS %in% str_trim(tclvalue(startMonth)))
 				mon2 <- (mon1 + len - 1) %% 12
 				mon2[mon2 == 0] <- 12
@@ -505,22 +503,15 @@ spatialAnalysisPanelCmd <- function(){
 
 		ANALYSIS <- c('Mean', 'Median', 'Standard deviation', 'Coefficient of variation',
 						'Trend', 'Percentiles', 'Frequency', 'Anomaly')
+		Analyses <- c('mean', 'median', 'std', 'cv', 'trend', 'percentile', 'frequency', 'anomaly')
 		analysis.method <- tclVar()
-		tclvalue(analysis.method) <- switch(GeneralParameters$analysis.method$mth.fun, 
-										'mean' = ANALYSIS[1],
-										'median' = ANALYSIS[2], 
-										'std' = ANALYSIS[3],
-										'cv' = ANALYSIS[4], 
-										'trend' = ANALYSIS[5],
-										'percentile' = ANALYSIS[6], 
-										'frequency' = ANALYSIS[7],
-										'anomaly' = ANALYSIS[8])
+		tclvalue(analysis.method) <- ANALYSIS[Analyses %in% GeneralParameters$analysis.method$mth.fun]
 
 		cb.anMthd <- ttkcombobox(frameAnalysis, values = ANALYSIS, textvariable = analysis.method, width = largeur4)
 		fr.anMthd <- tkframe(frameAnalysis)
 
 		trend.unit <- tclVar(GeneralParameters$analysis.method$trend.unit)
-		if(str_trim(tclvalue(analysis.method)) == 'Trend'){
+		if(str_trim(tclvalue(analysis.method)) == ANALYSIS[5]){
 			rd.trend1 <- tkradiobutton(fr.anMthd, text = "change (trend) / year", variable = trend.unit, value = "1", anchor = 'w', justify = 'left')
 			rd.trend2 <- tkradiobutton(fr.anMthd, text = "change (trend) over the period", variable = trend.unit, value = "2", anchor = 'w', justify = 'left')
 			rd.trend3 <- tkradiobutton(fr.anMthd, text = "change (trend) / average (in %)", variable = trend.unit, value = "3", anchor = 'w', justify = 'left')
@@ -531,10 +522,10 @@ spatialAnalysisPanelCmd <- function(){
 		}
 
 		mth.perc <- tclVar(GeneralParameters$analysis.method$mth.perc)
-		if(str_trim(tclvalue(analysis.method)) == 'Percentiles'){
-			txt.Percent <- tklabel(fr.anMthd, text = "Percentile",  anchor = 'e', justify = 'right')
+		if(str_trim(tclvalue(analysis.method)) == ANALYSIS[6]){
+			txt.Percent <- tklabel(fr.anMthd, text = "Percentile", anchor = 'e', justify = 'right')
 			en.Percent <- tkentry(fr.anMthd, textvariable = mth.perc, width = 4)
-			th.Percent <- tklabel(fr.anMthd, text = "th",  anchor = 'w', justify = 'left')
+			th.Percent <- tklabel(fr.anMthd, text = "th", anchor = 'w', justify = 'left')
 
 			tkgrid(txt.Percent, en.Percent, th.Percent)
 
@@ -544,9 +535,9 @@ spatialAnalysisPanelCmd <- function(){
 
 		low.thres <- tclVar(GeneralParameters$analysis.method$low.thres)
 		up.thres <- tclVar(GeneralParameters$analysis.method$up.thres)
-		if(str_trim(tclvalue(analysis.method)) == 'Frequency'){
-			txt.Freq0 <- tklabel(fr.anMthd, text = "Frequency",  anchor = 'w', justify = 'left')
-			txt.Freq1 <- tklabel(fr.anMthd, text = "Between",  anchor = 'e', justify = 'right')
+		if(str_trim(tclvalue(analysis.method)) == ANALYSIS[7]){
+			txt.Freq0 <- tklabel(fr.anMthd, text = "Frequency", anchor = 'w', justify = 'left')
+			txt.Freq1 <- tklabel(fr.anMthd, text = "Between", anchor = 'e', justify = 'right')
 			en.Freq1 <- tkentry(fr.anMthd, textvariable = low.thres, width = 5)
 			txt.Freq2 <- tklabel(fr.anMthd, text = "And")
 			en.Freq2 <- tkentry(fr.anMthd, textvariable = up.thres, width = 5)
@@ -563,13 +554,13 @@ spatialAnalysisPanelCmd <- function(){
 		perc.anom <- tclVar(GeneralParameters$analysis.method$perc.anom)
 		startYr.anom <- tclVar(GeneralParameters$analysis.method$startYr.anom)
 		endYr.anom <- tclVar(GeneralParameters$analysis.method$endYr.anom)
-		if(str_trim(tclvalue(analysis.method)) == 'Anomaly'){
-			txt.Anom0 <- tklabel(fr.anMthd, text = "Anomaly",  anchor = 'w', justify = 'left')
+		if(str_trim(tclvalue(analysis.method)) == ANALYSIS[8]){
+			txt.Anom0 <- tklabel(fr.anMthd, text = "Anomaly", anchor = 'w', justify = 'left')
 			chk.Anom <- tkcheckbutton(fr.anMthd, variable = perc.anom, text = "Percentage of mean", anchor = 'w', justify = 'left')
 
 			fr.Anom <- ttklabelframe(fr.anMthd, text = "Base period", relief = 'groove')
-			txt.Anom1 <- tklabel(fr.Anom, text = "Start Year",  anchor = 'e', justify = 'right')
-			txt.Anom2 <- tklabel(fr.Anom, text = "End Year",  anchor = 'e', justify = 'right')
+			txt.Anom1 <- tklabel(fr.Anom, text = "Start Year", anchor = 'e', justify = 'right')
+			txt.Anom2 <- tklabel(fr.Anom, text = "End Year", anchor = 'e', justify = 'right')
 			en.Anom1 <- tkentry(fr.Anom, textvariable = startYr.anom, width = 5)
 			en.Anom2 <- tkentry(fr.Anom, textvariable = endYr.anom, width = 5)
 
@@ -594,7 +585,7 @@ spatialAnalysisPanelCmd <- function(){
 			tkdestroy(fr.anMthd)
 			fr.anMthd <<- tkframe(frameAnalysis)
 
-			if(str_trim(tclvalue(analysis.method)) == 'Trend'){
+			if(str_trim(tclvalue(analysis.method)) == ANALYSIS[5]){
 				rd.trend1 <- tkradiobutton(fr.anMthd, text = "change (trend) / year", variable = trend.unit, value = "1", anchor = 'w', justify = 'left')
 				rd.trend2 <- tkradiobutton(fr.anMthd, text = "change (trend) over the period", variable = trend.unit, value = "2", anchor = 'w', justify = 'left')
 				rd.trend3 <- tkradiobutton(fr.anMthd, text = "change (trend) / average (in %)", variable = trend.unit, value = "3", anchor = 'w', justify = 'left')
@@ -604,19 +595,19 @@ spatialAnalysisPanelCmd <- function(){
 				tkgrid(rd.trend3, sticky = 'we')
 			}
 
-			if(str_trim(tclvalue(analysis.method)) == 'Percentiles'){
-				txt.Percent <- tklabel(fr.anMthd, text = "Percentile",  anchor = 'e', justify = 'right')
+			if(str_trim(tclvalue(analysis.method)) == ANALYSIS[6]){
+				txt.Percent <- tklabel(fr.anMthd, text = "Percentile", anchor = 'e', justify = 'right')
 				en.Percent <- tkentry(fr.anMthd, textvariable = mth.perc, width = 4)
-				th.Percent <- tklabel(fr.anMthd, text = "th",  anchor = 'w', justify = 'left')
+				th.Percent <- tklabel(fr.anMthd, text = "th", anchor = 'w', justify = 'left')
 
 				tkgrid(txt.Percent, en.Percent, th.Percent)
 
 				infobulle(en.Percent, "Enter the nth percentile to be calculated")
 				status.bar.display(en.Percent, "Enter the nth percentile to be calculated")
 			}
-			if(str_trim(tclvalue(analysis.method)) == 'Frequency'){
-				txt.Freq0 <- tklabel(fr.anMthd, text = "Frequency",  anchor = 'w', justify = 'left')
-				txt.Freq1 <- tklabel(fr.anMthd, text = "Between",  anchor = 'e', justify = 'right')
+			if(str_trim(tclvalue(analysis.method)) == ANALYSIS[7]){
+				txt.Freq0 <- tklabel(fr.anMthd, text = "Frequency", anchor = 'w', justify = 'left')
+				txt.Freq1 <- tklabel(fr.anMthd, text = "Between", anchor = 'e', justify = 'right')
 				en.Freq1 <- tkentry(fr.anMthd, textvariable = low.thres, width = 5)
 				txt.Freq2 <- tklabel(fr.anMthd, text = "And")
 				en.Freq2 <- tkentry(fr.anMthd, textvariable = up.thres, width = 5)
@@ -629,13 +620,13 @@ spatialAnalysisPanelCmd <- function(){
 				infobulle(en.Freq2, "Enter the upper bound of the interval to count the number of occurrences")
 				status.bar.display(en.Freq2, "Enter the upper bound of the interval to count the number of occurrences")
 			}
-			if(str_trim(tclvalue(analysis.method)) == 'Anomaly'){
-				txt.Anom0 <- tklabel(fr.anMthd, text = "Anomaly",  anchor = 'w', justify = 'left')
+			if(str_trim(tclvalue(analysis.method)) == ANALYSIS[8]){
+				txt.Anom0 <- tklabel(fr.anMthd, text = "Anomaly", anchor = 'w', justify = 'left')
 				chk.Anom <- tkcheckbutton(fr.anMthd, variable = perc.anom, text = "Percentage of mean", anchor = 'w', justify = 'left')
 
 				fr.Anom <- ttklabelframe(fr.anMthd, text = "Base period", relief = 'groove')
-				txt.Anom1 <- tklabel(fr.Anom, text = "Start Year",  anchor = 'e', justify = 'right')
-				txt.Anom2 <- tklabel(fr.Anom, text = "End Year",  anchor = 'e', justify = 'right')
+				txt.Anom1 <- tklabel(fr.Anom, text = "Start Year", anchor = 'e', justify = 'right')
+				txt.Anom2 <- tklabel(fr.Anom, text = "End Year", anchor = 'e', justify = 'right')
 				en.Anom1 <- tkentry(fr.Anom, textvariable = startYr.anom, width = 5)
 				en.Anom2 <- tkentry(fr.Anom, textvariable = endYr.anom, width = 5)
 
@@ -662,15 +653,9 @@ spatialAnalysisPanelCmd <- function(){
 
 		#################
 		tkconfigure(AnalyzeBut, command = function(){
-			GeneralParameters$data.type <- switch(str_trim(tclvalue(DataType)),
-												'CDT stations data format' = 'cdtstation',
-												'CDT dataset format (gridded)' = 'cdtdataset')
+			GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+			GeneralParameters$in.tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
 
-			GeneralParameters$in.tstep <- switch(str_trim(tclvalue(timeSteps)), 
-			 									'Daily data' = 'daily',
-			 									'Pentad data' = 'pentad',
-												'Dekadal data' =  'dekadal',
-												'Monthly data' = 'monthly')
 			GeneralParameters$in.file <- str_trim(tclvalue(file.stnfl))
 			GeneralParameters$out.dir <- str_trim(tclvalue(file.save1))
 
@@ -701,10 +686,8 @@ spatialAnalysisPanelCmd <- function(){
 				}
 			}
 
-			GeneralParameters$time.series$out.series <- switch(str_trim(tclvalue(out.series)), 
-						 									'Monthly' = 'monthly',
-															'Seasonal' =  'seasonal',
-															'Annual' = 'annual')
+			GeneralParameters$time.series$out.series <- outSeriesVAL[CboutSeriesVAL %in% str_trim(tclvalue(out.series))]
+
 			GeneralParameters$time.series$len.seas <- as.numeric(str_trim(tclvalue(tkget(spin.lenSeas))))
 			GeneralParameters$time.series$start.month <- which(MOIS %in% str_trim(tclvalue(startMonth)))
 			GeneralParameters$time.series$end.month <- which(MOIS %in% str_trim(tclvalue(endMonth)))
@@ -723,15 +706,7 @@ spatialAnalysisPanelCmd <- function(){
 				}
 			}
 
-			GeneralParameters$analysis.method$mth.fun <- switch(str_trim(tclvalue(analysis.method)),
-																'Mean' = 'mean',
-																'Median' = 'median',
-																'Standard deviation' = 'std',
-																'Coefficient of variation' = 'cv',
-																'Trend' = 'trend',
-																'Percentiles' = 'percentile',
-																'Frequency' = 'frequency',
-																'Anomaly' = 'anomaly')
+			GeneralParameters$analysis.method$mth.fun <- Analyses[ANALYSIS %in% str_trim(tclvalue(analysis.method))]
 
 			if(GeneralParameters$analysis.method$mth.fun == 'trend'){
 				GeneralParameters$analysis.method$trend.unit <- as.numeric(tclvalue(trend.unit))
@@ -866,9 +841,9 @@ spatialAnalysisPanelCmd <- function(){
 		.cdtData$EnvData$climDate <- tclVar()
 
 		cb.climato.maps <- ttkcombobox(frameClimatoMap, values = "", textvariable = .cdtData$EnvData$climStat, width = largeur5)
-		bt.climato.maps <- ttkbutton(frameClimatoMap, text = "PLOT")
+		bt.climato.maps <- ttkbutton(frameClimatoMap, text = .cdtEnv$tcl$lang$global[['button']][['3']])
 		cb.climDate <- ttkcombobox(frameClimatoMap, values = "", textvariable = .cdtData$EnvData$climDate, width = largeur6)
-		bt.climMapOpt <- ttkbutton(frameClimatoMap, text = "Options")
+		bt.climMapOpt <- ttkbutton(frameClimatoMap, text = .cdtEnv$tcl$lang$global[['button']][['4']])
 
 		###################
 
@@ -969,10 +944,10 @@ spatialAnalysisPanelCmd <- function(){
 		cb.TSDate <- ttkcombobox(frameTSMaps, values = "", textvariable = .cdtData$EnvData$TSDate, width = largeur6)
 		bt.TSDate.prev <- ttkbutton(frameTSMaps, text = "<<", width = 3)
 		bt.TSDate.next <- ttkbutton(frameTSMaps, text = ">>", width = 3)
-		bt.TSDate.plot <- ttkbutton(frameTSMaps, text = "PLOT", width = 7)
+		bt.TSDate.plot <- ttkbutton(frameTSMaps, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
 
 		cb.TSData <- ttkcombobox(frameTSMaps, values = "Data", textvariable = .cdtData$EnvData$TSData, width = largeur6)
-		bt.TSMapOpt <- ttkbutton(frameTSMaps, text = "Options", width = 7)
+		bt.TSMapOpt <- ttkbutton(frameTSMaps, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
 
 		###################
 
@@ -1084,8 +1059,8 @@ spatialAnalysisPanelCmd <- function(){
 		stateType <- if(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)%in%c("Line", "ENSO-Line")) "normal" else "disabled"
 
 		cb.typeTSp <- ttkcombobox(frameTSPlot, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur6)
-		bt.TsGraph.plot <- ttkbutton(frameTSPlot, text = "PLOT", width = 7)
-		bt.TSGraphOpt <- ttkbutton(frameTSPlot, text = "Options", width = 8)
+		bt.TsGraph.plot <- ttkbutton(frameTSPlot, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
+		bt.TSGraphOpt <- ttkbutton(frameTSPlot, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
 
 		frTS1 <- tkframe(frameTSPlot)
 		chk.meanTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$averageTSp, text = "Add Mean", anchor = 'w', justify = 'left', state = stateType)
@@ -1258,7 +1233,7 @@ spatialAnalysisPanelCmd <- function(){
 		stateSHP <- "disabled"
 
 		chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
-		bt.addshpOpt <- ttkbutton(frameSHP, text = "Options", state = stateSHP)
+		bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
 		cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
 		bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
 

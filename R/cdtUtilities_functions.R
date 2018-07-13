@@ -43,15 +43,22 @@ convert_data_type <- function(mat, as.fun){
 
 ##############################################
 
+## Transpose matrix
+transPose <- function(X){
+	if(is.null(dim(X))) matrix(X, ncol = 1) else t(X)
+}
+
+##############################################
+
 ## Test leap year
 
 is.leapyear <- function(year){
-	leap <- year%%c(4, 100, 400)
+	leap <- year %% c(4, 100, 400)
 	((leap[1] == 0) & (leap[2] != 0)) | (leap[3] == 0)
 }
 
 is.leapyears <- function(years){
-	leap <- sapply(years, function(x) x%%c(4, 100, 400))
+	leap <- sapply(years, function(x) x %% c(4, 100, 400))
 	((leap[1, ] == 0) & (leap[2, ] != 0)) | (leap[3, ] == 0)
 }
 
@@ -65,10 +72,12 @@ nb.Day.Of.Year <- function(daty){
 	ifelse(is.leapyears(year), 366, 365)
 }
 
+Day.Of.Month <- function(year, mon){
+	rev((28:31)[!is.na(as.Date(paste(year, mon, 28:31, sep = '-')))])[1]
+}
+
 nb.Day.Of.Month <- function(daty){
-	nbm <- mapply(function(year, mon)
-				rev((28:31)[!is.na(as.Date(paste(year, mon, 28:31, sep = '-')))])[1],
-				substr(daty, 1, 4), substr(daty, 5, 6))
+	nbm <- mapply(Day.Of.Month, substr(daty, 1, 4), substr(daty, 5, 6))
 	as.numeric(unname(nbm))
 }
 
@@ -181,6 +190,16 @@ addPentads <- function(daty, n = 1){
 }
 
 # addPentadsVec <- function(daty, n = 1) do.call(c, lapply(daty, addPentads, n))
+
+##############################################
+
+table.annuel <- function(){
+	uneAnne <- seq(as.Date('2014-1-1'), by = 'day', length.out = 365)
+	day <- as.numeric(format(uneAnne, "%d"))
+	mon <- as.numeric(format(uneAnne, "%m"))
+	vtimes <- cbind(day, mon, 1:365)
+	vtimes
+}
 
 ##############################################
 ## File name or path without extension

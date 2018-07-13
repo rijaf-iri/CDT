@@ -69,3 +69,13 @@ precip.colors <- function(n = 12){
 	kolorFonction(n)
 }
 
+## Decile colors
+decile.colors <- function(n = 8){
+	kolor <- c('#8B2323', '#BD5B1C', '#F28E43', '#FCE9DA',
+				'#EBF3DE', '#BACCE4', '#608CC4', '#3B638F')
+	if(n == 8) return(kolor)
+	kolorFonction <- colorRampPalette(kolor)
+	kolorFonction(n)
+}
+
+

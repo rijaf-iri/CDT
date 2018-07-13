@@ -265,7 +265,7 @@
             <text lang="en"> Daily Rainfall Analysis </text>
         </submenu>
         <submenu id="7">
-            <text lang="en"> Rain Season Characteristics </text>
+            <text lang="en"> Rainy Season Characteristics </text>
         </submenu>
         <submenu id="7-1">
             <text lang="en"> Season Onset </text>
@@ -277,7 +277,7 @@
             <text lang="en"> Season Length </text>
         </submenu>
         <submenu id="8">
-            <text lang="en"> PICSA </text>
+            <text lang="en"> Rainy Season Analysis </text>
         </submenu>
         <submenu id="9">
             <text lang="en"> Climate Extremes Indices </text>

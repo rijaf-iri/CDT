@@ -59,8 +59,8 @@ download_RFE_createURL <- function(){
 		dates[, 4] <- mois[as.numeric(dates[, 2])]
 		dates[, 5] <- ifelse(dates[, 5] == '01', '1-10', ifelse(dates[, 5] == '02', '11-20', '03'))
 		if(length(which(dates[, 5] == '03')) > 0){
-			endmois <- apply(matrix(dates[dates[, 5] == '03', 1:2], ncol = 2), 1,
-						function(x) rev((28:31)[which(!is.na(as.Date(paste(x[1], x[2], 28:31, sep = '-'))))])[1])
+			endmois <- matrix(dates[dates[, 5] == '03', 1:2], ncol = 2)
+			endmois <- apply(endmois, 1, function(x) Day.Of.Month(x[1], x[2]))
 			dates[dates[, 5] == '03', 5] <- paste(21, endmois, sep = '-')
 		}
 		tstep <- "dekadal"

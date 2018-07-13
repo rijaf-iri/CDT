@@ -28,6 +28,11 @@ dailyRainAnalysisPanelCmd <- function(){
 								'Probability of exceeding'))
 
 	GeneralParameters <- list(data.type = "cdtstation", cdtstation = "", cdtdataset = "",
+							seas = list(all.years = TRUE,
+										startYear = 1981, startMon = 9, startDay = 1,
+										endYear = 2017, endMon = 12, endDay = 31),
+							stats = list(daily = 'tot.rain', yearly = 'mean'),
+							def = list(drywet.day = 0.85, drywet.spell = 7, proba.thres = 400),
 							min.frac = 0.95, output = "")
 
 	# xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtSpatialAnalysis_leftCmd.xml")
@@ -69,10 +74,9 @@ dailyRainAnalysisPanelCmd <- function(){
 		frameInData <- ttklabelframe(subfr1, text = "Input Data", relief = 'groove')
 
 		DataType <- tclVar()
-		CbdatatypeVAL <- c('CDT stations data format', 'CDT dataset format (gridded)')
-		tclvalue(DataType) <- switch(GeneralParameters$data.type,
-									'cdtstation' = CbdatatypeVAL[1],
-									'cdtdataset' = CbdatatypeVAL[2])
+		CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
+		datatypeVAL <- c('cdtstation', 'cdtdataset')
+		tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% GeneralParameters$data.type]
 
 		if(GeneralParameters$data.type == 'cdtstation'){
 			input.Prec <- tclVar(GeneralParameters$cdtstation)
@@ -143,7 +147,7 @@ dailyRainAnalysisPanelCmd <- function(){
 			tclvalue(input.Prec) <- ''
 
 			###
-			if(str_trim(tclvalue(DataType)) == 'CDT stations data format'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 				tclvalue(txt.INPrec.var) <- 'File containing stations daily Precip data'
 
 				cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
@@ -168,7 +172,7 @@ dailyRainAnalysisPanelCmd <- function(){
 			}
 
 			###
-			if(str_trim(tclvalue(DataType)) == 'CDT dataset format (gridded)'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
 				tclvalue(txt.INPrec.var) <- 'Index file (*.rds) for daily Precip data'
 
 				cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
@@ -193,16 +197,6 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		############################################
 
-		GeneralParameters$seas$all.years <- TRUE
-		GeneralParameters$seas$startYear <- 1981
-		GeneralParameters$seas$endYear <- 2017
-		GeneralParameters$seas$startMon <- 9
-		GeneralParameters$seas$startDay <- 1
-		GeneralParameters$seas$endMon <- 11
-		GeneralParameters$seas$endDay <- 30
-
-		########
-
 		frameSeas <- ttklabelframe(subfr1, text = "Season", relief = 'groove')
 
 		allYears <- tclVar(GeneralParameters$seas$all.years)
@@ -218,7 +212,7 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		stateYear <- if(GeneralParameters$seas$all.years) 'disabled' else 'normal'
 
-		chk.allYears <- tkcheckbutton(frameSeas, variable = allYears, text =  "Use all years from the input data", anchor = 'w', justify = 'left')
+		chk.allYears <- tkcheckbutton(frameSeas, variable = allYears, text = "Use all years from the input data", anchor = 'w', justify = 'left')
 		txt.startYear <- tklabel(frameSeas, text = "Start Year", anchor = 'e', justify = 'right')
 		en.startYear <- tkentry(frameSeas, textvariable = startYear, width = 6, state = stateYear)
 		txt.endYear <- tklabel(frameSeas, text = "End Year", anchor = 'e', justify = 'right')
@@ -265,7 +259,7 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		dir.save <- tclVar(GeneralParameters$output)
 
-		txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results",  anchor = 'w', justify = 'left')
+		txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results", anchor = 'w', justify = 'left')
 		en.dir.save <- tkentry(frameDirSav, textvariable = dir.save, width = largeur2)
 		bt.dir.save <- tkbutton(frameDirSav, text = "...")
 
@@ -295,29 +289,18 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		##############################################
 
-		GeneralParameters$stats$daily <- 'tot.rain'
-		GeneralParameters$stats$yearly <- 'mean'
-
 		frameStats <- ttklabelframe(subfr2, text = "Statistics", relief = 'groove')
 
 		daily.Stats <- tclVar()
 		CbDailyStatsVAL <- c('Total Rainfall', 'Rainfall Intensity', 'Number of Wet Days',
 							'Number of Dry Days', 'Number of Wet Spells', 'Number of Dry Spells')
-		tclvalue(daily.Stats) <- switch(GeneralParameters$stats$daily,
-										'tot.rain' = CbDailyStatsVAL[1],
-										'rain.int' = CbDailyStatsVAL[2],
-										'nb.wet.day' = CbDailyStatsVAL[3],
-										'nb.dry.day' = CbDailyStatsVAL[4],
-										'nb.wet.spell' = CbDailyStatsVAL[5],
-										'nb.dry.spell' = CbDailyStatsVAL[6])
+		DailyStatsVAL <- c('tot.rain', 'rain.int', 'nb.wet.day', 'nb.dry.day', 'nb.wet.spell', 'nb.dry.spell')
+		tclvalue(daily.Stats) <- CbDailyStatsVAL[DailyStatsVAL %in% GeneralParameters$stats$daily]
 
 		yearly.Stats <- tclVar()
 		CbYearlyStatsVAL <- c('Mean', 'Standard deviation', 'Coefficient of variation', 'Probability of exceeding')
-		tclvalue(yearly.Stats) <- switch(GeneralParameters$stats$yearly,
-										'mean' = CbYearlyStatsVAL[1],
-										'stdev' = CbYearlyStatsVAL[2],
-										'coefvar' = CbYearlyStatsVAL[3],
-										'proba' = CbYearlyStatsVAL[4])
+		YearlyStatsVAL <- c('mean', 'stdev', 'coefvar', 'proba')
+		tclvalue(yearly.Stats) <- CbYearlyStatsVAL[YearlyStatsVAL %in% GeneralParameters$stats$yearly]
 
 		txt.StatDay <- tklabel(frameStats, text = 'Seasonal daily statistics', anchor = 'w', justify = 'left')
 		cb.StatDay <- ttkcombobox(frameStats, values = CbDailyStatsVAL, textvariable = daily.Stats, width = largeur3)
@@ -334,8 +317,6 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		##############################################
 
-		GeneralParameters$def$drywet.day <- 0.85
-
 		frameDryDay <- ttklabelframe(subfr2, text = "Wet/Dry Day definition", relief = 'groove')
 
 		drywet.day <- tclVar(GeneralParameters$def$drywet.day)
@@ -347,8 +328,6 @@ dailyRainAnalysisPanelCmd <- function(){
 		tkgrid(txt.DryDay1, en.DryDay, txt.DryDay2)
 
 		##############################################
-
-		GeneralParameters$def$drywet.spell <- 7
 
 		frameDrySpell <- ttklabelframe(subfr2, text = "Wet/Dry Spell definition", relief = 'groove')
 
@@ -362,22 +341,12 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		##############################################
 
-		GeneralParameters$def$proba.thres <- switch(GeneralParameters$stats$daily,
-													'tot.rain' = 400,
-													'rain.int' = 10,
-													'nb.wet.day' = 30,
-													'nb.dry.day' = 30,
-													'nb.wet.spell' = 5,
-													'nb.dry.spell' = 5)
-		txt.units.thres <- switch(GeneralParameters$stats$daily,
-										'tot.rain' = 'mm',
-										'rain.int' = 'mm/day',
-										'nb.wet.day' = 'days',
-										'nb.dry.day' = 'days',
-										'nb.wet.spell' = 'spells',
-										'nb.dry.spell' = 'spells')
-
 		frameProba <- tkframe(subfr2)
+
+		INITIAL.VAL <- c(400, 10, 30, 30, 5, 5)
+		UNIT.TXT <- c('mm', 'mm/day', 'days', 'days', 'spells', 'spells')
+
+		txt.units.thres <- UNIT.TXT[DailyStatsVAL %in% GeneralParameters$stats$daily]
 
 		proba.thres <- tclVar(GeneralParameters$def$proba.thres)
 		units.thres <- tclVar(txt.units.thres)
@@ -392,45 +361,19 @@ dailyRainAnalysisPanelCmd <- function(){
 		###################
 
 		tkbind(cb.StatYear, "<<ComboboxSelected>>", function(){
-			stateProba <- if(str_trim(tclvalue(yearly.Stats)) == 'Probability of exceeding') 'normal' else 'disabled'
+			stateProba <- if(str_trim(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]) 'normal' else 'disabled'
 			tkconfigure(en.Proba, state = stateProba)
 
-			if(str_trim(tclvalue(yearly.Stats)) == 'Probability of exceeding'){
-				tclvalue(units.thres) <- switch(str_trim(tclvalue(daily.Stats)),
-												'Total Rainfall' = 'mm',
-												'Rainfall Intensity' = 'mm/day',
-												'Number of Wet Days' = 'days',
-												'Number of Dry Days' = 'days',
-												'Number of Wet Spells' = 'spells',
-												'Number of Dry Spells' = 'spells')
-
-				tclvalue(proba.thres) <- switch(str_trim(tclvalue(daily.Stats)),
-												'Total Rainfall' = 400,
-												'Rainfall Intensity' = 10,
-												'Number of Wet Days' = 30,
-												'Number of Dry Days' = 30,
-												'Number of Wet Spells' = 5,
-												'Number of Dry Spells' = 5)
+			if(str_trim(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]){
+				tclvalue(units.thres) <- UNIT.TXT[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
+				tclvalue(proba.thres) <- INITIAL.VAL[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
 			}
 		})
 
 		tkbind(cb.StatDay, "<<ComboboxSelected>>", function(){
-			if(str_trim(tclvalue(yearly.Stats)) == 'Probability of exceeding'){
-				tclvalue(units.thres) <- switch(str_trim(tclvalue(daily.Stats)),
-												'Total Rainfall' = 'mm',
-												'Rainfall Intensity' = 'mm/day',
-												'Number of Wet Days' = 'days',
-												'Number of Dry Days' = 'days',
-												'Number of Wet Spells' = 'spells',
-												'Number of Dry Spells' = 'spells')
-
-				tclvalue(proba.thres) <- switch(str_trim(tclvalue(daily.Stats)),
-												'Total Rainfall' = 400,
-												'Rainfall Intensity' = 10,
-												'Number of Wet Days' = 30,
-												'Number of Dry Days' = 30,
-												'Number of Wet Spells' = 5,
-												'Number of Dry Spells' = 5)
+			if(str_trim(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]){
+				tclvalue(units.thres) <- UNIT.TXT[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
+				tclvalue(proba.thres) <- INITIAL.VAL[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
 			}
 		})
 
@@ -445,14 +388,12 @@ dailyRainAnalysisPanelCmd <- function(){
 		bt.CalcDaily <- ttkbutton(frameCalc, text = 'Calculate', state = stateCaclBut)
 
 		tkconfigure(bt.CalcDaily, command = function(){
-			GeneralParameters$data.type <- switch(str_trim(tclvalue(DataType)),
-												'CDT stations data format' = 'cdtstation',
-												'CDT dataset format (gridded)' = 'cdtdataset')
+			GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
 
-			if(str_trim(tclvalue(DataType)) == 'CDT stations data format')
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
 				GeneralParameters$cdtstation <- str_trim(tclvalue(input.Prec))
 
-			if(str_trim(tclvalue(DataType)) == 'CDT dataset format (gridded)')
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
 				GeneralParameters$cdtdataset <- str_trim(tclvalue(input.Prec))
 
 			GeneralParameters$min.frac <- as.numeric(str_trim(tclvalue(min.frac)))
@@ -466,19 +407,8 @@ dailyRainAnalysisPanelCmd <- function(){
 			GeneralParameters$seas$endMon <- which(MOIS %in% str_trim(tclvalue(endMon)))
 			GeneralParameters$seas$endDay <- as.numeric(str_trim(tclvalue(tkget(spin.endDay))))
 
-			GeneralParameters$stats$daily <- switch(str_trim(tclvalue(daily.Stats)),
-												'Total Rainfall' = 'tot.rain',
-												'Rainfall Intensity' = 'rain.int',
-												'Number of Wet Days' = 'nb.wet.day',
-												'Number of Dry Days' = 'nb.dry.day',
-												'Number of Wet Spells' = 'nb.wet.spell',
-												'Number of Dry Spells' = 'nb.dry.spell')
-
-			GeneralParameters$stats$yearly <- switch(str_trim(tclvalue(yearly.Stats)),
-													'Mean' = 'mean',
-													'Standard deviation' = 'stdev',
-													'Coefficient of variation' = 'coefvar',
-													'Probability of exceeding' = 'proba')
+			GeneralParameters$stats$daily <- DailyStatsVAL[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
+			GeneralParameters$stats$yearly <- YearlyStatsVAL[CbYearlyStatsVAL %in% str_trim(tclvalue(yearly.Stats))]
 
 			GeneralParameters$def$drywet.day <- as.numeric(str_trim(tclvalue(drywet.day)))
 			GeneralParameters$def$drywet.spell <- as.numeric(str_trim(tclvalue(drywet.spell)))
@@ -608,9 +538,9 @@ dailyRainAnalysisPanelCmd <- function(){
 		.cdtData$EnvData$anaStat <- tclVar()
 
 		cb.varstat.var <- ttkcombobox(frameDataStatMap, values = "", textvariable = .cdtData$EnvData$anaVars, width = largeur4)
-		bt.varstat.maps <- ttkbutton(frameDataStatMap, text = "PLOT")
+		bt.varstat.maps <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['3']])
 		cb.varstat.stat <- ttkcombobox(frameDataStatMap, values = "", textvariable = .cdtData$EnvData$anaStat, width = largeur4)
-		bt.varstat.MapOpt <- ttkbutton(frameDataStatMap, text = "Options")
+		bt.varstat.MapOpt <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['4']])
 
 		###################
 
@@ -682,8 +612,8 @@ dailyRainAnalysisPanelCmd <- function(){
 		cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = .cdtData$EnvData$donDate, width = largeur5)
 		bt.data.Index.prev <- ttkbutton(frameDataMap, text = "<<", width = 3)
 		bt.data.Index.next <- ttkbutton(frameDataMap, text = ">>", width = 3)
-		bt.data.maps <- ttkbutton(frameDataMap, text = "PLOT", width = 7)
-		bt.data.MapOpt <- ttkbutton(frameDataMap, text = "Options", width = 7)
+		bt.data.maps <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
+		bt.data.MapOpt <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
 
 		###############
 
@@ -792,8 +722,8 @@ dailyRainAnalysisPanelCmd <- function(){
 		stateType <- if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Line") "normal" else "disabled"
 
 		cb.typeTSp <- ttkcombobox(frameDataTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur5)
-		bt.TsGraph.plot <- ttkbutton(frameDataTS, text = "PLOT", width = 7)
-		bt.TSGraphOpt <- ttkbutton(frameDataTS, text = "Options", width = 8)
+		bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
+		bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
 
 		frTS1 <- tkframe(frameDataTS)
 		chk.meanTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$averageTSp, text = "Add Mean", anchor = 'w', justify = 'left', state = stateType)
@@ -934,7 +864,7 @@ dailyRainAnalysisPanelCmd <- function(){
 		stateSHP <- "disabled"
 
 		chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
-		bt.addshpOpt <- ttkbutton(frameSHP, text = "Options", state = stateSHP)
+		bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
 		cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
 		bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
 

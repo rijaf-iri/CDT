@@ -27,7 +27,9 @@ MapGraph.MapOptions <- function(parent.win, climMapOpt){
 
 	frameColkey <- ttklabelframe(frDialog, text = "Colorkey", relief = 'groove')
 
-	preset.colkey <- c('tim.colors', 'rainbow', 'heat.colors', 'cm.colors', 'topo.colors', 'terrain.colors', 'spi.colors')
+	preset.colkey <- c('tim.colors', 'rainbow', 'heat.colors', 'cm.colors', 'topo.colors',
+						'terrain.colors', 'spi.colors', 'precip.colors', 'decile.colors')
+
 	preset.color <- tclVar(climMapOpt$presetCol$color)
 	reverse.color <- tclVar(climMapOpt$presetCol$reverse)
 	custom.color <- tclVar(climMapOpt$userCol$custom)
@@ -3238,7 +3240,8 @@ MapGraph.SpiVizOptions <- function(parent.win, spiVizOpt){
 
 	frameColkey <- ttklabelframe(frDialog, text = "Colorkey", relief = 'groove')
 
-	preset.colkey <- c('tim.colors', 'rainbow', 'heat.colors', 'cm.colors', 'topo.colors', 'terrain.colors', 'spi.colors')
+	preset.colkey <- c('tim.colors', 'rainbow', 'heat.colors', 'cm.colors', 'topo.colors',
+						'terrain.colors', 'spi.colors', 'precip.colors', 'decile.colors')
 	preset.color <- tclVar(spiVizOpt$presetCol$color)
 	reverse.color <- tclVar(spiVizOpt$presetCol$reverse)
 	custom.color <- tclVar(spiVizOpt$userCol$custom)

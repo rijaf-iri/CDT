@@ -162,6 +162,7 @@ cdt.daily.statistics <- function(MAT, STATS = "tot.rain",
 
 #############################################
 
+## Rolling function
 .rollfun.vec <- function(x, win, fun, na.rm, min.data, na.pad, fill, align)
 {
 	conv <- if(fun == "convolve") TRUE else FALSE
@@ -255,7 +256,7 @@ cdt.daily.statistics <- function(MAT, STATS = "tot.rain",
 	return(xx)
 }
 
-## Rolling function
+## to export
 cdt.roll.fun <- function(x, win, fun = "sum", na.rm = FALSE,
 						min.data = win, na.pad = TRUE, fill = FALSE,
 						align = c("center", "left", "right")
@@ -271,5 +272,134 @@ cdt.roll.fun <- function(x, win, fun = "sum", na.rm = FALSE,
 	if(min.data > win) min.data <- win
 
 	foo(x, win, fun, na.rm, min.data, na.pad, fill, align)
+}
+
+#############################################
+
+## Climatology
+.cdt.Climatologies <- function(index.clim, data.mat, min.year, tstep, daily.win)
+{
+	tmp <- rep(NA, ncol(data.mat))
+	div <- if(tstep == "daily") 2 * daily.win + 1 else 1
+	tstep.miss <- (sapply(index.clim$index, length) / div) < min.year
+
+	dat.clim <- lapply(seq_along(index.clim$id), function(jj){
+		if(tstep.miss[jj]) return(list(moy = tmp, sds = tmp))
+		xx <- data.mat[index.clim$index[[jj]], , drop = FALSE]
+		ina <- (colSums(!is.na(xx)) / div) < min.year
+		moy <- colMeans(xx, na.rm = TRUE)
+		sds <- matrixStats::colSds(xx, na.rm = TRUE)
+		moy[ina] <- NA
+		sds[ina] <- NA
+		moy[is.nan(moy)] <- NA
+		list(moy = moy, sds = sds)
+	})
+
+	dat.moy <- do.call(rbind, lapply(dat.clim, "[[", "moy"))
+	dat.sds <- do.call(rbind, lapply(dat.clim, "[[", "sds"))
+
+	return(list(mean = dat.moy, sd = dat.sds))
+}
+
+## to export
+cdt.Climatologies <- function(data.mat, dates,
+								tstep = "dekadal",
+								pars.clim = list(
+										all.years = TRUE,
+										start.year = 1981,
+										end.year = 2010,
+										min.year = 15,
+										daily.win = 0)
+								)
+{
+	year <- as.numeric(substr(dates, 1, 4))
+	if(length(unique(year)) < pars.clim$min.year)
+		stop("No enough data to compute climatology")
+
+	iyear <- rep(TRUE, length(year))
+	if(!pars.clim$all.years)
+		iyear <- year >= pars.clim$start.year & year <= pars.clim$end.year
+	dates <- dates[iyear]
+	data.mat <- data.mat[iyear, , drop = FALSE]
+
+	index <- cdt.index.Climatologies(dates, tstep, pars.clim$daily.win)
+	dat.clim <- .cdt.Climatologies(index, data.mat, pars.clim$min.year, tstep, pars.clim$daily.win)
+
+	return(list(id = index$id, mean = dat.clim$mean, sd = dat.clim$sd))
+}
+
+#############################################
+
+## Anomaly
+.cdt.Anomalies <- function(index.anom, data.mat, data.mean, data.sds, FUN)
+{
+	data.mat <- data.mat[index.anom[, 2], , drop = FALSE]
+	data.mean <- data.mean[index.anom[, 1], , drop = FALSE]
+	data.sds <- data.sds[index.anom[, 1], , drop = FALSE]
+	anom <- switch(FUN,
+				"Difference" = data.mat - data.mean,
+				"Percentage" = 100 * (data.mat - data.mean) / (data.mean + 0.001),
+				"Standardized" = (data.mat - data.mean) / data.sds
+			)
+	return(anom)
+}
+
+## to export
+cdt.Anomalies <- function(data.mat, dates,
+							tstep = "dekadal",
+							date.range = NULL,
+							FUN = c("Difference", "Percentage", "Standardized"),
+							climatology = FALSE,
+							data.clim = list(mean = NULL, sd = NULL),
+							pars.clim = list(
+									all.years = TRUE,
+									start.year = 1981,
+									end.year = 2010,
+									min.year = 15,
+									daily.win = 0)
+						)
+{
+	# date.range = c(start = 2018011, end = 2018063)	
+	FUN <- FUN[1]
+	index.clim <- NULL
+	if(climatology){
+		if(is.null(data.clim$mean)) stop("Climatology mean does not find.")
+		if(!is.matrix(data.clim$mean)) stop("Climatology mean must be a matrix.")
+		if(FUN == "Standardized"){
+			if(is.null(data.clim$sd)) stop("Climatology SD does not find.")
+			if(!is.matrix(data.clim$sd)) stop("Climatology SD must be a matrix.")
+		}
+		id <- switch(tstep, "daily" = 365, "pentad" = 72, "dekadal" = 36, "monthly" = 12)
+		data.clim$id <- seq(id)
+		index.clim$id <- seq(id)
+	}else{
+		data.clim <- cdt.Climatologies(data.mat, dates, tstep, pars.clim)
+		index.clim$id <- data.clim$id
+	}
+
+	if(!is.null(date.range)){
+		if(tstep == "monthly"){
+			daty0 <- as.Date(paste0(dates, 15), "%Y%m%d")
+			start.daty <- as.Date(paste0(date.range$start, 15), "%Y%m%d")
+			end.daty <- as.Date(paste0(date.range$end, 15), "%Y%m%d")
+		}else{
+			daty0 <- as.Date(dates, "%Y%m%d")
+			start.daty <- as.Date(as.character(date.range$start), "%Y%m%d")
+			end.daty <- as.Date(as.character(date.range$end), "%Y%m%d")
+		}
+		iyear <- daty0 >= start.daty & daty0 <= end.daty
+		dates <- dates[iyear]
+		if(length(dates) == 0) stop("No data to compute anomaly")
+		data.mat <- data.mat[iyear, , drop = FALSE]
+	}
+
+	index <- cdt.index.Anomalies(dates, index.clim, tstep)
+	index.anom <- index$index
+	date.anom <- index$date
+
+	data.sds <- if(FUN == "Standardized") data.clim$sd else NULL
+	anom <- .cdt.Anomalies(index.anom, data.mat, data.clim$mean, data.sds, FUN)
+
+	return(list(data.anom = list(date = date.anom, anomaly = anom), data.clim = data.clim))
 }
 

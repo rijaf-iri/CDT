@@ -24,7 +24,7 @@
             </option>
         </combobox>
         <button id="1">
-            <text lang="en"> Settings </text>
+            <text lang="en"> Set Base Period </text>
         </button>
         <button id="2">
             <text lang="en"> Calculate </text>
@@ -52,18 +52,6 @@
         </label>
         <label id="6">
             <text lang="en"> Format </text>
-        </label>
-        <label id="7">
-            <text lang="en"> Base Period </text>
-        </label>
-        <label id="8">
-            <text lang="en"> Start </text>
-        </label>
-        <label id="9">
-            <text lang="en"> End </text>
-        </label>
-        <label id="10">
-            <text lang="en"> Minimum number of years </text>
         </label>
         <label id="11">
             <text lang="en"> Centered time window </text>
@@ -161,26 +149,10 @@
         </content>
         <content id="8">
             <status>
-                <text lang="en"> Enter the start year of the base period </text>
+                <text lang="en"> Click on this button to set the base period for the climatology </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the start year of the base period </text>
-            </tooltip>
-        </content>
-        <content id="9">
-            <status>
-                <text lang="en"> Enter the end year of the base period </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Enter the end year of the base period </text>
-            </tooltip>
-        </content>
-        <content id="10">
-            <status>
-                <text lang="en"> Enter the minimum number of years with non missing values to calculate the climatology </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Enter the minimum number of years with non missing values to calculate the climatology </text>
+                <text lang="en"> Click on this button to set the base period for the climatology </text>
             </tooltip>
         </content>
         <content id="11">

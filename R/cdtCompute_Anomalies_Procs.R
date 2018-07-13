@@ -51,6 +51,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
 				return(NULL)
 			}
 		}else{
+			allyears <- GeneralParameters$climato$allyears
 			year1 <- GeneralParameters$climato$start
 			year2 <- GeneralParameters$climato$end
 			minyear <- GeneralParameters$climato$minyear
@@ -73,7 +74,28 @@ anomaliesCalcProcs <- function(GeneralParameters){
 
 		daty <- don$dates
 		year <- as.numeric(substr(daty, 1, 4))
+	}
 
+	##############################
+
+	if(GeneralParameters$data.type == "cdtdataset"){
+		don <- try(readRDS(GeneralParameters$cdtdataset$index), silent = TRUE)
+		if(inherits(don, "try-error")){
+			Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset$index), format = TRUE)
+			return(NULL)
+		}
+		if(freqData != don$TimeStep){
+			Insert.Messages.Out(paste("The dataset is not a", freqData, "data"), format = TRUE)
+			return(NULL)
+		}
+
+		daty <- don$dateInfo$date
+		year <- as.numeric(substr(daty, 1, 4))
+	}
+
+	#####################################################
+
+	if(GeneralParameters$data.type == "cdtstation"){
 		if(GeneralParameters$outdir$update){
 			if(length(don$id) != length(don.anom$data$id)){
 				Insert.Messages.Out("Number of stations from the input and the previous saved anomalies data do not match", format = TRUE)
@@ -143,244 +165,25 @@ anomaliesCalcProcs <- function(GeneralParameters){
 					return(NULL)
 				}
 
-				iyear <- year >= year1 & year <= year2
+				iyear <- if(allyears) rep(TRUE, length(year)) else year >= year1 & year <= year2
 				daty0 <- daty[iyear]
-				don0 <- don$data[iyear, , drop = FALSE]
 				index0 <- cdt.index.Climatologies(daty0, freqData, xwin)
 
-				div <- if(freqData == "daily") 2 * xwin + 1 else 1
-				Tstep.miss <- (sapply(index0$index, length) / div) < minyear
+				don0 <- don$data[iyear, , drop = FALSE]
 
-				dat.clim <- lapply(seq_along(index0$id), function(jj){
-					if(Tstep.miss[jj]){
-						tmp <- rep(NA, ncol(don0))
-						 return(list(moy = tmp, sds = tmp))
-					}
-					xx <- don0[index0$index[[jj]], , drop = FALSE]
-					ina <- (colSums(!is.na(xx)) / div) < minyear
-					moy <- colMeans(xx, na.rm = TRUE)
-					sds <- colSds(xx, na.rm = TRUE)
-					moy[ina] <- NA
-					sds[ina] <- NA
-					rm(xx)
-					list(moy = moy, sds = sds)
-				})
-
-				dat.moy <- do.call(rbind, lapply(dat.clim, "[[", "moy"))
-				dat.sds <- do.call(rbind, lapply(dat.clim, "[[", "sds"))
-				dat.moy <- round(dat.moy, 1)
-				dat.sds <- round(dat.sds, 1)
+				dat.clim <- .cdt.Climatologies(index0, don0, minyear, freqData, xwin)
+				dat.moy <- round(dat.clim$mean, 1)
+				dat.sds <- round(dat.clim$sd, 1)
 
 				rm(dat.clim, don0, daty0)
 			}
 			anomaly.fonct <- GeneralParameters$anomaly
 		}
-
-		### anom
-		daty0 <- if(freqData == "monthly") as.Date(paste0(daty, 15), "%Y%m%d") else as.Date(daty, "%Y%m%d")
-
-		if(freqData == "daily"){
-			start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
-			end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
-		}
-		if(freqData == "pentad"){
-			start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
-			end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
-		}
-		if(freqData == "dekadal"){
-			start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
-			end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
-		}
-		if(freqData == "monthly"){
-			start.daty <- as.Date(paste(start.year, start.mon, 15, sep = "-"))
-			end.daty <- as.Date(paste(end.year, end.mon, 15, sep = "-"))
-		}
-
-		iyear <- daty0 >= start.daty & daty0 <= end.daty
-		daty <- daty[iyear]
-		if(length(daty) == 0){
-			Insert.Messages.Out("No data to compute anomaly", format = TRUE)
-			return(NULL)
-		}
-		don$data <- don$data[iyear, , drop = FALSE]
-		rm(daty0)
-
-		########
-		index <- cdt.index.Climatologies(daty, freqData, 0)
-		ixx <- match(index0$id, index$id)
-		ixx <- ixx[!is.na(ixx)]
-		index$id <- index$id[ixx]
-		index$index <- index$index[ixx]
-
-		index1 <- lapply(seq_along(index$id), function(j){
-			cbind(index$id[j], index$index[[j]])
-		})
-
-		index1 <- do.call(rbind, index1)
-		index1 <- index1[order(index1[, 2]), ]
-		daty <- daty[index1[, 2]]
-
-		if(anomaly.fonct == "Difference"){
-			anom <- don$data[index1[, 2], , drop = FALSE] - dat.moy[index1[, 1], , drop = FALSE]
-		}
-
-		if(anomaly.fonct == "Percentage"){
-			anom <- 100 * (don$data[index1[, 2], , drop = FALSE] - dat.moy[index1[, 1], , drop = FALSE]) / (dat.moy[index1[, 1], , drop = FALSE] + 0.001)
-		}
-
-		if(anomaly.fonct == "Standardized"){
-			anom <- (don$data[index1[, 2], , drop = FALSE] - dat.moy[index1[, 1], , drop = FALSE]) / dat.sds[index1[, 1], , drop = FALSE]
-		}
-
-		#########################################
-
-		if(GeneralParameters$outdir$update){
-			anom.dir <- dirname(GeneralParameters$outdir$dir)
-			anom.file.rds <- file.path(anom.dir, 'CDTANOM', 'CDTANOM.rds')
-			anom.file.csv <- file.path(anom.dir, 'CDTSTATIONS', paste0(freqData, "_Anomaly.csv"))
-
-			data.anom.rds <- readRDS(anom.file.rds)
-			data.anom.csv <- read.table(anom.file.csv, sep = ",", colClasses = "character", stringsAsFactors = FALSE)
-			infohead <- data.anom.csv[1:3, , drop = FALSE]
-			data.anom.csv <- data.anom.csv[-(1:3), -1]
-
-			ixold <- match(daty, don.anom$data$dates)
-			ixold <- ixold[!is.na(ixold)]
-
-			if(length(ixold) == 0){
-				don.anom$data$dates <- c(don.anom$data$dates, daty)
-				data.anom.rds <- rbind(data.anom.rds, anom)
-				anom[is.na(anom)] <- -99
-				anom <- as.data.frame(anom)
-				names(anom) <- names(data.anom.csv)
-				data.anom.csv <- rbind(data.anom.csv, anom)
-			}else{
-				don.anom$data$dates <- c(don.anom$data$dates[-ixold], daty)
-				data.anom.rds <- rbind(data.anom.rds[-ixold, , drop = FALSE], anom)
-				anom[is.na(anom)] <- -99
-				anom <- as.data.frame(anom)
-				names(anom) <- names(data.anom.csv)
-				data.anom.csv <- rbind(data.anom.csv[-ixold, , drop = FALSE], anom)
-			}
-
-			saveRDS(data.anom.rds, anom.file.rds)
-
-			tmp <- data.frame(cbind(don.anom$data$dates, data.anom.csv))
-			names(tmp) <- names(infohead)
-			data.anom.csv <- rbind(infohead, tmp)
-			writeFiles(data.anom.csv, anom.file.csv)
-
-			saveRDS(don.anom, GeneralParameters$outdir$dir)
-			.cdtData$EnvData$output <- don.anom
-			.cdtData$EnvData$PathAnom <- anom.dir
-
-			rm(tmp, don, anom, data.anom.csv, data.anom.rds, don.anom, dat.moy, dat.sds)
-		}else{
-			outDIR <- file.path(GeneralParameters$outdir$dir, "ANOMALIES_data")
-			dir.create(outDIR, showWarnings = FALSE, recursive = TRUE)
-			out.dat.index <- gzfile(file.path(outDIR, "Anomaly.rds"), compression = 7)
-
-			datadir <- file.path(outDIR, 'CDTSTATIONS')
-			dir.create(datadir, showWarnings = FALSE, recursive = TRUE)
-			out.cdt.anomal <- file.path(datadir, paste0(freqData, "_Anomaly.csv"))
-
-			dataOUT3 <- file.path(outDIR, 'CDTANOM')
-			dir.create(dataOUT3, showWarnings = FALSE, recursive = TRUE)
-			out.cdt.anom <- gzfile(file.path(dataOUT3, 'CDTANOM.rds'), compression = 7)
-
-			#############
-			saveRDS(anom, out.cdt.anom)
-			close(out.cdt.anom)
-
-			#############
-			xhead <- rbind(don$id, don$lon, don$lat)
-			chead <- c('ID.STN', 'LON', paste0(toupper(freqData), "/LAT"))
-			infohead <- cbind(chead, xhead)
-
-			#############
-			anom <- round(anom, 2)
-			anom[is.na(anom)] <- -99
-			anom <- rbind(infohead, cbind(daty, anom))
-			writeFiles(anom, out.cdt.anomal)
-
-			#############
-			if(GeneralParameters$climato$clim.exist){
-				output <- list(params = GeneralParameters,
-							data = list(id = don$id, lon = don$lon, lat = don$lat, dates = daty),
-							mean.file = mean.file, sds.file = sds.file)
-				.cdtData$EnvData$output <- output
-				.cdtData$EnvData$PathAnom <- outDIR
-
-				saveRDS(output, out.dat.index)
-				close(out.dat.index)
-			}else{
-				out.cdt.clim.moy <- file.path(datadir, paste0(freqData, "_Climatology_mean.csv"))
-				out.cdt.clim.sds <- file.path(datadir, paste0(freqData, "_Climatology_std.csv"))
-
-				out.climato.index <- gzfile(file.path(outDIR, "Climatology.rds"), compression = 7)
-
-				dataOUT1 <- file.path(outDIR, 'CDTMEAN')
-				dir.create(dataOUT1, showWarnings = FALSE, recursive = TRUE)
-				index.file.moy <- file.path(dataOUT1, 'CDTMEAN.rds')
-				out.cdt.moy <- gzfile(index.file.moy, compression = 7)
-
-				dataOUT2 <- file.path(outDIR, 'CDTSTD')
-				dir.create(dataOUT2, showWarnings = FALSE, recursive = TRUE)
-				index.file.sds <- file.path(dataOUT2, 'CDTSTD.rds')
-				out.cdt.sds <- gzfile(index.file.sds, compression = 7)
-
-				output <- list(params = GeneralParameters,
-							data = list(id = don$id, lon = don$lon, lat = don$lat, dates = daty),
-							mean.file = index.file.moy, sds.file = index.file.sds)
-				.cdtData$EnvData$output <- output
-				.cdtData$EnvData$PathAnom <- outDIR
-
-				params.clim <- c(GeneralParameters[c("intstep", "data.type", "cdtstation", "cdtdataset", "cdtnetcdf")],
-								list(climato = GeneralParameters$climato[c("start", "end", "minyear", "window")],
-									out.dir = GeneralParameters$outdir$dir))
-				output.clim <- list(params = params.clim,
-							data = list(id = don$id, lon = don$lon, lat = don$lat),
-							index = index0$id)
-
-				saveRDS(output.clim, out.climato.index)
-				close(out.climato.index)
-				saveRDS(output, out.dat.index)
-				close(out.dat.index)
-				saveRDS(dat.moy, out.cdt.moy)
-				close(out.cdt.moy)
-				saveRDS(dat.sds, out.cdt.sds)
-				close(out.cdt.sds)
-
-				##################
-				infohead[3, 1] <- "INDEX/LAT"
-				dat.moy[is.na(dat.moy)] <- -99
-				dat.moy <- rbind(infohead, cbind(index0$id, dat.moy))
-				writeFiles(dat.moy, out.cdt.clim.moy)
-
-				dat.sds[is.na(dat.sds)] <- -99
-				dat.sds <- rbind(infohead, cbind(index0$id, dat.sds))
-				writeFiles(dat.sds, out.cdt.clim.sds)
-			}
-			rm(dat.moy, dat.sds, output, don, anom)
-		}
 	}
 
-	#####################################################
+	##############################
 
 	if(GeneralParameters$data.type == "cdtdataset"){
-		don <- try(readRDS(GeneralParameters$cdtdataset$index), silent = TRUE)
-		if(inherits(don, "try-error")){
-			Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset$index), format = TRUE)
-			return(NULL)
-		}
-		if(freqData != don$TimeStep){
-			Insert.Messages.Out(paste("The dataset is not a", freqData, "data"), format = TRUE)
-			return(NULL)
-		}
-
-		daty <- don$dateInfo$date
-		year <- as.numeric(substr(daty, 1, 4))
-
 		if(GeneralParameters$outdir$update){
 			outDIR <- dirname(GeneralParameters$outdir$dir)
 			index.file.moy <- don.anom$mean.file
@@ -442,13 +245,6 @@ anomaliesCalcProcs <- function(GeneralParameters){
 					return(NULL)
 				}
 
-				iyear <- year >= year1 & year <= year2
-				daty0 <- daty[iyear]
-				index0 <- cdt.index.Climatologies(daty0, freqData, xwin)
-
-				div <- if(freqData == "daily") 2 * xwin + 1 else 1
-				Tstep.miss <- (sapply(index0$index, length) / div) < minyear
-
 				##################
 				out.climato.index <- gzfile(file.path(outDIR, "Climatology.rds"), compression = 7)
 
@@ -463,6 +259,12 @@ anomaliesCalcProcs <- function(GeneralParameters){
 				datadir2 <- file.path(outDIR, 'CDTSTD', 'DATA')
 				dir.create(datadir2, showWarnings = FALSE, recursive = TRUE)
 				index.file.sds <- file.path(outDIR, 'CDTSTD', 'CDTSTD.rds')
+
+				##################
+
+				iyear <- if(allyears) rep(TRUE, length(year)) else year >= year1 & year <= year2
+				daty0 <- daty[iyear]
+				index0 <- cdt.index.Climatologies(daty0, freqData, xwin)
 
 				##################
 
@@ -498,38 +300,18 @@ anomaliesCalcProcs <- function(GeneralParameters){
 				do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
 				do.parCALC <- if(do.parChunk) FALSE else TRUE
 
-				toExports <- c("readCdtDatasetChunk.sequence", "writeCdtDatasetChunk.sequence", "doparallel")
-				packages <- c("doParallel")
-
 				is.parallel <- doparallel(do.parCALC & (length(chunkcalc) > 10))
 				`%parLoop%` <- is.parallel$dofun
-				ret <- foreach(jj = seq_along(chunkcalc), .export = toExports, .packages = packages) %parLoop% {
+				ret <- foreach(jj = seq_along(chunkcalc), .packages = "doParallel") %parLoop% {
 					don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, do.par = do.parChunk)
 					don.data <- don.data[don$dateInfo$index, , drop = FALSE]
 					don.data <- don.data[iyear, , drop = FALSE]
 
-					dat.clim <- lapply(seq_along(index0$id), function(j){
-						if(Tstep.miss[jj]){
-							tmp <- rep(NA, ncol(don.data))
-							 return(list(moy = tmp, sds = tmp))
-						}
+					dat.clim <- .cdt.Climatologies(index0, don.data, minyear, freqData, xwin)
 
-						xx <- don.data[index0$index[[j]], , drop = FALSE]
-						ina <- (colSums(!is.na(xx)) / div) <  minyear
-						moy <- colMeans(xx, na.rm = TRUE)
-						sds <- matrixStats::colSds(xx, na.rm = TRUE)
-						moy[ina] <- NA
-						sds[ina] <- NA
-						rm(xx)
-						list(moy = moy, sds = sds)
-					})
-
-					dat.moy <- do.call(rbind, lapply(dat.clim, "[[", "moy"))
-					dat.sds <- do.call(rbind, lapply(dat.clim, "[[", "sds"))
-
-					writeCdtDatasetChunk.sequence(dat.moy, chunkcalc[[jj]], index.out.clim, datadir1, do.par = do.parChunk)
-					writeCdtDatasetChunk.sequence(dat.sds, chunkcalc[[jj]], index.out.clim, datadir2, do.par = do.parChunk)
-					rm(dat.clim, dat.moy, dat.sds, don.data); gc()
+					writeCdtDatasetChunk.sequence(dat.clim$mean, chunkcalc[[jj]], index.out.clim, datadir1, do.par = do.parChunk)
+					writeCdtDatasetChunk.sequence(dat.clim$sd, chunkcalc[[jj]], index.out.clim, datadir2, do.par = do.parChunk)
+					rm(dat.clim, don.data); gc()
 				}
 				if(is.parallel$stop) stopCluster(is.parallel$cluster)
 
@@ -565,53 +347,188 @@ anomaliesCalcProcs <- function(GeneralParameters){
 				})
 			}
 		}
+	}
 
-		### anom
-		daty0 <- if(freqData == "monthly") as.Date(paste0(daty, 15), "%Y%m%d") else as.Date(daty, "%Y%m%d")
+	#####################################################
 
-		if(freqData == "daily"){
-			start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
-			end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
+	### anom
+	daty0 <- if(freqData == "monthly") as.Date(paste0(daty, 15), "%Y%m%d") else as.Date(daty, "%Y%m%d")
+
+	if(freqData == "daily"){
+		start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
+		end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
+	}
+	if(freqData == "pentad"){
+		start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
+		end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
+	}
+	if(freqData == "dekadal"){
+		start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
+		end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
+	}
+	if(freqData == "monthly"){
+		start.daty <- as.Date(paste(start.year, start.mon, 15, sep = "-"))
+		end.daty <- as.Date(paste(end.year, end.mon, 15, sep = "-"))
+	}
+
+	iyear <- daty0 >= start.daty & daty0 <= end.daty
+	daty <- daty[iyear]
+	if(length(daty) == 0){
+		Insert.Messages.Out("No data to compute anomaly", format = TRUE)
+		return(NULL)
+	}
+	rm(daty0)
+
+	########
+
+	index1 <- cdt.index.Anomalies(daty, index0, freqData)
+	daty <- index1$date
+	index1 <- index1$index
+
+	#####################################################
+
+	if(GeneralParameters$data.type == "cdtstation"){
+		don$data <- don$data[iyear, , drop = FALSE]
+
+		data.sds <- if(anomaly.fonct == "Standardized") dat.sds else NULL
+		anom <- .cdt.Anomalies(index1, don$data, dat.moy, data.sds, anomaly.fonct)
+
+		#########################################
+
+		if(GeneralParameters$outdir$update){
+			anom.dir <- dirname(GeneralParameters$outdir$dir)
+			anom.file.rds <- file.path(anom.dir, 'CDTANOM', 'CDTANOM.rds')
+			anom.file.csv <- file.path(anom.dir, 'CDTSTATIONS', paste0(freqData, "_Anomaly.csv"))
+
+			data.anom.rds <- readRDS(anom.file.rds)
+			data.anom.csv <- read.table(anom.file.csv, sep = ",", colClasses = "character", stringsAsFactors = FALSE)
+			infohead <- data.anom.csv[1:3, , drop = FALSE]
+			data.anom.csv <- data.anom.csv[-(1:3), -1]
+
+			ixold <- match(daty, don.anom$data$dates)
+			ixold <- ixold[!is.na(ixold)]
+
+			if(length(ixold) == 0){
+				don.anom$data$dates <- c(don.anom$data$dates, daty)
+				data.anom.rds <- rbind(data.anom.rds, anom)
+				anom[is.na(anom)] <- .cdtData$Config$missval.anom
+				anom <- as.data.frame(anom)
+				names(anom) <- names(data.anom.csv)
+				data.anom.csv <- rbind(data.anom.csv, anom)
+			}else{
+				don.anom$data$dates <- c(don.anom$data$dates[-ixold], daty)
+				data.anom.rds <- rbind(data.anom.rds[-ixold, , drop = FALSE], anom)
+				anom[is.na(anom)] <- .cdtData$Config$missval.anom
+				anom <- as.data.frame(anom)
+				names(anom) <- names(data.anom.csv)
+				data.anom.csv <- rbind(data.anom.csv[-ixold, , drop = FALSE], anom)
+			}
+
+			saveRDS(data.anom.rds, anom.file.rds)
+
+			tmp <- data.frame(cbind(don.anom$data$dates, data.anom.csv))
+			names(tmp) <- names(infohead)
+			data.anom.csv <- rbind(infohead, tmp)
+			writeFiles(data.anom.csv, anom.file.csv)
+
+			saveRDS(don.anom, GeneralParameters$outdir$dir)
+			.cdtData$EnvData$output <- don.anom
+			.cdtData$EnvData$PathAnom <- anom.dir
+
+			rm(tmp, don, anom, data.anom.csv, data.anom.rds, don.anom, dat.moy, dat.sds)
+		}else{
+			outDIR <- file.path(GeneralParameters$outdir$dir, "ANOMALIES_data")
+			dir.create(outDIR, showWarnings = FALSE, recursive = TRUE)
+			out.dat.index <- gzfile(file.path(outDIR, "Anomaly.rds"), compression = 7)
+
+			datadir <- file.path(outDIR, 'CDTSTATIONS')
+			dir.create(datadir, showWarnings = FALSE, recursive = TRUE)
+			out.cdt.anomal <- file.path(datadir, paste0(freqData, "_Anomaly.csv"))
+
+			dataOUT3 <- file.path(outDIR, 'CDTANOM')
+			dir.create(dataOUT3, showWarnings = FALSE, recursive = TRUE)
+			out.cdt.anom <- gzfile(file.path(dataOUT3, 'CDTANOM.rds'), compression = 7)
+
+			#############
+			saveRDS(anom, out.cdt.anom)
+			close(out.cdt.anom)
+
+			#############
+			xhead <- rbind(don$id, don$lon, don$lat)
+			chead <- c('ID.STN', 'LON', paste0(toupper(freqData), "/LAT"))
+			infohead <- cbind(chead, xhead)
+
+			#############
+			anom <- round(anom, 2)
+			anom[is.na(anom)] <- .cdtData$Config$missval.anom
+			anom <- rbind(infohead, cbind(daty, anom))
+			writeFiles(anom, out.cdt.anomal)
+
+			#############
+			if(GeneralParameters$climato$clim.exist){
+				output <- list(params = GeneralParameters,
+							data = list(id = don$id, lon = don$lon, lat = don$lat, dates = daty),
+							mean.file = mean.file, sds.file = sds.file)
+				.cdtData$EnvData$output <- output
+				.cdtData$EnvData$PathAnom <- outDIR
+
+				saveRDS(output, out.dat.index)
+				close(out.dat.index)
+			}else{
+				out.cdt.clim.moy <- file.path(datadir, paste0(freqData, "_Climatology_mean.csv"))
+				out.cdt.clim.sds <- file.path(datadir, paste0(freqData, "_Climatology_std.csv"))
+
+				out.climato.index <- gzfile(file.path(outDIR, "Climatology.rds"), compression = 7)
+
+				dataOUT1 <- file.path(outDIR, 'CDTMEAN')
+				dir.create(dataOUT1, showWarnings = FALSE, recursive = TRUE)
+				index.file.moy <- file.path(dataOUT1, 'CDTMEAN.rds')
+				out.cdt.moy <- gzfile(index.file.moy, compression = 7)
+
+				dataOUT2 <- file.path(outDIR, 'CDTSTD')
+				dir.create(dataOUT2, showWarnings = FALSE, recursive = TRUE)
+				index.file.sds <- file.path(dataOUT2, 'CDTSTD.rds')
+				out.cdt.sds <- gzfile(index.file.sds, compression = 7)
+
+				output <- list(params = GeneralParameters,
+							data = list(id = don$id, lon = don$lon, lat = don$lat, dates = daty),
+							mean.file = index.file.moy, sds.file = index.file.sds)
+				.cdtData$EnvData$output <- output
+				.cdtData$EnvData$PathAnom <- outDIR
+
+				params.clim <- c(GeneralParameters[c("intstep", "data.type", "cdtstation", "cdtdataset", "cdtnetcdf")],
+								list(climato = GeneralParameters$climato[c("start", "end", "minyear", "window")],
+									out.dir = GeneralParameters$outdir$dir))
+				output.clim <- list(params = params.clim,
+							data = list(id = don$id, lon = don$lon, lat = don$lat),
+							index = index0$id)
+
+				saveRDS(output.clim, out.climato.index)
+				close(out.climato.index)
+				saveRDS(output, out.dat.index)
+				close(out.dat.index)
+				saveRDS(dat.moy, out.cdt.moy)
+				close(out.cdt.moy)
+				saveRDS(dat.sds, out.cdt.sds)
+				close(out.cdt.sds)
+
+				##################
+				infohead[3, 1] <- "INDEX/LAT"
+				dat.moy[is.na(dat.moy)] <- .cdtData$Config$missval
+				dat.moy <- rbind(infohead, cbind(index0$id, dat.moy))
+				writeFiles(dat.moy, out.cdt.clim.moy)
+
+				dat.sds[is.na(dat.sds)] <- .cdtData$Config$missval
+				dat.sds <- rbind(infohead, cbind(index0$id, dat.sds))
+				writeFiles(dat.sds, out.cdt.clim.sds)
+			}
+			rm(dat.moy, dat.sds, output, don, anom)
 		}
+	}
 
-		if(freqData == "pentad"){
-			start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
-			end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
-		}
-		if(freqData == "dekadal"){
-			start.daty <- as.Date(paste(start.year, start.mon, start.dek, sep = "-"))
-			end.daty <- as.Date(paste(end.year, end.mon, end.dek, sep = "-"))
-		}
-		if(freqData == "monthly"){
-			start.daty <- as.Date(paste(start.year, start.mon, 15, sep = "-"))
-			end.daty <- as.Date(paste(end.year, end.mon, 15, sep = "-"))
-		}
+	##############################
 
-		iyear <- daty0 >= start.daty & daty0 <= end.daty
-		daty <- daty[iyear]
-		if(length(daty) == 0){
-			Insert.Messages.Out("No data to compute anomaly", format = TRUE)
-			return(NULL)
-		}
-		rm(daty0)
-
-		########
-		index <- cdt.index.Climatologies(daty, freqData, 0)
-		ixx <- match(index0$id, index$id)
-		ixx <- ixx[!is.na(ixx)]
-		index$id <- index$id[ixx]
-		index$index <- index$index[ixx]
-
-		index1 <- lapply(seq_along(index$id), function(j){
-			cbind(index$id[j], index$index[[j]])
-		})
-
-		index1 <- do.call(rbind, index1)
-		index1 <- index1[order(index1[, 2]), ]
-		daty <- daty[index1[, 2]]
-
-		##################
-
+	if(GeneralParameters$data.type == "cdtdataset"){
 		ncdfOUT3 <- file.path(outDIR, 'DATA_NetCDF', 'CDTANOM')
 		datadir3 <- file.path(outDIR, 'CDTANOM', 'DATA')
 		index.file.anomal <- file.path(outDIR, 'CDTANOM', 'CDTANOM.rds')
@@ -668,36 +585,24 @@ anomaliesCalcProcs <- function(GeneralParameters){
 		#########################################
 
 		chunkfile <- sort(unique(don$colInfo$index))
-		chunkcalc <- split(chunkfile, ceiling(chunkfile/don$chunkfac))
+		chunkcalc <- split(chunkfile, ceiling(chunkfile / don$chunkfac))
 
 		do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
 		do.parCALC <- if(do.parChunk) FALSE else TRUE
 
-		toExports <- c("readCdtDatasetChunk.sequence", "writeCdtDatasetChunk.sequence", "doparallel")
-		packages <- c("doParallel")
-
 		is.parallel <- doparallel(do.parCALC & (length(chunkcalc) > 10))
 		`%parLoop%` <- is.parallel$dofun
-		ret <- foreach(jj = seq_along(chunkcalc), .export = toExports, .packages = packages) %parLoop% {
+		ret <- foreach(jj = seq_along(chunkcalc), .packages = "doParallel") %parLoop% {
 			don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, do.par = do.parChunk)
 			don.data <- don.data[don$dateInfo$index, , drop = FALSE]
 			don.data <- don.data[iyear, , drop = FALSE]
 
 			dat.moy <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.moy, do.par = do.parChunk)
 
-			if(anomaly.fonct == "Difference"){
-				anom <- don.data[index1[, 2], , drop = FALSE] - dat.moy[index1[, 1], , drop = FALSE]
-			}
-
-			if(anomaly.fonct == "Percentage"){
-				anom <- 100 * (don.data[index1[, 2], , drop = FALSE] - dat.moy[index1[, 1], , drop = FALSE]) / (dat.moy[index1[, 1], , drop = FALSE] + 0.001)
-			}
-
-			if(anomaly.fonct == "Standardized"){
-				dat.sds <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.sds, do.par = do.parChunk)
-				anom <- (don.data[index1[, 2], , drop = FALSE] - dat.moy[index1[, 1], , drop = FALSE]) / dat.sds[index1[, 1], , drop = FALSE]
-				rm(dat.sds)
-			}
+			data.sds <- NULL
+			if(anomaly.fonct == "Standardized")
+				data.sds <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.sds, do.par = do.parChunk)
+			anom <- .cdt.Anomalies(index1, don.data, dat.moy, data.sds, anomaly.fonct)
 
 			if(GeneralParameters$outdir$update){
 				dat.anom <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.anomal, do.par = do.parChunk)
@@ -731,17 +636,16 @@ anomaliesCalcProcs <- function(GeneralParameters){
 		######################
 
 		chunkfile <- sort(unique(don$colInfo$index))
-		datyread <- split(daty, ceiling(seq_along(daty)/50))
+		datyread <- split(daty, ceiling(seq_along(daty) / 50))
 
 		do.parChunk <- if(length(chunkfile) > length(datyread)) TRUE else FALSE
 		do.parCALC <- if(do.parChunk) FALSE else TRUE
 
-		toExports <- c("readCdtDatasetChunk.multi.dates.order", "doparallel")
 		packages <- c("doParallel", "ncdf4")
 
 		is.parallel <- doparallel(do.parCALC & (length(datyread) > 50))
 		`%parLoop%` <- is.parallel$dofun
-		ret <- foreach(jj = seq_along(datyread), .export = toExports, .packages = packages) %parLoop% {
+		ret <- foreach(jj = seq_along(datyread), .packages = packages) %parLoop% {
 			daty0 <- datyread[[jj]]
 			dat.anom <- readCdtDatasetChunk.multi.dates.order(index.file.anomal, daty0, do.par = do.parChunk)
 
@@ -760,7 +664,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
 		}
 		if(is.parallel$stop) stopCluster(is.parallel$cluster)
 
-		rm(don, index, index1, index.out)
+		rm(don, index1, index.out)
 	}
 
 	return(0)

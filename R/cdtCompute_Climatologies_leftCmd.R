@@ -19,7 +19,7 @@ climatologiesCalcPanelCmd <- function(){
 							cdtstation = list(file = ""),
 							cdtdataset = list(index = ""),
 							cdtnetcdf = list(dir = "", sample = "", format = "rfe_%s%s%s.nc"),
-							climato = list(start = 1981, end = 2010, minyear = 20, window = 0),
+							climato = list(allyears = TRUE, start = 1981, end = 2010, minyear = 20, window = 0),
 							out.dir = "")
 
 	xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Climatologies_leftCmd.xml")
@@ -103,7 +103,7 @@ climatologiesCalcPanelCmd <- function(){
 		cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
 
 		txt.infile <- tklabel(frameInData, text = tclvalue(txt.INData.var), textvariable = txt.INData.var, anchor = 'w', justify = 'left')
-		set.infile <- tkbutton(frameInData, text = lang.dlg[['button']][['1']], width = 8, state = stateSetNC)
+		set.infile <- tkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], width = 8, state = stateSetNC)
 
 		if(GeneralParameters$data.type == 'cdtstation'){
 			cb.en.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
@@ -234,43 +234,33 @@ climatologiesCalcPanelCmd <- function(){
 
 		frameBaseP <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
 
-		startYear <- tclVar(GeneralParameters$climato$start)
-		endYear <- tclVar(GeneralParameters$climato$end)
-		minYear <- tclVar(GeneralParameters$climato$minyear)
 		dayWin <- tclVar(GeneralParameters$climato$window)
 
 		statedayW <- if(GeneralParameters$intstep == "daily") "normal" else "disabled"
 
-		txt.BaseP <- tklabel(frameBaseP, text = lang.dlg[['label']][['7']], anchor = 'w', justify = 'left')
-		txt.sYear <- tklabel(frameBaseP, text = lang.dlg[['label']][['8']], anchor = 'e', justify = 'right')
-		txt.eYear <- tklabel(frameBaseP, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
-		en.sYear <- tkentry(frameBaseP, textvariable = startYear, width = 5)
-		en.eYear <- tkentry(frameBaseP, textvariable = endYear, width = 5)
-
-		txt.minYear <- tklabel(frameBaseP, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
-		en.minYear <- tkentry(frameBaseP, textvariable = minYear, width = 3)
-
+		bt.BasePeriod <- ttkbutton(frameBaseP, text = lang.dlg[['button']][['1']])
 		txt.daywin1 <- tklabel(frameBaseP, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
 		en.daywin <- tkentry(frameBaseP, textvariable = dayWin, width = 3, state = statedayW)
 		txt.daywin2 <- tklabel(frameBaseP, text = lang.dlg[['label']][['12']], anchor = 'w', justify = 'left')
 
+		tkconfigure(bt.BasePeriod, command = function(){
+			Params <- GeneralParameters[["climato"]][c('allyears', 'start', 'end', 'minyear')]
+			names(Params) <- c('all.years', 'start.year', 'end.year', 'min.year')
+			Params <- getInfoBasePeriod(.cdtEnv$tcl$main$win, Params)
+			GeneralParameters$climato$allyears <<- Params$all.years
+			GeneralParameters$climato$start <<- Params$start.year
+			GeneralParameters$climato$end <<- Params$end.year
+			GeneralParameters$climato$minyear <<- Params$min.year
+		})
+
 		######
-		tkgrid(txt.BaseP, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-		tkgrid(txt.sYear, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-		tkgrid(en.sYear, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-		tkgrid(txt.eYear, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-		tkgrid(en.eYear, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
 
-		tkgrid(txt.minYear, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.minYear, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.BasePeriod, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(txt.daywin1, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(en.daywin, row = 1, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(txt.daywin2, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
 
-		tkgrid(txt.daywin1, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-		tkgrid(en.daywin, row = 2, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-		tkgrid(txt.daywin2, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-
-		helpWidget(en.sYear, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
-		helpWidget(en.eYear, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-		helpWidget(en.minYear, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
+		helpWidget(bt.BasePeriod, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
 		helpWidget(en.daywin, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
 
 		#############################
@@ -316,9 +306,6 @@ climatologiesCalcPanelCmd <- function(){
 				GeneralParameters$cdtnetcdf$dir <- str_trim(tclvalue(input.file))
 
 			GeneralParameters$out.dir <- str_trim(tclvalue(dir.save))
-			GeneralParameters$climato$start <- as.numeric(str_trim(tclvalue(startYear)))
-			GeneralParameters$climato$end <- as.numeric(str_trim(tclvalue(endYear)))
-			GeneralParameters$climato$minyear <- as.numeric(str_trim(tclvalue(minYear)))
 			GeneralParameters$climato$window <- if(GeneralParameters$intstep == 'daily') as.numeric(str_trim(tclvalue(dayWin))) else 0
 
 			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingINData)){
@@ -435,7 +422,7 @@ climatologiesCalcPanelCmd <- function(){
 
 		cb.clim.Var <- ttkcombobox(frameClimatoMap, values = .cdtData$EnvData$CbClimSTAT, textvariable = .cdtData$EnvData$climVar, width = largeur3)
 		bt.clim.maps <- ttkbutton(frameClimatoMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 8)
-		cb.clim.Date <- ttkcombobox(frameClimatoMap, values = "", textvariable = .cdtData$EnvData$climDate, width = 3)
+		cb.clim.Date <- ttkcombobox(frameClimatoMap, values = "", textvariable = .cdtData$EnvData$climDate, width = 3, justify = 'center')
 		bt.clim.Date.prev <- ttkbutton(frameClimatoMap, text = "<<", width = 3)
 		bt.clim.Date.next <- ttkbutton(frameClimatoMap, text = ">>", width = 3)
 		bt.clim.MapOpt <- ttkbutton(frameClimatoMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)

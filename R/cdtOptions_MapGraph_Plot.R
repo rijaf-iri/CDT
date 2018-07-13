@@ -221,7 +221,7 @@ graphs.plot.bar <- function(x, y, xlim = NULL, ylim = NULL, origindate = NULL,
 	plot(x, y, type = 'n', xlab = '', ylab = '', axes = FALSE, xlim = xlim, ylim = ylim)
 	minTck <- axTicks(2)
 	minTck <- minTck[-length(minTck)] + diff(minTck)/2
-	minTck <-c(min(axTicks(2))-diff(minTck)[1]/2, minTck, max(axTicks(2))+diff(minTck)[1]/2)
+	minTck <- c(min(axTicks(2))-diff(minTck)[1]/2, minTck, max(axTicks(2))+diff(minTck)[1]/2)
 	abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
 	abline(h = minTck, col = "lightgray", lty = "dotted")
 
@@ -346,10 +346,10 @@ graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
 	plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
 	xminTck <- axTicks(1)
 	xminTck <- xminTck[-length(xminTck)] + diff(xminTck)/2
-	xminTck <-c(min(axTicks(2))-diff(xminTck)[1]/2, xminTck, max(axTicks(2))+diff(xminTck)[1]/2)
+	xminTck <- c(min(axTicks(2))-diff(xminTck)[1]/2, xminTck, max(axTicks(2))+diff(xminTck)[1]/2)
 	yminTck <- axTicks(2)
 	yminTck <- yminTck[-length(yminTck)] + diff(yminTck)/2
-	yminTck <-c(min(axTicks(2))-diff(yminTck)[1]/2, yminTck, max(axTicks(2))+diff(yminTck)[1]/2)
+	yminTck <- c(min(axTicks(2))-diff(yminTck)[1]/2, yminTck, max(axTicks(2))+diff(yminTck)[1]/2)
 	abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
 	abline(h = yminTck, col = "lightgray", lty = "dotted")
 	abline(v = axTicks(1), col = "lightgray", lty = "solid", lwd = 0.8)
@@ -614,7 +614,7 @@ graphs.plot.bar.ENSO <- function(x, y, oni, xlim = NULL, ylim = NULL, origindate
 	plot(x, y, type = 'n', xlab = '', ylab = '', axes = FALSE, xlim = xlim, ylim = ylim)
 	minTck <- axTicks(2)
 	minTck <- minTck[-length(minTck)] + diff(minTck)/2
-	minTck <-c(min(axTicks(2))-diff(minTck)[1]/2, minTck, max(axTicks(2))+diff(minTck)[1]/2)
+	minTck <- c(min(axTicks(2))-diff(minTck)[1]/2, minTck, max(axTicks(2))+diff(minTck)[1]/2)
 	abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
 	abline(h = minTck, col = "lightgray", lty = "dotted")
 
@@ -736,10 +736,10 @@ graphs.plot.proba.ENSO <- function(dat, oni, xlim = NULL, ylim = NULL, origindat
 	plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
 	xminTck <- axTicks(1)
 	xminTck <- xminTck[-length(xminTck)] + diff(xminTck)/2
-	xminTck <-c(min(axTicks(2))-diff(xminTck)[1]/2, xminTck, max(axTicks(2))+diff(xminTck)[1]/2)
+	xminTck <- c(min(axTicks(2))-diff(xminTck)[1]/2, xminTck, max(axTicks(2))+diff(xminTck)[1]/2)
 	yminTck <- axTicks(2)
 	yminTck <- yminTck[-length(yminTck)] + diff(yminTck)/2
-	yminTck <-c(min(axTicks(2))-diff(yminTck)[1]/2, yminTck, max(axTicks(2))+diff(yminTck)[1]/2)
+	yminTck <- c(min(axTicks(2))-diff(yminTck)[1]/2, yminTck, max(axTicks(2))+diff(yminTck)[1]/2)
 	abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
 	abline(h = yminTck, col = "lightgray", lty = "dotted")
 	abline(v = axTicks(1), col = "lightgray", lty = "solid", lwd = 0.8)
@@ -874,7 +874,7 @@ graphs.plot.bar.Anomaly <- function(x, y, period = c(1981, 2010), percent = TRUE
 	plot(x, y, type = 'n', xlab = '', ylab = '', axes = FALSE, xlim = xlim, ylim = ylim)
 	minTck <- axTicks(2)
 	minTck <- minTck[-length(minTck)] + diff(minTck)/2
-	minTck <-c(min(axTicks(2))-diff(minTck)[1]/2, minTck, max(axTicks(2))+diff(minTck)[1]/2)
+	minTck <- c(min(axTicks(2))-diff(minTck)[1]/2, minTck, max(axTicks(2))+diff(minTck)[1]/2)
 	abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
 	abline(h = minTck, col = "lightgray", lty = "dotted")
 
@@ -949,10 +949,15 @@ graphs.plot.bar.line <- function(x, y, y0 = 0, yticks = NULL,
 	}
 
 	if(is.null(xlim)) xlim <- range(x, na.rm = TRUE)
-	if(is.null(ylim)) ylim <- range(pretty(y))
+	if(!is.null(yticks)){
+		yticks1 <- yticks
+		yticks <- yticks - y0
+	}
+	y <- y - y0
+	ylim <- if(is.null(ylim)) range(pretty(y)) else ylim - y0
 
-	if(xlim[1] == xlim[2]) xlim <- xlim[1]+c(-0.5, 0.5)
-	if(xlim[2]-xlim[1] == 1) xlim <- xlim+c(-0.5, 0.5)
+	if(xlim[1] == xlim[2]) xlim <- xlim[1] + c(-0.5, 0.5)
+	if(xlim[2] - xlim[1] == 1) xlim <- xlim + c(-0.5, 0.5)
 
 	draw.title <- if(missing(title) | str_trim(title) == "") FALSE else TRUE
 	nr.ylab <- str_count(ylab, pattern = "\n")
@@ -988,52 +993,54 @@ graphs.plot.bar.line <- function(x, y, y0 = 0, yticks = NULL,
 
 	if(is.null(yticks)){
 		minTck <- axTicks(2)
-		minTck <- minTck[-length(minTck)] + diff(minTck)/2
-		minTck <-c(min(axTicks(2))-diff(minTck)[1]/2, minTck, max(axTicks(2))+diff(minTck)[1]/2)
+		minTck <- minTck[-length(minTck)] + diff(minTck) / 2
+		minTck <- c(min(axTicks(2)) - diff(minTck)[1] / 2, minTck, max(axTicks(2)) + diff(minTck)[1] / 2)
 		abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
 		abline(h = minTck, col = "lightgray", lty = "dotted")
 		yTck <- axTicks(2)
+		ylabTck <- yTck
 		ylas <- 1
 	}else{
 		abline(h = yticks, col = "lightgray", lty = "solid", lwd = 0.8)
 		yTck <- yticks
+		ylabTck <- yticks1
 		ylas <- 2
 	}
 
 	if(is(x, "Date")){
 		xTck <- axTicks.Date(x, 1)
 		axis.foo <- axis.Date
-		bar.width <- round(58*(as.numeric(diff(range(xlim)))/min(as.numeric(diff(x)), na.rm = TRUE))^(-0.508775))
+		bar.width <- round(58 * (as.numeric(diff(range(xlim))) / min(as.numeric(diff(x)), na.rm = TRUE))^(-0.508775))
 		if(as.numeric(diff(xlim)) > 1095){
 			xminor <- seq(as.Date(paste0(format(xlim[1], "%Y"), "-01-01")),
-						as.Date(paste0(as.numeric(format(xlim[2], "%Y"))+1, "-01-01")), "year")
-			xminor <- xminor[!xminor%in%xTck]
+						as.Date(paste0(as.numeric(format(xlim[2], "%Y")) + 1, "-01-01")), "year")
+			xminor <- xminor[!xminor %in% xTck]
 		}else xminor <- NULL
 	}else{
 		xTck <- axTicks(1)
-		xTck <- xTck[sapply(xTck, function(e) min(abs(c(e%%1, e%%1-1))) < 1e-10)]
+		xTck <- xTck[sapply(xTck, function(e) min(abs(c(e%%1, e%%1 - 1))) < 1e-10)]
 		axis.foo <- axis
-		bar.width <- round(60*as.numeric(diff(range(xlim)))^(-0.508775))
+		bar.width <- round(60 * as.numeric(diff(range(xlim)))^(-0.508775))
 		if(as.numeric(diff(xlim)) > 5){
 			xminor <- seq(floor(xlim[1]), floor(xlim[2]), 1)
-			xminor <- xminor[!xminor%in%xTck]
+			xminor <- xminor[!xminor %in% xTck]
 		}else xminor <- NULL
 	}
 	abline(v = xTck, col = "lightgray", lty = "dotted")
 
-	kol <- ifelse(y >= y0, 2, 1)
+	kol <- ifelse(y >= 0, 2, 1)
 	lines(x, y, type = "h", lwd = bar.width, lend = "butt", col = barcol[kol])
-	abline(h = y0, col = "lightgray", lty = "solid", lwd = 0.8)
+	abline(h = 0, col = "lightgray", lty = "solid", lwd = 0.8)
 	if(plot.line$plot) lines(x, y, lwd = plot.line$lwd, col = plot.line$col)
 
 	axis.foo(1, at = xTck, font = axis.font)
-	if(length(xminor) > 0) axis.foo(1, at = xminor, labels = NA, tcl = par("tcl")*0.5)
-	axis(2, at = yTck, las = ylas, font = axis.font)
+	if(length(xminor) > 0) axis.foo(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
+	axis(2, at = yTck, labels = ylabTck, las = ylas, font = axis.font)
 
 	mtext(xlab, side = 1, line = 2.1)
-	line <- if(max(nchar(as.character(axTicks(2)))) > 2) 3.8 else 2.5
+	line <- if(max(nchar(as.character(ylabTck))) > 2) 3.8 else 2.5
 	if(!is.null(ylab.sub)){
-		mtext(ylab, side = 2, line = line+1)
+		mtext(ylab, side = 2, line = line + 1)
 		mtext(ylab.sub, side = 2, line = line, font = 3, cex = 0.8)
 	}else mtext(ylab, side = 2, line = line)
 
@@ -1074,8 +1081,8 @@ graphs.plot.polygon <- function(x, y, y0 = 0, yticks = NULL,
 	if(is.null(xlim)) xlim <- range(x, na.rm = TRUE)
 	if(is.null(ylim)) ylim <- range(pretty(y))
 
-	if(xlim[1] == xlim[2]) xlim <- xlim[1]+c(-0.5, 0.5)
-	if(xlim[2]-xlim[1] == 1) xlim <- xlim+c(-0.5, 0.5)
+	if(xlim[1] == xlim[2]) xlim <- xlim[1] + c(-0.5, 0.5)
+	if(xlim[2] - xlim[1] == 1) xlim <- xlim + c(-0.5, 0.5)
 
 	draw.title <- if(missing(title) | str_trim(title) == "") FALSE else TRUE
 	nr.ylab <- str_count(ylab, pattern = "\n")
@@ -1111,8 +1118,8 @@ graphs.plot.polygon <- function(x, y, y0 = 0, yticks = NULL,
 
 	if(is.null(yticks)){
 		minTck <- axTicks(2)
-		minTck <- minTck[-length(minTck)] + diff(minTck)/2
-		minTck <-c(min(axTicks(2))-diff(minTck)[1]/2, minTck, max(axTicks(2))+diff(minTck)[1]/2)
+		minTck <- minTck[-length(minTck)] + diff(minTck) / 2
+		minTck <- c(min(axTicks(2)) - diff(minTck)[1] / 2, minTck, max(axTicks(2)) + diff(minTck)[1] / 2)
 		abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
 		abline(h = minTck, col = "lightgray", lty = "dotted")
 		yTck <- axTicks(2)
@@ -1126,20 +1133,20 @@ graphs.plot.polygon <- function(x, y, y0 = 0, yticks = NULL,
 	if(is(x, "Date")){
 		xTck <- axTicks.Date(x, 1)
 		axis.foo <- axis.Date
-		bar.width <- round(58*(as.numeric(diff(range(xlim)))/min(as.numeric(diff(x)), na.rm = TRUE))^(-0.508775))
+		bar.width <- round(58 * (as.numeric(diff(range(xlim))) / min(as.numeric(diff(x)), na.rm = TRUE))^(-0.508775))
 		if(as.numeric(diff(xlim)) > 1095){
 			xminor <- seq(as.Date(paste0(format(xlim[1], "%Y"), "-01-01")),
-						as.Date(paste0(as.numeric(format(xlim[2], "%Y"))+1, "-01-01")), "year")
-			xminor <- xminor[!xminor%in%xTck]
+						as.Date(paste0(as.numeric(format(xlim[2], "%Y")) + 1, "-01-01")), "year")
+			xminor <- xminor[!xminor %in% xTck]
 		}else xminor <- NULL
 	}else{
 		xTck <- axTicks(1)
-		xTck <- xTck[sapply(xTck, function(e) min(abs(c(e%%1, e%%1-1))) < 1e-10)]
+		xTck <- xTck[sapply(xTck, function(e) min(abs(c(e%%1, e%%1 - 1))) < 1e-10)]
 		axis.foo <- axis
-		bar.width <- round(60*as.numeric(diff(range(xlim)))^(-0.508775))
+		bar.width <- round(60 * as.numeric(diff(range(xlim)))^(-0.508775))
 		if(as.numeric(diff(xlim)) > 5){
 			xminor <- seq(floor(xlim[1]), floor(xlim[2]), 1)
-			xminor <- xminor[!xminor%in%xTck]
+			xminor <- xminor[!xminor %in% xTck]
 		}else xminor <- NULL
 	}
 	abline(v = xTck, col = "lightgray", lty = "dotted")
@@ -1154,13 +1161,13 @@ graphs.plot.polygon <- function(x, y, y0 = 0, yticks = NULL,
 	abline(h = y0, col = "lightgray", lty = "solid", lwd = 0.8)
 
 	axis.foo(1, at = xTck, font = axis.font)
-	if(length(xminor) > 0) axis.foo(1, at = xminor, labels = NA, tcl = par("tcl")*0.5)
+	if(length(xminor) > 0) axis.foo(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
 	axis(2, at = yTck, las = ylas, font = axis.font)
 
 	mtext(xlab, side = 1, line = 2.1)
 	line <- if(max(nchar(as.character(axTicks(2)))) > 2) 3.8 else 2.5
 	if(!is.null(ylab.sub)){
-		mtext(ylab, side = 2, line = line+1)
+		mtext(ylab, side = 2, line = line + 1)
 		mtext(ylab.sub, side = 2, line = line, font = 3, cex = 0.8)
 	}else mtext(ylab, side = 2, line = line)
 

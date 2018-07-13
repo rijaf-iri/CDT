@@ -15,6 +15,9 @@
         <button id="4">
             <text lang="en"> Options </text>
         </button>
+        <button id="5">
+            <text lang="en"> Settings </text>
+        </button>
         <label id="1">
             <text lang="en"> Open Files </text>
             <text lang="fr"> Fichiers Ouverts </text>

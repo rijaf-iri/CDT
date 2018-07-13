@@ -1,0 +1,1091 @@
+
+SPEICalcPanelCmd <- function(){
+	listOpenFiles <- openFile_ttkcomboList()
+	if(WindowsOS()){
+		largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
+		largeur1 <- .cdtEnv$tcl$fun$w.widgets(27)
+		largeur2 <- .cdtEnv$tcl$fun$w.widgets(29)
+		largeur3 <- 20
+		largeur4 <- 26
+		largeur5 <- 20
+	}else{
+		largeur0 <- .cdtEnv$tcl$fun$w.widgets(16)
+		largeur1 <- .cdtEnv$tcl$fun$w.widgets(21)
+		largeur2 <- .cdtEnv$tcl$fun$w.widgets(22)
+		largeur3 <- 15
+		largeur4 <- 20
+		largeur5 <- 14
+	}
+
+	GeneralParameters <- list(intstep = "dekadal", data.type = "cdtstation", 
+							cdtstation = list(prec = "", etp = ""),
+							cdtdataset = list(prec = "", etp = ""),
+							outfreq = "month", tscale = 3, distr = "log-Logistic",
+							monitoring = FALSE,
+							dates = list(year1 = 2018, mon1 = 6, dek1 = 1, year2 = 2018, mon2 = 6, dek2 = 3),
+							outdir = "")
+
+	# xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_SPEI_leftCmd.xml")
+	# lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+	# .cdtData$EnvData$message <- lang.dlg[['message']]
+
+	###################
+
+	.cdtEnv$tcl$main$cmd.frame <- tkframe(.cdtEnv$tcl$main$panel.left)
+
+	tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
+
+	cmd.tab1 <- bwAddTab(tknote.cmd, text = "SPEI")
+	cmd.tab2 <- bwAddTab(tknote.cmd, text = "Maps")
+	cmd.tab3 <- bwAddTab(tknote.cmd, text = "Graphs")
+	cmd.tab4 <- bwAddTab(tknote.cmd, text = "Boundaries")
+
+	bwRaiseTab(tknote.cmd, cmd.tab1)
+
+	tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
+	tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+	tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
+	tkgrid.columnconfigure(cmd.tab4, 0, weight = 1)
+
+	tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
+	tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
+	tkgrid.rowconfigure(cmd.tab3, 0, weight = 1)
+	tkgrid.rowconfigure(cmd.tab4, 0, weight = 1)
+
+	#######################################################################################################
+
+	#Tab1
+	subfr1 <- bwTabScrollableFrame(cmd.tab1)
+
+		#######################
+
+		frameTimeS <- ttklabelframe(subfr1, text = "Time step of input data", relief = 'groove')
+
+		timeSteps <- tclVar()
+		CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:5]
+		periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
+		tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$intstep]
+
+		cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, width = largeur1)
+
+		tkgrid(cb.fperiod, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		infobulle(cb.fperiod, 'Select the time step of the data')
+		status.bar.display(cb.fperiod, 'Select the time step of the data')
+
+		############
+
+		tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
+			valSPIfreq <- if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[4]) "month" else c("dekad", "month")
+			tkconfigure(cb.SPIfreq, values = valSPIfreq)
+			if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[4]){
+				tclvalue(out.spifreq) <- "month"
+				tclvalue(txt.suffix.var) <- '-month'
+			}
+			stateTscale <- if(str_trim(tclvalue(out.spifreq)) == 'month') "normal" else "disabled"
+			tkconfigure(spin.Tscale, state = stateTscale)
+		})
+
+		#######################
+
+		frameInData <- ttklabelframe(subfr1, text = "Input Data", relief = 'groove')
+
+		DataType <- tclVar()
+		CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
+		datatypeVAL <- c('cdtstation', 'cdtdataset')
+		tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% GeneralParameters$data.type]
+
+		if(GeneralParameters$data.type == 'cdtstation'){
+			input.Etp <- tclVar(GeneralParameters$cdtstation$etp)
+			input.Prec <- tclVar(GeneralParameters$cdtstation$prec)
+			txt.INEtp <- 'File containing stations PET data'
+			txt.INPrec <- 'File containing stations Precip data'
+		}else{
+			input.Etp <- tclVar(GeneralParameters$cdtdataset$etp)
+			input.Prec <- tclVar(GeneralParameters$cdtdataset$prec)
+			txt.INEtp <- 'Index file (*.rds) for PET data'
+			txt.INPrec <- 'Index file (*.rds) for Precip data'
+		}
+		txt.INEtp.var <- tclVar(txt.INEtp)
+		txt.INPrec.var <- tclVar(txt.INPrec)
+
+		txt.datatype <- tklabel(frameInData, text = "Format", anchor = 'w', justify = 'left')
+		cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
+
+		txt.prec <- tklabel(frameInData, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
+
+		if(GeneralParameters$data.type == 'cdtstation'){
+			cb.en.prec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
+		}else{
+			cb.en.prec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
+		}
+		bt.prec <- tkbutton(frameInData, text = "...")
+
+		############
+
+		tkconfigure(bt.prec, command = function(){
+			if(GeneralParameters$data.type == 'cdtstation'){
+				dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
+				if(!is.null(dat.opfiles)){
+					update.OpenFiles('ascii', dat.opfiles)
+					listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+					tclvalue(input.Prec) <- dat.opfiles[[1]]
+					lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
+				}
+			}else{
+				path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+				tclvalue(input.Prec) <- if(path.rds %in% c("", "NA")) "" else path.rds
+			}
+		})
+
+		##############
+		txt.etp <- tklabel(frameInData, text = tclvalue(txt.INEtp.var), textvariable = txt.INEtp.var, anchor = 'w', justify = 'left')
+
+		if(GeneralParameters$data.type == 'cdtstation'){
+			cb.en.etp <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Etp, width = largeur1)
+		}else{
+			cb.en.etp <- tkentry(frameInData, textvariable = input.Etp, width = largeur2)
+		}
+		bt.etp <- tkbutton(frameInData, text = "...")
+
+		############
+
+		tkconfigure(bt.etp, command = function(){
+			if(GeneralParameters$data.type == 'cdtstation'){
+				dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
+				if(!is.null(dat.opfiles)){
+					update.OpenFiles('ascii', dat.opfiles)
+					listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+					tclvalue(input.Etp) <- dat.opfiles[[1]]
+					lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
+				}
+			}else{
+				path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+				tclvalue(input.Etp) <- if(path.rds %in% c("", "NA")) "" else path.rds
+			}
+		})
+
+		############
+
+		tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, ipadx = 1)
+		tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, ipadx = 1)
+
+		tkgrid(txt.prec, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, ipadx = 1)
+		tkgrid(cb.en.prec, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, ipadx = 1)
+		tkgrid(bt.prec, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, ipadx = 1)
+
+		tkgrid(txt.etp, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, ipadx = 1)
+		tkgrid(cb.en.etp, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, ipadx = 1)
+		tkgrid(bt.etp, row = 4, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, ipadx = 1)
+
+		############
+		infobulle(cb.datatype, 'Select the format of the input data')
+		status.bar.display(cb.datatype, 'Select the format of the input data')
+
+		if(GeneralParameters$data.type == 'cdtstation'){
+			infobulle(cb.en.etp, 'Select the file containing the pontetial evapotranspiration')
+			status.bar.display(cb.en.etp, 'Select the file containing the pontetial evapotranspiration')
+			infobulle(cb.en.prec, 'Select the file containing the precipitation data')
+			status.bar.display(cb.en.prec, 'Select the file containing the precipitation data')
+
+			infobulle(bt.etp, 'Browse file if not listed')
+			status.bar.display(bt.etp, 'Browse file if not listed')
+			infobulle(bt.prec, 'Browse file if not listed')
+			status.bar.display(bt.prec, 'Browse file if not listed')
+		}else{
+			infobulle(cb.en.etp, 'Enter the full path to the file <pontetial evapotranspiration dataset name>.rds')
+			status.bar.display(cb.en.etp, 'Enter the full path to the file <pontetial evapotranspiration dataset name>.rds')
+			infobulle(cb.en.prec, 'Enter the full path to the file <precipitation dataset name>.rds')
+			status.bar.display(cb.en.prec, 'Enter the full path to the file <precipitation dataset name>.rds')
+
+			infobulle(bt.etp, 'or browse here')
+			status.bar.display(bt.etp, 'or browse here')
+			infobulle(bt.prec, 'or browse here')
+			status.bar.display(bt.prec, 'or browse here')
+		}
+
+		############
+
+		tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
+			tkdestroy(cb.en.etp)
+			tclvalue(input.Etp) <- ''
+
+			tkdestroy(cb.en.prec)
+			tclvalue(input.Prec) <- ''
+
+			###
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+				tclvalue(txt.INEtp.var) <- 'File containing stations PET data'
+				tclvalue(txt.INPrec.var) <- 'File containing stations Precip data'
+
+				cb.en.etp <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Etp, width = largeur1)
+				cb.en.prec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
+
+				######
+				tkconfigure(bt.etp, command = function(){
+					dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
+					if(!is.null(dat.opfiles)){
+						update.OpenFiles('ascii', dat.opfiles)
+						listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+						tclvalue(input.Etp) <- dat.opfiles[[1]]
+						lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
+					}
+				})
+
+				tkconfigure(bt.prec, command = function(){
+					dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
+					if(!is.null(dat.opfiles)){
+						update.OpenFiles('ascii', dat.opfiles)
+						listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+						tclvalue(input.Prec) <- dat.opfiles[[1]]
+						lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
+					}
+				})
+
+				######
+				infobulle(cb.en.etp, 'Select the file containing the pontetial evapotranspiration')
+				status.bar.display(cb.en.etp, 'Select the file containing the pontetial evapotranspiration')
+				infobulle(cb.en.prec, 'Select the file containing the precipitation data')
+				status.bar.display(cb.en.prec, 'Select the file containing the precipitation data')
+
+				infobulle(bt.etp, 'Browse file if not listed')
+				status.bar.display(bt.etp, 'Browse file if not listed')
+				infobulle(bt.prec, 'Browse file if not listed')
+				status.bar.display(bt.prec, 'Browse file if not listed')
+			}
+
+			###
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+				tclvalue(txt.INEtp.var) <- 'Index file (*.rds) for PET data'
+				tclvalue(txt.INPrec.var) <- 'Index file (*.rds) for Precip data'
+
+				cb.en.etp <- tkentry(frameInData, textvariable = input.Etp, width = largeur2)
+				cb.en.prec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
+
+				######
+				tkconfigure(bt.etp, command = function(){
+					path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+					tclvalue(input.Etp) <- if(path.rds %in% c("", "NA")) "" else path.rds
+				})
+
+				tkconfigure(bt.prec, command = function(){
+					path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+					tclvalue(input.Prec) <- if(path.rds %in% c("", "NA")) "" else path.rds
+				})
+
+				######
+				infobulle(cb.en.etp, 'Enter the full path to the file <pontetial evapotranspiration dataset name>.rds')
+				status.bar.display(cb.en.etp, 'Enter the full path to the file <pontetial evapotranspiration dataset name>.rds')
+				infobulle(cb.en.prec, 'Enter the full path to the file <precipitation dataset name>.rds')
+				status.bar.display(cb.en.prec, 'Enter the full path to the file <precipitation dataset name>.rds')
+
+				infobulle(bt.etp, 'or browse here')
+				status.bar.display(bt.etp, 'or browse here')
+				infobulle(bt.prec, 'or browse here')
+				status.bar.display(bt.prec, 'or browse here')
+			}
+
+			tkgrid(cb.en.prec, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, ipadx = 1)
+			tkgrid(cb.en.etp, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, ipadx = 1)
+		})
+
+		#############################
+
+		frameMoni <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
+
+		monitoring <- tclVar(GeneralParameters$monitoring)
+
+		if(GeneralParameters$monitoring){
+			statedates <- 'normal'
+			statedatedek <- if(GeneralParameters$outfreq == 'month') 'disabled' else 'normal'
+		}else{
+			statedates <- 'disabled'
+			statedatedek <- 'disabled'
+		}
+
+		chk.Moni <- tkcheckbutton(frameMoni, variable = monitoring, text = "Monitoring: update SPEI dataset", anchor = 'w', justify = 'left')
+		bt.DateRange <- ttkbutton(frameMoni, text = "Set Date Range", state = statedates)
+
+		tkconfigure(bt.DateRange, command = function(){
+			Params <- GeneralParameters[["dates"]]
+			names(Params) <- c("start.year", "start.mon", "start.day",
+								"end.year", "end.mon", "end.day")
+			Params <- getInfoDateRange(.cdtEnv$tcl$main$win, Params, daypendek.lab = 'Dekad', state.dek = statedatedek)
+			GeneralParameters$dates$year1 <<- Params$start.year
+			GeneralParameters$dates$mon1 <<- Params$start.mon
+			GeneralParameters$dates$dek1 <<- Params$start.day
+			GeneralParameters$dates$year2 <<- Params$end.year
+			GeneralParameters$dates$mon2 <<- Params$end.mon
+			GeneralParameters$dates$dek2 <<- Params$end.day
+		})
+
+		tkgrid(chk.Moni, row = 0, column = 0, rowspan = 1, columnspan = 1, padx = 1, ipadx = 1)
+		tkgrid(bt.DateRange, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, ipadx = 10)
+
+		###############
+
+		tkbind(chk.Moni, "<Button-1>", function(){
+			if(tclvalue(monitoring) == "0"){
+				statedates <- 'normal'
+				statedatedek <<- if(str_trim(tclvalue(out.spifreq)) == 'month') 'disabled' else 'normal'
+				tclvalue(txt.save.var) <- "Index file (SPEI.rds) for SPEI data"
+
+				tkconfigure(bt.outSPI, command = function(){
+					path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+					tclvalue(outSPIdir) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+				})
+			}else{
+				statedates <- 'disabled'
+				statedatedek <<- 'disabled'
+				tclvalue(txt.save.var) <- "Directory to save the outputs"
+				tkconfigure(bt.outSPI, command = function(){
+					dirSPI <- tk_choose.dir(getwd(), "")
+					tclvalue(outSPIdir) <- if(dirSPI %in% c("", "NA") | is.na(dirSPI)) "" else dirSPI
+				})
+			}
+
+			tkconfigure(bt.DateRange, state = statedates)
+		})
+
+		#############################
+
+		frameParams <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
+
+		out.spifreq <- tclVar(GeneralParameters$outfreq)
+		CbOutVAL <- c("dekad", "month")
+
+		if(GeneralParameters$outfreq == 'dekad'){
+			txt.suffix <- '-dekad'
+			stateTscale <- "disabled"
+			up.tscale <- 1
+			val.tscale <- 1
+		}else{
+			txt.suffix <- '-month'
+			stateTscale <- "normal"
+			up.tscale <- 60
+			val.tscale <- GeneralParameters$tscale
+		}
+		txt.suffix.var <- tclVar(txt.suffix)
+
+		frameTscale <- tkframe(frameParams)
+		txt.SPIfreq <- tklabel(frameTscale, text = "SPEI", anchor = 'e', justify = 'right')
+		cb.SPIfreq <- ttkcombobox(frameTscale, values = CbOutVAL, textvariable = out.spifreq, width = 8)
+		txt.Tscale1 <- tklabel(frameTscale, text = "Timescale", anchor = 'e', justify = 'right')
+		spin.Tscale <- ttkspinbox(frameTscale, from = 1, to = up.tscale, increment = 1, justify = 'center', width = 2, state = stateTscale)
+		tkset(spin.Tscale, val.tscale)
+		txt.Tscale2 <- tklabel(frameTscale, text = tclvalue(txt.suffix.var), textvariable = txt.suffix.var, anchor = 'w', justify = 'left')
+
+		tkgrid(txt.SPIfreq, cb.SPIfreq, txt.Tscale1, spin.Tscale, txt.Tscale2)
+
+		########
+		tkbind(cb.SPIfreq, "<<ComboboxSelected>>", function(){
+			if(str_trim(tclvalue(out.spifreq)) == 'dekad'){
+				stateTscale <- "disabled"
+				tclvalue(txt.suffix.var) <- '-dekad'
+				tkset(spin.Tscale, 1)
+				statedatedek <<- if(tclvalue(monitoring) == "1") "normal" else "disabled"
+			}
+			if(str_trim(tclvalue(out.spifreq)) == 'month'){
+				stateTscale <- "normal"
+				tclvalue(txt.suffix.var) <- '-month'
+				tkconfigure(spin.Tscale, to = 60)
+				statedatedek <<- "disabled"
+			}
+
+			tkconfigure(spin.Tscale, state = stateTscale)
+		})
+
+
+		########
+		tkgrid(frameTscale, row = 0, column = 0, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		#############################
+
+		frameDirSav <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
+
+		outSPIdir <- tclVar(GeneralParameters$outdir)
+
+		if(GeneralParameters$monitoring){
+			text.save <- "Index file (SPEI.rds) for SPEI data"
+		}else{
+			text.save <- "Directory to save the outputs"
+		}
+		txt.save.var <- tclVar(text.save)
+
+		txt.outSPI <- tklabel(frameDirSav, text = tclvalue(txt.save.var), textvariable = txt.save.var, anchor = 'w', justify = 'left')
+		en.outSPI <- tkentry(frameDirSav, textvariable = outSPIdir, width = largeur2)
+		bt.outSPI <- tkbutton(frameDirSav, text = "...")
+
+		######
+
+		tkconfigure(bt.outSPI, command = function(){
+			if(GeneralParameters$monitoring){
+				path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+				tclvalue(outSPIdir) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+			}else{
+				dirSPI <- tk_choose.dir(getwd(), "")
+				tclvalue(outSPIdir) <- if(dirSPI %in% c("", "NA") | is.na(dirSPI)) "" else dirSPI
+			}
+		})
+
+		######
+		tkgrid(txt.outSPI, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(en.outSPI, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(bt.outSPI, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+		infobulle(en.outSPI, 'Enter the full path to directory to save outputs')
+		status.bar.display(en.outSPI, 'Enter the full path to directory to save outputs')
+		infobulle(bt.outSPI, 'or browse here')
+		status.bar.display(bt.outSPI, 'or browse here')
+
+		#############################
+
+		if(!is.null(.cdtData$EnvData$DirExist)){
+			stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == "0") "normal" else "disabled"
+		}else stateCaclBut <- "normal"
+
+		calculateBut <- ttkbutton(subfr1, text = "Calculate", state = stateCaclBut)
+
+		#################
+
+		tkconfigure(calculateBut, command = function(){
+			GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+			GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+				GeneralParameters$cdtstation$etp <- str_trim(tclvalue(input.Etp))
+				GeneralParameters$cdtstation$prec <- str_trim(tclvalue(input.Prec))
+			}
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+				GeneralParameters$cdtdataset$etp <- str_trim(tclvalue(input.Etp))
+				GeneralParameters$cdtdataset$prec <- str_trim(tclvalue(input.Prec))
+			}
+
+			GeneralParameters$monitoring <- switch(tclvalue(monitoring), '0' = FALSE, '1' = TRUE)
+
+			GeneralParameters$outfreq <- str_trim(tclvalue(out.spifreq))
+			GeneralParameters$tscale <- as.numeric(str_trim(tclvalue(tkget(spin.Tscale))))
+
+			GeneralParameters$outdir <- str_trim(tclvalue(outSPIdir))
+			GeneralParameters$Indices <- "SPEI"
+
+			# assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
+
+			Insert.Messages.Out("Calculate SPEI ......")
+
+			tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
+			tcl('update')
+			ret <- tryCatch(
+				{
+					computeSPEIProcs(GeneralParameters)
+				},
+				warning = function(w) warningFun(w),
+				error = function(e) errorFun(e),
+				finally = {
+					tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+					tcl('update')
+				}
+			)
+
+			msg0 <- "SPEI calculation finished successfully"
+			msg1 <- "SPEI calculation failed"
+
+			if(!is.null(ret)){
+				if(ret == 0){
+					Insert.Messages.Out(msg0)
+
+					.cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
+					.cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
+					###################
+
+					widgets.Station.Pixel()
+					ret <- try(set.Data.Scales(), silent = TRUE)
+					if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+
+					ret <- try(set.Data.Dates(), silent = TRUE)
+					if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+				}else Insert.Messages.Out(msg1, format = TRUE)
+			}else Insert.Messages.Out(msg1, format = TRUE)
+		})
+
+		############################################
+
+		tkgrid(frameTimeS, row = 0, column = 0, sticky = '', padx = 1, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(frameInData, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 0)
+		tkgrid(frameMoni, row = 2, column = 0, sticky = '', padx = 1, pady = 0, ipadx = 1, ipady = 0)
+		tkgrid(frameParams, row = 3, column = 0, sticky = '', padx = 1, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(frameDirSav, row = 4, column = 0, sticky = 'we', padx = 1, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(calculateBut, row = 5, column = 0, sticky = '', padx = 1, pady = 2, ipadx = 1, ipady = 1)
+
+	#######################################################################################################
+
+	#Tab2
+	subfr2 <- bwTabScrollableFrame(cmd.tab2)
+
+		##############################################
+
+		frameDataExist <- ttklabelframe(subfr2, text = "SPEI data", relief = 'groove')
+
+		.cdtData$EnvData$DirExist <- tclVar(0)
+		file.dataIndex <- tclVar()
+
+		stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
+
+		chk.dataIdx <- tkcheckbutton(frameDataExist, variable = .cdtData$EnvData$DirExist, text = "SPEI data already computed", anchor = 'w', justify = 'left')
+		en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2, state = stateExistData)
+		bt.dataIdx <- tkbutton(frameDataExist, text = "...", state = stateExistData)
+
+		tkconfigure(bt.dataIdx, command = function(){
+			path.Stat <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+			if(path.Stat %in% c("", "NA") | is.na(path.Stat)) return(NULL)
+			tclvalue(file.dataIndex) <- path.Stat
+
+			if(file.exists(str_trim(tclvalue(file.dataIndex)))){
+				OutSPIdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+				if(inherits(OutSPIdata, "try-error")){
+					Insert.Messages.Out('Unable to load SPEI data', format = TRUE)
+					Insert.Messages.Out(gsub('[\r\n]', '', OutSPIdata[1]), format = TRUE)
+					tkconfigure(cb.spi.maps, values = "")
+					tclvalue(.cdtData$EnvData$spi.tscale) <- ""
+					tkconfigure(cb.spi.Date, values = "")
+					tclvalue(.cdtData$EnvData$spi.date) <- ""
+					return(NULL)
+				}
+
+				.cdtData$EnvData$output <- OutSPIdata
+				.cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+				.cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
+				.cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
+				###################
+
+				widgets.Station.Pixel()
+				ret <- try(set.Data.Scales(), silent = TRUE)
+				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+
+				ret <- try(set.Data.Dates(), silent = TRUE)
+				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+			}
+		})
+
+
+		tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.dataIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+		###############
+
+		tkbind(chk.dataIdx, "<Button-1>", function(){
+			stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
+			tkconfigure(en.dataIdx, state = stateExistData)
+			tkconfigure(bt.dataIdx, state = stateExistData)
+			stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
+			tkconfigure(calculateBut, state = stateCaclBut)
+		})
+
+		##############################################
+
+		frameSPIMap <- ttklabelframe(subfr2, text = "SPEI Map", relief = 'groove')
+
+		.cdtData$EnvData$spi.tscale <- tclVar()
+		.cdtData$EnvData$spi.date <- tclVar()
+
+		cb.spi.maps <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.tscale, width = largeur4)
+		bt.spi.maps <- ttkbutton(frameSPIMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
+		cb.spi.Date <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.date, width = largeur5)
+		bt.spi.Date.prev <- ttkbutton(frameSPIMap, text = "<<", width = 3)
+		bt.spi.Date.next <- ttkbutton(frameSPIMap, text = ">>", width = 3)
+		bt.spi.MapOpt <- ttkbutton(frameSPIMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
+
+		###############
+
+		.cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = TRUE),
+											userCol = list(custom = FALSE, color = NULL),
+											userLvl = list(custom = TRUE, levels = c(-2, -1.5, -1, 0, 1, 1.5, 2), equidist = TRUE),
+											title = list(user = FALSE, title = ''),
+											colkeyLab = list(user = FALSE, label = ''),
+											scalebar = list(add = FALSE, pos = 'bottomleft'))
+
+		tkconfigure(bt.spi.MapOpt, command = function(){
+			if(!is.null(.cdtData$EnvData$varData$map)){
+				atlevel <- pretty(.cdtData$EnvData$varData$map$z, n = 10, min.n = 7)
+				if(is.null(.cdtData$EnvData$dataMapOp$userLvl$levels)){
+					.cdtData$EnvData$dataMapOp$userLvl$levels <- atlevel
+				}else{
+					if(!.cdtData$EnvData$dataMapOp$userLvl$custom)
+						.cdtData$EnvData$dataMapOp$userLvl$levels <- atlevel
+				}
+			}
+			.cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$dataMapOp)
+		})
+
+		###############
+
+		.cdtData$EnvData$tab$dataMap <- NULL
+
+		tkconfigure(bt.spi.maps, command = function(){
+			if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != "" &
+				!is.null(.cdtData$EnvData$varData))
+			{
+				get.Data.Map()
+
+				SPICalc.Display.Maps('SPEI - Map', 'SPEI - Time Series')
+			}
+		})
+
+		tkconfigure(bt.spi.Date.prev, command = function(){
+			if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != ""){
+				donDates <- .cdtData$EnvData$varData$ts$dates
+				idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$spi.date)))
+				idaty <- idaty - 1
+				if(idaty < 1) idaty <- length(donDates)
+				tclvalue(.cdtData$EnvData$spi.date) <- donDates[idaty]
+				get.Data.Map()
+
+				SPICalc.Display.Maps('SPEI - Map', 'SPEI - Time Series')
+			}
+		})
+
+		tkconfigure(bt.spi.Date.next, command = function(){
+			if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != ""){
+				donDates <- .cdtData$EnvData$varData$ts$dates
+				idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$spi.date)))
+				idaty <- idaty + 1
+				if(idaty > length(donDates)) idaty <- 1
+				tclvalue(.cdtData$EnvData$spi.date) <- donDates[idaty]
+				get.Data.Map()
+
+				SPICalc.Display.Maps('SPEI - Map', 'SPEI - Time Series')
+			}
+		})
+
+		###############
+		tkgrid(cb.spi.maps, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.spi.maps, row = 0, column = 4, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.spi.Date.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.spi.Date, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.spi.Date.next, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.spi.MapOpt, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		###############
+		tkbind(cb.spi.maps, "<<ComboboxSelected>>", function(){
+			ret <- try(set.Data.Dates(), silent = TRUE)
+			if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+		})
+
+		##############################################
+
+		tkgrid(frameDataExist, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(frameSPIMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+	#######################################################################################################
+
+	#Tab3
+	subfr3 <- bwTabScrollableFrame(cmd.tab3)
+
+		##############################################
+
+		frameDataTS <- ttklabelframe(subfr3, text = "SPEI Graph", relief = 'groove')
+
+		typeTSPLOT <- c("Bar-Line", "Polygon")
+		.cdtData$EnvData$plot.maps$typeTSp <- tclVar("Bar-Line")
+
+		cb.typeTSp <- ttkcombobox(frameDataTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur5)
+		bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
+		bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
+
+		#################
+
+		.cdtData$EnvData$TSGraphOp <- list(
+							bar.line = list(
+								xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
+								ylim = list(is.min = FALSE, min = -10, is.max = FALSE, max = 10),
+								userYTcks = list(custom = TRUE, ticks = c(-2, -1.5, -1, 0, 1, 1.5, 2)),
+								axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+								title = list(is.title = FALSE, title = '', position = 'top'),
+								colors = list(y0 = 0, negative = "#CF661C", positive = "#157040"),
+								line = list(plot = FALSE, col = "black", lwd = 1.5)
+							)
+						)
+
+		tkconfigure(bt.TSGraphOpt, command = function(){
+			suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
+									"Bar-Line" = "Bar.Line",
+									"Polygon" = "Bar.Line")
+			plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
+			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSGraphOp)
+		})
+
+		#########
+		.cdtData$EnvData$tab$dataGraph <- NULL
+
+		tkconfigure(bt.TsGraph.plot, command = function(){
+			if(!is.null(.cdtData$EnvData$varData)){
+				imgContainer <- CDT.Display.Graph(SPICalc.Plot.Graph, .cdtData$EnvData$tab$dataGraph, 'SPEI - Time Series')
+				.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
+			}
+		})
+
+		#################
+
+		tkgrid(cb.typeTSp, row = 0, column = 0, sticky = 'we', pady = 1, columnspan = 1)
+		tkgrid(bt.TSGraphOpt, row = 0, column = 1, sticky = 'we', padx = 4, pady = 1, columnspan = 1)
+		tkgrid(bt.TsGraph.plot, row = 0, column = 2, sticky = 'we', pady = 1, columnspan = 1)
+
+		##############################################
+
+		frameSTNCrds <- ttklabelframe(subfr3, text = "Station/Coordinates", relief = 'groove')
+
+		frTS2 <- tkframe(frameSTNCrds)
+		.cdtData$EnvData$plot.maps$lonLOC <- tclVar()
+		.cdtData$EnvData$plot.maps$latLOC <- tclVar()
+		.cdtData$EnvData$plot.maps$stnIDTSp <- tclVar()
+
+		tkgrid(frTS2, row = 0, column = 0, sticky = 'e', pady = 1)
+
+		##############################################
+
+		frameVizTS <- tkframe(subfr3, relief = 'groove', borderwidth = 2)
+
+		.cdtData$EnvData$spiViz$max.tscale <- tclVar(12)
+
+		bt.VizTS <- ttkbutton(frameVizTS, text = "Visualizing time-scales")
+		bt.VizOpt <- ttkbutton(frameVizTS, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+		txt.VizTS <- tklabel(frameVizTS, text = "Maximum time-scale", anchor = 'e', justify = 'right')
+		en.VizTS <- tkentry(frameVizTS, textvariable = .cdtData$EnvData$spiViz$max.tscale, width = 3)
+
+		###############
+
+		.cdtData$EnvData$spiVizOp <- list(presetCol = list(color = 'spi.colors', reverse = FALSE),
+										userCol = list(custom = FALSE, color = NULL),
+										userLvl = list(custom = TRUE, levels = c(-2, -1.5, -1, 0, 1, 1.5, 2), equidist = TRUE),
+										title = list(user = FALSE, title = ''),
+										colkeyLab = list(user = FALSE, label = ''),
+										axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = TRUE, ylab = 'Time-scale (months)'))
+
+		tkconfigure(bt.VizOpt, command = function(){
+			.cdtData$EnvData$spiVizOp <- MapGraph.SpiVizOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$spiVizOp)
+		})
+
+		###############
+
+		.cdtData$EnvData$notebookTab.spiViz <- NULL
+
+		tkconfigure(bt.VizTS, command = function(){
+			if(!is.null(.cdtData$EnvData$varData)){
+				ret <- try(get.Data.spiViz(), silent = TRUE)
+				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+
+				imgContainer <- CDT.Display.Graph(SPICalc.Plot.VizTS, .cdtData$EnvData$tab$spiViz, 'SPEI - Time Scales')
+				.cdtData$EnvData$tab$spiViz <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$spiViz)
+			}
+		})
+
+		###############
+
+		tkgrid(bt.VizTS, row = 0, column = 0, sticky = 'we', padx = 3, ipadx = 1, pady = 1)
+		tkgrid(bt.VizOpt, row = 0, column = 1, sticky = 'we', padx = 3, ipadx = 1, pady = 1)
+		tkgrid(txt.VizTS, row = 1, column = 0, sticky = 'e', padx = 3, ipadx = 1, pady = 1)
+		tkgrid(en.VizTS, row = 1, column = 1, sticky = 'w', padx = 3, ipadx = 1, pady = 1)
+
+		##############################################
+
+		tkgrid(frameDataTS, row = 0, column = 0, sticky = 'we', pady = 1)
+		tkgrid(frameSTNCrds, row = 1, column = 0, sticky = '', pady = 3)
+		tkgrid(frameVizTS, row = 2, column = 0, sticky = '', pady = 3)
+
+	#######################################################################################################
+
+	#Tab4
+	subfr4 <- bwTabScrollableFrame(cmd.tab4)
+
+		##############################################
+
+		frameSHP <- ttklabelframe(subfr4, text = "Boundaries", relief = 'groove')
+
+		.cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
+		file.plotShp <- tclVar()
+		stateSHP <- "disabled"
+
+		chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
+		bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
+		cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
+		bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
+
+		########
+		tkconfigure(bt.addshp, command = function(){
+			shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
+			if(!is.null(shp.opfiles)){
+				update.OpenFiles('shp', shp.opfiles)
+				tclvalue(file.plotShp) <- shp.opfiles[[1]]
+				listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
+
+				tkconfigure(cb.addshp, values = unlist(listOpenFiles))
+
+				shpofile <- getShpOpenData(file.plotShp)
+				if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
+				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+			}
+		})
+
+		########
+		.cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+
+		tkconfigure(bt.addshpOpt, command = function(){
+			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtEnv$tcl$main$win, .cdtData$EnvData$SHPOp)
+		})
+
+		########
+		tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+		tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+		tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+		tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
+
+		#################
+		tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
+			shpofile <- getShpOpenData(file.plotShp)
+			if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
+			.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+		})
+
+		tkbind(chk.addshp, "<Button-1>", function(){
+			stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
+			tkconfigure(cb.addshp, state = stateSHP)
+			tkconfigure(bt.addshp, state = stateSHP)
+			tkconfigure(bt.addshpOpt, state = stateSHP)
+		})
+
+		##############################################
+
+		tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
+
+	#######################################################################################################
+
+	widgets.Station.Pixel <- function(){
+		tkdestroy(frTS2)
+		frTS2 <<- tkframe(frameSTNCrds)
+
+		if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
+			stnIDTSPLOT <- .cdtData$EnvData$output$data$id
+			txt.stnSel <- tklabel(frTS2, text = "Select a station to plot")
+			bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = 6)
+			bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = 6)
+			cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur5)
+			tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
+
+			tkconfigure(bt.stnID.prev, command = function(){
+				if(!is.null(.cdtData$EnvData$varData)){
+					istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+					istn <- istn - 1
+					if(istn < 1) istn <- length(stnIDTSPLOT)
+					tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
+
+					imgContainer <- CDT.Display.Graph(SPICalc.Plot.Graph, .cdtData$EnvData$tab$dataGraph, 'SPEI - Time Series')
+					.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
+				}
+			})
+
+			tkconfigure(bt.stnID.next, command = function(){
+				if(!is.null(.cdtData$EnvData$varData)){
+					istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+					istn <- istn + 1
+					if(istn > length(stnIDTSPLOT)) istn <- 1
+					tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
+
+					imgContainer <- CDT.Display.Graph(SPICalc.Plot.Graph, .cdtData$EnvData$tab$dataGraph, 'SPEI - Time Series')
+					.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
+				}
+			})
+
+			tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		}else{
+			txt.crdSel <- tklabel(frTS2, text = "Enter longitude and latitude to plot", anchor = 'w', justify = 'left')
+			txt.lonLoc <- tklabel(frTS2, text = "Longitude", anchor = 'e', justify = 'right')
+			en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
+			txt.latLoc <- tklabel(frTS2, text = "Latitude", anchor = 'e', justify = 'right')
+			en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+			stnIDTSPLOT <- ""
+			tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
+
+			tkgrid(txt.crdSel, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(txt.lonLoc, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(en.lonLoc, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(txt.latLoc, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+			tkgrid(en.latLoc, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		}
+
+		tkgrid(frTS2, row = 0, column = 0, sticky = 'e', pady = 1)
+		return(0)
+	}
+
+	#################
+
+	set.Data.Scales <- function(){
+		path.data <- file.path(.cdtData$EnvData$PathData, "CDTDATASET")
+		spi.tscales <- list.files(path.data, "SPEI_.+")
+		if(length(spi.tscales) == 0){
+			Insert.Messages.Out('No SPEI data found', format = TRUE)
+			return(NULL)
+		}
+		if(.cdtData$EnvData$output$params$data.type == "cdtstation")
+			spi.tscales <- file_path_sans_ext(spi.tscales)
+
+		nch <- nchar(spi.tscales)
+		tsc <- str_pad(substr(spi.tscales, 6, nch - 3), 2, pad = "0")
+		scales <- substr(spi.tscales, nch - 2, nch)
+
+		spi.tscalesF <- spi.tscales[order(paste0(scales, tsc))]
+		spi.tscales <- paste0("SPEI-", as.numeric(tsc), "-", ifelse(scales == "dek", "Dekad", "Month"))
+		spi.tscales <- spi.tscales[order(paste0(scales, tsc))]
+
+		.cdtData$EnvData$varData$spi$disp <- spi.tscales
+		.cdtData$EnvData$varData$spi$dataF <- spi.tscalesF
+
+		tkconfigure(cb.spi.maps, values = spi.tscales)
+		tclvalue(.cdtData$EnvData$spi.tscale) <- spi.tscales[1]
+		return(0)
+	}
+
+	#################
+
+	set.Data.Dates <- function(){
+		path.data <- file.path(.cdtData$EnvData$PathData, "CDTDATASET")
+		spi_scale <- str_trim(tclvalue(.cdtData$EnvData$spi.tscale))
+
+		ipos <- which(.cdtData$EnvData$varData$spi$disp %in% spi_scale)
+		tscale.data <- .cdtData$EnvData$varData$spi$dataF[ipos]
+		file.index <-
+			if(.cdtData$EnvData$output$params$data.type == "cdtstation")
+				file.path(path.data, paste0(tscale.data, ".rds"))
+			else
+				file.path(path.data, tscale.data, paste0(tscale.data, ".rds"))
+
+		if(!file.exists(file.index)){
+			Insert.Messages.Out(paste(file.index, 'not found'), format = TRUE)
+			return(NULL)
+		}
+
+		read.cdt.dataIdx <- TRUE
+		if(!is.null(.cdtData$EnvData$cdtdataset))
+			if(!is.null(.cdtData$EnvData$file.index))
+				if(.cdtData$EnvData$file.index == file.index) read.cdt.dataIdx <- FALSE
+		if(read.cdt.dataIdx){
+			cdtdataset <- readRDS(file.index)
+			daty <- if(.cdtData$EnvData$output$params$data.type == "cdtstation") cdtdataset$date else cdtdataset$dateInfo$date
+
+			tkconfigure(cb.spi.Date, values = daty)
+			tclvalue(.cdtData$EnvData$spi.date) <- daty[length(daty)]
+
+			.cdtData$EnvData$varData$ts$step <- strsplit(spi_scale, "-")[[1]][3]
+			.cdtData$EnvData$varData$ts$dates <- daty
+			.cdtData$EnvData$cdtdataset <- cdtdataset
+			.cdtData$EnvData$cdtdataset$fileInfo <- file.index
+			.cdtData$EnvData$file.index <- file.index
+		}
+
+		return(0)
+	}
+
+	#################
+
+	get.Data.Map <- function(){
+		tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
+		tcl('update')
+		on.exit({
+			tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+			tcl('update')
+		})
+
+		this.daty <- str_trim(tclvalue(.cdtData$EnvData$spi.date))
+
+		readVarData <- TRUE
+		if(!is.null(.cdtData$EnvData$varData))
+			if(!is.null(.cdtData$EnvData$varData$spi$this.daty))
+				if(.cdtData$EnvData$varData$spi$this.daty == this.daty) readVarData <- FALSE
+
+		if(readVarData){
+			if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
+				idt <- which(.cdtData$EnvData$cdtdataset$date == this.daty)
+				x <- .cdtData$EnvData$output$data$lon
+				y <- .cdtData$EnvData$output$data$lat
+				tmp <- as.numeric(.cdtData$EnvData$cdtdataset$spi[idt, ])
+
+				nx <- nx_ny_as.image(diff(range(x)))
+				ny <- nx_ny_as.image(diff(range(y)))
+
+				tmp <- cdt.as.image(tmp, nx = nx, ny = ny, pts.xy = cbind(x, y))
+				.cdtData$EnvData$varData$map$x <- tmp$x
+				.cdtData$EnvData$varData$map$y <- tmp$y
+				.cdtData$EnvData$varData$map$z <- tmp$z
+			}else{
+				ipos <- which(.cdtData$EnvData$varData$spi$disp %in% str_trim(tclvalue(.cdtData$EnvData$spi.tscale)))
+				tscale.data <- .cdtData$EnvData$varData$spi$dataF[ipos]
+
+				nc.file <- file.path(.cdtData$EnvData$PathData, "DATA_NetCDF", tscale.data, paste0("spei_", this.daty, ".nc"))
+				nc <- nc_open(nc.file)
+				.cdtData$EnvData$varData$map$x <- nc$dim[[1]]$vals
+				.cdtData$EnvData$varData$map$y <- nc$dim[[2]]$vals
+				.cdtData$EnvData$varData$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
+				nc_close(nc)
+			}
+
+			.cdtData$EnvData$varData$spi$this.daty <- this.daty
+		}
+	}
+
+	#################
+
+	get.Data.spiViz <- function(){
+		file.mon.prec <- file.path(.cdtData$EnvData$PathData, "MONTHLY_precip")
+		file.dek.prec <- file.path(.cdtData$EnvData$PathData, "DEKADAL_precip")
+		file.mon.etp <- file.path(.cdtData$EnvData$PathData, "MONTHLY_pet")
+		file.dek.etp <- file.path(.cdtData$EnvData$PathData, "DEKADAL_pet")
+
+		if(file.exists(file.mon.prec) & file.exists(file.mon.etp)){
+			file.index.prec <- file.mon.prec
+			file.index.etp <- file.mon.etp
+			viztstep <- "monthly"
+		}else{
+			if(file.exists(file.dek.prec) & file.exists(file.dek.etp)){
+				file.index.prec <- file.dek.etp
+				file.index.etp <- file.dek.etp
+				viztstep <- "dekadal"
+			}else{
+				Insert.Messages.Out('No dekadal or monthly data found', format = TRUE)
+				return(NULL)
+			}
+		}
+
+		readspiVizData <- TRUE
+		if(!is.null(.cdtData$EnvData$spiViz))
+			if(!is.null(.cdtData$EnvData$spiViz$tstep))
+				if(.cdtData$EnvData$spiViz$tstep == viztstep) readspiVizData <- FALSE
+
+		if(readspiVizData){
+			file.index.prec <- file.path(file.index.prec, paste0(basename(file.index.prec), ".rds"))
+			file.index.etp <- file.path(file.index.etp, paste0(basename(file.index.etp), ".rds"))
+			.cdtData$EnvData$spiViz$cdtdataset$prec <- readRDS(file.index.prec)
+			.cdtData$EnvData$spiViz$cdtdataset$etp <- readRDS(file.index.etp)
+			.cdtData$EnvData$spiViz$cdtdataset$fileInfo.prec <- file.index.prec
+			.cdtData$EnvData$spiViz$cdtdataset$fileInfo.etp <- file.index.etp
+			.cdtData$EnvData$spiViz$tstep <- viztstep
+		}
+
+		return(0)
+	}
+
+	#######################################################################################################
+
+	tkgrid(tknote.cmd, sticky = 'nwes')
+	tkgrid.columnconfigure(tknote.cmd, 0, weight = 1)
+	tkgrid.rowconfigure(tknote.cmd, 0, weight = 1)
+
+	tcl('update')
+	tkgrid(.cdtEnv$tcl$main$cmd.frame, sticky = 'nwes', pady = 1)
+	tkgrid.columnconfigure(.cdtEnv$tcl$main$cmd.frame, 0, weight = 1)
+	tkgrid.rowconfigure(.cdtEnv$tcl$main$cmd.frame, 0, weight = 1)
+
+	invisible()
+}

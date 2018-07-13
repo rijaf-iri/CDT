@@ -440,7 +440,7 @@ computeTvars_getParams <- function(){
 			.cdtData$GalParams$Tstep <- switch(str_trim(tclvalue(timeSteps)), 
 												'Daily data' = 'daily',
 												'Pentad data' = 'pentad',
-												'Dekadal data' =  'dekadal',
+												'Dekadal data' = 'dekadal',
 												'Monthly data' = 'monthly')
 			.cdtData$GalParams$variable <- str_trim(tclvalue(temp.variable))
 

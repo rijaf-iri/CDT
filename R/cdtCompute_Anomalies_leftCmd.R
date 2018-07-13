@@ -20,8 +20,8 @@ anomaliesCalcPanelCmd <- function(){
 							cdtdataset = list(index = ""),
 							Dates = list(start.year = 1981, start.mon = 1, start.dek = 1,
 										end.year = 2017, end.mon = 12, end.dek = 3),
-							climato = list(clim.exist = FALSE, clim.file = "",
-									start = 1981, end = 2010, minyear = 20, window = 0),
+							climato = list(clim.exist = FALSE, clim.file = "", allyears = TRUE,
+											start = 1981, end = 2010, minyear = 20, window = 0),
 							anomaly = "Difference", outdir = list(update = FALSE, dir = ""))
 
 	# xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Anomalies_leftCmd.xml")
@@ -63,12 +63,9 @@ anomaliesCalcPanelCmd <- function(){
 		frameTimeS <- ttklabelframe(subfr1, text = "Time step of input data", relief = 'groove')
 
 		timeSteps <- tclVar()
-		CbperiodVAL <- c('Daily data', 'Pentad data', 'Dekadal data', 'Monthly data')
-		tclvalue(timeSteps) <- switch(GeneralParameters$intstep, 
-										'daily' = CbperiodVAL[1],
-										'pentad' = CbperiodVAL[2],
-										'dekadal' = CbperiodVAL[3],
-										'monthly' = CbperiodVAL[4])
+		CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:5]
+		periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
+		tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$intstep]
 
 		cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, width = largeur1)
 
@@ -81,15 +78,14 @@ anomaliesCalcPanelCmd <- function(){
 
 		tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
 			if(tclvalue(updateAnom) == '0'){
-				statedayW <- if(str_trim(tclvalue(timeSteps)) == 'Daily data' &
+				statedayW <- if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[1] &
 								tclvalue(climDataExist) == '0') "normal" else "disabled"
 			}else statedayW <- "disabled"
 
 			tkconfigure(en.daywin, state = statedayW)
-			tclvalue(day.txtVar) <- switch(tclvalue(timeSteps), 'Dekadal data' = 'Dek', 'Pentad data' = 'Pen', 'Day')
-			stateday <- if(tclvalue(timeSteps) == 'Monthly data') 'disabled' else 'normal'
-			tkconfigure(en.day1, state = stateday)
-			tkconfigure(en.day2, state = stateday)
+			tclvalue(day.txtVar) <- ifelse(str_trim(tclvalue(timeSteps)) == CbperiodVAL[3], 'Dekad',
+									ifelse(str_trim(tclvalue(timeSteps)) == CbperiodVAL[2], 'Pentad', 'Day'))
+			statedate <<- if(tclvalue(timeSteps) == CbperiodVAL[4]) 'disabled' else 'normal'
 		})
 
 		#######################
@@ -97,10 +93,9 @@ anomaliesCalcPanelCmd <- function(){
 		frameInData <- ttklabelframe(subfr1, text = "Input Data", relief = 'groove')
 
 		DataType <- tclVar()
-		CbdatatypeVAL <- c('CDT stations data format', 'CDT dataset format (gridded)')
-		tclvalue(DataType) <- switch(GeneralParameters$data.type,
-									'cdtstation' = CbdatatypeVAL[1],
-									'cdtdataset' = CbdatatypeVAL[2])
+		CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
+		datatypeVAL <- c('cdtstation', 'cdtdataset')
+		tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% GeneralParameters$data.type]
 
 		if(GeneralParameters$data.type == 'cdtstation'){
 			input.file <- tclVar(GeneralParameters$cdtstation$file)
@@ -174,7 +169,7 @@ anomaliesCalcPanelCmd <- function(){
 			tclvalue(input.file) <- ''
 
 			###
-			if(str_trim(tclvalue(DataType)) == 'CDT stations data format'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 				tclvalue(txt.INData.var) <- 'File containing stations data'
 
 				cb.en.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
@@ -196,7 +191,7 @@ anomaliesCalcPanelCmd <- function(){
 			}
 
 			###
-			if(str_trim(tclvalue(DataType)) == 'CDT dataset format (gridded)'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
 				tclvalue(txt.INData.var) <- 'Index file (*.rds) of the dataset'
 
 				cb.en.infile <- tkentry(frameInData, textvariable = input.file, width = largeur2)
@@ -223,7 +218,7 @@ anomaliesCalcPanelCmd <- function(){
 		outAnom <- tclVar(GeneralParameters$outdir$dir)
 
 		if(GeneralParameters$outdir$update){
-			txt.upAnom <- 'Path to the file Anomaly.rds'
+			txt.upAnom <- 'Path to the file (Anomaly.rds)'
 		}else{
 			txt.upAnom <- "Directory to save the outputs"
 		}
@@ -268,7 +263,7 @@ anomaliesCalcPanelCmd <- function(){
 
 		tkbind(chk.outAnom, "<Button-1>", function(){
 			if(tclvalue(updateAnom) == '0'){
-				tclvalue(txt.upAnom.var) <- 'Path to the file Anomaly.rds'
+				tclvalue(txt.upAnom.var) <- 'Path to the file (Anomaly.rds)'
 
 				tkconfigure(bt.outAnom, command = function(){
 					path.anomIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), initialfile = "", filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -293,7 +288,7 @@ anomaliesCalcPanelCmd <- function(){
 				stateClim.Ex <- 'normal'
 				stateClim <- if(tclvalue(climDataExist) == '1') 'normal' else 'disabled'
 				stateBaseP <- if(tclvalue(climDataExist) == '1') 'disabled' else 'normal'
-				statedayW <- if(str_trim(tclvalue(timeSteps)) == 'Daily data' & 
+				statedayW <- if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[1] & 
 								tclvalue(climDataExist) == '0') "normal" else "disabled"
 				stateAnomC <- 'normal'
 			}else{
@@ -308,12 +303,8 @@ anomaliesCalcPanelCmd <- function(){
 			tkconfigure(en.climIdx, state = stateClim)
 			tkconfigure(bt.climIdx, state = stateClim)
 
-			tkconfigure(en.sYear, state = stateBaseP)
-			tkconfigure(en.eYear, state = stateBaseP)
-			tkconfigure(en.minYear, state = stateBaseP)
-
+			tkconfigure(bt.BasePeriod, state = stateBaseP)
 			tkconfigure(en.daywin, state = statedayW)
-
 			tkconfigure(cb.anomaly, state = stateAnomC)
 		})
 
@@ -330,45 +321,27 @@ anomaliesCalcPanelCmd <- function(){
 
 		##############################################
 
-		frametDate <- ttklabelframe(subfr2, text = "Anomalies Date Range", relief = 'groove')
-
-		istart.yrs <- tclVar(GeneralParameters$Dates$start.year)
-		istart.mon <- tclVar(GeneralParameters$Dates$start.mon)
-		istart.day <- tclVar(GeneralParameters$Dates$start.dek)
-		iend.yrs <- tclVar(GeneralParameters$Dates$end.year)
-		iend.mon <- tclVar(GeneralParameters$Dates$end.mon)
-		iend.day <- tclVar(GeneralParameters$Dates$end.dek)
-
-		txtdek <- switch(GeneralParameters$intstep, 'dekadal' = 'Dek', 'pentad' = 'Pen', 'Day')
+		txtdek <- switch(GeneralParameters$intstep, 'dekadal' = 'Dekad', 'pentad' = 'Pentad', 'Day')
 		day.txtVar <- tclVar(txtdek)
 		statedate <- if(GeneralParameters$intstep == 'monthly') 'disabled' else 'normal'
 
-		txt.deb <- tklabel(frametDate, text = 'Start date', anchor = 'e', justify = 'right')
-		txt.fin <- tklabel(frametDate, text = 'End date', anchor = 'e', justify = 'right')
-		txt.yrs <- tklabel(frametDate, text = 'Year')
-		txt.mon <- tklabel(frametDate, text = 'Month')
-		txt.day <- tklabel(frametDate, text = tclvalue(day.txtVar), textvariable = day.txtVar)
-		en.yrs1 <- tkentry(frametDate, width = 4, textvariable = istart.yrs, justify = "right")
-		en.mon1 <- tkentry(frametDate, width = 4, textvariable = istart.mon, justify = "right")
-		en.day1 <- tkentry(frametDate, width = 4, textvariable = istart.day, justify = "right", state = statedate)
-		en.yrs2 <- tkentry(frametDate, width = 4, textvariable = iend.yrs, justify = "right")
-		en.mon2 <- tkentry(frametDate, width = 4, textvariable = iend.mon, justify = "right")
-		en.day2 <- tkentry(frametDate, width = 4, textvariable = iend.day, justify = "right", state = statedate)
+		btDateRange <- ttkbutton(subfr2, text = "Set Anomalies Date Range")
 
-		tkgrid(txt.deb, row = 1, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.fin, row = 2, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.yrs, row = 0, column = 1, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.mon, row = 0, column = 2, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.day, row = 0, column = 3, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.yrs1, row = 1, column = 1, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.mon1, row = 1, column = 2, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.day1, row = 1, column = 3, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.yrs2, row = 2, column = 1, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.mon2, row = 2, column = 2, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.day2, row = 2, column = 3, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkconfigure(btDateRange, command = function(){
+			Params <- GeneralParameters[["Dates"]]
+			names(Params) <- c("start.year", "start.mon", "start.day",
+								"end.year", "end.mon", "end.day")
+			Params <- getInfoDateRange(.cdtEnv$tcl$main$win, Params, daypendek.lab = tclvalue(day.txtVar), state.dek = statedate)
+			GeneralParameters$Dates$start.year <<- Params$start.year
+			GeneralParameters$Dates$start.mon <<- Params$start.mon
+			GeneralParameters$Dates$start.dek <<- Params$start.day
+			GeneralParameters$Dates$end.year <<- Params$end.year
+			GeneralParameters$Dates$end.mon <<- Params$end.mon
+			GeneralParameters$Dates$end.dek <<- Params$end.day
+		})
 
-		infobulle(frametDate, 'Start and end date to calculate the anomalies')
-		status.bar.display(frametDate, 'Start and end date to calculate the anomalies')
+		infobulle(btDateRange, 'Start and end date to calculate the anomalies')
+		status.bar.display(btDateRange, 'Start and end date to calculate the anomalies')
 
 		#############################
 
@@ -376,9 +349,6 @@ anomaliesCalcPanelCmd <- function(){
 
 		climDataExist <- tclVar(GeneralParameters$climato$clim.exist)
 		file.ClimIndex <- tclVar(GeneralParameters$climato$clim.file)
-		startYear <- tclVar(GeneralParameters$climato$start)
-		endYear <- tclVar(GeneralParameters$climato$end)
-		minYear <- tclVar(GeneralParameters$climato$minyear)
 		dayWin <- tclVar(GeneralParameters$climato$window)
 
 		if(!GeneralParameters$outdir$update){
@@ -395,20 +365,16 @@ anomaliesCalcPanelCmd <- function(){
 		}
 
 		chk.climIdx <- tkcheckbutton(frameBaseP, variable = climDataExist, text = "Climatologies data already computed", anchor = 'w', justify = 'left', state = stateClim.Ex)
+
+		txt.climIdx <- tklabel(frameBaseP, text = 'Path to the file (Climatology.rds)', anchor = 'w', justify = 'left')
 		en.climIdx <- tkentry(frameBaseP, textvariable = file.ClimIndex, width = largeur2, state = stateClim)
 		bt.climIdx <- tkbutton(frameBaseP, text = "...", state = stateClim)
 
-		txt.sYear <- tklabel(frameBaseP, text = "Base Period: Start",  anchor = 'e', justify = 'right')
-		txt.eYear <- tklabel(frameBaseP, text = "End",  anchor = 'e', justify = 'right')
-		en.sYear <- tkentry(frameBaseP, textvariable = startYear, width = 5, state = stateBaseP)
-		en.eYear <- tkentry(frameBaseP, textvariable = endYear, width = 5, state = stateBaseP)
+		bt.BasePeriod <- ttkbutton(frameBaseP, text = "Set Base Period", state = stateBaseP)
 
-		txt.minYear <- tklabel(frameBaseP, text = "Minimum number of years",  anchor = 'e', justify = 'right')
-		en.minYear <- tkentry(frameBaseP, textvariable = minYear, width = 3, state = stateBaseP)
-
-		txt.daywin1 <- tklabel(frameBaseP, text = "Centered time window",  anchor = 'e', justify = 'right')
+		txt.daywin1 <- tklabel(frameBaseP, text = "Centered time window", anchor = 'e', justify = 'right')
 		en.daywin <- tkentry(frameBaseP, textvariable = dayWin, width = 3, state = statedayW)
-		txt.daywin2 <- tklabel(frameBaseP, text = "days",  anchor = 'w', justify = 'left')
+		txt.daywin2 <- tklabel(frameBaseP, text = "days", anchor = 'w', justify = 'left')
 
 		######
 
@@ -417,37 +383,31 @@ anomaliesCalcPanelCmd <- function(){
 			tclvalue(file.ClimIndex) <- if(path.climIdx %in% c("", "NA") | is.na(path.climIdx)) "" else path.climIdx
 		})
 
+		tkconfigure(bt.BasePeriod, command = function(){
+			Params <- GeneralParameters[["climato"]][c('allyears', 'start', 'end', 'minyear')]
+			names(Params) <- c('all.years', 'start.year', 'end.year', 'min.year')
+			Params <- getInfoBasePeriod(.cdtEnv$tcl$main$win, Params)
+			GeneralParameters$climato$allyears <<- Params$all.years
+			GeneralParameters$climato$start <<- Params$start.year
+			GeneralParameters$climato$end <<- Params$end.year
+			GeneralParameters$climato$minyear <<- Params$min.year
+		})
+
 		######
 
 		tkgrid(chk.climIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.climIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(bt.climIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-		tkgrid(txt.sYear, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.sYear, row = 2, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.eYear, row = 2, column = 2, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.eYear, row = 2, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-		tkgrid(txt.minYear, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.minYear, row = 3, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-		tkgrid(txt.daywin1, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.daywin, row = 4, column = 2, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.daywin2, row = 4, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
+		tkgrid(txt.climIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(en.climIdx, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.climIdx, row = 2, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.BasePeriod, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(txt.daywin1, row = 4, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(en.daywin, row = 4, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(txt.daywin2, row = 4, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 		infobulle(en.climIdx, 'Enter the full path to the file Climatology.rds')
 		status.bar.display(en.climIdx, 'Enter the full path to the file Climatology.rds')
 		infobulle(bt.climIdx, 'or browse here')
 		status.bar.display(bt.climIdx, 'or browse here')
-
-		infobulle(en.sYear, 'Enter the start year of the base period')
-		status.bar.display(en.sYear, 'Enter the start year of the base period')
-		infobulle(en.eYear, 'Enter the end year of the base period')
-		status.bar.display(en.eYear, 'Enter the end year of the base period')
-
-		infobulle(en.minYear, 'Enter the minimum number of years with non missing values to calculate the climatology')
-		status.bar.display(en.minYear, 'Enter the minimum number of years with non missing values to calculate the climatology')
 
 		infobulle(en.daywin, 'The daily climatology is calculated using a centered (2 x window + 1) time window')
 		status.bar.display(en.daywin, 'The daily climatology is calculated using a centered (2 x window + 1) time window')
@@ -458,7 +418,7 @@ anomaliesCalcPanelCmd <- function(){
 			if(tclvalue(updateAnom) == '0'){
 				stateClim <- if(tclvalue(climDataExist) == '1') 'disabled' else 'normal'
 				stateBaseP <- if(tclvalue(climDataExist) == '1') 'normal' else 'disabled'
-				statedayW <- if(str_trim(tclvalue(timeSteps)) == 'Daily data' &
+				statedayW <- if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[1] &
 								tclvalue(climDataExist) == '1') 'normal' else 'disabled'
 			}else{
 				stateClim <- 'disabled'
@@ -469,10 +429,7 @@ anomaliesCalcPanelCmd <- function(){
 			tkconfigure(en.climIdx, state = stateClim)
 			tkconfigure(bt.climIdx, state = stateClim)
 
-			tkconfigure(en.sYear, state = stateBaseP)
-			tkconfigure(en.eYear, state = stateBaseP)
-			tkconfigure(en.minYear, state = stateBaseP)
-
+			tkconfigure(bt.BasePeriod, state = stateBaseP)
 			tkconfigure(en.daywin, state = statedayW)
 		})
 
@@ -485,7 +442,7 @@ anomaliesCalcPanelCmd <- function(){
 
 		stateAnomC <- if(!GeneralParameters$outdir$update) 'normal' else 'disabled'
 
-		txt.anomaly <- tklabel(frameAnom, text = "Anomaly",  anchor = 'e', justify = 'right')
+		txt.anomaly <- tklabel(frameAnom, text = "Anomaly", anchor = 'e', justify = 'right')
 		cb.anomaly <- ttkcombobox(frameAnom, values = AnomType, textvariable = anomaly, width = largeur3, state = stateAnomC)
 
 		tkgrid(txt.anomaly, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -505,37 +462,19 @@ anomaliesCalcPanelCmd <- function(){
 		#################
 
 		tkconfigure(calculateBut, command = function(){
-			GeneralParameters$intstep <- switch(str_trim(tclvalue(timeSteps)), 
-			 									'Daily data' = 'daily',
-			 									'Pentad data' = 'pentad',
-												'Dekadal data' =  'dekadal',
-												'Monthly data' = 'monthly')
+			GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+			GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
 
-			GeneralParameters$data.type <- switch(str_trim(tclvalue(DataType)),
-												'CDT stations data format' = 'cdtstation',
-												'CDT dataset format (gridded)' = 'cdtdataset')
-
-			if(str_trim(tclvalue(DataType)) == 'CDT stations data format')
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
 				GeneralParameters$cdtstation$file <- str_trim(tclvalue(input.file))
-			if(str_trim(tclvalue(DataType)) == 'CDT dataset format (gridded)')
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
 				GeneralParameters$cdtdataset$index <- str_trim(tclvalue(input.file))
-
-			GeneralParameters$Dates$start.year <- as.numeric(str_trim(tclvalue(istart.yrs)))
-			GeneralParameters$Dates$start.mon <- as.numeric(str_trim(tclvalue(istart.mon)))
-			GeneralParameters$Dates$start.dek <- as.numeric(str_trim(tclvalue(istart.day)))
-			GeneralParameters$Dates$end.year <- as.numeric(str_trim(tclvalue(iend.yrs)))
-			GeneralParameters$Dates$end.mon <- as.numeric(str_trim(tclvalue(iend.mon)))
-			GeneralParameters$Dates$end.dek <- as.numeric(str_trim(tclvalue(iend.day)))
 
 			GeneralParameters$outdir$update <- switch(tclvalue(updateAnom), '0' = FALSE, '1' = TRUE)
 			GeneralParameters$outdir$dir <- str_trim(tclvalue(outAnom))
 
 			GeneralParameters$climato$clim.exist <- switch(tclvalue(climDataExist), '0' = FALSE, '1' = TRUE)
 			GeneralParameters$climato$clim.file <- str_trim(tclvalue(file.ClimIndex))
-			GeneralParameters$climato$start <- as.numeric(str_trim(tclvalue(startYear)))
-			GeneralParameters$climato$end <- as.numeric(str_trim(tclvalue(endYear)))
-			GeneralParameters$climato$end <- as.numeric(str_trim(tclvalue(endYear)))
-			GeneralParameters$climato$minyear <- as.numeric(str_trim(tclvalue(minYear)))
 			GeneralParameters$climato$window <- as.numeric(str_trim(tclvalue(dayWin)))
 
 			GeneralParameters$anomaly <- str_trim(tclvalue(anomaly))
@@ -577,7 +516,7 @@ anomaliesCalcPanelCmd <- function(){
 
 		############################################
 
-		tkgrid(frametDate, row = 0, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+		tkgrid(btDateRange, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 		tkgrid(frameBaseP, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(frameAnom, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 		tkgrid(calculateBut, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)

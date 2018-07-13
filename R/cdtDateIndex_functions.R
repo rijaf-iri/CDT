@@ -51,6 +51,27 @@ cdt.index.Climatologies <- function(dates, tstep = "daily", xwin = 0){
 
 #############################################
 
+## Anomaly index
+cdt.index.Anomalies <- function(dates, index.clim, tstep = "daily")
+{
+	index <- cdt.index.Climatologies(dates, tstep, 0)
+	ixx <- match(index.clim$id, index$id)
+	ixx <- ixx[!is.na(ixx)]
+	index$id <- index$id[ixx]
+	index$index <- index$index[ixx]
+
+	index1 <- lapply(seq_along(index$id), function(j){
+		cbind(index$id[j], index$index[[j]])
+	})
+
+	index1 <- do.call(rbind, index1)
+	index1 <- index1[order(index1[, 2]), ]
+	dates <- dates[index1[, 2]]
+	return(list(date = dates, index = index1))
+}
+
+#############################################
+
 ## Flexible seasonal index
 ## startSeas: YYYYMMDD
 ## endSeas: YYYYMMDD
@@ -62,12 +83,24 @@ getIndexSeasonVars <- function(...) cdt.index.flexseason(...)
 
 cdt.index.flexseason <- function(startSeas, endSeas, dates, inTimestep)
 {
-	idx <- vector(mode = "list", length = length(startSeas))
+	len.start <- length(startSeas)
+	odaty <- paste0(startSeas, "_", endSeas)
+
+	idx <- vector(mode = "list", length = len.start)
 	ina <- is.na(startSeas) | is.na(endSeas)
 	idx[ina] <- NA
 	startSeas <- startSeas[!ina]
 	endSeas <- endSeas[!ina]
-	if(length(startSeas) == 0) return(idx)
+	odaty[ina] <- NA
+	if(length(startSeas) == 0){
+		idx <- lapply(idx, function(x) x[!is.na(x)])
+		return(list(index = idx,
+					date = odaty,
+					nb0 = rep(1, len.start),
+					nba = rep(0, len.start)
+				)
+			)
+	}
 
 	if(inTimestep == "daily"){
 		start.seas <- as.numeric(as.character(startSeas))
@@ -131,10 +164,8 @@ cdt.index.flexseason <- function(startSeas, endSeas, dates, inTimestep)
 	##################
 
 	cdates <- as.numeric(as.character(cdates))
-	istart <- which(cdates %in% start.seas)
-	iend <- which(cdates %in% end.seas)
-	# istart <- match(start.seas, cdates)
-	# iend <- match(end.seas, cdates)
+	istart <- match(start.seas, cdates)
+	iend <- match(end.seas, cdates)
 
 	idrow <- lapply(seq_along(istart), function(j) {
 		if(!is.na(iend[j])) idrow[istart[j]:iend[j]] else NA
@@ -143,7 +174,6 @@ cdt.index.flexseason <- function(startSeas, endSeas, dates, inTimestep)
 	nbd0 <- unname(sapply(idx, length))
 	idx <- lapply(idx, function(x) x[!is.na(x)])
 	nbda <- unname(sapply(idx, length))
-	odaty <- paste0(startSeas, "_", endSeas)
 	list(index = idx, date = odaty, nb0 = nbd0, nba = nbda)
 }
 

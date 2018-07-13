@@ -587,16 +587,13 @@ startCDT <- function(wd = NA, lang = NA){
 				})
 
 			##########
-			tkadd(menu.dataproc, "separator")
-
-			##########
 			tkadd(menu.dataproc, "command", label = lang.menu[["data.analysis"]][["8"]],
 				command = function()
 			{
 				refreshCDT()
 				spinbox.state(state = 'normal')
 				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-					# PICSACalcPanelCmd()
+					SeasonAnalysisPanelCmd()
 					.cdtEnv$tcl$data$lcmd.frame <- 1
 				}
 			})
@@ -651,7 +648,7 @@ startCDT <- function(wd = NA, lang = NA){
 					refreshCDT()
 					spinbox.state(state = 'normal')
 					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# SPICalcPanelCmd()
+						SPICalcPanelCmd()
 						.cdtEnv$tcl$data$lcmd.frame <- 1
 					}
 				})
@@ -668,7 +665,7 @@ startCDT <- function(wd = NA, lang = NA){
 					refreshCDT()
 					spinbox.state(state = 'normal')
 					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# SPEICalcPanelCmd()
+						SPEICalcPanelCmd()
 						.cdtEnv$tcl$data$lcmd.frame <- 1
 					}
 				})
@@ -683,7 +680,7 @@ startCDT <- function(wd = NA, lang = NA){
 					refreshCDT()
 					spinbox.state(state = 'normal')
 					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# DecilesCalcPanelCmd()
+						DecilesCalcPanelCmd()
 						.cdtEnv$tcl$data$lcmd.frame <- 1
 					}
 				})

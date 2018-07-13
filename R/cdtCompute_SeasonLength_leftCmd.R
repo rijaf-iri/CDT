@@ -94,7 +94,7 @@ SeasonLengthCalcPanelCmd <- function(){
 
 		dir.save <- tclVar(GeneralParameters$output)
 
-		txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results",  anchor = 'w', justify = 'left')
+		txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results", anchor = 'w', justify = 'left')
 		en.dir.save <- tkentry(frameDirSav, textvariable = dir.save, width = largeur0)
 		bt.dir.save <- tkbutton(frameDirSav, text = "...")
 
