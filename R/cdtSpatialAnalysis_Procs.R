@@ -12,8 +12,8 @@ spatialAnalysisProcs <- function(GeneralParameters){
 	}
 
 	#############
-	outputDIR <- file.path(GeneralParameters$out.dir, paste0("SpatialAnalysis_",
-							GeneralParameters$time.series$out.series, "_",
+	outputDIR <- file.path(GeneralParameters$out.dir, paste0("SPATIAL.ANALYSIS_",
+							toupper(GeneralParameters$time.series$out.series), "_",
 							file.sans.ext(basename(GeneralParameters$in.file))))
 	dir.create(outputDIR, showWarnings = FALSE, recursive = TRUE)
 

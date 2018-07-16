@@ -73,8 +73,7 @@ writeFiles <- function(data2save, file2save,
 
 ## Open netcdf files
 getOpenNetcdf <- function(parent, initialdir = getwd()){
-	fileopen <- tclvalue(tkgetOpenFile(initialdir = initialdir, initialfile = "",
-										filetypes = .cdtEnv$tcl$data$filetypes3))
+	fileopen <- tclvalue(tkgetOpenFile(initialdir = initialdir, filetypes = .cdtEnv$tcl$data$filetypes3))
 	if(fileopen == "" | is.na(fileopen)) return(NULL)
 	if(length(.cdtData$OpenFiles$Data) > 0){
 		existff <- unlist(
@@ -99,8 +98,7 @@ getOpenNetcdf <- function(parent, initialdir = getwd()){
 ## Open ESRI shapefile
 getOpenShp <- function(parent){
 	# parent doesn't use yet
-	fileopen <- tclvalue(tkgetOpenFile(initialdir = getwd(), initialfile = "",
-										filetypes = .cdtEnv$tcl$data$filetypes4))
+	fileopen <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes4))
 	if(fileopen == "") return(NULL)
 	if(length(.cdtData$OpenFiles$Data) > 0){
 		existff <- unlist(

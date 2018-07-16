@@ -109,7 +109,7 @@ spatialAnalysisPanelCmd <- function(){
 					update.OpenFiles('ascii', dat.opfiles)
 					listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
 					tclvalue(file.stnfl) <- dat.opfiles[[1]]
-					lapply(list(cb.stnfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+					tkconfigure(cb.stnfl, values = unlist(listOpenFiles))
 				}
 			}
 			if(GeneralParameters$data.type == 'cdtdataset'){
@@ -151,7 +151,7 @@ spatialAnalysisPanelCmd <- function(){
 						update.OpenFiles('ascii', dat.opfiles)
 						listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
 						tclvalue(file.stnfl) <- dat.opfiles[[1]]
-						lapply(list(cb.stnfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+						tkconfigure(cb.stnfl, values = unlist(listOpenFiles))
 					}
 				})
 
@@ -842,17 +842,19 @@ spatialAnalysisPanelCmd <- function(){
 
 		cb.climato.maps <- ttkcombobox(frameClimatoMap, values = "", textvariable = .cdtData$EnvData$climStat, width = largeur5)
 		bt.climato.maps <- ttkbutton(frameClimatoMap, text = .cdtEnv$tcl$lang$global[['button']][['3']])
-		cb.climDate <- ttkcombobox(frameClimatoMap, values = "", textvariable = .cdtData$EnvData$climDate, width = largeur6)
+		cb.climDate <- ttkcombobox(frameClimatoMap, values = "", textvariable = .cdtData$EnvData$climDate, width = largeur6, justify = 'center')
 		bt.climMapOpt <- ttkbutton(frameClimatoMap, text = .cdtEnv$tcl$lang$global[['button']][['4']])
 
 		###################
 
+		.cdtData$EnvData$tab$pointSize.climMap <- NULL
 		.cdtData$EnvData$climMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-												userCol = list(custom = FALSE, color = NULL),
-												userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-												title = list(user = FALSE, title = ''),
-												colkeyLab = list(user = FALSE, label = ''),
-												scalebar = list(add = FALSE, pos = 'bottomleft'))
+											userCol = list(custom = FALSE, color = NULL),
+											userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+											title = list(user = FALSE, title = ''),
+											colkeyLab = list(user = FALSE, label = ''),
+											scalebar = list(add = FALSE, pos = 'bottomleft'),
+											pointSize = .cdtData$EnvData$tab$pointSize.climMap)
 
 		tkconfigure(bt.climMapOpt, command = function(){
 			if(!is.null(.cdtData$EnvData$don)){
@@ -865,10 +867,17 @@ spatialAnalysisPanelCmd <- function(){
 				}
 			}
 			.cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$climMapOp)
+
+			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+				.cdtData$EnvData$tab$pointSize.climMap <- .cdtData$EnvData$climMapOp$pointSize
 		})
 
 		.cdtData$EnvData$tab$climMap <- NULL
+
 		tkconfigure(bt.climato.maps, command = function(){
+			ret <- read.ClimStat()
+			if(is.null(ret)) return(NULL)
+
 			if(!str_trim(tclvalue(.cdtData$EnvData$climStat)) %in% c("", "Anomaly"))
 				spatialAnalysis.DisplayStatMaps()
 		})
@@ -941,7 +950,7 @@ spatialAnalysisPanelCmd <- function(){
 		.cdtData$EnvData$TSDate <- tclVar()
 		.cdtData$EnvData$TSData <- tclVar("Data")
 
-		cb.TSDate <- ttkcombobox(frameTSMaps, values = "", textvariable = .cdtData$EnvData$TSDate, width = largeur6)
+		cb.TSDate <- ttkcombobox(frameTSMaps, values = "", textvariable = .cdtData$EnvData$TSDate, width = largeur6, justify = 'center')
 		bt.TSDate.prev <- ttkbutton(frameTSMaps, text = "<<", width = 3)
 		bt.TSDate.next <- ttkbutton(frameTSMaps, text = ">>", width = 3)
 		bt.TSDate.plot <- ttkbutton(frameTSMaps, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
@@ -951,12 +960,14 @@ spatialAnalysisPanelCmd <- function(){
 
 		###################
 
+		.cdtData$EnvData$tab$pointSize.TSMap <- NULL
 		.cdtData$EnvData$TSMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-												userCol = list(custom = FALSE, color = NULL),
-												userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-												title = list(user = FALSE, title = ''),
-												colkeyLab = list(user = FALSE, label = ''),
-												scalebar = list(add = FALSE, pos = 'bottomleft'))
+										userCol = list(custom = FALSE, color = NULL),
+										userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+										title = list(user = FALSE, title = ''),
+										colkeyLab = list(user = FALSE, label = ''),
+										scalebar = list(add = FALSE, pos = 'bottomleft'),
+										pointSize = .cdtData$EnvData$tab$pointSize.TSMap)
 
 		tkconfigure(bt.TSMapOpt, command = function(){
 			if(!is.null(.cdtData$EnvData$tsdata)){
@@ -972,6 +983,9 @@ spatialAnalysisPanelCmd <- function(){
 				}
 			}
 			.cdtData$EnvData$TSMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSMapOp)
+
+			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+				.cdtData$EnvData$tab$pointSize.TSMap <- .cdtData$EnvData$TSMapOp$pointSize
 		})
 
 		.cdtData$EnvData$tab$TSMap <- NULL
@@ -1037,9 +1051,33 @@ spatialAnalysisPanelCmd <- function(){
 
 		##############################################
 
+		framePlotType <- tkframe(subfr3)
+
+		.cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
+
+		txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
+		cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur6)
+
+		tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		###############
+
+		tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
+			ret <- read.ClimStat()
+			if(is.null(ret)) return(NULL)
+
+			########
+			ret1 <- read.ClimTSData()
+			if(is.null(ret1)) return(NULL)
+		})
+
+		##############################################
+
 		tkgrid(frameAnDat, row = 0, column = 0, sticky = 'we')
 		tkgrid(frameClimatoMap, row = 1, column = 0, sticky = 'we')
 		tkgrid(frameTSMaps, row = 2, column = 0, sticky = 'we', pady = 1)
+		tkgrid(framePlotType, row = 3, column = 0, sticky = '', pady = 3)
 
 	#######################################################################################################
 
@@ -1056,7 +1094,7 @@ spatialAnalysisPanelCmd <- function(){
 		.cdtData$EnvData$plot.maps$tercileTSp <- tclVar(FALSE)
 		.cdtData$EnvData$plot.maps$trendTSp <- tclVar(FALSE)
 
-		stateType <- if(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)%in%c("Line", "ENSO-Line")) "normal" else "disabled"
+		stateType <- if(tclvalue(.cdtData$EnvData$plot.maps$typeTSp) %in% c("Line", "ENSO-Line")) "normal" else "disabled"
 
 		cb.typeTSp <- ttkcombobox(frameTSPlot, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur6)
 		bt.TsGraph.plot <- ttkbutton(frameTSPlot, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
@@ -1247,8 +1285,10 @@ spatialAnalysisPanelCmd <- function(){
 				lapply(list(cb.stnfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
 				shpofile <- getShpOpenData(file.plotShp)
-				if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+				if(is.null(shpofile))
+					.cdtData$EnvData$shp$ocrds <- NULL
+				else
+					.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 			}
 		})
 
@@ -1268,8 +1308,10 @@ spatialAnalysisPanelCmd <- function(){
 		#################
 		tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
 			shpofile <- getShpOpenData(file.plotShp)
-			if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-			.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+			if(is.null(shpofile))
+				.cdtData$EnvData$shp$ocrds <- NULL
+			else
+				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 		})
 
 		tkbind(chk.addshp, "<Button-1>", function(){
@@ -1344,6 +1386,23 @@ spatialAnalysisPanelCmd <- function(){
 		return(0)
 	}
 
+	#####################
+
+	set.plot.type <- function(){
+		if(.cdtData$EnvData$statpars$params$data.type == "cdtstation")
+		{
+			plot.type <- c("Pixels", "Points")
+			.cdtData$EnvData$plot.maps$.data.type <- "Points"
+
+			.cdtData$EnvData$climMapOp$pointSize <- 0.7
+			.cdtData$EnvData$TSMapOp$pointSize <- 0.7
+		}else{
+			plot.type <- c("Pixels", "FilledContour")
+			.cdtData$EnvData$plot.maps$.data.type <- "Grid"
+		}
+		tkconfigure(cb.plotType, values = plot.type)
+	}
+
 	#######################################################################################################
 
 	load.SpatialAnalysis.Data <- function(){
@@ -1411,6 +1470,7 @@ spatialAnalysisPanelCmd <- function(){
 		###################
 
 		widgets.Station.Pixel()
+		set.plot.type()
 	}
 
 	#######################################################################################################
@@ -1441,58 +1501,92 @@ spatialAnalysisPanelCmd <- function(){
 				if(.cdtData$EnvData$filestat == filestat) readClimData <- FALSE
 
 		if(.cdtData$EnvData$statpars$params$data.type == "cdtstation"){
+			change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+
+			if(!readClimData)
+				if(.cdtData$EnvData$change.plot.ClimData != change.plot) readClimData <- TRUE
+
 			if(readClimData){
 				don <- fread(filestat, header = FALSE, sep = ",", data.table = FALSE,
 									stringsAsFactors = FALSE, colClasses = "character")
 
 				if(tclvalue(.cdtData$EnvData$climStat) == "Trend"){
-					.cdtData$EnvData$don <- list(id = as.character(don[1, -1]), 
-														x0 = as.numeric(don[2, -1]),
-														y0 = as.numeric(don[3, -1]), 
-														var = as.numeric(don[4, -1]),
-														# std.slope = as.numeric(don[5, -1]),
-														p.value = as.numeric(don[6, -1]),
-														# r2 = as.numeric(don[7, -1]),
-														na = as.numeric(don[8, -1]))
-					nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$don$x0)))
-					ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$don$y0)))
-					tmp <- cdt.as.image(.cdtData$EnvData$don$var, nx = nx, ny = ny,
-									pts.xy = cbind(.cdtData$EnvData$don$x0, .cdtData$EnvData$don$y0))
-					.cdtData$EnvData$don$x <- tmp$x
-					.cdtData$EnvData$don$y <- tmp$y
-					.cdtData$EnvData$don$z <- tmp$z
-					# tmp <- cdt.as.image(.cdtData$EnvData$don$std.slope, nx = nx, ny = ny,
-					# 				pts.xy = cbind(.cdtData$EnvData$don$x0, .cdtData$EnvData$don$y0))
-					# .cdtData$EnvData$don$std <- tmp$z
-					tmp <- cdt.as.image(.cdtData$EnvData$don$p.value, nx = nx, ny = ny,
-									pts.xy = cbind(.cdtData$EnvData$don$x0, .cdtData$EnvData$don$y0))
-					.cdtData$EnvData$don$pval <- tmp$z
-					# tmp <- cdt.as.image(.cdtData$EnvData$don$r2, nx = nx, ny = ny,
-					# 				pts.xy = cbind(.cdtData$EnvData$don$x0, .cdtData$EnvData$don$y0))
-					# .cdtData$EnvData$don$r2 <- tmp$z
-					tmp <- cdt.as.image(.cdtData$EnvData$don$na, nx = nx, ny = ny,
-									pts.xy = cbind(.cdtData$EnvData$don$x0, .cdtData$EnvData$don$y0))
-					.cdtData$EnvData$don$na <- tmp$z
+					.cdtData$EnvData$don <- list(
+													id = as.character(don[1, -1]), 
+													x0 = as.numeric(don[2, -1]),
+													y0 = as.numeric(don[3, -1]), 
+													var = as.numeric(don[4, -1]),
+													# std.slope = as.numeric(don[5, -1]),
+													p.value = as.numeric(don[6, -1]),
+													# r2 = as.numeric(don[7, -1]),
+													# na = as.numeric(don[8, -1])
+												)
+
+					X0 <- .cdtData$EnvData$don$x0
+					Y0 <- .cdtData$EnvData$don$y0
+					VAR0 <- .cdtData$EnvData$don$var
+
+					if(change.plot == "Pixels"){
+						nx <- nx_ny_as.image(diff(range(X0)))
+						ny <- nx_ny_as.image(diff(range(Y0)))
+						tmp <- cdt.as.image(VAR0, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						.cdtData$EnvData$don$x <- tmp$x
+						.cdtData$EnvData$don$y <- tmp$y
+						.cdtData$EnvData$don$z <- tmp$z
+						# tmp <- cdt.as.image(.cdtData$EnvData$don$std.slope, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						# .cdtData$EnvData$don$std <- tmp$z
+						tmp <- cdt.as.image(.cdtData$EnvData$don$p.value, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						.cdtData$EnvData$don$pval <- tmp$z
+						# tmp <- cdt.as.image(.cdtData$EnvData$don$r2, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						# .cdtData$EnvData$don$r2 <- tmp$z
+						# tmp <- cdt.as.image(.cdtData$EnvData$don$na, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						# .cdtData$EnvData$don$na <- tmp$z
+						rm(tmp)
+					}
+
+					if(change.plot == "Points"){
+						.cdtData$EnvData$don$x <- X0
+						.cdtData$EnvData$don$y <- Y0
+						.cdtData$EnvData$don$z <- VAR0
+						.cdtData$EnvData$don$pval <- .cdtData$EnvData$don$p.value
+						# .cdtData$EnvData$don$na <- .cdtData$EnvData$don$na
+					}
 				}else{
-					.cdtData$EnvData$don <- list(id = as.character(don[1, -1]), 
-												x0 = as.numeric(don[2, -1]),
-												y0 = as.numeric(don[3, -1]), 
-												var = as.numeric(don[4, -1]),
-												na = as.numeric(don[5, -1]))
-					nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$don$x0)))
-					ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$don$y0)))
-					tmp <- cdt.as.image(.cdtData$EnvData$don$var, nx = nx, ny = ny,
-									pts.xy = cbind(.cdtData$EnvData$don$x0, .cdtData$EnvData$don$y0))
-					.cdtData$EnvData$don$x <- tmp$x
-					.cdtData$EnvData$don$y <- tmp$y
-					.cdtData$EnvData$don$z <- tmp$z
-					tmp <- cdt.as.image(.cdtData$EnvData$don$na, nx = nx, ny = ny,
-									pts.xy = cbind(.cdtData$EnvData$don$x0, .cdtData$EnvData$don$y0))
-					.cdtData$EnvData$don$na <- tmp$z
+					.cdtData$EnvData$don <- list(
+													id = as.character(don[1, -1]), 
+													x0 = as.numeric(don[2, -1]),
+													y0 = as.numeric(don[3, -1]), 
+													var = as.numeric(don[4, -1]),
+													# na = as.numeric(don[5, -1])
+												)
+
+					X0 <- .cdtData$EnvData$don$x0
+					Y0 <- .cdtData$EnvData$don$y0
+					VAR0 <- .cdtData$EnvData$don$var
+
+					if(change.plot == "Pixels"){
+						nx <- nx_ny_as.image(diff(range(X0)))
+						ny <- nx_ny_as.image(diff(range(Y0)))
+						tmp <- cdt.as.image(VAR0, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						.cdtData$EnvData$don$x <- tmp$x
+						.cdtData$EnvData$don$y <- tmp$y
+						.cdtData$EnvData$don$z <- tmp$z
+						# tmp <- cdt.as.image(.cdtData$EnvData$don$na, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						# .cdtData$EnvData$don$na <- tmp$z
+						rm(tmp)
+					}
+
+					if(change.plot == "Points"){
+						.cdtData$EnvData$don$x <- X0
+						.cdtData$EnvData$don$y <- Y0
+						.cdtData$EnvData$don$z <- VAR0
+						# .cdtData$EnvData$don$na <- .cdtData$EnvData$don$na
+					}
 				}
 				.cdtData$EnvData$filestat <- filestat
+				.cdtData$EnvData$change.plot.ClimData <- change.plot
 
-				rm(don, tmp)
+				rm(don)
 			}
 		}else{
 			if(readClimData){
@@ -1504,14 +1598,14 @@ spatialAnalysisPanelCmd <- function(){
 					# .cdtData$EnvData$don$std <- ncvar_get(nc, varid = "std.slope")
 					.cdtData$EnvData$don$pval <- ncvar_get(nc, varid = "pvalue")
 					# .cdtData$EnvData$don$r2 <- ncvar_get(nc, varid = "r2")
-					.cdtData$EnvData$don$na <- ncvar_get(nc, varid = "nonNA")
+					# .cdtData$EnvData$don$na <- ncvar_get(nc, varid = "nonNA")
 					nc_close(nc)
 				}else{
 					nc <- nc_open(filestat)
 					.cdtData$EnvData$don$x <- nc$dim[[1]]$vals
 					.cdtData$EnvData$don$y <- nc$dim[[2]]$vals
 					.cdtData$EnvData$don$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-					.cdtData$EnvData$don$na <- ncvar_get(nc, varid = "nonNA")
+					# .cdtData$EnvData$don$na <- ncvar_get(nc, varid = "nonNA")
 					nc_close(nc)
 				}
 				.cdtData$EnvData$filestat <- filestat
@@ -1539,6 +1633,9 @@ spatialAnalysisPanelCmd <- function(){
 				return(NULL)
 			}
 
+			change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+
+			########
 			readTsData <- TRUE
 			if(!is.null(.cdtData$EnvData$tsdata))
 				if(!is.null(.cdtData$EnvData$filetsdata))
@@ -1559,23 +1656,41 @@ spatialAnalysisPanelCmd <- function(){
 			}
 
 			########
+
 			rasterTsData <- TRUE
 			if(!readTsData)
 				if(!is.null(.cdtData$EnvData$rasterTsData))
 					if(.cdtData$EnvData$filetsdata == filetsdata)
 						if(.cdtData$EnvData$rasterTsData == tclvalue(.cdtData$EnvData$TSDate)) rasterTsData <- FALSE
 
+			if(!rasterTsData)
+				if(.cdtData$EnvData$change.plot.rasterTsData != change.plot) rasterTsData <- TRUE
+
 			if(rasterTsData){
 				idt <- which(.cdtData$EnvData$tsdata$date == tclvalue(.cdtData$EnvData$TSDate))
-				nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$tsdata$x0)))
-				ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$tsdata$y0)))
-				tmp <- cdt.as.image(as.numeric(.cdtData$EnvData$tsdata$data[idt, ]), nx = nx, ny = ny,
-								pts.xy = cbind(.cdtData$EnvData$tsdata$x0, .cdtData$EnvData$tsdata$y0))
-				.cdtData$EnvData$tsdata$x <- tmp$x
-				.cdtData$EnvData$tsdata$y <- tmp$y
-				.cdtData$EnvData$tsdata$z <- tmp$z
+
+				X0 <- .cdtData$EnvData$tsdata$x0
+				Y0 <- .cdtData$EnvData$tsdata$y0
+				VAR0 <- as.numeric(.cdtData$EnvData$tsdata$data[idt, ])
+
+				if(change.plot == "Pixels"){
+					nx <- nx_ny_as.image(diff(range(X0)))
+					ny <- nx_ny_as.image(diff(range(Y0)))
+					tmp <- cdt.as.image(VAR0, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+					.cdtData$EnvData$tsdata$x <- tmp$x
+					.cdtData$EnvData$tsdata$y <- tmp$y
+					.cdtData$EnvData$tsdata$z <- tmp$z
+					rm(tmp)
+				}
+
+				if(change.plot == "Points"){
+					.cdtData$EnvData$tsdata$x <- X0
+					.cdtData$EnvData$tsdata$y <- Y0
+					.cdtData$EnvData$tsdata$z <- VAR0
+				}
+
 				.cdtData$EnvData$rasterTsData <- tclvalue(.cdtData$EnvData$TSDate)
-				rm(tmp)
+				.cdtData$EnvData$change.plot.rasterTsData <- change.plot
 			}
 
 			if("Anomaly" %in% .cdtData$EnvData$DirStat$Stats){
@@ -1613,17 +1728,34 @@ spatialAnalysisPanelCmd <- function(){
 						if(.cdtData$EnvData$file.anom == file.anom)
 							if(.cdtData$EnvData$rasterAnomData == tclvalue(.cdtData$EnvData$TSDate)) rasterAnomData <- FALSE
 
+				if(!rasterAnomData)
+					if(.cdtData$EnvData$change.plot.rasterAnomData != change.plot) rasterAnomData <- TRUE
+
 				if(rasterAnomData){
 					idt <- which(.cdtData$EnvData$anomData$date == tclvalue(.cdtData$EnvData$TSDate))
-					nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$anomData$x0)))
-					ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$anomData$y0)))
-					tmp <- cdt.as.image(as.numeric(.cdtData$EnvData$anomData$data[idt, ]), nx = nx, ny = ny,
-									pts.xy = cbind(.cdtData$EnvData$anomData$x0, .cdtData$EnvData$anomData$y0))
-					.cdtData$EnvData$anomData$x <- tmp$x
-					.cdtData$EnvData$anomData$y <- tmp$y
-					.cdtData$EnvData$anomData$z <- tmp$z
+
+					X0 <- .cdtData$EnvData$anomData$x0
+					Y0 <- .cdtData$EnvData$anomData$y0
+					VAR0 <- as.numeric(.cdtData$EnvData$anomData$data[idt, ])
+
+					if(change.plot == "Pixels"){
+						nx <- nx_ny_as.image(diff(range(X0)))
+						ny <- nx_ny_as.image(diff(range(Y0)))
+						tmp <- cdt.as.image(VAR0, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						.cdtData$EnvData$anomData$x <- tmp$x
+						.cdtData$EnvData$anomData$y <- tmp$y
+						.cdtData$EnvData$anomData$z <- tmp$z
+						rm(tmp)
+					}
+
+					if(change.plot == "Points"){
+						.cdtData$EnvData$anomData$x <- X0
+						.cdtData$EnvData$anomData$y <- Y0
+						.cdtData$EnvData$anomData$z <- VAR0
+					}
+
 					.cdtData$EnvData$rasterAnomData <- tclvalue(.cdtData$EnvData$TSDate)
-					rm(tmp)
+					.cdtData$EnvData$change.plot.rasterAnomData <- change.plot
 				}
 			}
 		}else{

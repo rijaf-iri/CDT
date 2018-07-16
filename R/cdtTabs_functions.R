@@ -175,8 +175,8 @@ Display_Output_Console_Tab <- function(out2disp, title, rhtests = FALSE){
 ## Update Open Tab data
 update.OpenTabs <- function(type, data){
 	ntab <- length(.cdtData$OpenTab$Type)
-	.cdtData$OpenTab$Type[[ntab+1]] <- type
-	.cdtData$OpenTab$Data[[ntab+1]] <- data
+	.cdtData$OpenTab$Type[[ntab + 1]] <- type
+	.cdtData$OpenTab$Data[[ntab + 1]] <- data
 	return(ntab)
 }
 

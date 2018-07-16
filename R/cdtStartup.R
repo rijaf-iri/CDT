@@ -691,6 +691,31 @@ startCDT <- function(wd = NA, lang = NA){
 		tkadd(top.menu, "cascade", label = lang.menu[["plot.data"]][["0"]], menu = menu.plot, activebackground = 'lightblue')
 
 			##########
+			tkadd(menu.plot, "command", label = lang.menu[["plot.data"]][["1"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					PlotCDTStationCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
+			})
+
+			##########
+			tkadd(menu.plot, "separator")
+
+			##########
+			tkadd(menu.plot, "command", label = lang.menu[["plot.data"]][["2"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					PlotCDTDatasetCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
+			})
 
 
 		####################################

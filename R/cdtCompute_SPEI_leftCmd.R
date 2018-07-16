@@ -499,6 +499,7 @@ SPEICalcPanelCmd <- function(){
 					###################
 
 					widgets.Station.Pixel()
+					set.plot.type()
 					ret <- try(set.Data.Scales(), silent = TRUE)
 					if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -559,6 +560,7 @@ SPEICalcPanelCmd <- function(){
 				###################
 
 				widgets.Station.Pixel()
+				set.plot.type()
 				ret <- try(set.Data.Scales(), silent = TRUE)
 				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -566,7 +568,6 @@ SPEICalcPanelCmd <- function(){
 				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 			}
 		})
-
 
 		tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -591,19 +592,21 @@ SPEICalcPanelCmd <- function(){
 
 		cb.spi.maps <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.tscale, width = largeur4)
 		bt.spi.maps <- ttkbutton(frameSPIMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-		cb.spi.Date <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.date, width = largeur5)
+		cb.spi.Date <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.date, width = largeur5, justify = 'center')
 		bt.spi.Date.prev <- ttkbutton(frameSPIMap, text = "<<", width = 3)
 		bt.spi.Date.next <- ttkbutton(frameSPIMap, text = ">>", width = 3)
 		bt.spi.MapOpt <- ttkbutton(frameSPIMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
 
 		###############
 
+		.cdtData$EnvData$tab$pointSize <- NULL
 		.cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = TRUE),
 											userCol = list(custom = FALSE, color = NULL),
 											userLvl = list(custom = TRUE, levels = c(-2, -1.5, -1, 0, 1, 1.5, 2), equidist = TRUE),
 											title = list(user = FALSE, title = ''),
 											colkeyLab = list(user = FALSE, label = ''),
-											scalebar = list(add = FALSE, pos = 'bottomleft'))
+											scalebar = list(add = FALSE, pos = 'bottomleft'),
+											pointSize = .cdtData$EnvData$tab$pointSize)
 
 		tkconfigure(bt.spi.MapOpt, command = function(){
 			if(!is.null(.cdtData$EnvData$varData$map)){
@@ -616,6 +619,9 @@ SPEICalcPanelCmd <- function(){
 				}
 			}
 			.cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$dataMapOp)
+
+			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+				.cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$dataMapOp$pointSize
 		})
 
 		###############
@@ -674,8 +680,28 @@ SPEICalcPanelCmd <- function(){
 
 		##############################################
 
+		framePlotType <- tkframe(subfr2)
+
+		.cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
+
+		txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
+		cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur5)
+
+		tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		###############
+
+		tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
+			if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != "")
+				get.Data.Map()
+		})
+
+		##############################################
+
 		tkgrid(frameDataExist, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(frameSPIMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+		tkgrid(framePlotType, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
 	#######################################################################################################
 
@@ -696,16 +722,16 @@ SPEICalcPanelCmd <- function(){
 		#################
 
 		.cdtData$EnvData$TSGraphOp <- list(
-							bar.line = list(
-								xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
-								ylim = list(is.min = FALSE, min = -10, is.max = FALSE, max = 10),
-								userYTcks = list(custom = TRUE, ticks = c(-2, -1.5, -1, 0, 1, 1.5, 2)),
-								axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-								title = list(is.title = FALSE, title = '', position = 'top'),
-								colors = list(y0 = 0, negative = "#CF661C", positive = "#157040"),
-								line = list(plot = FALSE, col = "black", lwd = 1.5)
-							)
-						)
+										bar.line = list(
+											xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
+											ylim = list(is.min = FALSE, min = -10, is.max = FALSE, max = 10),
+											userYTcks = list(custom = TRUE, ticks = c(-2, -1.5, -1, 0, 1, 1.5, 2)),
+											axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+											title = list(is.title = FALSE, title = '', position = 'top'),
+											colors = list(y0 = 0, negative = "#CF661C", positive = "#157040"),
+											line = list(plot = FALSE, col = "black", lwd = 1.5)
+										)
+									)
 
 		tkconfigure(bt.TSGraphOpt, command = function(){
 			suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
@@ -822,8 +848,10 @@ SPEICalcPanelCmd <- function(){
 				tkconfigure(cb.addshp, values = unlist(listOpenFiles))
 
 				shpofile <- getShpOpenData(file.plotShp)
-				if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+				if(is.null(shpofile))
+					.cdtData$EnvData$shp$ocrds <- NULL
+				else
+					.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 			}
 		})
 
@@ -843,8 +871,10 @@ SPEICalcPanelCmd <- function(){
 		#################
 		tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
 			shpofile <- getShpOpenData(file.plotShp)
-			if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-			.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+			if(is.null(shpofile))
+				.cdtData$EnvData$shp$ocrds <- NULL
+			else
+				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 		})
 
 		tkbind(chk.addshp, "<Button-1>", function(){
@@ -918,6 +948,22 @@ SPEICalcPanelCmd <- function(){
 
 		tkgrid(frTS2, row = 0, column = 0, sticky = 'e', pady = 1)
 		return(0)
+	}
+
+	#################
+
+	set.plot.type <- function(){
+		if(.cdtData$EnvData$output$params$data.type == "cdtstation")
+		{
+			plot.type <- c("Pixels", "Points")
+			.cdtData$EnvData$plot.maps$.data.type <- "Points"
+
+			.cdtData$EnvData$dataMapOp$pointSize <- 0.7
+		}else{
+			plot.type <- c("Pixels", "FilledContour")
+			.cdtData$EnvData$plot.maps$.data.type <- "Grid"
+		}
+		tkconfigure(cb.plotType, values = plot.type)
 	}
 
 	#################
@@ -1005,21 +1051,39 @@ SPEICalcPanelCmd <- function(){
 			if(!is.null(.cdtData$EnvData$varData$spi$this.daty))
 				if(.cdtData$EnvData$varData$spi$this.daty == this.daty) readVarData <- FALSE
 
-		if(readVarData){
-			if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
+		if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
+			change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+
+			if(!readVarData)
+				if(.cdtData$EnvData$change.plot != change.plot) readVarData <- TRUE
+
+			if(readVarData){
 				idt <- which(.cdtData$EnvData$cdtdataset$date == this.daty)
+
 				x <- .cdtData$EnvData$output$data$lon
 				y <- .cdtData$EnvData$output$data$lat
 				tmp <- as.numeric(.cdtData$EnvData$cdtdataset$spi[idt, ])
 
-				nx <- nx_ny_as.image(diff(range(x)))
-				ny <- nx_ny_as.image(diff(range(y)))
+				if(change.plot == "Pixels"){
+					nx <- nx_ny_as.image(diff(range(x)))
+					ny <- nx_ny_as.image(diff(range(y)))
+					tmp <- cdt.as.image(tmp, nx = nx, ny = ny, pts.xy = cbind(x, y))
+					.cdtData$EnvData$varData$map$x <- tmp$x
+					.cdtData$EnvData$varData$map$y <- tmp$y
+					.cdtData$EnvData$varData$map$z <- tmp$z
+				}
 
-				tmp <- cdt.as.image(tmp, nx = nx, ny = ny, pts.xy = cbind(x, y))
-				.cdtData$EnvData$varData$map$x <- tmp$x
-				.cdtData$EnvData$varData$map$y <- tmp$y
-				.cdtData$EnvData$varData$map$z <- tmp$z
-			}else{
+				if(change.plot == "Points"){
+					.cdtData$EnvData$varData$map$x <- x
+					.cdtData$EnvData$varData$map$y <- y
+					.cdtData$EnvData$varData$map$z <- tmp
+				}
+
+				.cdtData$EnvData$varData$spi$this.daty <- this.daty
+				.cdtData$EnvData$change.plot <- change.plot
+			}
+		}else{
+			if(readVarData){
 				ipos <- which(.cdtData$EnvData$varData$spi$disp %in% str_trim(tclvalue(.cdtData$EnvData$spi.tscale)))
 				tscale.data <- .cdtData$EnvData$varData$spi$dataF[ipos]
 
@@ -1029,9 +1093,9 @@ SPEICalcPanelCmd <- function(){
 				.cdtData$EnvData$varData$map$y <- nc$dim[[2]]$vals
 				.cdtData$EnvData$varData$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
 				nc_close(nc)
-			}
 
-			.cdtData$EnvData$varData$spi$this.daty <- this.daty
+				.cdtData$EnvData$varData$spi$this.daty <- this.daty
+			}
 		}
 	}
 

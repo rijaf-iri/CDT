@@ -24,11 +24,10 @@ LatLonAxisLabels <- function(axis.x, axis.y){
 ########################################################################
 
 ## Layout for lattice plot
-## only used in plotMerging_displayPlot_functions.R
 manageLayout <- function(nbPlot, transpose = FALSE){
 	 # nmaxPlot = n*n+n
 	n <- 5
-	nLayout <- cbind(c(rep(1:n, seq(1, n*2, 2)), rep(n+1, n)), rep(1:n, seq(2, n*2, 2)))
+	nLayout <- cbind(c(rep(1:n, seq(1, n * 2, 2)), rep(n + 1, n)), rep(1:n, seq(2, n * 2, 2)))
 	dimLayout <- nLayout[nbPlot, ]
 	if(transpose) dimLayout <- rev(dimLayout)
 
@@ -50,13 +49,12 @@ manageLayout <- function(nbPlot, transpose = FALSE){
 
 ################
 ## Axis ticks for levelplot
-## only used in plotMerging_displayPlot_functions.R
 parAxisPlotFun <- function(x, factor = 0.04){
 	#factor = 0.04 par defaut pour R
 	x <- x[!is.na(x)]
 	if(length(x) > 1) xlim <- range(x) + c(-1, 1) * factor * diff(range(x))
 	else if(length(x) == 1 & x != 0) xlim <- x + c(-1, 1) * factor * abs(x)
-	else  xlim <- factor * c(-1, 1)
+	else xlim <- factor * c(-1, 1)
 	xtick <- pretty(x)
 	bInf <- min(xtick[xtick >= min(xlim)])
 	bSup <- max(xtick[xtick <= max(xlim)])
@@ -72,7 +70,7 @@ parAxisPlotFun <- function(x, factor = 0.04){
 # This functions is almost a copy of axis.Date
 axTicks.Date <- function(x, side = 1){
 	x <- as.Date(x)
-	range <- par("usr")[if(side%%2) 1L:2L else 3:4L]
+	range <- par("usr")[if(side %% 2) 1L:2L else 3:4L]
 	range[1L] <- ceiling(range[1L])
 	range[2L] <- floor(range[2L])
 	d <- range[2L] - range[1L]

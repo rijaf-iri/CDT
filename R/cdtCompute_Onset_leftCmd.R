@@ -762,6 +762,7 @@ OnsetCalcPanelCmd <- function(){
 					###################
 					set.Data.Dates()
 					widgets.Station.Pixel()
+					set.plot.type()
 					res <- try(read.Data.Map(), silent = TRUE)
 					if(inherits(res, "try-error") | is.null(res)) return(NULL)
 				}else Insert.Messages.Out(lang.dlg[['message']][['10']], format = TRUE)
@@ -812,6 +813,7 @@ OnsetCalcPanelCmd <- function(){
 				###################
 				set.Data.Dates()
 				widgets.Station.Pixel()
+				set.plot.type()
 				ret <- try(read.Data.Map(), silent = TRUE)
 				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 			}
@@ -835,7 +837,7 @@ OnsetCalcPanelCmd <- function(){
 
 		.cdtData$EnvData$donDate <- tclVar()
 
-		cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = .cdtData$EnvData$donDate, width = largeur4)
+		cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = .cdtData$EnvData$donDate, width = largeur4, justify = 'center')
 		bt.data.Index.prev <- ttkbutton(frameDataMap, text = "<<", width = 3)
 		bt.data.Index.next <- ttkbutton(frameDataMap, text = ">>", width = 3)
 		bt.data.maps <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
@@ -843,12 +845,14 @@ OnsetCalcPanelCmd <- function(){
 
 		###############
 
+		.cdtData$EnvData$tab$pointSize <- NULL
 		.cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-												userCol = list(custom = FALSE, color = NULL),
-												userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-												title = list(user = FALSE, title = ''),
-												colkeyLab = list(user = FALSE, label = ''),
-												scalebar = list(add = FALSE, pos = 'bottomleft'))
+											userCol = list(custom = FALSE, color = NULL),
+											userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+											title = list(user = FALSE, title = ''),
+											colkeyLab = list(user = FALSE, label = ''),
+											scalebar = list(add = FALSE, pos = 'bottomleft'),
+											pointSize = .cdtData$EnvData$tab$pointSize)
 
 		tkconfigure(bt.data.MapOpt, command = function(){
 			if(!is.null(.cdtData$EnvData$varData$map)){
@@ -861,6 +865,9 @@ OnsetCalcPanelCmd <- function(){
 				}
 			}
 			.cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$dataMapOp)
+
+			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+				.cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$dataMapOp$pointSize
 		})
 
 		#########
@@ -921,8 +928,30 @@ OnsetCalcPanelCmd <- function(){
 
 		##############################################
 
+		framePlotType <- tkframe(subfr3)
+
+		.cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
+
+		txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
+		cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur4)
+
+		tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		###############
+
+		tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
+			if(!is.null(.cdtData$EnvData$varData)){
+				ret <- try(read.Data.Map(), silent = TRUE)
+				if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+			}
+		})
+
+		##############################################
+
 		tkgrid(frameDataExist, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(frameDataMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+		tkgrid(framePlotType, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
 	#######################################################################################################
 
@@ -943,23 +972,23 @@ OnsetCalcPanelCmd <- function(){
 		#################
 
 		.cdtData$EnvData$TSGraphOp <- list(
-					bar = list(
-							xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-							ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-							axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-							title = list(is.title = FALSE, title = '', position = 'top'),
-							colors = list(col = "darkblue")
-						),
-					line = list(
-						xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-						ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-						axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-						title = list(is.title = FALSE, title = '', position = 'top'),
-						plot = list(type = 'both',
-							col = list(line = "red", points = "blue"),
-							lwd = 2, cex = 1.4),
-						legend = NULL)
-					)
+										bar = list(
+												xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+												ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+												axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+												title = list(is.title = FALSE, title = '', position = 'top'),
+												colors = list(col = "darkblue")
+											),
+										line = list(
+											xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+											ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+											axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+											title = list(is.title = FALSE, title = '', position = 'top'),
+											plot = list(type = 'both',
+												col = list(line = "red", points = "blue"),
+												lwd = 2, cex = 1.4),
+											legend = NULL)
+										)
 
 		tkconfigure(bt.TSGraphOpt, command = function(){
 			suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
@@ -1030,8 +1059,10 @@ OnsetCalcPanelCmd <- function(){
 				tkconfigure(cb.addshp, values = unlist(listOpenFiles))
 
 				shpofile <- getShpOpenData(file.plotShp)
-				if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+				if(is.null(shpofile))
+					.cdtData$EnvData$shp$ocrds <- NULL
+				else
+					.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 			}
 		})
 
@@ -1051,8 +1082,10 @@ OnsetCalcPanelCmd <- function(){
 		#################
 		tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
 			shpofile <- getShpOpenData(file.plotShp)
-			if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-			.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+			if(is.null(shpofile))
+				.cdtData$EnvData$shp$ocrds <- NULL
+			else
+				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 		})
 
 		tkbind(chk.addshp, "<Button-1>", function(){
@@ -1128,6 +1161,24 @@ OnsetCalcPanelCmd <- function(){
 		return(0)
 	}
 
+	#################
+
+	set.plot.type <- function(){
+		if(.cdtData$EnvData$output$params$data.type == "cdtstation")
+		{
+			plot.type <- c("Pixels", "Points")
+			.cdtData$EnvData$plot.maps$.data.type <- "Points"
+
+			.cdtData$EnvData$dataMapOp$pointSize <- 0.7
+		}else{
+			plot.type <- c("Pixels", "FilledContour")
+			.cdtData$EnvData$plot.maps$.data.type <- "Grid"
+		}
+		tkconfigure(cb.plotType, values = plot.type)
+	}
+
+	#################
+
 	set.Data.Dates <- function(){
 		donDates <- format(.cdtData$EnvData$output$start.date, "%Y")
 		tkconfigure(cb.data.Index, values = donDates)
@@ -1155,6 +1206,9 @@ OnsetCalcPanelCmd <- function(){
 				return(NULL)
 			}
 
+			change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+
+			########
 			readVarData <- TRUE
 			if(!is.null(.cdtData$EnvData$varData))
 				if(!is.null(.cdtData$EnvData$filePathData))
@@ -1172,18 +1226,32 @@ OnsetCalcPanelCmd <- function(){
 					if(.cdtData$EnvData$filePathData == filePathData)
 						if(.cdtData$EnvData$varData$rasterDate == this.daty) rasterVarData <- FALSE
 
-			if(rasterVarData){
-				nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lon)))
-				ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lat)))
-				tmp <- as.numeric(.cdtData$EnvData$varData$data[idt, ] - .cdtData$EnvData$output$start.date[idt])
+			if(!rasterVarData)
+				if(.cdtData$EnvData$change.plot != change.plot) rasterVarData <- TRUE
 
-				tmp <- cdt.as.image(tmp, nx = nx, ny = ny,
-								pts.xy = cbind(.cdtData$EnvData$output$data$lon, .cdtData$EnvData$output$data$lat))
-				.cdtData$EnvData$varData$map$x <- tmp$x
-				.cdtData$EnvData$varData$map$y <- tmp$y
-				.cdtData$EnvData$varData$map$z <- tmp$z
+			if(rasterVarData){
+				X0 <- .cdtData$EnvData$output$data$lon
+				Y0 <- .cdtData$EnvData$output$data$lat
+				VAR0 <- as.numeric(.cdtData$EnvData$varData$data[idt, ] - .cdtData$EnvData$output$start.date[idt])
+
+				if(change.plot == "Pixels"){
+					nx <- nx_ny_as.image(diff(range(X0)))
+					ny <- nx_ny_as.image(diff(range(Y0)))
+					tmp <- cdt.as.image(VAR0, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+					.cdtData$EnvData$varData$map$x <- tmp$x
+					.cdtData$EnvData$varData$map$y <- tmp$y
+					.cdtData$EnvData$varData$map$z <- tmp$z
+					rm(tmp)
+				}
+
+				if(change.plot == "Points"){
+					.cdtData$EnvData$varData$map$x <- X0
+					.cdtData$EnvData$varData$map$y <- Y0
+					.cdtData$EnvData$varData$map$z <- VAR0
+				}
+
 				.cdtData$EnvData$varData$rasterDate <- this.daty
-				rm(tmp)
+				.cdtData$EnvData$change.plot <- change.plot
 			}
 		}else{
 			filePathData <- file.path(.cdtData$EnvData$PathData, "DATA_NetCDF",

@@ -63,7 +63,17 @@ CDT.Display.Map.inter <- function(plot.map, notebookTab, tab.title){
 			displayCursorPosition3Var(W, x, y, parPltCrd, getStnIDLabel,
 									stn.coords = .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')])
 		else
-			displayCursorPosition3Var(W, x, y, parPltCrd, getEmptyChar)
+		{
+			display.shp.attr <- FALSE
+			if(!is.null(.cdtData$EnvData$plot.maps$shp))
+				if(.cdtData$EnvData$plot.maps$shp$display) display.shp.attr <- TRUE
+
+			if(display.shp.attr){
+				displayCursorPosition3Var(W, x, y, parPltCrd, getAdminLabel,
+										shp = .cdtData$EnvData$plot.maps$shp$shp,
+										idField = .cdtData$EnvData$plot.maps$shp$field)
+			}else displayCursorPosition3Var(W, x, y, parPltCrd, getEmptyChar)
+		}
 	})
 
 	tkbind(img, "<Enter>", function() tkconfigure(img, cursor = 'crosshair'))

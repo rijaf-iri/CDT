@@ -63,6 +63,10 @@
                 <text lang="en"> Rolling Seasonal data </text>
                 <text lang="fr"> Données saisonnières glissantes </text>
             </option>
+            <option id="9">
+                <text lang="en"> Others </text>
+                <text lang="fr"> Autres </text>
+            </option>
         </combobox>
         <combobox id="2">
             <option id="1">
@@ -98,6 +102,9 @@
         </content>
         <content id="6">
             <text lang="en"> This type of data can not be saved as a table </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Coordinates outside of data range </text>
         </content>
     </message>
 </global_wdgt>

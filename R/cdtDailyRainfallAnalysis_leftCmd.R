@@ -445,6 +445,7 @@ dailyRainAnalysisPanelCmd <- function(){
 					###################
 					set.Data.VarStat.Dates_1st()
 					widgets.Station.Pixel()
+					set.plot.type()
 					res1 <- try(read.Data.MapVarStat(), silent = TRUE)
 					if(inherits(res1, "try-error") | is.null(res1)) return(NULL)
 					res2 <- try(read.Data.MapVarTS(), silent = TRUE)
@@ -510,6 +511,7 @@ dailyRainAnalysisPanelCmd <- function(){
 				###################
 				set.Data.VarStat.Dates_1st()
 				widgets.Station.Pixel()
+				set.plot.type()
 				ret1 <- try(read.Data.MapVarStat(), silent = TRUE)
 				if(inherits(ret1, "try-error") | is.null(ret1)) return(NULL)
 				ret2 <- try(read.Data.MapVarTS(), silent = TRUE)
@@ -544,12 +546,14 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		###################
 
+		.cdtData$EnvData$tab$pointSize.MapStat <- NULL
 		.cdtData$EnvData$varstatMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
 											userCol = list(custom = FALSE, color = NULL),
 											userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
 											title = list(user = FALSE, title = ''),
 											colkeyLab = list(user = FALSE, label = ''),
-											scalebar = list(add = FALSE, pos = 'bottomleft'))
+											scalebar = list(add = FALSE, pos = 'bottomleft'),
+											pointSize = .cdtData$EnvData$tab$pointSize.MapStat)
 
 		tkconfigure(bt.varstat.MapOpt, command = function(){
 			if(!is.null(.cdtData$EnvData$varData$map)){
@@ -562,6 +566,9 @@ dailyRainAnalysisPanelCmd <- function(){
 				}
 			}
 			.cdtData$EnvData$varstatMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$varstatMapOp)
+
+			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+				.cdtData$EnvData$tab$pointSize.MapStat <- .cdtData$EnvData$varstatMapOp$pointSize
 		})
 
 		###################
@@ -617,12 +624,14 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		###############
 
+		.cdtData$EnvData$tab$pointSize.MapTS <- NULL
 		.cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
 										userCol = list(custom = FALSE, color = NULL),
 										userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
 										title = list(user = FALSE, title = ''),
 										colkeyLab = list(user = FALSE, label = ''),
-										scalebar = list(add = FALSE, pos = 'bottomleft'))
+										scalebar = list(add = FALSE, pos = 'bottomleft'),
+										pointSize = .cdtData$EnvData$tab$pointSize.MapTS)
 
 		tkconfigure(bt.data.MapOpt, command = function(){
 			if(!is.null(.cdtData$EnvData$varData$map)){
@@ -635,6 +644,9 @@ dailyRainAnalysisPanelCmd <- function(){
 				}
 			}
 			.cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$dataMapOp)
+
+			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+				.cdtData$EnvData$tab$pointSize.MapTS <- .cdtData$EnvData$dataMapOp$pointSize
 		})
 
 		###############
@@ -700,9 +712,39 @@ dailyRainAnalysisPanelCmd <- function(){
 
 		##############################################
 
+		framePlotType <- tkframe(subfr3)
+
+		.cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
+
+		txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
+		cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur5)
+
+		tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		###############
+
+		tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
+			if(str_trim(tclvalue(.cdtData$EnvData$anaVars)) != "" &
+				str_trim(tclvalue(.cdtData$EnvData$anaStat)) != "")
+			{
+				ret1 <- try(read.Data.MapVarStat(), silent = TRUE)
+				if(inherits(ret1, "try-error") | is.null(ret1)) return(NULL)
+			}
+
+			########
+			if(!is.null(.cdtData$EnvData$tsData)){
+				ret2 <- try(read.Data.MapVarTS(), silent = TRUE)
+				if(inherits(ret2, "try-error") | is.null(ret2)) return(NULL)
+			}
+		})
+
+		##############################################
+
 		tkgrid(frameDataExist, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(frameDataStatMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 		tkgrid(frameDataMap, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(framePlotType, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
 	#######################################################################################################
 
@@ -878,8 +920,10 @@ dailyRainAnalysisPanelCmd <- function(){
 				tkconfigure(cb.addshp, values = unlist(listOpenFiles))
 
 				shpofile <- getShpOpenData(file.plotShp)
-				if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+				if(is.null(shpofile))
+					.cdtData$EnvData$shp$ocrds <- NULL
+				else
+					.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 			}
 		})
 
@@ -899,8 +943,10 @@ dailyRainAnalysisPanelCmd <- function(){
 		#################
 		tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
 			shpofile <- getShpOpenData(file.plotShp)
-			if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-			.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+			if(is.null(shpofile))
+				.cdtData$EnvData$shp$ocrds <- NULL
+			else
+				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 		})
 
 		tkbind(chk.addshp, "<Button-1>", function(){
@@ -978,6 +1024,23 @@ dailyRainAnalysisPanelCmd <- function(){
 
 	###################
 
+	set.plot.type <- function(){
+		if(.cdtData$EnvData$output$params$data.type == "cdtstation")
+		{
+			plot.type <- c("Pixels", "Points")
+			.cdtData$EnvData$plot.maps$.data.type <- "Points"
+
+			.cdtData$EnvData$varstatMapOp$pointSize <- 0.7
+			.cdtData$EnvData$dataMapOp$pointSize <- 0.7
+		}else{
+			plot.type <- c("Pixels", "FilledContour")
+			.cdtData$EnvData$plot.maps$.data.type <- "Grid"
+		}
+		tkconfigure(cb.plotType, values = plot.type)
+	}
+
+	###################
+
 	set.Data.VarStat.Dates_1st <- function(){
 		varstats <- .cdtData$EnvData$output$exist.vars.dates
 		if(length(names(varstats)) == 0) return(NULL)
@@ -1025,23 +1088,40 @@ dailyRainAnalysisPanelCmd <- function(){
 				return(NULL)
 			}
 
+			change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+
 			readVarData <- TRUE
 			if(!is.null(.cdtData$EnvData$statData))
 				if(!is.null(.cdtData$EnvData$statData$filePathData))
 					if(.cdtData$EnvData$statData$filePathData == filePathData) readVarData <- FALSE
 
+			if(!readVarData)
+				if(.cdtData$EnvData$change.plot.VarData != change.plot) readVarData <- TRUE
+
 			if(readVarData){
 				.cdtData$EnvData$statData$data <- readRDS(filePathData)
-				nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lon)))
-				ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lat)))
-				tmp <- cdt.as.image(.cdtData$EnvData$statData$data, nx = nx, ny = ny,
-								pts.xy = cbind(.cdtData$EnvData$output$data$lon, .cdtData$EnvData$output$data$lat))
-				.cdtData$EnvData$statData$map$x <- tmp$x
-				.cdtData$EnvData$statData$map$y <- tmp$y
-				.cdtData$EnvData$statData$map$z <- tmp$z
-				rm(tmp)
+
+				X0 <- .cdtData$EnvData$output$data$lon
+				Y0 <- .cdtData$EnvData$output$data$lat
+				VAR0 <- .cdtData$EnvData$statData$data
+				if(change.plot == "Pixels"){
+					nx <- nx_ny_as.image(diff(range(X0)))
+					ny <- nx_ny_as.image(diff(range(Y0)))
+					tmp <- cdt.as.image(VAR0, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+					.cdtData$EnvData$statData$map$x <- tmp$x
+					.cdtData$EnvData$statData$map$y <- tmp$y
+					.cdtData$EnvData$statData$map$z <- tmp$z
+					rm(tmp)
+				}
+
+				if(change.plot == "Points"){
+					.cdtData$EnvData$statData$map$x <- X0
+					.cdtData$EnvData$statData$map$y <- Y0
+					.cdtData$EnvData$statData$map$z <- VAR0
+				}
 
 				.cdtData$EnvData$statData$filePathData <- filePathData
+				.cdtData$EnvData$change.plot.VarData <- change.plot
 			}
 		}else{
 			filePathData <- file.path(.cdtData$EnvData$PathData, "DATA_NetCDF_STATS", paste0(this.vars, "_", this.stats, ".nc"))
@@ -1094,6 +1174,9 @@ dailyRainAnalysisPanelCmd <- function(){
 				return(NULL)
 			}
 
+			change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+
+			########
 			readVarData <- TRUE
 			if(!is.null(.cdtData$EnvData$tsData))
 				if(!is.null(.cdtData$EnvData$tsData$filePathData))
@@ -1111,17 +1194,33 @@ dailyRainAnalysisPanelCmd <- function(){
 					if(.cdtData$EnvData$tsData$filePathData == filePathData)
 						if(.cdtData$EnvData$tsData$rasterDate == this.daty) rasterVarData <- FALSE
 
+			if(!rasterVarData)
+				if(.cdtData$EnvData$change.plot.rasterVarData != change.plot) rasterVarData <- TRUE
+
 			if(rasterVarData){
 				idt <- which(.cdtData$EnvData$output$exist.vars.dates[[this.vars]]$date == this.daty)
-				nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lon)))
-				ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lat)))
-				tmp <- cdt.as.image(as.numeric(.cdtData$EnvData$tsData$data[idt, ]), nx = nx, ny = ny,
-								pts.xy = cbind(.cdtData$EnvData$output$data$lon, .cdtData$EnvData$output$data$lat))
-				.cdtData$EnvData$tsData$map$x <- tmp$x
-				.cdtData$EnvData$tsData$map$y <- tmp$y
-				.cdtData$EnvData$tsData$map$z <- tmp$z
+
+				X0 <- .cdtData$EnvData$output$data$lon
+				Y0 <- .cdtData$EnvData$output$data$lat
+				VAR0 <- as.numeric(.cdtData$EnvData$tsData$data[idt, ])
+				if(change.plot == "Pixels"){
+					nx <- nx_ny_as.image(diff(range(X0)))
+					ny <- nx_ny_as.image(diff(range(Y0)))
+					tmp <- cdt.as.image(VAR0, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+					.cdtData$EnvData$tsData$map$x <- tmp$x
+					.cdtData$EnvData$tsData$map$y <- tmp$y
+					.cdtData$EnvData$tsData$map$z <- tmp$z
+					rm(tmp)
+				}
+
+				if(change.plot == "Points"){
+					.cdtData$EnvData$tsData$map$x <- X0
+					.cdtData$EnvData$tsData$map$y <- Y0
+					.cdtData$EnvData$tsData$map$z <- VAR0
+				}
+
 				.cdtData$EnvData$tsData$rasterDate <- this.daty
-				rm(tmp)
+				.cdtData$EnvData$change.plot.rasterVarData <- change.plot
 			}
 		}else{
 			filePathData <- file.path(.cdtData$EnvData$PathData, this.vars, "DATA_NetCDF", paste0("Seas_", this.daty, ".nc"))

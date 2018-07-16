@@ -156,7 +156,7 @@ SeasonAnalysisPanelCmd <- function(){
 					update.OpenFiles('ascii', dat.opfiles)
 					listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
 					tclvalue(input.Prec) <- dat.opfiles[[1]]
-					lapply(list(cb.en.INPrec, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+					tkconfigure(cb.en.INPrec, values = unlist(listOpenFiles))
 				}
 			}else{
 				path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -229,7 +229,7 @@ SeasonAnalysisPanelCmd <- function(){
 						update.OpenFiles('ascii', dat.opfiles)
 						listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
 						tclvalue(input.Prec) <- dat.opfiles[[1]]
-						lapply(list(cb.en.INPrec, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+						tkconfigure(cb.en.INPrec, values = unlist(listOpenFiles))
 					}
 				})
 
@@ -312,7 +312,7 @@ SeasonAnalysisPanelCmd <- function(){
 
 		dir.save <- tclVar(GeneralParameters$output)
 
-		txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results",  anchor = 'w', justify = 'left')
+		txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results", anchor = 'w', justify = 'left')
 		en.dir.save <- tkentry(frameDirSav, textvariable = dir.save, width = largeur0)
 		bt.dir.save <- tkbutton(frameDirSav, text = "...")
 
@@ -405,7 +405,6 @@ SeasonAnalysisPanelCmd <- function(){
 		tkgrid(frameDirSav, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 		tkgrid(frameCalc, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
-
 	#######################################################################################################
 
 	#Tab3
@@ -481,7 +480,7 @@ SeasonAnalysisPanelCmd <- function(){
 		stateDrySpl <- 'disabled'
 
 		cb.TsMap.picsavar <- ttkcombobox(framePICSATSMap, values = varPICSA.val, textvariable = .cdtData$EnvData$varPICSA, width = largeur3)
-		txt.TsMap.dryspell <- tklabel(framePICSATSMap, text = "DrySpell",  anchor = 'w', justify = 'left')
+		txt.TsMap.dryspell <- tklabel(framePICSATSMap, text = "DrySpell", anchor = 'w', justify = 'left')
 		.cdtData$EnvData$spin.TsMap.dryspell <- ttkspinbox(framePICSATSMap, from = 1, to = 50, increment = 1, justify = 'center', width = 2, state = stateDrySpl)
 		tkset(.cdtData$EnvData$spin.TsMap.dryspell, 5)
 
@@ -494,12 +493,14 @@ SeasonAnalysisPanelCmd <- function(){
 
 		#################
 
+		.cdtData$EnvData$tab$pointSize.TSMap <- NULL
 		.cdtData$EnvData$TSMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
 											userCol = list(custom = FALSE, color = NULL),
 											userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
 											title = list(user = FALSE, title = ''),
 											colkeyLab = list(user = FALSE, label = ''),
-											scalebar = list(add = FALSE, pos = 'bottomleft'))
+											scalebar = list(add = FALSE, pos = 'bottomleft'),
+											pointSize = .cdtData$EnvData$tab$pointSize.TSMap)
 
 		tkconfigure(bt.TsMap.Opt, command = function(){
 			if(!is.null(.cdtData$EnvData$tsdata)){
@@ -512,6 +513,9 @@ SeasonAnalysisPanelCmd <- function(){
 				}
 			}
 			.cdtData$EnvData$TSMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSMapOp)
+
+			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+				.cdtData$EnvData$tab$pointSize.TSMap <- .cdtData$EnvData$TSMapOp$pointSize
 		})
 
 		.cdtData$EnvData$tab$TSMap <- NULL
@@ -605,24 +609,27 @@ SeasonAnalysisPanelCmd <- function(){
 		stateTrend <- if(tclvalue(.cdtData$EnvData$analysis.method) == 'Trend') 'normal' else 'disabled'
 
 		cb.anMthd <- ttkcombobox(framePICSACLMMap, values = ANALYSIS, textvariable = .cdtData$EnvData$analysis.method, width = largeur3)
-		txt.Percent <- tklabel(framePICSACLMMap, text = "Percentile",  anchor = 'w', justify = 'left')
+		txt.Percent <- tklabel(framePICSACLMMap, text = "Percentile", anchor = 'w', justify = 'left')
 		en.Percent <- tkentry(framePICSACLMMap, textvariable = .cdtData$EnvData$mth.perc, width = 3, state = statePrc)
 
-		txt.Freq1 <- tklabel(framePICSACLMMap, text = "Between",  anchor = 'w', justify = 'left')
+		txt.Freq1 <- tklabel(framePICSACLMMap, text = "Between", anchor = 'w', justify = 'left')
 		en.Freq1 <- tkentry(framePICSACLMMap, textvariable = .cdtData$EnvData$low.thres, width = 5, state = stateFrq)
-		txt.Freq2 <- tklabel(framePICSACLMMap, text = "And",  anchor = 'w', justify = 'left')
+		txt.Freq2 <- tklabel(framePICSACLMMap, text = "And", anchor = 'w', justify = 'left')
 		en.Freq2 <- tkentry(framePICSACLMMap, textvariable = .cdtData$EnvData$up.thres, width = 5, state = stateFrq)
 		bt.ClimMap.plot <- ttkbutton(framePICSACLMMap, text = .cdtEnv$tcl$lang$global[['button']][['3']])
 		cb.Trend <- ttkcombobox(framePICSACLMMap, values = TRENDOPT, textvariable = .cdtData$EnvData$trend, width = largeur3, state = stateTrend)
 		bt.ClimMap.Opt <- ttkbutton(framePICSACLMMap, text = .cdtEnv$tcl$lang$global[['button']][['4']])
 
 		#################
+
+		.cdtData$EnvData$tab$pointSize.climMap <- NULL
 		.cdtData$EnvData$climMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
 											userCol = list(custom = FALSE, color = NULL),
 											userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
 											title = list(user = FALSE, title = ''),
 											colkeyLab = list(user = FALSE, label = ''),
-											scalebar = list(add = FALSE, pos = 'bottomleft'))
+											scalebar = list(add = FALSE, pos = 'bottomleft'),
+											pointSize = .cdtData$EnvData$tab$pointSize.climMap)
 
 		tkconfigure(bt.ClimMap.Opt, command = function(){
 			if(!is.null(.cdtData$EnvData$climdata)){
@@ -635,6 +642,9 @@ SeasonAnalysisPanelCmd <- function(){
 				}
 			}
 			.cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$climMapOp)
+
+			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+				.cdtData$EnvData$tab$pointSize.climMap <- .cdtData$EnvData$climMapOp$pointSize
 		})
 
 		.cdtData$EnvData$tab$ClimMap <- NULL
@@ -681,9 +691,33 @@ SeasonAnalysisPanelCmd <- function(){
 
 		##############################################
 
+		framePlotType <- tkframe(subfr3)
+
+		.cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
+
+		txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
+		cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur3)
+
+		tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		###############
+
+		tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
+			ret <- read.PicsaTSData()
+			if(is.null(ret)) return(NULL)
+
+			########
+			ret <- calculate.ClimStat()
+			if(is.null(ret)) return(NULL)
+		})
+
+		##############################################
+
 		tkgrid(framePICSADat, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(framePICSATSMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(framePICSACLMMap, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(framePlotType, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
 	#######################################################################################################
 
@@ -713,9 +747,9 @@ SeasonAnalysisPanelCmd <- function(){
 		tkgrid(cb.varTSp, cb.typeTSp, bt.TsGraph.plot)
 
 		frTS1 <- tkframe(framePICSATSGRAPH)
-		chk.meanTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$averageTSp, text =  "Add Mean", anchor = 'w', justify = 'left', state = stateType)
-		chk.tercTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$tercileTSp, text =  "Add Terciles", anchor = 'w', justify = 'left', state = stateType)
-		chk.trendTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$trendTSp, text =  "Add Trend", anchor = 'w', justify = 'left', state = stateType)
+		chk.meanTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$averageTSp, text = "Add Mean", anchor = 'w', justify = 'left', state = stateType)
+		chk.tercTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$tercileTSp, text = "Add Terciles", anchor = 'w', justify = 'left', state = stateType)
+		chk.trendTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$trendTSp, text = "Add Trend", anchor = 'w', justify = 'left', state = stateType)
 		tkgrid(chk.meanTSp, chk.tercTSp, chk.trendTSp)
 
 		bt.TsGraph.Opt <- ttkbutton(framePICSATSGRAPH, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8, state = stateTsp)
@@ -906,8 +940,10 @@ SeasonAnalysisPanelCmd <- function(){
 				lapply(list(cb.en.INPrec, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
 				shpofile <- getShpOpenData(file.plotShp)
-				if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+				if(is.null(shpofile))
+					.cdtData$EnvData$shp$ocrds <- NULL
+				else
+					.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 			}
 		})
 
@@ -927,8 +963,10 @@ SeasonAnalysisPanelCmd <- function(){
 		#################
 		tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
 			shpofile <- getShpOpenData(file.plotShp)
-			if(is.null(shpofile)) .cdtData$EnvData$shp$ocrds <- NULL
-			.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+			if(is.null(shpofile))
+				.cdtData$EnvData$shp$ocrds <- NULL
+			else
+				.cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
 		})
 
 		tkbind(chk.addshp, "<Button-1>", function(){
@@ -1004,6 +1042,23 @@ SeasonAnalysisPanelCmd <- function(){
 		return(0)
 	}
 
+	#####################
+
+	set.plot.type <- function(){
+		if(.cdtData$EnvData$output$data.type == "cdtstation")
+		{
+			plot.type <- c("Pixels", "Points")
+			.cdtData$EnvData$plot.maps$.data.type <- "Points"
+
+			.cdtData$EnvData$climMapOp$pointSize <- 0.7
+			.cdtData$EnvData$TSMapOp$pointSize <- 0.7
+		}else{
+			plot.type <- c("Pixels", "FilledContour")
+			.cdtData$EnvData$plot.maps$.data.type <- "Grid"
+		}
+		tkconfigure(cb.plotType, values = plot.type)
+	}
+
 	#######################################################################################################
 
 	load.PICSA.Data <- function(){
@@ -1025,6 +1080,7 @@ SeasonAnalysisPanelCmd <- function(){
 		###################
 		# widgets.Station.Pixel
 		widgets.Station.Pixel()
+		set.plot.type()
 
 		###################
 		# load daily precip
@@ -1077,6 +1133,9 @@ SeasonAnalysisPanelCmd <- function(){
 				return(NULL)
 			}
 
+			change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+
+			########
 			readTsData <- TRUE
 			if(!is.null(.cdtData$EnvData$tsdata))
 				if(!is.null(.cdtData$EnvData$filetsdata))
@@ -1099,11 +1158,13 @@ SeasonAnalysisPanelCmd <- function(){
 				if(!is.null(.cdtData$EnvData$oldDryspell))
 					if(.cdtData$EnvData$oldDryspell != dryspl & !rasterTsData) rasterTsData <- TRUE
 
-			if(rasterTsData){
-				idt <- which(.cdtData$EnvData$tsdata$date == idaty)
-				nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lon)))
-				ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lat)))
+			if(!rasterTsData)
+				if(.cdtData$EnvData$change.plot.rasterTsData != change.plot) rasterTsData <- TRUE
 
+			if(rasterTsData){
+				X0 <- .cdtData$EnvData$output$data$lon
+				Y0 <- .cdtData$EnvData$output$data$lat
+				idt <- which(.cdtData$EnvData$tsdata$date == idaty)
 				if(tsdata.dir == "Dry_Spells"){
 					tmp <- .cdtData$EnvData$tsdata$data[idt, ]
 					nval <- sapply(tmp, function(x) (length(x) == 1) & is.na(x[1]))
@@ -1113,11 +1174,23 @@ SeasonAnalysisPanelCmd <- function(){
 					.cdtData$EnvData$oldDryspell <- dryspl
 				}else tmp <- as.numeric(.cdtData$EnvData$tsdata$data[idt, ])
 
-				tmp <- cdt.as.image(tmp, nx = nx, ny = ny, pts.xy = cbind(.cdtData$EnvData$output$data$lon, .cdtData$EnvData$output$data$lat))
-				.cdtData$EnvData$tsdata$x <- tmp$x
-				.cdtData$EnvData$tsdata$y <- tmp$y
-				.cdtData$EnvData$tsdata$z <- tmp$z
+				if(change.plot == "Pixels"){
+					nx <- nx_ny_as.image(diff(range(X0)))
+					ny <- nx_ny_as.image(diff(range(Y0)))
+					tmp <- cdt.as.image(tmp, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+					.cdtData$EnvData$tsdata$x <- tmp$x
+					.cdtData$EnvData$tsdata$y <- tmp$y
+					.cdtData$EnvData$tsdata$z <- tmp$z
+				}
+
+				if(change.plot == "Points"){
+					.cdtData$EnvData$tsdata$x <- X0
+					.cdtData$EnvData$tsdata$y <- Y0
+					.cdtData$EnvData$tsdata$z <- tmp
+				}
+
 				.cdtData$EnvData$rasterTsData <- idaty
+				.cdtData$EnvData$change.plot.rasterTsData <- change.plot
 				rm(tmp)
 			}
 		}else{
@@ -1217,7 +1290,9 @@ SeasonAnalysisPanelCmd <- function(){
 			}
 
 			StatCalc <- str_trim(tclvalue(.cdtData$EnvData$analysis.method))
+			change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
+			########
 			calcClim <- TRUE
 			if(!is.null(.cdtData$EnvData$climdata))
 				if(!is.null(.cdtData$EnvData$filetsdata1))
@@ -1236,6 +1311,9 @@ SeasonAnalysisPanelCmd <- function(){
 			if(varPICSA == "Longest Dry Spell")
 				if(!is.null(.cdtData$EnvData$oldDryspell2))
 					if(.cdtData$EnvData$oldDryspell2 != dryspl & !calcClim) calcClim <- TRUE
+
+			if(!calcClim)
+				if(.cdtData$EnvData$change.plot.calcClim != change.plot) calcClim <- TRUE
 
 			if(calcClim){
 				don <- readRDS(filetsdata)
@@ -1256,19 +1334,31 @@ SeasonAnalysisPanelCmd <- function(){
 					.cdtData$EnvData$oldDryspell2 <- dryspl
 				}
 
+				X0 <- .cdtData$EnvData$output$data$lon
+				Y0 <- .cdtData$EnvData$output$data$lat
 				## na min.frac
 				don <- statisticFunction(don)
-				nx <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lon)))
-				ny <- nx_ny_as.image(diff(range(.cdtData$EnvData$output$data$lat)))
-				don <- cdt.as.image(don, nx = nx, ny = ny, pts.xy = cbind(.cdtData$EnvData$output$data$lon, .cdtData$EnvData$output$data$lat))
-				.cdtData$EnvData$climdata$x <- don$x
-				.cdtData$EnvData$climdata$y <- don$y
-				.cdtData$EnvData$climdata$z <- don$z
-				
-				rm(don)
+
+				if(change.plot == "Pixels"){
+					nx <- nx_ny_as.image(diff(range(X0)))
+					ny <- nx_ny_as.image(diff(range(Y0)))
+					don <- cdt.as.image(don, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+					.cdtData$EnvData$climdata$x <- don$x
+					.cdtData$EnvData$climdata$y <- don$y
+					.cdtData$EnvData$climdata$z <- don$z
+				}
+
+				if(change.plot == "Points"){
+					.cdtData$EnvData$climdata$x <- X0
+					.cdtData$EnvData$climdata$y <- Y0
+					.cdtData$EnvData$climdata$z <- don
+				}
+
 				.cdtData$EnvData$filetsdata1 <- filetsdata
 				.cdtData$EnvData$StatCalc <- StatCalc
 				if(StatCalc == "Trend") .cdtData$EnvData$trendUnit <- trendUnit
+				.cdtData$EnvData$change.plot.calcClim <- change.plot
+				rm(don)
 			}
 		}else{
 			tsdata.path <- file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET", tsdata.dir)

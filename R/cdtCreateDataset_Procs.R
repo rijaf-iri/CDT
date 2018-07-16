@@ -438,77 +438,76 @@ readCdtDatasetChunk.locations <- function(loc, fileInfo, cdtData = NULL, chunkDi
 
 ###########################################################
 
-# readCdtDatasetChunk for PICSA (a changer)
+# cdtdataset <- .cdtData$EnvData$cdtdataset
+# fileInfo <- cdtdataset$fileInfo
+# xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+# yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
 
-readCdtDatasetChunk.picsa <- function(col, colInfo, indir, chunksize = 100, chunk.par = TRUE)
-{
-	col.id <- match(col, colInfo$id)
-	col.idx <- colInfo$index[col.id]
-	col.grp <- split(col.id, col.idx)
-	col.grp <- lapply(col.grp, function(l){
-		ix <- (l-chunksize)%%chunksize
-		ifelse(ix == 0, chunksize, ix)
-	})
-	chunk <- unique(col.idx)
+# padx <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonPAD)))
+# pady <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latPAD)))
 
-	is.parallel <- doparallel(chunk.par & (length(chunk) >= 10))
-	`%parLoop%` <- is.parallel$dofun
-	don <- foreach(j = seq_along(chunk)) %parLoop% {
-		file.rds <- file.path(indir, paste0(chunk[j], ".rds"))
-		# con <- file(file.rds)
-		# open(con, "rb")
-		# x <- readRDS(con)
-		# close(con)
-		x <- readRDS(file.rds)
-		x[, col.grp[[j]], drop = FALSE]
-	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
-	do.call(cbind, don)
+cdtdataset.extarct.TS <- function(cdtdataset, fileInfo, xloc, yloc, padx = 0, pady = 0, ...){
+	if(padx == 0 & pady == 0)
+		cdtdataset.one.pixel(cdtdataset, fileInfo, xloc, yloc, ...)
+	else
+		cdtdataset.pad.pixel(cdtdataset, fileInfo, xloc, yloc, padx, pady, ...)
 }
 
-## in picsa
+## extract one pixel
+cdtdataset.one.pixel <- function(cdtdataset, fileInfo, xloc, yloc, ...){
+	xlon <- cdtdataset$coords$mat$x
+	xlat <- cdtdataset$coords$mat$y
 
-writeCdtDatasetChunk.create <- function(x, outdir, chunksize = 100, chunk.par = TRUE)
-{
-	col.id <- seq(ncol(x))
-	col.grp <- split(col.id, ceiling(col.id/chunksize))
-	col.idx <- rep(seq_along(col.grp), sapply(col.grp, length))
+	ilon <- xloc
+	ilat <- yloc
 
-	is.parallel <- doparallel(chunk.par & (length(col.grp) >= 10))
-	`%parLoop%` <- is.parallel$dofun
-	ret <- foreach(j = seq_along(col.grp)) %parLoop% {
-		tmp <- x[, col.grp[[j]], drop = FALSE]
-		file.rds <- file.path(outdir, paste0(j, ".rds"))
-		con <- gzfile(file.rds, compression = 5)
-		open(con, "wb")
-		saveRDS(tmp, con)
-		close(con)
-		rm(tmp); gc()
+	iclo <- findInterval(ilon, xlon)
+	ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])
+	icla <- findInterval(ilat, xlat)
+	ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
+
+	if(is.na(ilo) | is.na(ila)){
+		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
+		return(NULL)
 	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
-	return(list(id = col.id, index = col.idx))
+	ixy <- ilo + length(xlon) * (ila - 1)
+
+	don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
+	don <- don$data[, 1]
+	daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
+
+	list(data = don, date = daty)
 }
 
+## spatially averaged over a rectangle (padding)
+cdtdataset.pad.pixel <- function(cdtdataset, fileInfo, xloc, yloc, padx, pady, ...){
+	xlon <- cdtdataset$coords$mat$x
+	xlat <- cdtdataset$coords$mat$y
 
-writeCdtDatasetChunk.rbind <- function(x, outdir, chunksize = 100, chunk.par = TRUE)
-{
-	col.id <- seq(ncol(x))
-	col.grp <- split(col.id, ceiling(col.id/chunksize))
-	col.idx <- rep(seq_along(col.grp), sapply(col.grp, length))
+	nx <- xlon[2] - xlon[1]
+	ny <- xlat[2] - xlat[1]
+	padx <- round(padx / nx)
+	pady <- round(pady / ny)
+	voisin <- expand.grid(x = xloc + nx * (-padx:padx), y =  yloc + ny * (-pady:pady))
 
-	is.parallel <- doparallel(chunk.par & (length(col.grp) >= 10))
-	`%parLoop%` <- is.parallel$dofun
-	ret <- foreach(j = seq_along(col.grp)) %parLoop% {
-		file.rds <- file.path(outdir, paste0(j, ".rds"))
-		y <- readRDS(file.rds)
-		z <- x[, col.grp[[j]], drop = FALSE]
-		tmp <- rbind(y, z)
-		con <- gzfile(file.rds, compression = 5)
-		open(con, "wb")
-		saveRDS(tmp, con)
-		close(con)
-		rm(y, z, tmp); gc()
+	ilon <- voisin$x
+	ilat <- voisin$y
+
+	iclo <- findInterval(ilon, xlon)
+	ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])
+	icla <- findInterval(ilat, xlat)
+	ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
+
+	ina <- !is.na(ilo) & !is.na(ila)
+	if(all(!ina)){
+		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
+		return(NULL)
 	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
-	return(list(id = col.id, index = col.idx))
+	ixy <- ilo[ina] + length(xlon) * (ila[ina] - 1)
+
+	don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
+	don <- rowMeans(don$data, na.rm = TRUE)
+	daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
+
+	list(data = don, date = daty)
 }
