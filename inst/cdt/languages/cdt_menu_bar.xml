@@ -100,10 +100,10 @@
             <text lang="fr"> Contrôle Qualité </text>
         </submenu>
         <submenu id="1">
-            <text lang="en"> Assess Data Availability </text>
+            <text lang="en"> Check Stations Coordinates </text>
         </submenu>
         <submenu id="2">
-            <text lang="en"> Check Stations Coordinates </text>
+            <text lang="en"> Assess Data Availability </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> QC stations data </text>

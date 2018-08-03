@@ -548,7 +548,7 @@ DecilesCalcPanelCmd <- function(){
 						.cdtData$EnvData$dataMapOp$userLvl$levels <- atlevel
 				}
 			}
-			.cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$dataMapOp)
+			.cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
 
 			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
 				.cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$dataMapOp$pointSize
@@ -668,7 +668,7 @@ DecilesCalcPanelCmd <- function(){
 									"Bar-Line" = "Bar.Line",
 									"Polygon" = "Bar.Line")
 			plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
-			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSGraphOp)
+			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
 		})
 
 		#########
@@ -719,7 +719,7 @@ DecilesCalcPanelCmd <- function(){
 										axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = TRUE, ylab = 'Time-scale (months)'))
 
 		tkconfigure(bt.VizOpt, command = function(){
-			.cdtData$EnvData$spiVizOp <- MapGraph.SpiVizOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$spiVizOp)
+			.cdtData$EnvData$spiVizOp <- MapGraph.SpiVizOptions(.cdtData$EnvData$spiVizOp)
 		})
 
 		###############
@@ -789,7 +789,7 @@ DecilesCalcPanelCmd <- function(){
 		.cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
 		tkconfigure(bt.addshpOpt, command = function(){
-			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtEnv$tcl$main$win, .cdtData$EnvData$SHPOp)
+			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
 		})
 
 		########

@@ -141,7 +141,7 @@ anomaliesCalcPanelCmd <- function(){
 
 		tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.infile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(txt.infile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(cb.en.infile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(bt.infile, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
@@ -197,7 +197,7 @@ anomaliesCalcPanelCmd <- function(){
 				cb.en.infile <- tkentry(frameInData, textvariable = input.file, width = largeur2)
 
 				tkconfigure(bt.infile, command = function(){
-					path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), initialfile = "", filetypes = .cdtEnv$tcl$data$filetypes6))
+					path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
 					tclvalue(input.file) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
 				})
 
@@ -233,7 +233,7 @@ anomaliesCalcPanelCmd <- function(){
 
 		tkconfigure(bt.outAnom, command = function(){
 			if(GeneralParameters$outdir$update){
-				path.anomIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), initialfile = "", filetypes = .cdtEnv$tcl$data$filetypes6))
+				path.anomIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
 				tclvalue(outAnom) <- if(path.anomIdx %in% c("", "NA") | is.na(path.anomIdx)) "" else path.anomIdx
 			}else{
 				dirAnom <- tk_choose.dir(getwd(), "")
@@ -379,7 +379,7 @@ anomaliesCalcPanelCmd <- function(){
 		######
 
 		tkconfigure(bt.climIdx, command = function(){
-			path.climIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), initialfile = "", filetypes = .cdtEnv$tcl$data$filetypes6))
+			path.climIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
 			tclvalue(file.ClimIndex) <- if(path.climIdx %in% c("", "NA") | is.na(path.climIdx)) "" else path.climIdx
 		})
 
@@ -573,6 +573,7 @@ anomaliesCalcPanelCmd <- function(){
 		tkgrid(bt.anomIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
 		###############
+
 		tkbind(chk.anomIdx, "<Button-1>", function(){
 			stateAnomDat <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
 			tkconfigure(en.anomIdx, state = stateAnomDat)
@@ -580,6 +581,7 @@ anomaliesCalcPanelCmd <- function(){
 			stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
 			tkconfigure(calculateBut, state = stateCaclBut)
 		})
+
 		##############################################
 
 		frameAnomalyMap <- ttklabelframe(subfr3, text = "Anomaly Map", relief = 'groove')
@@ -589,8 +591,8 @@ anomaliesCalcPanelCmd <- function(){
 		cb.anom.Date <- ttkcombobox(frameAnomalyMap, values = "", textvariable = .cdtData$EnvData$anomDate, width = largeur4, justify = 'center')
 		bt.anom.Date.prev <- ttkbutton(frameAnomalyMap, text = "<<", width = 3)
 		bt.anom.Date.next <- ttkbutton(frameAnomalyMap, text = ">>", width = 3)
-		bt.anom.maps <- ttkbutton(frameAnomalyMap, text = "PLOT", width = 7)
-		bt.anom.MapOpt <- ttkbutton(frameAnomalyMap, text = "Options", width = 7)
+		bt.anom.maps <- ttkbutton(frameAnomalyMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
+		bt.anom.MapOpt <- ttkbutton(frameAnomalyMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
 
 		###############
 
@@ -613,7 +615,7 @@ anomaliesCalcPanelCmd <- function(){
 						.cdtData$EnvData$anomMapOp$userLvl$levels <- atlevel
 				}
 			}
-			.cdtData$EnvData$anomMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$anomMapOp)
+			.cdtData$EnvData$anomMapOp <- MapGraph.MapOptions(.cdtData$EnvData$anomMapOp)
 
 			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
 				.cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$anomMapOp$pointSize
@@ -721,8 +723,8 @@ anomaliesCalcPanelCmd <- function(){
 		.cdtData$EnvData$plot.maps$typeTSp <- tclVar("Bar")
 
 		cb.typeTSp <- ttkcombobox(frameAnomalyTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur4)
-		bt.TsGraph.plot <- ttkbutton(frameAnomalyTS, text = "PLOT", width = 7)
-		bt.TSGraphOpt <- ttkbutton(frameAnomalyTS, text = "Options", width = 8)
+		bt.TsGraph.plot <- ttkbutton(frameAnomalyTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
+		bt.TSGraphOpt <- ttkbutton(frameAnomalyTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
 
 		#################
 
@@ -751,7 +753,7 @@ anomaliesCalcPanelCmd <- function(){
 									"Bar" = "Anomaly",
 									"Line" = "Line")
 			plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
-			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSGraphOp)
+			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
 		})
 
 		#########
@@ -825,7 +827,7 @@ anomaliesCalcPanelCmd <- function(){
 		.cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
 		tkconfigure(bt.addshpOpt, command = function(){
-			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtEnv$tcl$main$win, .cdtData$EnvData$SHPOp)
+			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
 		})
 
 		########

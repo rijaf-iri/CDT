@@ -145,7 +145,7 @@ cdtDataset_readData <- function(){
 
 	#########################################################
 
-	chunkdate <- split(seq_along(ncInfo$dates), ceiling(seq_along(ncInfo$dates)/30))
+	chunkdate <- split(seq_along(ncInfo$dates), ceiling(seq_along(ncInfo$dates) / 30))
 
 	is.parallel <- doparallel(length(chunkdate) >= 10)
 	`%parLoop%` <- is.parallel$dofun
@@ -212,7 +212,7 @@ cdtDataset_readData <- function(){
 			return(0)
 		}
 
-		stt0 <- Sys.time()-stt
+		stt0 <- Sys.time() - stt
 		vdaty <- ncInfo$dates[chunkdate[[jj]]]
 		Insert.Messages.Out(paste("Date:", vdaty[1], "-", vdaty[length(vdaty)],
 							"| Elapsed time:", as.character(stt0), attr(stt0, "units")))
@@ -220,7 +220,6 @@ cdtDataset_readData <- function(){
 		rm(tmp); gc()
 		return(0)
 	})
-
 	if(is.parallel$stop) stopCluster(is.parallel$cluster)
 
 	#########################################################
@@ -466,6 +465,11 @@ cdtdataset.one.pixel <- function(cdtdataset, fileInfo, xloc, yloc, ...){
 	icla <- findInterval(ilat, xlat)
 	ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
 
+	if(length(ilo) == 0 | length(ila) == 0){
+		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
+		return(NULL)
+	}
+
 	if(is.na(ilo) | is.na(ila)){
 		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
 		return(NULL)
@@ -473,10 +477,11 @@ cdtdataset.one.pixel <- function(cdtdataset, fileInfo, xloc, yloc, ...){
 	ixy <- ilo + length(xlon) * (ila - 1)
 
 	don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
+	coords <- don$coords
 	don <- don$data[, 1]
 	daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
 
-	list(data = don, date = daty)
+	list(data = don, date = daty, coords = coords)
 }
 
 ## spatially averaged over a rectangle (padding)
@@ -497,6 +502,11 @@ cdtdataset.pad.pixel <- function(cdtdataset, fileInfo, xloc, yloc, padx, pady, .
 	ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])
 	icla <- findInterval(ilat, xlat)
 	ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
+
+	if(length(ilo) == 0 | length(ila) == 0){
+		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
+		return(NULL)
+	}
 
 	ina <- !is.na(ilo) & !is.na(ila)
 	if(all(!ina)){

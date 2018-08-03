@@ -76,7 +76,9 @@ imageNotebookTab_open <- function(notebookTab, tabTitle){
 
 ## Display data.frame on unique Tab
 
-tableNotebookTab_unik <- function(data.df, notebookTab, title, colwidth = 8){
+tableNotebookTab_unik <- function(data.df, notebookTab, title,
+								colwidth = 8, table.type = 'arr')
+{
 	ntab <- length(.cdtData$OpenTab$Type)
 	newTable <- TRUE
 	if(!is.null(notebookTab)){
@@ -95,7 +97,7 @@ tableNotebookTab_unik <- function(data.df, notebookTab, title, colwidth = 8){
 	if(newTable){
 		tabID <- ntab + 1
 		tableDisp <- Display_data.frame_Table(data.df, title, colwidth)
-		.cdtData$OpenTab$Type[[tabID]] <- 'arr'
+		.cdtData$OpenTab$Type[[tabID]] <- table.type
 		.cdtData$OpenTab$Data[[tabID]] <- tableDisp
 	}else{
 		tabID <- idTabs

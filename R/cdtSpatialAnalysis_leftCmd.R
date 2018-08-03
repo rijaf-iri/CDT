@@ -866,7 +866,7 @@ spatialAnalysisPanelCmd <- function(){
 						.cdtData$EnvData$climMapOp$userLvl$levels <- atlevel
 				}
 			}
-			.cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$climMapOp)
+			.cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtData$EnvData$climMapOp)
 
 			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
 				.cdtData$EnvData$tab$pointSize.climMap <- .cdtData$EnvData$climMapOp$pointSize
@@ -982,7 +982,7 @@ spatialAnalysisPanelCmd <- function(){
 						.cdtData$EnvData$TSMapOp$userLvl$levels <- atlevel
 				}
 			}
-			.cdtData$EnvData$TSMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSMapOp)
+			.cdtData$EnvData$TSMapOp <- MapGraph.MapOptions(.cdtData$EnvData$TSMapOp)
 
 			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
 				.cdtData$EnvData$tab$pointSize.TSMap <- .cdtData$EnvData$TSMapOp$pointSize
@@ -1193,7 +1193,7 @@ spatialAnalysisPanelCmd <- function(){
 									"ENSO-Barplot" = "BarENSO",
 									"ENSO-Proba" = "ProbaENSO")
 			plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
-			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSGraphOp)
+			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
 		})
 
 		.cdtData$EnvData$tab$TSplot <- NULL
@@ -1296,7 +1296,7 @@ spatialAnalysisPanelCmd <- function(){
 		.cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
 		tkconfigure(bt.addshpOpt, command = function(){
-			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtEnv$tcl$main$win, .cdtData$EnvData$SHPOp)
+			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
 		})
 
 		########
@@ -1516,8 +1516,9 @@ spatialAnalysisPanelCmd <- function(){
 													x0 = as.numeric(don[2, -1]),
 													y0 = as.numeric(don[3, -1]), 
 													var = as.numeric(don[4, -1]),
+													p.value = as.numeric(don[6, -1])
+
 													# std.slope = as.numeric(don[5, -1]),
-													p.value = as.numeric(don[6, -1]),
 													# r2 = as.numeric(don[7, -1]),
 													# na = as.numeric(don[8, -1])
 												)
@@ -1533,10 +1534,11 @@ spatialAnalysisPanelCmd <- function(){
 						.cdtData$EnvData$don$x <- tmp$x
 						.cdtData$EnvData$don$y <- tmp$y
 						.cdtData$EnvData$don$z <- tmp$z
-						# tmp <- cdt.as.image(.cdtData$EnvData$don$std.slope, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
-						# .cdtData$EnvData$don$std <- tmp$z
 						tmp <- cdt.as.image(.cdtData$EnvData$don$p.value, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
 						.cdtData$EnvData$don$pval <- tmp$z
+
+						# tmp <- cdt.as.image(.cdtData$EnvData$don$std.slope, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
+						# .cdtData$EnvData$don$std <- tmp$z
 						# tmp <- cdt.as.image(.cdtData$EnvData$don$r2, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
 						# .cdtData$EnvData$don$r2 <- tmp$z
 						# tmp <- cdt.as.image(.cdtData$EnvData$don$na, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
@@ -1549,14 +1551,16 @@ spatialAnalysisPanelCmd <- function(){
 						.cdtData$EnvData$don$y <- Y0
 						.cdtData$EnvData$don$z <- VAR0
 						.cdtData$EnvData$don$pval <- .cdtData$EnvData$don$p.value
+
 						# .cdtData$EnvData$don$na <- .cdtData$EnvData$don$na
 					}
 				}else{
 					.cdtData$EnvData$don <- list(
-													id = as.character(don[1, -1]), 
+													id = as.character(don[1, -1]),
 													x0 = as.numeric(don[2, -1]),
-													y0 = as.numeric(don[3, -1]), 
-													var = as.numeric(don[4, -1]),
+													y0 = as.numeric(don[3, -1]),
+													var = as.numeric(don[4, -1])
+
 													# na = as.numeric(don[5, -1])
 												)
 
@@ -1571,6 +1575,7 @@ spatialAnalysisPanelCmd <- function(){
 						.cdtData$EnvData$don$x <- tmp$x
 						.cdtData$EnvData$don$y <- tmp$y
 						.cdtData$EnvData$don$z <- tmp$z
+
 						# tmp <- cdt.as.image(.cdtData$EnvData$don$na, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
 						# .cdtData$EnvData$don$na <- tmp$z
 						rm(tmp)
@@ -1580,6 +1585,7 @@ spatialAnalysisPanelCmd <- function(){
 						.cdtData$EnvData$don$x <- X0
 						.cdtData$EnvData$don$y <- Y0
 						.cdtData$EnvData$don$z <- VAR0
+
 						# .cdtData$EnvData$don$na <- .cdtData$EnvData$don$na
 					}
 				}
@@ -1595,8 +1601,9 @@ spatialAnalysisPanelCmd <- function(){
 					.cdtData$EnvData$don$x <- nc$dim[[1]]$vals
 					.cdtData$EnvData$don$y <- nc$dim[[2]]$vals
 					.cdtData$EnvData$don$z <- ncvar_get(nc, varid = "trend")
-					# .cdtData$EnvData$don$std <- ncvar_get(nc, varid = "std.slope")
 					.cdtData$EnvData$don$pval <- ncvar_get(nc, varid = "pvalue")
+
+					# .cdtData$EnvData$don$std <- ncvar_get(nc, varid = "std.slope")
 					# .cdtData$EnvData$don$r2 <- ncvar_get(nc, varid = "r2")
 					# .cdtData$EnvData$don$na <- ncvar_get(nc, varid = "nonNA")
 					nc_close(nc)
@@ -1605,6 +1612,7 @@ spatialAnalysisPanelCmd <- function(){
 					.cdtData$EnvData$don$x <- nc$dim[[1]]$vals
 					.cdtData$EnvData$don$y <- nc$dim[[2]]$vals
 					.cdtData$EnvData$don$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
+
 					# .cdtData$EnvData$don$na <- ncvar_get(nc, varid = "nonNA")
 					nc_close(nc)
 				}
@@ -1786,7 +1794,7 @@ spatialAnalysisPanelCmd <- function(){
 				.cdtData$EnvData$cdtdataset$fileInfo <- fldataset
 			}
 
-			if("Anomaly"%in%.cdtData$EnvData$DirStat$Stats){
+			if("Anomaly" %in% .cdtData$EnvData$DirStat$Stats){
 				anom.path <- file.path(.cdtData$EnvData$PathStat, "Anomaly")
 				file.anom <- file.path(anom.path, paste0("anomaly", "_", tclvalue(.cdtData$EnvData$TSDate), ".nc"))
 				if(!file.exists(file.anom)){

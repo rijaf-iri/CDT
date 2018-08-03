@@ -51,6 +51,7 @@ CDTdataset.Plot.Graph <- function(){
 	pady <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latPAD)))
 
 	xyloc <- cdtdataset.extarct.TS(cdtdataset, fileInfo, xloc, yloc, padx, pady)
+	if(is.null(xyloc)) return(NULL)
 	don <- as.numeric(xyloc$data)
 	daty <- xyloc$date
 

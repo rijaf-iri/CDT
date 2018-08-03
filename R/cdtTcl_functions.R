@@ -114,6 +114,78 @@ defile.menu.OpenFiles <- function(x, y){
 
 ########################################################################
 
+## table 1st column defile menu
+defile.menu.OpenTable <- function(){
+	tabid <- as.numeric(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+
+	table1 <- .cdtData$OpenTab$Data[[tabid]][[2]][[1]]
+	data.arr <- .cdtData$OpenTab$Data[[tabid]][[2]][[2]]
+	nl <- data.arr$nrow
+
+	#########
+	popup.EditTable <- tkmenu(table1, tearoff = FALSE)
+	tkadd(popup.EditTable, "command", label = "Insert row above", command = function(){
+		nl <<- table.insertRowAbove(table1, data.arr, nl)
+	})
+	tkadd(popup.EditTable, "command", label = "Insert row below", command = function(){
+		nl <<- table.insertRowBelow(table1, data.arr, nl)
+	})
+	tkadd(popup.EditTable, "separator")
+	tkadd(popup.EditTable, "command", label = "Delete selected row", command = function(){
+		nl <<- table.deleteSelRow(table1, data.arr, nl)
+	})
+
+	#########
+	defile.popup <- function(x, y) {
+		rootx <- as.integer(tkwinfo("rootx", table1))
+		rooty <- as.integer(tkwinfo("rooty", table1))
+		xTxt <- as.integer(x) + rootx
+		yTxt <- as.integer(y) + rooty
+		if(tclvalue(tkindex(table1, paste("@", x, ",", y, sep = ""), "col")) == "0"){
+			selrow <- tclvalue(tkindex(table1, paste("@", x, ",", y, sep = ""), "row"))
+			tkselection.set(table1, paste(selrow, 0, sep = ','), paste(selrow, data.arr$ncol, sep = ','))
+			.Tcl(paste("tk_popup", .Tcl.args(popup.EditTable, xTxt, yTxt)))
+		}
+	}
+
+	#########
+	tkbind(table1, "<Button-3>", function(x, y){
+		defile.popup(x, y)
+	})
+}
+
+table.insertRowAbove <- function(parent, data.arr, nl){
+	row.nb <- unlist(strsplit(tclvalue(tcl(parent, "curselection")), ','))[1]
+	tkinsert(parent, "rows", row.nb, "-1")
+	nl <- nl + 1
+	data.arr$nrow <- nl
+	for(i in 1:nl) data.arr[i, 0] <- i
+	nl
+}
+
+table.insertRowBelow <- function(parent, data.arr, nl){
+	row.nb <- unlist(strsplit(tclvalue(tcl(parent, "curselection")), ','))[1]
+	tkinsert(parent, "rows", row.nb, "1")
+	nl <- nl + 1
+	data.arr$nrow <- nl
+	for(i in 1:nl) data.arr[i, 0] <- i
+	nl
+}
+
+table.deleteSelRow <- function(parent, data.arr, nl){
+	tmp <- unlist(strsplit(tclvalue(tcl(parent, "curselection")), ' '))
+	tmp <- do.call(rbind, strsplit(tmp, ','))
+	remrow <- sort(as.numeric(levels(as.factor(tmp[, 1]))))
+	tkdelete(parent, "rows", remrow[1], length(remrow))
+	nl <- nl - length(remrow)
+
+	data.arr$nrow <- nl
+	for(i in 1:nl) data.arr[i, 0] <- i
+	nl
+}
+
+########################################################################
+
 ## Create button on toolbar
 tkbutton.toolbar <- function(frame, img.file, txt.tooltip, txt.status)
 {
@@ -151,7 +223,7 @@ tk_get_SaveFile <- function(initialdir = getwd(), initialfile = "", filetypes = 
 	if(WindowsOS()){
 		f2save <- tclvalue(tkgetSaveFile(initialdir = initialdir,
 										initialfile = initialfile,
-										iletypes = filetypes,
+										filetypes = filetypes,
 										defaultextension = TRUE))
 	}else{
 		f2save <- tclvalue(tkgetSaveFile(initialdir = initialdir,
@@ -283,4 +355,16 @@ setScrollCanvas <- function(parent, width, height){
 }
 
 ########################################################################
+
+## Resize Tcl image type photo
+resizeTclImage <- function(file, factor = 2, zoom = TRUE){
+	imgtmp <- tkimage.create('photo', file = file)
+	imgrsz <- tkimage.create("photo")
+	if(zoom)
+		tcl(imgrsz, "copy", imgtmp, zoom = factor)
+	else
+		tcl(imgrsz, "copy", imgtmp, subsample = factor)  
+	tcl('image', 'delete', imgtmp)
+	return(imgrsz)
+}
 

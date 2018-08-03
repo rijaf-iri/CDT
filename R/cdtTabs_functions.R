@@ -183,12 +183,15 @@ update.OpenTabs <- function(type, data){
 ########################################################################
 
 ## Close tab
+
+## "StnInfo" ~ "chkcrds"
+
 Close_Notebook_Tab <- function(index){
 	#tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
 	tabid <- as.integer(index) + 1
 	if(!is.na(tabid)){
-		arrTypes <- c("arr", "arrhom", "arrRHtest", "arrqc", "arrzc", "arrInterp",
-					"homInfo", "StnInfo", "arrValid", "arrAssess", "arrSummary")
+		arrTypes <- c("arr", "chkcrds", "arrhom", "arrRHtest", "arrqc", "arrzc", "arrInterp",
+					"homInfo", "arrValid", "arrAssess", "arrSummary")
 		if(.cdtData$OpenTab$Type[[tabid]] %in% arrTypes){
 			tkdestroy(.cdtData$OpenTab$Data[[tabid]][[1]][[1]])
 		}else if(.cdtData$OpenTab$Type[[tabid]] == "ctxt"){
@@ -222,17 +225,20 @@ Save_Table_As <- function(){
 		}
 		tryCatch(
 			{
-				file.to.save <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes1)
+				file.to.save <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes2)
 				dat2sav <- tclArray2dataframe(Objarray)
-				file.disk <- .cdtData$OpenTab$Data[[tabid]][[3]]
+				
 				file.spec <- NULL
-				if(file.exists(file.disk)){
-					nopfs <- length(.cdtData$OpenFiles$Type)
-					if(nopfs > 0){
-						listOpenFiles <- sapply(1:nopfs, function(j) .cdtData$OpenFiles$Data[[j]][[1]])
-						if(basename(file.disk) %in% listOpenFiles){
-							nopf <- which(listOpenFiles %in% basename(file.disk))
-							file.spec <- .cdtData$OpenFiles$Data[[nopf]][[4]]
+				if(length(.cdtData$OpenTab$Data[[tabid]]) > 2){
+					file.disk <- .cdtData$OpenTab$Data[[tabid]][[3]]
+					if(file.exists(file.disk)){
+						nopfs <- length(.cdtData$OpenFiles$Type)
+						if(nopfs > 0){
+							listOpenFiles <- sapply(1:nopfs, function(j) .cdtData$OpenFiles$Data[[j]][[1]])
+							if(basename(file.disk) %in% listOpenFiles){
+								nopf <- which(listOpenFiles %in% basename(file.disk))
+								file.spec <- .cdtData$OpenFiles$Data[[nopf]][[4]]
+							}
 						}
 					}
 				}
@@ -275,28 +281,47 @@ Save_Notebook_Tab_Array <- function(){
 	tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
 	if(length(.cdtData$OpenTab$Type) > 0){
 		if(.cdtData$OpenTab$Type[[tabid]] == "arr"){
-			filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
 			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
 			dat2sav <- tclArray2dataframe(Objarray)
+			if(is.null(dat2sav)){
+				Insert.Messages.Out("No data to save", format = TRUE)
+				return(NULL)
+			}
+			if(length(.cdtData$OpenTab$Data[[tabid]]) == 2){
+				filetosave <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes2)
+				writeFiles(dat2sav, filetosave, col.names = TRUE)
+			}else{
+				filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
+				file.spec <- NULL
+				nopfs <- length(.cdtData$OpenFiles$Type)
+				if(nopfs > 0){
+					listOpenFiles <- sapply(1:nopfs, function(j) .cdtData$OpenFiles$Data[[j]][[1]])
+					if(basename(filetosave) %in% listOpenFiles){
+						nopf <- which(listOpenFiles %in% basename(filetosave))
+						file.spec <- .cdtData$OpenFiles$Data[[nopf]][[4]]
+					}
+				}
 
-			file.spec <- NULL
-			nopfs <- length(.cdtData$OpenFiles$Type)
-			if(nopfs > 0){
-				listOpenFiles <- sapply(1:nopfs, function(j) .cdtData$OpenFiles$Data[[j]][[1]])
-				if(basename(filetosave) %in% listOpenFiles){
-					nopf <- which(listOpenFiles %in% basename(filetosave))
-					file.spec <- .cdtData$OpenFiles$Data[[nopf]][[4]]
+				if(!is.null(file.spec)){
+					writeFiles(dat2sav, filetosave, col.names = file.spec$header,
+								na = file.spec$miss.val, sep = file.spec$sepr)
+				}else{
+					writeFiles(dat2sav, filetosave,
+								col.names = Objarray[[2]]$col.names,
+								row.names = Objarray[[2]]$row.names)
 				}
 			}
+		}else if(.cdtData$OpenTab$Type[[tabid]] == "chkcrds"){
+			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
+			dat2sav <- tclArray2dataframe(Objarray)
+			if(all(is.na(dat2sav)) | is.null(dat2sav)) dat2sav <- NULL
+			.cdtData$EnvData$Table.Disp <- dat2sav
+			file.table.rds <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', 'Table.rds')
+			saveRDS(dat2sav, file.table.rds)
 
-			if(!is.null(file.spec)){
-				writeFiles(dat2sav, filetosave, col.names = file.spec$header,
-							na = file.spec$miss.val, sep = file.spec$sepr)
-			}else{
-				writeFiles(dat2sav, filetosave,
-							col.names = Objarray[[2]]$col.names,
-							row.names = Objarray[[2]]$row.names)
-			}
+			if(is.null(dat2sav)) dat2sav <- ""
+			file.table.csv <- file.path(.cdtData$EnvData$PathData, 'Stations_to_Check.csv')
+			writeFiles(dat2sav, file.table.csv, col.names = TRUE)
 		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrhom"){
 			if(ReturnExecResults$action == 'homog' & ReturnExecResults$period == 'daily'){
 				filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
@@ -387,21 +412,6 @@ Save_Notebook_Tab_Array <- function(){
 							z = as.numeric(as.character(dat2sav$z)),
 							elv = elvd)
 			assign('donnees', donnees, envir = EnvInterpolation)
-		}else if(.cdtData$OpenTab$Type[[tabid]] == "StnInfo"){
-			if(ReturnExecResults$action == 'chk.coords'){
-				f2save <- file.path(ReturnExecResults$outdir,
-							paste0(file.sans.ext(GeneralParameters$IO.files$STN.file),
-									'_2CORRECT_STATIONS.txt'))
-				Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
-				dat2sav <- tclArray2dataframe(Objarray)
-				if(is.null(dat2sav)){
-					dat2sav <- data.frame(NA, NA, NA, NA, NA)
-					names(dat2sav) <- c('Info', 'ID.Station', 'Longitude', 'Latitude', 'ID.Col')
-				}
-				write.table(dat2sav, f2save, row.names = FALSE, col.names = TRUE)
-			}else{
-				Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], format = TRUE)
-			}
 		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrAssess"){
 			f2save <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes2)
 			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]

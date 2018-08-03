@@ -37,7 +37,7 @@ computeTvarsProcs <- function(){
 		stn.lon <- tmax$lon[id]
 		stn.lat <- tmax$lat[id]
 		tmax$data <- tmax$data[, id, drop = FALSE]
-		tmin$data <- tmin$data[, tmin$id%in%tmax$id, drop = FALSE]
+		tmin$data <- tmin$data[, tmin$id %in% tmax$id, drop = FALSE]
 
 		##################
 		if(.cdtData$GalParams$variable == "Mean") outdon <- (tmax$data + tmin$data) / 2

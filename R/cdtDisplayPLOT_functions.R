@@ -1,6 +1,18 @@
 
 ## Plot graph
 CDT.Display.Graph <- function(plot.graph, notebookTab, tab.title){
+	plotIt <- function(){
+		tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
+		tcl('update')
+		on.exit({
+			tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+			tcl('update')
+		})
+		op <- par(bg = "white")
+		plot.graph()
+		par(op)
+	}
+
 	onglet <- imageNotebookTab_open(notebookTab, tab.title)
 
 	hscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH)))
@@ -13,8 +25,9 @@ CDT.Display.Graph <- function(plot.graph, notebookTab, tab.title){
 	tkgrid.rowconfigure(scrollwin, 0, weight = 1)
 	tkgrid.columnconfigure(scrollwin, 0, weight = 1)
 	containerFrame <- bwScrollableFrame(scrollwin, width = wscrFrame, height = hscrFrame)
+	tcl("update")
 
-	img <- tkrplot(containerFrame, fun = plot.graph, hscale = hscale, vscale = vscale)
+	img <- tkrplot(containerFrame, fun = plotIt, hscale = hscale, vscale = vscale)
 	tkgrid(img)
 	tkgrid.rowconfigure(img, 0, weight = 1)
 	tkgrid.columnconfigure(img, 0, weight = 1)

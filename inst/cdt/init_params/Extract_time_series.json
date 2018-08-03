@@ -1,0 +1,98 @@
+{
+    // Time step of the input data
+    "in.series": "daily",
+    // Input and Output netcdf files/directory
+    "ncdf.file": {
+        // // Full path to the directory of ncdf data
+        "dir": "",
+        // ncdf filename format 
+        "format": "rr_mrg_%s%s%s.nc",
+        // ncdf sample file
+        "sample": ""
+    },
+    // Shapefile
+    "shp.file": {
+        // shapefile filename
+        "shp": "",
+        // Attribute field to be used and displayed
+        "attr": ""
+    },
+    // Date range of the output time series
+    "date.range": {
+        "start.year": 1981,
+        "start.mon": 1,
+        "start.day": 1,
+        "start.hour": 0,
+        "end.year": 2017,
+        "end.mon": 12,
+        "end.day": 31,
+        "end.hour": 23,
+        // start month to extract (1:12)
+        "start.month": 1,
+        // end month to extract (1:12)
+        "end.month": 12
+    },
+    // Output time step
+    "out.series": {
+        // Time step of the output time series:
+        // "daily", "dekadal", "monthly", "seasonal3", "seasonal6", "annual"
+        "out.series": "daily",
+        // start month of the season (1:12)
+        "start.seas": 1,
+        // end month of the season (1:12)
+        "end.seas": 12
+    },
+    // Output time series aggregation
+    "aggr.series": {
+        // Function to be used to aggregate the series: "sum", "mean", "count" 
+        "aggr.fun": "sum",
+        // Minimum fraction of available data that must be present for the time period to compute
+        "min.frac": 0.95,
+        // Comparison operator to be used to count event
+        "opr.fun": ">=",
+        // user defined threshold filter applied to events
+        "opr.thres": 0
+    },
+
+    // Type of the output time series
+    // "rawts" = Raw Time Series
+    // "anom" = Anomalies
+    // "stanom" = Standardized Anomalies
+    // "climato" = Climatologies
+    "type.series": "rawts",
+
+    // Extraction type
+    // Point: "point"
+    // Multiple Points: "mpoint"
+    // Rectangle: "rect"
+    // Polygon: "poly"
+    // Multiple Polygons: "mpoly"
+    "type.extract": "point",
+
+    "out.data": {
+        // Data output format
+        // "cdt": CDT Format
+        // "cpt": CPT Format
+        // "ncdf": NetCDF
+        // "tyxz": Time|Lat|Lon|Value Format
+        "format": "cdt",
+        // Saptially Average Over Selected Area
+        "sp.avrg": false,
+        // Path to the file or directory to save extracted data
+        "outdir": ""
+    },
+
+    // climatology parameters
+    "climato": {
+        // Use all years to calculate climatology
+        "all.years": true,
+        // Start year of the period to calculate climatology
+        "start.year": 1981,
+        // End year of the period to calculate climatology
+        "end.year": 2010,
+        // Minimum number of year without missing values required to calculate climatology
+        "min.year": 15,
+        // Use sliding window to compute daily climatology, apply a window size (average in windows)
+        "winsize": 1
+    }
+}

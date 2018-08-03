@@ -151,14 +151,14 @@ tclArray2dataframe0 <- function(object){
 		if(ncretArr == ncolnames) colnames(ret.array) <- colnames
 		if(ncretArr > ncolnames) colnames(ret.array) <- colnom[1:ncol(ret.array)]
 		if(ncretArr < ncolnames){
-			ret.array <- cbind(ret.array, matrix(NA, ncol = ncolnames-ncretArr, nrow = nrow(ret.array)))
+			ret.array <- cbind(ret.array, matrix(NA, ncol = ncolnames - ncretArr, nrow = nrow(ret.array)))
 			colnames(ret.array) <- colnames
 		}
 		rownames(ret.array) <- rownom[1:nrow(ret.array)]
 		ret.array <- ret.array[apply(ret.array, 1, function(x) sum(!is.na(x)) > 0), ]
 		if(nrow(ret.array) == 0) ret.array[1, ] <- NA
 	}else{
-		ret.array <- data.frame(matrix(NA, ncol = ncolnames))
+		ret.array <- data.frame(matrix(NA, ncol = ncolnames), stringsAsFactors = FALSE)
 		names(ret.array) <- colnames
 	}
 	return(ret.array)
@@ -181,7 +181,7 @@ tclArray2dataframe <- function(object){
 	amat.array <- amat.array[exist.array]
 	grid.array <- grid.array[exist.array, ]
 	values.array <- unlist(lapply(amat.array, function(x) tclvalue(x)))
-	data.array <- data.frame(grid.array, values.array)
+	data.array <- data.frame(grid.array, values.array, stringsAsFactors = FALSE)
 
 	if(nrow(data.array) > 0){
 		ret.array <- reshape.array(data.array)
@@ -191,15 +191,4 @@ tclArray2dataframe <- function(object){
 	}else ret.array <- NULL
 
 	return(ret.array)
-}
-
-########################################################################
-
-## reshape data.frame to matrix
-reshape.array <- function(dat){
-	dat <- as.data.frame(dat)
-	names(dat) <- c('x', 'y', 'z')
-	z <- matrix(NA, nrow = max(dat$x), ncol = max(dat$y))
-	z[cbind(dat$x, dat$y)] <- as.character(dat$z)
-	return(as.data.frame(z))
 }

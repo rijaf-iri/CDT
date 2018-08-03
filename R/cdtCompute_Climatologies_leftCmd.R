@@ -450,7 +450,7 @@ climatologiesCalcPanelCmd <- function(){
 						.cdtData$EnvData$climMapOp$userLvl$levels <- atlevel
 				}
 			}
-			.cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtEnv$tcl$main$win, .cdtData$EnvData$climMapOp)
+			.cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtData$EnvData$climMapOp)
 
 			if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
 				.cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$climMapOp$pointSize
@@ -588,7 +588,7 @@ climatologiesCalcPanelCmd <- function(){
 									"Barplot" = "Bar",
 									"Line" = "Line")
 			plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
-			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSGraphOp)
+			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
 		})
 
 		#########
@@ -662,7 +662,7 @@ climatologiesCalcPanelCmd <- function(){
 		.cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
 		tkconfigure(bt.addshpOpt, command = function(){
-			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtEnv$tcl$main$win, .cdtData$EnvData$SHPOp)
+			.cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
 		})
 
 		########

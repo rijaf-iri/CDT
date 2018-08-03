@@ -130,8 +130,11 @@ SavePlot <- function(){
 			height <- as.numeric(str_trim(tclvalue(hImage)))
 
 			foo <- tolower(file_ext(filename))
+			if(is.na(foo) | foo == ""){
+				filename <- paste0(filename, '.jpg')
+				foo <- "jpeg"
+			}
 			if(foo == "jpg") foo <- "jpeg"
-			# image.fun <- match.fun(foo)
 			image.fun <- get(foo, mode = "function")
 
 			tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1

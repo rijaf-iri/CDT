@@ -188,8 +188,8 @@ PlotCDTDatasetCmd <- function(){
 		.cdtData$EnvData$plot.maps$typeTSp <- tclVar("Line")
 
 		cb.typeTSp <- ttkcombobox(frGph1, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur2)
-		bt.TsGraph.plot <- ttkbutton(frGph1, text = "PLOT", width = 7)
-		bt.TSGraphOpt <- ttkbutton(frGph1, text = "Options", width = 8)
+		bt.TsGraph.plot <- ttkbutton(frGph1, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
+		bt.TSGraphOpt <- ttkbutton(frGph1, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
 
 		.cdtData$EnvData$TSGraphOp <- list(
 					bar = list(
@@ -215,7 +215,7 @@ PlotCDTDatasetCmd <- function(){
 									"Barplot" = "Bar",
 									"Line" = "Line")
 			plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
-			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtEnv$tcl$main$win, .cdtData$EnvData$TSGraphOp)
+			.cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
 		})
 
 		#########

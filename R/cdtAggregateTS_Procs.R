@@ -91,9 +91,16 @@ AggregateTS_Execute <- function(){
 	seasonLength <- .cdtData$GalParams$Seasonal$length.mon
 
 	agg.index <- cdt.index.aggregate(dates, period, period1, seasonLength, startMonth)
-	if(is.null(agg.index)) return(NULL)
+	if(is.null(agg.index)){
+		Insert.Messages.Out("Incorrect Season length", format = TRUE)
+		return(NULL)
+	}
 
 	ifull <- (agg.index$nba / agg.index$nb0) >= min.frac
+	if(all(!ifull)){
+		Insert.Messages.Out("No aggregation, too much missing values", format = TRUE)
+		return(NULL)
+	}
 
 	odaty <- agg.index$date[ifull]
 	index <- agg.index$index[ifull]

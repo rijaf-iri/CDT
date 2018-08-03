@@ -211,7 +211,7 @@ compute_RainySeasonData <- function(GeneralParameters){
 	##########################################
 
 	if(onset$params$data.type == "cdtstation"){
-		outDIR <- file.path(GeneralParameters$output, "RainySeasonAnalysis_data")
+		outDIR <- file.path(GeneralParameters$output, "RAINY.SEASON.ANALYSIS_data")
 		dir.create(outDIR, showWarnings = FALSE, recursive = TRUE)
 
 		datadir <- file.path(outDIR, 'CDTSTATIONS')
@@ -555,7 +555,7 @@ compute_RainySeasonData <- function(GeneralParameters){
 	##########################################
 
 	if(onset$params$data.type == "cdtdataset"){
-		outDIR <- file.path(GeneralParameters$output, "RainySeasonAnalysis_data")
+		outDIR <- file.path(GeneralParameters$output, "RAINY.SEASON.ANALYSIS_data")
 		dir.create(outDIR, showWarnings = FALSE, recursive = TRUE)
 
 		ncdfOUT <- file.path(outDIR, 'DATA_NetCDF')

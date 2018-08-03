@@ -13,6 +13,14 @@ testConnection <- function(url = "https://cloud.r-project.org") {
 }
 
 ##############################################
+## Check the Dynamic HTML Help System
+is.HelpServerRunning <- function(){
+	ifelse(R.version['svn rev'] < 67550 | getRversion() < "3.2.0", 
+			get("httpdPort", envir = environment(startDynamicHelp)) > 0,
+			tools::startDynamicHelp(NA) > 0)
+}
+
+##############################################
 ## Create parallel loop
 doparallel <- function(condition, nb.cores = detectCores() - 1,
 						okpar = if(nb.cores < 3) FALSE else TRUE)
@@ -243,7 +251,7 @@ initialize.parameters <- function(action, tstep = 'dekadal'){
 ## Get index of selected file from .cdtData$OpenFiles$Data
 getIndex.AllOpenFiles <- function(nomfile){
 	if(inherits(nomfile, "tclVar")){
-		fileio <- tclvalue(nomfile)
+		fileio <- str_trim(tclvalue(nomfile))
 	}else if(is.character(nomfile)){
 		fileio <- nomfile
 	}else return(NULL)
@@ -367,6 +375,20 @@ getNCDFSampleData <- function(file.netcdf){
 
 ##############################################
 
+## get NetCDF data  in the list (all open files)
+## return $lon $lat $val
+getNcdfOpenData <- function(file.netcdf){
+	jfile <- getIndex.AllOpenFiles(file.netcdf)
+	nc <- NULL
+	if(length(jfile) > 0){
+		if(.cdtData$OpenFiles$Type[[jfile]] == "netcdf")
+			nc <- .cdtData$OpenFiles$Data[[jfile]]
+	}
+	return(nc)
+}
+
+##############################################
+
 ## Get shp file in the list (all open files)
 ## return [[1]] name [[2]] shp [[3]] path
 getShpOpenData <- function(shp){
@@ -390,6 +412,12 @@ isEquals <- function(x, y){
 
 ## Test if two vectors are equals
 isEqual <- function(x, y) !any(!isEquals(x, y))
+
+## Test if all elements of a vector are equals
+elEqual <- function(x){
+	x <- x[!is.na(x)]
+	if(length(x)) all(x == x[1]) else TRUE
+}
 
 ##############################################
 
@@ -622,3 +650,26 @@ getBoundaries <- function(shpf){
 	return(ocrds)
 }
 
+##############################################
+
+## Reshape data.frame XYZ to matrix list(x, y, z = matrix)
+reshapeXYZ2Matrix <- function(df){
+	df <- as.data.frame(df, stringsAsFactors = FALSE)
+	names(df) <- c('x', 'y', 'z')
+	x <- sort(unique(df$x))
+	y <- sort(unique(df$y))
+	z <- reshape2::acast(df, x~y, value.var = "z")
+	dimnames(z) <- NULL
+	return(list(x = x, y = y, z = z))
+}
+
+##############################################
+
+## reshape cbind(i, j, k) indices to matrix
+reshape.array <- function(dat){
+	dat <- as.data.frame(dat)
+	names(dat) <- c('x', 'y', 'z')
+	z <- matrix(NA, nrow = max(dat$x), ncol = max(dat$y))
+	z[cbind(dat$x, dat$y)] <- as.character(dat$z)
+	return(as.data.frame(z))
+}

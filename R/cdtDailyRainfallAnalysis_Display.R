@@ -41,7 +41,7 @@ dailyRainAnalysis.plotMapVarStats <- function(){
 					paste0(format(as.Date(paste0("2000-", strsplit(infos$season, "_")[[1]])), "%b-%d"), collapse = "_"))
 		period.def <- paste0("[", period.def, "]")
 
-		.titre <- paste(titre1, var.def,";" , titre2, proba.def, period.def)
+		.titre <- paste(titre1, var.def, ";", titre2, proba.def, period.def)
 	}else .titre <- dataMapOp$title$title
 
 	#################
@@ -146,6 +146,7 @@ dailyRainAnalysis.plotVarGraph <- function(){
 		xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
 		yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
 		xyloc <- cdtdataset.extarct.TS(cdtdataset, cdtdataset$fileInfo, xloc, yloc)
+		if(is.null(xyloc)) return(NULL)
 		don <- as.numeric(xyloc$data)
 		.cdtData$EnvData$location <- paste0("Longitude: ", round(xloc, 5), ", Latitude: ", round(yloc, 5))
 	}

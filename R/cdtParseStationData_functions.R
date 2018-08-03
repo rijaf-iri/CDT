@@ -18,6 +18,7 @@ splitCDTData0 <- function(donne){
 	dat <- list(id = as.character(donne[1, -1]),
 				lon = as.numeric(donne[2, -1]),
 				lat = as.numeric(donne[3, -1]),
+				elv = if(pos == 4) as.numeric(donne[4, -1]) else NULL,
 				dates = as.character(donne[-(1:pos), 1]),
 				data = as.matrix(donne[-(1:pos), -1]))
 	dimnames(dat$data)[[2]] <- NULL

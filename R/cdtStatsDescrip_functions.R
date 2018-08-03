@@ -46,7 +46,9 @@ cdt.aggregate <- function(MAT,
 							pars = list(
 								aggr.fun = "sum",
 								opr.fun = ">",
-								opr.thres = 0)
+								opr.thres = 0,
+								rle.fun = ">=",
+								rle.thres = 6)
 							)
 {
 	if(pars$aggr.fun == "max") res <- matrixStats::colMaxs(MAT, na.rm = TRUE)
@@ -54,11 +56,35 @@ cdt.aggregate <- function(MAT,
 	if(pars$aggr.fun == "median") res <- matrixStats::colMedians(MAT, na.rm = TRUE)
 	if(pars$aggr.fun == "mean") res <- colMeans(MAT, na.rm = TRUE)
 	if(pars$aggr.fun == "sum") res <- colSums(MAT, na.rm = TRUE)
-	if(pars$aggr.fun == "count"){
+
+	if(pars$aggr.fun %in% c("count", "count.rle.list", "count.rle.nb",
+							"count.rle.max", "count.rle.min"))
+	{
 		count.fun <- get(pars$opr.fun, mode = "function")
 		MAT <- count.fun(MAT, pars$opr.thres) & !is.na(MAT)
-		res <- colSums(MAT, na.rm = TRUE)
+
+		if(pars$aggr.fun != "count")
+		{
+			res <- lapply(seq(ncol(MAT)), function(j){
+				rr <- rle(MAT[, j])
+				rr <- rr$lengths[rr$values]
+				if(length(rr) == 0) rr <- 0
+				rr
+			})
+			if(pars$aggr.fun == "count.rle.max")
+				res <- sapply(res, max)
+			if(pars$aggr.fun == "count.rle.min")
+				res <- sapply(res, min)
+			if(pars$aggr.fun == "count.rle.nb"){
+				rle.fun <- get(pars$rle.fun, mode = "function")
+				res <- sapply(res, function(x) sum(rle.fun(x, pars$rle.thres)))
+			}
+		}else res <- colSums(MAT, na.rm = TRUE)
 	}
+
+	if(pars$aggr.fun != "count.rle.list")
+		res[is.nan(res) | is.infinite(res)] <- NA
+
 	return(res)
 }
 
@@ -66,16 +92,17 @@ cdt.data.aggregate <- function(MAT, index,
 								pars = list(min.frac = 0.95,
 											aggr.fun = "sum",
 											opr.fun = ">",
-											opr.thres = 0)
+											opr.thres = 0,
+											rle.fun = ">=",
+											rle.thres = 6)
 								)
 {
 	data <- lapply(index, function(ix){
 		don <- MAT[ix, , drop = FALSE]
-		miss <- (colSums(is.na(don))/nrow(don)) >= pars$min.frac
-
-		out <- cdt.aggregate(don, pars = pars)
-		out[miss] <- NA
-		out[is.nan(out) | is.infinite(out)] <- NA
+		miss <- (colSums(!is.na(don))/nrow(don)) < pars$min.frac
+		out <- rep(NA, ncol(don))
+		if(all(miss)) return(out)
+		out[!miss] <- cdt.aggregate(don[, !miss, drop = FALSE], pars = pars)
 		out
 	})
 	do.call(rbind, data)
@@ -276,21 +303,22 @@ cdt.roll.fun <- function(x, win, fun = "sum", na.rm = FALSE,
 
 #############################################
 
-## Climatology
+## Climatology mean & sd
 .cdt.Climatologies <- function(index.clim, data.mat, min.year, tstep, daily.win)
 {
-	tmp <- rep(NA, ncol(data.mat))
 	div <- if(tstep == "daily") 2 * daily.win + 1 else 1
 	tstep.miss <- (sapply(index.clim$index, length) / div) < min.year
+	tmp <- rep(NA, ncol(data.mat))
 
 	dat.clim <- lapply(seq_along(index.clim$id), function(jj){
 		if(tstep.miss[jj]) return(list(moy = tmp, sds = tmp))
 		xx <- data.mat[index.clim$index[[jj]], , drop = FALSE]
 		ina <- (colSums(!is.na(xx)) / div) < min.year
-		moy <- colMeans(xx, na.rm = TRUE)
-		sds <- matrixStats::colSds(xx, na.rm = TRUE)
-		moy[ina] <- NA
-		sds[ina] <- NA
+		if(all(ina)) return(list(moy = tmp, sds = tmp))
+		moy <- tmp
+		moy[!ina] <- colMeans(xx[, !ina, drop = FALSE], na.rm = TRUE)
+		sds <- tmp
+		sds[!ina] <- matrixStats::colSds(xx[, !ina, drop = FALSE], na.rm = TRUE)
 		moy[is.nan(moy)] <- NA
 		list(moy = moy, sds = sds)
 	})
@@ -299,6 +327,32 @@ cdt.roll.fun <- function(x, win, fun = "sum", na.rm = FALSE,
 	dat.sds <- do.call(rbind, lapply(dat.clim, "[[", "sds"))
 
 	return(list(mean = dat.moy, sd = dat.sds))
+}
+
+## Climatology percentiles
+.cdt.quantile.Climatologies <- function(index.clim, data.mat, probs, min.year,
+										tstep, daily.win, type = 8)
+{
+	div <- if(tstep == "daily") 2 * daily.win + 1 else 1
+	tstep.miss <- (sapply(index.clim$index, length) / div) < min.year
+	tmp <- matrix(NA, ncol(data.mat), length(probs))
+
+	dat.clim <- lapply(seq_along(index.clim$id), function(jj){
+		if(tstep.miss[jj]) return(tmp)
+		xx <- data.mat[index.clim$index[[jj]], , drop = FALSE]
+		ina <- (colSums(!is.na(xx)) / div) < min.year
+		if(all(ina)) return(tmp)
+		xquant <- matrixStats::colQuantiles(xx[, !ina, drop = FALSE], probs = probs, na.rm = TRUE, type = type)
+		if(length(probs) == 1) xquant <- matrix(xquant, ncol = 1)
+		out <- tmp
+		out[!ina, ] <- xquant
+		out
+	})
+
+	quant <- lapply(seq_along(probs), function(j) do.call(rbind, lapply(dat.clim, "[", , j)))
+	names(quant) <- paste0(probs * 100, "%")
+
+	return(quant)
 }
 
 ## to export
@@ -334,8 +388,8 @@ cdt.Climatologies <- function(data.mat, dates,
 .cdt.Anomalies <- function(index.anom, data.mat, data.mean, data.sds, FUN)
 {
 	data.mat <- data.mat[index.anom[, 2], , drop = FALSE]
-	data.mean <- data.mean[index.anom[, 1], , drop = FALSE]
-	data.sds <- data.sds[index.anom[, 1], , drop = FALSE]
+	data.mean <- data.mean[index.anom[, 3], , drop = FALSE]
+	data.sds <- data.sds[index.anom[, 3], , drop = FALSE]
 	anom <- switch(FUN,
 				"Difference" = data.mat - data.mean,
 				"Percentage" = 100 * (data.mat - data.mean) / (data.mean + 0.001),

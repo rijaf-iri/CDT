@@ -204,6 +204,7 @@ startCDT <- function(wd = NA, lang = NA){
 				if(length(.cdtData$OpenTab$Type)){
 					tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
 					if(.cdtData$OpenTab$Type[[tabid]] == "img") SavePlot()
+					tkfocus(.cdtEnv$tcl$main$win)
 				}
 			})
 
@@ -392,6 +393,32 @@ startCDT <- function(wd = NA, lang = NA){
 		tkadd(top.menu, "cascade", label = lang.menu[["quality.control"]][["0"]], menu = menu.qchom, activebackground = 'lightblue')
 
 			##########
+			tkadd(menu.qchom, "command", label = lang.menu[["quality.control"]][["1"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					StnChkCoordsPanelCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
+			})
+
+			##########
+			tkadd(menu.qchom, "separator")
+
+			##########
+			tkadd(menu.qchom, "command", label = lang.menu[["quality.control"]][["2"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					AssessDataPanelCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
+			})
+
 
 
 		####################################
@@ -413,7 +440,7 @@ startCDT <- function(wd = NA, lang = NA){
 				refreshCDT()
 				spinbox.state(state = 'normal')
 				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-					# ExtractDataPanelCmd()
+					ExtractDataPanelCmd()
 					.cdtEnv$tcl$data$lcmd.frame <- 1
 				}
 			})
@@ -428,7 +455,7 @@ startCDT <- function(wd = NA, lang = NA){
 				refreshCDT()
 				spinbox.state(state = 'normal')
 				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-					# summariesDataPanelCmd()
+					summariesDataPanelCmd()
 					.cdtEnv$tcl$data$lcmd.frame <- 1
 				}
 			})
@@ -612,7 +639,7 @@ startCDT <- function(wd = NA, lang = NA){
 					refreshCDT()
 					spinbox.state(state = 'normal')
 					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# climdexPanelCmd.RR()
+						climdexPanelCmd.RR()
 						.cdtEnv$tcl$data$lcmd.frame <- 1
 					}
 				})
@@ -627,7 +654,7 @@ startCDT <- function(wd = NA, lang = NA){
 					refreshCDT()
 					spinbox.state(state = 'normal')
 					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# climdexPanelCmd.TT()
+						climdexPanelCmd.TT()
 						.cdtEnv$tcl$data$lcmd.frame <- 1
 					}
 				})
@@ -717,6 +744,36 @@ startCDT <- function(wd = NA, lang = NA){
 				}
 			})
 
+			##########
+			tkadd(menu.plot, "separator")
+
+			##########
+			tkadd(menu.plot, "command", label = lang.menu[["plot.data"]][["3"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					PlotOneNetCDFFileCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
+			})
+
+			##########
+			tkadd(menu.plot, "separator")
+
+			##########
+			tkadd(menu.plot, "command", label = lang.menu[["plot.data"]][["4"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					PlotSeqNetCDFFilesCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
+			})
+
 
 		####################################
 
@@ -786,7 +843,8 @@ startCDT <- function(wd = NA, lang = NA){
 
 		##################
 
-		tkgrid(tb.open.file, tb.save.image,
+		tkgrid(
+				tb.open.file, tb.save.image,
 				tb.separator0,
 				tb.open.table, tb.save.table,
 				tb.separator1,
@@ -878,7 +936,10 @@ startCDT <- function(wd = NA, lang = NA){
 
 		##################
 
-		tkconfigure(tb.save.image, command = function() SavePlot())
+		tkconfigure(tb.save.image, command = function(){
+			SavePlot()
+			tkfocus(.cdtEnv$tcl$main$win)
+		})
 
 		##################
 
@@ -1289,6 +1350,26 @@ startCDT <- function(wd = NA, lang = NA){
 		refreshCDT()
 		tkdestroy(.cdtEnv$tcl$main$win)
 	})
+
+	#################################################################################
+
+	.cdtEnv$tcl$zoom$img$plus <- resizeTclImage(file.path(.cdtDir$Root, "images", 'ZoomIn128.gif'), factor = 4, zoom = FALSE)
+	.cdtEnv$tcl$zoom$img$moins <- resizeTclImage(file.path(.cdtDir$Root, "images", 'ZoomOut128.gif'), factor = 4, zoom = FALSE)
+	.cdtEnv$tcl$zoom$img$rect <- resizeTclImage(file.path(.cdtDir$Root, "images", 'ZoomRect128.gif'), factor = 4, zoom = FALSE)
+	.cdtEnv$tcl$zoom$img$centre <- tkimage.create('photo', file = file.path(.cdtDir$Root, "images", 'imgCentre24.gif'))
+	.cdtEnv$tcl$zoom$img$redraw <- resizeTclImage(file.path(.cdtDir$Root, "images", 'redraw128.gif'), factor = 4, zoom = FALSE)
+	.cdtEnv$tcl$zoom$img$pan <- tkimage.create('photo', file = file.path(.cdtDir$Root, "images", 'PanImage32.gif'))
+	.cdtEnv$tcl$zoom$img$reset <- resizeTclImage(file.path(.cdtDir$Root, "images", 'reset128.gif'), factor = 4, zoom = FALSE)
+
+	# pikZoomPlus <- resizeTclImage(file.path(imgdir, 'ZoomIn128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
+	# pikZoomMinus <- resizeTclImage(file.path(imgdir, 'ZoomOut128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
+	# pikZoomRect <- resizeTclImage(file.path(imgdir, 'ZoomRect128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
+	# pikCentre <- tkimage.create('photo', file = file.path(imgdir, 'imgCentre24.gif', fsep = .Platform$file.sep))
+	# pikRedraw <- resizeTclImage(file.path(imgdir, 'redraw128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
+	# pikPanImg <- tkimage.create('photo', file = file.path(imgdir, 'PanImage32.gif', fsep = .Platform$file.sep))
+	# pikReset <- resizeTclImage(file.path(imgdir, 'reset128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
+
+	#################################################################################
 
 	invisible()
 }

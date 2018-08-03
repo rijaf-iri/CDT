@@ -56,6 +56,7 @@ anomaliesCalc.plotAnomGraph <- function(){
 		xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
 		yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
 		xyloc <- cdtdataset.extarct.TS(cdtdataset, cdtdataset$fileInfo, xloc, yloc)
+		if(is.null(xyloc)) return(NULL)
 		don <- as.numeric(xyloc$data)
 		daty <- xyloc$date
 

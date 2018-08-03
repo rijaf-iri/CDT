@@ -55,13 +55,13 @@ cdt.index.Climatologies <- function(dates, tstep = "daily", xwin = 0){
 cdt.index.Anomalies <- function(dates, index.clim, tstep = "daily")
 {
 	index <- cdt.index.Climatologies(dates, tstep, 0)
-	ixx <- match(index.clim$id, index$id)
+	ixx <- match(index$id, index.clim$id)
 	ixx <- ixx[!is.na(ixx)]
 	index$id <- index$id[ixx]
 	index$index <- index$index[ixx]
 
 	index1 <- lapply(seq_along(index$id), function(j){
-		cbind(index$id[j], index$index[[j]])
+		cbind(index$id[j], index$index[[j]], ixx[j])
 	})
 
 	index1 <- do.call(rbind, index1)

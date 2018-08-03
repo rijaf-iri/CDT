@@ -47,7 +47,7 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 	if(GeneralParameters$data.type == "cdtstation"){
 		don <- getStnOpenData(GeneralParameters$cdtstation)
 		if(is.null(don)) return(NULL)
-		don <- getCDTdataAndDisplayMsg(don, "daily")
+		don <- getCDTdataAndDisplayMsg(don, "daily", GeneralParameters$cdtstation)
 		if(is.null(don)) return(NULL)
 
 		daty <- don$dates
