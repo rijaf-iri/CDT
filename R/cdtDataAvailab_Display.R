@@ -225,7 +225,8 @@ assessData_plotYearlyTS <- function(){
 
 ######################################################################################################
 
-assessData_dateLabel <- function(x, intstep){
+assessData_dateLabel <- function(x){
+	intstep <- .cdtData$EnvData$output$params$intstep
 	daty <- as.Date(x, origin = '1970-1-1')
 	if(intstep == 'daily')
 		labdates <- format(daty, '%d-%b-%Y')
@@ -233,7 +234,7 @@ assessData_dateLabel <- function(x, intstep){
 		brks <- if(intstep == 'dekadal') c(1, 10, 20, 31) else c(1, 5, 10, 15, 20, 25, 31)
 		day <- as.numeric(format(daty, '%d'))
 		pdk <- findInterval(day, brks, rightmost.closed = TRUE, left.open = TRUE)
-		labdates <- paste(format(daty, '%b-%Y'), pdk, sep = '-')
+		labdates <- paste0(pdk, '-', format(daty, '%b-%Y'))
 	}
 	if(intstep == 'monthly')
 		labdates <- format(daty,'%b-%Y')
@@ -267,14 +268,11 @@ assessData_displayActivities <- function(notebookTab){
 	tcl("update")
 
 	#########
-	intstep <- .cdtData$EnvData$output$params$intstep
-
-	#########
 
 	tkbind(img, "<Motion>", function(W, x, y){
 		xyMouse <- mouseMouvment(W, x, y, parPltCrd, ydiv = c(0, 1 / sum(YLayoutDiv)))
 
-		frxcoord <- if(xyMouse$inout) '' else assessData_dateLabel(xyMouse$x, intstep)
+		frxcoord <- if(xyMouse$inout) '' else assessData_dateLabel(xyMouse$x)
 		frycoord <- if(xyMouse$inout) '' else round(xyMouse$y)
 
 		tclvalue(.cdtEnv$tcl$status$xcrd) <- frxcoord

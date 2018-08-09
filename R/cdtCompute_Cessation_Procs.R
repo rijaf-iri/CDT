@@ -513,7 +513,7 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
 				rm(SP1, SP2)
 
 				jfile <- getIndex.AllOpenFiles(GeneralParameters$wb.pars$swhc$file)
-				swhc <- .cdtData$OpenFiles$Data[[jfile]][[2]]$value
+				swhc <- .cdtData$OpenFiles$Data[[jfile]][[2]]$z
 			}else swhc <- GeneralParameters$wb.pars$swhc$cap.max
 
 			if(GeneralParameters$wb.pars$wb$multi){
@@ -532,7 +532,7 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
 				rm(SP1, SP2)
 
 				jfile <- getIndex.AllOpenFiles(GeneralParameters$wb.pars$wb$file)
-				wb1 <- .cdtData$OpenFiles$Data[[jfile]][[2]]$value
+				wb1 <- .cdtData$OpenFiles$Data[[jfile]][[2]]$z
 			}else wb1 <- GeneralParameters$wb.pars$wb$wb1
 
 			index.wb <- cdt.index.DailyYears(index.out$dateInfo$date,

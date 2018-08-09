@@ -63,9 +63,9 @@ preview.data.nc <- function(parent.win, openncf){
 	######
 	print.nc <- vector(mode = 'character', length = 0)
 	print.nc[[1]] <- paste("file", basename(openncf), "has", ncdim, "dimensions:")
-	for(i in 1:ncdim) print.nc[[i+1]] <- paste(nc$dim[[i]]$name, "  Size:", nc$dim[[i]]$len)
-	print.nc[[ncdim+2]] <- paste("----------------------------------------")
-	print.nc[[ncdim+3]] <- paste("file", basename(openncf), "has", ncvar, "variables:")
+	for(i in 1:ncdim) print.nc[[i + 1]] <- paste(nc$dim[[i]]$name, "  Size:", nc$dim[[i]]$len)
+	print.nc[[ncdim + 2]] <- paste("----------------------------------------")
+	print.nc[[ncdim + 3]] <- paste("file", basename(openncf), "has", ncvar, "variables:")
 	for(i in 1:ncvar){
 		nd <- nc$var[[i]]$ndims
 		dimstring <- '['
@@ -76,7 +76,7 @@ preview.data.nc <- function(parent.win, openncf){
 			}
 		}
 		dimstring <- paste0(dimstring, '] ')
-		print.nc[[i+ncdim+3]] <- paste0(nc$var[[i]]$prec, ' ', nc$var[[i]]$name, dimstring,
+		print.nc[[i + ncdim + 3]] <- paste0(nc$var[[i]]$prec, ' ', nc$var[[i]]$name, dimstring,
 								' Longname:', nc$var[[i]]$longname, ' Missval:', nc$var[[i]]$missval)
 	}
 
@@ -112,7 +112,7 @@ preview.data.nc <- function(parent.win, openncf){
 	tkbind(cb.var, "<<ComboboxSelected>>", function(){
 		ichoix <- which(var.choix == tclvalue(var.dim))
 		if(ichoix != 1){
-			ivar <<- ichoix-1
+			ivar <<- ichoix - 1
 			v.ndims <- var.info[ivar, 2]
 			X.choix <- c('', var.dim.info[[ivar]][1:v.ndims, 1])
 			Y.choix <- c('', var.dim.info[[ivar]][1:v.ndims, 1])
@@ -152,26 +152,24 @@ preview.data.nc <- function(parent.win, openncf){
 				idy <- which(d.dim == str_trim(tclvalue(Y.dim)))
 				lon <- var.dim.val[[ivar]][[idx]]
 				lat <- var.dim.val[[ivar]][[idy]]
+				varid <- as.character(var.info[ivar, 1])
 
 				d.units <- d.units[c(idx, idy)]
-				dat <- ncvar_get(nc, varid = as.character(var.info[ivar, 1]))
+				dat <- ncvar_get(nc, varid = varid)
+				varinfo <- nc$var[[varid]][c('name', 'prec', 'units', 'longname', 'missval')]
 
-				irevlat <- all(lat == cummax(lat))
 				xo <- order(lon)
 				lon <- lon[xo]
 				yo <- order(lat)
 				lat <- lat[yo]
-			
-				if(idx == 1){
-					dat <- dat[xo, yo]
-				}else{
-					dat <- matrix(c(dat), nrow = v.size[idx], ncol = v.size[idy], byrow = TRUE)
-					dat <- dat[xo, yo]
-				}
+				nx <- length(lon)
+				ny <- length(lat)
+				dat <- if(idx < idy) dat[xo, yo] else t(dat)[xo, yo]
 
-				retval <<- list(x = lon, y = lat, value = dat, var.unit = v.unit,
-								dim.units = d.units, varid = as.character(var.info[ivar, 1]),
-								ilon = idx, ilat = idy, irevlat = irevlat,
+				retval <<- list(x = lon, y = lat, z = dat,
+								varinfo = varinfo, dim.units = d.units,
+								varid = varid, ilon = idx, ilat = idy,
+								xo = xo, yo = yo, nx = nx, ny = ny,
 								file = openncf)
 			}else retval <<- NULL
 

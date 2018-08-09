@@ -171,17 +171,8 @@ startCDT <- function(wd = NA, lang = NA){
 			tkadd(menu.file, "separator")
 
 			##########
-			tkadd(menu.file, "command", label = lang.menu[["file"]][["4"]], command = function(){})
 
-			##########
-			tkadd(menu.file, "command", label = lang.menu[["file"]][["5"]], command = function(){})
-
-			##########
-			tkadd(menu.file, "separator")
-
-			##########
-
-			tkadd(menu.file, "command", label = lang.menu[["file"]][["6"]],
+			tkadd(menu.file, "command", label = lang.menu[["file"]][["4"]],
 				command = function()
 			{
 				tab2sav <- try(Save_Notebook_Tab_Array(), silent = TRUE)
@@ -194,11 +185,11 @@ startCDT <- function(wd = NA, lang = NA){
 			})
 
 			##########
-			tkadd(menu.file, "command", label = lang.menu[["file"]][["7"]],
+			tkadd(menu.file, "command", label = lang.menu[["file"]][["5"]],
 				command = function() Save_Table_As())
 
 			##########
-			tkadd(menu.file, "command", label = lang.menu[["file"]][["8"]],
+			tkadd(menu.file, "command", label = lang.menu[["file"]][["6"]],
 				command = function()
 			{
 				if(length(.cdtData$OpenTab$Type)){
@@ -212,14 +203,14 @@ startCDT <- function(wd = NA, lang = NA){
 			tkadd(menu.file, "separator")
 
 			##########
-			tkadd(menu.file, "command", label = lang.menu[["file"]][["9"]],
+			tkadd(menu.file, "command", label = lang.menu[["file"]][["7"]],
 				command = function() cdtConfiguration(.cdtEnv$tcl$main$win))
 
 			##########
 			tkadd(menu.file, "separator")
 
 			##########
-			tkadd(menu.file, "command", label = lang.menu[["file"]][["10"]],
+			tkadd(menu.file, "command", label = lang.menu[["file"]][["8"]],
 				command = function()
 			{
 				on.exit({
@@ -419,7 +410,68 @@ startCDT <- function(wd = NA, lang = NA){
 				}
 			})
 
+			##########
+			tkadd(menu.qchom, "separator")
 
+			##########
+			menu.qc <- tkmenu(top.menu, tearoff = FALSE)
+			tkadd(menu.qchom, "cascade", label = lang.menu[["quality.control"]][["3"]], menu = menu.qc)
+
+				##########
+				menu.qcRain <- tkmenu(menu.qc, tearoff = FALSE)
+				tkadd(menu.qc, "cascade", label = lang.menu[["quality.control"]][["3-1"]], menu = menu.qcRain)
+
+					tkadd(menu.qcRain, "command", label = lang.menu[["quality.control"]][["3-1-1"]],
+						command = function()
+					{
+						refreshCDT()
+						spinbox.state(state = 'disabled')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							qcRRZeroCheckPanelCmd()
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
+					})
+
+					tkadd(menu.qcRain, "command", label = lang.menu[["quality.control"]][["3-1-2"]],
+						command = function()
+					{
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							qcRROutlierCheckPanelCmd()
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
+					})
+
+				##########
+				tkadd(menu.qc, "separator")
+
+				##########
+				tkadd(menu.qc, "command", label = lang.menu[["quality.control"]][["3-2"]],
+					command = function()
+				{
+					refreshCDT()
+					spinbox.state(state = 'normal')
+					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+						qcTTOutlierCheckPanelCmd()
+						.cdtEnv$tcl$data$lcmd.frame <- 1
+					}
+				})
+
+			##########
+			tkadd(menu.qchom, "separator")
+
+			##########
+			tkadd(menu.qchom, "command", label = lang.menu[["quality.control"]][["4"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+				# 	AssessDataPanelCmd()
+				# 	.cdtEnv$tcl$data$lcmd.frame <- 1
+				# }
+			})
 
 		####################################
 

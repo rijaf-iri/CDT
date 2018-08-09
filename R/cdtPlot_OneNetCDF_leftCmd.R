@@ -247,8 +247,8 @@ PlotOneNetCDFFileCmd <- function(){
 				shpdata[['vtmp']] <- 1
 				mask <- over(defSpatialPixels(nc.grid), shpdata)[, 'vtmp']
 				dim(mask) <- sapply(nc.grid, length)
-				.cdtData$EnvData$ncData$map$z <- ncdata[[2]]$value * mask
-			}else .cdtData$EnvData$ncData$map$z <- ncdata[[2]]$value
+				.cdtData$EnvData$ncData$map$z <- ncdata[[2]]$z * mask
+			}else .cdtData$EnvData$ncData$map$z <- ncdata[[2]]$z
 
 			.cdtData$EnvData$ncData$file2plot <- ncdata[[1]]
 			.cdtData$EnvData$loaded.nc <- loaded.nc

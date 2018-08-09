@@ -1,4 +1,43 @@
 
+cdt.plotmap.args0 <- function(don,
+							user.levels = list(custom = FALSE, levels = NULL, equidist = TRUE),
+							user.colors = list(custom = FALSE, color = rainbow(20)),
+							preset.colors = list(color = "rainbow", reverse = FALSE)
+						)
+{
+	brks <- image.plot_Legend_pars(don$z, user.levels, user.colors, preset.colors)
+	don$z <- don$z + 1e-15
+	pars0 <- list(
+					don = don,
+					zlim = brks$legend.breaks$zlim,
+					breaks = brks$breaks,
+					breaks1 = brks$legend.axis$at,
+					breaks2 = brks$legend.breaks$breaks,
+					labels = brks$legend.axis$labels,
+					kolor = brks$colors
+				)
+
+	is.horiz <- diff(range(don$x)) > diff(range(don$y))
+	if(is.horiz){
+		pars <- list(
+					horizontal = TRUE,
+					legend.mar = 3.5,
+					legend.width = 0.7,
+					mar = c(7, 4, 2.5, 2.5)
+				)
+	}else{
+		pars <- list(
+					horizontal = FALSE,
+					legend.mar = 6.2,
+					legend.width = 0.9,
+					mar = c(4, 4, 2.5, 6)
+				)
+	}
+
+	pars <- c(pars0, pars)
+	return(pars)
+}
+
 cdt.plotmap.args <- function(don, MapOp, shpf, legend.text = NULL, label.fun = identity, ...)
 {
 	## colorscale title

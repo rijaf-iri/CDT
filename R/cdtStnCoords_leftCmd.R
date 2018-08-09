@@ -412,23 +412,9 @@ StnChkCoordsPanelCmd <- function(){
 
 			if(!is.null(.cdtData$EnvData$Maps.Disp))
 			{
-				donX <- range(.cdtData$EnvData$Maps.Disp$LonX, na.rm = TRUE)
-				donY <- range(.cdtData$EnvData$Maps.Disp$LatX, na.rm = TRUE)
-				lo1 <- round(donX[1], 4)
-				lo2 <- round(donX[2], 4)
-				la1 <- round(donY[1], 4)
-				la2 <- round(donY[2], 4)
-				ZoomXYval0 <<- c(lo1, lo2, la1, la2)
+				set.initialize.Zoom()
 
-				tclvalue(.cdtData$EnvData$zoom$xx1) <- lo1
-				tclvalue(.cdtData$EnvData$zoom$xx2) <- lo2
-				tclvalue(.cdtData$EnvData$zoom$yy1) <- la1
-				tclvalue(.cdtData$EnvData$zoom$yy2) <- la2
-
-				.cdtData$EnvData$ZoomXYval <- as.numeric(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
-														tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
-
-				imgContainer <- StnChkCoordsDisplayMap(.cdtData$EnvData$tab$MapSelect)
+				imgContainer <- CDT.Display.Points.Zoom(StnChkCoordsPlotMap, .cdtData$EnvData$tab$MapSelect, 'Coordinates-Map')
 				.cdtData$EnvData$tab$MapSelect <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$MapSelect)
 			}
 		})
@@ -513,8 +499,6 @@ StnChkCoordsPanelCmd <- function(){
 		.cdtData$EnvData$zoom$pressButM <- tclVar(0)
 		.cdtData$EnvData$zoom$pressButRect <- tclVar(0)
 		.cdtData$EnvData$zoom$pressButDrag <- tclVar(0)
-
-		# .cdtData$EnvData$pressGetCoords <- tclVar(0)
 
 		ZoomXYval0 <- NULL
 
@@ -727,6 +711,39 @@ StnChkCoordsPanelCmd <- function(){
 		##########################################
 
 		tkgrid(frameZoom, row = 0, column = 0, sticky = '')
+
+	#######################################################################################################
+
+	.cdtData$EnvData$StnChkCoords$SaveEdit <- function(dat2sav){
+		if(all(is.na(dat2sav)) | is.null(dat2sav)) dat2sav <- NULL
+		.cdtData$EnvData$Table.Disp <- dat2sav
+		file.table.rds <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', 'Table.rds')
+		saveRDS(dat2sav, file.table.rds)
+
+		if(is.null(dat2sav)) dat2sav <- ""
+		file.table.csv <- file.path(.cdtData$EnvData$PathData, 'Stations_to_Check.csv')
+		writeFiles(dat2sav, file.table.csv, col.names = TRUE)
+	}
+
+	set.initialize.Zoom <- function(){
+		donX <- range(.cdtData$EnvData$Maps.Disp$LonX, na.rm = TRUE)
+		donY <- range(.cdtData$EnvData$Maps.Disp$LatX, na.rm = TRUE)
+		lo1 <- round(donX[1], 4)
+		lo2 <- round(donX[2], 4)
+		la1 <- round(donY[1], 4)
+		la2 <- round(donY[2], 4)
+		ZoomXYval0 <<- c(lo1, lo2, la1, la2)
+
+		tclvalue(.cdtData$EnvData$zoom$xx1) <- lo1
+		tclvalue(.cdtData$EnvData$zoom$xx2) <- lo2
+		tclvalue(.cdtData$EnvData$zoom$yy1) <- la1
+		tclvalue(.cdtData$EnvData$zoom$yy2) <- la2
+
+		.cdtData$EnvData$ZoomXYval <- as.numeric(c(tclvalue(.cdtData$EnvData$zoom$xx1),
+												tclvalue(.cdtData$EnvData$zoom$xx2),
+												tclvalue(.cdtData$EnvData$zoom$yy1),
+												tclvalue(.cdtData$EnvData$zoom$yy2)))
+	}
 
 	#######################################################################################################
 

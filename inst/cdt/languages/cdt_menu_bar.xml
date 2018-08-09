@@ -15,27 +15,21 @@
             <text lang="en"> Open ESRI Shapefile </text>
         </submenu>
         <submenu id="4">
-            <text lang="en"> Open QC/Homogenization session </text>
-        </submenu>
-        <submenu id="5">
-            <text lang="en"> Save QC/Homogenization session </text>
-        </submenu>
-        <submenu id="6">
             <text lang="en"> Save table </text>
             <text lang="fr"> Sauvegarder le tableau </text>
         </submenu>
-        <submenu id="7">
+        <submenu id="5">
             <text lang="en"> Save table As... </text>
             <text lang="fr"> Sauvegarder le tableau sous... </text>
         </submenu>
-        <submenu id="8">
+        <submenu id="6">
             <text lang="en"> Save Image As... </text>
             <text lang="fr"> Sauvegarder l'image sous... </text>
         </submenu>
-        <submenu id="9">
+        <submenu id="7">
             <text lang="en"> Configuration </text>
         </submenu>
-        <submenu id="10">
+        <submenu id="8">
             <text lang="en"> Quit CDT </text>
             <text lang="fr"> Quitter CDT </text>
         </submenu>
@@ -121,22 +115,7 @@
             <text lang="en"> Temperatures </text>
         </submenu>
         <submenu id="4">
-            <text lang="en"> Aggregate zeros checked stations </text>
-        </submenu>
-        <submenu id="5">
-            <text lang="en"> Aggregate checked stations </text>
-        </submenu>
-        <submenu id="6">
             <text lang="en"> Homogeneity Test </text>
-        </submenu>
-        <submenu id="6-1">
-            <text lang="en"> RHtestsV4 </text>
-        </submenu>
-        <submenu id="6-2">
-            <text lang="en"> CDT Homogenization Methods </text>
-        </submenu>
-        <submenu id="7">
-            <text lang="en"> Aggregate homogenized stations </text>
         </submenu>
     </menu>
     <menu id="merging.data">

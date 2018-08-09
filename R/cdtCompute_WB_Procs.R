@@ -186,7 +186,7 @@ computeWBProcs <- function(){
 			rm(SP1, SP2)
 
 			jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$swhc$file)
-			swhc <- .cdtData$OpenFiles$Data[[jfile]][[2]]$value
+			swhc <- .cdtData$OpenFiles$Data[[jfile]][[2]]$z
 		}else swhc <- .cdtData$GalParams$swhc$cap.max
 
 		if(.cdtData$GalParams$wb$multi){
@@ -205,7 +205,7 @@ computeWBProcs <- function(){
 			rm(SP1, SP2)
 
 			jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$wb$file)
-			wb1 <- .cdtData$OpenFiles$Data[[jfile]][[2]]$value
+			wb1 <- .cdtData$OpenFiles$Data[[jfile]][[2]]$z
 		}else wb1 <- .cdtData$GalParams$wb$wb1
 
 		##################

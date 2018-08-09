@@ -187,7 +187,7 @@ splitCDTData <- function(donne, tstep){
 
 	iddup <- duplicated(stn.id) | duplicated(stn.id, fromLast = TRUE)
 	imiss <- (is.na(stn.lon) | stn.lon < -180 | stn.lon > 360 | is.na(stn.lat) | stn.lat < -90 | stn.lat > 90)
-	idup <- duplicated(Info[, 2:3, drop = FALSE]) | duplicated(Info[, 2:3, drop = FALSE], fromLast = TRUE)
+	idup <- (!is.na(stn.lon) | !is.na(stn.lat)) & (duplicated(Info[, 2:3, drop = FALSE]) | duplicated(Info[, 2:3, drop = FALSE], fromLast = TRUE))
 	aretenir <- !imiss & !duplicated(Info[, 2:3, drop = FALSE]) & !duplicated(stn.id)
 
 	stn.lon <- stn.lon[aretenir]
@@ -196,18 +196,25 @@ splitCDTData <- function(donne, tstep){
 	stn.elv <- stn.elv[aretenir]
 	donne <- donne[, aretenir, drop = FALSE]
 
-	stn.miss <- if(any(imiss)) Info[imiss, , drop = FALSE] else NULL
+	stn.miss <- NULL
+	if(any(imiss)){
+		stn.miss <- Info[imiss, , drop = FALSE]
+		rownames(stn.miss) <- NULL
+	}
+
 	stn.dup <- NULL
 	if(any(idup)){
 		stn.dup <- Info[idup, , drop = FALSE]
 		o <- order(apply(stn.dup[, 2:3, drop = FALSE], 1, paste, collapse = ''))
 		stn.dup <- stn.dup[o, , drop = FALSE]
+		rownames(stn.dup) <- NULL
 	}
 
 	stn.id.dup <- NULL
 	if(any(iddup)){
 		stn.id.dup <- Info[iddup, , drop = FALSE]
 		stn.id.dup <- stn.id.dup[order(stn.id.dup[, 1]), , drop = FALSE]
+		rownames(stn.id.dup) <- NULL
 	}
 
 	stnlist <- list(id = stn.id, lon = stn.lon, lat = stn.lat, elv = stn.elv, dates = dates, data = donne,

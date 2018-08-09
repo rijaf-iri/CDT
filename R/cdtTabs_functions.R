@@ -184,14 +184,13 @@ update.OpenTabs <- function(type, data){
 
 ## Close tab
 
-## "StnInfo" ~ "chkcrds"
-
-Close_Notebook_Tab <- function(index){
-	#tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+Close_Notebook_Tab <- function(index)
+{
 	tabid <- as.integer(index) + 1
 	if(!is.na(tabid)){
-		arrTypes <- c("arr", "chkcrds", "arrhom", "arrRHtest", "arrqc", "arrzc", "arrInterp",
-					"homInfo", "arrValid", "arrAssess", "arrSummary")
+		arrTypes <- c("arr", "chkcrds", "falsezero", "outqc",
+					"arrhom", "arrRHtest", "arrInterp",
+					"homInfo", "arrValid")
 		if(.cdtData$OpenTab$Type[[tabid]] %in% arrTypes){
 			tkdestroy(.cdtData$OpenTab$Data[[tabid]][[1]][[1]])
 		}else if(.cdtData$OpenTab$Type[[tabid]] == "ctxt"){
@@ -314,114 +313,105 @@ Save_Notebook_Tab_Array <- function(){
 		}else if(.cdtData$OpenTab$Type[[tabid]] == "chkcrds"){
 			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
 			dat2sav <- tclArray2dataframe(Objarray)
-			if(all(is.na(dat2sav)) | is.null(dat2sav)) dat2sav <- NULL
-			.cdtData$EnvData$Table.Disp <- dat2sav
-			file.table.rds <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', 'Table.rds')
-			saveRDS(dat2sav, file.table.rds)
 
-			if(is.null(dat2sav)) dat2sav <- ""
-			file.table.csv <- file.path(.cdtData$EnvData$PathData, 'Stations_to_Check.csv')
-			writeFiles(dat2sav, file.table.csv, col.names = TRUE)
-		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrhom"){
-			if(ReturnExecResults$action == 'homog' & ReturnExecResults$period == 'daily'){
-				filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
-				f2sdly <- filetosave[[1]]
-				f2sdek <- filetosave[[2]]
-				f2smon <- filetosave[[3]]
-				Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
-				dat2format <- tclArray2dataframe(Objarray)
-				dat2sav <- reHomOutFormat(dat2format)
-				write.table(dat2sav[[1]], f2sdly, row.names = FALSE, col.names = TRUE)
-				write.table(dat2sav[[2]], f2sdek, row.names = FALSE, col.names = TRUE)
-				write.table(dat2sav[[3]], f2smon, row.names = FALSE, col.names = TRUE)
-			}else if(ReturnExecResults$action == 'homog' & ReturnExecResults$period == 'dekadal'){
-				filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
-				f2sdek <- filetosave[[1]]
-				f2smon <- filetosave[[2]]
-				Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
-				dat2format <- tclArray2dataframe(Objarray)
-				dat2sav <- reHomOutFormat(dat2format)
-				write.table(dat2sav[[1]], f2sdek, row.names = FALSE, col.names = TRUE)
-				write.table(dat2sav[[2]], f2smon, row.names = FALSE, col.names = TRUE)
-			}else if(ReturnExecResults$action == 'homog' & ReturnExecResults$period == 'monthly'){
-				filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
-				f2smon <- filetosave[[1]]
-				Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
-				dat2format <- tclArray2dataframe(Objarray)
-				dat2sav <- reHomOutFormat(dat2format)
-				write.table(dat2sav[[1]], f2smon, row.names = FALSE, col.names = TRUE)
-			}else{
-				Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], format = TRUE)
-				return(NULL)
-			}
-		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrRHtest"){
-			f2save <- .cdtData$OpenTab$Data[[tabid]][[3]][[1]]
+			.cdtData$EnvData$StnChkCoords$SaveEdit(dat2sav)
+		}else if(.cdtData$OpenTab$Type[[tabid]] == "falsezero"){
 			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
 			dat2sav <- tclArray2dataframe(Objarray)
-			head <- readLines(f2save, n = 1)
-			cat(paste(head, '\n'), file = f2save)
-			if(!is.null(dat2sav)){
-				dat2sav <- dat2sav[!is.na(dat2sav[, 3]), , drop = FALSE]
-				nline <- nrow(dat2sav)
-				if(nline > 0){
-					tmp4 <- strsplit(str_trim(gsub("[()-]", " ", dat2sav[, 4])), ' ')
-					tmp4 <- lapply(tmp4, function(x) if(length(x) == 0) c(NA, NA) else x)
-					tmp7 <- strsplit(str_trim(gsub("[()-]", " ", dat2sav[, 7])), ' ')
-					tmp7 <- lapply(tmp7, function(x) if(length(x) == 0) c(NA, NA) else x)
-					tmp <- cbind(dat2sav[, 1:3], do.call('rbind', tmp4),
-								 dat2sav[, 5:6], do.call('rbind', tmp7))
-					tmp <- convert_data_type(tmp, as.character)
-					colClasses <- c('numeric', 'character', rep('numeric', 7))
-					tmp0 <- data.frame(tmp)
-					tmp0[] <- NA
-					for(j in 1:ncol(tmp)) tmp0[, j] <- as(tmp[, j], colClasses[j])
-					for(j in 1:nline){
-						cat(paste0(
-							ifelse(is.na(tmp0[j, 1]), sprintf("%1.0s", ''), sprintf("%1.0f", tmp0[j, 1])), " ",
-							sprintf("%-4.4s", ifelse(is.na(tmp0[j, 2]), '',tmp0[j, 2])),
-							ifelse(is.na(tmp0[j, 3]), sprintf("%10.0s", ''), sprintf("%10.0f", tmp0[j, 3])), " (",
-							ifelse(is.na(tmp0[j, 4]), sprintf("%6.4s", ''), sprintf("%6.4f", tmp0[j, 4])), "-",
-							ifelse(is.na(tmp0[j, 5]), sprintf("%6.4s", ''), sprintf("%6.4f", tmp0[j, 5])), ")",
-							ifelse(is.na(tmp0[j, 6]), sprintf("%6.3s", ''), sprintf("%6.3f", tmp0[j, 6])),
-							ifelse(is.na(tmp0[j, 7]), sprintf("%10.4s", ''), sprintf("%10.4f", tmp0[j, 7])), " (",
-							ifelse(is.na(tmp0[j, 8]), sprintf("%10.4s", ''), sprintf("%10.4f", tmp0[j, 8])), "-",
-							ifelse(is.na(tmp0[j, 9]), sprintf("%10.4s", ''), sprintf("%10.4f", tmp0[j, 9])), ")\n"
-						), file = f2save, append = TRUE)
-					}
-				}
-			}
-		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrqc"){
-			f2save <- .cdtData$OpenTab$Data[[tabid]][[3]][[1]]
-			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
-			dat2sav <- tclArray2dataframe0(Objarray)
-			write.table(dat2sav, f2save, row.names = FALSE, col.names = TRUE)
-		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrzc"){
-			f2save <- .cdtData$OpenTab$Data[[tabid]][[3]][[1]]
-			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
-			dat2sav <- tclArray2dataframe0(Objarray)
-			write.table(dat2sav, f2save, row.names = FALSE, col.names = TRUE)
-		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrInterp"){
+
+			.cdtData$EnvData$qcRRZeroCheck$SaveEdit(dat2sav)
+		}else if(.cdtData$OpenTab$Type[[tabid]] == "outqc"){
 			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
 			dat2sav <- tclArray2dataframe(Objarray)
-			elvd <- as.numeric(as.character(dat2sav$elv))
-			if(sum(!is.na(elvd)) == 0) elvd <- NULL
-			donnees <- list(date = .cdtData$OpenTab$Data[[tabid]][[3]][[1]],
-							lon = as.numeric(as.character(dat2sav$lon)),
-							lat = as.numeric(as.character(dat2sav$lat)),
-							id = as.character(dat2sav$id),
-							z = as.numeric(as.character(dat2sav$z)),
-							elv = elvd)
-			assign('donnees', donnees, envir = EnvInterpolation)
-		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrAssess"){
-			f2save <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes2)
-			Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
-			dat2sav <- tclArray2dataframe(Objarray)
-			writeFiles(dat2sav, f2save)
-		}else if(.cdtData$OpenTab$Type[[tabid]] == "arrSummary"){
-			f2save <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes2)
-			summary.df <- SummaryData.Get.Table()
-			writeFiles(as.matrix(summary.df), f2save, col.names = TRUE)
+
+			.cdtData$EnvData$QC$SaveEdit(dat2sav)
+		}else if(.cdtData$OpenTab$Type[[tabid]] == "homog"){
+
+
 		}else return(NULL)
+
+		# }else if(.cdtData$OpenTab$Type[[tabid]] == "arrhom"){
+		# 	if(ReturnExecResults$action == 'homog' & ReturnExecResults$period == 'daily'){
+		# 		filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
+		# 		f2sdly <- filetosave[[1]]
+		# 		f2sdek <- filetosave[[2]]
+		# 		f2smon <- filetosave[[3]]
+		# 		Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
+		# 		dat2format <- tclArray2dataframe(Objarray)
+		# 		dat2sav <- reHomOutFormat(dat2format)
+		# 		write.table(dat2sav[[1]], f2sdly, row.names = FALSE, col.names = TRUE)
+		# 		write.table(dat2sav[[2]], f2sdek, row.names = FALSE, col.names = TRUE)
+		# 		write.table(dat2sav[[3]], f2smon, row.names = FALSE, col.names = TRUE)
+		# 	}else if(ReturnExecResults$action == 'homog' & ReturnExecResults$period == 'dekadal'){
+		# 		filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
+		# 		f2sdek <- filetosave[[1]]
+		# 		f2smon <- filetosave[[2]]
+		# 		Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
+		# 		dat2format <- tclArray2dataframe(Objarray)
+		# 		dat2sav <- reHomOutFormat(dat2format)
+		# 		write.table(dat2sav[[1]], f2sdek, row.names = FALSE, col.names = TRUE)
+		# 		write.table(dat2sav[[2]], f2smon, row.names = FALSE, col.names = TRUE)
+		# 	}else if(ReturnExecResults$action == 'homog' & ReturnExecResults$period == 'monthly'){
+		# 		filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]
+		# 		f2smon <- filetosave[[1]]
+		# 		Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
+		# 		dat2format <- tclArray2dataframe(Objarray)
+		# 		dat2sav <- reHomOutFormat(dat2format)
+		# 		write.table(dat2sav[[1]], f2smon, row.names = FALSE, col.names = TRUE)
+		# 	}else{
+		# 		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], format = TRUE)
+		# 		return(NULL)
+		# 	}
+		# }else if(.cdtData$OpenTab$Type[[tabid]] == "arrRHtest"){
+		# 	f2save <- .cdtData$OpenTab$Data[[tabid]][[3]][[1]]
+		# 	Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
+		# 	dat2sav <- tclArray2dataframe(Objarray)
+		# 	head <- readLines(f2save, n = 1)
+		# 	cat(paste(head, '\n'), file = f2save)
+		# 	if(!is.null(dat2sav)){
+		# 		dat2sav <- dat2sav[!is.na(dat2sav[, 3]), , drop = FALSE]
+		# 		nline <- nrow(dat2sav)
+		# 		if(nline > 0){
+		# 			tmp4 <- strsplit(str_trim(gsub("[()-]", " ", dat2sav[, 4])), ' ')
+		# 			tmp4 <- lapply(tmp4, function(x) if(length(x) == 0) c(NA, NA) else x)
+		# 			tmp7 <- strsplit(str_trim(gsub("[()-]", " ", dat2sav[, 7])), ' ')
+		# 			tmp7 <- lapply(tmp7, function(x) if(length(x) == 0) c(NA, NA) else x)
+		# 			tmp <- cbind(dat2sav[, 1:3], do.call('rbind', tmp4),
+		# 						 dat2sav[, 5:6], do.call('rbind', tmp7))
+		# 			tmp <- convert_data_type(tmp, as.character)
+		# 			colClasses <- c('numeric', 'character', rep('numeric', 7))
+		# 			tmp0 <- data.frame(tmp)
+		# 			tmp0[] <- NA
+		# 			for(j in 1:ncol(tmp)) tmp0[, j] <- as(tmp[, j], colClasses[j])
+		# 			for(j in 1:nline){
+		# 				cat(paste0(
+		# 					ifelse(is.na(tmp0[j, 1]), sprintf("%1.0s", ''), sprintf("%1.0f", tmp0[j, 1])), " ",
+		# 					sprintf("%-4.4s", ifelse(is.na(tmp0[j, 2]), '',tmp0[j, 2])),
+		# 					ifelse(is.na(tmp0[j, 3]), sprintf("%10.0s", ''), sprintf("%10.0f", tmp0[j, 3])), " (",
+		# 					ifelse(is.na(tmp0[j, 4]), sprintf("%6.4s", ''), sprintf("%6.4f", tmp0[j, 4])), "-",
+		# 					ifelse(is.na(tmp0[j, 5]), sprintf("%6.4s", ''), sprintf("%6.4f", tmp0[j, 5])), ")",
+		# 					ifelse(is.na(tmp0[j, 6]), sprintf("%6.3s", ''), sprintf("%6.3f", tmp0[j, 6])),
+		# 					ifelse(is.na(tmp0[j, 7]), sprintf("%10.4s", ''), sprintf("%10.4f", tmp0[j, 7])), " (",
+		# 					ifelse(is.na(tmp0[j, 8]), sprintf("%10.4s", ''), sprintf("%10.4f", tmp0[j, 8])), "-",
+		# 					ifelse(is.na(tmp0[j, 9]), sprintf("%10.4s", ''), sprintf("%10.4f", tmp0[j, 9])), ")\n"
+		# 				), file = f2save, append = TRUE)
+		# 			}
+		# 		}
+		# 	}
+		# }else if(.cdtData$OpenTab$Type[[tabid]] == "arrInterp"){
+		# 	Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
+		# 	dat2sav <- tclArray2dataframe(Objarray)
+		# 	elvd <- as.numeric(as.character(dat2sav$elv))
+		# 	if(sum(!is.na(elvd)) == 0) elvd <- NULL
+		# 	donnees <- list(date = .cdtData$OpenTab$Data[[tabid]][[3]][[1]],
+		# 					lon = as.numeric(as.character(dat2sav$lon)),
+		# 					lat = as.numeric(as.character(dat2sav$lat)),
+		# 					id = as.character(dat2sav$id),
+		# 					z = as.numeric(as.character(dat2sav$z)),
+		# 					elv = elvd)
+		# 	assign('donnees', donnees, envir = EnvInterpolation)
+		# }else return(NULL)
+
 	}else return(NULL)
 
 	return(0)

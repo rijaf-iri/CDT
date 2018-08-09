@@ -140,7 +140,6 @@ image.plot_Legend_pars <- function(Zmat, user.levels, user.colors, preset.colors
 		kolFonction <- colorRampPalette(user.colors$color)
 		kolor <- kolFonction(length(breaks) - 1)
 	}else{
-		# kolFonction <- match.fun(preset.colors$color)
 		kolFonction <- get(preset.colors$color, mode = "function")
 		kolor <- kolFonction(length(breaks) - 1)
 		if(preset.colors$reverse) kolor <- rev(kolor)

@@ -54,7 +54,7 @@ extractTS.previewWin <- function(states, shpL, type){
 		#########
 
 		tkgrid(crdfrm1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	 	tkgrid(crdfrm2, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(crdfrm2, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(cbmltpts, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(btmltpts, row = 2, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
@@ -74,7 +74,7 @@ extractTS.previewWin <- function(states, shpL, type){
 			if(tclvalue(coordsfrom) == 'crd') crds <- crds[, c(1, 3, 4), drop = FALSE]
 			if(tclvalue(coordsfrom) == 'cdt') crds <- t(crds[1:3, -1, drop = FALSE])
 			for(i in 1:nrow(crds)) tkinsert(textObj, "end", paste(crds[i, 1], crds[i, 2], crds[i, 3], "\n"))
-	 	})
+		})
 	}
 
 	#############################

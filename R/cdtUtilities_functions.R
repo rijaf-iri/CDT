@@ -362,15 +362,23 @@ getCDTTSdataAndDisplayMsg <- function(donne, period, filefrmt, datefrmt, filenam
 ## old name:  getRFESampleData
 getNCDFSampleData <- function(file.netcdf){
 	jfile <- getIndex.AllOpenFiles(file.netcdf)
-	rfelist <- NULL
+	nclist <- NULL
 	if(length(jfile) > 0){
 		if(.cdtData$OpenFiles$Type[[jfile]] == "netcdf"){
 			ncdata <- .cdtData$OpenFiles$Data[[jfile]][[2]]
-			nclist <- list(lon = ncdata$x, lat = ncdata$y, varid = ncdata$varid,
-						ilon = ncdata$ilon, ilat = ncdata$ilat, irevlat = ncdata$irevlat)
+			nclist <- c(list(lon = ncdata$x, lat = ncdata$y),
+						ncdata[c('varid', 'ilon', 'ilat', 'xo',
+							'yo', 'nx', 'ny', 'varinfo')])
 		}
 	}
 	return(nclist)
+}
+
+transposeNCDFData <- function(x, ncinfo){
+	if(ncinfo$ilon < ncinfo$ilat)
+		x[ncinfo$xo, ncinfo$yo]
+	else
+		t(x)[ncinfo$xo, ncinfo$yo]
 }
 
 ##############################################
@@ -673,3 +681,44 @@ reshape.array <- function(dat){
 	z[cbind(dat$x, dat$y)] <- as.character(dat$z)
 	return(as.data.frame(z))
 }
+
+##############################################
+
+## append two lists by name, concatenate
+append.list <- function (l1, l2)
+{
+	stopifnot(is.list(l1), is.list(l2))
+	lnames <- names(l1)
+	for(v in names(l2)){
+		if(v %in% lnames && is.list(l1[[v]]) && is.list(l2[[v]]))
+			l1[[v]] <- append.list(l1[[v]], l2[[v]])
+		else
+			l1[[v]] <- c(l1[[v]], l2[[v]])
+	}
+	return(l1)
+}
+
+##############################################
+
+## convert km to degree
+km2deg <- function(km, lat){
+	R <- sqrt((1/110.54)^2 + (1 / (111.32 * cos(lat * pi/180)))^2)
+	return(km * R / sqrt(2))
+}
+
+##############################################
+
+## create hill shade  matrix from DEM(x, y, z)
+hillShade.Matrix <- function(dem, scale = 1, ...){
+	crd <- dem[c('x', 'y')]
+	dem <- raster::raster(dem)
+	slope <- raster::terrain(dem, opt = 'slope')
+	aspect <- raster::terrain(dem, opt = 'aspect')
+	hill <- raster::hillShade(slope, aspect, ...)
+	hill <- t(as.matrix(hill))
+	hill <- hill[, rev(seq(ncol(hill)))]
+	hill <- scale * hill
+	list(x = crd$x, y = crd$y, z = hill)
+}
+
+
