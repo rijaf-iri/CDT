@@ -99,6 +99,7 @@ CDT.Display.Map.inter <- function(plot.map, notebookTab, tab.title){
 
 ## plot stations coordinates with zoom
 CDT.Display.Points.Zoom <- function(plot.map, notebookTab, tab.title){
+	if(is.null(.cdtData$EnvData)) return(NULL)
 	if(is.null(.cdtData$EnvData$plot.maps$id)) return(NULL)
 	stn.coords <- .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')]
 
@@ -139,7 +140,11 @@ CDT.Display.Points.Zoom <- function(plot.map, notebookTab, tab.title){
 	tcl('raise', canvas)
 	tcl('update')
 
+	##########
+
 	tkbind(canvas, "<Enter>", function(){
+		if(is.null(.cdtData$EnvData$zoom)) return(NULL)
+
 		if(tclvalue(.cdtData$EnvData$zoom$pressButP) == "1")
 			tkconfigure(canvas, cursor = 'sizing')
 		else if(tclvalue(.cdtData$EnvData$zoom$pressButM) == "1")
@@ -172,6 +177,8 @@ CDT.Display.Points.Zoom <- function(plot.map, notebookTab, tab.title){
 	##########
 	## first click on map
 	tkbind(canvas, "<Button-1>", function(W, x, y){
+		if(is.null(.cdtData$EnvData$zoom)) return(NULL)
+
 		ret <- getXYCoords(W, x, y, parPltCrd)
 		tkdelete(W, 'rect')
 
@@ -261,12 +268,16 @@ CDT.Display.Points.Zoom <- function(plot.map, notebookTab, tab.title){
 	##########
 	## cursor movement
 	tkbind(canvas, "<Motion>", function(W, x, y){
+		if(is.null(.cdtData$EnvData$zoom)) return(NULL)
+
 		displayCursorPosition3Var(W, x, y, parPltCrd, getStnIDLabel, stn.coords = stn.coords)
 	})
 
 	#########
 	## cursor movement with button-1 pressed
 	tkbind(canvas, "<B1-Motion>", function(W, x, y){
+		if(is.null(.cdtData$EnvData$zoom)) return(NULL)
+
 		ret <- getXYCoords(W, x, y, parPltCrd)
 
 		##Zoom rectangle
@@ -301,6 +312,8 @@ CDT.Display.Points.Zoom <- function(plot.map, notebookTab, tab.title){
 	#########
 	## release button1
 	tkbind(canvas, "<ButtonRelease>", function(W, x, y){
+		if(is.null(.cdtData$EnvData$zoom)) return(NULL)
+
 		ret <- getXYCoords(W, x, y, parPltCrd)
 
 		##Zoom rectangle
@@ -334,6 +347,8 @@ CDT.Display.Points.Zoom <- function(plot.map, notebookTab, tab.title){
 	###############################################
 	## deactivate zoom (right button)
 	tkbind(canvas, "<Button-3>", function(W){
+		if(is.null(.cdtData$EnvData$zoom)) return(NULL)
+
 		tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
 		tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
 		tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0

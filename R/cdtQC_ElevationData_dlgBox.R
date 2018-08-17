@@ -1,5 +1,5 @@
 
-getParams.QC.Elevation <- function(Parameters)
+getParams.QC.Elevation <- function(Parameters, parent.win = .cdtEnv$tcl$main$win)
 {
 	listOpenFiles <- openFile_ttkcomboList()
 	if(WindowsOS())
@@ -49,9 +49,11 @@ getParams.QC.Elevation <- function(Parameters)
 
 	input.file <- tclVar(Parameters$file)
 
+	stateDEM <- if(tclvalue(elevfrom) == '0') 'disabled' else 'normal'
+
 	txt.infile <- tklabel(frameNcdf, text = 'File containing DEM', anchor = 'w', justify = 'left')
-	cb.infile <- ttkcombobox(frameNcdf, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
-	bt.infile <- tkbutton(frameNcdf, text = "...")
+	cb.infile <- ttkcombobox(frameNcdf, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1, state = stateDEM)
+	bt.infile <- tkbutton(frameNcdf, text = "...", state = stateDEM)
 
 	tkconfigure(bt.infile, command = function(){
 		nc.opfiles <- getOpenNetcdf(tt, initialdir = getwd())
@@ -86,13 +88,13 @@ getParams.QC.Elevation <- function(Parameters)
 
 		tkgrab.release(tt)
 		tkdestroy(tt)
-		tkfocus(.cdtEnv$tcl$main$win)
+		tkfocus(parent.win)
 	})
 
 	tkconfigure(bt.prm.CA, command = function(){
 		tkgrab.release(tt)
 		tkdestroy(tt)
-		tkfocus(.cdtEnv$tcl$main$win)
+		tkfocus(parent.win)
 	})
 
 	tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
@@ -116,7 +118,7 @@ getParams.QC.Elevation <- function(Parameters)
 	tkfocus(tt)
 	tkbind(tt, "<Destroy>", function(){
 		tkgrab.release(tt)
-		tkfocus(.cdtEnv$tcl$main$win)
+		tkfocus(parent.win)
 	})
 	tkwait.window(tt)
 	return(Parameters)

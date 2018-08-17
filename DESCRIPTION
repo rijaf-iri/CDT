@@ -37,7 +37,6 @@ Imports:
     data.table,
     fitdistrplus,
     lmomco,
-    changepoint,
     qmap,
     ADGofTest,
     RCurl,

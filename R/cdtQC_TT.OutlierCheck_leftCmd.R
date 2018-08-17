@@ -16,7 +16,7 @@ qcTTOutlierCheckPanelCmd <- function(){
 	}
 
 	GeneralParameters <- list(intstep = "daily", infile1 = "", infile2 = "",
-							qc.tmax = TRUE,  outdir = "",
+							qc.tmax = TRUE, outdir = "",
 							elv = list(use = FALSE, dem = TRUE, file = ""),
 							params = list(
 								voisin = list(min = 4, max = 15, dist = 35, elv = 800),
@@ -152,7 +152,7 @@ qcTTOutlierCheckPanelCmd <- function(){
 		use.elev <- tclVar(GeneralParameters$elv$use)
 
 		chk.elev <- tkcheckbutton(frameParams, variable = use.elev, text = "Use Elevation", anchor = 'w', justify = 'left')
-		bt.elev <- ttkbutton(frameParams, text = "Settings", state = "disabled")
+		bt.elev <- ttkbutton(frameParams, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = "disabled")
 		bt.params <- ttkbutton(frameParams, text = "Quality Control Parameters")
 
 		tkconfigure(bt.elev, command = function(){
@@ -176,8 +176,10 @@ qcTTOutlierCheckPanelCmd <- function(){
 
 		###############
 		tkbind(chk.elev, "<Button-1>", function(){
-			stateElev <- if(tclvalue(use.elev) == '1') 'disabled' else 'normal'
-			tkconfigure(bt.elev, state = stateElev)
+			if(tclvalue(QCExist) == '0'){
+				stateElev <- if(tclvalue(use.elev) == '1') 'disabled' else 'normal'
+				tkconfigure(bt.elev, state = stateElev)
+			}
 		})
 
 		#######################
@@ -340,6 +342,7 @@ qcTTOutlierCheckPanelCmd <- function(){
 			stateExistData <- if(tclvalue(QCExist) == '1') 'disabled' else 'normal'
 			tkconfigure(en.dataIdx, state = stateExistData)
 			tkconfigure(bt.dataIdx, state = stateExistData)
+
 			stateQC <- if(tclvalue(QCExist) == '1') 'normal' else 'disabled'
 			tkconfigure(cb.fperiod, state = stateQC)
 			tkconfigure(rb.vartxtn1, state = stateQC)
@@ -352,6 +355,7 @@ qcTTOutlierCheckPanelCmd <- function(){
 			tkconfigure(en.dir.save, state = stateQC)
 			tkconfigure(bt.dir.save, state = stateQC)
 			tkconfigure(bt.doQC, state = stateQC)
+
 			tkconfigure(chk.elev, state = stateQC)
 			if(tclvalue(QCExist) == '1'){
 				stateElev <- if(tclvalue(use.elev) == '0') 'disabled' else 'normal'
@@ -991,7 +995,7 @@ qcTTOutlierCheckPanelCmd <- function(){
 		stateSAT <- "disabled"
 
 		chk.addSat <- tkcheckbutton(frameSAT, variable = .cdtData$EnvData$sat$add.sat, text = "Add satellite data to map", anchor = 'w', justify = 'left')
-		bt.addSatSet <- ttkbutton(frameSAT, text = "Settings", state = stateSAT)
+		bt.addSatSet <- ttkbutton(frameSAT, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSAT)
 		en.addSat <- tkentry(frameSAT, textvariable = dir.plotSat, width = largeur2, state = stateSAT)
 		bt.addSat <- tkbutton(frameSAT, text = "...", state = stateSAT)
 

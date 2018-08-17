@@ -1,0 +1,127 @@
+{
+    // Merging date
+    "Merging.Date": [{
+        "year": 2017,
+        "month": 8,
+        "dekad": 1
+    }],
+
+    "STN": {
+        // If there is no station data: true ifelse false
+        "No.Stn.Data": false,
+        // Station data filename
+        "file": ""
+    },
+
+    "RFE": {
+        // If RFE data is already downloaded : true ifelse false
+        "downloaded": true,
+        // RFE data source: "TAMSATv2",  "TAMSATv3" or "CHIRP"
+        "source": "TAMSATv3",
+        // RFE data filename
+        "file": ""
+    },
+
+    //Bounding box to extract RFE data
+    "RFE.bbox": [{
+        "minlon": 42,
+        "maxlon": 52,
+        "minlat": -26,
+        "maxlat": -12
+    }],
+
+    "BIAS": {
+        // Correct Bias: true, if there is no bias factors: false
+        "Adjust": true,
+        //Bias correction method
+        // "Multiplicative.Bias.Var": multiplicative bias correction according to the time step of data
+        //              daily: 365 days bias factors, dekadal: 36 bias factors, monthly: 12 bias factors 
+        // "Multiplicative.Bias.Mon": multiplicative bias correction using one factor for each month
+        // "Quantile.Mapping": Fitting Bernoulli-Gamma distribution
+        "method": "Multiplicative.Bias.Var",
+        // Bias directory
+        "Dir": ""
+    },
+
+    // Merging Parameters
+    "Merging": {
+        // Merging Method:
+        // "Regression Kriging"
+        // "Spatio-Temporal LM"
+        // "Simple Bias Adjustment"
+        "mrg.method": "Regression Kriging",
+
+        // Interpolation method: IDW/Kriging
+        // IDW: Inverse Distance Weighted
+        // Kriging: Ordinary Kriging
+        "interp.method": "IDW",
+
+        // Kriging & IDW interpolation parameters
+        // nmin for gstat
+        "nmin": 3,
+        // nmax for gstat
+        "nmax": 5,
+        // maxdist for gstat (in decimal degree)
+        "maxdist": 0.75,
+        // variogram model, see gstat package for list of available model
+        "vgm.model": ["Sph", "Exp", "Gau"],
+        // using kriging of block mean values (true or false)
+        "use.block": true,
+
+        // Minimum number of stations with data to be used to do the merging
+        "min.stn": 10,
+        // Minimum number of non-zero station values to perform the merging
+        "min.non.zero": 7,
+
+        // LMCoef directory
+        // "LMCoef.dir": ""
+
+        // Use auxiliary variables with GLM to calculate the spatial trend
+        "sp.trend.aux": false
+    },
+
+    "LMCOEF": {
+        "dir.LMCoef": "",
+        // Filename format of the LM coef files
+        "format": "LM_Coefficient_%s.nc"
+    },
+
+    "RnoR": {
+        // use Rain-no-Rain mask (true or false)
+        "use.RnoR": true,
+        // Maximum distance (in decimal degrees) for interpolating Rain-no-Rain mask
+        "maxdist.RnoR": 0.25,
+        // Smooth Rain-no-Rain mask (true or false)
+        "smooth.RnoR": false,
+        // wet day definition, rainfall >= wet.day
+        "wet.day": 1.0
+    },
+
+    // Add auxiliary variables
+    "auxvar": {
+        "dem": false,
+        "slope": false,
+        "aspect": false,
+        "lon": false,
+        "lat": false
+    },
+
+    "blank": {
+        // Blank grid outside the country boundaries or over ocean
+        // "1" : None
+        // "2" : Use DEM
+        // "3" : Use ESRI shapefile
+        "blank": "1",
+        // ESRI shapefile
+        "SHP.file": "",
+        // Elevation data filename
+        "DEM.file": ""
+    },
+
+    "output": {
+        // Full path to the directory to save results
+        "dir": "",
+        // Merged filename format
+        "format": "rr_mrg_%s%s%s_MON.nc"
+    }
+}

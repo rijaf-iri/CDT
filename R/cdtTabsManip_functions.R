@@ -124,3 +124,40 @@ tableNotebookTab_unik <- function(data.df, notebookTab, title,
 	return(ntbkIdTab)
 }
 
+#########################################
+
+consolOutNotebookTab_unik <- function(todisplay, notebookTab, title, rhtests = FALSE)
+{
+	ntab <- length(.cdtData$OpenTab$Type)
+	newTable <- TRUE
+	if(!is.null(notebookTab)){
+		if(ntab > 0){
+			AllNoteTab <- sapply(seq(ntab), function(j){
+				if(!is.null(attributes(.cdtData$OpenTab$Data[[j]][[1]][[1]])))
+					.cdtData$OpenTab$Data[[j]][[1]][[1]]$ID
+				else
+					.cdtData$OpenTab$Data[[j]][[1]][[1]]
+			})
+			idTabs <- which(AllNoteTab == notebookTab)
+			if(length(idTabs) > 0) newTable <- FALSE
+		}
+	}
+
+	if(newTable){
+		tabID <- ntab + 1
+		containertab <- Display_Output_Console_Tab(todisplay, title, rhtests)
+		.cdtData$OpenTab$Type[[tabID]] <- 'ctxt'
+		.cdtData$OpenTab$Data[[tabID]] <- containertab
+	}else{
+		tabID <- idTabs
+		.Tcl(paste('destroy', tclvalue(tkwinfo("children", .cdtData$OpenTab$Data[[tabID]][[2]]))))
+		Display_Output_Console(.cdtData$OpenTab$Data[[tabID]][[2]], todisplay, rhtests)
+		tcl(.cdtEnv$tcl$main$tknotes, 'tab', .cdtData$OpenTab$Data[[tabID]][[1]][[1]], '-text', title)
+	}
+
+	ntbkIdTab <- .cdtData$OpenTab$Data[[tabID]][[1]]$ID
+	tkselect(.cdtEnv$tcl$main$tknotes, tabID - 1)
+
+	return(ntbkIdTab)
+}
+

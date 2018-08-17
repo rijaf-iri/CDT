@@ -85,7 +85,7 @@ anomaliesCalcPanelCmd <- function(){
 			tkconfigure(en.daywin, state = statedayW)
 			tclvalue(day.txtVar) <- ifelse(str_trim(tclvalue(timeSteps)) == CbperiodVAL[3], 'Dekad',
 									ifelse(str_trim(tclvalue(timeSteps)) == CbperiodVAL[2], 'Pentad', 'Day'))
-			statedate <<- if(tclvalue(timeSteps) == CbperiodVAL[4]) 'disabled' else 'normal'
+			statedate <<- if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[4]) 'disabled' else 'normal'
 		})
 
 		#######################

@@ -232,6 +232,7 @@ qcRRZeroCheckPanelCmd <- function(){
 			stateExistData <- if(tclvalue(zeroExist) == '1') 'disabled' else 'normal'
 			tkconfigure(en.dataIdx, state = stateExistData)
 			tkconfigure(bt.dataIdx, state = stateExistData)
+
 			stateZero <- if(tclvalue(zeroExist) == '1') 'normal' else 'disabled'
 			tkconfigure(cb.infile, state = stateZero)
 			tkconfigure(bt.infile, state = stateZero)

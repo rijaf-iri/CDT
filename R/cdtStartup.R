@@ -175,6 +175,11 @@ startCDT <- function(wd = NA, lang = NA){
 			tkadd(menu.file, "command", label = lang.menu[["file"]][["4"]],
 				command = function()
 			{
+				if(length(.cdtData$OpenTab$Type) == 0) return(NULL)
+				tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+				arrTypes <- c("arr", "chkcrds", "falsezero", "outqc", "outhom")
+				if(!.cdtData$OpenTab$Type[[tabid]] %in% arrTypes) return(NULL)
+
 				tab2sav <- try(Save_Notebook_Tab_Array(), silent = TRUE)
 				if(!inherits(tab2sav, "try-error")){
 					if(!is.null(tab2sav)) Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['3']])
@@ -467,10 +472,10 @@ startCDT <- function(wd = NA, lang = NA){
 			{
 				refreshCDT()
 				spinbox.state(state = 'normal')
-				# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-				# 	AssessDataPanelCmd()
-				# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-				# }
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					testHomogeneityPanelCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
 			})
 
 		####################################
@@ -479,6 +484,275 @@ startCDT <- function(wd = NA, lang = NA){
 		tkadd(top.menu, "cascade", label = lang.menu[["merging.data"]][["0"]], menu = menu.mrg, activebackground = 'lightblue')
 
 			##########
+			# tkadd(menu.mrg, "command", label = lang.menu[["merging.data"]][["1"]],
+			# 	command = function()
+			# {
+			# 	refreshCDT()
+			# 	spinbox.state(state = 'normal')
+			# 	if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+			# 		SpatialInterpPanelCmd()
+			# 		.cdtEnv$tcl$data$lcmd.frame <- 1
+			# 	}
+			# })
+
+			###########
+			# tkadd(menu.mrg, "separator")
+
+			###########
+			menu.mrg.down <- tkmenu(top.menu, tearoff = FALSE)
+			tkadd(menu.mrg, "cascade", label = lang.menu[["merging.data"]][["2"]], menu = menu.mrg.down)
+
+				##########
+				tkadd(menu.mrg.down, "command", label = lang.menu[["merging.data"]][["2-1"]], background = 'lightblue',
+					command = function()
+				{
+					refreshCDT()
+					initialize.parameters('coefdown.temp', 'dekadal')
+					Temp_coefDownGetInfo()
+				})
+
+				##########
+				tkadd(menu.mrg.down, "separator")
+
+				##########
+				tkadd(menu.mrg.down, "command", label = lang.menu[["merging.data"]][["2-2"]],
+					command = function()
+				{
+					refreshCDT()
+					initialize.parameters('down.temp', 'dekadal')
+					Temp_reanalDownGetInfo()
+				})
+
+			###########
+			tkadd(menu.mrg, "separator")
+
+			##########
+			menu.mrg1 <- tkmenu(top.menu, tearoff = FALSE)
+			tkadd(menu.mrg, "cascade", label = lang.menu[["merging.data"]][["3"]], menu = menu.mrg1, state = "normal")
+
+				##########
+				tkadd(menu.mrg1, "command", label = lang.menu[["merging.data"]][["3-1"]],
+					command = function()
+				{
+					refreshCDT()
+					initialize.parameters('merge.rain.one', 'dekadal')
+					Precip_mergeGetInfoALL()
+				})
+
+				##########
+				tkadd(menu.mrg1, "separator")
+
+				##########
+				tkadd(menu.mrg1, "command", label = lang.menu[["merging.data"]][["3-2"]],
+					command = function()
+				{
+					refreshCDT()
+					initialize.parameters('merge.temp.one', 'dekadal')
+					Temp_mergeGetInfoALL()
+				})
+
+			###########
+			tkadd(menu.mrg, "separator")
+
+			##########
+			menu.mrg2 <- tkmenu(top.menu, tearoff = FALSE)
+			tkadd(menu.mrg, "cascade", label = lang.menu[["merging.data"]][["4"]], menu = menu.mrg2)
+
+				##########
+				menu.mrg.rain2 <- tkmenu(top.menu, tearoff = FALSE)
+				tkadd(menu.mrg2, "cascade", label = lang.menu[["merging.data"]][["4-1"]], menu = menu.mrg.rain2)
+
+					##########
+					tkadd(menu.mrg.rain2, "command", label = lang.menu[["merging.data"]][["4-1-1"]], background = 'lightblue',
+						command = function()
+					{
+						refreshCDT()
+						initialize.parameters('coefbias.rain', 'dekadal')
+						coefBiasGetInfoRain()
+					})
+
+					##########
+					tkadd(menu.mrg.rain2, "separator")
+
+					##########
+					tkadd(menu.mrg.rain2, "command", label = lang.menu[["merging.data"]][["4-1-2"]],
+						command = function()
+					{
+						refreshCDT()
+						initialize.parameters('rmbias.rain', 'dekadal')
+						rmvBiasGetInfoRain()
+					})
+
+					##########
+					tkadd(menu.mrg.rain2, "separator")
+
+					##########
+					tkadd(menu.mrg.rain2, "command", label = lang.menu[["merging.data"]][["4-1-3"]], background = 'lightblue',
+						command = function()
+					{
+						refreshCDT()
+						initialize.parameters('coefLM.rain', 'dekadal')
+						coefLMGetInfoRain()
+					})
+
+					##########
+					tkadd(menu.mrg.rain2, "separator")
+
+					##########
+					tkadd(menu.mrg.rain2, "command", label = lang.menu[["merging.data"]][["4-1-4"]],
+						command = function()
+					{
+						refreshCDT()
+						initialize.parameters('merge.rain', 'dekadal')
+						mergeGetInfoRain()
+					})
+
+				##########
+				tkadd(menu.mrg2, "separator")
+
+				##########
+				menu.mrg.temp2 <- tkmenu(top.menu, tearoff = FALSE)
+				tkadd(menu.mrg2, "cascade", label = lang.menu[["merging.data"]][["4-2"]], menu = menu.mrg.temp2)
+
+					##########
+					tkadd(menu.mrg.temp2, "command", label = lang.menu[["merging.data"]][["4-2-1"]], background = 'lightblue',
+						command = function()
+					{
+						refreshCDT()
+						initialize.parameters('coefbias.temp', 'dekadal')
+						biasGetInfoTempDown()
+					})
+
+					##########
+					tkadd(menu.mrg.temp2, "separator")
+
+					##########
+					tkadd(menu.mrg.temp2, "command", label = lang.menu[["merging.data"]][["4-2-2"]],
+						command = function()
+					{
+						refreshCDT()
+						initialize.parameters('adjust.temp', 'dekadal')
+						adjGetInfoTempDownReanal()
+					})
+
+					##########
+					tkadd(menu.mrg.temp2, "separator")
+
+					##########
+					tkadd(menu.mrg.temp2, "command", label = lang.menu[["merging.data"]][["4-2-3"]], background = 'lightblue',
+						command = function()
+					{
+						refreshCDT()
+						initialize.parameters('coefLM.temp', 'dekadal')
+						coefLMGetInfoTemp()
+					})
+
+					##########
+					tkadd(menu.mrg.temp2, "separator")
+
+					##########
+					tkadd(menu.mrg.temp2, "command", label = lang.menu[["merging.data"]][["4-2-4"]],
+						command = function()
+					{
+						refreshCDT()
+						initialize.parameters('merge.temp', 'dekadal')
+						mrgGetInfoTemp()
+					})
+
+			##########
+			tkadd(menu.mrg, "separator")
+
+			##########
+			tkadd(menu.mrg, "command", label = lang.menu[["merging.data"]][["5"]],
+			command = function(){
+				refreshCDT()
+				initialize.parameters('scale.merged', 'daily')
+				Merging_ScaleDataInfo()
+			})
+
+			##########
+			tkadd(menu.mrg, "separator")
+
+			##########
+			tkadd(menu.mrg, "command", label = lang.menu[["merging.data"]][["6"]],
+				command = function()
+			{
+				refreshCDT()
+				initialize.parameters('merge.dekrain', 'dekadal')
+				mergeDekadInfoRain()
+			})
+
+			##########
+			tkadd(menu.mrg, "separator")
+
+			##########
+			menu.valid <- tkmenu(top.menu, tearoff = FALSE)
+			tkadd(menu.mrg, "cascade", label = lang.menu[["merging.data"]][["7"]], menu = menu.valid)
+
+				##########
+				menu.valid1 <- tkmenu(top.menu, tearoff = FALSE)
+				tkadd(menu.valid, "cascade", label = lang.menu[["merging.data"]][["7-1"]], menu = menu.valid1)
+
+					########
+					tkadd(menu.valid1, "command", label = lang.menu[["merging.data"]][["7-1-1"]],
+						command = function()
+					{
+						# refreshCDT()
+						# spinbox.state(state = 'normal')
+						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+						# 	Validation.HOV.PanelCmd('RR')
+						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
+						# }
+					})
+
+					##########
+					tkadd(menu.valid1, "separator")
+
+					#########
+					tkadd(menu.valid1, "command", label = lang.menu[["merging.data"]][["7-1-2"]],
+						command = function()
+					{
+						# refreshCDT()
+						# spinbox.state(state = 'normal')
+						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+						# 	Validation.HOV.PanelCmd('TT')
+						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
+						# }
+					})
+
+				##########
+				tkadd(menu.valid, "separator")
+
+				##########
+				menu.valid2 <- tkmenu(top.menu, tearoff = FALSE)
+				tkadd(menu.valid, "cascade", label = lang.menu[["merging.data"]][["7-2"]], menu = menu.valid2)
+
+					########
+					tkadd(menu.valid2, "command", label = lang.menu[["merging.data"]][["7-2-1"]],
+						command = function()
+					{
+						# refreshCDT()
+						# spinbox.state(state = 'normal')
+						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+						# 	Validation.LOOCV.PanelCmd('RR')
+						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
+						# }
+					})
+
+					##########
+					tkadd(menu.valid2, "separator")
+
+					#########
+					tkadd(menu.valid2, "command", label = lang.menu[["merging.data"]][["7-2-2"]],
+						command = function()
+					{
+						# refreshCDT()
+						# spinbox.state(state = 'normal')
+						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+						# 	Validation.LOOCV.PanelCmd('TT')
+						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
+						# }
+					})
 
 		####################################
 
@@ -833,6 +1107,16 @@ startCDT <- function(wd = NA, lang = NA){
 		tkadd(top.menu, "cascade", label = lang.menu[["help"]][["0"]], menu = menu.aide, activebackground = 'lightblue')
 
 			##########
+			tkadd(menu.aide, "command", label = lang.menu[["help"]][["1"]], command = function(){
+				# start help server ifnot
+				# browseURL(paste0('file://',file.path(apps.dir, 'help', 'html', 'index.html')))
+			})
+
+			##########
+			tkadd(menu.aide, "separator")
+
+			##########
+			tkadd(menu.aide, "command", label = lang.menu[["help"]][["2"]], command = function() aboutCDT())
 
 	#################################################################################
 
@@ -1006,6 +1290,11 @@ startCDT <- function(wd = NA, lang = NA){
 		##################
 
 		tkconfigure(tb.save.table, command = function(){
+			if(length(.cdtData$OpenTab$Type) == 0) return(NULL)
+			tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+			arrTypes <- c("arr", "chkcrds", "falsezero", "outqc", "outhom")
+			if(!.cdtData$OpenTab$Type[[tabid]] %in% arrTypes) return(NULL)
+
 			tab2sav <- try(Save_Notebook_Tab_Array(), silent = TRUE)
 			if(inherits(tab2sav, "try-error")){
 				Insert.Messages.Out(lang.toolbar[['message']][['2']], format = TRUE)
@@ -1157,10 +1446,96 @@ startCDT <- function(wd = NA, lang = NA){
 		tkgrid.columnconfigure(area.frame, 0, weight = 1)
 		tkgrid.rowconfigure(area.frame, 0, weight = 1)
 
-		#####
+		####################################
+
 		.cdtEnv$tcl$main$pressed_index <- tclVar('')
 		tkbind(.cdtEnv$tcl$main$tknotes, "<ButtonPress-1>", function(x, y, W) btn_press(x, y, W))
 		tkbind(.cdtEnv$tcl$main$tknotes, "<ButtonRelease-1>", function(x, y, W) btn_releases(x, y, W))
+
+	#################################################################################
+
+	frameAcc <- tkframe(.cdtEnv$tcl$main$tknotes)
+
+	cdtfr.irilogo0 <- tkframe(frameAcc)
+	cdtfr.cdtname <- tkframe(frameAcc)
+
+	cdtfr.tmp2 <- tkframe(frameAcc)
+
+	cdtfr.tmp3a <- tkframe(frameAcc)
+
+	cdtfr.tmp4a <- tkframe(frameAcc)
+	cdtfr.tmp4b <- tkframe(frameAcc)
+	cdtfr.tmp4c <- tkframe(frameAcc)
+
+	cdtfr.irilogo1 <- tkframe(frameAcc)
+
+	#######
+	cdtfont0 <- tkfont.create(family = "times", size = 48, weight = "bold")
+	cdtfont1 <- tkfont.create(family = "times", size = 18, weight = "bold")
+	cdtfont2 <- tkfont.create(family = "times", size = 12)
+
+	imgAcc.cdt <- tkimage.create('photo', file = file.path(.cdtDir$Root, "images", "cdttext.gif"))
+	imgAcc.iri0 <- resizeTclImage(file.path(.cdtDir$Root, "images", "iriLogo.gif"), factor = 3, zoom = FALSE)
+	# imgAcc.iri1 <- tkimage.create('photo', file = file.path(.cdtDir$Root, "images", "iri_logo_no_icon.png"))
+	imgAcc.iri1 <- resizeTclImage(file.path(.cdtDir$Root, "images", "iri_logo_no_icon.png"), factor = 4, zoom = FALSE)
+
+	#######
+	imglab.iri0 <- tklabel(cdtfr.irilogo0, image = imgAcc.iri0)
+	tkgrid(imglab.iri0)
+	# txtlab.iri0 <- tklabel(cdtfr.irilogo0, text = '', width = 13)
+	# tkgrid(imglab.iri0, txtlab.iri0)
+
+	#######
+	imglab.cdt <- tklabel(cdtfr.cdtname, image = imgAcc.cdt)
+	txtlab.cdt <- tklabel(cdtfr.cdtname, text = 'Climate Data Tools', font = cdtfont0, foreground = '#1461E2')
+	txtlab.ver <- tklabel(cdtfr.cdtname, text = paste('Version', .cdtEnv$pkg$version), font = cdtfont1)
+	txtlab.auth <- tklabel(cdtfr.cdtname, text = 'Rija Faniriantsoa, Tufa Dinku', font = cdtfont2)
+
+	tkgrid(imglab.cdt)
+	tkgrid(txtlab.cdt)
+	tkgrid(txtlab.ver)
+	tkgrid(txtlab.auth)
+
+	#######
+
+	txtlab.tmp2 <- tklabel(cdtfr.tmp2, text = '', height = 10)
+	tkgrid(txtlab.tmp2)
+
+	#######
+
+	txtlab.tmp3a <- tklabel(cdtfr.tmp3a, text = '', width = 21)
+	tkgrid(txtlab.tmp3a)
+
+	#######
+
+	txtlab.tmp4a <- tklabel(cdtfr.tmp4a, text = '', width = 21)
+	txtlab.tmp4b <- tklabel(cdtfr.tmp4b, text = '', width = 21)
+	txtlab.tmp4c <- tklabel(cdtfr.tmp4c, text = '', width = 21)
+	tkgrid(txtlab.tmp4a)
+	tkgrid(txtlab.tmp4b)
+	tkgrid(txtlab.tmp4c)
+
+	#######
+	imglab.iri1 <- tklabel(cdtfr.irilogo1, image = imgAcc.iri1)
+	tkgrid(imglab.iri1, row = 0, column = 0, sticky = 'se')
+
+	#######
+	tkgrid(cdtfr.irilogo0, row = 0, column = 0, sticky = 'nw', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(cdtfr.cdtname, row = 0, column = 1, sticky = 'nwe', rowspan = 2, columnspan = 3, padx = 1, pady = 1, ipadx = 3, ipady = 1)
+
+	tkgrid(cdtfr.tmp2, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	tkgrid(cdtfr.tmp3a, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	tkgrid(cdtfr.tmp4a, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(cdtfr.tmp4b, row = 4, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(cdtfr.tmp4c, row = 4, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	tkgrid(cdtfr.irilogo1, row = 4, column = 3, sticky = 'se', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	#######
+	tkgrid(frameAcc, sticky = 'nsew', pady = 25, padx = 1, ipadx = 1, ipady = 1)
+
 
 	#################################################################################
 
@@ -1412,14 +1787,6 @@ startCDT <- function(wd = NA, lang = NA){
 	.cdtEnv$tcl$zoom$img$redraw <- resizeTclImage(file.path(.cdtDir$Root, "images", 'redraw128.gif'), factor = 4, zoom = FALSE)
 	.cdtEnv$tcl$zoom$img$pan <- tkimage.create('photo', file = file.path(.cdtDir$Root, "images", 'PanImage32.gif'))
 	.cdtEnv$tcl$zoom$img$reset <- resizeTclImage(file.path(.cdtDir$Root, "images", 'reset128.gif'), factor = 4, zoom = FALSE)
-
-	# pikZoomPlus <- resizeTclImage(file.path(imgdir, 'ZoomIn128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
-	# pikZoomMinus <- resizeTclImage(file.path(imgdir, 'ZoomOut128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
-	# pikZoomRect <- resizeTclImage(file.path(imgdir, 'ZoomRect128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
-	# pikCentre <- tkimage.create('photo', file = file.path(imgdir, 'imgCentre24.gif', fsep = .Platform$file.sep))
-	# pikRedraw <- resizeTclImage(file.path(imgdir, 'redraw128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
-	# pikPanImg <- tkimage.create('photo', file = file.path(imgdir, 'PanImage32.gif', fsep = .Platform$file.sep))
-	# pikReset <- resizeTclImage(file.path(imgdir, 'reset128.gif', fsep = .Platform$file.sep), factor = 4, zoom = FALSE)
 
 	#################################################################################
 

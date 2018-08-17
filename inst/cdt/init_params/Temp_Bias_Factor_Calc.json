@@ -1,0 +1,92 @@
+{
+    // Station data filename
+    "STN.file": "",
+    // Elevation data filename
+    "DEM.file": "",
+    // Temperature data
+    "TEMP": {
+        // Full path to the directory of downscaled data
+        "dir": "",
+        // downscaled data sample file
+        "sample": "",
+        // downscaled data filename format 
+        "format": "tmax_down_%s%s%s.nc"
+    },
+
+    "BIAS": {
+        //Bias correction method
+        // "Multiplicative.Bias.Var": multiplicative bias correction according to the time step of data
+        //              daily: 365 days bias factors, dekadal: 36 bias factors, monthly: 12 bias factors 
+        // "Multiplicative.Bias.Mon": multiplicative bias correction using one factor for each month
+        // "Quantile.Mapping": Fitting Normal distribution
+        "bias.method": "Multiplicative.Bias.Var",
+
+        // Period to be used to compute Mean Bias coefficients
+        "all.years": true,
+        "start.year": 1981,
+        "end.year": 2010,
+        "min.year": 15,
+
+        // Interpolation method: NN/IDW/Kriging
+        // NN: Nearest Neighbor
+        // IDW: Inverse Distance Weighted
+        // Kriging: Ordinary Kriging
+        "interp.method": "IDW",
+
+        // Kriging & IDW interpolation parameters
+        // nmin for gstat
+        "nmin": 3,
+        // nmax for gstat
+        "nmax": 5,
+        // maxdist for gstat (in decimal degree)
+        "maxdist": 0.75,
+        // variogram model, see gstat package for list of available model
+        "vgm.model": ["Sph", "Exp", "Gau"],
+        // using kriging of block mean values (true or false)
+        "use.block": true,
+
+        // nearest-neighbor interpolation parameters
+
+        // Maximum radius of interpolation for nearest-neighbor
+        // 10 times of data resolution belong longitude
+        "rad.lon": 10,
+        // 10 times of data resolution belong latitude
+        "rad.lat": 10,
+        // 4 times of elevation resolution (elevation is discretized by 100 m)
+        "rad.elv": 4,
+        //use elevation as 3rd dimension true/false
+        "elev.3rd.dim": true,
+        // convert lat/lon units km/m
+        "latlon.unit": "km",
+        // standardize coordinates true/false
+        "normalize": true,
+
+        // Minimum length of non missing values to be used to calculate the factor
+        // or to fit the distribution
+        "min.length": 15,
+        // Minimum number of non missing stations to interpolate bias
+        "min.stn": 10,
+
+        // Use Shapiro-Wilk normality test to test if data (follow) (are compatible with) a normal distribution
+        "SWnorm.test": true,
+
+        // Months on which bias factors or distribution parameters will be calculated
+        "Months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    },
+
+    // Add auxiliary variables
+    "auxvar": {
+        "dem": false,
+        "slope": false,
+        "aspect": false,
+        "lon": false,
+        "lat": false
+    },
+
+    "output": {
+        // Full path to the directory to save results
+        "dir": "",
+        // Filename format of the bias files
+        "format": "STN_GRID_MeanBias_%s.nc"
+    }
+}

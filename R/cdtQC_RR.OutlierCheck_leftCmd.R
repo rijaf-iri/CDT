@@ -107,7 +107,7 @@ qcRROutlierCheckPanelCmd <- function(){
 		use.elev <- tclVar(GeneralParameters$elv$use)
 
 		chk.elev <- tkcheckbutton(frameParams, variable = use.elev, text = "Use Elevation", anchor = 'w', justify = 'left')
-		bt.elev <- ttkbutton(frameParams, text = "Settings", state = "disabled")
+		bt.elev <- ttkbutton(frameParams, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = "disabled")
 		bt.params <- ttkbutton(frameParams, text = "Quality Control Parameters")
 
 		tkconfigure(bt.elev, command = function(){
@@ -131,8 +131,10 @@ qcRROutlierCheckPanelCmd <- function(){
 
 		###############
 		tkbind(chk.elev, "<Button-1>", function(){
-			stateElev <- if(tclvalue(use.elev) == '1') 'disabled' else 'normal'
-			tkconfigure(bt.elev, state = stateElev)
+			if(tclvalue(QCExist) == '0'){
+				stateElev <- if(tclvalue(use.elev) == '1') 'disabled' else 'normal'
+				tkconfigure(bt.elev, state = stateElev)
+			}
 		})
 
 		#######################
@@ -293,6 +295,7 @@ qcRROutlierCheckPanelCmd <- function(){
 			stateExistData <- if(tclvalue(QCExist) == '1') 'disabled' else 'normal'
 			tkconfigure(en.dataIdx, state = stateExistData)
 			tkconfigure(bt.dataIdx, state = stateExistData)
+
 			stateQC <- if(tclvalue(QCExist) == '1') 'normal' else 'disabled'
 			tkconfigure(cb.fperiod, state = stateQC)
 			tkconfigure(cb.infile, state = stateQC)
@@ -301,6 +304,7 @@ qcRROutlierCheckPanelCmd <- function(){
 			tkconfigure(en.dir.save, state = stateQC)
 			tkconfigure(bt.dir.save, state = stateQC)
 			tkconfigure(bt.doQC, state = stateQC)
+
 			tkconfigure(chk.elev, state = stateQC)
 			if(tclvalue(QCExist) == '1'){
 				stateElev <- if(tclvalue(use.elev) == '0') 'disabled' else 'normal'

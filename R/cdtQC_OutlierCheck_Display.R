@@ -271,21 +271,6 @@ qcPlot_Spatial.Check <- function(){
 
 ######################################################################################################
 
-qcPlotMon_dateLabel <- function(daty){
-	intstep <- .cdtData$EnvData$output$params$intstep
-	if(intstep == 'daily')
-		labdates <- format(as.Date(daty, "%Y%m%d"), '%d-%b-%Y')
-	if(intstep %in% c('pentad', 'dekadal')){
-		daty <- as.Date(daty, "%Y%m%d")
-		day <- as.numeric(format(daty, '%d'))
-		labdates <- paste0(day, '-', format(daty, '%b-%Y'))
-	}
-	if(intstep == 'monthly')
-		labdates <- format(as.Date(paste0(daty, '1'), "%Y%m%d"),'%b-%Y')
-
-	return(labdates)
-}
-
 qcDislpay_Outliers.Mon <- function(notebookTab, tab.title){
 	varplot <- c("parPlotSize1", "parPlotSize2", "parPlotSize3", "parPlotSize4",
 				"usrCoords1", "usrCoords2", "usrCoords3", "usrCoords4")
@@ -312,14 +297,16 @@ qcDislpay_Outliers.Mon <- function(notebookTab, tab.title){
 	tcl("update")
 
 	#########
+	intstep <- .cdtData$EnvData$output$params$intstep
 
+	#########
 	tkbind(img, "<Motion>", function(W, x, y){
 		xyMouse <- mouseMouvment(W, x, y, parPltCrd)
 
 		ipos <- round(xyMouse$x)
 		datyRange <- ipos < 1 | ipos > length(daty) | xyMouse$inout
 
-		frxcoord <- if(datyRange) '' else qcPlotMon_dateLabel(daty[ipos])
+		frxcoord <- if(datyRange) '' else format.plot.date.label(daty[ipos], intstep)
 		frycoord <- if(xyMouse$inout) '' else round(xyMouse$y, 1)
 
 		tclvalue(.cdtEnv$tcl$status$xcrd) <- frxcoord

@@ -118,6 +118,24 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## Compute downscaling coefficients
+	if(.cdtData$GalParams$action == 'coefdown.temp'){
+		ret <- try(Temp_execCoefDown(), silent = TRUE)
+
+		msg0 <- "Computing regression parameters finished successfully"
+		msg1 <- "Computing regression parameters failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Downscale reanalysis data
+	if(.cdtData$GalParams$action == 'down.temp'){
+		ret <- try(Temp_execDownscaling(), silent = TRUE)
+
+		msg0 <- "Downscaling finished successfully"
+		msg1 <- "Downscaling failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
 	###
 
 }

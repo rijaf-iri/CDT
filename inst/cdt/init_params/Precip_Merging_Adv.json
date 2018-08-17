@@ -1,0 +1,120 @@
+{
+    // Station data filename
+    "STN.file": "",
+    // Elevation data filename
+    "DEM.file": "",
+    // RFE data
+    "RFE": {
+        // Full path to the directory of RFE
+        "dir": "",
+        // RFE sample file
+        "sample": "",
+        // RFE filename format 
+        "format": "rfe%s_%s-dk%s.nc"
+    },
+
+    "LMCOEF": {
+        "dir.LMCoef": "",
+        // Filename format of the LM coef files
+        "format": "LM_Coefficient_%s.nc"
+    },
+
+    "Merging": {
+        // Merging Method:
+        // "Regression Kriging"
+        // "Spatio-Temporal LM"
+        // "Simple Bias Adjustment"
+        "mrg.method": "Regression Kriging",
+
+        // Interpolation method: IDW/Kriging
+        // IDW: Inverse Distance Weighted
+        // Kriging: Ordinary Kriging
+        "interp.method": "IDW",
+
+        // Kriging & IDW interpolation parameters
+        // nmin for gstat
+        "nmin": 3,
+        // nmax for gstat
+        "nmax": 5,
+        // maxdist for gstat (in decimal degree)
+        "maxdist": 0.45,
+        // variogram model, see gstat package for list of available model
+        "vgm.model": ["Sph", "Exp", "Gau"],
+        // using kriging of block mean values (true or false)
+        "use.block": true,
+
+        // Minimum number of stations with data to be used to do the merging
+        "min.stn": 10,
+        // Minimum number of non-zero station values to perform the merging
+        "min.non.zero": 4,
+
+        // Use auxiliary variables with GLM to calculate the spatial trend
+        "sp.trend.aux": false
+    },
+
+    // Merging date range
+    "Merging.Date": {
+        "start.year": 1981,
+        "start.mon": 1,
+        "start.day": 1,
+        "end.year": 2015,
+        "end.mon": 12,
+        "end.day": 3,
+        // Months on which merging will be performed
+        "Months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    },
+
+    "RnoR": {
+        // use Rain-no-Rain mask (true or false)
+        "use.RnoR": true,
+        // Maximum distance (in decimal degrees) for interpolating Rain-no-Rain mask
+        "maxdist.RnoR": 0.15,
+        // Smooth Rain-no-Rain mask (true or false)
+        "smooth.RnoR": false,
+        // wet day definition, rainfall >= wet.day
+        "wet.day": 1.0
+    },
+
+    "Grid.Creation": {
+        // Create new grid to interpolate bias
+        // "1": from RFE
+        // "2": from DEM
+        // "3": create a new grid
+        "grid": "1",
+        // New grid definition min/max/res
+        "minlon": 42,
+        "maxlon": 52,
+        // resolution in decimal degree
+        "reslon": 0.1,
+        "minlat": -26,
+        "maxlat": -12,
+        // resolution in decimal degree
+        "reslat": 0.1
+    },
+
+    // Add auxiliary variables
+    "auxvar": {
+        "dem": false,
+        "slope": false,
+        "aspect": false,
+        "lon": false,
+        "lat": false
+    },
+
+    "output": {
+        // Full path to the directory to save results
+        "dir": "",
+        // Merged filename format
+        "format": "rr_mrg_%s%s%s_ALL.nc"
+    },
+
+    "blank": {
+        // Blank grid outside the country boundaries or over ocean
+        // "1" : None
+        // "2" : Use DEM
+        // "3" : Use ESRI shapefile
+        "blank": "1",
+        // ESRI shapefile
+        "SHP.file": ""
+    }
+}

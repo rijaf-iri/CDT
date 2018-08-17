@@ -1,0 +1,42 @@
+{
+    // Merged data to be scaled up
+    "mrg.data": {
+        // Time step of the data to be scaled up: "daily", "pentad", "dekadal"
+        "tstep": "daily",
+        // Full path to the directory of merged data to be scaled
+        "dir": "",
+        // Merged data sample file to be scaled
+        "sample": "",
+        // Merged data filename format to be scaled
+        "format": "rr_mrg_%s%s%s_ALL.nc"
+    },
+
+    // Scaling date range
+    "Scaling.Date": {
+        "start.year": 1981,
+        "start.mon": 1,
+        "start.day": 1,
+        "end.year": 2015,
+        "end.mon": 12,
+        "end.day": 3,
+        // Months on which scaling will be performed
+        "Months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    },
+
+    // data to be used to scale the merged data
+    "scale.data": {
+        // Function to use to scale up data,  "mean" or "sum"
+        "fun": "sum",
+        // Time step of the aggregated data to be used for scaling: "pentad", "dekadal", "monthly"
+        "tstep": "dekadal",
+        // Full path to the directory of merged data to be use for scaling
+        "dir": "",
+        // Merged data sample file to be use for scaling
+        "sample": "",
+        // Merged data filename format to be use for scaling
+        "format": "rr_mrg_%s%s_ALL.nc"
+    },
+
+    // Full path to the directory to save results
+    "outdir": ""
+}

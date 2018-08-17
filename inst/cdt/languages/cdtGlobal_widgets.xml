@@ -11,12 +11,15 @@
         </button>
         <button id="3">
             <text lang="en"> PLOT </text>
+            <text lang="fr"> PLOT </text>
         </button>
         <button id="4">
             <text lang="en"> Options </text>
+            <text lang="fr"> Options </text>
         </button>
         <button id="5">
             <text lang="en"> Settings </text>
+            <text lang="fr"> Settings </text>
         </button>
         <label id="1">
             <text lang="en"> Open Files </text>

@@ -122,5 +122,109 @@ cdt.init.params <- function(action, tstep){
 						output = "")
 	}
 
+	#################################################################
+
+	## Compute regression parameters for downscaling
+	if(action == 'coefdown.temp'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Temp_downscalling_Coef.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$IO.files$dir2save) == "") ret.params$IO.files$dir2save <- getwd()
+	}
+
+	## Downscaling reanalysis
+	if(action == 'down.temp'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Temp_downscalling_reanalysis.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Simplified
+	if(action == 'merge.temp.one'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Temp_Merging_One.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Bias coeff
+	if(action == 'coefbias.temp'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Temp_Bias_Factor_Calc.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Adjustment
+	if(action == 'adjust.temp'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Temp_Bias_Correction.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Compute LM coef
+	if(action == 'coefLM.temp'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Temp_LM_Coef_Calc.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Merging
+	if(action == 'merge.temp'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Temp_Merging_Adv.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	#################################################################
+
+	## Scale merged data
+	if(action == 'scale.merged'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Scaling_MergedData.json'))
+		ret.params <- c(list(action = action), ret.params)
+		if(str_trim(ret.params$outdir) == "") ret.params$outdir <- getwd()
+	}
+
+	#################################################################
+
+	## Simplified
+	if(action == 'merge.rain.one'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Precip_Merging_One.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Mean bias
+	if(action == 'coefbias.rain'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Precip_Bias_Factor_Calc.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Remove bias
+	if(action == 'rmbias.rain'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Precip_Bias_Correction.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Compute LM coef
+	if(action == 'coefLM.rain'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Precip_LM_Coef_Calc.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Merging rainfall
+	if(action == 'merge.rain'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Precip_Merging_Adv.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
+	## Dekadal update
+	if(action == 'merge.dekrain'){
+		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Precip_Update_dekadal.json'))
+		ret.params <- c(list(action = action, period = tstep), ret.params)
+		if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+	}
+
 	return(ret.params)
 }

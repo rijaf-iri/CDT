@@ -31,17 +31,15 @@ computeTvars_getParams <- function(){
 	frtimestep <- tkframe(frMain, relief = 'sunken', borderwidth = 2)
 
 	timeSteps <- tclVar()
-	cb.periodVAL <- c('Daily data', 'Pentad data', 'Dekadal data', 'Monthly data')
-	tclvalue(timeSteps) <- switch(.cdtData$GalParams$Tstep,
-									'daily' = cb.periodVAL[1],
-									'pentad' = cb.periodVAL[2],
-									'dekadal' = cb.periodVAL[3],
-									'monthly' = cb.periodVAL[4])
+	CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:5]
+	periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
+	tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$Tstep]
+
 	cb.varsVAL <- c('Mean', 'Range')
 	temp.variable <- tclVar(.cdtData$GalParams$variable)
 
 	txt.period <- tklabel(frtimestep, text = 'Time step', anchor = 'e', justify = 'right')
-	cb.period <- ttkcombobox(frtimestep, values = cb.periodVAL, textvariable = timeSteps, width = largeur0)
+	cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
 	txt.variable <- tklabel(frtimestep, text = 'Variable', anchor = 'e', justify = 'right')
 	cb.variable <- ttkcombobox(frtimestep, values = cb.varsVAL, textvariable = temp.variable, width = largeur1)
 
@@ -60,11 +58,9 @@ computeTvars_getParams <- function(){
 	frdatatype <- tkframe(frMain, relief = 'sunken', borderwidth = 2)
 
 	DataType <- tclVar()
-	CbdatatypeVAL <- c('CDT stations data format', 'CDT dataset format (gridded)', 'NetCDF gridded data')
-	tclvalue(DataType) <- switch(.cdtData$GalParams$data.type,
-								'cdtstation' = CbdatatypeVAL[1],
-								'cdtdataset' = CbdatatypeVAL[2],
-								'cdtnetcdf' = CbdatatypeVAL[3])
+	CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:3]
+	datatypeVAL <- c('cdtstation', 'cdtdataset', 'cdtnetcdf')
+	tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% .cdtData$GalParams$data.type]
 
 	txt.datatyp <- tklabel(frdatatype, text = 'Format of input data', anchor = 'w', justify = 'left')
 	cb.datatyp <- ttkcombobox(frdatatype, values = CbdatatypeVAL, textvariable = DataType, width = largeur3)
@@ -85,12 +81,12 @@ computeTvars_getParams <- function(){
 		tclvalue(input.Tmax) <- ''
 
 		###
-		stateSetNC <- if(str_trim(tclvalue(DataType)) == 'NetCDF gridded data') "normal" else "disabled"
+		stateSetNC <- if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]) "normal" else "disabled"
 		tkconfigure(set.tmin, state = stateSetNC)
 		tkconfigure(set.tmax, state = stateSetNC)
 
 		###
-		if(str_trim(tclvalue(DataType)) == 'CDT stations data format'){
+		if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 			tclvalue(txt.INTmin.var) <- 'File containing stations Tmin data'
 			tclvalue(txt.INTmax.var) <- 'File containing stations Tmax data'
 
@@ -130,7 +126,7 @@ computeTvars_getParams <- function(){
 		}
 
 		###
-		if(str_trim(tclvalue(DataType)) == 'CDT dataset format (gridded)'){
+		if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
 			tclvalue(txt.INTmin.var) <- 'Index file (*.rds) for Tmin data'
 			tclvalue(txt.INTmax.var) <- 'Index file (*.rds) for Tmax data'
 
@@ -160,7 +156,7 @@ computeTvars_getParams <- function(){
 		}
 
 		###
-		if(str_trim(tclvalue(DataType)) == 'NetCDF gridded data'){
+		if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]){
 			tclvalue(txt.INTmin.var) <- 'Directory of the Tmin NetCDF files'
 			tclvalue(txt.INTmax.var) <- 'Directory of the Tmax NetCDF files'
 
@@ -170,13 +166,13 @@ computeTvars_getParams <- function(){
 			######
 			tkconfigure(set.tmin, command = function(){
 				.cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
-																str_trim(tclvalue(input.Tmin)), tclvalue(timeSteps))
+																str_trim(tclvalue(input.Tmin)), str_trim(tclvalue(timeSteps)))
 				settingTmin <<- 1
 			})
 
 			tkconfigure(set.tmax, command = function(){
 				.cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
-																str_trim(tclvalue(input.Tmax)), tclvalue(timeSteps))
+																str_trim(tclvalue(input.Tmax)), str_trim(tclvalue(timeSteps)))
 				settingTmax <<- 1
 			})
 
@@ -202,7 +198,7 @@ computeTvars_getParams <- function(){
 		}
 
 		#######
-		if(str_trim(tclvalue(DataType)) == 'CDT stations data format'){
+		if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 			txtSaveHelp <- 'Enter the full path of the file to save the result'
 			tclvalue(fileORdir) <- 'File to save the result'
 			isFile <- TRUE
@@ -253,7 +249,7 @@ computeTvars_getParams <- function(){
 
 	##############
 	txt.tmin <- tklabel(frameInData, text = tclvalue(txt.INTmin.var), textvariable = txt.INTmin.var, anchor = 'w', justify = 'left')
-	set.tmin <- tkbutton(frameInData, text = "Settings", state = stateSetNC)
+	set.tmin <- ttkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
 
 	if(.cdtData$GalParams$data.type == 'cdtstation'){
 		cb.en.tmin <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Tmin, width = largeur3)
@@ -266,7 +262,7 @@ computeTvars_getParams <- function(){
 	settingTmin <- .cdtData$GalParams$settingTmin
 	tkconfigure(set.tmin, command = function(){
 		.cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
-														str_trim(tclvalue(input.Tmin)), tclvalue(timeSteps))
+														str_trim(tclvalue(input.Tmin)), str_trim(tclvalue(timeSteps)))
 		settingTmin <<- 1
 	})
 
@@ -290,7 +286,7 @@ computeTvars_getParams <- function(){
 
 	##############
 	txt.tmax <- tklabel(frameInData, text = tclvalue(txt.INTmax.var), textvariable = txt.INTmax.var, anchor = 'w', justify = 'left')
-	set.tmax <- tkbutton(frameInData, text = "Settings", state = stateSetNC)
+	set.tmax <- ttkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
 
 	if(.cdtData$GalParams$data.type == 'cdtstation'){
 		cb.en.tmax <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Tmax, width = largeur3)
@@ -303,7 +299,7 @@ computeTvars_getParams <- function(){
 	settingTmax <- .cdtData$GalParams$settingTmax
 	tkconfigure(set.tmax, command = function(){
 		.cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
-														str_trim(tclvalue(input.Tmax)), tclvalue(timeSteps))
+														str_trim(tclvalue(input.Tmax)), str_trim(tclvalue(timeSteps)))
 		settingTmax <<- 1
 	})
 
@@ -430,36 +426,28 @@ computeTvars_getParams <- function(){
 		}else if(tclvalue(file.save) %in% c("", "NA")){
 			tkmessageBox(message = "Choose a directory or enter the file to save results", icon = "warning", type = "ok")
 			tkwait.window(tt)
-		}else if(str_trim(tclvalue(DataType)) == 'NetCDF gridded data' & is.null(settingTmin)){
+		}else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingTmin)){
 				tkmessageBox(message = "You have to set the Tmin files parameters", icon = "warning", type = "ok")
 				tkwait.window(tt)
-		}else if(str_trim(tclvalue(DataType)) == 'NetCDF gridded data' & is.null(settingTmax)){
+		}else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingTmax)){
 				tkmessageBox(message = "You have to set the Tmax files parameters", icon = "warning", type = "ok")
 				tkwait.window(tt)
 		}else{
-			.cdtData$GalParams$Tstep <- switch(str_trim(tclvalue(timeSteps)), 
-												'Daily data' = 'daily',
-												'Pentad data' = 'pentad',
-												'Dekadal data' = 'dekadal',
-												'Monthly data' = 'monthly')
+			.cdtData$GalParams$Tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+			.cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
 			.cdtData$GalParams$variable <- str_trim(tclvalue(temp.variable))
 
-			.cdtData$GalParams$data.type <- switch(str_trim(tclvalue(DataType)),
-												'CDT stations data format' = 'cdtstation',
-												'CDT dataset format (gridded)' = 'cdtdataset',
-												'NetCDF gridded data' = 'cdtnetcdf')
-
-			if(str_trim(tclvalue(DataType)) == 'CDT stations data format'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
 				.cdtData$GalParams$cdtstation$tmin <- str_trim(tclvalue(input.Tmin))
 				.cdtData$GalParams$cdtstation$tmax <- str_trim(tclvalue(input.Tmax))
 			}
 
-			if(str_trim(tclvalue(DataType)) == 'CDT dataset format (gridded)'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
 				.cdtData$GalParams$cdtdataset$tmin <- str_trim(tclvalue(input.Tmin))
 				.cdtData$GalParams$cdtdataset$tmax <- str_trim(tclvalue(input.Tmax))
 			}
 
-			if(str_trim(tclvalue(DataType)) == 'NetCDF gridded data'){
+			if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]){
 				.cdtData$GalParams$cdtnetcdf$tmin$dir <- str_trim(tclvalue(input.Tmin))
 				.cdtData$GalParams$cdtnetcdf$tmax$dir <- str_trim(tclvalue(input.Tmax))
 			}

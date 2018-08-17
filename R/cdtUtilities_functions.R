@@ -72,6 +72,11 @@ is.leapyears <- function(years){
 
 ##############################################
 
+## Check class Date
+is.date <- function(x) inherits(x, "Date")
+
+##############################################
+
 ## Number of days
 # daty: character representing the date
 
@@ -198,6 +203,59 @@ addPentads <- function(daty, n = 1){
 }
 
 # addPentadsVec <- function(daty, n = 1) do.call(c, lapply(daty, addPentads, n))
+
+##############################################
+
+format.plot.date <- function(dates, tstep){
+	if(tstep == "daily")
+		daty <- as.Date(dates, "%Y%m%d")
+	if(tstep == "pentad"){
+		pen <- c(1, 6, 11, 16, 21, 26)[as.numeric(substr(dates, 7, 7))]
+		daty <- as.Date(paste0(substr(dates, 1, 6), pen), "%Y%m%d")
+	}
+	if(tstep == "dekadal"){
+		dek <- c(1, 11, 21)[as.numeric(substr(dates, 7, 7))]
+		daty <- as.Date(paste0(substr(dates, 1, 6), dek), "%Y%m%d")
+	}
+	if(tstep == "monthly")
+		daty <- as.Date(paste0(dates, 1), "%Y%m%d")
+	return(daty)
+}
+
+format.plot.date.label <- function(x, tstep){
+	if(is.character(x)){
+		daty <- switch(tstep,
+					"daily" = as.Date(x, "%Y%m%d"),
+					"pentad" = local({
+						pen <- c(1, 6, 11, 16, 21, 26)[as.numeric(substr(x, 7, 7))]
+						as.Date(paste0(substr(x, 1, 6), pen), "%Y%m%d")
+					}) ,
+					"dekadal" = local({
+						dek <- c(1, 11, 21)[as.numeric(substr(x, 7, 7))]
+						as.Date(paste0(substr(x, 1, 6), dek), "%Y%m%d")
+					}),
+					"monthly" = as.Date(paste0(x, '1'), "%Y%m%d"))
+	}
+	if(is.numeric(x))
+		daty <- as.Date(x, origin = '1970-1-1')
+	if(is.date(x)) daty <- x
+
+	#######
+	if(tstep == 'daily')
+		labdates <- format(daty, '%d-%b-%Y')
+
+	if(tstep %in% c('pentad', 'dekadal')){
+		brks <- if(tstep == 'dekadal') c(1, 10, 20, 31) else c(1, 5, 10, 15, 20, 25, 31)
+		day <- as.numeric(format(daty, '%d'))
+		pdk <- findInterval(day, brks, rightmost.closed = TRUE, left.open = TRUE)
+		labdates <- paste0(pdk, '-', format(daty, '%b-%Y'))
+	}
+
+	if(tstep == 'monthly')
+		labdates <- format(daty,'%b-%Y')
+
+	return(labdates)
+}
 
 ##############################################
 
@@ -535,9 +593,16 @@ grid2pointINDEX <- function(pts_Coords, grd_Coords){
 defSpatialPixels <- function(grd_Coords){
 	newgrid <- expand.grid(lon = grd_Coords$lon, lat = grd_Coords$lat)
 	coordinates(newgrid) <- ~lon+lat
-	newgrid <- SpatialPixels(points = newgrid,
+	newgrid <- try(SpatialPixels(points = newgrid,
 							tolerance = sqrt(sqrt(.Machine$double.eps)),
-							proj4string = CRS(as.character(NA)))
+							proj4string = CRS(as.character(NA))), silent = TRUE)
+	if(inherits(newgrid, "try-error")){
+		newgrid <- expand.grid(lon = grd_Coords$lon, lat = grd_Coords$lat)
+		coordinates(newgrid) <- ~lon+lat
+		newgrid <- SpatialPixels(points = newgrid, tolerance = 0.001,
+								proj4string = CRS(as.character(NA)))
+	}
+
 	return(newgrid)
 }
 
@@ -591,6 +656,26 @@ cdt.interp.surface.grid <- function(obj, grid.list, edge = TRUE)
 
 	names(grid.list) <- c('x', 'y')
 	out <- c(grid.list, list(z = matrix(z, nx0, ny0)))
+	return(out)
+}
+
+##############################################
+
+## Aggregate spatial data
+cdt.aggregate.grid <- function(obj, grid.list, FUN = mean, ...)
+{
+	old.grid <- defSpatialPixels(obj[c('lon', 'lat')])
+	new.grid <- defSpatialPixels(grid.list)
+
+	dim.grid <- new.grid@grid@cells.dim
+	names(grid.list) <- c('x', 'y')
+	out <- c(grid.list, list(z = matrix(NA, dim.grid[1], dim.grid[2])))
+
+	ixy <- over(old.grid, new.grid)
+	z.out <- tapply(c(obj$z), ixy, FUN, ...)
+	z.out[is.nan(z.out) | is.infinite(z.out)] <- NA
+
+	out$z[as.numeric(names(z.out))] <- z.out
 	return(out)
 }
 
@@ -719,6 +804,29 @@ hillShade.Matrix <- function(dem, scale = 1, ...){
 	hill <- hill[, rev(seq(ncol(hill)))]
 	hill <- scale * hill
 	list(x = crd$x, y = crd$y, z = hill)
+}
+
+##############################################
+
+## number and fraction of non-missing values
+## by considering stations reporting period (first and last non-missing)
+
+available.data.fraction <- function(data.mat){
+	INA <- lapply(seq(ncol(data.mat)), function(j){
+		x <- data.mat[, j]
+		ina <- !is.na(x)
+		ix <- which(ina)
+		if(length(ix) == 0)
+			return(c(length = 0, frac = 0))
+		ix <- ix[1]:ix[length(ix)]
+		x <- x[ix]
+		ina <- ina[ix]
+		n <- length(x)
+		fr <- sum(ina) / n
+		c(length = n, frac = fr)
+	})
+
+	as.list(data.frame(do.call(rbind, INA)))
 }
 
 

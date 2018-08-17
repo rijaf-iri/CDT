@@ -55,11 +55,8 @@ status.bar.display <- function(widget, text){
 }
 
 helpWidget <- function(widget, text_balloon, text_statusbar){
-	# tkbind(widget, "<Enter>", function() tclvalue(.cdtEnv$tcl$status$help) <- text_statusbar)
-	# tkbind(widget, "<Leave>", function() tclvalue(.cdtEnv$tcl$status$help) <- "")
 	status.bar.display(widget, text_statusbar)
 	tcl("DynamicHelp::register", widget, 'balloon', text_balloon)
-	# infobulle(widget, text_balloon)
 }
 
 ########################################################################
@@ -336,7 +333,7 @@ bwTabScrollableFrame <- function(parent, wscrlwin = .cdtEnv$tcl$data$wscrlwin,
 	tkgrid.columnconfigure(scrwin, 0, weight = 1)
 	tkgrid.rowconfigure(scrwin, 0, weight = 1)
 
-	scrfr <- bwScrollableFrame(scrwin, width = wscrlwin, height = hscrlwin, bg = "red", ...)
+	scrfr <- bwScrollableFrame(scrwin, width = wscrlwin, height = hscrlwin, ...) #bg = "red",
 	return(scrfr)
 }
 
