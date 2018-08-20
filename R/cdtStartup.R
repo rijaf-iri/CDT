@@ -1477,7 +1477,7 @@ startCDT <- function(wd = NA, lang = NA){
 	imgAcc.cdt <- tkimage.create('photo', file = file.path(.cdtDir$Root, "images", "cdttext.gif"))
 	imgAcc.iri0 <- resizeTclImage(file.path(.cdtDir$Root, "images", "iriLogo.gif"), factor = 3, zoom = FALSE)
 	# imgAcc.iri1 <- tkimage.create('photo', file = file.path(.cdtDir$Root, "images", "iri_logo_no_icon.png"))
-	imgAcc.iri1 <- resizeTclImage(file.path(.cdtDir$Root, "images", "iri_logo_no_icon.png"), factor = 4, zoom = FALSE)
+	imgAcc.iri1 <- resizeTclImage(file.path(.cdtDir$Root, "images", "iri_logo_no_icon.gif"), factor = 4, zoom = FALSE)
 
 	#######
 	imglab.iri0 <- tklabel(cdtfr.irilogo0, image = imgAcc.iri0)
@@ -1497,20 +1497,22 @@ startCDT <- function(wd = NA, lang = NA){
 	tkgrid(txtlab.auth)
 
 	#######
+	hauteur_sep <- if(WindowsOS()) 9 else 10
+	largeur_sep <- if(WindowsOS()) 24 else 21
 
-	txtlab.tmp2 <- tklabel(cdtfr.tmp2, text = '', height = 10)
+	txtlab.tmp2 <- tklabel(cdtfr.tmp2, text = '', height = hauteur_sep)
 	tkgrid(txtlab.tmp2)
 
 	#######
 
-	txtlab.tmp3a <- tklabel(cdtfr.tmp3a, text = '', width = 21)
+	txtlab.tmp3a <- tklabel(cdtfr.tmp3a, text = '', width = largeur_sep)
 	tkgrid(txtlab.tmp3a)
 
 	#######
 
-	txtlab.tmp4a <- tklabel(cdtfr.tmp4a, text = '', width = 21)
-	txtlab.tmp4b <- tklabel(cdtfr.tmp4b, text = '', width = 21)
-	txtlab.tmp4c <- tklabel(cdtfr.tmp4c, text = '', width = 21)
+	txtlab.tmp4a <- tklabel(cdtfr.tmp4a, text = '', width = largeur_sep)
+	txtlab.tmp4b <- tklabel(cdtfr.tmp4b, text = '', width = largeur_sep)
+	txtlab.tmp4c <- tklabel(cdtfr.tmp4c, text = '', width = largeur_sep)
 	tkgrid(txtlab.tmp4a)
 	tkgrid(txtlab.tmp4b)
 	tkgrid(txtlab.tmp4c)

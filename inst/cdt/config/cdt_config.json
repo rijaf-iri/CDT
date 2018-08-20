@@ -4,7 +4,7 @@
     // List of lang.iso available in the xml files: e.g., ["en", "fr", "es"]
     "lang.iso.list": ["en", "fr"],
     // List of language name available in the xml files: e.g., ["English", "Français", "Español"]
-    "lang.name.list": ["English", "Français"],
+    "lang.name.list": ["English", "Francais"],
     // Missing value code
     "missval": "-99",
     // Anomaly missing value code
