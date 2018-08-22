@@ -190,7 +190,7 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 
 	#############################
 	## Check and install packages (tkrplot is not listed in DESCRIPTION)
-	cdtInstall.Packages()
+	# cdtInstall.Packages()
 
 	invisible()
 }
