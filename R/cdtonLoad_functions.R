@@ -23,10 +23,6 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 	if(LinuxOS()) ostype <- "Linux"
 
 	#############################
-	## Check and install packages (tkrplot is not listed in DESCRIPTION)
-	cdtInstall.Packages()
-
-	#############################
 	## Copy config directories to local dir
 	if(!dir.exists(.cdtDir$dirLocal)){
 		dir.create(.cdtDir$dirLocal, recursive = TRUE, showWarnings = FALSE)
@@ -191,6 +187,10 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 	To start CDT use startCDT()
 	-----------------------------------------------------------
 	")
+
+	#############################
+	## Check and install packages (tkrplot is not listed in DESCRIPTION)
+	cdtInstall.Packages()
 
 	invisible()
 }
