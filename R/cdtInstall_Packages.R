@@ -15,16 +15,16 @@
 #' library(CDT)
 #' 
 #' # Interactive mode
-#' ctdInstall.Packages()
+#' cdtInstall.Packages()
 #' 
 #' # Windows
-#' ctdInstall.Packages(FALSE, config = list(
+#' cdtInstall.Packages(FALSE, config = list(
 #' 		local.dir = TRUE,
 #' 		pkg.path = "C:/Users/rijaf/Desktop/R3.5-packages")
 #'  )
 #' 
 #' # MacOS and Linux
-#' ctdInstall.Packages(FALSE, config = list(
+#' cdtInstall.Packages(FALSE, config = list(
 #' 		geos_config = "/Library/Frameworks/GEOS.framework/unix/bin/geos-config",
 #' 		gdal_config = "/Library/Frameworks/GDAL.framework/unix/bin/gdal-config",
 #' 		proj_include = "/Library/Frameworks/PROJ.framework/unix/include",
@@ -33,7 +33,7 @@
 #'
 #' @export
 
-ctdInstall.Packages <- function(interactive = TRUE, config = NULL){
+cdtInstall.Packages <- function(interactive = TRUE, config = NULL){
 	required.packages <- c( 'tkrplot', 'latticeExtra', 'ncdf4',
 							'R.utils', 'jsonlite', 'RCurl', 'stringr', 'reshape2',
 							'foreach', 'doParallel',

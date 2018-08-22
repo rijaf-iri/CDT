@@ -12,7 +12,8 @@
 .cdtDir$Root <- system.file("cdt", package = "CDT")
 
 if(WindowsOS()) .cdtDir$dirLocal <- file.path(Sys.getenv('LOCALAPPDATA'), 'CDT')
-if(MacOSXP()) .cdtDir$dirLocal <- path.expand('~/Library/Application Support/CDT')
+# if(MacOSXP()) .cdtDir$dirLocal <- path.expand('~/Library/Application Support/CDT')
+if(MacOSXP()) .cdtDir$dirLocal <- path.expand('/Users/rijaf/Desktop/ECHANGE/github_IRI_CDT/Local/CDT')
 if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 
 #############################
@@ -21,10 +22,6 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 	if(WindowsOS()) ostype <- "Windows"
 	if(MacOSXP()) ostype <- "MacOS"
 	if(LinuxOS()) ostype <- "Linux"
-
-	#############################
-	## Check and install packages (tkrplot is not listed in DESCRIPTION)
-	ctdInstall.Packages()
 
 	#############################
 	## Copy config directories to local dir
@@ -191,6 +188,10 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 	To start CDT use startCDT()
 	-----------------------------------------------------------
 	")
+
+	#############################
+	## Check and install packages (tkrplot is not listed in DESCRIPTION)
+	cdtInstall.Packages()
 
 	invisible()
 }
