@@ -57,6 +57,10 @@ cdtInstall.Packages <- function(interactive = FALSE, config = NULL){
 					online <- FALSE
 				}
 			}else{
+				if(is.null(config$local.dir)){
+					cat("You have to provide the path to the directory containing the packages\n")
+					return(1)
+				}
 				if(config$local.dir){
 					path2pkgs <- config$pkg.path
 					online <- FALSE
