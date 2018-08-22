@@ -33,7 +33,7 @@
 #'
 #' @export
 
-cdtInstall.Packages <- function(interactive = TRUE, config = NULL){
+cdtInstall.Packages <- function(interactive = FALSE, config = NULL){
 	required.packages <- c( 'tkrplot', 'latticeExtra', 'ncdf4',
 							'R.utils', 'jsonlite', 'RCurl', 'stringr', 'reshape2',
 							'foreach', 'doParallel',
