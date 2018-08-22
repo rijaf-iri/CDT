@@ -49,8 +49,8 @@ startCDT <- function(wd = NA, lang = NA){
 
 	#################################################################################
 
-	# options(warn = -1)
-	options(warn = 0)
+	options(warn = -1)
+	# options(warn = 0)
 
 	.cdtEnv$tcl$main$win <- tktoplevel()
 	tkwm.resizable(.cdtEnv$tcl$main$win, TRUE, TRUE)

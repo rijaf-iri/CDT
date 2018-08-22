@@ -537,17 +537,11 @@ read.NetCDF.Data2Points <- function(read.ncdf.parms, list.lonlat.pts){
 	ncInfo <- do.call(ncFilesInfo, c(read.ncdf.parms$ncfiles, error.msg = read.ncdf.parms$errmsg))
 	if(is.null(ncInfo)) return(NULL)
 
-	nc <- nc_open(ncInfo$nc.files[which(ncInfo$exist)[1]])
-	lon <- nc$var[[read.ncdf.parms$ncinfo$varid]]$dim[[read.ncdf.parms$ncinfo$xo]]$vals
-	lat <- nc$var[[read.ncdf.parms$ncinfo$varid]]$dim[[read.ncdf.parms$ncinfo$yo]]$vals
-	nc_close(nc)
+	lon <- read.ncdf.parms$ncinfo$lon
+	lat <- read.ncdf.parms$ncinfo$lat
+	nlon <- read.ncdf.parms$ncinfo$nx
+	nlat <- read.ncdf.parms$ncinfo$ny
 
-	xo <- order(lon)
-	lon <- lon[xo]
-	yo <- order(lat)
-	lat <- lat[yo]
-	nlon <- length(lon)
-	nlat <- length(lat)
 	ijx <- grid2pointINDEX(list.lonlat.pts, list(lon = lon, lat = lat))
 
 	is.parallel <- doparallel(length(which(ncInfo$exist)) >= 100)
@@ -560,7 +554,7 @@ read.NetCDF.Data2Points <- function(read.ncdf.parms, list.lonlat.pts){
 			xvar <- ncvar_get(nc, varid = read.ncdf.parms$ncinfo$varid)
 			nc_close(nc)
 			if(nlon != nrow(xvar) | nlat != ncol(xvar)) return(NULL)
-			xvar <- if(read.ncdf.parms$ncinfo$xo < read.ncdf.parms$ncinfo$yo) xvar[xo, yo] else t(xvar)[xo, yo]
+			xvar <- transposeNCDFData(xvar, read.ncdf.parms$ncinfo)
 			xvar <- xvar[ijx]
 		}else xvar <- NULL
 		xvar
@@ -569,6 +563,40 @@ read.NetCDF.Data2Points <- function(read.ncdf.parms, list.lonlat.pts){
 	ret <- list(dates = ncInfo$dates, data = ncdata, lon = lon, lat = lat,
 				lon.pts = list.lonlat.pts$lon, lat.pts = list.lonlat.pts$lat)
 	Insert.Messages.Out(read.ncdf.parms$msg$end)
+	return(ret)
+}
+
+readNetCDFData2Points <- function(ncInfo, list.lonlat.pts, msg){
+	Insert.Messages.Out(msg$start)
+	lon <- ncInfo$ncinfo$lon
+	lat <- ncInfo$ncinfo$lat
+	nlon <- ncInfo$ncinfo$nx
+	nlat <- ncInfo$ncinfo$ny
+
+	ijx <- grid2pointINDEX(list.lonlat.pts, list(lon = lon, lat = lat))
+
+	is.parallel <- doparallel(length(which(ncInfo$exist)) >= 180)
+	`%parLoop%` <- is.parallel$dofun
+
+	ncdata <- foreach(jj = seq_along(ncInfo$nc.files), .packages = 'ncdf4') %parLoop% {
+		if(ncInfo$exist[jj]){
+			nc <- try(nc_open(ncInfo$nc.files[jj]), silent = TRUE)
+			if(inherits(nc, "try-error")) return(NULL)
+			xvar <- ncvar_get(nc, varid = ncInfo$ncinfo$varid)
+			nc_close(nc)
+			if(nlon != nrow(xvar) | nlat != ncol(xvar)) return(NULL)
+			xvar <- transposeNCDFData(xvar, ncInfo$ncinfo)
+			xvar <- xvar[ijx]
+		}else xvar <- NULL
+		xvar
+	}
+	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+
+	inull <- sapply(ncdata, is.null)
+	ncdata <- do.call(rbind, ncdata)
+	dates <- ncInfo$dates[!inull]
+	ret <- list(dates = dates, data = ncdata)
+	Insert.Messages.Out(msg$end)
 	return(ret)
 }
 
@@ -829,4 +857,17 @@ available.data.fraction <- function(data.mat){
 	as.list(data.frame(do.call(rbind, INA)))
 }
 
+##############################################
 
+smooth.matrix <- function(mat, ns){
+	M <- matrix(NA, nrow(mat) + 2 * ns, ncol(mat) + 2 * ns)
+	sqC <- (ns + 1):(ncol(M) - ns)
+	sqR <- (ns + 1):(nrow(M) - ns)
+	M[sqR, sqC] <- mat
+	sqN <- -ns:ns
+	for(j in sqC)
+		for(i in sqR)
+			mat[i - ns, j - ns] <- mean(M[i + sqN, j + sqN], na.rm = TRUE)
+	mat[is.nan(mat)] <- NA
+	return(mat)
+}

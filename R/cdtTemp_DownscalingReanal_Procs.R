@@ -93,7 +93,6 @@ Temp_execDownscaling <- function(){
 	errmsg <- "Reanalysis data not found"
 	ncInfo <- ncFilesInfo(.cdtData$GalParams$period, start.date, end.date, months, reanalDir, reanalfilefrmt, errmsg)
 	if(is.null(ncInfo)) return(NULL)
-	ncInfo$ncinfo <- list(xo = reanalInfo$rfeILon, yo = reanalInfo$rfeILat, varid = reanalInfo$rfeVarid)
 	ncInfo$ncinfo <- reanalInfo
 
 	################

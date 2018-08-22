@@ -136,6 +136,42 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## Compute bias coefficients RR
+	if(.cdtData$GalParams$action == 'coefbias.rain'){
+		ret <- try(execBiasRain(), silent = TRUE)
+
+		msg0 <- "Computing Gauge-RFE bias finished successfully"
+		msg1 <- "Computing Gauge-RFE bias failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Adjust bias RFE
+	if(.cdtData$GalParams$action == 'rmbias.rain'){
+		ret <- try(execAdjBiasRain(), silent = TRUE)
+
+		msg0 <- "Adjusting Gauge-RFE bias finished successfully"
+		msg1 <- "Adjusting Gauge-RFE bias failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## compute spatio-temporal LM coeff
+	if(.cdtData$GalParams$action == 'coefLM.rain'){
+		ret <- try(execLMCoefRain(), silent = TRUE)
+
+		msg0 <- "Computing LM Coefficients finished successfully"
+		msg1 <- "Computing LM Coefficients failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Merging
+	if(.cdtData$GalParams$action == 'merge.rain'){
+		ret <- try(execMergeRain(), silent = TRUE)
+
+		msg0 <- "Rainfall merging finished successfully"
+		msg1 <- "Rainfall merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
 	###
 
 }

@@ -37,7 +37,7 @@
         // nmax for gstat
         "nmax": 5,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.45,
+        "maxdist": 0.25,
         // variogram model, see gstat package for list of available model
         "vgm.model": ["Sph", "Exp", "Gau"],
         // using kriging of block mean values (true or false)

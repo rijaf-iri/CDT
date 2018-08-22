@@ -1,5 +1,5 @@
 
-rmvBiasGetInfoRain <- function(parent.win, GeneralParameters){
+rmvBiasGetInfoRain <- function(){
 	listOpenFiles <- openFile_ttkcomboList()
 	if(WindowsOS()){
 		largeur0 <- 19

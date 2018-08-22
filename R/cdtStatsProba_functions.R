@@ -206,3 +206,37 @@ fit.distributions <- function(x, distr = c("norm", "snorm", "lnorm", "gamma", "w
 }
 
 #############################################
+
+## Fit Mixture distribution
+fit.mixture.distr <- function(x, min.len = 7, alpha = 0.05,
+						distr.fun = c("berngamma", "bernlnorm", "bernweibull", "bernexp"),
+						method = 'mle', lower = c(0, 1e-10, 1e-10), upper = c(1, Inf, Inf),
+						keepdata = FALSE, keepdata.nb = 3, ...)
+{
+	x <- x[!is.na(x)]
+	ret <- NULL
+	if(length(x) > min.len){
+		if(length(x[x > 0]) > 2){
+			if(var(x[x > 0]) == 0) x[x > 0] <- x[x > 0] + runif(length(x[x > 0]))
+			if(length(which(x == 0)) == 0) x <- c(x, 0)
+		}else return(NULL)
+
+		ret <- lapply(distr.fun, function(distrf){
+			start.fun <- get(paste0("start", distrf), mode = "function")
+			start.pars <- start.fun(x)
+			fit.mod <- try(fitdistrplus::fitdist(x, distrf, method = method, start = start.pars, lower = lower, upper = upper,
+									keepdata = keepdata, keepdata.nb = keepdata.nb, ...), silent = TRUE)
+			if(!inherits(fit.mod, "try-error")){
+				# Anderson-Darling Test
+				pdistrf <- get(paste0('p', distrf), mode = "function")
+				goftest <- do.call("ad.test", c(list(x), pdistrf, as.list(fit.mod$estimate)))
+				goftest$data.name <- paste(deparse(substitute(x)), 'and', distrf) 
+				test <- if(goftest$p.value > alpha) 'yes' else 'no'
+				res <- list(fitted.distr = fit.mod, ADgoftest = goftest, h0 = test)
+			}else res <- list(fitted.distr = NULL, ADgoftest = NULL, h0 = 'null')
+			return(res)
+		})
+		names(ret) <- distr.fun
+	}
+	return(ret)
+}
