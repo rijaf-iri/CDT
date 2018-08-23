@@ -11,8 +11,10 @@
 ### path
 .cdtDir$Root <- system.file("cdt", package = "CDT")
 
-if(WindowsOS()) .cdtDir$dirLocal <- file.path(Sys.getenv('LOCALAPPDATA'), 'CDT')
+if(WindowsOS()) .cdtDir$dirLocal <- path.expand('~/AppData/Local/CDT')
+# if(WindowsOS()) .cdtDir$dirLocal <- file.path(Sys.getenv('LOCALAPPDATA'), 'CDT')
 if(MacOSXP()) .cdtDir$dirLocal <- path.expand('~/Library/Application Support/CDT')
+# if(MacOSXP()) .cdtDir$dirLocal <- path.expand('/Users/rijaf/Desktop/ECHANGE/github_IRI_CDT/Local/CDT')
 if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 
 #############################
@@ -31,7 +33,7 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 	if(!dir.exists(.cdtDir$dirLocal)){
 		dir.create(.cdtDir$dirLocal, recursive = TRUE, showWarnings = FALSE)
 		cdtDirRoot <- file.path(.cdtDir$Root, c("config", "init_params", "languages", "data"))
-		ret <- file.copy(cdtDirRoot, .cdtDir$dirLocal, recursive = TRUE)
+		ret <- file.copy(cdtDirRoot, .cdtDir$dirLocal, recursive = TRUE, copy.mode = TRUE)
 		if(any(!ret)){
 			warning("Unable to copy\n")
 			for(i in which(!ret))
