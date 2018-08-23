@@ -8,7 +8,7 @@
         <combobox id="1">
             <option id="1">
                 <text lang="en"> One NetCDF file </text>
-                 <text lang="fr"> Un fichier NetCDF file </text>
+                 <text lang="fr"> Un fichier NetCDF </text>
             </option>
             <option id="2">
                 <text lang="en"> Multiple NetCDF files </text>
