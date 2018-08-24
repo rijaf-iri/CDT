@@ -337,7 +337,7 @@ SeasonAnalysisPanelCmd <- function(){
 			stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
 		}else stateCaclBut <- "normal"
 
-		bt.CalcPICSA <- ttkbutton(frameCalc, text = 'Calculate PICSA Data', state = stateCaclBut)
+		bt.CalcPICSA <- ttkbutton(frameCalc, text = 'Run Analysis', state = stateCaclBut)
 
 		tkconfigure(bt.CalcPICSA, command = function(){
 			GeneralParameters$onset <- str_trim(tclvalue(input.Onset))

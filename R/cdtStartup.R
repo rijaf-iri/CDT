@@ -86,6 +86,8 @@ startCDT <- function(wd = NA, lang = NA){
 	## Widgets width function in %
 	.cdtEnv$tcl$fun$w.widgets <- function(percent) 
 			as.integer(.cdtEnv$tcl$fun$w.scale(percent) / .cdtEnv$tcl$data$sfont0)
+	.cdtEnv$tcl$fun$h.widgets <- function(percent) 
+			as.integer(.cdtEnv$tcl$fun$h.scale(percent) / .cdtEnv$tcl$data$sfont0)
 
 	if(WindowsOS()){
 		## Output message, tktext height
@@ -1497,8 +1499,10 @@ startCDT <- function(wd = NA, lang = NA){
 	tkgrid(txtlab.auth)
 
 	#######
-	hauteur_sep <- if(WindowsOS()) 9 else 10
-	largeur_sep <- if(WindowsOS()) 24 else 21
+	hauteur_sep <- if(WindowsOS()) 11 else 14
+	largeur_sep <- if(WindowsOS()) 17.5 else 17
+	hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(hauteur_sep)
+	largeur_sep <- .cdtEnv$tcl$fun$w.widgets(largeur_sep)
 
 	txtlab.tmp2 <- tklabel(cdtfr.tmp2, text = '', height = hauteur_sep)
 	tkgrid(txtlab.tmp2)

@@ -10,7 +10,7 @@
         // RFE sample file
         "sample": "",
         // RFE filename format 
-        "format": "rfe%s_%s-dk%s.nc"
+        "format": "rfe_%s%s%s.nc"
     },
 
     "LMCOEF": {
