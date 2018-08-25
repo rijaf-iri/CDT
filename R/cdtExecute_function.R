@@ -172,6 +172,33 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## Merging one
+	if(.cdtData$GalParams$action == 'merge.rain.one'){
+		ret <- try(Precip_Merging_ALL(), silent = TRUE)
+
+		msg0 <- "Rainfall merging finished successfully"
+		msg1 <- "Rainfall merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Compute mean bias coef
+	if(.cdtData$GalParams$action == 'coefbias.temp'){
+		ret <- try(execBiasTemp(), silent = TRUE)
+
+		msg0 <- "Computing bias coefficients finished successfully"
+		msg1 <- "Computing bias coefficients failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## bias correction
+	if(.cdtData$GalParams$action == 'adjust.temp'){
+		ret <- try(execAjdBiasDownTemp(), silent = TRUE)
+
+		msg0 <- "Adjustment of downscaled data finished successfully"
+		msg1 <- "Adjustment of downscaled data failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
 	###
 
 }

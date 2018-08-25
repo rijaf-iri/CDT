@@ -1,5 +1,5 @@
 
-execAdjBiasRain <- function(){
+execAjdBiasDownTemp <- function(){
 	daty <- .cdtData$GalParams$Adjust.Date
 	if(.cdtData$GalParams$period == 'monthly'){
 		xdeb <- paste0(format(ISOdate(2014, daty$start.mon, 1), "%b"), daty$start.year)
@@ -8,20 +8,20 @@ execAdjBiasRain <- function(){
 		xdeb <- paste0(daty$start.day, format(ISOdate(2014, daty$start.mon, 1), "%b"), daty$start.year)
 		xfin <- paste0(daty$end.day, format(ISOdate(2014, daty$end.mon, 1), "%b"), daty$end.year)
 	}
-	origdir <- file.path(.cdtData$GalParams$output$dir, paste('ADJUSTED_Precip_Data', xdeb, xfin, sep = '_'))
+	origdir <- file.path(.cdtData$GalParams$output$dir, paste('ADJUSTED_Temp_Data', xdeb, xfin, sep = '_'))
 
 	dir.create(origdir, showWarnings = FALSE, recursive = TRUE)
-	Insert.Messages.Out('Adjusting Gauge-RFE bias ...')
+	Insert.Messages.Out('Adjustment of downscaled data ...')
 
 	##################
-	## RFE sample file
-	rfeDataInfo <- getNCDFSampleData(.cdtData$GalParams$RFE$sample)
-	if(is.null(rfeDataInfo)){
-		Insert.Messages.Out("No RFE data sample found", format = TRUE)
+	## TEMP sample file
+	tmpDataInfo <- getNCDFSampleData(.cdtData$GalParams$TEMP$sample)
+	if(is.null(tmpDataInfo)){
+		Insert.Messages.Out("No downscaled data sample found", format = TRUE)
 		return(NULL)
 	}
 
-	##################
+	################
 	freqData <- .cdtData$GalParams$period
 	start.year <- .cdtData$GalParams$Adjust.Date$start.year
 	start.mon <- .cdtData$GalParams$Adjust.Date$start.mon
@@ -33,15 +33,14 @@ execAdjBiasRain <- function(){
 	start.date <- as.Date(paste(start.year, start.mon, start.dek, sep = '/'), format = '%Y/%m/%d')
 	end.date <- as.Date(paste(end.year, end.mon, end.dek, sep = '/'), format = '%Y/%m/%d')
 
-	RFE.DIR <- .cdtData$GalParams$RFE$dir
-	RFE.Format <- .cdtData$GalParams$RFE$format
+	TMP.DIR <- .cdtData$GalParams$TEMP$dir
+	TMP.Format <- .cdtData$GalParams$TEMP$format
 
 	##################
-	errmsg <- "RFE data not found"
-	ncInfo <- ncFilesInfo(freqData, start.date, end.date, months, RFE.DIR, RFE.Format, errmsg)
+	errmsg <- "Downscaled data not found"
+	ncInfo <- ncFilesInfo(freqData, start.date, end.date, months, TMP.DIR, TMP.Format, errmsg)
 	if(is.null(ncInfo)) return(NULL)
-	ncInfo$ncinfo <- rfeDataInfo
-	ncInfo$xy.rfe <- rfeDataInfo[c('lon', 'lat')]
+	ncInfo$ncinfo <- tmpDataInfo
 
 	##################
 	## READ BIAS FILSES
@@ -49,26 +48,25 @@ execAdjBiasRain <- function(){
 	.cdtData$GalParams$biasFilenames <- .cdtData$GalParams$BIAS$format
 
 	.cdtData$GalParams$biasParms <- list(bias.DIR = BIAS.DIR, dates = ncInfo$dates, months = months)
-	BIAS <- Precip_ReadBiasFiles()
+	BIAS <- Temp_ReadBiasFiles()
 	if(is.null(BIAS)) return(NULL)
 
 	##################
 	.cdtData$GalParams$biasParms <- list(adj.DIR = origdir, extractADJ = FALSE, BIAS = BIAS,
-										ncInfo = ncInfo, stnData = list(lon = NULL, lat = NULL))
+									ncInfo = ncInfo, stnData = list(lon = NULL, lat = NULL))
 
-	ret <- Precip_ApplyBiasCorrection()
-
-	rm(BIAS, rfeDataInfo, ncInfo); gc()
-
+	ret <- Temp_ApplyBiasCorrection()
+	rm(BIAS, tmpDataInfo, ncInfo)
+	gc()
 	if(!is.null(ret)){
 		if(ret == 0) return(0)
 		else return(ret)
-	}else return(NULL)
+	} else return(NULL)
 }
 
-########################################################################################################
+#######################################################################################
 
-Precip_ReadBiasFiles <- function(){
+Temp_ReadBiasFiles <- function(){
 	Insert.Messages.Out('Read bias data ...')
 	biasParms <- .cdtData$GalParams$biasParms
 	months <- biasParms$months
@@ -162,7 +160,7 @@ Precip_ReadBiasFiles <- function(){
 		nc_close(nc)
 		BIAS[times.stn] <- lapply(seq_along(times.stn), function(m){
 			nc <- nc_open(biasFile[m])
-			xvar <- ncvar_get(nc, varid = nc$var[[1]]$name)
+			xvar <- ncvar_get(nc, varid = "bias")
 			nc_close(nc)
 			xvar
 		})
@@ -170,23 +168,23 @@ Precip_ReadBiasFiles <- function(){
 	}
 
 	if(.cdtData$GalParams$BIAS$bias.method == "Quantile.Mapping"){
-		pars.stnFile <- file.path(biasParms$bias.DIR, paste0('Bernoulli-Gamma_Pars.STN_', months, '.nc'))
+		pars.stnFile <- file.path(biasParms$bias.DIR, paste0('Gaussian_Pars.STN_', months, '.nc'))
 		exist.pars.stn <- unlist(lapply(pars.stnFile, file.exists))
 		if(any(!exist.pars.stn)){
 			miss.pars.stn <- months[!exist.pars.stn]
 			for(j in seq_along(miss.pars.stn)){
-				msg <- paste0('Bernoulli-Gamma_Pars.STN_', miss.pars.stn[j], '.nc')
+				msg <- paste0('Gaussian_Pars.STN_', miss.pars.stn[j], '.nc')
 				Insert.Messages.Out(paste(msg, "doesn't exist"), format = TRUE)
 			}
 			return(NULL)
 		}
 
-		pars.rfeFile <- file.path(biasParms$bias.DIR, paste0('Bernoulli-Gamma_Pars.RFE_', months, '.nc'))
-		exist.pars.rfe <- unlist(lapply(pars.rfeFile, file.exists))
-		if(any(!exist.pars.rfe)){
-			miss.pars.rfe <- months[!exist.pars.rfe]
-			for(j in seq_along(miss.pars.rfe)){
-				msg <- paste0('Bernoulli-Gamma_Pars.RFE_', miss.pars.rfe[j], '.nc')
+		pars.downFile <- file.path(biasParms$bias.DIR, paste0('Gaussian_Pars.REANAL_', months, '.nc'))
+		exist.pars.down <- unlist(lapply(pars.downFile, file.exists))
+		if(any(!exist.pars.down)){
+			miss.pars.down <- months[!exist.pars.down]
+			for(j in seq_along(miss.pars.down)){
+				msg <- paste0('Gaussian_Pars.REANAL_', miss.pars.down[j], '.nc')
 				Insert.Messages.Out(paste(msg, "doesn't exist"), format = TRUE)
 			}
 			return(NULL)
@@ -196,33 +194,31 @@ Precip_ReadBiasFiles <- function(){
 		lat <- nc$dim[[2]]$vals
 		nc_close(nc)
 		PARS.stn <- vector(mode = 'list', length = 12)
-		PARS.rfe <- vector(mode = 'list', length = 12)
+		PARS.down <- vector(mode = 'list', length = 12)
 		PARS.stn[months] <- lapply(seq_along(months), function(m){
 			nc <- nc_open(pars.stnFile[m])
-			prob <- ncvar_get(nc, varid = "prob")
-			scale <- ncvar_get(nc, varid = "scale")
-			shape <- ncvar_get(nc, varid = "shape")
+			moy <- ncvar_get(nc, varid = "mean")
+			ect <- ncvar_get(nc, varid = "sd")
 			nc_close(nc)
-			list(prob = prob, scale = scale, shape = shape)
+			list(mean = moy, sd = ect)
 		})
 
-		PARS.rfe[months] <- lapply(seq_along(months), function(m){
-			nc <- nc_open(pars.rfeFile[m])
-			prob <- ncvar_get(nc, varid = "prob")
-			scale <- ncvar_get(nc, varid = "scale")
-			shape <- ncvar_get(nc, varid = "shape")
+		PARS.down[months] <- lapply(seq_along(months), function(m){
+			nc <- nc_open(pars.downFile[m])
+			moy <- ncvar_get(nc, varid = "mean")
+			ect <- ncvar_get(nc, varid = "sd")
 			nc_close(nc)
-			list(prob = prob, scale = scale, shape = shape)
+			list(mean = moy, sd = ect)
 		})
-		bias <- list(lon = lon, lat = lat, bias.stn = PARS.stn, bias.rfe = PARS.rfe)
+		bias <- list(lon = lon, lat = lat, bias.stn = PARS.stn, bias.down = PARS.down)
 	}
 	Insert.Messages.Out('Reading bias data finished')
 	return(bias)
 }
 
-########################################################################################################
+#######################################################################################
 
-Precip_ApplyBiasCorrection <- function(){
+Temp_ApplyBiasCorrection <- function(){
 	Insert.Messages.Out('Apply bias correction ...')
 	biasParms <- .cdtData$GalParams$biasParms
 	extractADJ <- biasParms$extractADJ
@@ -233,16 +229,11 @@ Precip_ApplyBiasCorrection <- function(){
 	dx <- ncdim_def("Lon", "degreeE", biasParms$BIAS$lon)
 	dy <- ncdim_def("Lat", "degreeN", biasParms$BIAS$lat)
 	xy.dim <- list(dx, dy)
-	grd.bsadj <- ncvar_def("precip", "mm", xy.dim, -99, longname= "Bias Corrected RFE",
-							prec = "short", shuffle = TRUE, compression = 9)
+	grd.bsadj <- ncvar_def("temp", "DegC", list(dx, dy), -99, longname= "Bias Corrected Reanalysis", prec = "float", compression = 9)
 
-	################ 
-	## RFE regrid?
+	################
+
 	biasGrd <- biasParms$BIAS[c('lon', 'lat')]
-	biasSp <- defSpatialPixels(biasGrd)
-	rfeSp <- defSpatialPixels(biasParms$ncInfo$xy.rfe)
-	is.regridRFE <- is.diffSpatialPixelsObj(biasSp, rfeSp, tol = 1e-07)
-
 	if(extractADJ) ijSTN <- grid2pointINDEX(biasParms$stnData, biasGrd)
 
 	################
@@ -253,65 +244,62 @@ Precip_ApplyBiasCorrection <- function(){
 	##################
 	xlon <- ncinfo$lon
 	xlat <- ncinfo$lat
+	filenameFormat <- .cdtData$GalParams$output$format
 
 	is.parallel <- doparallel(length(nc.files) >= 30)
 	`%parLoop%` <- is.parallel$dofun
 	adj.stn <- foreach(jfl = seq_along(nc.files), .packages = 'ncdf4') %parLoop% {
 		nc <- nc_open(nc.files[jfl])
-		xrfe <- ncvar_get(nc, varid = ncinfo$varid)
+		xtmp <- ncvar_get(nc, varid = ncinfo$varid)
 		nc_close(nc)
-		xrfe <- transposeNCDFData(xrfe, ncinfo)
-		rfe.date <- nc.dates[jfl]
-
-		############
-		if(is.regridRFE){
-			rfeGrid <- cdt.interp.surface.grid(list(lon = xlon, lat = xlat, z = xrfe), biasGrd)
-			xrfe <- rfeGrid$z
-		}
+		xtmp <- transposeNCDFData(xtmp, ncinfo)
+		tmp.date <- nc.dates[jfl]
 
 		############
 		if(bias.method == "Multiplicative.Bias.Var"){
 			if(freqData == 'daily'){
-				ann <- as.numeric(substr(rfe.date, 1, 4))
-				iday <- as.numeric(strftime(as.Date(rfe.date, format = '%Y%m%d'), format = '%j'))
+				ann <- as.numeric(substr(tmp.date, 1, 4))
+				iday <- as.numeric(strftime(as.Date(tmp.date, format = '%Y%m%d'), format = '%j'))
 				ijt <- ifelse(is.leapyear(ann) & iday > 59, iday - 1, iday)
 			}
 			if(freqData == 'pentad'){
-				mon <- as.numeric(substr(rfe.date, 5, 6))
-				pen <- as.numeric(substr(rfe.date, 7, 7))
+				mon <- as.numeric(substr(tmp.date, 5, 6))
+				pen <- as.numeric(substr(tmp.date, 7, 7))
 				annual.pen <- expand.grid(pen = 1:6, mon = 1:12)
 				ijt <- which(annual.pen$pen == pen & annual.pen$mon == mon)
 			}
 			if(freqData == 'dekadal'){
-				mon <- as.numeric(substr(rfe.date, 5, 6))
-				dek <- as.numeric(substr(rfe.date, 7, 7))
+				mon <- as.numeric(substr(tmp.date, 5, 6))
+				dek <- as.numeric(substr(tmp.date, 7, 7))
 				annual.dek <- expand.grid(dek = 1:3, mon = 1:12)
 				ijt <- which(annual.dek$dek == dek & annual.dek$mon == mon)
 			}
 			if(freqData == 'monthly'){
-				ijt <- as.numeric(substr(rfe.date, 5, 6))
+				ijt <- as.numeric(substr(tmp.date, 5, 6))
 			}
 		}else{
-			ijt <- as.numeric(substr(rfe.date, 5, 6))
+			ijt <- as.numeric(substr(tmp.date, 5, 6))
 		}
 
 		############
 		if(bias.method == "Quantile.Mapping"){
-			xadj <- quantile.mapping.BGamma(xrfe, biasParms$BIAS$bias.stn[[ijt]],
-									biasParms$BIAS$bias.rfe[[ijt]], rfe.zero = TRUE)
-		}else xadj <- xrfe * biasParms$BIAS$bias[[ijt]]
+			xadj <- quantile.mapping.Gau(xtmp, biasParms$BIAS$bias.stn[[ijt]],
+											biasParms$BIAS$bias.down[[ijt]])
+		}else xadj <- xtmp * biasParms$BIAS$bias[[ijt]]
 		xadj[xadj < 0] <- 0
 		adjSTN <- if(extractADJ) xadj[ijSTN] else NULL
 		xadj[is.na(xadj)] <- -99
 
 		############
-		year <- substr(rfe.date, 1, 4)
-		month <- substr(rfe.date, 5, 6)
+		year <- substr(tmp.date, 1, 4)
+		month <- substr(tmp.date, 5, 6)
+
 		if(freqData == 'daily'){
-			adjfrmt <- sprintf("rr_adj_%s%s%s.nc", year, month, substr(rfe.date, 7, 8))
+			adjfrmt <- sprintf(filenameFormat, year, month, substr(tmp.date, 7, 8))
 		}else if(freqData %in% c('pentad', 'dekadal')){
-			adjfrmt <- sprintf("rr_adj_%s%s%s.nc", year, month, substr(rfe.date, 7, 7))
-		}else adjfrmt <- sprintf("rr_adj_%s%s.nc", year, month)
+			adjfrmt <- sprintf(filenameFormat, year, month, substr(tmp.date, 7, 7))
+		}else  adjfrmt <- sprintf(filenameFormat, year, month)
+
 		outfl <- file.path(biasParms$adj.DIR, adjfrmt)
 
 		nc2 <- nc_create(outfl, grd.bsadj)
@@ -326,7 +314,7 @@ Precip_ApplyBiasCorrection <- function(){
 		adjSTN <- list(dates = nc.dates, data = do.call(rbind, adj.stn))
 	}else adjSTN <- 0
 
-	rm(biasGrd, biasSp, rfeSp, adj.stn)
+	rm(biasGrd, adj.stn)
 	gc()
 	Insert.Messages.Out('Bias Correction done')
 	return(adjSTN)
