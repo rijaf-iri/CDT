@@ -502,7 +502,7 @@ climdexPanelCmd.TT <- function(){
 			GeneralParameters$start.july <- switch(tclvalue(start.july), '0' = FALSE, '1' = TRUE)
 			GeneralParameters$bootstrap <- switch(tclvalue(bootstrap), '0' = FALSE, '1' = TRUE)
 
-			assign("GeneralParameters", GeneralParameters, envir = .GlobalEnv)
+			# assign("GeneralParameters", GeneralParameters, envir = .GlobalEnv)
 
 			Insert.Messages.Out("Calculating Indices (this may take some time) .......")
 

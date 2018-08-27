@@ -199,6 +199,33 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## compute spatio-temporal LM coeff
+	if(.cdtData$GalParams$action == 'coefLM.temp'){
+		ret <- try(execLMCoefTemp(), silent = TRUE)
+
+		msg0 <- "Computing LM Coefficients finished successfully"
+		msg1 <- "Computing LM Coefficients failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Merge temp data
+	if(.cdtData$GalParams$action == 'merge.temp'){
+		ret <- try(execMergeTemp(), silent = TRUE)
+
+		msg0 <- "Temperature merging finished successfully"
+		msg1 <- "Temperature merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Merge temp data all
+	if(.cdtData$GalParams$action == 'merge.temp.one'){
+		ret <- try(Temp_Merging_ALL(), silent = TRUE)
+
+		msg0 <- "Temperature merging finished successfully"
+		msg1 <- "Temperature merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
 	###
 
 }

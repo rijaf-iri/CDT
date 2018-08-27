@@ -250,9 +250,9 @@ Temp_ComputeBias <- function(){
 		}
 		mplus.month.date <- function(daty){
 			mon1 <- as.character(daty)
-			mon2 <- addMonths(as.Date(paste0(mon1, '01'), format = '%Y%m%d'), addMonths, n = 1)
+			mon2 <- addMonths(as.Date(paste0(mon1, '01'), format = '%Y%m%d'), n = 1)
 			mon2 <- format(mon2, '%Y%m')
-			mon0 <- addMonths(as.Date(paste0(mon1, '01'), format = '%Y%m%d'), addMonths, n = -1)
+			mon0 <- addMonths(as.Date(paste0(mon1, '01'), format = '%Y%m%d'), n = -1)
 			mon0 <- format(mon0, '%Y%m')
 			unique(sort(c(mon0, mon1, mon2)))
 		}
@@ -264,9 +264,6 @@ Temp_ComputeBias <- function(){
 		months <- biasParms$months
 		xmonth <- as(substr(date.bias, 5, 6), 'numeric')
 
-		# packages <- c('fitdistrplus')
-		# toExports <- c('fit.norm.temp', 'addPentads', 'addDekads', 'addMonths',
-		# 				'addPentadsVec', 'addDekadsVec', 'addMonthsVec')
 		BIAS <- .cdtData$GalParams$BIAS
 		parsDistr <- vector(mode = 'list', length = 12)
 

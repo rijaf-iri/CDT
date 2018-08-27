@@ -1,5 +1,5 @@
 
-Precip_Merging_ALL <- function(){
+Temp_Merging_ALL <- function(){
 	daty <- .cdtData$GalParams$Merging.Date
 	xdeb <- as.Date(paste(daty$start.year, daty$start.mon, daty$start.day, sep = '-'))
 	xfin <- as.Date(paste(daty$end.year, daty$end.mon, daty$end.day, sep = '-'))
@@ -26,13 +26,15 @@ Precip_Merging_ALL <- function(){
 		xdeb <- format(daty[1], '%Y%m')
 		xfin <- format(daty[length(daty)], '%Y%m')
 	}
-	origdir <- file.path(.cdtData$GalParams$output$dir, paste('Merging_Precip_Data', xdeb, xfin, sep = '_'))
+
+	origdir <- file.path(.cdtData$GalParams$output$dir, paste('Merging_Temp_Data', xdeb, xfin, sep = '_'))
 
 	dir.create(origdir, showWarnings = FALSE, recursive = TRUE)
 	Insert.Messages.Out('Start merging ...')
 
 	freqData <- .cdtData$GalParams$period
 	.cdtData$GalParams$auxvar <- list(dem = FALSE, slope = FALSE, aspect = FALSE, lon = FALSE, lat = FALSE)
+
 	.cdtData$GalParams$biasFilenames <- .cdtData$GalParams$BIAS$format
 	.cdtData$GalParams$lmCoefFilenames <- .cdtData$GalParams$LMCOEF$format
 
@@ -43,19 +45,18 @@ Precip_Merging_ALL <- function(){
 	if(is.null(stnData)) return(NULL)
 
 	##################
-	## RFE sample file
-	rfeDataInfo <- getNCDFSampleData(.cdtData$GalParams$RFE$sample)
-	if(is.null(rfeDataInfo)){
-		Insert.Messages.Out("No RFE data sample found", format = TRUE)
+	## TEMP sample file
+	tmpDataInfo <- getNCDFSampleData(.cdtData$GalParams$TEMP$sample)
+	if(is.null(tmpDataInfo)){
+		Insert.Messages.Out("No downscaled data sample found", format = TRUE)
 		return(NULL)
 	}
 
 	##################
 	## Grid for interpolation
-	.cdtData$GalParams$Grid.Creation$grid <- "1"
-	xy.grid <- rfeDataInfo[c('lon', 'lat')]
-	nlon0 <- length(rfeDataInfo$lon)
-	nlat0 <- length(rfeDataInfo$lat)
+	xy.grid <- tmpDataInfo[c('lon', 'lat')]
+	nlon0 <- length(tmpDataInfo$lon)
+	nlat0 <- length(tmpDataInfo$lat)
 
 	##################
 	## Get RFE data info
@@ -69,15 +70,14 @@ Precip_Merging_ALL <- function(){
 	start.date <- as.Date(paste(start.year, start.mon, start.dek, sep = '/'), format = '%Y/%m/%d')
 	end.date <- as.Date(paste(end.year, end.mon, end.dek, sep = '/'), format = '%Y/%m/%d')
 
-	RFE.DIR <- .cdtData$GalParams$RFE$dir
-	RFE.Format <- .cdtData$GalParams$RFE$format
+	TMP.DIR <- .cdtData$GalParams$TEMP$dir
+	TMP.Format <- .cdtData$GalParams$TEMP$format
 
 	##################
-	errmsg <- "RFE data not found"
-	ncInfo <- ncFilesInfo(freqData, start.date, end.date, months, RFE.DIR, RFE.Format, errmsg)
+	errmsg <- "Downscaled data not found"
+	ncInfo <- ncFilesInfo(freqData, start.date, end.date, months, TMP.DIR, TMP.Format, errmsg)
 	if(is.null(ncInfo)) return(NULL)
-	ncInfo$ncinfo <- rfeDataInfo
-	ncInfo$xy.rfe <- rfeDataInfo[c('lon', 'lat')]
+	ncInfo$ncinfo <- tmpDataInfo
 
 	##################
 	## DEM data
@@ -113,39 +113,25 @@ Precip_Merging_ALL <- function(){
 	## Compute BIAS
 	if(!.cdtData$GalParams$BIAS$deja.calc)
 	{
-		allyears <- .cdtData$GalParams$BIAS$all.years
-		year1 <- .cdtData$GalParams$BIAS$start.year
-		year2 <- .cdtData$GalParams$BIAS$end.year
-		minyear <- .cdtData$GalParams$BIAS$min.year
-		years <- as.numeric(substr(stnData$dates, 1, 4))
-		iyrUse <- if(allyears) rep(TRUE, length(years)) else years >= year1 & years <= year2
-		years <- years[iyrUse]
+		start.date1 <- as.Date(paste0(.cdtData$GalParams$BIAS$start.year, '0101'), format = '%Y%m%d')
+		end.date1 <- as.Date(paste0(.cdtData$GalParams$BIAS$end.year, '1231'), format = '%Y%m%d')
 
-		if(length(unique(years)) < minyear){
-			Insert.Messages.Out("Data too short", format = TRUE)
-			return(NULL)
-		}
-
-		start.date1 <- as.Date(paste0(years[1], '0101'), format = '%Y%m%d')
-		end.date1 <- as.Date(paste0(years[length(years)], '1231'), format = '%Y%m%d')
-
-		ncInfoBias <- ncFilesInfo(freqData, start.date1, end.date1, months, RFE.DIR, RFE.Format, errmsg)
+		ncInfoBias <- ncFilesInfo(freqData, start.date1, end.date1, months, TMP.DIR, TMP.Format, errmsg)
 		if(is.null(ncInfoBias)) return(NULL)
-		ncInfoBias$ncinfo <- rfeDataInfo
-		ncInfoBias$xy.rfe <- rfeDataInfo[c('lon', 'lat')]
+		ncInfoBias$ncinfo <- tmpDataInfo
 
 		# calculate bias factors
 		bias.DIR <- file.path(origdir, "BIAS_Data")
 		dir.create(bias.DIR, showWarnings = FALSE, recursive = TRUE)
 		.cdtData$GalParams$biasParms <- list(stnData = stnData, ncInfo = ncInfoBias, bias.DIR = bias.DIR,
-						months = months, interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0))
-		bias.pars <- Precip_ComputeBias()
+							months = months, interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0))
+		bias.pars <- Temp_ComputeBias()
 		if(is.null(bias.pars)) return(NULL)
 		#########
 		.cdtData$GalParams$biasParms <- list(bias.pars = bias.pars, months = months,
 						stnData = stnData[c('lon', 'lat')], demData = demData, ncInfo = ncInfoBias, bias.DIR = bias.DIR,
 						interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0))
-		ret <- Precip_InterpolateBias()
+		ret <- Temp_InterpolateBias()
 		rm(bias.pars, ncInfoBias)
 		gc()
 		if(!is.null(ret)){
@@ -158,32 +144,16 @@ Precip_Merging_ALL <- function(){
 	adj.DIR <- file.path(origdir, "ADJUSTED_Data")
 	dir.create(adj.DIR, showWarnings = FALSE, recursive = TRUE)
 
-	if(!.cdtData$GalParams$LMCOEF$deja.calc &
-		.cdtData$GalParams$Merging$mrg.method == "Spatio-Temporal LM")
+	if(!.cdtData$GalParams$LMCOEF$deja.calc & .cdtData$GalParams$Merging$mrg.method == "Spatio-Temporal LM")
 	{
-		allyears <- .cdtData$GalParams$LMCOEF$all.years
-		year1 <- .cdtData$GalParams$LMCOEF$start.year
-		year2 <- .cdtData$GalParams$LMCOEF$end.year
-		minyear <- .cdtData$GalParams$LMCOEF$min.year
-		years <- as.numeric(substr(stnData$dates, 1, 4))
-		iyrUse <- if(allyears) rep(TRUE, length(years)) else years >= year1 & years <= year2
-		years <- years[iyrUse]
-
-		if(length(unique(years)) < minyear){
-			Insert.Messages.Out("Data too short", format = TRUE)
-			return(NULL)
-		}
-
-		start.date1 <- as.Date(paste0(years[1], '0101'), format = '%Y%m%d')
-		end.date1 <- as.Date(paste0(years[length(years)], '1231'), format = '%Y%m%d')
-
+		start.date1 <- as.Date(paste(.cdtData$GalParams$LMCOEF$start.year, '0101', sep = ''), format = '%Y%m%d')
+		end.date1 <- as.Date(paste(.cdtData$GalParams$LMCOEF$end.year, '1231', sep = ''), format = '%Y%m%d')
 		start.date1 <- min(start.date1, start.date)
 		end.date1 <- max(end.date1, end.date)
 
-		ncInfoAdj <- ncFilesInfo(freqData, start.date1, end.date1, months, RFE.DIR, RFE.Format, errmsg)
+		ncInfoAdj <- ncFilesInfo(freqData, start.date1, end.date1, months, TMP.DIR, TMP.Format, errmsg)
 		if(is.null(ncInfoAdj)) return(NULL)
-		ncInfoAdj$ncinfo <- rfeDataInfo
-		ncInfoAdj$xy.rfe <- rfeDataInfo[c('lon', 'lat')]
+		ncInfoAdj$ncinfo <- tmpDataInfo
 		AdjDate <- ncInfoAdj$dates
 		extractADJ <- TRUE
 	}else{
@@ -195,16 +165,22 @@ Precip_Merging_ALL <- function(){
 	##################
 	## READ BIAS FILSES
 	.cdtData$GalParams$biasParms <- list(bias.DIR = bias.DIR, dates = AdjDate, months = months)
-	BIAS <- Precip_ReadBiasFiles()
+	BIAS <- Temp_ReadBiasFiles()
 	if(is.null(BIAS)) return(NULL)
 
 	##################
+	if(freqData %in% c('daily', 'pentad', 'dekadal')) adj.Format <- "temp_adj_%s%s%s.nc"
+	if(freqData == 'monthly') adj.Format <- "temp_adj_%s%s.nc"
+	GeneralParameters0 <- .cdtData$GalParams
+	.cdtData$GalParams$output$format <- adj.Format
 
+	##################
 	.cdtData$GalParams$biasParms <- list(adj.DIR = adj.DIR, extractADJ = extractADJ, BIAS = BIAS,
 										ncInfo = ncInfoAdj, stnData = stnData[c('lon', 'lat')])
 
-	data.adj.stn <- Precip_ApplyBiasCorrection()
+	data.adj.stn <- Temp_ApplyBiasCorrection()
 
+	.cdtData$GalParams <- GeneralParameters0
 	rm(BIAS, ncInfoAdj)
 	if(!extractADJ){
 		if(!is.null(data.adj.stn)){
@@ -224,16 +200,17 @@ Precip_Merging_ALL <- function(){
 		.cdtData$GalParams$lmCoefParms <- list(stnData = stnData,
 							ncInfo = ncInfoLMCoef, LMCoef.DIR = LMCoef.DIR, months = months,
 							interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0))
-		model.coef <- Precip_ComputeLMCoef()
+		model.coef <- Temp_ComputeLMCoef()
 		if(is.null(model.coef)) return(NULL)
 		#########
 		.cdtData$GalParams$lmCoefParms <- list(model.coef = model.coef, months = months,
 						stnData = stnData[c('lon', 'lat')], demData = demData,
 						ncInfo = ncInfo, LMCoef.DIR = LMCoef.DIR,
 						interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0))
-		ret <- Precip_InterpolateLMCoef()
+		ret <- Temp_InterpolateLMCoef()
 
 		.cdtData$GalParams$LMCOEF$dir.LMCoef <- LMCoef.DIR
+
 		rm(model.coef)
 		gc()
 		if(!is.null(ret)){
@@ -242,19 +219,16 @@ Precip_Merging_ALL <- function(){
 	}
 
 	##################
-	if(freqData %in% c('daily', 'pentad', 'dekadal')) adj.Format <- "rr_adj_%s%s%s.nc"
-	if(freqData == 'monthly') adj.Format <- "rr_adj_%s%s.nc"
 
 	errmsg <- "Adjusted data not found"
 	ncInfo <- ncFilesInfo(freqData, start.date, end.date, months, adj.DIR, adj.Format, errmsg)
 	if(is.null(ncInfo)) return(NULL)
-	ncInfo$ncinfo <- rfeDataInfo
+	ncInfo$ncinfo <- tmpDataInfo
 	ncInfo$ncinfo$ilon <- 1
 	ncInfo$ncinfo$ilat <- 2
-	ncInfo$ncinfo$varid <- "precip"
-	ncInfo$ncinfo$xo <- seq_along(rfeDataInfo$lon)
-	ncInfo$ncinfo$yo <- seq_along(rfeDataInfo$lat)
-	ncInfo$xy.rfe <- rfeDataInfo[c('lon', 'lat')]
+	ncInfo$ncinfo$varid <- "temp"
+	ncInfo$ncinfo$xo <- seq_along(tmpDataInfo$lon)
+	ncInfo$ncinfo$yo <- seq_along(tmpDataInfo$lat)
 
 	##################
 	## blanking
@@ -280,7 +254,7 @@ Precip_Merging_ALL <- function(){
 					stnData = stnData, demData = demData, merge.DIR = merge.DIR,
 					interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0), outMask = outMask)
 
-	ret <- Precip_MergingFunctions()
+	ret <- Temp_MergingFunctions()
 
 	rm(ncInfo)
 	gc()
