@@ -226,6 +226,16 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## Scaling merged data
+	if(.cdtData$GalParams$action == 'scale.merged'){
+		ret <- try(exec_ScalingUpData(), silent = TRUE)
+
+		msg0 <- "Scaling up merged data finished successfully"
+		msg1 <- "Scaling up merged data failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+
 	###
 
 }
