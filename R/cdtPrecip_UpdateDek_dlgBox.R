@@ -216,12 +216,12 @@ mergeDekadInfoRain <- function(){
 		frDown <- ttklabelframe(frTab2, text = "Download RFE", relief = 'groove')
 
 		data.rfe <- tclVar(.cdtData$GalParams$RFE$source)
-		minLon <- tclVar(str_trim(.cdtData$GalParams$RFE.bbox$minlon))
-		maxLon <- tclVar(str_trim(.cdtData$GalParams$RFE.bbox$maxlon))
-		minLat <- tclVar(str_trim(.cdtData$GalParams$RFE.bbox$minlat))
-		maxLat <- tclVar(str_trim(.cdtData$GalParams$RFE.bbox$maxlat))
+		minLon <- tclVar(str_trim(.cdtData$GalParams$bbox$minlon))
+		maxLon <- tclVar(str_trim(.cdtData$GalParams$bbox$maxlon))
+		minLat <- tclVar(str_trim(.cdtData$GalParams$bbox$minlat))
+		maxLat <- tclVar(str_trim(.cdtData$GalParams$bbox$maxlat))
 
-		cb.down.rfe <- ttkcombobox(frDown, values = c('TAMSATv2', 'TAMSATv3', 'CHIRP'), textvariable = data.rfe, width = largeur2, state = stateRFE2)
+		cb.down.rfe <- ttkcombobox(frDown, values = c('10-DAYS TAMSATv3', '10-DAYS TAMSATv2', '10-DAYS CHIRPSv2.0', '10-DAYS CHIRPv1.0'), textvariable = data.rfe, width = largeur2, state = stateRFE2)
 		frbbox <- tkframe(frDown)
 
 		txt.lon <- tklabel(frbbox, text = "Longitude", anchor = 'e', justify = 'right')
@@ -636,10 +636,10 @@ mergeDekadInfoRain <- function(){
 			.cdtData$GalParams$RFE$file <- str_trim(tclvalue(file.grdrfe))
 			.cdtData$GalParams$RFE$source <- str_trim(tclvalue(data.rfe))
 
-			.cdtData$GalParams$RFE.bbox$minlon <- as.numeric(str_trim(tclvalue(minLon)))
-			.cdtData$GalParams$RFE.bbox$maxlon <- as.numeric(str_trim(tclvalue(maxLon)))
-			.cdtData$GalParams$RFE.bbox$minlat <- as.numeric(str_trim(tclvalue(minLat)))
-			.cdtData$GalParams$RFE.bbox$maxlat <- as.numeric(str_trim(tclvalue(maxLat)))
+			.cdtData$GalParams$bbox$minlon <- as.numeric(str_trim(tclvalue(minLon)))
+			.cdtData$GalParams$bbox$maxlon <- as.numeric(str_trim(tclvalue(maxLon)))
+			.cdtData$GalParams$bbox$minlat <- as.numeric(str_trim(tclvalue(minLat)))
+			.cdtData$GalParams$bbox$maxlat <- as.numeric(str_trim(tclvalue(maxLat)))
 
 			.cdtData$GalParams$BIAS$Adjust <- switch(str_trim(tclvalue(adj.bias)), '0' = FALSE, '1' = TRUE)
 			.cdtData$GalParams$BIAS$Dir <- str_trim(tclvalue(dir.bias))

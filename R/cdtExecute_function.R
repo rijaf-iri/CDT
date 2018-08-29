@@ -235,6 +235,14 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## Merging 1 dekad
+	if(.cdtData$GalParams$action == 'merge.dekrain'){
+		ret <- try(mergeOneDekadRain(), silent = TRUE)
+
+		msg0 <- "Rainfall merging finished successfully"
+		msg1 <- "Rainfall merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
 
 	###
 

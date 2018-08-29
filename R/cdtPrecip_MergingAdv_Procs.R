@@ -647,7 +647,7 @@ Precip_MergingFunctions <- function(){
 			}
 
 			rm(rnr0, imsk, irnr, rnr.res.grd, newdata0.rnr, igrid.rnr, buff.rnr,
-				iadd, xadd, xadd.out, xadd.in, locations.stn, rnr.stn, rnr.stn,
+				iadd, xadd, xadd.out, xadd.in, locations.stn, rnr.stn,
 				buffer.rnor.in, buffer.rnor.out, buffer.rnor.grid)
 		}
 

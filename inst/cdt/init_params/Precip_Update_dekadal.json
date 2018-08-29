@@ -16,14 +16,14 @@
     "RFE": {
         // If RFE data is already downloaded : true ifelse false
         "downloaded": true,
-        // RFE data source: "TAMSATv2",  "TAMSATv3" or "CHIRP"
-        "source": "TAMSATv3",
+        // RFE data source: '10-DAYS TAMSATv3', '10-DAYS TAMSATv2' or '10-DAYS CHIRPv1.0'
+        "source": "10-DAYS TAMSATv3",
         // RFE data filename
         "file": ""
     },
 
     //Bounding box to extract RFE data
-    "RFE.bbox": [{
+    "bbox": [{
         "minlon": 42,
         "maxlon": 52,
         "minlat": -26,
@@ -62,7 +62,7 @@
         // nmax for gstat
         "nmax": 5,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.75,
+        "maxdist": 0.3,
         // variogram model, see gstat package for list of available model
         "vgm.model": ["Sph", "Exp", "Gau"],
         // using kriging of block mean values (true or false)
