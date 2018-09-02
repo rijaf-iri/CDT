@@ -1,5 +1,5 @@
 
-plotMap4Extraction <- function(){
+plotMap4Validation <- function(){
 	xmin <- .cdtData$EnvData$ZoomXYval[1]
 	xmax <- .cdtData$EnvData$ZoomXYval[2]
 	ymin <- .cdtData$EnvData$ZoomXYval[3]
@@ -22,11 +22,15 @@ plotMap4Extraction <- function(){
 		return(NULL)
 	}
 
+	lon <- as.numeric(.cdtData$EnvData$donne[2, ])
+	lat <- as.numeric(.cdtData$EnvData$donne[3, ])
+
 	#######
 	opar <- par(mar = c(4, 4, 2, 2))
 	plot(1, xlim = c(xmin, xmax), ylim = c(ymin, ymax), xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
 	lines(.cdtData$EnvData$ocrds)
-	if(!is.null(.cdtData$EnvData$selectedPolygon)) lines(.cdtData$EnvData$selectedPolygon, col = 'red', lwd = 2)
+	points(lon, lat, pch = 20, col = 'darkred', cex = 0.7)
+	if(!is.null(.cdtData$EnvData$selectedPolygon)) lines(.cdtData$EnvData$selectedPolygon, col = 'red')
 
 	abline(h = axTicks(2), v = axTicks(1) , col = "lightgray", lty = 3)
 	axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
@@ -39,9 +43,9 @@ plotMap4Extraction <- function(){
 	return(list(par = c(plt, usr)))
 }
 
-#################################################################
+############################################################################
 
-displayMap4Extraction <- function(notebookTab){
+displayMap4Validation <- function(notebookTab){
 	varplot <- c("parPlotSize1", "parPlotSize2", "parPlotSize3", "parPlotSize4",
 				 "usrCoords1", "usrCoords2", "usrCoords3", "usrCoords4")
 	parPltCrd <- setNames(lapply(varplot, function(x) assign(x, tclVar(), env = parent.frame())), varplot)
@@ -54,15 +58,16 @@ displayMap4Extraction <- function(notebookTab){
 			tcl('update')
 		})
 
-		op <- par(bg = "white")
-		pltusr <- plotMap4Extraction()
+		op <- par(bg = 'white')
+		pltusr <- plotMap4Validation()
 		par(op)
+
 		for(j in seq_along(varplot)) tclvalue(parPltCrd[[varplot[j]]]) <- pltusr$par[j]
 	}
 
 	###################################################################
 
-	onglet <- imageNotebookTab_open(notebookTab, 'Extraction Map')
+	onglet <- imageNotebookTab_open(notebookTab, 'Validation Map')
 	hscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH)))
 	vscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
 
@@ -76,6 +81,8 @@ displayMap4Extraction <- function(notebookTab){
 	tkcreate(canvas, "image", 0, 0, anchor = 'nw', image = img$image)
 	tcl('raise', canvas)
 	tcl('update')
+
+	if(is.null(.cdtEnv$tcl$data$lcmd.frame)) return(NULL)
 
 	tkbind(canvas, "<Enter>", function(){
 		if(tclvalue(.cdtData$EnvData$zoom$pressButP) == "1")
@@ -94,26 +101,26 @@ displayMap4Extraction <- function(notebookTab){
 
 	tkbind(canvas, "<Leave>", function() tkconfigure(canvas, cursor = ''))
 
-	##########
+	#####
 	shpf <- .cdtData$EnvData$shpf
 	.cdtData$EnvData$selectedPolygon <- NULL
 
-	## draw rectangle initial value
+	##draw rectangle initial value
 	.cdtEnv$tcl$lastX <- 0
 	.cdtEnv$tcl$lastY <- 0
 
-	## zoom factor
+	##zoom factor
 	factZoom <- 0.2
 
 	##zoom rectangle
 	rectZoomInit <- .cdtData$EnvData$ZoomXYval
 
-	## Pan Image
+	##Pan Image
 	panZoomInit <- c(0, 0, 0, 0, 0, 0)
 	factPan <- 0.2
 
 	##########
-	## first click on map
+
 	tkbind(canvas, "<Button-1>", function(W, x, y){
 		ret <- getXYCoords(W, x, y, parPltCrd)
 		tkdelete(W, 'rect')
@@ -122,28 +129,16 @@ displayMap4Extraction <- function(notebookTab){
 		if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1" & !ret$oin){
 			.cdtData$EnvData$selectedPolygon <- NULL
 
-			if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "Point"){
-				tclvalue(.cdtData$EnvData$minlonRect) <- round(ret$xc, 4)
-				tclvalue(.cdtData$EnvData$maxlonRect) <- ''
-				tclvalue(.cdtData$EnvData$minlatRect) <- round(ret$yc, 4)
-				tclvalue(.cdtData$EnvData$maxlatRect) <- ''
-				stateADD <- 'disabled'
-				colorADD <- 'lightblue'
-			}
-
-			##
-			if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "Rectangle"){
+			if(str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Rectangle"){
 				pPressRect(W, x, y, width = 1, outline = "red")
 				tclvalue(.cdtData$EnvData$minlonRect) <- round(ret$xc, 4)
 				tclvalue(.cdtData$EnvData$minlatRect) <- round(ret$yc, 4)
-				stateADD <- 'disabled'
-				colorADD <- 'lightblue'
 			}
 
 			##
-			if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "Polygon"){
+			if(str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Polygons"){
 				xypts <- data.frame(x = ret$xc, y = ret$yc)
-				coordinates(xypts) <- ~x+y
+				coordinates(xypts) <- ~x + y
 				admin_name <- over(xypts, shpf)
 				admin_name <- c(t(admin_name[1, ]))
 
@@ -153,38 +148,7 @@ displayMap4Extraction <- function(notebookTab){
 					tclvalue(.cdtData$EnvData$namePoly) <- as.character(admin_name)
 					.cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
 				}
-				stateADD <- 'disabled'
-				colorADD <- 'lightblue'
 			}
-
-			##
-			if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == 'Multiple Points'){
-				tclvalue(.cdtData$EnvData$minlonRect) <- round(ret$xc, 4)
-				tclvalue(.cdtData$EnvData$maxlonRect) <- ''
-				tclvalue(.cdtData$EnvData$minlatRect) <- round(ret$yc, 4)
-				tclvalue(.cdtData$EnvData$maxlatRect) <- ''
-				stateADD <- 'normal'
-				colorADD <- 'red'
-			}
-
-			##
-			if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == 'Multiple Polygons'){
-				xypts <- data.frame(x = ret$xc, y = ret$yc)
-				coordinates(xypts) <- ~x+y
-				admin_name <- over(xypts, shpf)
-				admin_name <- c(t(admin_name[1, ]))
-
-				ids <- as.numeric(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
-				admin_name <- admin_name[ids]
-				if(!is.na(admin_name)){
-					tclvalue(.cdtData$EnvData$namePoly) <- as.character(admin_name)
-					.cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
-				}
-				stateADD <- 'normal'
-				colorADD <- 'red'
-			}
-
-			tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = colorADD, state = stateADD)
 
 			refreshPlot(W, img,
 						hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
@@ -217,7 +181,7 @@ displayMap4Extraction <- function(notebookTab){
 		}
 
 		#Zoom Moins
-		if(tclvalue(.cdtData$EnvData$zoom$pressButM) == "1" & !ret$oin){
+		if(tclvalue(.cdtData$EnvData$zoom$pressButM) == "1"  & !ret$oin){
 			rgX <- as.numeric(tclvalue(parPltCrd$usrCoords2)) - as.numeric(tclvalue(parPltCrd$usrCoords1))
 			rgY <- as.numeric(tclvalue(parPltCrd$usrCoords4)) - as.numeric(tclvalue(parPltCrd$usrCoords3))
 			shiftX <- rgX * (1 + factZoom)/2
@@ -232,7 +196,7 @@ displayMap4Extraction <- function(notebookTab){
 				tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
 				tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
 				tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
-				
+
 				tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
 				tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
 				tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
@@ -255,14 +219,14 @@ displayMap4Extraction <- function(notebookTab){
 		}
 
 		##Zoom rectangle
-		if(tclvalue(.cdtData$EnvData$zoom$pressButRect) == "1" & !ret$oin){
+		if(tclvalue(.cdtData$EnvData$zoom$pressButRect) == "1"  & !ret$oin){
 			pPressRect(W, x, y, width = 1, outline = "red")
 			rectZoomInit[1] <<- ret$xc
 			rectZoomInit[3] <<- ret$yc
 		}
 
 		##Pan image
-		if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1" & !ret$oin){
+		if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"  & !ret$oin){
 			panZoomInit[1] <<- ret$xc
 			panZoomInit[2] <<- ret$yc
 
@@ -276,20 +240,26 @@ displayMap4Extraction <- function(notebookTab){
 	})
 
 	##########
-	## cursor movement
 	tkbind(canvas, "<Motion>", function(W, x, y){
-		displayCursorPosition3Var(W, x, y, parPltCrd, getAdminLabel, shp = shpf,
-									idField = .cdtData$EnvData$cb.shpAttr)
+		if(str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Polygons" & !is.null(shpf)){
+			displayCursorPosition3Var(W, x, y, parPltCrd, getAdminLabel, shp = shpf,
+										idField = .cdtData$EnvData$cb.shpAttr)
+		}else{
+			stn.coords <- list(lon = as.numeric(.cdtData$EnvData$donne[2, ]),
+							lat = as.numeric(.cdtData$EnvData$donne[3, ]),
+							id = as.character(.cdtData$EnvData$donne[1, ]))
+			
+			displayCursorPosition3Var(W, x, y, parPltCrd, getStnIDLabel, stn.coords = stn.coords)
+		}
 	})
 
 	#########
-	## cursor movement with button-1 pressed
 	tkbind(canvas, "<B1-Motion>", function(W, x, y){
 		ret <- getXYCoords(W, x, y, parPltCrd)
 
 		##get coordinates rect
 		if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1" &
-			str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "Rectangle")
+			str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Rectangle")
 		{
 			pMoveRect(W, x, y)
 			tclvalue(.cdtData$EnvData$maxlonRect) <- round(ret$xc, 4)
@@ -325,13 +295,13 @@ displayMap4Extraction <- function(notebookTab){
 	})
 
 	#########
-	## release button1
 	tkbind(canvas, "<ButtonRelease>", function(W, x, y){
 		ret <- getXYCoords(W, x, y, parPltCrd)
 
 		##get coordinates rect
-		if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1"){
-			if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "Rectangle")
+		if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1")
+		{
+			if(str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Rectangle")
 			{
 				xpr <- c(as.numeric(tclvalue(.cdtData$EnvData$minlonRect)), round(ret$xc, 4),
 						as.numeric(tclvalue(.cdtData$EnvData$minlatRect)), round(ret$yc, 4))
@@ -345,7 +315,7 @@ displayMap4Extraction <- function(notebookTab){
 			}
 
 			tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
-			tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
+			tkconfigure(.cdtData$EnvData$bt.select, relief = 'raised', bg = 'lightblue', state = 'normal')
 
 			tkconfigure(W, cursor = 'crosshair')
 		}
@@ -379,7 +349,7 @@ displayMap4Extraction <- function(notebookTab){
 	})
 
 	###############################################
-	## deactivate zoom (right button)
+
 	tkbind(canvas, "<Button-3>", function(W){
 		tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
 		tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
@@ -391,15 +361,10 @@ displayMap4Extraction <- function(notebookTab){
 		tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
 		tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
-		tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-		stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% c('Multiple Points', 'Multiple Polygons')) "normal" else "disabled"
-		tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
-
 		tkconfigure(canvas, cursor = 'crosshair')
 
 		tkdelete(W, 'rect')
 
-		.cdtData$EnvData$selectedPolygon <- NULL
 		refreshPlot(W, img,
 					hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
 					vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))

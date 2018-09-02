@@ -699,12 +699,12 @@ startCDT <- function(wd = NA, lang = NA){
 					tkadd(menu.valid1, "command", label = lang.menu[["merging.data"]][["7-1-1"]],
 						command = function()
 					{
-						# refreshCDT()
-						# spinbox.state(state = 'normal')
-						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# 	Validation.HOV.PanelCmd('RR')
-						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-						# }
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							Validation.HOV.PanelCmd('RR')
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
 					})
 
 					##########
@@ -714,12 +714,12 @@ startCDT <- function(wd = NA, lang = NA){
 					tkadd(menu.valid1, "command", label = lang.menu[["merging.data"]][["7-1-2"]],
 						command = function()
 					{
-						# refreshCDT()
-						# spinbox.state(state = 'normal')
-						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# 	Validation.HOV.PanelCmd('TT')
-						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-						# }
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							Validation.HOV.PanelCmd('TT')
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
 					})
 
 				##########
