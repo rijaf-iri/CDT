@@ -12,7 +12,6 @@
 .cdtDir$Root <- system.file("cdt", package = "CDT")
 
 if(WindowsOS()) .cdtDir$dirLocal <- path.expand('~/AppData/Local/CDT')
-# if(WindowsOS()) .cdtDir$dirLocal <- file.path(Sys.getenv('LOCALAPPDATA'), 'CDT')
 if(MacOSXP()) .cdtDir$dirLocal <- path.expand('~/Library/Application Support/CDT')
 # if(MacOSXP()) .cdtDir$dirLocal <- path.expand('/Users/rijaf/Desktop/ECHANGE/github_IRI_CDT/Local/CDT')
 if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
