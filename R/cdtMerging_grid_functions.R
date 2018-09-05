@@ -81,7 +81,7 @@ createGrid <- function(ObjStn, ObjGrd, ObjRfe = NULL, as.dim.elv = TRUE,
 	ixOa <- is.na(gridO$elv)
 	if(any(ixOa)){
 		gridOa <- gridO[ixOa, c('lon', 'lat'), drop = FALSE]
-		gridOa <- krige(formula = elv~1, locations = ~lon + lat, data = na.omit(gridS),
+		gridOa <- gstat::krige(formula = elv~1, locations = ~lon + lat, data = na.omit(gridS),
 						newdata = gridOa, nmin = 3, nmax = 10, debug.level = 0)
 		gridO$elv[ixOa] <- round(gridOa$var1.pred)
 	}
@@ -89,7 +89,7 @@ createGrid <- function(ObjStn, ObjGrd, ObjRfe = NULL, as.dim.elv = TRUE,
 	ixSa <- is.na(gridS$elv)
 	if(any(ixSa)){
 		gridSa <- gridS[ixSa, c('lon', 'lat'), drop = FALSE]
-		gridSa <- krige(formula = elv~1, locations = ~lon + lat, data = na.omit(gridS),
+		gridSa <- gstat::krige(formula = elv~1, locations = ~lon + lat, data = na.omit(gridS),
 						newdata = gridSa, nmin = 3, nmax = 10, debug.level = 0)
 		gridS$elv[ixSa] <- round(gridSa$var1.pred)
 		ObjGrd$z[ixSa] <- round(gridSa$var1.pred)
