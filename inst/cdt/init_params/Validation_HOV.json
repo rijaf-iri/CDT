@@ -58,7 +58,7 @@
         "aggr.data": false,
         // Function to be used to aggregate the series: "sum", "mean", "count" 
         "aggr.fun": "sum",
-        // // Minimum fraction of available data that must be present for each time step of the aggregated series
+        // Minimum fraction of available data that must be present for each time step of the aggregated series
         "min.frac": 0.95,
         // Comparison operator to be used to count event
         "opr.fun": ">=",
