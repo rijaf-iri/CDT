@@ -63,7 +63,7 @@ Water.Balance <- function(rain, etp, capacity.max = 100, wb1 = 0){
 
 	if(length(wb1) == 1) wb1 <- rep(wb1, nbstn)
 	minwb <- rep(0, nbstn)
-	if(length(capacity.max) == 1) maxwb <- rep(capacity.max, nbstn)
+	maxwb <- if(length(capacity.max) == 1) rep(capacity.max, nbstn) else capacity.max
 	water.balance <- matrix(NA, nrow = ndays, ncol = nbstn)
 	water.balance[1, ] <- wb1
 
