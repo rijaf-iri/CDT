@@ -122,7 +122,7 @@ cdt.data.analysis <- function(MAT, FUN,
 	MAT <- MAT[, nNA, drop = FALSE]
 
 	out <- if(FUN == "trend") matrix(NA, nrow = 4, ncol = nc) else rep(NA, nc)
-	if(ncol(MAT) == 0) retrun(out)
+	if(ncol(MAT) == 0) return(out)
 
 	if(FUN == "mean") res <- colMeans(MAT, na.rm = TRUE)
 	if(FUN == "median") res <- matrixStats::colMedians(MAT, na.rm = TRUE)
