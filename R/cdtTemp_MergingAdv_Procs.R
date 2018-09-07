@@ -257,6 +257,8 @@ Temp_MergingFunctions <- function(){
 	xlat <- ncInfo$ncinfo$lat
 	ijGrd <- grid2pointINDEX(list(lon = lon.stn, lat = lat.stn), list(lon = xlon, lat = xlat))
 
+	paramsOutFmt <- .cdtData$GalParams$output$format
+
 	#############
 
 	is.parallel <- doparallel(length(which(ncInfo$exist)) >= 10)
@@ -284,7 +286,7 @@ Temp_MergingFunctions <- function(){
 		donne.stn <- data.stn[date.stn == ncInfo$dates[jj], , drop = FALSE]
 		if(nrow(donne.stn) == 0){
 			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
-					mrgParms$merge.DIR, .cdtData$GalParams$output$format)
+					mrgParms$merge.DIR, paramsOutFmt)
 			cat(paste(ncInfo$dates[jj], ":", "no station data", "|", "Input temperature data", "\n"), file = log.file, append = TRUE)
 			return(NULL)
 		}
@@ -292,7 +294,7 @@ Temp_MergingFunctions <- function(){
 		stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = FALSE)
 		if(is.null(stng)){
 			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
-					mrgParms$merge.DIR, .cdtData$GalParams$output$format)
+					mrgParms$merge.DIR, paramsOutFmt)
 			cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|", "Input temperature data", "\n"),
 				file = log.file, append = TRUE)
 			return(NULL)
@@ -318,7 +320,7 @@ Temp_MergingFunctions <- function(){
 
 		if(all(is.na(locations.stn$tmp))){
 			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
-					mrgParms$merge.DIR, .cdtData$GalParams$output$format)
+					mrgParms$merge.DIR, paramsOutFmt)
 			cat(paste(ncInfo$dates[jj], ":", "all temperature data @ station location are missing", "|", "Input temperature data", "\n"),
 				file = log.file, append = TRUE)
 			return(NULL)
@@ -363,7 +365,7 @@ Temp_MergingFunctions <- function(){
 
 		if(length(locations.stn) < min.stn){
 			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
-					mrgParms$merge.DIR, .cdtData$GalParams$output$format)
+					mrgParms$merge.DIR, paramsOutFmt)
 			cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|", "Input temperature data", "\n"),
 				file = log.file, append = TRUE)
 			return(NULL)
@@ -376,7 +378,7 @@ Temp_MergingFunctions <- function(){
 
 			if(length(locations.stn) < min.stn){
 				writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
-						mrgParms$merge.DIR, .cdtData$GalParams$output$format)
+						mrgParms$merge.DIR, paramsOutFmt)
 				cat(paste(ncInfo$dates[jj], ":", "not enough station data combined with auxiliary var", "|",
 						"Input temperature data", "\n"), file = log.file, append = TRUE)
 				return(NULL)
@@ -490,7 +492,7 @@ Temp_MergingFunctions <- function(){
 		if(!is.null(mrgParms$outMask)) out.mrg[is.na(mrgParms$outMask)] <- NA
 
 		writeNC.merging(out.mrg, ncInfo$dates[jj], freqData, grd.nc.out,
-				mrgParms$merge.DIR, .cdtData$GalParams$output$format)
+				mrgParms$merge.DIR, paramsOutFmt)
 
 		rm(out.mrg, xtmp, newdata)
 		gc()
@@ -501,5 +503,3 @@ Temp_MergingFunctions <- function(){
 	Insert.Messages.Out('Merging finished')
 	return(0)
 }
-
-
