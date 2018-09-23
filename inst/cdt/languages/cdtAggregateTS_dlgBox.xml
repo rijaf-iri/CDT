@@ -6,7 +6,7 @@
     <widget>
         <button id="1">
             <text lang="en"> Settings </text>
-            <text lang="en"> Configurations </text>
+            <text lang="fr"> Configurations </text>
         </button>
         <label id="1">
             <text lang="en"> Time Series Aggregation </text>
