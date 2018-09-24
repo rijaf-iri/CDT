@@ -12,147 +12,188 @@
             </option>
             <option id="2">
                 <text lang="en"> Multiple NetCDF files </text>
+                <text lang="fr"> Plusieurs fichiers NetCDF </text>
             </option>
         </combobox>
         <combobox id="2">
             <option id="1">
                 <text lang="en"> Aggregate </text>
+                <text lang="fr"> Agréger </text>
             </option>
             <option id="2">
                 <text lang="en"> Disaggregate </text>
+                <text lang="en"> Désagréger </text>
             </option>
         </combobox>
         <label id="1">
             <text lang="en"> NetCDF Data </text>
+            <text lang="fr"> Données NetCDF </text>
         </label>
         <label id="2">
             <text lang="en"> NetCDF data file </text>
+            <text lang="fr"> Fichier de données NetCDF </text>
         </label>
         <label id="3">
             <text lang="en"> Directory containing the netcdf data (*.nc) </text>
+            <text lang="fr"> Répertoire contenant les données netCDF (*.nc) </text>
         </label>
         <label id="4">
             <text lang="en"> NetCDF data sample file </text>
+            <text lang="fr"> Fichier exemple de données NetCDF </text>
         </label>
         <label id="5">
             <text lang="en"> Use Grid from other NetCDF data </text>
+            <text lang="fr"> Utiliser la grille d'autres données NetCDF </text>
         </label>
         <label id="6">
             <text lang="en"> NetCDF file to be used </text>
+            <text lang="fr"> Fichier NetCDF à utiliser </text>
         </label>
         <label id="7">
             <text lang="en"> Aggregation method </text>
+            <text lang="fr"> Méthode d'agrégation </text>
         </label>
         <label id="8">
             <text lang="en"> Action </text>
+            <text lang="fr"> Action </text>
         </label>
         <label id="9">
             <text lang="en"> Method </text>
+            <text lang="fr"> Méthode </text>
         </label>
         <label id="10">
             <text lang="en"> New grid boundaries and resolutions </text>
+            <text lang="fr"> Nouvelles limites et résolutions de la grille </text>
         </label>
         <label id="11">
             <text lang="en"> Longitude </text>
+            <text lang="fr"> Longitude </text>
         </label>
         <label id="12">
             <text lang="en"> Latitude </text>
+            <text lang="fr"> Latitude </text>
         </label>
         <label id="13">
             <text lang="en"> Directory to save results </text>
+            <text lang="fr"> Répertoire de sauvegarde des données </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Minimum longitude in degree decimal </text>
+                <text lang="fr"> Longitude minimale en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Minimum longitude in degree decimal </text>
+                <text lang="fr"> Longitude minimale en degré décimal </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Maximum longitude in degree decimal </text>
+                <text lang="fr"> Longitude maximale en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Maximum longitude in degree decimal </text>
+                <text lang="fr"> Longitude maximale en degré décimal </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Resolution in degree decimal </text>
+                <text lang="fr"> Résolution en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Resolution in degree decimal </text>
+                <text lang="fr"> Résolution en degré décimal </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Minimum latitude in degree decimal </text>
+                <text lang="fr"> Latitude minimale en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Minimum latitude in degree decimal </text>
+                <text lang="fr"> Latitude minimale en degré décimal </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> Maximum latitude in degree decimal </text>
+                <text lang="fr"> Latitude maximale en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Maximum latitude in degree decimal </text>
+                <text lang="fr"> Latitude maximale en degré décimal </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Enter the full path to directory to save results </text>
+                <text lang="fr"> Entrez le répertoire de sauvegarde des résultats </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory to save results </text>
+                <text lang="fr"> Entrez le répertoire de sauvegarde des résultats </text>
             </tooltip>
         </content>
         <content id="7">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="en"> ou parcourir ici </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> NetCDF regridding finished successfully </text>
+            <text lang="fr"> Le reggridding des NetCDF a été exécuté avec succès </text>
         </content>
         <content id="2">
             <text lang="en"> NetCDF regridding failed </text>
+            <text lang="fr"> Le reggridding des NetCDF a échoué </text>
         </content>
         <content id="3">
             <text lang="en"> Regrid netCDF data ... </text>
+            <text lang="fr"> Reggridding des NetCDF en cours ... </text>
         </content>
         <content id="4">
             <text lang="en"> Directory to save results is missing </text>
+            <text lang="fr"> Répertoire pour enregistrer les résultats non spécifié </text>
         </content>
         <content id="5">
             <text lang="en"> Unable to read NetCDF file to be regridded </text>
+            <text lang="fr"> Impossible de lire le fichier NetCDF à regrider </text>
         </content>
         <content id="6">
             <text lang="en"> Unable to read the sample NetCDF file </text>
+            <text lang="fr"> Impossible de lire l'exemple de fichier NetCDF </text>
         </content>
         <content id="7">
             <text lang="en"> Unable to read NetCDF file whose grid will be used </text>
+            <text lang="fr"> Impossible de lire le fichier NetCDF dont la grille sera utilisée </text>
         </content>
         <content id="8">
             <text lang="en"> Nothing to do the files have the same grid </text>
+            <text lang="fr"> Rien à faire car les fichiers ont la même grille </text>
         </content>
         <content id="9">
             <text lang="en"> Nothing to do the new grid is finer than the grid of NetCDF data </text>
+            <text lang="fr"> Rien à faire car la nouvelle grille est plus fine que celle des données NetCDF </text>
         </content>
         <content id="10">
             <text lang="en"> Nothing to do the new grid is coarser than the grid of NetCDF data </text>
+            <text lang="fr"> Rien à faire car la nouvelle grille est plus grossière que celle de données NetCDF </text>
         </content>
         <content id="11">
             <text lang="en"> No NetCDF files found </text>
+            <text lang="fr"> Aucun fichier NetCDF n'a été touvé </text>
         </content>
     </message>
 </dialog_box>
