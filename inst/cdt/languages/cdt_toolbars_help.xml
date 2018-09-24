@@ -88,7 +88,7 @@
             </status>
             <tooltip>
                 <text lang="en"> Redraw plot </text>
-                <text lang="fr"> Redessine l'image active </text>
+                <text lang="fr"> Redessiner l'image active </text>
             </tooltip>
         </content>
         <content id="9">
