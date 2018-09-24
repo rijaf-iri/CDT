@@ -3,38 +3,49 @@
     <widget>
         <label id="1">
             <text lang="en"> CDT station data format #1 </text>
+            <text lang="fr"> Format de données de station CDT #1 </text>
         </label>
         <label id="2">
             <text lang="en"> CDT station data format #2 </text>
+            <text lang="fr"> Format de données de station CDT #2 </text>
         </label>
         <label id="3">
             <text lang="en"> File to save merged data </text>
+            <text lang="fr"> Fichier de sauvegarde des données fusionnées </text>
         </label>
         <button id="1">
             <text lang="en"> Merge Data </text>
+            <text lang="fr"> Fusionner Données </text>
         </button>
     </widget>
     <message>
         <content id="1">
             <text lang="en"> Merge data ........... </text>
+            <text lang="fr"> Fusionner Données........ </text>
         </content>
         <content id="2">
             <text lang="en"> Merging CDT data finished successfully </text>
+            <text lang="fr"> Fusion des données CDT terminée avec succès </text>
         </content>
         <content id="3">
             <text lang="en"> Merging CDT data failed </text>
+            <text lang="fr"> Fusion des données CDT échouée </text>
         </content>
         <content id="4">
             <text lang="en"> The input data is not in a standard unambiguous CDT format </text>
+            <text lang="fr"> Données d'entrée pas dans un format CDT non ambigu standard </text>
         </content>
         <content id="5">
             <text lang="en"> The two data have different time step </text>
+            <text lang="fr"> Les deux données ont un pas de temps différent </text>
         </content>
         <content id="6">
             <text lang="en"> Different Values </text>
+            <text lang="fr"> Valeurs Différentes </text>
         </content>
         <content id="7">
             <text lang="en"> Different station coordinates </text>
+            <text lang="fr"> Différentes coordonnées des stations </text>
         </content>
     </message>
 </panel_cmd>
