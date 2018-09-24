@@ -7,27 +7,31 @@
         </submenu>
         <submenu id="1">
             <text lang="en"> Open data.frame </text>
+            <text lang="fr"> Ouvrir un data.frame </text>
         </submenu>
         <submenu id="2">
             <text lang="en"> Open netcdf file </text>
+            <text lang="fr"> Ouvrir un fichier netcdf </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> Open ESRI Shapefile </text>
+            <text lang="en"> Ouvrir un Shapefile ESRI </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Save table </text>
-            <text lang="fr"> Sauvegarder le tableau </text>
+            <text lang="fr"> Enregistrer le tableau </text>
         </submenu>
         <submenu id="5">
             <text lang="en"> Save table As... </text>
-            <text lang="fr"> Sauvegarder le tableau sous... </text>
+            <text lang="fr"> Enregistrer le tableau sous... </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Save Image As... </text>
-            <text lang="fr"> Sauvegarder l'image sous... </text>
+            <text lang="fr"> Enregistrer l'image sous... </text>
         </submenu>
         <submenu id="7">
             <text lang="en"> Configuration </text>
+            <text lang="fr"> Configuration </text>
         </submenu>
         <submenu id="8">
             <text lang="en"> Quit CDT </text>
@@ -41,39 +45,51 @@
         </submenu>
         <submenu id="1">
             <text lang="en"> Format CDTs Input Data </text>
+            <text lang="fr"> Formater données d'entréé CDT </text>
         </submenu>
         <submenu id="2">
             <text lang="en"> Merge two CDT Station Data </text>
+            <text lang="fr"> Combiner 2 données station CDT </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> Filtering CDT Data </text>
+            <text lang="fr"> Filtrer les données CDT </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Transform NetCDF files into CDT Dataset </text>
+            <text lang="fr"> Transformer fichiers NetCDF en données CDT </text>
         </submenu>
         <submenu id="5">
             <text lang="en"> Download DEM </text>
+            <text lang="fr"> Télécharger MNT </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Download Country boundary </text>
+            <text lang="fr"> Télécharger limites d'un pays </text>
         </submenu>
         <submenu id="7">
             <text lang="en"> Download RFE data </text>
+            <text lang="fr"> Télécharger les données RFE </text>
         </submenu>
         <submenu id="8">
             <text lang="en"> Filling missing dekadal temperature values </text>
+            <text lang="fr"> Combler les températures décadaires manquantes </text>
         </submenu>
         <submenu id="9">
             <text lang="en"> Data Format Conversion </text>
+            <text lang="fr"> Conversion de format de données </text>
         </submenu>
         <submenu id="9-1">
             <text lang="en"> Conversion to CPT data format </text>
+            <text lang="fr"> Conversion au format de données CPT </text>
         </submenu>
         <submenu id="9-2">
             <text lang="en"> Converting NetCDF/GeoTIFF/ESRI .hdr Labelled </text>
+            <text lang="fr"> Convertir NetCDF/GeoTIFF/ESRI .hdr Labelled </text>
         </submenu>
         <submenu id="9-3">
             <text lang="en"> Create GrADS Descriptor File from CDT NetCDF files </text>
+            <text lang="fr"> Créer un descripteur GrADS à partir de fichiers CDT NetCDF </text>
         </submenu>
     </menu>
     <menu id="aggregate.data">
@@ -83,9 +99,11 @@
         </submenu>
         <submenu id="1">
             <text lang="en"> Aggregating Time Series </text>
+            <text lang="fr"> Agréger Series Temporelles </text>
         </submenu>
         <submenu id="2">
             <text lang="en"> Aggregate/Disaggregate Spatial NetCDF data </text>
+            <text lang="fr"> Agréger/Désagréger données spatiales NetCDF </text>
         </submenu>
     </menu>
     <menu id="quality.control">
@@ -95,27 +113,35 @@
         </submenu>
         <submenu id="1">
             <text lang="en"> Check Stations Coordinates </text>
+            <text lang="fr"> Vérifier Coordonnées Stations </text>
         </submenu>
         <submenu id="2">
             <text lang="en"> Assess Data Availability </text>
+            <text lang="fr"> Vérifier Disponibilité Données </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> QC stations data </text>
+            <text lang="fr"> QC données stations </text>
         </submenu>
         <submenu id="3-1">
             <text lang="en"> Rainfall </text>
+            <text lang="fr"> Pluie </text>
         </submenu>
         <submenu id="3-1-1">
             <text lang="en"> False-Zeros check </text>
+            <text lang="fr"> Vérifier les Faux-Zéros </text>
         </submenu>
         <submenu id="3-1-2">
             <text lang="en"> Outliers Check </text>
+            <text lang="fr"> Valeurs aberrantes </text>
         </submenu>
         <submenu id="3-2">
             <text lang="en"> Temperatures </text>
+            <text lang="fr"> Températures </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Homogeneity Test </text>
+            <text lang="fr"> Test d'homogénéité </text>
         </submenu>
     </menu>
     <menu id="merging.data">
@@ -125,84 +151,111 @@
         </submenu>
         <submenu id="1">
             <text lang="en"> Spatial Interpolation </text>
+            <text lang="fr"> Interpolation Spatiale </text>
         </submenu>
         <submenu id="2">
             <text lang="en"> Temperature - Reanalysis Downscaling </text>
+            <text lang="fr"> Température - Downscaling des Réanalyses </text>
         </submenu>
         <submenu id="2-1">
             <text lang="en"> Compute Downscaling Coefficients </text>
+            <text lang="fr"> Calcul Coefficients Downscaling</text>
         </submenu>
         <submenu id="2-2">
             <text lang="en"> Reanalysis Downscaling </text>
+            <text lang="fr"> Downscaling Réanalyses </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> Merging </text>
+            <text lang="fr"> Fusion </text>
         </submenu>
         <submenu id="3-1">
             <text lang="en"> Merging Rainfall </text>
+            <text lang="fr"> Fusion Pluie </text>
         </submenu>
         <submenu id="3-2">
             <text lang="en"> Merging Temperature </text>
+            <text lang="fr"> Fusion Température </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Merging - Advanced </text>
+            <text lang="fr"> Fusion - Avancée </text>
         </submenu>
         <submenu id="4-1">
             <text lang="en"> Merging Rainfall </text>
+            <text lang="fr"> Fusion Pluie </text>
         </submenu>
         <submenu id="4-1-1">
             <text lang="en"> Compute mean Gauge-RFE bias </text>
+            <text lang="fr"> Calcul bias moyen Stations-RFE </text>
         </submenu>
         <submenu id="4-1-2">
             <text lang="en"> Apply bias correction </text>
+            <text lang="fr"> Correction de biais </text>
         </submenu>
         <submenu id="4-1-3">
             <text lang="en"> Compute Spatio-temporal Trend Coefficients </text>
+            <text lang="fr"> Calcul coefficients Tendance Spatio-Temporelle </text>
         </submenu>
         <submenu id="4-1-4">
             <text lang="en"> Merging Data </text>
+            <text lang="fr"> Fusion Données </text>
         </submenu>
         <submenu id="4-2">
             <text lang="en"> Merging Temperature </text>
+            <text lang="fr"> Fusion Température </text>
         </submenu>
         <submenu id="4-2-1">
             <text lang="en"> Compute Bias Coefficients </text>
+            <text lang="fr"> Calcul Coefficients de Biais </text>
         </submenu>
         <submenu id="4-2-2">
             <text lang="en"> Apply bias correction </text>
+            <text lang="fr"> Correction de biais </text>
         </submenu>
         <submenu id="4-2-3">
             <text lang="en"> Compute Spatio-temporal Trend Coefficients </text>
+            <text lang="fr"> Calcul coefficients Tendance Spatio-Temporelle </text>
         </submenu>
         <submenu id="4-2-4">
             <text lang="en"> Merging Data </text>
+            <text lang="fr"> Fusion Données </text>
         </submenu>
         <submenu id="5">
             <text lang="en"> Scale merged data </text>
+            <text lang="fr"> Scale données fusionnées </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Updating dekadal Rainfall </text>
+            <text lang="fr"> Mise à jour Pluie décadaire </text>
         </submenu>
         <submenu id="7">
             <text lang="en"> Validation method </text>
+            <text lang="fr"> Méthode Validation </text>
         </submenu>
         <submenu id="7-1">
             <text lang="en"> Hold-Out Validation </text>
+            <text lang="fr"> Hold-Out Validation </text>
         </submenu>
         <submenu id="7-1-1">
             <text lang="en"> Precipitation </text>
+            <text lang="fr"> Précipitation </text>
         </submenu>
         <submenu id="7-1-2">
             <text lang="en"> Temperature </text>
+            <text lang="fr"> Température </text>
         </submenu>
         <submenu id="7-2">
             <text lang="en"> Leave-One-Out Cross-Validation </text>
+            <text lang="fr"> Leave-One-Out Cross-Validation </text>
         </submenu>
         <submenu id="7-2-1">
             <text lang="en"> Precipitation </text>
+            <text lang="fr"> Précipitation </text>
         </submenu>
         <submenu id="7-2-2">
             <text lang="en"> Temperature </text>
+            <text lang="fr"> Température </text>
         </submenu>
     </menu>
     <menu id="data.analysis">
@@ -212,72 +265,95 @@
         </submenu>
         <submenu id="1">
             <text lang="en"> Data Extraction </text>
+            <text lang="fr"> Extraction Données </text>
         </submenu>
         <submenu id="2">
             <text lang="en"> Summary Statistics </text>
+            <text lang="fr"> Synthèses Statistiques </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> Derived Climate Variables </text>
+            <text lang="fr"> Dérivation Variables Climatiques </text>
         </submenu>
         <submenu id="3-1">
             <text lang="en"> Temperature Variables </text>
+            <text lang="fr"> Variables de Température </text>
         </submenu>
         <submenu id="3-2">
             <text lang="en"> Potential Evapotranspiration </text>
+            <text lang="fr"> Evapotranspiration Potentielle </text>
         </submenu>
         <submenu id="3-3">
             <text lang="en"> Water Balance </text>
+            <text lang="fr"> Bilan Hydrique </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Compute Climatologies </text>
+            <text lang="fr"> Calcul Climatologies </text>
         </submenu>
         <submenu id="4-1">
             <text lang="en"> Climatologies </text>
+            <text lang="fr"> Climatologies </text>
         </submenu>
         <submenu id="4-2">
             <text lang="en"> Anomalies </text>
+            <text lang="fr"> Anomalies </text>
         </submenu>
         <submenu id="5">
             <text lang="en"> Spatial Analysis </text>
+            <text lang="fr"> Analyses Spatiales </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Daily Rainfall Analysis </text>
+            <text lang="fr"> Analyses Pluies Journalières </text>
         </submenu>
         <submenu id="7">
             <text lang="en"> Rainy Season Characteristics </text>
+            <text lang="fr"> Charactéristiques Saison Pluie </text>
         </submenu>
         <submenu id="7-1">
             <text lang="en"> Season Onset </text>
+            <text lang="fr"> Début Saison </text>
         </submenu>
         <submenu id="7-2">
             <text lang="en"> Season Cessation </text>
+            <text lang="fr"> Fin Saison </text>
         </submenu>
         <submenu id="7-3">
             <text lang="en"> Season Length </text>
+            <text lang="fr"> Longueur Saison </text>
         </submenu>
         <submenu id="8">
             <text lang="en"> Rainy Season Analysis </text>
+            <text lang="fr"> Analyses Saison Pluie </text>
         </submenu>
         <submenu id="9">
             <text lang="en"> Climate Extremes Indices </text>
+            <text lang="fr"> Indices Extremes Climatiques </text>
         </submenu>
         <submenu id="9-1">
             <text lang="en"> Precipitation </text>
+            <text lang="fr"> Précipitation </text>
         </submenu>
         <submenu id="9-2">
             <text lang="en"> Temperature </text>
+            <text lang="fr"> Température </text>
         </submenu>
         <submenu id="10">
             <text lang="en"> Drought Indices </text>
+            <text lang="fr"> Indices Sécheresse </text>
         </submenu>
         <submenu id="10-1">
             <text lang="en"> Standardized Precipitation Index (SPI) </text>
+            <text lang="fr"> Indices Standardisés de Précipitation (SPI) </text>
         </submenu>
         <submenu id="10-2">
             <text lang="en"> Standardized Precipitation Evapotranspiration Index (SPEI) </text>
+            <text lang="fr"> Indices Standardisés de Précipitation Evapotranspiration (SPEI) </text>
         </submenu>
         <submenu id="10-3">
             <text lang="en"> Deciles </text>
+            <text lang="fr"> Déciles </text>
         </submenu>
     </menu>
     <menu id="plot.data">
@@ -287,21 +363,27 @@
         </submenu>
         <submenu id="1">
             <text lang="en"> Plot CDT Station Data </text>
+            <text lang="fr"> Visualisation données CDT </text>
         </submenu>
         <submenu id="2">
             <text lang="en"> Plot CDT Gridded Dataset </text>
+            <text lang="fr"> Visualisation données grilles </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> Plot NetCDF Data (One File) </text>
+            <text lang="fr"> Visualisation NetCDF (Un Fichier) </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Plot NetCDF Data (Sequential Files) </text>
+            <text lang="fr"> Visualisation NetCDF (Fichiers Séquentiels) </text>
         </submenu>
         <submenu id="5">
             <text lang="en"> Plot NetCDF Data (Several Files) </text>
+            <text lang="fr"> Visualisation NetCDF (Plusieurs fichiers) </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Plot Merging Outputs </text>
+            <text lang="fr"> Visualisation Sorties Fusion </text>
         </submenu>
     </menu>
     <menu id="help">
@@ -311,9 +393,11 @@
         </submenu>
         <submenu id="1">
             <text lang="en"> CDT User Guide </text>
+            <text lang="fr"> Guide CDT </text>
         </submenu>
         <submenu id="2">
             <text lang="en"> About CDT </text>
+            <text lang="fr"> A propos de CDT </text>
         </submenu>
     </menu>
 </menu_bar>
