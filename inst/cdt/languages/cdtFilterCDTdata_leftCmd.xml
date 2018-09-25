@@ -3,35 +3,45 @@
     <widget>
         <label id="1">
             <text lang="en"> Input CDT data </text>
+            <text lang="fr"> Données d'entrée CDT </text>
         </label>
         <label id="2">
             <text lang="en"> Filter Stations with </text>
+            <text lang="fr"> Filtrer les Stations avec </text>
         </label>
         <label id="3">
             <text lang="en"> Non-missing values </text>
+            <text lang="fr"> Valeurs non manquantes </text>
         </label>
         <label id="4">
             <text lang="en"> File to save filtered data </text>
+            <text lang="fr"> Fichier de sauvegarde des données filtrées </text>
         </label>
         <button id="1">
             <text lang="en"> Filter Data </text>
+            <text lang="fr"> Filter les données </text>
         </button>
     </widget>
     <message>
         <content id="1">
             <text lang="en"> Filtering data ........... </text>
+            <text lang="fr"> Filtrage des données en cours..... </text>
         </content>
         <content id="2">
             <text lang="en"> Filtering CDT data finished successfully </text>
+            <text lang="fr"> Filtrage des données CDT terminé avec succès </text>
         </content>
         <content id="3">
             <text lang="en"> Filtering CDT data failed </text>
+            <text lang="fr"> Filtrage des données CDT échoué </text>
         </content>
         <content id="4">
             <text lang="en"> No input CDT data found </text>
+            <text lang="fr"> Aucune donnée d'entrée CDT trouvée </text>
         </content>
         <content id="5">
             <text lang="en"> The input data is not in a standard unambiguous CDT format </text>
+            <text lang="fr"> Les données d'entrée ne sont pas dans un format CDT standard non ambigu </text>
         </content>
     </message>
 </panel_cmd>
