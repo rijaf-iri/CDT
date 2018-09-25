@@ -2,13 +2,16 @@
 <dialog_box>
     <title>
         <text lang="en"> Configurations </text>
+        <text lang="fr"> Configurations </text>
     </title>
     <tab_title>
         <tab id="1">
             <text lang="en"> CDT Configuration </text>
+            <text lang="fr"> Configuration de CDT </text>
         </tab>
         <tab id="2">
             <text lang="en"> Tcl Configuration </text>
+            <text lang="fr"> Configuration de Tcl </text>
         </tab>
     </tab_title>
     <widget>
@@ -65,25 +68,31 @@
         <content id="1">
             <status>
                 <text lang="en"> Specify here the missing value code </text>
+                <text lang="fr"> Spécifiez ici le code des valeurs manquantes </text>
             </status>
             <tooltip>
                 <text lang="en"> Specify here the missing value code </text>
+                <text lang="fr"> Spécifiez ici le code des valeurs manquantes </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Specify here the missing value code for anomalies data </text>
+                <text lang="fr"> Spécifiez ici le code des valeurs manquantes pour les données d'anomalies </text>
             </status>
             <tooltip>
                 <text lang="en"> Specify here the missing value code for anomalies data </text>
+                <text lang="fr"> Spécifiez ici le code des valeurs manquantes pour les données d'anomalies </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Check this box if you want to use other Tcl/Tk installation </text>
+                <text lang="fr"> Cochez cette case si vous souhaitez utiliser une autre installation Tcl/Tk </text>
             </status>
             <tooltip>
                 <text lang="en"> Check this box if you want to use other Tcl/Tk installation </text>
+                <text lang="fr"> Cochez cette case si vous souhaitez utiliser une autre installation Tcl/Tk </text>
             </tooltip>
         </content>
         <content id="4">
@@ -99,9 +108,11 @@
         <content id="5">
             <status>
                 <text lang="en"> Check this box if Tktable is located under auto_path, installed with the Tcl/Tk library </text>
+                <text lang="fr"> Cochez cette case si Tktable se trouve sous auto_path, installé avec la librairie Tcl/Tk </text>
             </status>
             <tooltip>
                 <text lang="en"> Check this box if Tktable is located under auto_path, installed with the Tcl/Tk library </text>
+                <text lang="fr"> Cochez cette case si Tktable se trouve sous auto_path, installé avec la librairie Tcl/Tk </text>
             </tooltip>
         </content>
         <content id="6">
@@ -117,9 +128,11 @@
         <content id="7">
             <status>
                 <text lang="en"> Check this box if Bwidget located under auto_path, installed with the Tcl/Tk library </text>
+                <text lang="fr"> Cochez cette case si Bwidget se trouve sous auto_path, installé avec la librairie Tcl/Tk </text>
             </status>
             <tooltip>
                 <text lang="en"> Check this box if Bwidget located under auto_path, installed with the Tcl/Tk library </text>
+                <text lang="fr"> Cochez cette case si Bwidget se trouve sous auto_path, installé avec la librairie Tcl/Tk </text>
             </tooltip>
         </content>
         <content id="8">
@@ -136,21 +149,25 @@
     <message>
         <content id="1">
             <text lang="en">
-                Changing "Tcl Configuration" needs a new R session to take effect. \nChanging "CDT Configuration - Language" needs to restart CDT to take effect
-            </text>
+                Changing "Tcl Configuration" needs a new R session to take effect. \nChanging "CDT Configuration - Language" needs to restart CDT to take effect </text>
+            <text lang="fr">
+                Le Changement "Configuration de Tcl" requiert une nouvelle session R pour prendre effet. \nLe Changement "Configuration de CDT  - Langue" requiert un redemarrage de CDT pour prendre effet </text>
         </content>
         <content id="2">
             <text lang="en"> No input path for Tcl/Tk binary directory </text>
+            <text lang="fr"> Pas de chemin d'entrée pour le répertoire binaire Tcl/Tk </text>
         </content>
         <content id="3">
             <text lang="en"> does not exist </text>
-            <text lang="fr"> n'exist pas </text>
+            <text lang="fr"> n'existe pas </text>
         </content>
         <content id="4">
             <text lang="en"> No input path for Tktable </text>
+            <text lang="fr"> Pas de chemin d'entrée pour Tktable </text>
         </content>
         <content id="5">
             <text lang="en"> No input path for Bwidget </text>
+            <text lang="fr"> Pas de chemin d'entrée pour Bwidget </text>
         </content>
     </message>
 </dialog_box>
