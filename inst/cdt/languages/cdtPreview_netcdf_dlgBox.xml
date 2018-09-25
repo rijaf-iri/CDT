@@ -2,33 +2,42 @@
 <dialog_box>
     <title>
         <text lang="en"> Data Import Options </text>
+        <text lang="fr"> Options d'importation de données </text>
     </title>
     <widget>
         <label id="1">
             <text lang="en"> Data Information </text>
+            <text lang="fr"> Information sur les données </text>
         </label>
         <label id="2">
             <text lang="en"> Select Variable </text>
+            <text lang="fr"> Sélectionnez la variable </text>
         </label>
         <label id="3">
             <text lang="en"> Variable: </text>
+            <text lang="fr"> Variable: </text>
         </label>
         <label id="4">
             <text lang="en"> Longitude: </text>
+            <text lang="fr"> Longitude: </text>
         </label>
         <label id="5">
             <text lang="en"> Latitude: </text>
+            <text lang="fr"> Latitude: </text>
         </label>
     </widget>
     <message>
         <content id="1">
             <text lang="en"> Unable to open file: </text>
+            <text lang="fr"> Impossible d'ouvrir le fichier: </text>
         </content>
         <content id="2">
             <text lang="en"> Select longitude variable </text>
+            <text lang="fr"> Sélectionnez la variable de longitude </text>
         </content>
         <content id="3">
             <text lang="en"> Select latitude variable </text>
+            <text lang="fr"> Sélectionnez la variable de latitude </text>
         </content>
     </message>
 </dialog_box>

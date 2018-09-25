@@ -2,33 +2,42 @@
 <dialog_box>
     <title>
         <text lang="en"> Image export options </text>
+        <text lang="fr"> Options d'exportation d'image </text>
     </title>
     <widget>
         <label id="1">
             <text lang="en"> File to save the image </text>
+            <text lang="fr"> Fichier pour enregistrer l'image </text>
         </label>
         <label id="2">
             <text lang="en"> Image properties </text>
+            <text lang="fr"> Propriétés de l'image </text>
         </label>
         <label id="3">
             <text lang="en"> Units </text>
+            <text lang="fr"> Unités </text>
         </label>
         <label id="4">
             <text lang="en"> Resolution </text>
+            <text lang="fr"> Résolution </text>
         </label>
         <label id="5">
             <text lang="en"> Width </text>
+            <text lang="fr"> Largeur </text>
         </label>
         <label id="6">
             <text lang="en"> Height </text>
+            <text lang="fr"> Hauteur </text>
         </label>
     </widget>
     <message>
         <content id="1">
             <text lang="en"> File to save the image is missing </text>
+            <text lang="fr"> Nom du fichier de sauvegarde de l'image manquant </text>
         </content>
         <content id="2">
             <text lang="en"> Unable to save the image </text>
+            <text lang="fr"> Impossible de sauvegarder l'image </text>
         </content>
     </message>
 </dialog_box>
