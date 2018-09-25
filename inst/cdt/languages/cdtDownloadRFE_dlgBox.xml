@@ -15,11 +15,11 @@
         </button>
         <label id="1">
             <text lang="en"> Start date </text>
-            <text lang="en"> Date de début </text>
+            <text lang="fr"> Date de début </text>
         </label>
         <label id="2">
             <text lang="en"> End date </text>
-            <text lang="en"> Date de fin </text>
+            <text lang="fr"> Date de fin </text>
         </label>
         <label id="3">
             <text lang="en"> Area of interest </text>

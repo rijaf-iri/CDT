@@ -2,147 +2,184 @@
 <dialog_box>
     <title>
         <text lang="en"> Single File - Settings </text>
+        <text lang="fr"> Fichier Unique - Paramètres </text>
     </title>
     <widget>
         <checkbutton id="1">
             <text lang="en"> Coordinates included in the data </text>
+            <text lang="fr"> Coordonnées incluses dans les données </text>
         </checkbutton>
         <checkbutton id="2">
             <text lang="en"> Include elevation data </text>
+            <text lang="fr"> Inclure les données d'altitude </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Station data file </text>
+            <text lang="fr"> Fichier de données station </text>
         </label>
         <label id="2">
             <text lang="en"> Station coordinates file </text>
+            <text lang="fr"> Fichier de coordonnées de station </text>
         </label>
         <label id="3">
             <text lang="en"> Column Index </text>
+            <text lang="fr"> Indice des colonnes </text>
         </label>
         <label id="4">
             <text lang="en"> Data column number </text>
+            <text lang="fr"> Nombre de colonnes de données </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Choose the file containing the station data to be formated </text>
+                <text lang="fr"> Choisissez le fichier contenant les données de station à formater </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file in the list </text>
+                <text lang="fr"> Sélectionnez le fichier dans la liste </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
-                <text lang="en"> 'Browse file if not listed </text>
+                <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </status>
             <tooltip>
-                <text lang="en"> 'Browse file if not listed </text>
+                <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Choose the file containing the station coordinates </text>
+                <text lang="fr"> Choisissez le fichier contenant les coordonnées de station </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file in the list </text>
+                <text lang="fr"> Sélectionnez le fichier dans la liste </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> Include elevation data into the output CDT format </text>
+                <text lang="fr"> Inclure les données d'altitude dans le format CDT de sortie </text>
             </status>
             <tooltip>
                 <text lang="en"> Include elevation data into the output CDT format </text>
+                <text lang="fr"> Inclure les données d'altitude dans le format CDT de sortie </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Column index containing the station ID </text>
+                <text lang="fr"> Indice de colonne contenant l'ID de la station </text>
             </status>
             <tooltip>
                 <text lang="en"> Column index containing the station ID </text>
+                <text lang="fr"> Indice de colonne contenant l'ID de la station </text>
             </tooltip>
         </content>
         <content id="7">
             <status>
                 <text lang="en"> Column index from which observed data start </text>
+                <text lang="fr"> Index de colonne à partir duquel les données observées commencent </text>
             </status>
             <tooltip>
                 <text lang="en"> Column index from which observed data start </text>
+                <text lang="fr"> Index de colonne à partir duquel les données observées commencent </text>
             </tooltip>
         </content>
         <content id="8">
             <status>
                 <text lang="en"> Column index containing the longitude </text>
+                <text lang="fr"> Index de colonne contenant la longitude </text>
             </status>
             <tooltip>
                 <text lang="en"> Column index containing the longitude </text>
+                <text lang="fr"> Index de colonne contenant la longitude </text>
             </tooltip>
         </content>
         <content id="9">
             <status>
                 <text lang="en"> Column index containing the latitude </text>
+                <text lang="fr"> Index de colonne contenant la latitude </text>
             </status>
             <tooltip>
                 <text lang="en"> Column index containing the latitude </text>
+                <text lang="fr"> Index de colonne contenant la latitude </text>
             </tooltip>
         </content>
         <content id="10">
             <status>
                 <text lang="en"> Column index containing the elevation data </text>
+                <text lang="fr"> Index de colonne contenant les données d'altitude </text>
             </status>
             <tooltip>
                 <text lang="en"> Column index containing the elevation data </text>
+                <text lang="fr"> Index de colonne contenant les données d'altitude </text>
             </tooltip>
         </content>
         <content id="11">
             <status>
                 <text lang="en"> Column index containing the years </text>
+                <text lang="fr"> Index de colonne contenant les années </text>
             </status>
             <tooltip>
                 <text lang="en"> Column index containing the years </text>
+                <text lang="fr"> Index de colonne contenant les années </text>
             </tooltip>
         </content>
         <content id="12">
             <status>
                 <text lang="en"> Column index containing the months </text>
+                <text lang="fr"> Index de colonne contenant les mois </text>
             </status>
             <tooltip>
                 <text lang="en"> Column index containing the months </text>
+                <text lang="fr"> Index de colonne contenant les mois </text>
             </tooltip>
         </content>
         <content id="13">
             <status>
                 <text lang="en"> Column index containing the days or dekad </text>
+                <text lang="fr"> Index de colonne contenant les jours ou décades </text>
             </status>
             <tooltip>
                 <text lang="en"> Column index containing the days or dekad </text>
+                <text lang="fr"> Index de colonne contenant les jours ou décades </text>
             </tooltip>
         </content>
         <content id="14">
             <status>
                 <text lang="en"> Number of column containing the data </text>
+                <text lang="fr"> Nombre de colonnes contenant les données </text>
             </status>
             <tooltip>
                 <text lang="en"> Number of column containing the data </text>
+                <text lang="fr"> Nombre de colonnes contenant les données </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> Select the file containing the observed data </text>
+            <text lang="fr"> Sélectionnez le fichier contenant les données observées </text>
         </content>
         <content id="2">
             <text lang="en"> Select the file containing the coordinates </text>
+            <text lang="fr"> Sélectionnez le fichier contenant les coordonnées </text>
         </content>
     </message>
 </dialog_box>
