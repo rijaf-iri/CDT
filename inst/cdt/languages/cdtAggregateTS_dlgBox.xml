@@ -14,8 +14,8 @@
             <text lang="fr"> Agrégation Series Temporelles </text>
         </label>
         <label id="2">
-            <text lang="fr"> TO </text>
-            <text lang="en"> A </text>
+            <text lang="en"> TO </text>
+            <text lang="fr"> A </text>
         </label>
         <label id="3">
             <text lang="en"> Start Month </text>
