@@ -99,5 +99,6 @@
     },
 
     // Path to the file or directory to save results
-    "outdir": ""
+    "outdir": "",
+    "validation": "HOV"
 }

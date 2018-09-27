@@ -733,12 +733,12 @@ startCDT <- function(wd = NA, lang = NA){
 					tkadd(menu.valid2, "command", label = lang.menu[["merging.data"]][["7-2-1"]],
 						command = function()
 					{
-						# refreshCDT()
-						# spinbox.state(state = 'normal')
-						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# 	Validation.LOOCV.PanelCmd('RR')
-						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-						# }
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							Validation.LOOCV.PanelCmd('RR')
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
 					})
 
 					##########
@@ -748,12 +748,12 @@ startCDT <- function(wd = NA, lang = NA){
 					tkadd(menu.valid2, "command", label = lang.menu[["merging.data"]][["7-2-2"]],
 						command = function()
 					{
-						# refreshCDT()
-						# spinbox.state(state = 'normal')
-						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# 	Validation.LOOCV.PanelCmd('TT')
-						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-						# }
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							Validation.LOOCV.PanelCmd('TT')
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
 					})
 
 		####################################
@@ -1489,7 +1489,7 @@ startCDT <- function(wd = NA, lang = NA){
 
 	#######
 	imglab.cdt <- tklabel(cdtfr.cdtname, image = imgAcc.cdt)
-	txtlab.cdt <- tklabel(cdtfr.cdtname, text = 'Climate Data Tools', font = cdtfont0, foreground = '#1461E2')
+	txtlab.cdt <- tklabel(cdtfr.cdtname, text = 'Climate Data Tools', font = cdtfont0, foreground = '#00227C')
 	txtlab.ver <- tklabel(cdtfr.cdtname, text = paste('Version', .cdtEnv$pkg$version), font = cdtfont1)
 	txtlab.auth <- tklabel(cdtfr.cdtname, text = 'Rija Faniriantsoa, Tufa Dinku', font = cdtfont2)
 

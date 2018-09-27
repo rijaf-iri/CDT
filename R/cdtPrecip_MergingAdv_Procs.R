@@ -239,12 +239,15 @@ Precip_MergingFunctions <- function(){
 		formule <- formula(paste0('res', '~', paste(auxvar[is.auxvar], collapse = '+')))
 		if(mrg.method == "Regression Kriging"){
 			sp.trend.aux <- .cdtData$GalParams$Merging$sp.trend.aux
-			if(sp.trend.aux) formuleRK <- formula(paste0('stn', '~', 'rfe', '+', paste(auxvar[is.auxvar], collapse = '+')))
-			else formuleRK <- formula(paste0('stn', '~', 'rfe'))
+			if(sp.trend.aux)
+				formuleRK <- formula(paste0('stn', '~', 'rfe', '+', paste(auxvar[is.auxvar], collapse = '+')))
+			else
+				formuleRK <- formula(paste0('stn', '~', 'rfe'))
 		}
 	}else{
 		formule <- formula(paste0('res', '~', 1))
-		if(mrg.method == "Regression Kriging") formuleRK <- formula(paste0('stn', '~', 'rfe'))
+		if(mrg.method == "Regression Kriging")
+			formuleRK <- formula(paste0('stn', '~', 'rfe'))
 	}
 
 	#############
@@ -283,6 +286,8 @@ Precip_MergingFunctions <- function(){
 	############# 
 	GalParams <- .cdtData$GalParams
 	ncInfo <- mrgParms$ncInfo
+
+	#############
 	rfeSp <- defSpatialPixels(ncInfo$xy.rfe)
 	is.regridRFE <- is.diffSpatialPixelsObj(grdSp, rfeSp, tol = 1e-07)
 
@@ -293,9 +298,10 @@ Precip_MergingFunctions <- function(){
 
 	#############
 
-	is.parallel <- doparallel(length(which(ncInfo$exist)) >= 20)
-	`%parLoop%` <- is.parallel$dofun
-	ret <- foreach(jj = seq_along(ncInfo$nc.files), .packages = c('sp', 'ncdf4')) %parLoop% {
+	ret <- cdt.foreach(seq_along(ncInfo$nc.files),
+					parsL = length(which(ncInfo$exist)) >= 20,
+					.packages = c('sp', 'ncdf4'), FUN = function(jj)
+	{
 		if(ncInfo$exist[jj]){
 			nc <- nc_open(ncInfo$nc.files[jj])
 			xrfe <- ncvar_get(nc, varid = ncInfo$ncinfo$varid)
@@ -329,7 +335,7 @@ Precip_MergingFunctions <- function(){
 			return(NULL)
 		}
 		donne.stn <- data.frame(lon = lon.stn, lat = lat.stn, stn = c(donne.stn))
-		stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = FALSE)
+		stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = TRUE)
 		if(is.null(stng)){
 			writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
 					mrgParms$merge.DIR, GalParams$output$format)
@@ -357,6 +363,7 @@ Precip_MergingFunctions <- function(){
 		nb.stn.nonZero <- length(which(noNA & locations.stn$stn > 0))
 		locations.stn <- locations.stn[noNA, ]
 
+		############
 		if(all(is.na(locations.stn$rfe))){
 			writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
 					mrgParms$merge.DIR, GalParams$output$format)
@@ -449,7 +456,7 @@ Precip_MergingFunctions <- function(){
 		# create buffer for stations
 		buffer.ina <- rgeos::gBuffer(locations.stn, width = maxdist)
 		buffer.grid <- rgeos::gBuffer(locations.stn, width = maxdist * 1.5)
-		buffer.xaddin <- rgeos::gBuffer(locations.stn, width = maxdist / sqrt(2))
+		buffer.xaddin <- rgeos::gBuffer(locations.stn, width = maxdist / 2)
 		buffer.xaddout <- rgeos::gBuffer(locations.stn, width = maxdist * 2.5)
 
 		############
@@ -577,7 +584,7 @@ Precip_MergingFunctions <- function(){
 			rm(newdata.glm)
 
 			###########
-			buffer.rnor.in <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR / sqrt(2))
+			buffer.rnor.in <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR / 2)
 			buffer.rnor.out <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR * 2.5)
 			buffer.rnor.grid <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR * 1.5)
 
@@ -664,8 +671,7 @@ Precip_MergingFunctions <- function(){
 		rm(out.mrg, rnr, newdata, xrfe)
 		gc()
 		return(0)
-	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+	})
 
 	Insert.Messages.Out('Merging finished')
 	return(0)

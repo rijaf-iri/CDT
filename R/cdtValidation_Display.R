@@ -1,5 +1,5 @@
 
-HOValidation.plotStatMaps <- function(){
+Validation.plotStatMaps <- function(){
 	mapstat <- str_trim(tclvalue(.cdtData$EnvData$statistics))
 	istat <- which(.cdtData$EnvData$Statistics$STN$description == mapstat)
 	don <- .cdtData$EnvData$Statistics$STN$statistics[istat, ]
@@ -69,7 +69,7 @@ HOValidation.plotStatMaps <- function(){
 
 ###############################
 
-HOValidation.plotGraph <- function(){
+Validation.plotGraph <- function(){
 	if(.cdtData$EnvData$GeneralParameters$stat.data == 'all'){
 		x <- c(.cdtData$EnvData$opDATA$stnStatData)
 		y <- c(.cdtData$EnvData$opDATA$ncStatData)
@@ -189,11 +189,11 @@ HOValidation.plotGraph <- function(){
 
 ###############################
 
-HOValidation.DisplayStatMaps <- function(){
+Validation.DisplayStatMaps <- function(){
 	if(is.null(.cdtData$EnvData)) return(NULL)
 	if(is.null(.cdtData$EnvData$opDATA)) return(NULL)
 
-	imgContainer <- CDT.Display.Map.inter(HOValidation.plotStatMaps, .cdtData$EnvData$tab$Maps, 'Statistics-Maps')
+	imgContainer <- CDT.Display.Map.inter(Validation.plotStatMaps, .cdtData$EnvData$tab$Maps, 'Statistics-Maps')
 	.cdtData$EnvData$tab$Maps <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Maps)
 
 	###############
@@ -202,7 +202,7 @@ HOValidation.DisplayStatMaps <- function(){
 							stn.coords = .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')])
 
 		if(xyid$plotTS){
-			imgContainer1 <- CDT.Display.Graph(HOValidation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
+			imgContainer1 <- CDT.Display.Graph(Validation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
 			.cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$Graph)
 		}
 	})

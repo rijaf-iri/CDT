@@ -1,0 +1,143 @@
+{
+    // Time step of the input data
+    "Tstep": "dekadal",
+    // Station data filename
+    "STN.file": "",
+    // Elevation data filename
+    "DEM.file": "",
+    // netcdf data
+    "NCDF": {
+        // Full path to the directory of the netcdf files
+        "dir": "",
+        // netcdf sample file
+        "sample": "",
+        // netcdf filename format 
+        "format": "rfe_%s%s%s.nc"
+    },
+
+    "LMCOEF": {
+        "dir.LMCoef": "",
+        // Filename format of the LM coef files
+        "format": "LM_Coefficient_%s.nc"
+    },
+
+    "Merging": {
+        // Merging Method:
+        // "Regression Kriging"
+        // "Spatio-Temporal LM"
+        // "Simple Bias Adjustment"
+        "mrg.method": "Regression Kriging",
+
+        // Interpolation method: IDW/Kriging
+        // IDW: Inverse Distance Weighted
+        // Kriging: Ordinary Kriging
+        "interp.method": "IDW",
+
+        // Kriging & IDW interpolation parameters
+        // nmin for gstat
+        "nmin": 3,
+        // nmax for gstat
+        "nmax": 5,
+        // maxdist for gstat (in decimal degree)
+        "maxdist": 0.45,
+        // variogram model, see gstat package for list of available model
+        "vgm.model": ["Sph", "Exp", "Gau"],
+        // using kriging of block mean values (true or false)
+        "use.block": true,
+
+        // Minimum number of stations with data to be used to do the merging
+        "min.stn": 10,
+        // Minimum number of non-zero station values to perform the merging
+        "min.non.zero": 4,
+
+        // Use auxiliary variables with GLM to calculate the spatial trend
+        "sp.trend.aux": false
+    },
+
+    // Merging date range
+    "Merging.Date": {
+        "start.year": 1981,
+        "start.mon": 1,
+        "start.day": 1,
+        "end.year": 2016,
+        "end.mon": 12,
+        "end.day": 3,
+        // Months on which merging will be performed
+        "Months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    },
+
+    "RnoR": {
+        // use Rain-no-Rain mask (true or false)
+        "use.RnoR": true,
+        // Maximum distance (in decimal degrees) for interpolating Rain-no-Rain mask
+        "maxdist.RnoR": 0.15,
+        // Smooth Rain-no-Rain mask (true or false)
+        "smooth.RnoR": true,
+        // wet day definition, rainfall >= wet.day
+        "wet.day": 1.0
+    },
+
+    // Add auxiliary variables
+    "auxvar": {
+        "dem": false,
+        "slope": false,
+        "aspect": false,
+        "lon": false,
+        "lat": false
+    },
+
+    // Validation date for aggregation
+    "date.range": {
+        // start year 
+        "start.year": 1981,
+        // end year
+        "end.year": 2016,
+        // start month 
+        "start.month": 1,
+        // end month
+        "end.month": 12
+    },
+
+    // Data aggregation
+    "aggr.series": {
+        // use aggregated data
+        "aggr.data": false,
+        // Function to be used to aggregate the series: "sum", "mean", "count" 
+        "aggr.fun": "sum",
+        // Minimum fraction of available data that must be present for each time step of the aggregated series
+        "min.frac": 0.95,
+        // Comparison operator to be used to count event
+        "opr.fun": ">=",
+        // user defined threshold filter applied to events
+        "opr.thres": 0
+    },
+
+    "dicho.fcst": {
+        // Comparison operator to be used to to separate "yes" and "no"
+        "opr.fun": ">=",
+        // user defined threshold filter applied to events
+        "opr.thres": 1
+    },
+
+    // Data to use to calculate statistics
+    // All data: "all"
+    // Spatial average: "avg"
+    // Per station: "stn"
+    "stat.data": "all",
+
+    // add shp or dem to plot
+    "add.to.plot": {
+        // add boundaries
+        "add.shp": false,
+        // shapefile filename
+        "shp.file": "",
+        // add elevation map
+        "add.dem": false,
+        // dem filename
+        "dem.file": ""
+    },
+
+    // Path to the file or directory to save results
+    "outdir": "",
+    "validation": "LOOCV"
+}

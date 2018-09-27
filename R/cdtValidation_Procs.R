@@ -1,9 +1,16 @@
 
-HandOutValidationDataProcs <- function(GeneralParameters){
-	if(tclvalue(.cdtData$EnvData$hovd) == "1"){
+ValidationDataProcs <- function(GeneralParameters){
+	if(GeneralParameters$validation == "HOV"){
+		data.exist <- tclvalue(.cdtData$EnvData$hovd) == "1"
+		dir.prefix <- 'HOVALIDATION_'
+	}else{
+		data.exist <- tclvalue(.cdtData$EnvData$loocv) == "1"
+		dir.prefix <- 'LOOCVALIDATION_'
+	}
+	if(data.exist){
 		outValidation <- dirname(.cdtData$EnvData$file.hovd)
 	}else{
-		outValidation <- file.path(GeneralParameters$outdir, paste0('HOVALIDATION_',
+		outValidation <- file.path(GeneralParameters$outdir, paste0(dir.prefix,
 									file_path_sans_ext(GeneralParameters$STN.file)))
 	}
 

@@ -22,9 +22,9 @@ is.HelpServerRunning <- function(){
 
 ##############################################
 ## Create parallel loop
-doparallel <- function(condition, nb.cores = detectCores() - 1,
-						okpar = if(nb.cores < 3) FALSE else TRUE)
+doparallel <- function(condition, nb.cores = detectCores() - 1)
 {
+	okpar <- if(detectCores() < 3) FALSE else TRUE
 	if(okpar & condition){
 		klust <- makeCluster(nb.cores)
 		registerDoParallel(klust)
@@ -35,7 +35,40 @@ doparallel <- function(condition, nb.cores = detectCores() - 1,
 		`%dofun%` <- `%do%`
 		closeklust <- FALSE
 	}
-	list(dofun = `%dofun%`, cluster = klust, stop = closeklust)
+	list(dofun = `%dofun%`, cluster = klust,
+		stop = closeklust, parLL = closeklust)
+}
+
+##############################################
+## foreach, use lapply if not parallel
+
+cdt.foreach <- function(loopL, parsL = NULL, ..., FUN)
+{
+	FUN <- match.fun(FUN)
+
+	nb.cores <- detectCores() - 1
+	if(!is.null(parsL)){
+		if(is.logical(parsL)){
+			parsL <- list(condition = parsL, nb.cores = nb.cores)
+		}else{
+			if(is.null(parsL$condition)) parsL$condition <- FALSE
+			if(is.null(parsL$nb.cores)) parsL$nb.cores <- nb.cores
+		}
+	}else{
+		parsL <- list(condition = FALSE, nb.cores = nb.cores)
+	}
+	is.parallel <- do.call(doparallel, parsL)
+
+	if(is.parallel$parLL){
+		`%parLoop%` <- is.parallel$dofun
+		ret.loop <- foreach(jloop = loopL, ...) %parLoop% FUN(jloop)
+		stopCluster(is.parallel$cluster)
+	}else{
+		.lapply <- function(X, FUN) lapply(X, FUN)
+		ret.loop <- .lapply(loopL, FUN)
+	}
+
+	return(ret.loop)
 }
 
 ##############################################

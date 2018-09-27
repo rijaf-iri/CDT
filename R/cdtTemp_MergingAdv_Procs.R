@@ -210,12 +210,15 @@ Temp_MergingFunctions <- function(){
 		formule <- formula(paste0('res', '~', paste(auxvar[is.auxvar], collapse = '+')))
 		if(mrg.method == "Regression Kriging"){
 			sp.trend.aux <- .cdtData$GalParams$Merging$sp.trend.aux
-			if(sp.trend.aux) formuleRK <- formula(paste0('stn', '~', 'tmp', '+', paste(auxvar[is.auxvar], collapse = '+')))
-			else formuleRK <- formula(paste0('stn', '~', 'tmp'))
+			if(sp.trend.aux)
+				formuleRK <- formula(paste0('stn', '~', 'tmp', '+', paste(auxvar[is.auxvar], collapse = '+')))
+			else
+				formuleRK <- formula(paste0('stn', '~', 'tmp'))
 		}
 	}else{
 		formule <- formula(paste0('res', '~', 1))
-		if(mrg.method == "Regression Kriging") formuleRK <- formula(paste0('stn', '~', 'tmp'))
+		if(mrg.method == "Regression Kriging")
+			formuleRK <- formula(paste0('stn', '~', 'tmp'))
 	}
 
 	#############
@@ -252,18 +255,20 @@ Temp_MergingFunctions <- function(){
 	}
 
 	############# 
+	paramsOutFmt <- .cdtData$GalParams$output$format
 	ncInfo <- mrgParms$ncInfo
+
+	#############
 	xlon <- ncInfo$ncinfo$lon
 	xlat <- ncInfo$ncinfo$lat
 	ijGrd <- grid2pointINDEX(list(lon = lon.stn, lat = lat.stn), list(lon = xlon, lat = xlat))
 
-	paramsOutFmt <- .cdtData$GalParams$output$format
-
 	#############
 
-	is.parallel <- doparallel(length(which(ncInfo$exist)) >= 10)
-	`%parLoop%` <- is.parallel$dofun
-	ret <- foreach(jj = seq_along(ncInfo$nc.files), .packages = c('sp', 'ncdf4')) %parLoop% {
+	ret <- cdt.foreach(seq_along(ncInfo$nc.files),
+					parsL = length(which(ncInfo$exist)) >= 20,
+					.packages = c('sp', 'ncdf4'), FUN = function(jj)
+	{
 		if(ncInfo$exist[jj]){
 			nc <- nc_open(ncInfo$nc.files[jj])
 			xtmp <- ncvar_get(nc, varid = ncInfo$ncinfo$varid)
@@ -291,7 +296,7 @@ Temp_MergingFunctions <- function(){
 			return(NULL)
 		}
 		donne.stn <- data.frame(lon = lon.stn, lat = lat.stn, stn = c(donne.stn))
-		stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = FALSE)
+		stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = TRUE)
 		if(is.null(stng)){
 			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
 					mrgParms$merge.DIR, paramsOutFmt)
@@ -318,6 +323,7 @@ Temp_MergingFunctions <- function(){
 		noNA <- !is.na(locations.stn$stn)
 		locations.stn <- locations.stn[noNA, ]
 
+		############
 		if(all(is.na(locations.stn$tmp))){
 			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
 					mrgParms$merge.DIR, paramsOutFmt)
@@ -355,8 +361,10 @@ Temp_MergingFunctions <- function(){
 				ina.trend <- is.na(sp.trend)
 				sp.trend[ina.trend] <- xtmp[ina.trend]
 				locations.stn$res <- NA
-				if(length(glm.stn$na.action) > 0) locations.stn$res[-glm.stn$na.action] <- glm.stn$residuals
-				else locations.stn$res <- glm.stn$residuals
+				if(length(glm.stn$na.action) > 0)
+					locations.stn$res[-glm.stn$na.action] <- glm.stn$residuals
+				else
+					locations.stn$res <- glm.stn$residuals
 			}
 		}
 
@@ -401,7 +409,7 @@ Temp_MergingFunctions <- function(){
 		# create buffer for stations
 		buffer.ina <- rgeos::gBuffer(locations.stn, width = maxdist)
 		buffer.grid <- rgeos::gBuffer(locations.stn, width = maxdist * 1.5)
-		buffer.xaddin <- rgeos::gBuffer(locations.stn, width = maxdist / sqrt(2))
+		buffer.xaddin <- rgeos::gBuffer(locations.stn, width = maxdist / 2)
 		buffer.xaddout <- rgeos::gBuffer(locations.stn, width = maxdist * 2.5)
 
 		############
@@ -497,8 +505,7 @@ Temp_MergingFunctions <- function(){
 		rm(out.mrg, xtmp, newdata)
 		gc()
 		return(0)
-	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+	})
 
 	Insert.Messages.Out('Merging finished')
 	return(0)
