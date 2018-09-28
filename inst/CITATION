@@ -1,0 +1,14 @@
+NOTE <- paste( "R package version", meta$Version )
+bibentry(
+      bibtype = "Misc",
+      title = "CDT: Climate Data Tools",
+      author = c(
+          person("Rija Faniriantsoa"),
+          person("Tufa Dinku")
+        ),
+        note = NOTE,
+      organization = "International Research Institute for Climate and Society. The Earth Institute, Columbia University",
+      address = "Palisades, NY, USA",
+      year = 2018,
+      url = "https://github.com/rijaf-iri/CDT"
+    )

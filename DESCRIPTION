@@ -1,15 +1,20 @@
 Package: CDT
 Version: 5.0
+Date: 2018-09-01
 Title: Climate Data Tools
 Description: Climate Data Tools (CDT) is a set of utility functions
     for meteorological data quality control, homogenization
     and merging station data with satellite and others proxies
     such as reanalysis, all functions are available in the GUI mode.
 Authors@R: c(
+    person("Rija", "Faniriantsoa", email = "rijaf@iri.columbia.com", role = c("aut", "cre")),
     person("Tufa", "Dinku", email = "tufa@iri.columbia.com", role = "aut"),
-    person("Bernard", "Minoungou", email = "minoungoubernard@yahoo.fr", role = "ctb"),
-    person("Rija", "Faniriantsoa", email = "rijaf@iri.columbia.com", role = c("aut", "cre"))
+    person("Bernard", "Minoungou", email = "minoungoubernard@yahoo.fr", role = "ctb", comment = "Translation to french")
     )
+Author: Rija Faniriantsoa [aut, cre],
+    Tufa Dinku [aut],
+    Bernard Minoungou [ctb]
+Maintainer: Rija Faniriantsoa <rijaf@iri.columbia.com>
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
