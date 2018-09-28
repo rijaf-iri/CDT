@@ -1,6 +1,5 @@
 Package: CDT
 Version: 5.0
-Date: 2018-09-01
 Title: Climate Data Tools
 Description: Climate Data Tools (CDT) is a set of utility functions
     for meteorological data quality control, homogenization

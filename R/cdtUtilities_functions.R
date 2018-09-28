@@ -904,3 +904,14 @@ smooth.matrix <- function(mat, ns){
 	mat[is.nan(mat)] <- NA
 	return(mat)
 }
+
+##############################################
+
+sort.filename.data <- function(X){
+	xo <- lapply(seq(ncol(X)), function(i) sort(unique(X[, i])))
+	xo <- do.call(expand.grid, xo)
+	xo <- apply(xo, 1, paste, collapse = ".")
+	X <- apply(X, 1, paste, collapse = ".")
+	xo <- xo[xo %in% X]
+	match(xo, X)
+}

@@ -22,7 +22,7 @@ StnChkCoordsFormatHtml <- function(){
 	html.f[38] <- paste0("new google.maps.LatLng(", lat.b[1], ", ", lon.b[1], "),")
 	html.f[39] <- paste0("new google.maps.LatLng(", lat.b[2], ", ", lon.b[2], ")));")
 	html.f[97] <- paste0("var titre = ", titre)
-	html.f[98] <- paste0("var contenu = ", contenu)
+	html.f[106] <- paste0("var contenu = ", contenu)
 
 	return(html.f)
 }

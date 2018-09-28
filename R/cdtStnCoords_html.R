@@ -97,7 +97,6 @@ tmp <- '<!DOCTYPE html>
             var data = stn.stncoord[i];
             var latLng = new google.maps.LatLng(data.LatX, data.LonX);
             var titre = "ID : " + data.ID + "\\r" + "Name : " + data.Name + "\\r" + "District : " + data.district + "\\r" + "info : " + data.info;
-            var contenu = "ID : " + data.ID + "<br>" + "Name : " + data.Name + "<br>" + "District : " + data.district + "<br>" + "info : " + data.info;
             var marker = new google.maps.Marker({
                 map: map,
                 position: latLng,
@@ -106,6 +105,7 @@ tmp <- '<!DOCTYPE html>
             });
             (function(marker, data) {
                 google.maps.event.addListener(marker, "click", function(e) {
+                    var contenu = "ID : " + data.ID + "<br>" + "Name : " + data.Name + "<br>" + "District : " + data.district + "<br>" + "info : " + data.info;
                     infoWindow.setContent(contenu);
                     infoWindow.open(map, marker);
                 });
