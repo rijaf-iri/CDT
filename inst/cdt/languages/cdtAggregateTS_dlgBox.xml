@@ -2,218 +2,278 @@
 <dialog_box>
     <title>
         <text lang="en"> Time Series - Aggregation </text>
+        <text lang="fr"> Series Temporelles-Agrégation </text>
     </title>
     <widget>
         <button id="1">
             <text lang="en"> Settings </text>
+            <text lang="fr"> Configurations </text>
         </button>
         <label id="1">
             <text lang="en"> Time Series Aggregation </text>
+            <text lang="fr"> Agrégation Series Temporelles </text>
         </label>
         <label id="2">
             <text lang="en"> TO </text>
+            <text lang="fr"> A </text>
         </label>
         <label id="3">
             <text lang="en"> Start Month </text>
+            <text lang="fr"> Mois de début </text>
         </label>
         <label id="4">
             <text lang="en"> Length </text>
+            <text lang="fr"> Longueur </text>
         </label>
         <label id="5">
             <text lang="en"> Type of Data </text>
+            <text lang="fr"> Type de Données </text>
         </label>
         <label id="6">
             <text lang="en"> File containing stations input data </text>
+            <text lang="fr"> Fichier contenant les données des stations </text>
         </label>
         <label id="7">
             <text lang="en"> Index file (*.rds) of the dataset </text>
+            <text lang="fr"> Fichier Index (*.rds) des données </text>
         </label>
         <label id="8">
             <text lang="en"> Directory containing the NetCDF data </text>
+            <text lang="fr"> Répertoire contenant les données netCDF </text>
         </label>
         <label id="9">
             <text lang="en"> File to save aggregated data </text>
+            <text lang="fr"> Fichier de sauvegarde des données agrégées </text>
         </label>
         <label id="10">
             <text lang="en"> Directory to save result </text>
+            <text lang="fr"> Répertoire de sauvegarde </text>
         </label>
         <label id="11">
             <text lang="en"> Aggregation Function </text>
+            <text lang="fr"> Fonction d'agrégation </text>
         </label>
         <label id="12">
             <text lang="en"> Function </text>
+            <text lang="fr"> Fonction </text>
         </label>
         <label id="13">
             <text lang="en"> Min.Frac </text>
+            <text lang="fr"> Min.Frac </text>
         </label>
         <label id="14">
             <text lang="en"> Operator </text>
+            <text lang="fr"> Opérateur </text>
         </label>
         <label id="15">
             <text lang="en"> Threshold </text>
+            <text lang="fr"> Seuil </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Select the time step of the input data to aggregate </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données d'entrée à agréger </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the time step of the input data to aggregate </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données d'entrée à agréger </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Select the time step of the aggregated data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données agrégées </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the time step of the aggregated data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données agrégées </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Enter the start month of the season (1 to 12) </text>
+                <text lang="fr"> Entrez le mois de début de la saison (1 à 12) </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the start month of the season (1 to 12) </text>
+                <text lang="fr"> Entrez le mois de début de la saison (1 à 12) </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Enter the width of the season (e.g., 3 for three-month season) </text>
+                <text lang="fr"> Entrez la longueur de la saison (ex, 3 pour une saison de trois mois) </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the width of the season (e.g., 3 for three-month season) </text>
+                <text lang="fr"> Entrez la longueur de la saison (ex, 3 pour une saison de trois mois) </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> Select the file containing the data to aggregate </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les données à agréger </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file containing the data to aggregate </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les données à agréger </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;nom données&gt;.rds </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;nom données&gt;.rds </text>
             </tooltip>
         </content>
         <content id="7">
             <status>
                 <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les données NetCDF </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les données NetCDF </text>
             </tooltip>
         </content>
         <content id="8">
             <status>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir fichier si pas répertorié </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir fichier si pas répertorié </text>
             </tooltip>
         </content>
         <content id="9">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </tooltip>
         </content>
         <content id="10">
             <status>
                 <text lang="en"> Enter the full path of the file to save aggregated data </text>
+                <text lang="fr"> Entrez le chemin complet du fichier pour sauver les données agrégées </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path of the file to save aggregated data </text>
+                <text lang="fr"> Entrez le chemin complet du fichier pour sauver les données agrégées </text>
             </tooltip>
         </content>
         <content id="11">
             <status>
-                <text lang="en"> Enter the full path to the directory to save result </text>
+                <text lang="en"> Enter the full path to the directory to save results </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire pour sauver les résultats </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to the directory to save result </text>
+                <text lang="en"> Enter the full path to the directory to save results </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire pour sauver les résultats </text>
             </tooltip>
         </content>
         <content id="12">
             <status>
-                <text lang="en"> Function that have to be applied for aggregating from daily/dekadal/monthly into\na higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean) </text>
+                <text lang="en"> Function that have to be applied for aggregating from daily/dekadal/monthly into\n a higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean) </text>
+                <text lang="fr"> Fonction à appliquer pour l'agrégation à partir de jpurnalier/décadaire/mensuel \n à pas de temps plus long (ex, pour Précipitation FUN=sum et pour Température FUN=mean) </text>
             </status>
             <tooltip>
                 <text lang="en"> Function that have to be applied for aggregating from daily/dekadal/monthly into \n a higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean) </text>
+                <text lang="fr"> Fonction à appliquer pour l'agrégation à partir de jpurnalier/décadaire/mensuel \n à pas de temps plus long (ex, pour Précipitation FUN=sum et pour Température FUN=mean) </text>
             </tooltip>
         </content>
         <content id="13">
             <status>
                 <text lang="en"> Minimum fraction of available data that must be present within each output time step </text>
+                <text lang="fr"> Fraction minimale de données disponibles devant être présentes dans chaque pas de temps de sortie </text>
             </status>
             <tooltip>
                 <text lang="en"> Minimum fraction of available data that must be present within each output time step </text>
+                <text lang="fr"> Fraction minimale de données disponibles devant être présentes dans chaque pas de temps de sortie </text>
             </tooltip>
         </content>
         <content id="14">
             <status>
                 <text lang="en"> Select the comparison operator to be used to match event </text>
+                <text lang="fr"> Sélectionnez l'opérateur de comparaison à utiliser pour faire correspondre l'événement </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the comparison operator to be used to match event </text>
+                <text lang="fr"> Sélectionnez l'opérateur de comparaison à utiliser pour faire correspondre l'événement </text>
             </tooltip>
         </content>
         <content id="15">
             <status>
                 <text lang="en"> User defined threshold applied to count event </text>
+                <text lang="fr"> Seuil défini par l'utilisateur appliqué pour compter des événements </text>
             </status>
             <tooltip>
                 <text lang="en"> User defined threshold applied to count event </text>
+                <text lang="fr"> Seuil défini par l'utilisateur appliqué pour compter des événements </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> No input file </text>
+            <text lang="fr"> Aucun fichier d'entrée </text>
         </content>
         <content id="2">
             <text lang="en"> Browse the directory or enter the file to save results </text>
+            <text lang="fr"> Parcourir le répertoire ou entrer le fichier pour sauver les résultats </text>
         </content>
         <content id="3">
             <text lang="en"> You have to set the NetCDF files parameters </text>
+            <text lang="fr"> Vous devez définir les paramètres des fichiers NetCDF </text>
         </content>
         <content id="4">
             <text lang="en"> Data aggregation finished successfully </text>
+            <text lang="fr"> Agrégation de données terminée avec succès </text>
         </content>
         <content id="5">
             <text lang="en"> Data aggregation failed </text>
+            <text lang="fr"> Agrégation de données échouée </text>
         </content>
         <content id="6">
             <text lang="en"> Aggregate time series ... </text>
+            <text lang="fr"> Agrégation des series temporelles ... </text>
         </content>
         <content id="7">
             <text lang="en"> Unable to read </text>
+            <text lang="fr"> Impossible de lire </text>
         </content>
         <content id="8">
             <text lang="en"> Time step of the dataset is not </text>
+            <text lang="fr"> Pas de temps des données inexistant </text>
         </content>
         <content id="9">
             <text lang="en"> Wrong start date </text>
+            <text lang="fr"> Date de début incorrecte </text>
         </content>
         <content id="10">
             <text lang="en"> Wrong end date </text>
+            <text lang="fr"> Date de début incorrecte </text>
         </content>
         <content id="11">
             <text lang="en"> Unable to locate netcdf files </text>
+            <text lang="fr"> Impossible de localiser les fichiers netcdf </text>
         </content>
         <content id="12">
             <text lang="en"> Netcdf data sample not found </text>
+            <text lang="fr"> Exemple de données NetCDF non trouvé </text>
         </content>
         <content id="13">
             <text lang="en"> Aggregating time series finished </text>
+            <text lang="fr"> Agrégation des series temporelles effectuée </text>
         </content>
     </message>
 </dialog_box>

@@ -2,54 +2,70 @@
 <dialog_box>
     <title>
         <text lang="en"> Raster data format conversion </text>
+        <text lang="fr"> Conversion de format de données raster </text>
     </title>
     <widget>
         <label id="1">
             <text lang="en"> Data conversion </text>
+            <text lang="fr"> Conversion de données </text>
         </label>
         <label id="2">
             <text lang="en"> FROM </text>
+            <text lang="fr"> DE </text>
         </label>
         <label id="3">
             <text lang="en"> TO </text>
+            <text lang="fr"> A </text>
         </label>
         <label id="4">
             <text lang="en"> Input/Output Directory </text>
+            <text lang="fr"> Répertoire Entrées/Sorties </text>
         </label>
         <label id="5">
             <text lang="en"> Directory containing the .nc files </text>
+            <text lang="fr"> Répertoire contenant les fichiers .nc </text>
         </label>
         <label id="6">
             <text lang="en"> Directory containing the .tif files </text>
+            <text lang="fr"> Répertoire contenant les fichiers .tif </text>
         </label>
         <label id="7">
             <text lang="en"> Directory containing the .bil/.hdr files </text>
+            <text lang="fr"> Répertoire contenant les fichiers .bil/.hdr </text>
         </label>
         <label id="8">
             <text lang="en"> Directory to save converted data </text>
+            <text lang="fr"> Répertoire de sauvegarde des données converties </text>
         </label>
         <label id="9">
             <text lang="en"> NetCDF Options </text>
+            <text lang="fr"> Options NetCDF </text>
         </label>
     </widget>
     <message>
         <content id="1">
             <text lang="en"> Provide the full path of the directory containing the input data </text>
+            <text lang="fr"> Fournissez le chemin complet du répertoire contenant les données d'entrée </text>
         </content>
         <content id="2">
             <text lang="en"> Provide the full path of the directory to save results </text>
+            <text lang="fr"> Fournissez le chemin complet du répertoire pour enregistrer les résultats </text>
         </content>
         <content id="3">
             <text lang="en"> Converting data format finished successfully </text>
+            <text lang="fr"> Conversion du format de données terminée avec succès </text>
         </content>
         <content id="4">
             <text lang="en"> Converting data format failed </text>
+            <text lang="fr"> Conversion du format de données échouée </text>
         </content>
         <content id="5">
             <text lang="en"> Raster data format conversion ...... </text>
+            <text lang="fr"> Conversion de format de données raster en cours.. </text>
         </content>
         <content id="6">
             <text lang="en"> Files not found: </text>
+            <text lang="fr"> Fichiers non trouvés: </text>
         </content>
     </message>
 </dialog_box>

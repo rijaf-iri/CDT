@@ -2,135 +2,172 @@
 <dialog_box>
     <title>
         <text lang="en"> Download Satellite Rainfall Estimate data </text>
+        <text lang="fr"> Télécharger les données de pluie estimées par satellite </text>
     </title>
     <widget>
         <button id="1">
             <text lang="en"> Download </text>
+            <text lang="fr"> Télécharger </text>
         </button>
         <button id="2">
             <text lang="en"> Cancel </text>
+            <text lang="fr"> Annuler </text>
         </button>
         <label id="1">
             <text lang="en"> Start date </text>
+            <text lang="fr"> Date de début </text>
         </label>
         <label id="2">
             <text lang="en"> End date </text>
+            <text lang="fr"> Date de fin </text>
         </label>
         <label id="3">
             <text lang="en"> Area of interest </text>
+            <text lang="fr"> Zone d'interêt </text>
         </label>
         <label id="4">
             <text lang="en"> Longitude </text>
+            <text lang="fr"> Longitude </text>
         </label>
         <label id="5">
             <text lang="en"> Latitude </text>
+            <text lang="fr"> Latitude </text>
         </label>
         <label id="6">
             <text lang="en"> Minimum </text>
+            <text lang="fr"> Minimum </text>
         </label>
         <label id="7">
             <text lang="en"> Maximum </text>
+            <text lang="fr"> Maximum </text>
         </label>
         <label id="8">
             <text lang="en"> Directory to save downloaded files </text>
+            <text lang="fr"> Répertoire pour sauver les fichiers téléchargés </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Select the data source </text>
+                <text lang="fr"> Sélectionnez la source de données </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the data source </text>
+                <text lang="fr"> Sélectionnez la source de données </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Start and end date to download RFE </text>
+                <text lang="fr"> Date de début et de fin pour télécharger RFE </text>
             </status>
             <tooltip>
                 <text lang="en"> Start and end date to download RFE </text>
+                <text lang="fr"> Date de début et de fin pour télécharger RFE </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Minimum longitude in degree decimal </text>
+                <text lang="fr"> Longitude minimum en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Minimum longitude in degree decimal </text>
+                <text lang="fr"> Longitude minimum en degré décimal </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Maximum longitude in degree decimal </text>
+                <text lang="fr"> Longitude maximum en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Maximum longitude in degree decimal </text>
+                <text lang="fr"> Longitude maximum en degré décimal </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> Minimum latitude in degree decimal </text>
+                <text lang="fr"> Latitude minimum en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Minimum latitude in degree decimal </text>
+                <text lang="fr"> Latitude minimum en degré décimal </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Maximum latitude in degree decimal </text>
+                <text lang="fr"> Latitude maximum en degré décimal </text>
             </status>
             <tooltip>
                 <text lang="en"> Maximum latitude in degree decimal </text>
+                <text lang="fr"> Latitude maximum en degré décimal </text>
             </tooltip>
         </content>
         <content id="7">
             <status>
                 <text lang="en"> Enter the full path to directory to save downloaded files </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les fichiers téléchargés </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory to save downloaded files </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les fichiers téléchargés </text>
             </tooltip>
         </content>
         <content id="8">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> Browse or enter directory to put the downloaded files </text>
+            <text lang="fr"> Parcourez ou entrez le répertoire pour mettre les fichiers téléchargés </text>
         </content>
         <content id="2">
             <text lang="en"> No Internet connection </text>
+            <text lang="fr"> Pas de connection Internet </text>
         </content>
         <content id="3">
             <text lang="en"> Downloading ................. </text>
+            <text lang="fr"> Téléchargement en cours...... </text>
         </content>
         <content id="4">
             <text lang="en"> Download Done! </text>
+            <text lang="fr"> Téléchargement effectué </text>
         </content>
         <content id="5">
             <text lang="en"> Download Failed </text>
+            <text lang="fr"> Téléchargement échoué </text>
         </content>
         <content id="6">
             <text lang="en"> Some files could not be downloaded </text>
+            <text lang="fr"> Certains fichiers ne peuvent pas être téléchargés </text>
         </content>
         <content id="7">
             <text lang="en"> Check the start date </text>
+            <text lang="fr"> Vérifiez la date de début </text>
         </content>
         <content id="8">
             <text lang="en"> Check the end date </text>
+            <text lang="fr"> Vérifier la date de fin </text>
         </content>
         <content id="9">
             <text lang="en"> Dekad must be between 1 and 3 </text>
+            <text lang="fr"> Décade doit être comprise entre 1 et 3 </text>
         </content>
         <content id="10">
             <text lang="en"> Cannot open the connection or file does not exist: </text>
+            <text lang="fr"> Impossible d'ouvrir la connexion ou le fichier n'existe pas: </text>
         </content>
     </message>
 </dialog_box>

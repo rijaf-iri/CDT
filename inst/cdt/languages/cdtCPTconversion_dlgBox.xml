@@ -2,115 +2,146 @@
 <dialog_box>
     <title>
         <text lang="en"> Conversion to CPT Format </text>
+        <text lang="fr"> Conversion au format CPT </text>
     </title>
     <widget>
         <combobox id="1">
             <option id="1">
                 <text lang="en"> CDT stations data format </text>
+                <text lang="fr"> Format de données CDT de stations </text>
             </option>
             <option id="2">
                 <text lang="en"> NetCDF gridded data </text>
+                <text lang="fr"> Données NetCDF </text>
             </option>
         </combobox>
         <button id="1">
             <text lang="en"> Settings </text>
+            <text lang="fr"> Configurations </text>
         </button>
         <label id="1">
             <text lang="en"> Format of input data </text>
+            <text lang="fr"> Format des données d'entrée </text>
         </label>
         <label id="2">
             <text lang="en"> File containing stations data </text>
+            <text lang="fr"> Fichier contenant des données de stations </text>
         </label>
         <label id="3">
             <text lang="en"> Directory of the NetCDF files </text>
+            <text lang="fr"> Répertoire des fichiers NetCDF </text>
         </label>
         <label id="4">
             <text lang="en"> Field Name </text>
+            <text lang="fr"> Nom de champ </text>
         </label>
         <label id="5">
             <text lang="en"> Field Units </text>
+            <text lang="fr"> unités du champ </text>
         </label>
         <label id="6">
             <text lang="en"> Missing Value </text>
+            <text lang="fr"> Valeurs manquantes </text>
         </label>
         <label id="7">
             <text lang="en"> File to save the output </text>
+            <text lang="fr"> Fichier pour sauver les résultats </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Select the file containing the stations data in CDT format </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les données de la station au format CDT </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file containing the stations data in CDT format </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les données des stations au format CDT </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers netcdf </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers netcdf </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Enter the full path of the file to save the result </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les résultats </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path of the file to save the result </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les résultats </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> No input data found </text>
+            <text lang="fr"> Aucune donnée d'entrée trouvée </text>
         </content>
         <content id="2">
             <text lang="en"> Provide the file to save results </text>
+            <text lang="fr"> Fournir le fichier pour enregistrer les résultats </text>
         </content>
         <content id="3">
             <text lang="en"> You have to set the netcdf files parameters </text>
+            <text lang="fr"> Vous devez définir les paramètres des fichiers netcdf </text>
         </content>
         <content id="4">
             <text lang="en"> Converting data into CPT data format finished successfully </text>
+            <text lang="fr"> La conversion des données au format de données CPT s'est terminée avec succès </text>
         </content>
         <content id="5">
             <text lang="en"> Converting data into CPT data format failed </text>
+            <text lang="fr"> La conversion des données au format de données CPT a échoué </text>
         </content>
         <content id="6">
             <text lang="en"> Conversion to CPT data format ...... </text>
+            <text lang="fr"> Conversion au format de données CPT ...... </text>
         </content>
         <content id="7">
             <text lang="en"> No netcdf data sample found </text>
+            <text lang="fr"> Aucun exemple de données netcdf trouvé </text>
         </content>
         <content id="8">
             <text lang="en"> No netcdf files found </text>
+            <text lang="fr"> Aucun fichier netcdf trouvé </text>
         </content>
     </message>
 </dialog_box>

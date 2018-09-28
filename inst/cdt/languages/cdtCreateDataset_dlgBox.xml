@@ -2,158 +2,202 @@
 <dialog_box>
     <title>
         <text lang="en"> Import NetCDF files into CDT Dataset </text>
+        <text lang="fr"> Importer des fichiers NetCDF au jeu de données CDT </text>
     </title>
     <widget>
         <label id="1">
             <text lang="en"> Directory containing the NetCDF data </text>
+            <text lang="fr"> Répertoire contenant les données NetCDF </text>
         </label>
         <label id="2">
             <text lang="en"> Settings </text>
+            <text lang="fr"> Configurations </text>
         </label>
         <label id="3">
             <text lang="en"> Date range to import </text>
+            <text lang="fr"> Plage de dates à importer </text>
         </label>
         <label id="4">
             <text lang="en"> Start date </text>
+            <text lang="fr"> Date de Début </text>
         </label>
         <label id="5">
             <text lang="en"> End date </text>
+            <text lang="fr"> Date de fin </text>
         </label>
         <label id="6">
             <text lang="en"> Year </text>
+            <text lang="fr"> Année </text>
         </label>
         <label id="7">
             <text lang="en"> Month </text>
+            <text lang="fr"> Mois </text>
         </label>
         <label id="8">
             <text lang="en"> Add new data to an existing dataset </text>
+            <text lang="fr"> Ajouter de nouvelles données à des données existantes </text>
         </label>
         <label id="9">
             <text lang="en"> Directory to put the dataset </text>
+            <text lang="fr"> Répertoire pour mettre le jeu de données </text>
         </label>
         <label id="10">
             <text lang="en"> Dataset name </text>
+            <text lang="fr"> Nom du jeu de données </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Enter the full path to the directory containing the NetCDF files </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les fichiers NetCDF </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the directory containing the NetCDF files </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les fichiers NetCDF </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Or browse here </text>
+                <text lang="fr"> Ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> Or browse here </text>
+                <text lang="fr"> Ou parcourir ici </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Setting netcdf data options </text>
+                <text lang="fr"> Définition des options de données netcdf </text>
             </status>
             <tooltip>
                 <text lang="en"> Setting netcdf data options </text>
+                <text lang="fr"> Définition des options de données netcdf </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> Start and end date to import into the data </text>
+                <text lang="fr"> Date de début et de fin d'import des données </text>
             </status>
             <tooltip>
                 <text lang="en"> Start and end date to import into the data </text>
+                <text lang="fr"> Date de début et de fin d'import des données </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Check this box to add new data to an existing dataset </text>
+                <text lang="fr"> Cochez cette case pour ajouter de nouvelles données à des données existantes </text>
             </status>
             <tooltip>
                 <text lang="en"> Check this box to add new data to an existing dataset </text>
+                <text lang="fr"> Cochez cette case pour ajouter de nouvelles données à des données existantes </text>
             </tooltip>
         </content>
         <content id="7">
             <status>
                 <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom du jeu de données&gt;.rds </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom du jeu de données&gt;.rds </text>
             </tooltip>
         </content>
         <content id="8">
             <status>
                 <text lang="en"> Enter the full path to directory to put the dataset </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour mettre le jeu de données </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory to put the dataset </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour mettre le jeu de données </text>
             </tooltip>
         </content>
         <content id="9">
             <status>
                 <text lang="en"> Specify the dataset name </text>
+                <text lang="fr"> Spécifiez le nom du jeu de données </text>
             </status>
             <tooltip>
                 <text lang="en"> Specify the dataset name </text>
+                <text lang="fr"> Spécifiez le nom du jeu de données </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> Select or enter the directory containing the NetCDF files </text>
+            <text lang="fr"> Sélectionnez ou entrez le répertoire contenant les fichiers NetCDF </text>
         </content>
         <content id="2">
             <text lang="en"> Select or enter the path to the file &lt;dataset name&gt;.rds </text>
+            <text lang="fr"> Sélectionnez ou entrez le chemin d'accès au fichier &lt;Nom du jeu de données&gt;.rds </text>
         </content>
         <content id="3">
             <text lang="en"> Browse or enter the path to directory to put the dataset </text>
+            <text lang="fr"> Parcourez ou entrez le chemin d'accès au répertoire pour placer le jeu de données </text>
         </content>
         <content id="4">
             <text lang="en"> CDT dataset creation finished successfully </text>
+            <text lang="fr"> Création du jeu de données CDT terminée avec succès </text>
         </content>
         <content id="5">
             <text lang="en"> CDT dataset creation values failed </text>
+            <text lang="fr"> Création des valeurs de jeu de données CDT échouée </text>
         </content>
         <content id="6">
             <text lang="en"> Update CDT dataset ..... </text>
+            <text lang="fr"> Mise à jour des jeux de données CDT en cours ..... </text>
         </content>
         <content id="7">
             <text lang="en"> Directory containing the data not found </text>
+            <text lang="fr"> Répertoire contenant les données non trouvées </text>
         </content>
         <content id="8">
             <text lang="en"> Directory 'DATA' not found </text>
+            <text lang="fr"> Répertoire 'DATA' introuvable </text>
         </content>
         <content id="9">
-            <text lang="en"> does not found </text>
+            <text lang="en"> not found </text>
+            <text lang="fr"> introuvable </text>
         </content>
         <content id="10">
             <text lang="en"> Unable to read </text>
+            <text lang="fr"> Impossible de lire </text>
         </content>
         <content id="11">
             <text lang="en"> Create CDT dataset ..... </text>
+            <text lang="fr"> Création des jeux de données CDT en cours ..... </text>
         </content>
         <content id="12">
             <text lang="en"> No netcdf data sample found </text>
+            <text lang="fr"> Aucun exemple de données netcdf trouvé </text>
         </content>
         <content id="13">
-            <text lang="en"> NCDF data not found </text>
+            <text lang="en"> NetCDF data not found </text>
+            <text lang="fr"> Données NetCDF introuvables </text>
         </content>
         <content id="14">
             <text lang="en"> Data already up to date </text>
+            <text lang="fr"> Données déjà à jour </text>
         </content>
         <content id="15">
             <text lang="en"> Data have different resolution or bbox </text>
+            <text lang="fr"> Les données ont une résolution ou des limites différentes </text>
         </content>
     </message>
 </dialog_box>

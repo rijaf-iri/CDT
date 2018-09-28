@@ -2,91 +2,116 @@
 <dialog_box>
     <title>
         <text lang="en"> GrADS Data Descriptor File </text>
+        <text lang="fr"> Fichier de descripteur de données GrADS </text>
     </title>
     <widget>
         <button id="1">
             <text lang="en"> Settings </text>
+            <text lang="fr"> Paramètres </text>
         </button>
         <label id="1">
             <text lang="en"> Directory containing the NetCDF data </text>
+            <text lang="fr"> Répertoire contenant les données NetCDF </text>
         </label>
         <label id="2">
             <text lang="en"> File to save the descriptor file </text>
+            <text lang="fr"> Fichier pour enregistrer le fichier descripteur </text>
         </label>
         <label id="3">
             <text lang="en"> Date Range </text>
+            <text lang="fr"> Plage des dates </text>
         </label>
         <label id="4">
             <text lang="en"> Start date </text>
+            <text lang="fr"> Date de début </text>
         </label>
         <label id="5">
             <text lang="en"> End date </text>
+            <text lang="fr"> Date de fin </text>
         </label>
         <label id="6">
             <text lang="en"> Year </text>
+            <text lang="fr"> Année </text>
         </label>
         <label id="7">
             <text lang="en"> Month </text>
+            <text lang="fr"> Mois </text>
         </label>
         <label id="8">
             <text lang="en"> Day </text>
+            <text lang="fr"> Jour </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers netcdf </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers netcdf </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcouri ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Enter the full path of the file to save the GrADS Data Descriptor File </text>
+                <text lang="fr"> Entrez le chemin complet du fichier pour enregistrer le fichier de descripteur de données GrADS </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path of the file to save the GrADS Data Descriptor File </text>
+                <text lang="fr"> Entrez le chemin complet du fichier pour enregistrer le fichier de descripteur de données GrADS </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> No input data found </text>
+            <text lang="fr"> Aucune donnée d'entrée trouvée </text>
         </content>
         <content id="2">
             <text lang="en"> Provide the file to save the GrADS Data Descriptor File </text>
+            <text lang="fr"> Fournir le fichier pour enregistrer le fichier de descripteur de données GrADS </text>
         </content>
         <content id="3">
             <text lang="en"> You have to set the netcdf files parameters </text>
+            <text lang="fr"> Vous devez définir les paramètres des fichiers netcdf </text>
         </content>
         <content id="4">
             <text lang="en"> Creating GrADS data descriptor file finished successfully </text>
+            <text lang="fr"> Création du fichier descripteur de données GrADS réussie </text>
         </content>
         <content id="5">
             <text lang="en"> Creating GrADS data descriptor file failed </text>
+            <text lang="fr"> Création du fichier descripteur de données GrADS échoué </text>
         </content>
         <content id="6">
             <text lang="en"> No netcdf files found </text>
+            <text lang="fr"> Aucun fichier netcdf trouvé </text>
         </content>
         <content id="7">
             <text lang="en"> No netcdf data sample found </text>
+            <text lang="fr"> Aucun exemple de données netcdf trouvé </text>
         </content>
     </message>
 </dialog_box>

@@ -2,45 +2,56 @@
 <dialog_box>
     <title>
         <text lang="en"> NetCDF Data - Settings </text>
+        <text lang="fr"> Données NetCDF - Paramètres </text>
     </title>
     <widget>
         <label id="1">
             <text lang="en"> Netcdf data sample file </text>
+            <text lang="fr"> Fichier exemple de données Netcdf </text>
         </label>
         <label id="2">
             <text lang="en"> Netcdf data filenames format </text>
+            <text lang="fr"> Format des fichiers de données Netcdf </text>
         </label>
         <label id="3">
             <text lang="en"> Replace the year, month, dekad, pentad or day by\n </text>
+            <text lang="fr"> Remplacer l’année, le mois, la décade, la pentade ou le jour par\n </text>
         </label>
         <label id="4">
             <text lang="en"> Year: %Y; Month: %M; Dekad: %T; Pentad: %P; Day: %D\n </text>
+            <text lang="fr"> Année: %Y; Mois: %M; Décade: %T; Pentade: %P; Jour: %D\n </text>
         </label>
         <label id="5">
             <text lang="en"> Example:\n </text>
+            <text lang="fr"> Exemple:\n </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
-                <text lang="en"> File containing a sample of the data in netcdf </text>
+                <text lang="en"> File containing a sample of the netcdf data </text>
+                <text lang="fr"> Fichier contenant un exemple de données netcdf </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Enter the filename format of netcdf data (see below) </text>
+                <text lang="fr"> Entrez le format de nom de fichier des données netcdf (voir ci-dessous) </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the filename format of netcdf data (see below) </text>
+                <text lang="fr"> Entrez le format de nom de fichier des données netcdf (voir ci-dessous) </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> You have to provide a sample file </text>
+            <text lang="fr"> Vous devez fournir un fichier exemple </text>
         </content>
     </message>
 </dialog_box>

@@ -2,47 +2,60 @@
 <dialog_box>
     <title>
         <text lang="en"> Data Import Options </text>
+        <text lang="fr"> Options d'importation de données </text>
     </title>
     <widget>
         <label id="1">
             <text lang="en"> Delimiters </text>
+            <text lang="fr"> Délimiteurs </text>
         </label>
         <label id="2">
             <text lang="en"> Header </text>
+            <text lang="fr"> Entête </text>
         </label>
         <label id="3">
             <text lang="en"> Start import at row </text>
+            <text lang="fr"> Commencer l'importation à la ligne </text>
         </label>
         <label id="4">
             <text lang="en"> First row as header </text>
+            <text lang="fr"> Première ligne en en-tête </text>
         </label>
         <label id="5">
             <text lang="en"> Preview of </text>
+            <text lang="fr"> Aperçu de </text>
         </label>
         <label id="6">
             <text lang="en"> Missing Value </text>
+            <text lang="fr"> Valeur manquante </text>
         </label>
         <radiobutton id="1">
             <radio id="1">
                 <text lang="en"> Tab </text>
+                <text lang="fr"> Tabulation </text>
             </radio>
             <radio id="2">
                 <text lang="en"> Space </text>
+                <text lang="fr"> Espace </text>
             </radio>
             <radio id="3">
                 <text lang="en"> Semicolon </text>
+                <text lang="fr"> Semicolonne </text>
             </radio>
             <radio id="4">
                 <text lang="en"> Comma </text>
+                <text lang="fr"> Virgule </text>
             </radio>
             <radio id="5">
                 <text lang="en"> Other: </text>
+                <text lang="fr"> Autre: </text>
             </radio>
         </radiobutton>
     </widget>
     <message>
         <content id="1">
             <text lang="en"> Unable to open file: </text>
+            <text lang="fr"> Impossible d'ouvrir le fichier: </text>
         </content>
     </message>
 </dialog_box>

@@ -2,134 +2,168 @@
 <dialog_box>
     <title>
         <text lang="en"> Multiple Files - Settings </text>
+        <text lang="fr"> Fichiers Multiples- Paramètres </text>
     </title>
     <widget>
         <radiobutton id="1">
             <radio id="1">
                 <text lang="en"> One variable </text>
+                <text lang="fr"> Une variable </text>
             </radio>
             <radio id="2">
                 <text lang="en"> Rain Tmax Tmin </text>
+                <text lang="fr"> Pluie Tmax Tmin </text>
             </radio>
         </radiobutton>
         <checkbutton id="1">
             <text lang="en"> Include elevation data </text>
+            <text lang="fr"> Inclure les données d'élévation </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> File Format </text>
+            <text lang="fr"> Format de fichier </text>
         </label>
         <label id="2">
             <text lang="en"> Dates Format </text>
+            <text lang="fr"> Format des dates </text>
         </label>
         <label id="3">
             <text lang="en"> Directory of Station data files </text>
+            <text lang="fr"> Répertoire des fichiers de station </text>
         </label>
         <label id="4">
             <text lang="en"> Station Data Files Sample </text>
+            <text lang="fr"> Exemple de fichiers de station </text>
         </label>
         <label id="5">
             <text lang="en"> Station Coordinates File </text>
+            <text lang="fr"> Fichier de coordonnées de station </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> The file contains 1 variable </text>
+                <text lang="fr"> Le fichier contient 1 variable </text>
             </status>
             <tooltip>
                 <text lang="en"> The file contains 1 variable </text>
+                <text lang="fr"> Le fichier contient 1 variable </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> The file contains Rain, Tmax and Tmin in this order </text>
+                <text lang="fr"> Le fichier contient Pluie, Tmax et Tmin dans cet ordre </text>
             </status>
             <tooltip>
                 <text lang="en"> The file contains Rain, Tmax and Tmin in this order </text>
+                <text lang="fr"> Le fichier contient Pluie, Tmax et Tmin dans cet ordre </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Dates are grouped </text>
+                <text lang="fr"> Les dates sont groupées </text>
             </status>
             <tooltip>
                 <text lang="en"> Dates are grouped </text>
+                <text lang="fr"> Les dates sont groupées </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Dates are separated by space, tabulation or CSV format </text>
+                <text lang="fr"> Dates séparées par un espace, une tabulation ou au format CSV </text>
             </status>
             <tooltip>
                 <text lang="en"> Dates are separated by space, tabulation or CSV format </text>
+                <text lang="fr"> Dates séparées par un espace, une tabulation ou au format CSV </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> Enter the full path to directory containing the station files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers de station </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory containing the station files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers de station </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </tooltip>
         </content>
         <content id="7">
             <status>
                 <text lang="en"> File containing a sample of data </text>
+                <text lang="fr"> Fichier contenant un exemple de données </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file in the list </text>
+                <text lang="fr"> Sélectionnez le fichier dans la liste </text>
             </tooltip>
         </content>
         <content id="8">
             <status>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </tooltip>
         </content>
         <content id="9">
             <status>
-                <text lang="en"> File containing the ids and coordinates of the stations </text>
+                <text lang="en"> File containing the IDs and coordinates of the stations </text>
+                <text lang="fr"> Fichier contenant les IDs et les coordonnées des stations </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file in the list </text>
+                <text lang="fr"> Sélectionnez le fichier dans la liste </text>
             </tooltip>
         </content>
         <content id="10">
             <status>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </tooltip>
         </content>
         <content id="11">
             <status>
                 <text lang="en"> Include elevation data into the output CDT format </text>
+                <text lang="fr"> Inclure les données d'altitude dans le format de sortie CDT </text>
             </status>
             <tooltip>
                 <text lang="en"> Include elevation data into the output CDT format </text>
+                <text lang="fr"> Inclure les données d'altitude dans le format de sortie CDT </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
-            <text lang="en"> Select or enter the directory containing the STN files </text>
+            <text lang="en"> Select or enter the directory containing the Stations files </text>
+            <text lang="fr"> Sélectionnez ou entrez le répertoire contenant les fichiers Stations </text>
         </content>
         <content id="2">
             <text lang="en"> You have to provide a sample file </text>
+            <text lang="fr"> Vous devez fournir un fichier exemple </text>
         </content>
         <content id="3">
             <text lang="en"> Select the file containing the coordinates </text>
+            <text lang="fr"> Sélectionnez le fichier contenant les coordonnées </text>
         </content>
     </message>
 </dialog_box>

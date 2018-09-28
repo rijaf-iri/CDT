@@ -2,157 +2,202 @@
 <dialog_box>
     <title>
         <text lang="en"> Format CDT input station data </text>
+        <text lang="fr"> Formater les données d'entrée CDT de station </text>
     </title>
     <widget>
         <combobox id="1">
             <option id="1">
                 <text lang="en"> Multiple Files </text>
+                <text lang="fr"> Multiples Fichiers </text>
             </option>
             <option id="2">
                 <text lang="en"> Single File </text>
+                <text lang="fr"> Fichier Unique </text>
             </option>
         </combobox>
         <button id="1">
             <text lang="en"> Input File Setting </text>
+            <text lang="fr"> Paramétrage du fichier d'entrée </text>
         </button>
         <label id="1">
             <text lang="en"> Date Range </text>
+            <text lang="fr"> Plage des dates </text>
         </label>
         <label id="2">
             <text lang="en"> Min percentage (%) </text>
+            <text lang="fr"> Pourcentage Min (%) </text>
         </label>
         <label id="3">
             <text lang="en"> Start date </text>
+            <text lang="fr"> Date de début </text>
         </label>
         <label id="4">
             <text lang="en"> End date </text>
+            <text lang="fr"> Date de fin </text>
         </label>
         <label id="5">
             <text lang="en"> Year </text>
+            <text lang="fr"> Année </text>
         </label>
         <label id="6">
             <text lang="en"> Month </text>
+            <text lang="fr"> Mois </text>
         </label>
         <label id="7">
             <text lang="en"> Day </text>
+            <text lang="fr"> Jour </text>
         </label>
         <label id="8">
             <text lang="en"> Dekad </text>
+            <text lang="fr"> Décade </text>
         </label>
         <label id="9">
             <text lang="en"> File to save aggregated data </text>
+            <text lang="fr"> Fichier pour sauver les données agrégées </text>
         </label>
         <label id="10">
             <text lang="en"> Format of input files </text>
+            <text lang="fr"> Format des fichiers d'entrée </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Start and end date to take account </text>
+                <text lang="fr"> Date de début et de fin à prendre en compte </text>
             </status>
             <tooltip>
                 <text lang="en"> Start and end date to take account </text>
+                <text lang="fr"> Date de début et de fin à prendre en compte </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Minimum % of non-missing values of the stations series\nto be accepted to the aggregated data </text>
+                <text lang="fr"> % Minimum des valeurs non manquantes des séries de stations\n à accepter sur les données agrégées </text>
             </status>
             <tooltip>
                 <text lang="en"> Minimum % of non-missing values of the stations series\nto be accepted to the aggregated data </text>
+                <text lang="fr"> % Minimum des valeurs non manquantes des séries de stations\n à accepter sur les données agrégées </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Enter the full path to the file to save result </text>
+                <text lang="fr"> Entrez le chemin complet du fichier pour sauver le résultat </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file to save result </text>
+                <text lang="fr"> Entrez le chemin complet du fichier pour sauver le résultat </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Format of input files to be converted to CDT format </text>
+                <text lang="fr"> Format des fichiers d'entrée à convertir au format CDT </text>
             </status>
             <tooltip>
                 <text lang="en"> Format of input files to be converted to CDT format </text>
+                <text lang="fr"> Format des fichiers d'entrée à convertir au format CDT </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> Provide the file to save the formated data </text>
+            <text lang="fr"> Fournir le fichier pour sauver les données formatées </text>
         </content>
         <content id="2">
             <text lang="en"> Conversion to CDT data finished successfully </text>
+            <text lang="fr"> Conversion au format CDT terminée avec succès </text>
         </content>
         <content id="3">
             <text lang="en"> Conversion to CDT data failed </text>
+            <text lang="fr"> Conversion au format CDT échouée </text>
         </content>
         <content id="4">
             <text lang="en"> Convert data to CDT data format ... </text>
+            <text lang="fr"> Conversion au format CDT en cours ... </text>
         </content>
         <content id="5">
             <text lang="en"> No stations found </text>
+            <text lang="fr"> Aucune station trouvée </text>
         </content>
         <content id="6">
             <text lang="en"> Duplicated station ID </text>
+            <text lang="fr"> ID de station dupliqué </text>
         </content>
         <content id="7">
             <text lang="en"> Duplicated coordinates </text>
+            <text lang="fr"> Coordonnées dupliquées </text>
         </content>
         <content id="8">
             <text lang="en"> Missing coordinates </text>
+            <text lang="fr"> Coordonnées manquantes </text>
         </content>
         <content id="9">
             <text lang="en"> Stations without information in the coordinates file </text>
+            <text lang="fr"> Stations sans informations dans le fichier de coordonnées </text>
         </content>
         <content id="10">
             <text lang="en"> Stations without data but have coordinates </text>
+            <text lang="fr"> Stations sans données mais ayant des coordonnées </text>
         </content>
         <content id="11">
             <text lang="en"> Unable to read files </text>
+            <text lang="fr"> Impossible de lire les fichiers </text>
         </content>
         <content id="12">
             <text lang="en"> Stations excluded not enough values </text>
+            <text lang="fr"> Stations exclues, pas assez de valeurs </text>
         </content>
         <content id="13">
             <text lang="en"> Precip: Stations excluded not enough values </text>
+            <text lang="fr"> Pluie: Stations exclues, pas assez de valeurs </text>
         </content>
         <content id="14">
             <text lang="en"> Tmax: Stations excluded not enough values </text>
+            <text lang="fr"> Tmax: Stations exclues, pas assez de valeurs </text>
         </content>
         <content id="15">
             <text lang="en"> Tmin: Stations excluded not enough values </text>
+            <text lang="fr"> Tmin: Stations exclues, pas assez de valeurs </text>
         </content>
         <content id="16">
             <text lang="en"> Failed Stations </text>
+            <text lang="fr"> Stations échouées </text>
         </content>
         <content id="17">
             <text lang="en"> Missing values on Station IDs, Year, Months or Days </text>
+            <text lang="fr"> Valeurs manquantes sur les IDs de station, année, mois ou jours </text>
         </content>
         <content id="18">
             <text lang="en"> Stations with data but no coordinates found </text>
+            <text lang="fr"> Stations avec données mais aucune coordonnée trouvée </text>
         </content>
         <content id="19">
             <text lang="en"> Non numeric values inside the data </text>
+            <text lang="fr"> Valeurs non numériques à l'intérieur des données </text>
         </content>
     </message>
 </dialog_box>

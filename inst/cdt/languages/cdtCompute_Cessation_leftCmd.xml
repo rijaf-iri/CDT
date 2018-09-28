@@ -3,375 +3,489 @@
     <tab_title>
         <tab id="1">
             <text lang="en"> Input </text>
+            <text lang="fr"> Input </text>
         </tab>
         <tab id="2">
             <text lang="en"> Rainy Season </text>
+            <text lang="fr"> Saison de pluie </text>
         </tab>
         <tab id="3">
             <text lang="en"> Maps </text>
+            <text lang="fr"> Cartes </text>
         </tab>
         <tab id="4">
             <text lang="en"> Graphs </text>
+            <text lang="fr"> Graphiques </text>
         </tab>
         <tab id="5">
             <text lang="en"> Boundaries </text>
+            <text lang="fr"> Contours </text>
         </tab>
     </tab_title>
     <widget>
         <combobox id="2">
             <option id="1">
                 <text lang="en"> One </text>
+                <text lang="fr"> Unique </text>
             </option>
             <option id="2">
                 <text lang="en"> Multiple </text>
+                <text lang="fr"> Multiple </text>
             </option>
         </combobox>
         <combobox id="3">
             <option id="1">
                 <text lang="en"> Latitude </text>
+                <text lang="fr"> Latitude </text>
             </option>
             <option id="2">
                 <text lang="en"> Shapefile </text>
+                <text lang="fr"> Shapefile </text>
             </option>
         </combobox>
         <button id="0">
             <text lang="en"> Water Balance setting </text>
+            <text lang="fr"> Configuration Bilan hydrique </text>
         </button>
         <button id="1">
             <text lang="en"> Create Cessation Criteria </text>
+            <text lang="fr"> Créer Critère Date de Fin </text>
         </button>
         <button id="2">
             <text lang="en"> Help </text>
+            <text lang="fr"> Aide </text>
         </button>
         <button id="3">
             <text lang="en"> Calculate Cessation </text>
+            <text lang="fr"> Calculater Date de fin </text>
         </button>
         <checkbutton id="0">
             <text lang="en"> Water balance data already computed </text>
+            <text lang="fr"> Bilan Hydrique deja calculé </text>
         </checkbutton>
         <checkbutton id="1">
             <text lang="en"> Cessation data already computed </text>
+            <text lang="fr"> Date de Fin deja calculée </text>
         </checkbutton>
         <checkbutton id="2">
             <text lang="en"> Add boundaries to Map </text>
+            <text lang="fr"> Ajouter des contours à la carte </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Input Data </text>
+            <text lang="fr"> Données d'entrée </text>
         </label>
         <label id="2">
             <text lang="en"> Format </text>
+            <text lang="fr"> Format </text>
         </label>
         <label id="3">
             <text lang="en"> File containing stations daily water balance </text>
+            <text lang="fr"> Fichier contenant le bilan hydrique journalier des stations </text>
         </label>
         <label id="4">
             <text lang="en"> File containing stations daily Precip data </text>
+            <text lang="fr"> Fichier contenant les Pluies journalières des stations </text>
         </label>
         <label id="4-a">
             <text lang="en"> File containing stations daily PET data </text>
+            <text lang="fr"> Fichier contenant l'ETP journalière des stations </text>
         </label>
         <label id="5">
             <text lang="en"> Index file (*.rds) for daily water balance </text>
+            <text lang="fr"> Fichier Index (*.rds) pour le bilan hydrique journalier </text>
         </label>
         <label id="6">
             <text lang="en"> Index file (*.rds) for daily Precip data </text>
+            <text lang="fr"> Fichier Index (*.rds) pour la pluie journalière </text>
         </label>
         <label id="6-a">
             <text lang="en"> Index file (*.rds) for daily PET data </text>
+            <text lang="fr"> Fichier Index (*.rds) pour l'ETP journalière </text>
         </label>
         <label id="7">
             <text lang="en"> Directory to save results </text>
+            <text lang="fr"> Répertoire de sauvegarde des résultats </text>
         </label>
         <label id="8">
             <text lang="en"> Region </text>
+            <text lang="fr"> Région </text>
         </label>
         <label id="9">
             <text lang="en"> Subdivision from </text>
+            <text lang="fr"> Subdivision à partir </text>
         </label>
         <label id="10">
             <text lang="en"> Number of subdivisions </text>
+            <text lang="fr"> Nombre de subdivisions </text>
         </label>
         <label id="11">
             <text lang="en"> Latitudes: </text>
+            <text lang="fr"> Latitudes: </text>
         </label>
         <label id="12">
             <text lang="en"> Shapefile for subdivision of regions </text>
+            <text lang="fr"> Shapefile pour la subdivision des régions </text>
         </label>
         <label id="13">
             <text lang="en"> Attribute to be used to split the region </text>
+            <text lang="fr"> Attribut à utiliser pour diviser les régions </text>
         </label>
         <label id="14">
             <text lang="en"> Cessation Definition </text>
+            <text lang="fr"> Définition de la date de fin </text>
         </label>
         <label id="15">
             <text lang="en"> Cessation method </text>
+            <text lang="fr"> Méthode de Date de Fin </text>
         </label>
         <label id="16">
             <text lang="en"> Earliest cessation date </text>
+            <text lang="fr"> Date de fin la plus précoce </text>
         </label>
         <label id="17">
             <text lang="en"> Day </text>
+            <text lang="fr"> Jour </text>
         </label>
         <label id="18">
             <text lang="en"> Water balance drops below </text>
+            <text lang="fr"> Bilan Hydrique tombe en dessous </text>
         </label>
         <label id="19">
             <text lang="en"> for a period of </text>
+            <text lang="fr"> Pour la période de </text>
         </label>
         <label id="20">
             <text lang="en"> days </text>
+            <text lang="fr"> jours </text>
         </label>
         <label id="21">
             <text lang="en"> Latest possible date </text>
+            <text lang="fr"> Date la plus récente possible </text>
         </label>
         <label id="22-a">
             <text lang="en"> Detection method </text>
+            <text lang="fr"> Méthode de Détection </text>
         </label>
         <label id="22">
             <text lang="en"> Accumulated </text>
+            <text lang="fr"> Accumulé </text>
         </label>
         <label id="23">
             <text lang="en"> precipitation </text>
+            <text lang="fr"> précipitation </text>
         </label>
         <label id="24">
             <text lang="en"> less than </text>
+            <text lang="fr"> moins que </text>
         </label>
         <label id="25">
             <text lang="en"> of the evapotranspiration </text>
+            <text lang="fr"> d'évapotranspiration </text>
         </label>
         <label id="29">
             <text lang="en"> Cessation data </text>
+            <text lang="fr"> Date de Fin </text>
         </label>
         <label id="30">
             <text lang="en"> Cessation Map </text>
+            <text lang="fr"> Carte de Date de Fin </text>
         </label>
         <label id="31">
             <text lang="en"> Cessation Graph </text>
+            <text lang="fr"> Graphique de Date de Fin </text>
         </label>
         <label id="32">
             <text lang="en"> Station/Coordinates </text>
+            <text lang="fr"> Station/Coordonnées </text>
         </label>
         <label id="33">
             <text lang="en"> Boundaries </text>
+            <text lang="fr"> Contours </text>
         </label>
         <label id="34">
             <text lang="en"> Select a station to plot </text>
+            <text lang="fr"> Sélectionner une station à visualiser </text>
         </label>
         <label id="35">
             <text lang="en"> Enter longitude and latitude to plot </text>
+            <text lang="fr"> Entrer la longitude et la latitude à visualiser </text>
         </label>
         <label id="36">
             <text lang="en"> Longitude </text>
+            <text lang="fr"> Longitude </text>
         </label>
         <label id="37">
             <text lang="en"> Latitude </text>
+            <text lang="fr"> Latitude </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Select the file containing the daily water balance </text>
+                <text lang="fr"> Sélectionnez le fichier contenant le bilan hydrique journalier </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file containing the daily water balance </text>
+                <text lang="fr"> Sélectionnez le fichier contenant le bilan hydrique journalier </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
                 <text lang="en"> Select the file containing the daily precipitation </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les précipitations journalières </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file containing the daily precipitation </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les précipitations journalières </text>
             </tooltip>
         </content>
         <content id="3-a">
             <status>
                 <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
+                <text lang="fr"> Sélectionnez le fichier contenant l'ETP journalières </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
+                <text lang="fr"> Sélectionnez le fichier contenant l'ETP journalières </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Enter the full path to the file &lt;daily water balance dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données de bilan hydrique journalier&gt;.rds </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file &lt;daily water balance dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données de bilan hydrique journalier&gt;.rds </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données de pluie journalière&gt;.rds </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données de pluie journalière&gt;.rds </text>
             </tooltip>
         </content>
         <content id="5-a">
             <status>
                 <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données d'ETP journalière&gt;.rds </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données d'ETP journalière&gt;.rds </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </tooltip>
         </content>
         <content id="7">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </tooltip>
         </content>
         <content id="8">
             <status>
                 <text lang="en"> Enter the full path to directory to save outputs </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les résultats </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory to save outputs </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les résultats </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> Invalid latitude </text>
+            <text lang="fr"> Latitude non valide </text>
         </content>
         <content id="2">
             <text lang="en"> 1: Cessation using "Water Balance" </text>
+            <text lang="fr"> 1: Date de Fin utilisant "Bilan Hydrique" </text>
         </content>
         <content id="3">
             <text lang="en"> 2: Cessation criterion based on "Fraction of evapotranspiration" </text>
+            <text lang="fr"> 2: Critère de Date de Fin basé sur la "Fraction d'évapotranspiration" </text>
         </content>
         <content id="7">
             <text lang="en"> Invalid input found on cessation definition criteria </text>
+            <text lang="fr"> Entrée invalide sur les critères de définition de date de fin </text>
         </content>
         <content id="8">
             <text lang="en"> Calculate Season Cessation ...... </text>
+            <text lang="fr"> Calcul de la Date de Fin en cours ...... </text>
         </content>
         <content id="9">
             <text lang="en"> Season Cessation calculation finished successfully </text>
+            <text lang="fr"> Calcul de la fin de la saison terminé avec succès </text>
         </content>
         <content id="10">
             <text lang="en"> Season Cessation calculation failed </text>
+            <text lang="fr"> Calcul de la fin de la saison échoué </text>
         </content>
         <content id="11">
             <text lang="en"> Unable to load cessation data </text>
+            <text lang="fr"> Impossible de charger les données </text>
         </content>
         <content id="12">
             <text lang="en"> not found </text>
+            <text lang="fr"> introuvable </text>
         </content>
         <content id="13">
             <text lang="en"> Station not found </text>
+            <text lang="fr"> Station introuvable </text>
         </content>
         <content id="14">
             <text lang="en"> Coordinates outside of data range </text>
+            <text lang="fr"> Coordonnées hors de la plage de données </text>
         </content>
         <content id="15">
             <text lang="en"> Provide the daily precipitation data </text>
+            <text lang="fr"> Fournissez les précipitations journalières </text>
         </content>
         <content id="15-a">
             <text lang="en"> Provide the daily potential evapotranspiration data </text>
+            <text lang="fr"> Fournissez les l'ETP journalières </text>
         </content>
         <content id="16">
-            <text lang="en"> did not find </text>
+            <text lang="en"> not find </text>
+            <text lang="fr"> Introuvable </text>
         </content>
         <content id="17">
             <text lang="en"> Precip and PET stations do not match </text>
+            <text lang="fr"> Stations de Pluie et d'ETP ne correspondent pas </text>
         </content>
         <content id="18">
             <text lang="en"> Precip and PET dates do not match </text>
+            <text lang="fr"> Dates de Pluie et d'ETP ne correspondent pas </text>
         </content>
         <content id="19">
             <text lang="en"> No polygons found </text>
+            <text lang="fr"> Aucun polygone trouvé </text>
         </content>
         <content id="20">
             <text lang="en"> Unable to read </text>
+            <text lang="fr"> Impossible de lire </text>
         </content>
         <content id="21">
             <text lang="en"> Water balance dataset is not a daily data </text>
+            <text lang="fr"> Bilan hydrique pas au pas de temps journalier </text>
         </content>
         <content id="22">
             <text lang="en"> Precip dataset is not a daily data </text>
+            <text lang="fr"> Précipitation pas au pas de temps journalier </text>
         </content>
         <content id="22-a">
             <text lang="en"> PET dataset is not a daily data </text>
+            <text lang="fr"> ETP pas au pas de temps journalier </text>
         </content>
         <content id="23">
             <text lang="en"> Precip and PET have different resolution or bbox </text>
+            <text lang="fr"> La pluie et l'ETP ont une résolution ou des limites différentes </text>
         </content>
         <content id="23-a">
             <text lang="en"> Water balance, Precip and PET have different resolution or bbox </text>
+            <text lang="fr"> Le Bilan Hydrique, la pluie et l'ETP ont une résolution ou des limites différentes </text>
         </content>
         <content id="24">
             <text lang="en"> Precip and PET have different chunk size </text>
+            <text lang="fr"> Tailles du chunck de Pluie et ETP différentes </text>
         </content>
         <content id="24-a">
             <text lang="en"> Water balance, Precip and PET have different chunk size </text>
+            <text lang="fr"> Tailles du chunck de Bilan Hydrique, Pluie et ETP différentes </text>
         </content>
         <content id="25">
             <text lang="en"> Precip and PET dates do not match </text>
+            <text lang="fr"> Dates de Pluie et d'ETP ne correspondent pas </text>
         </content>
         <content id="25-a">
             <text lang="en"> Water balance, Precip and PET dates do not match </text>
+            <text lang="fr"> Dates de Bilan Hydrique, dePluie et d'ETP ne correspondent pas </text>
         </content>
         <content id="26">
             <text lang="en"> No data found </text>
+            <text lang="fr"> Données introuvables </text>
         </content>
         <content id="27">
             <text lang="en"> No water balance data found </text>
+            <text lang="fr"> Données de bilan hydrique introuvables </text>
         </content>
         <content id="28">
             <text lang="en"> No Precip data found </text>
+            <text lang="fr"> Données de précipitation introuvables </text>
         </content>
         <content id="29">
             <text lang="en"> No PET data found </text>
+            <text lang="fr"> Données d'ETP introuvables </text>
         </content>
         <content id="30">
-            <text lang="en"> Precip and WB stations do not match </text>
+            <text lang="en"> Precip and Water Balance stations do not match </text>
+            <text lang="fr"> Stations de Pluie et de Bilan Hydrique ne correspondent pas </text>
         </content>
         <content id="31">
             <text lang="en"> Precip and WB dates do not match </text>
+            <text lang="fr"> Dates de Pluie et de Bilan Hydrique ne correspondent pas </text>
         </content>
         <content id="32">
             <text lang="en"> SWHC, Precip and PET stations do not match </text>
+            <text lang="fr"> Stations SWHC, Pluie et ETP ne correspondent pas </text>
         </content>
         <content id="33">
             <text lang="en"> Initial water balance, Precip and PET stations do not match </text>
+            <text lang="fr"> Stations Bilan Hydrique initial, Pluie et ETP ne correspondent pas </text>
         </content>
         <content id="34">
             <text lang="en"> Compute water balance ..... </text>
+            <text lang="fr"> Calcul du Bilan Hydrique en cours ..... </text>
         </content>
         <content id="34-a">
             <text lang="en"> Computing water balance finished </text>
+            <text lang="fr"> Calcul du Bilan Hydrique terminé </text>
         </content>
         <content id="35">
             <text lang="en"> No SWHC data found </text>
+            <text lang="fr"> Données de SWHC introuvables </text>
         </content>
         <content id="35-a">
             <text lang="en"> SWHC, Precip and PET have different resolution or bbox </text>
+            <text lang="fr"> SWHC, Pluie et ETP ont une résolution ou des limites différentes </text>
         </content>
         <content id="36">
             <text lang="en"> No initial water balance data found </text>
+            <text lang="en"> Aucune donnée de Bilan hydrique trouvée </text>
         </content>
         <content id="36-a">
             <text lang="en"> Initial water balance, Precip and PET have different resolution or bbox </text>
+            <text lang="fr"> Bilan hydrique initial, Pluie et ETP ont une résolution ou des limites différentes </text>
         </content>
     </message>
 </panel_cmd>

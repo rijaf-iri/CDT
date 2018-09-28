@@ -3,305 +3,397 @@
     <tab_title>
         <tab id="1">
             <text lang="en"> Input </text>
+            <text lang="fr"> Input </text>
         </tab>
         <tab id="2">
             <text lang="en"> Rainy Season </text>
+            <text lang="fr"> Saison de Pluie </text>
         </tab>
         <tab id="3">
             <text lang="en"> Maps </text>
+            <text lang="fr"> Cartes </text>
         </tab>
         <tab id="4">
             <text lang="en"> Graphs </text>
+            <text lang="fr"> Graphiques </text>
         </tab>
         <tab id="5">
             <text lang="en"> Boundaries </text>
+            <text lang="fr"> Contours </text>
         </tab>
     </tab_title>
     <widget>
         <combobox id="2">
             <option id="1">
                 <text lang="en"> One </text>
+                <text lang="fr"> Unique </text>
             </option>
             <option id="2">
                 <text lang="en"> Multiple </text>
+                <text lang="fr"> Multiple </text>
             </option>
         </combobox>
         <combobox id="3">
             <option id="1">
                 <text lang="en"> Latitude </text>
+                <text lang="fr"> Latitude </text>
             </option>
             <option id="2">
                 <text lang="en"> Shapefile </text>
+                <text lang="fr"> Shapefile </text>
             </option>
         </combobox>
         <button id="1">
             <text lang="en"> Create Onset Criteria </text>
+            <text lang="fr"> Créer un critère de Date de Début </text>
         </button>
         <button id="2">
             <text lang="en"> Help </text>
+            <text lang="fr"> Aide </text>
         </button>
         <button id="3">
             <text lang="en"> Calculate Onset </text>
+            <text lang="fr"> Calculer la Date de Début </text>
         </button>
         <checkbutton id="1">
             <text lang="en"> Onset data already computed </text>
+            <text lang="fr"> Date de Début déjà calculée </text>
         </checkbutton>
         <checkbutton id="2">
             <text lang="en"> Add boundaries to Map </text>
+            <text lang="fr"> Ajouter des contours à la carte </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Input Data </text>
+            <text lang="fr"> Données d'entrée </text>
         </label>
         <label id="2">
             <text lang="en"> Format </text>
+            <text lang="fr"> Format </text>
         </label>
         <label id="3">
             <text lang="en"> File containing stations daily Precip data </text>
+            <text lang="fr"> Fichier contenant les Pluies journalières des stations </text>
         </label>
         <label id="4">
             <text lang="en"> File containing stations daily PET data </text>
+            text lang="fr"> Fichier contenant l'ETP journalière des stations </text>
         </label>
         <label id="5">
             <text lang="en"> Index file (*.rds) for daily Precip data </text>
+            <text lang="fr"> Fichier Index (*.rds) pour la pluie journalière </text>
         </label>
         <label id="6">
             <text lang="en"> Index file (*.rds) for daily PET data </text>
+            <text lang="fr"> Fichier Index (*.rds) pour l'ETP journalière </text>
         </label>
         <label id="7">
             <text lang="en"> Directory to save results </text>
+            <text lang="fr"> Répertoire de sauvegarde des résultats </text>
         </label>
         <label id="8">
             <text lang="en"> Region </text>
+            <text lang="fr"> Région </text>
         </label>
         <label id="9">
             <text lang="en"> Subdivision from </text>
+            <text lang="fr"> Subdivision à partir </text>
         </label>
         <label id="10">
             <text lang="en"> Number of subdivisions </text>
+            <text lang="fr"> Nombre de subdivisions </text>
         </label>
         <label id="11">
             <text lang="en"> Latitudes: </text>
+            <text lang="fr"> Latitudes: </text>
         </label>
         <label id="12">
             <text lang="en"> Shapefile for subdivision of regions </text>
+            <text lang="fr"> Shapefile pour la subdivision des régions </text>
         </label>
         <label id="13">
             <text lang="en"> Attribute to be used to split the region </text>
+            <text lang="fr"> Attribut à utiliser pour diviser les régions </text>
         </label>
         <label id="14">
             <text lang="en"> Onset Definition </text>
+            <text lang="fr"> Définition de la date de début </text>
         </label>
         <label id="15">
             <text lang="en"> Onset method </text>
+            <text lang="fr"> Méthode de Date de Début </text>
         </label>
         <label id="16">
             <text lang="en"> Earliest onset date </text>
+            <text lang="fr"> Date de début la plus précoce </text>
         </label>
         <label id="17">
             <text lang="en"> Day </text>
+            <text lang="fr"> Jour </text>
         </label>
         <label id="18">
             <text lang="en"> Threshold for a rainy day </text>
+            <text lang="fr"> Seuil pour un jour de pluie </text>
         </label>
         <label id="19">
             <text lang="en"> Rainfall total </text>
+            <text lang="fr"> Pluie totale </text>
         </label>
         <label id="20">
             <text lang="en"> over </text>
+            <text lang="fr"> en </text>
         </label>
         <label id="21">
             <text lang="en"> days </text>
+            <text lang="fr"> jours </text>
         </label>
         <label id="22">
             <text lang="en"> exceeding (fraction) </text>
+            <text lang="fr"> dépassant (fraction) </text>
         </label>
         <label id="23">
             <text lang="en"> of the evaporation </text>
+            <text lang="fr"> d'évaporation </text>
         </label>
         <label id="24">
             <text lang="en"> with at least </text>
+            <text lang="fr"> avec au moins </text>
         </label>
         <label id="25">
             <text lang="en"> rain days </text>
+            <text lang="fr"> jours de pluie </text>
         </label>
         <label id="26">
             <text lang="en"> Dry Spell not exceeding </text>
+            <text lang="fr"> Séquences sèches ne dépassant pas </text>
         </label>
         <label id="27">
             <text lang="en"> in the next </text>
+            <text lang="fr"> dans les prochains </text>
         </label>
         <label id="28">
             <text lang="en"> Latest possible date </text>
+            <text lang="fr"> Date la plus tardive possible </text>
         </label>
         <label id="29">
             <text lang="en"> Onset data </text>
+            <text lang="fr"> Données de date de début </text>
         </label>
         <label id="30">
             <text lang="en"> Onset Map </text>
+            <text lang="fr"> Carte de Date de Début </text>
         </label>
         <label id="31">
             <text lang="en"> Onset Graph </text>
+            <text lang="fr"> Graphique de Date de Début </text>
         </label>
         <label id="32">
             <text lang="en"> Station/Coordinates </text>
+            <text lang="fr"> Station/Coordonnées </text>
         </label>
         <label id="33">
             <text lang="en"> Boundaries </text>
+            <text lang="fr"> Contours </text>
         </label>
         <label id="34">
             <text lang="en"> Select a station to plot </text>
+            <text lang="fr"> Sélectionner une station à visualiser </text>
         </label>
         <label id="35">
             <text lang="en"> Enter longitude and latitude to plot </text>
+            <text lang="fr"> Entrer la longitude et la latitude à visualiser </text>
         </label>
         <label id="36">
             <text lang="en"> Longitude </text>
+            <text lang="fr"> Longitude </text>
         </label>
         <label id="37">
             <text lang="en"> Latitude </text>
+            <text lang="fr"> Latitude </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
                 <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
                 <text lang="en"> Select the file containing the daily precipitation </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les précipitations journalières </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file containing the daily precipitation </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les précipitations journalières </text>
             </tooltip>
         </content>
         <content id="3">
             <status>
-                <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
+                <text lang="en"> Select the file containing the daily potential evapotranspiration </text>
+                <text lang="fr"> Sélectionnez le fichier contenant l'ETP journalières </text>
             </status>
             <tooltip>
-                <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
+                <text lang="en"> Select the file containing the daily potential evapotranspiration </text>
+                <text lang="fr"> Sélectionnez le fichier contenant l'ETP journalières </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
                 <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données de pluie journalière&gt;.rds </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données de pluie journalière&gt;.rds </text>
             </tooltip>
         </content>
         <content id="5">
             <status>
                 <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données d'ETP journalière&gt;.rds </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données d'ETP journalière&gt;.rds </text>
             </tooltip>
         </content>
         <content id="6">
             <status>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </tooltip>
         </content>
         <content id="7">
             <status>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </status>
             <tooltip>
                 <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
             </tooltip>
         </content>
         <content id="8">
             <status>
                 <text lang="en"> Enter the full path to directory to save outputs </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les résultats </text>
             </status>
             <tooltip>
                 <text lang="en"> Enter the full path to directory to save outputs </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les résultats </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> Invalid latitude </text>
+            <text lang="fr"> Latitude non valide </text>
         </content>
         <content id="2">
             <text lang="en"> 1: Onset criterion based on "Total rainfall" </text>
+            <text lang="fr"> 1: Critère de Date de Début basé sur la "Pluie Totale" </text>
         </content>
         <content id="3">
             <text lang="en"> 2: Onset criterion based on "Fraction of evapotranspiration" </text>
+            <text lang="fr"> 2: Critère de Date de Début basé sur la "Fraction d'évapotranspiration" </text>
         </content>
         <content id="4">
             <text lang="en"> 3: Onset criterion based on "Minimum number of rainy days" </text>
+            <text lang="fr"> 3: Critère de Date de Début basé sur le "Nombre minimum de jours de pluie" </text>
         </content>
         <content id="5">
             <text lang="en"> 4: Onset criterion based on "Dry spell lengths" </text>
+            <text lang="fr"> 4: Critère de Date de Début basé sur les "Longueurs des séquences sèches </text>
         </content>
         <content id="6">
             <text lang="en"> 5: Onset criterion based on "Number of rainy days and spell lengths" </text>
+            <text lang="fr"> 5: Critère de Date de Début basé sur le "Nombre de jours de pluie et les séquences sèches" </text>
         </content>
         <content id="7">
             <text lang="en"> Invalid input found on onset definition criteria </text>
+            <text lang="fr"> Données d'entrée invalides pour le critère de définition de début </text>
         </content>
         <content id="8">
             <text lang="en"> Calculate Season Onset ...... </text>
+            <text lang="fr"> Calcul de la Date de Début en cours ...... </text>
         </content>
         <content id="9">
             <text lang="en"> Season Onset calculation finished successfully </text>
+            <text lang="fr"> Calcul du début de la saison terminé avec succès </text>
         </content>
         <content id="10">
             <text lang="en"> Season Onset calculation failed </text>
+            <text lang="fr"> Calcul du début de la saison échoué </text>
         </content>
         <content id="11">
             <text lang="en"> Unable to load onset data </text>
+            <text lang="fr"> Impossible de charger les données </text>
         </content>
         <content id="12">
             <text lang="en"> not found </text>
+            <text lang="fr"> introuvable </text>
         </content>
         <content id="13">
             <text lang="en"> Station not found </text>
+            <text lang="fr"> Station introuvable </text>
         </content>
         <content id="14">
             <text lang="en"> Coordinates outside of data range </text>
+            <text lang="fr"> Coordonnées hors de la plage de données </text>
         </content>
         <content id="15">
             <text lang="en"> Provide the potential evapotranspiration data </text>
+            <text lang="fr"> Fournissez les données d'ETP </text>
         </content>
         <content id="16">
-            <text lang="en"> did not find </text>
+            <text lang="en"> not find </text>
+            <text lang="fr"> Introuvable </text>
         </content>
         <content id="17">
             <text lang="en"> Precip and PET stations do not match </text>
+            <text lang="fr"> Stations de Pluie et d'ETP ne correspondent pas </text>
         </content>
         <content id="18">
             <text lang="en"> Precip and PET dates do not match </text>
+            <text lang="fr"> Dates de Pluie et d'ETP ne correspondent pas </text>
         </content>
         <content id="19">
             <text lang="en"> No polygons found </text>
+            <text lang="fr"> Aucun polygone trouvé </text>
         </content>
         <content id="20">
             <text lang="en"> Unable to read </text>
+            <text lang="fr"> Impossible de lire </text>
         </content>
         <content id="21">
             <text lang="en"> Precip dataset is not a daily data </text>
+            <text lang="fr"> Précipitation pas au pas de temps journalier </text>
         </content>
         <content id="22">
             <text lang="en"> PET dataset is not a daily data </text>
+            <text lang="fr"> ETP pas au pas de temps journalier </text>
         </content>
         <content id="23">
             <text lang="en"> Precip and PET have different resolution or bbox </text>
+            <text lang="fr"> La pluie et l'ETP ont une résolution ou des limites différentes </text>
         </content>
         <content id="24">
             <text lang="en"> Precip and PET have different chunk size </text>
+            <text lang="fr"> Tailles du chunck de Pluie et ETP différentes </text>
         </content>
         <content id="25">
             <text lang="en"> Precip and PET dates do not match </text>
+            <text lang="fr"> Dates de Pluie et d'ETP ne correspondent pas </text>
         </content>
     </message>
 </panel_cmd>
