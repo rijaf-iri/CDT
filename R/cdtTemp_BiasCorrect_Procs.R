@@ -246,9 +246,10 @@ Temp_ApplyBiasCorrection <- function(){
 	xlat <- ncinfo$lat
 	filenameFormat <- .cdtData$GalParams$output$format
 
-	is.parallel <- doparallel(length(nc.files) >= 30)
-	`%parLoop%` <- is.parallel$dofun
-	adj.stn <- foreach(jfl = seq_along(nc.files), .packages = 'ncdf4') %parLoop% {
+	ret <- cdt.foreach(seq_along(nc.files),
+					parsL = length(nc.files) >= 30,
+					.packages = 'ncdf4', FUN = function(jfl)
+	{
 		nc <- nc_open(nc.files[jfl])
 		xtmp <- ncvar_get(nc, varid = ncinfo$varid)
 		nc_close(nc)
@@ -307,8 +308,7 @@ Temp_ApplyBiasCorrection <- function(){
 		nc_close(nc2)
 
 		return(adjSTN)
-	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+	})
 
 	if(extractADJ){
 		adjSTN <- list(dates = nc.dates, data = do.call(rbind, adj.stn))
