@@ -77,7 +77,7 @@
         </label>
         <label id="4">
             <text lang="en"> File containing stations daily PET data </text>
-            text lang="fr"> Fichier contenant l'ETP journalière des stations </text>
+            <text lang="fr"> Fichier contenant l'ETP journalière des stations </text>
         </label>
         <label id="5">
             <text lang="en"> Index file (*.rds) for daily Precip data </text>
