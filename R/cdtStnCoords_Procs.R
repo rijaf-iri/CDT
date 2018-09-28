@@ -279,7 +279,7 @@ StnChkCoordsCorrect <- function(){
 	if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
 		if(nrow(change) > 0){
 			ix <- match(idx, .cdtData$EnvData$output$id)
-			don0[1:ncol(change), ix + 1] <- change
+			don0[1:ncol(change), ix + 1] <- t(change)
 
 			pos.lon <- 2
 			pos.lat <- 3
@@ -295,7 +295,7 @@ StnChkCoordsCorrect <- function(){
 	######
 
 	idx1 <- .cdtData$EnvData$output$coords$idx
-	if(length(id.del0)) id.del1 <- idx1[idx1 %in% id.del0]
+	id.del1 <- if(length(id.del0)) idx1[idx1 %in% id.del0] else NULL
 
 	if(nrow(change) > 0){
 		ix0 <- match(idx, idx1)

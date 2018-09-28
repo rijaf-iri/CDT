@@ -11,8 +11,10 @@
 ### path
 .cdtDir$Root <- system.file("cdt", package = "CDT")
 
-if(WindowsOS()) .cdtDir$dirLocal <- file.path(Sys.getenv('LOCALAPPDATA'), 'CDT')
+# if(WindowsOS()) .cdtDir$dirLocal <- file.path(Sys.getenv('LOCALAPPDATA'), 'CDT')
+if(WindowsOS()) .cdtDir$dirLocal <- path.expand('~/AppData/Local/CDT')
 if(MacOSXP()) .cdtDir$dirLocal <- path.expand('~/Library/Application Support/CDT')
+# if(MacOSXP()) .cdtDir$dirLocal <- path.expand('/Users/rijaf/Desktop/ECHANGE/github_IRI_CDT/Local/CDT')
 if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 
 #############################
@@ -31,7 +33,7 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 	if(!dir.exists(.cdtDir$dirLocal)){
 		dir.create(.cdtDir$dirLocal, recursive = TRUE, showWarnings = FALSE)
 		cdtDirRoot <- file.path(.cdtDir$Root, c("config", "init_params", "languages", "data"))
-		ret <- file.copy(cdtDirRoot, .cdtDir$dirLocal, recursive = TRUE)
+		ret <- file.copy(cdtDirRoot, .cdtDir$dirLocal, recursive = TRUE, copy.mode = TRUE)
 		if(any(!ret)){
 			warning("Unable to copy\n")
 			for(i in which(!ret))
@@ -62,14 +64,13 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 					if(any(new)){
 						tocp <- file.path(cdtDirRoot, cdt$files[new])
 						vers <- file.path(cdtDirLocal, cdt$files[new])
-						ret <- file.copy(tocp, vers)
-						# ret <- file.copy(tocp, vers, overwrite = TRUE)
+						ret <- file.copy(tocp, vers, overwrite = TRUE)
 						if(any(!ret)){
 							warning("Unable to copy")
 							for(i in which(!ret))
 								cat(paste(tocp[i], "to", dirname(vers[i])), "\n")
 							cat("Please copy manually.\n")
-							stop("Copy of configurations files to local directory failed.")
+							warning("Copy of configurations files to local directory failed.")
 						}
 					}
 					## change
@@ -93,7 +94,7 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 							for(i in which(!ret))
 								cat(paste(tocp[i], "to", dirname(vers[i])), "\n")
 							cat("Please copy manually.\n")
-							stop("Copy of configurations files to local directory failed.")
+							warning("Copy of configurations files to local directory failed.")
 						}
 					}
 				}
@@ -103,7 +104,7 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 				msg1 <- "Unable to copy\n"
 				msg2 <- paste(md5.cdt.f, "to", file.path(.cdtDir$dirLocal, "config"))
 				warning(paste(msg1, msg2))
-				stop("Unable to update local CDT configuration.")
+				warning("Unable to update local CDT configuration.")
 			}
 		}
 	}
@@ -155,7 +156,7 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 
 	if(!tcl.conf[[ostype]]$Bwidget.auto){
 		Bwidget.path <- stringr::str_trim(tcl.conf[[ostype]]$Bwidget.path)
-		if(!dir.exists(Bwidget.path)) stop(paste(Bwidget.path, "does not found"))
+		if(!dir.exists(Bwidget.path)) warning(paste(Bwidget.path, "does not found"))
 	}else Bwidget.path <- NULL
 
 	if(!isNamespaceLoaded("tcltk")){
@@ -169,10 +170,10 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 
 	if(!is.null(Tktable.path)) addTclPath(path = Tktable.path)
 	is.notkt <- tclRequire("Tktable")
-	if(is.logical(is.notkt)) stop(paste0("Tcl package 'Tktable' not found", editcfg.msg('Tktable')))
+	if(is.logical(is.notkt)) warning(paste0("Tcl package 'Tktable' not found", editcfg.msg('Tktable')))
 	if(!is.null(Bwidget.path)) addTclPath(path = Bwidget.path)
 	is.nobw <- tclRequire("BWidget")
-	if(is.logical(is.nobw)) stop(paste0("Tcl package 'BWidget' not found", editcfg.msg('BWidget')))
+	if(is.logical(is.nobw)) warning(paste0("Tcl package 'BWidget' not found", editcfg.msg('BWidget')))
 
 	invisible()
 }

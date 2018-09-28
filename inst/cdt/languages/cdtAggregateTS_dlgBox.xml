@@ -183,12 +183,12 @@
         </content>
         <content id="12">
             <status>
-                <text lang="en"> Function that have to be applied for aggregating from daily/dekadal/monthly into\na higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean) </text>
-                <text lang="fr"> Fonction à appliquer pour l'agrégation à partir de jpurnalier/décadaire/mensuel à\na pas de temps plus long (ex, pour Précipitation FUN=sum et pour Température FUN=mean) </text>
+                <text lang="en"> Function that have to be applied for aggregating from daily/dekadal/monthly into\n a higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean) </text>
+                <text lang="fr"> Fonction à appliquer pour l'agrégation à partir de jpurnalier/décadaire/mensuel \n à pas de temps plus long (ex, pour Précipitation FUN=sum et pour Température FUN=mean) </text>
             </status>
             <tooltip>
                 <text lang="en"> Function that have to be applied for aggregating from daily/dekadal/monthly into \n a higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean) </text>
-                <text lang="fr"> Fonction à appliquer pour l'agrégation à partir de jpurnalier/décadaire/mensuel à\na pas de temps plus long (ex, pour Précipitation FUN=sum et pour Température FUN=mean) </text>
+                <text lang="fr"> Fonction à appliquer pour l'agrégation à partir de jpurnalier/décadaire/mensuel \n à pas de temps plus long (ex, pour Précipitation FUN=sum et pour Température FUN=mean) </text>
             </tooltip>
         </content>
         <content id="13">

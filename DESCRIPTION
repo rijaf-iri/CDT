@@ -7,6 +7,7 @@ Description: Climate Data Tools (CDT) is a set of utility functions
     such as reanalysis, all functions are available in the GUI mode.
 Authors@R: c(
     person("Tufa", "Dinku", email = "tufa@iri.columbia.com", role = "aut"),
+    person("Bernard", "Minoungou", email = "minoungoubernard@yahoo.fr", role = "ctb"),
     person("Rija", "Faniriantsoa", email = "rijaf@iri.columbia.com", role = c("aut", "cre"))
     )
 License: GPL (>= 2)

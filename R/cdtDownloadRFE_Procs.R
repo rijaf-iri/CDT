@@ -156,13 +156,15 @@ download_RFE_createURL <- function(){
 	return(list(link = link, files = datasrc$fileout, name = datasrc$name))
 }
 
-ExecDownload_RFEData <- function(){
-	on.exit({
-		tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+ExecDownload_RFEData <- function(watch.cursor = TRUE){
+	if(watch.cursor){
+		on.exit({
+			tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+			tcl('update')
+		})
+		tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
 		tcl('update')
-	})
-	tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
-	tcl('update')
+	}
 
 	datasrc <- download_RFE_createURL()
 	if(is.null(datasrc)){

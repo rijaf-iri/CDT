@@ -172,6 +172,78 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## Merging one
+	if(.cdtData$GalParams$action == 'merge.rain.one'){
+		ret <- try(Precip_Merging_ALL(), silent = TRUE)
+
+		msg0 <- "Rainfall merging finished successfully"
+		msg1 <- "Rainfall merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Compute mean bias coef
+	if(.cdtData$GalParams$action == 'coefbias.temp'){
+		ret <- try(execBiasTemp(), silent = TRUE)
+
+		msg0 <- "Computing bias coefficients finished successfully"
+		msg1 <- "Computing bias coefficients failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## bias correction
+	if(.cdtData$GalParams$action == 'adjust.temp'){
+		ret <- try(execAjdBiasDownTemp(), silent = TRUE)
+
+		msg0 <- "Adjustment of downscaled data finished successfully"
+		msg1 <- "Adjustment of downscaled data failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## compute spatio-temporal LM coeff
+	if(.cdtData$GalParams$action == 'coefLM.temp'){
+		ret <- try(execLMCoefTemp(), silent = TRUE)
+
+		msg0 <- "Computing LM Coefficients finished successfully"
+		msg1 <- "Computing LM Coefficients failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Merge temp data
+	if(.cdtData$GalParams$action == 'merge.temp'){
+		ret <- try(execMergeTemp(), silent = TRUE)
+
+		msg0 <- "Temperature merging finished successfully"
+		msg1 <- "Temperature merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Merge temp data all
+	if(.cdtData$GalParams$action == 'merge.temp.one'){
+		ret <- try(Temp_Merging_ALL(), silent = TRUE)
+
+		msg0 <- "Temperature merging finished successfully"
+		msg1 <- "Temperature merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Scaling merged data
+	if(.cdtData$GalParams$action == 'scale.merged'){
+		ret <- try(exec_ScalingUpData(), silent = TRUE)
+
+		msg0 <- "Scaling up merged data finished successfully"
+		msg1 <- "Scaling up merged data failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Merging 1 dekad
+	if(.cdtData$GalParams$action == 'merge.dekrain'){
+		ret <- try(mergeOneDekadRain(), silent = TRUE)
+
+		msg0 <- "Rainfall merging finished successfully"
+		msg1 <- "Rainfall merging failed"
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
 	###
 
 }

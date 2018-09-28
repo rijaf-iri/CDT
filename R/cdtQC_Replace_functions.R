@@ -1,5 +1,5 @@
 
-FalseZerosCheck_replaceAll <- function(file.index, threshold = NULL)
+FalseZerosCheck_replaceAll <- function(file.index, action = c("all", "percentage", "ratio"), threshold = NULL)
 {
 	if(!file.exists(file.index)) stop(paste(file.index, 'not found'))
 	PathData <- dirname(file.index)
@@ -27,14 +27,26 @@ FalseZerosCheck_replaceAll <- function(file.index, threshold = NULL)
 	tmp <- fread(file.stn, header = FALSE, sep = info$sepr,
 				stringsAsFactors = FALSE, colClasses = "character")
 
+	action <- action[1]
+	if(action != "all"){
+		if(missing(threshold))
+			stop('Threshold is missing')
+		if(is.null(threshold))
+			stop('Provide the threshold')
+	}
+
 	for(stnid in outzeros$stn){
 		daty <- outzeros$res[[stnid]]$date
-		if(!is.null(threshold)){
-			thres <- as.character(outzeros$res[[stnid]]$stat$RATIO.NGHBR.AVRG)
+		if(action != "all"){
+			if(action == "percentage")
+				thres <- as.character(outzeros$res[[stnid]]$stat$STN.VAL)
+			if(action == "ratio")
+				thres <- as.character(outzeros$res[[stnid]]$stat$RATIO.NGHBR.AVRG)
 			thres <- as.numeric(thres)
 			daty <- daty[thres >= threshold]
 			if(length(daty) == 0) next
 		}
+
 		index.mon <- unlist(output$index[daty])
 		index.mon <- index.mon + is.elv
 		istn <- which(stn.data$id == stnid) + 1

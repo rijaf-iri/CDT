@@ -240,3 +240,28 @@ fit.mixture.distr <- function(x, min.len = 7, alpha = 0.05,
 	}
 	return(ret)
 }
+
+#############################################
+
+## Fit normal distribution for temp
+fit.norm.temp <- function(x, min.len, alpha = 0.05, method = 'mle',
+						lower = c(-20, 0), upper = c(60, 10),
+						keepdata = FALSE, keepdata.nb = 3, ...)
+{
+	x <- x[!is.na(x)]
+	ret <- NULL
+	if(length(x) > min.len){
+		xmoy <- mean(x)
+		xsd <- sd(x)
+		fit.mod <- try(fitdist(x, "norm", method = method,
+					start = list(mean = xmoy, sd = xsd), lower = lower, upper = upper,
+					keepdata = keepdata, keepdata.nb = keepdata.nb, ...), silent = TRUE)
+		if(!inherits(fit.mod, "try-error")){
+			# Shapiro-Wilk normality test
+			swnt <- shapiro.test(x)
+			test <- if(swnt$p.value > alpha) 'yes' else 'no'
+			ret <- list(fitted.distr = fit.mod, SWNtest = swnt, h0 = test)
+		}else ret <- list(fitted.distr = NULL, SWNtest = NULL, h0 = 'null')
+	}
+	return(ret)
+}

@@ -1,10 +1,10 @@
 
-execBiasRain <- function(){
+execBiasTemp <- function(){
 	origdir <- file.path(.cdtData$GalParams$output$dir, paste0('BIAS_Data_',
-						 file_path_sans_ext(.cdtData$GalParams$STN.file)))
+						file_path_sans_ext(.cdtData$GalParams$STN.file)))
 
 	dir.create(origdir, showWarnings = FALSE, recursive = TRUE)
-	Insert.Messages.Out('Computing Gauge-RFE bias ...')
+	Insert.Messages.Out('Computing bias coefficients ...')
 
 	freqData <- .cdtData$GalParams$period
 	.cdtData$GalParams$biasFilenames <- .cdtData$GalParams$output$format
@@ -15,21 +15,26 @@ execBiasRain <- function(){
 	if(is.null(stnData)) return(NULL)
 
 	##################
-	## RFE sample file
-	rfeDataInfo <- getNCDFSampleData(.cdtData$GalParams$RFE$sample)
-	if(is.null(rfeDataInfo)){
-		Insert.Messages.Out("No RFE data sample found", format = TRUE)
+	## TEMP sample file
+	tmpDataInfo <- getNCDFSampleData(.cdtData$GalParams$TEMP$sample)
+	if(is.null(tmpDataInfo)){
+		Insert.Messages.Out("No downscaled data sample found", format = TRUE)
 		return(NULL)
 	}
+
+	##################
+	## Grid for interpolation
+	xy.grid <- tmpDataInfo[c('lon', 'lat')]
+	nlon0 <- length(tmpDataInfo$lon)
+	nlat0 <- length(tmpDataInfo$lat)
 
 	##################
 	## DEM data
 	demData <- NULL
 	if(.cdtData$GalParams$BIAS$interp.method == "NN" |
-		.cdtData$GalParams$Grid.Creation$grid == "2" |
-		.cdtData$GalParams$auxvar$dem |
-		.cdtData$GalParams$auxvar$slope |
-		.cdtData$GalParams$auxvar$aspect)
+	   .cdtData$GalParams$auxvar$dem |
+	   .cdtData$GalParams$auxvar$slope |
+	   .cdtData$GalParams$auxvar$aspect)
 	{
 		demInfo <- getNCDFSampleData(.cdtData$GalParams$DEM.file)
 		if(is.null(demInfo)){
@@ -43,28 +48,6 @@ execBiasRain <- function(){
 	}
 
 	##################
-	##Create grid for interpolation
-	if(.cdtData$GalParams$Grid.Creation$grid == '1'){
-		grd.lon <- rfeDataInfo$lon
-		grd.lat <- rfeDataInfo$lat
-	}else if(.cdtData$GalParams$Grid.Creation$grid == '2'){
-		grd.lon <- demData$lon
-		grd.lat <- demData$lat
-	}else if(.cdtData$GalParams$Grid.Creation$grid == '3'){
-		X0 <- .cdtData$GalParams$Grid.Creation$minlon
-		X1 <- .cdtData$GalParams$Grid.Creation$maxlon
-		pX <- .cdtData$GalParams$Grid.Creation$reslon
-		Y0 <- .cdtData$GalParams$Grid.Creation$minlat
-		Y1 <- .cdtData$GalParams$Grid.Creation$maxlat
-		pY <- .cdtData$GalParams$Grid.Creation$reslat
-		grd.lon <- seq(X0, X1, pX)
-		grd.lat <- seq(Y0, Y1, pY)
-	}
-	nlon0 <- length(grd.lon)
-	nlat0 <- length(grd.lat)
-	xy.grid <- list(lon = grd.lon, lat = grd.lat)
-
-	##################
 	## regrid DEM data
 	if(!is.null(demData)){
 		is.regridDEM <- is.diffSpatialPixelsObj(defSpatialPixels(xy.grid), defSpatialPixels(demData), tol = 1e-07)
@@ -74,11 +57,6 @@ execBiasRain <- function(){
 	}
 
 	##################
-	## Get RFE data info
-	errmsg <- "RFE data not found"
-	RFE.DIR <- .cdtData$GalParams$RFE$dir
-	RFE.Format <- .cdtData$GalParams$RFE$format
-
 	allyears <- .cdtData$GalParams$BIAS$all.years
 	year1 <- .cdtData$GalParams$BIAS$start.year
 	year2 <- .cdtData$GalParams$BIAS$end.year
@@ -92,37 +70,45 @@ execBiasRain <- function(){
 		return(NULL)
 	}
 
-	start.date1 <- as.Date(paste0(years[1], '0101'), format = '%Y%m%d')
-	end.date1 <- as.Date(paste0(years[length(years)], '1231'), format = '%Y%m%d')
+	start.date <- as.Date(paste0(years[1], '0101'), format = '%Y%m%d')
+	end.date <- as.Date(paste0(years[length(years)], '1231'), format = '%Y%m%d')
+
+	# start.date <- as.Date(paste0(.cdtData$GalParams$BIAS$start.year, '0101'), format = '%Y%m%d')
+	# end.date <- as.Date(paste0(.cdtData$GalParams$BIAS$end.year, '1231'), format = '%Y%m%d')
 	months <- .cdtData$GalParams$BIAS$Months
 
-	ncInfoBias <- ncFilesInfo(freqData, start.date1, end.date1, months, RFE.DIR, RFE.Format, errmsg)
-	if(is.null(ncInfoBias)) return(NULL)
-	ncInfoBias$ncinfo <- rfeDataInfo
-	ncInfoBias$xy.rfe <- rfeDataInfo[c('lon', 'lat')]
+	TMP.DIR <- .cdtData$GalParams$TEMP$dir
+	TMP.Format <- .cdtData$GalParams$TEMP$format
 
-	.cdtData$GalParams$biasParms <- list(stnData = stnData, ncInfo = ncInfoBias, bias.DIR = origdir,
-										months = months, interp.grid = list(grid = xy.grid,
-											nlon = nlon0, nlat = nlat0))
-	bias.pars <- Precip_ComputeBias()
+	errmsg <- "Downscaled data not found"
+	ncInfo <- ncFilesInfo(freqData, start.date, end.date, months, TMP.DIR, TMP.Format, errmsg)
+	if(is.null(ncInfo)) return(NULL)
+	ncInfo$ncinfo <- tmpDataInfo
+
+	.cdtData$GalParams$biasParms <- list(stnData = stnData,
+						ncInfo = ncInfo, bias.DIR = origdir, months = months,
+						interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0))
+
+	bias.pars <- Temp_ComputeBias()
 	if(is.null(bias.pars)) return(NULL)
 
+	#########
 	.cdtData$GalParams$biasParms <- list(bias.pars = bias.pars, months = months,
-					stnData = stnData[c('lon', 'lat')], demData = demData, ncInfo = ncInfoBias, bias.DIR = origdir,
+					stnData = stnData[c('lon', 'lat')], demData = demData, ncInfo = ncInfo, bias.DIR = origdir,
 					interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0))
-	ret <- Precip_InterpolateBias()
+	ret <- Temp_InterpolateBias()
 
-	rm(ncInfoBias, stnData, demData, rfeDataInfo, bias.pars)
+	rm(stnData, demData, bias.pars, ncInfo, tmpDataInfo)
 	gc()
 	if(!is.null(ret)){
 		if(ret == 0) return(0)
 		else return(ret)
-	}else return(NULL)
+	} else return(NULL)
 }
 
-########################################################################################################
+#######################################################################################
 
-Precip_ComputeBias <- function(){
+Temp_ComputeBias <- function(){
 	Insert.Messages.Out('Compute bias factors ...')
 
 	biasParms <- .cdtData$GalParams$biasParms
@@ -146,21 +132,19 @@ Precip_ComputeBias <- function(){
 	res.coarse <- if(res.coarse >= 0.25) res.coarse else 0.25
 
 	ptsData <- biasParms$stnData[c('lon', 'lat')]
-	if(.cdtData$GalParams$BIAS$bias.method == 'Quantile.Mapping')
-	{
-		idcoarse <- indexCoarseGrid(biasParms$ncInfo$xy.rfe$lon, biasParms$ncInfo$xy.rfe$lat, res.coarse)
-		ptsData1 <- expand.grid(lon = biasParms$ncInfo$xy.rfe$lon[idcoarse$ix], lat = biasParms$ncInfo$xy.rfe$lat[idcoarse$iy])
+	if(.cdtData$GalParams$BIAS$bias.method == 'Quantile.Mapping'){
+		idcoarse <- indexCoarseGrid(biasParms$interp.grid$grid$lon, biasParms$interp.grid$grid$lat, res.coarse)
+		ptsData1 <- expand.grid(lon = biasParms$interp.grid$grid$lon[idcoarse$ix], lat = biasParms$interp.grid$grid$lat[idcoarse$iy])
 		nbgrd <- nrow(ptsData1)
 		ptsData <- list(lon = c(ptsData$lon, ptsData1$lon), lat = c(ptsData$lat, ptsData1$lat))
 	}
-	msg <- list(start = 'Read and extract RFE data ...', end = 'Reading RFE data finished')
+	msg <- list(start = 'Read Downscaled data ...', end = 'Reading Downscaled data finished')
+	downData <- readNetCDFData2Points(biasParms$ncInfo, ptsData, msg)
 
-	rfeData <- readNetCDFData2Points(biasParms$ncInfo, ptsData, msg)
-
-	data.rfe.stn <- rfeData$data[, 1:nstn, drop = FALSE]
+	data.down.stn <- downData$data[, 1:nstn]
 	if(.cdtData$GalParams$BIAS$bias.method == 'Quantile.Mapping')
-		data.rfe <- rfeData$data[, nstn + (1:nbgrd), drop = FALSE]
-	date.bias <- rfeData$dates
+		data.down <- downData$data[, nstn + (1:nbgrd)]
+	date.bias <- downData$dates
 
 	###############
 
@@ -175,9 +159,8 @@ Precip_ComputeBias <- function(){
 	}
 
 	###############
-	if(.cdtData$GalParams$BIAS$bias.method != 'Quantile.Mapping')
-	{
-		data.rfe.stn <- data.rfe.stn[ibsdt, , drop = FALSE]
+	if(.cdtData$GalParams$BIAS$bias.method != 'Quantile.Mapping'){
+		data.down.stn <- data.down.stn[ibsdt, , drop = FALSE]
 		data.stn <- data.stn[istdt, , drop = FALSE]
 
 		if(.cdtData$GalParams$BIAS$bias.method == 'Multiplicative.Bias.Mon'){
@@ -199,7 +182,7 @@ Precip_ComputeBias <- function(){
 				})
 				ix5days <- do.call('rbind', ix5days)
 				times.stn <- ix5days[, 1]
-				data.rfe.stn <- data.rfe.stn[ix5days[, 2], , drop = FALSE]
+				data.down.stn <- data.down.stn[ix5days[, 2], , drop = FALSE]
 				data.stn <- data.stn[ix5days[, 2], , drop = FALSE]
 			}
 			if(freqData == 'pentad'){
@@ -222,19 +205,22 @@ Precip_ComputeBias <- function(){
 		index <- split(seq(length(times.stn)), times.stn)
 		bias <- lapply(index, function(x){
 			stn <- data.stn[x, , drop = FALSE]
-			rfe <- data.rfe.stn[x, , drop = FALSE]
-			na.data <- is.na(stn) | is.na(rfe)
+			tt <- data.down.stn[x, , drop = FALSE]
+			na.data <- is.na(stn) | is.na(tt)
 			stn[na.data] <- NA
-			rfe[na.data] <- NA
+			tt[na.data] <- NA
 			len <- colSums(!na.data)
 			stn <- colSums(stn, na.rm = TRUE)
-			rfe <- colSums(rfe, na.rm = TRUE)
-			bs <- stn/rfe
+			tt <- colSums(tt, na.rm = TRUE)
+			bs <- stn/tt
 			bs[len < .cdtData$GalParams$BIAS$min.length] <- 1
 			bs[is.na(bs)] <- 1
-			bs[is.infinite(bs)] <- 1
+			bs[is.infinite(bs)] <- 1.5
 			bs[is.nan(bs)] <- 1
-			bs[bs > 3] <- 3
+			bs[bs < 0] <- 1
+			# bs[bs == 0] <- 0.6
+			bs[bs < 0.6] <- 0.6
+			bs[bs > 1.5] <- 1.5
 			bs
 		})
 
@@ -242,9 +228,9 @@ Precip_ComputeBias <- function(){
 
 		##########
 		bias.pars <- list(bias = bias, lon.stn = biasParms$stnData$lon, lat.stn = biasParms$stnData$lat,
-							id.stn = biasParms$stnData$id, data.stn = data.stn, data.rfe = data.rfe.stn,
+							id.stn = biasParms$stnData$id, data.stn = data.stn, data.down = data.down.stn,
 							date = date.bias, grid = biasParms$interp.grid)
-		rm(data.rfe.stn)
+		rm(data.down.stn)
 	}else{
 		mplus.pentad.date <- function(daty){
 			pen1 <- as.character(daty)
@@ -272,89 +258,85 @@ Precip_ComputeBias <- function(){
 		}
 
 		data.stn <- data.stn[istdt, , drop = FALSE]
-		data.rfe <- data.rfe[ibsdt, , drop = FALSE]
-		data.rfe.stn <- data.rfe.stn[ibsdt, , drop = FALSE]
+		data.down <- data.down[ibsdt, , drop = FALSE]
+		data.down.stn <- data.down.stn[ibsdt, , drop = FALSE]
 
 		months <- biasParms$months
 		xmonth <- as(substr(date.bias, 5, 6), 'numeric')
 
 		BIAS <- .cdtData$GalParams$BIAS
-		packages <- c('qmap', 'ADGofTest')
 		parsDistr <- vector(mode = 'list', length = 12)
 
 		is.parallel <- doparallel(length(months) >= 3)
 		`%parLoop%` <- is.parallel$dofun
 
-		parsDistr[months] <- foreach (m = months, .packages = packages) %parLoop% {
+		parsDistr[months] <- foreach (m = months, .packages = 'fitdistrplus') %parLoop% {
 			if(freqData == 'daily') xdt <- xmonth == m
 			if(freqData == 'pentad') xdt <- date.bias %in% mplus.pentad.date(date.bias[xmonth == m])
 			if(freqData == 'dekadal') xdt <- date.bias %in% mplus.dekad.date(date.bias[xmonth == m])
 			if(freqData == 'monthly') xdt <- date.bias %in% mplus.month.date(date.bias[xmonth == m])
 
 			xstn <- data.stn[xdt, , drop = FALSE]
-			xrfestn <- data.rfe.stn[xdt, , drop = FALSE]
-			xrfe <- data.rfe[xdt, , drop = FALSE]
-			xstn <- lapply(seq(ncol(xstn)), function(j) fit.mixture.distr(xstn[, j], BIAS$min.length, distr.fun = "berngamma"))
-			xrfestn <- lapply(seq(ncol(xrfestn)), function(j) fit.mixture.distr(xrfestn[, j], BIAS$min.length, distr.fun = "berngamma"))
-			xrfe <- lapply(seq(ncol(xrfe)), function(j) fit.mixture.distr(xrfe[, j], BIAS$min.length, distr.fun = "berngamma"))
-
-			list(stn = xstn, rfestn = xrfestn, rfe = xrfe)
+			xdownstn <- data.down.stn[xdt, , drop = FALSE]
+			xdown <- data.down[xdt, , drop = FALSE]
+			xstn <- lapply(seq(ncol(xstn)), function(j) fit.norm.temp(xstn[, j], BIAS$min.length))
+			xdownstn <- lapply(seq(ncol(xdownstn)), function(j) fit.norm.temp(xdownstn[, j], BIAS$min.length))
+			xdown <- lapply(seq(ncol(xdown)), function(j) fit.norm.temp(xdown[, j], BIAS$min.length))
+			list(stn = xstn, downstn = xdownstn, down = xdown)
 		}
 		if(is.parallel$stop) stopCluster(is.parallel$cluster)
 
 		pars.Obs.Stn <- lapply(parsDistr, '[[', 1)
-		pars.Obs.rfe <- lapply(parsDistr, '[[', 2)
-		pars.Crs.Rfe <- lapply(parsDistr, '[[', 3)
+		pars.Obs.down <- lapply(parsDistr, '[[', 2)
+		pars.Crs.down <- lapply(parsDistr, '[[', 3)
 
-		AD.stn <- outputADTest(pars.Obs.Stn, months, distr = "berngamma")
-		AD.rfestn <- outputADTest(pars.Obs.rfe, months, distr = "berngamma")
-		AD.rfe <- outputADTest(pars.Crs.Rfe, months, distr = "berngamma")
+		SW.stn <- outputSWNTest(pars.Obs.Stn, months)
+		SW.downstn <- outputSWNTest(pars.Obs.down, months)
+		SW.down <- outputSWNTest(pars.Crs.down, months)
 
-		pars.Stn <- extractDistrParams(pars.Obs.Stn, months, distr = "berngamma")
-		pars.Rfestn <- extractDistrParams(pars.Obs.rfe, months, distr = "berngamma")
-		pars.Rfe <- extractDistrParams(pars.Crs.Rfe, months, distr = "berngamma")
+		pars.Stn <- extractNormDistrParams(pars.Obs.Stn, months)
+		pars.Downstn <- extractNormDistrParams(pars.Obs.down, months)
+		pars.Down <- extractNormDistrParams(pars.Crs.down, months)
 
-		parsAD <- vector(mode = 'list', length = 12)
-		if(.cdtData$GalParams$BIAS$AD.test){
-			parsAD[months] <- lapply(months, function(j){
-				istn <- AD.stn[[j]] == 'yes' & AD.rfestn[[j]] == 'yes'
-				irfe <- AD.rfe[[j]] == 'yes'
-				list(rfe = irfe, stn = istn)
+		parsSW <- vector(mode = 'list', length = 12)
+		if(.cdtData$GalParams$BIAS$SWnorm.test){
+			parsSW[months] <- lapply(months, function(j){
+				istn <- SW.stn[[j]] == 'yes' & SW.downstn[[j]] == 'yes'
+				idown <- SW.down[[j]] == 'yes'
+				list(down = idown, stn = istn)
 			})
 		}else{
-			parsAD[months] <- lapply(months, function(j){
-				istn <- rep(TRUE, length(AD.stn[[j]]))
-				irfe <- rep(TRUE, length(AD.rfe[[j]]))
-				list(rfe = irfe, stn = istn)
+			parsSW[months] <- lapply(months, function(j){
+				istn <- rep(TRUE, length(SW.stn[[j]]))
+				idown <- rep(TRUE, length(SW.down[[j]]))
+				list(down = idown, stn = istn)
 			})
 		}
 
-		parsAD.Rfe <- lapply(parsAD, '[[', 1)
-		parsAD.Stn <- lapply(parsAD, '[[', 2)
-
-		bias <- list(pars.ad.stn = parsAD.Stn, pars.ad.rfe = parsAD.Rfe, pars.stn = pars.Stn,
-					pars.rfestn = pars.Rfestn, pars.rfe = pars.Rfe)
+		parsSW.Down <- lapply(parsSW, '[[', 1)
+		parsSW.Stn <- lapply(parsSW, '[[', 2)
+		bias <- list(pars.sw.stn = parsSW.Stn, pars.sw.down = parsSW.Down, pars.stn = pars.Stn,
+					pars.downstn = pars.Downstn, pars.down = pars.Down)
 
 		##########
-		bias.pars <- list(bias = bias, fit.stn = pars.Obs.Stn, fit.rfestn = pars.Obs.rfe, fit.rfe = pars.Crs.Rfe,
+		bias.pars <- list(bias = bias, fit.stn = pars.Obs.Stn, fit.downstn = pars.Obs.down, fit.down = pars.Crs.down,
 						lon.stn = biasParms$stnData$lon, lat.stn = biasParms$stnData$lat, id.stn = biasParms$stnData$id,
-						lon.rfe = biasParms$ncInfo$xy.rfe$lon[idcoarse$ix], lat.rfe = biasParms$ncInfo$xy.rfe$lat[idcoarse$iy],
-						data.stn = data.stn, data.rfestn = data.rfe.stn, data.rfe = data.rfe, date = date.bias, grid = biasParms$interp.grid)
-		rm(parsDistr, pars.Obs.Stn, pars.Obs.rfe, pars.Crs.Rfe, pars.Stn, pars.Rfe,
-			pars.Rfestn, parsAD, parsAD.Rfe, parsAD.Stn, data.rfe.stn, data.rfe)
+						lon.down = biasParms$interp.grid$grid$lon[idcoarse$ix], lat.down = biasParms$interp.grid$grid$lat[idcoarse$iy],
+						data.stn = data.stn, data.downstn = data.down.stn, data.down = data.down, date = date.bias, grid = biasParms$interp.grid)
+		rm(parsDistr, pars.Obs.Stn, pars.Obs.down, pars.Crs.down, pars.Stn, pars.Down, pars.Downstn, parsSW, parsSW.Down, parsSW.Stn)
 	}
 
 	saveRDS(bias.pars, file = file.path(biasParms$bias.DIR, "BIAS_PARAMS.rds"))
 
 	Insert.Messages.Out('Computing bias factors finished')
-	rm(rfeData, data.stn, bias.pars)
+	rm(downData, data.stn, bias.pars)
 	gc()
 	return(bias)
 }
 
-########################################################################################################
+#######################################################################################
 
-Precip_InterpolateBias <- function(){
+Temp_InterpolateBias <- function(){
 	Insert.Messages.Out('Interpolate bias factors ...')
 
 	biasParms <- .cdtData$GalParams$biasParms
@@ -380,7 +362,6 @@ Precip_InterpolateBias <- function(){
 
 	#############
 	demGrid <- biasParms$demData
-
 	if(!is.null(demGrid)){
 		slpasp <- raster.slope.aspect(demGrid)
 		demGrid$slp <- slpasp$slope
@@ -391,25 +372,9 @@ Precip_InterpolateBias <- function(){
 		demGrid$asp <- matrix(0, nlon0, nlat0)
 	}
 
-	ijGrd <- grid2pointINDEX(biasParms$stnData, xy.grid)
+	ijGrd <- grid2pointINDEX(biasParms$stnData[c('lon', 'lat')], xy.grid)
 	ObjStn <- list(x = biasParms$stnData$lon, y = biasParms$stnData$lat,
 					z = demGrid$z[ijGrd], slp = demGrid$slp[ijGrd], asp = demGrid$asp[ijGrd])
-
-	#############
-	# regrid RFE
-	create.grd <- .cdtData$GalParams$Grid.Creation$grid
-	rfeGrid <- NULL
-	rfeSp <- defSpatialPixels(biasParms$ncInfo$xy.rfe)
-	is.regridRFE <- is.diffSpatialPixelsObj(grdSp, rfeSp, tol = 1e-07)
-	if(create.grd != '1' & is.regridRFE){
-		xy.rfe <- biasParms$ncInfo$xy.rfe
-		demGrid0 <- demGrid[c('x', 'y', 'z')]
-		names(demGrid0) <- c('lon', 'lat', 'z')
-		rfeGrid <- cdt.interp.surface.grid(demGrid0, xy.rfe)
-		irfe <- over(rfeSp, grdSp)
-		rfeGrid$slp <- matrix(demGrid$slp[irfe], length(xy.rfe$lon), length(xy.rfe$lat))
-		rfeGrid$asp <- matrix(demGrid$asp[irfe], length(xy.rfe$lon), length(xy.rfe$lat))
-	}
 
 	#############
 	## interpolation grid
@@ -435,7 +400,7 @@ Precip_InterpolateBias <- function(){
 	## create grid to interp
 	bGrd <- NULL
 	if(interp.method == 'NN'){
-		interp.grid <- createGrid(ObjStn, demGrid, rfeGrid,
+		interp.grid <- createGrid(ObjStn, demGrid,
 						as.dim.elv = .cdtData$GalParams$BIAS$elev.3rd.dim,
 						latlong = .cdtData$GalParams$BIAS$latlon.unit,
 						normalize = .cdtData$GalParams$BIAS$normalize,
@@ -449,7 +414,7 @@ Precip_InterpolateBias <- function(){
 		xy.maxdist <- if(xy.maxdist < res.coarse) res.coarse else xy.maxdist
 		maxdist <- sqrt(xy.maxdist^2 + z.maxdist^2)
 	}else{
-		interp.grid <- createGrid(ObjStn, demGrid, rfeGrid, as.dim.elv = FALSE,
+		interp.grid <- createGrid(ObjStn, demGrid, as.dim.elv = FALSE,
 								coarse.grid = TRUE, res.coarse = res.coarse)
 		maxdist <- if(maxdist < res.coarse) res.coarse else maxdist
 		cells <- SpatialPixels(points = interp.grid$newgrid, tolerance = sqrt(sqrt(.Machine$double.eps)))@grid
@@ -553,8 +518,8 @@ Precip_InterpolateBias <- function(){
 				}
 
 				grdbias <- matrix(pars.grd$var1.pred, ncol = nlat0, nrow = nlon0)
-				grdbias[grdbias > 3] <- 3
-				grdbias[grdbias < 0] <- 0.1
+				grdbias[grdbias > 1.5] <- 1.5
+				grdbias[grdbias < 0.6] <- 0.6
 				grdbias[is.na(grdbias)] <- 1
 			}else grdbias <- matrix(1, ncol = nlat0, nrow = nlon0)
 
@@ -571,10 +536,10 @@ Precip_InterpolateBias <- function(){
 
 		PARS.stn <- vector(mode = 'list', length = 12)
 		PARS.stn[months] <- foreach(m = months, .packages = 'sp') %parLoop% {
-			pars.mon <- lapply(1:3, function(j){
+			pars.mon <- lapply(1:2, function(j){
 				locations.stn <- interp.grid$coords.stn
 				locations.stn$pars <- bias.pars$pars.stn[[m]][, j]
-				if(j > 1) locations.stn$pars[!bias.pars$pars.ad.stn[[m]]] <- NA
+				locations.stn$pars[!bias.pars$pars.sw.stn[[m]]] <- NA
 				locations.stn <- locations.stn[!is.na(locations.stn$pars), ]
 
 				if(any(is.auxvar) & interp.method != 'NN'){
@@ -591,17 +556,16 @@ Precip_InterpolateBias <- function(){
 				}else vgm <- NULL
 
 				xstn <- as.data.frame(locations.stn)
-				xadd <- if(create.grd != '1' & is.regridRFE) as.data.frame(interp.grid$coords.rfe) else as.data.frame(interp.grid$coords.grd)
-				xadd$pars <- bias.pars$pars.rfe[[m]][, j]
-				if(j > 1) xadd$pars[!bias.pars$pars.ad.rfe[[m]]] <- NA
+				xadd <- as.data.frame(interp.grid$coords.grd)
+				xadd$pars <- bias.pars$pars.down[[m]][, j]
+				xadd$pars[!bias.pars$pars.sw.down[[m]]] <- NA
 
 				xaddstn <- as.data.frame(interp.grid$coords.stn)
-				xaddstn$pars <- bias.pars$pars.rfestn[[m]][, j]
-				if(j > 1) xaddstn$pars[!bias.pars$pars.ad.stn[[m]]] <- NA
+				xaddstn$pars <- bias.pars$pars.downstn[[m]][, j]
+				xaddstn$pars[!bias.pars$pars.sw.stn[[m]]] <- NA
 
 				xadd <- rbind(xadd, xaddstn)
 				xadd <- xadd[!is.na(xadd$pars), ]
-
 				if(length(xadd$pars) < min.stn) return(NULL)
 
 				iadd <- rep(TRUE, nrow(xadd))
@@ -621,12 +585,12 @@ Precip_InterpolateBias <- function(){
 
 				if(interp.method == 'NN'){
 					locations.stn <- locations.stn[!duplicated(locations.stn[, c('lon', 'lat', 'elv')]), ]
-					coordinates(locations.stn) <- ~lon + lat + elv
+					coordinates(locations.stn) <- ~lon+lat+elv
 					pars.grd <- gstat::krige(pars~1, locations = locations.stn, newdata = interp.grid$newgrid,
 										nmax = 1, maxdist = maxdist, debug.level = 0)
 				}else{
 					locations.stn <- locations.stn[!duplicated(locations.stn[, c('lon', 'lat')]), ]
-					coordinates(locations.stn) <- ~lon + lat
+					coordinates(locations.stn) <- ~lon+lat
 					if(any(is.auxvar)){
 						locations.df <- as.data.frame(!is.na(locations.stn@data[, auxvar[is.auxvar]]))
 						locations.stn <- locations.stn[Reduce("&", locations.df), ]
@@ -636,135 +600,120 @@ Precip_InterpolateBias <- function(){
 										block = block, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
 				}
 				ret <- matrix(pars.grd$var1.pred, ncol = nlat0, nrow = nlon0)
-				if(j == 1){
-					ret[ret < 0] <- 0.01
-					ret[ret > 1] <- 0.99
-				}else ret[ret < 0] <- NA
+				if(j == 2) ret[ret < 0] <- NA
 				ret
 			})
-			names(pars.mon) <- c('prob', 'scale', 'shape')
+			names(pars.mon) <- c('mean', 'sd')
 			pars.mon
 		}
 
-		PARS.rfe <- vector(mode = 'list', length = 12)
-		PARS.rfe[months] <- foreach(m = months, .packages = 'sp') %parLoop% {
-			pars.mon <- lapply(1:3, function(j){
-				locations.rfe <- if(create.grd != '1' & is.regridRFE) interp.grid$coords.rfe else interp.grid$coords.grd
-				locations.rfe$pars <- bias.pars$pars.rfe[[m]][, j]
-				if(j > 1) locations.rfe$pars[!bias.pars$pars.ad.rfe[[m]]] <- NA
+		PARS.down <- vector(mode = 'list', length = 12)
+		PARS.down[months] <- foreach(m = months, .packages = 'sp') %parLoop% {
+			pars.mon <- lapply(1:2, function(j){
+				locations.down <- interp.grid$coords.grd
+				locations.down$pars <- bias.pars$pars.down[[m]][, j]
+				locations.down$pars[!bias.pars$pars.sw.down[[m]]] <- NA
 
-				locations.rfestn <- interp.grid$coords.stn
-				locations.rfestn$pars <- bias.pars$pars.rfestn[[m]][, j]
-				if(j > 1) locations.rfestn$pars[!bias.pars$pars.ad.stn[[m]]] <- NA
+				locations.downstn <- interp.grid$coords.stn
+				locations.downstn$pars <- bias.pars$pars.downstn[[m]][, j]
+				locations.downstn$pars[!bias.pars$pars.sw.stn[[m]]] <- NA
 
-				locations.rfe <- rbind(locations.rfe, locations.rfestn)
-				locations.rfe <- locations.rfe[!is.na(locations.rfe$pars), ]
-				if(length(locations.rfe$pars) < min.stn) return(NULL)
+				locations.down <- rbind(locations.down, locations.downstn)
+				locations.down <- locations.down[!is.na(locations.down$pars), ]
+				if(length(locations.down$pars) < min.stn) return(NULL)
 
-				locations.rfe <- remove.duplicates(locations.rfe)
+				locations.down <- remove.duplicates(locations.down)
 
 				if(any(is.auxvar) & interp.method != 'NN'){
-					locations.df <- as.data.frame(!is.na(locations.rfe@data[, auxvar[is.auxvar]]))
-					locations.rfe <- locations.rfe[Reduce("&", locations.df), ]
+					locations.df <- as.data.frame(!is.na(locations.down@data[, auxvar[is.auxvar]]))
+					locations.down <- locations.down[Reduce("&", locations.df), ]
 				}
-				if(length(locations.rfe$pars) < min.stn) return(NULL)
+				if(length(locations.down$pars) < min.stn) return(NULL)
 
 				if(interp.method == 'Kriging'){
-					if(length(locations.rfe$pars) > 7){
-						vgm <- try(automap::autofitVariogram(formule, input_data = locations.rfe, model = vgm.model, cressie = TRUE), silent = TRUE)
+					if(length(locations.down$pars) > 7){
+						vgm <- try(automap::autofitVariogram(formule, input_data = locations.down, model = vgm.model, cressie = TRUE), silent = TRUE)
 						vgm <- if(!inherits(vgm, "try-error")) vgm$var_model else NULL
 					}else vgm <- NULL
 				}else vgm <- NULL
 
 				if(interp.method == 'NN'){
-					pars.grd <- gstat::krige(pars~1, locations = locations.rfe, newdata = interp.grid$newgrid,
+					pars.grd <- gstat::krige(pars~1, locations = locations.down, newdata = interp.grid$newgrid,
 										nmax = 1, maxdist = maxdist, debug.level = 0)
 				}else{
 					block <- if(any(is.auxvar)) NULL else bGrd
-					pars.grd <- gstat::krige(formule, locations = locations.rfe, newdata = interp.grid$newgrid, model = vgm,
-									block = block, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
+					pars.grd <- gstat::krige(formule, locations = locations.down, newdata = interp.grid$newgrid, model = vgm,
+										block = block, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
 				}
 				ret <- matrix(pars.grd$var1.pred, ncol = nlat0, nrow = nlon0)
-				if(j == 1){
-					ret[ret < 0] <- 0.01
-					ret[ret > 1] <- 0.99
-				}else ret[ret < 0] <- NA
+				if(j == 2) ret[ret < 0] <- NA
 				ret
 			})
-			names(pars.mon) <- c('prob', 'scale', 'shape')
+			names(pars.mon) <- c('mean', 'sd')
 			pars.mon
 		}
 		if(is.parallel$stop) stopCluster(is.parallel$cluster)
 
 		################
 
-		default <- colMedians(do.call(rbind, bias.pars$pars.rfe), na.rm = TRUE)
-		names(default) <- c('prob', 'scale', 'shape')
+		default <- colMedians(do.call(rbind, bias.pars$pars.down), na.rm = TRUE)
+		names(default) <- c('mean', 'sd')
 		PARS <- vector(mode = 'list', length = 12)
 		PARS[months] <- lapply(months, function(m){
 			par.stn <- PARS.stn[[m]]
-			par.rfe <- PARS.rfe[[m]]
-			prob <- scale <- shape <- matrix(NA, ncol = nlat0, nrow = nlon0)
-			if(!is.null(par.stn) & !is.null(par.rfe)){
-				if(!is.null(par.stn$prob) & !is.null(par.stn$scale) & !is.null(par.stn$shape) &
-					!is.null(par.rfe$prob) & !is.null(par.rfe$scale) & !is.null(par.rfe$shape)){
-					ina <- is.na(par.stn$prob) | is.na(par.stn$scale) | is.na(par.stn$shape) |
-							is.na(par.rfe$prob) | is.na(par.rfe$scale) | is.na(par.rfe$shape)
-					mprob <- median(par.rfe$prob, na.rm = TRUE)
-					mscale <- median(par.rfe$scale, na.rm = TRUE)
-					mshape <- median(par.rfe$shape, na.rm = TRUE)
-					par.stn$prob[ina] <- mprob
-					par.stn$scale[ina] <- mscale
-					par.stn$shape[ina] <- mshape
-					par.rfe$prob[ina] <- mprob
-					par.rfe$scale[ina] <- mscale
-					par.rfe$shape[ina] <- mshape
-					ret.stn <- list(prob = par.stn$prob, scale = par.stn$scale, shape = par.stn$shape)
-					ret.rfe <- list(prob = par.rfe$prob, scale = par.rfe$scale, shape = par.rfe$shape)
+			par.down <- PARS.down[[m]]
+			xmean <- xsd <- matrix(NA, ncol = nlat0, nrow = nlon0)
+			if(!is.null(par.stn) & !is.null(par.down)){
+				if(!is.null(par.stn$mean) & !is.null(par.stn$sd) &
+					!is.null(par.down$mean) & !is.null(par.down$sd)){
+					ina <- is.na(par.stn$mean) | is.na(par.stn$sd) |
+							is.na(par.down$mean) | is.na(par.down$sd)
+					mmean <- median(par.down$mean, na.rm = TRUE)
+					msd <-  median(par.down$sd, na.rm = TRUE)
+					par.stn$mean[ina] <- mmean
+					par.stn$sd[ina] <- msd
+					par.down$mean[ina] <- mmean
+					par.down$sd[ina] <- msd
+					ret.stn <- list(mean = par.stn$mean, sd = par.stn$sd)
+					ret.down <- list(mean = par.down$mean, sd = par.down$sd)
 				}else{
-					prob[] <- default['prob']
-					scale[] <- default['scale']
-					shape[] <- default['shape']
-					ret.stn <- ret.rfe <- list(prob = prob, scale = scale, shape = shape)
+					xmean[] <- default['mean']
+					xsd[] <- default['sd']
+					ret.stn <- ret.down <- list(mean = xmean, sd = xsd)
 				}
-				################
 			}else{
-				prob[] <- default['prob']
-				scale[] <- default['scale']
-				shape[] <- default['shape']
-				ret.stn <- ret.rfe <- list(prob = prob, scale = scale, shape = shape)
+				xmean[] <- default['mean']
+				xsd[] <- default['sd']
+				ret.stn <- ret.down <- list(mean = xmean, sd = xsd)
 			}
-			list(stn = ret.stn, rfe = ret.rfe)
+			list(stn = ret.stn, down = ret.down)
 		})
 
+		################
 		#Defines netcdf output
-		grd.prob <- ncvar_def("prob", "", xy.dim, NA, longname = "Probability of non-zero event Bernoulli-Gamma distribution", prec = "float", compression = 9)
-		grd.scale <- ncvar_def("scale", "", xy.dim, NA, longname = "Scale parameters of the gamma distribution", prec = "float", compression = 9)
-		grd.shape <- ncvar_def("shape", "", xy.dim, NA, longname = "Shape parameters of the gamma distribution", prec = "float", compression = 9)
+		grd.mean <- ncvar_def("mean", "degC", xy.dim, NA, longname= "Means normal distribution", prec = "float", compression = 9)
+		grd.sd <- ncvar_def("sd", "degC", xy.dim, NA, longname= "Standard deviations normal distribution", prec = "float", compression = 9)
 
 		for(jfl in months){
-			outnc1 <- file.path(biasParms$bias.DIR, paste0('Bernoulli-Gamma_Pars.STN_', jfl, '.nc'))
-			nc1 <- nc_create(outnc1, list(grd.prob, grd.scale, grd.shape))
-			ncvar_put(nc1, grd.prob, PARS[[jfl]]$stn$prob)
-			ncvar_put(nc1, grd.scale, PARS[[jfl]]$stn$scale)
-			ncvar_put(nc1, grd.shape, PARS[[jfl]]$stn$shape)
+			outnc1 <- file.path(biasParms$bias.DIR, paste0('Gaussian_Pars.STN_', jfl, '.nc'))
+			nc1 <- nc_create(outnc1, list(grd.mean, grd.sd))
+			ncvar_put(nc1, grd.mean, PARS[[jfl]]$stn$mean)
+			ncvar_put(nc1, grd.sd, PARS[[jfl]]$stn$sd)
 			nc_close(nc1)
 		}
-
+			
 		for(jfl in months){
-			outnc2 <- file.path(biasParms$bias.DIR, paste0('Bernoulli-Gamma_Pars.RFE_', jfl, '.nc'))
-			nc2 <- nc_create(outnc2, list(grd.prob, grd.scale, grd.shape))
-			ncvar_put(nc2, grd.prob, PARS[[jfl]]$rfe$prob)
-			ncvar_put(nc2, grd.scale, PARS[[jfl]]$rfe$scale)
-			ncvar_put(nc2, grd.shape, PARS[[jfl]]$rfe$shape)
+			outnc2 <- file.path(biasParms$bias.DIR, paste0('Gaussian_Pars.REANAL_', jfl, '.nc'))
+			nc2 <- nc_create(outnc2, list(grd.mean, grd.sd))
+			ncvar_put(nc2, grd.mean, PARS[[jfl]]$down$mean)
+			ncvar_put(nc2, grd.sd, PARS[[jfl]]$down$sd)
 			nc_close(nc2)
 		}
-		rm(PARS.stn, PARS.rfe, PARS)
+		rm(PARS.stn, PARS.down, PARS)
 	}
 
-	rm(demGrid, rfeGrid, ObjStn, interp.grid, bias.pars)
+	rm(demGrid, ObjStn, interp.grid, bias.pars)
 	gc()
 	Insert.Messages.Out('Interpolating bias factors finished')
 	return(0)
 }
-

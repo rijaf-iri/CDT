@@ -1,15 +1,17 @@
 {
+    // Time step of the input data
+    "Tstep": "dekadal",
     // Station data filename
     "STN.file": "",
     // Elevation data filename
     "DEM.file": "",
-    // RFE data
-    "RFE": {
-        // Full path to the directory of RFE
+    // netcdf data
+    "NCDF": {
+        // Full path to the directory of the netcdf files
         "dir": "",
-        // RFE sample file
+        // netcdf sample file
         "sample": "",
-        // RFE filename format 
+        // netcdf filename format 
         "format": "rfe_%s%s%s.nc"
     },
 
@@ -37,7 +39,7 @@
         // nmax for gstat
         "nmax": 5,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.25,
+        "maxdist": 0.45,
         // variogram model, see gstat package for list of available model
         "vgm.model": ["Sph", "Exp", "Gau"],
         // using kriging of block mean values (true or false)
@@ -57,7 +59,7 @@
         "start.year": 1981,
         "start.mon": 1,
         "start.day": 1,
-        "end.year": 2015,
+        "end.year": 2016,
         "end.mon": 12,
         "end.day": 3,
         // Months on which merging will be performed
@@ -70,26 +72,9 @@
         // Maximum distance (in decimal degrees) for interpolating Rain-no-Rain mask
         "maxdist.RnoR": 0.15,
         // Smooth Rain-no-Rain mask (true or false)
-        "smooth.RnoR": false,
+        "smooth.RnoR": true,
         // wet day definition, rainfall >= wet.day
         "wet.day": 1.0
-    },
-
-    "Grid.Creation": {
-        // Create new grid to interpolate bias
-        // "1": from RFE
-        // "2": from DEM
-        // "3": create a new grid
-        "grid": "1",
-        // New grid definition min/max/res
-        "minlon": 42,
-        "maxlon": 52,
-        // resolution in decimal degree
-        "reslon": 0.1,
-        "minlat": -26,
-        "maxlat": -12,
-        // resolution in decimal degree
-        "reslat": 0.1
     },
 
     // Add auxiliary variables
@@ -101,20 +86,58 @@
         "lat": false
     },
 
-    "output": {
-        // Full path to the directory to save results
-        "dir": "",
-        // Merged filename format
-        "format": "rr_mrg_%s%s%s_ALL.nc"
+    // Validation date for aggregation
+    "date.range": {
+        // start year 
+        "start.year": 1981,
+        // end year
+        "end.year": 2016,
+        // start month 
+        "start.month": 1,
+        // end month
+        "end.month": 12
     },
 
-    "blank": {
-        // Blank grid outside the country boundaries or over ocean
-        // "1" : None
-        // "2" : Use DEM
-        // "3" : Use ESRI shapefile
-        "blank": "1",
-        // ESRI shapefile
-        "SHP.file": ""
-    }
+    // Data aggregation
+    "aggr.series": {
+        // use aggregated data
+        "aggr.data": false,
+        // Function to be used to aggregate the series: "sum", "mean", "count" 
+        "aggr.fun": "sum",
+        // Minimum fraction of available data that must be present for each time step of the aggregated series
+        "min.frac": 0.95,
+        // Comparison operator to be used to count event
+        "opr.fun": ">=",
+        // user defined threshold filter applied to events
+        "opr.thres": 0
+    },
+
+    "dicho.fcst": {
+        // Comparison operator to be used to to separate "yes" and "no"
+        "opr.fun": ">=",
+        // user defined threshold filter applied to events
+        "opr.thres": 1
+    },
+
+    // Data to use to calculate statistics
+    // All data: "all"
+    // Spatial average: "avg"
+    // Per station: "stn"
+    "stat.data": "all",
+
+    // add shp or dem to plot
+    "add.to.plot": {
+        // add boundaries
+        "add.shp": false,
+        // shapefile filename
+        "shp.file": "",
+        // add elevation map
+        "add.dem": false,
+        // dem filename
+        "dem.file": ""
+    },
+
+    // Path to the file or directory to save results
+    "outdir": "",
+    "validation": "LOOCV"
 }

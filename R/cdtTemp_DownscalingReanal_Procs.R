@@ -81,7 +81,7 @@ Temp_execDownscaling <- function(){
 	end.year <- .cdtData$GalParams$Down.Date.Range$end.year
 	end.mon <- .cdtData$GalParams$Down.Date.Range$end.mon
 	end.dek <- .cdtData$GalParams$Down.Date.Range$end.day
-	months <- .cdtData$GalParams$Down.Date.Range$Months[[1]]
+	months <- .cdtData$GalParams$Down.Date.Range$Months
 
 	reanalDir <- .cdtData$GalParams$REANAL$dir
 	reanalfilefrmt <- .cdtData$GalParams$REANAL$format

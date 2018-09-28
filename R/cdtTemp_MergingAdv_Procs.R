@@ -1,5 +1,5 @@
 
-execMergeRain <- function(){
+execMergeTemp <- function(){
 	daty <- .cdtData$GalParams$Merging.Date
 	xdeb <- as.Date(paste(daty$start.year, daty$start.mon, daty$start.day, sep = '-'))
 	xfin <- as.Date(paste(daty$end.year, daty$end.mon, daty$end.day, sep = '-'))
@@ -14,13 +14,13 @@ execMergeRain <- function(){
 	}
 	if(.cdtData$GalParams$period == 'monthly') daty <- seq(xdeb, xfin, 'month')
 
-	daty <- daty[as.numeric(format(daty, '%m')) %in% .cdtData$GalParams$Merging.Date$Months]
+	daty <- daty[as.numeric(format(daty, '%m'))%in%.cdtData$GalParams$Merging.Date$Months]
 	if(.cdtData$GalParams$period == 'daily'){
 		xdeb <- format(daty[1], '%Y%m%d')
 		xfin <- format(daty[length(daty)], '%Y%m%d')
 	}
 
-	if(.cdtData$GalParams$period %in% c('pentad', 'dekadal')){
+	if(.cdtData$GalParams$period%in%c('pentad', 'dekadal')){
 		xdeb <- paste0(format(daty[1], '%Y%m'), as.numeric(format(daty[1], '%d')))
 		xfin <- paste0(format(daty[length(daty)], '%Y%m'), as.numeric(format(daty[length(daty)], '%d')))
 	}
@@ -29,7 +29,7 @@ execMergeRain <- function(){
 		xdeb <- format(daty[1], '%Y%m')
 		xfin <- format(daty[length(daty)], '%Y%m')
 	}
-	origdir <- file.path(.cdtData$GalParams$output$dir, paste("Merged_Precip_Data", xdeb, xfin, sep = '_'))
+	origdir <- file.path(.cdtData$GalParams$output$dir, paste("Merged_Temp_Data", xdeb, xfin, sep = '_'))
 
 	dir.create(origdir, showWarnings = FALSE, recursive = TRUE)
 	Insert.Messages.Out('Merging data ...')
@@ -37,28 +37,31 @@ execMergeRain <- function(){
 
 	freqData <- .cdtData$GalParams$period
 
-	##################
-	## Get data
+	#######get data
 	stnData <- getStnOpenData(.cdtData$GalParams$STN.file)
 	stnData <- getCDTdataAndDisplayMsg(stnData, freqData, .cdtData$GalParams$STN.file)
 	if(is.null(stnData)) return(NULL)
 
 	##################
-	## RFE sample file
-	rfeDataInfo <- getNCDFSampleData(.cdtData$GalParams$RFE$sample)
-	if(is.null(rfeDataInfo)){
-		Insert.Messages.Out("No RFE or Adjusted RFE data sample found", format = TRUE)
+	## TEMP sample file
+	tmpDataInfo <- getNCDFSampleData(.cdtData$GalParams$TEMP$sample)
+	if(is.null(tmpDataInfo)){
+		Insert.Messages.Out("No downscaled or Adjusted reanalysis data sample found", format = TRUE)
 		return(NULL)
 	}
+
+	##################
+	## Grid for interpolation
+	xy.grid <- tmpDataInfo[c('lon', 'lat')]
+	nlon0 <- length(tmpDataInfo$lon)
+	nlat0 <- length(tmpDataInfo$lat)
 
 	##################
 	## DEM data
 	demData <- NULL
 	if(.cdtData$GalParams$blank$blank == "2" |
-		.cdtData$GalParams$Grid.Creation$grid == "2" |
-		.cdtData$GalParams$auxvar$dem |
-		.cdtData$GalParams$auxvar$slope |
-		.cdtData$GalParams$auxvar$aspect)
+	   .cdtData$GalParams$auxvar$dem | .cdtData$GalParams$auxvar$slope |
+	   .cdtData$GalParams$auxvar$aspect)
 	{
 		demData <- getNCDFSampleData(.cdtData$GalParams$DEM.file)
 		if(is.null(demData)){
@@ -70,28 +73,6 @@ execMergeRain <- function(){
 		demData$lon <- demData$x
 		demData$lat <- demData$y
 	}
-
-	##################
-	##Create grid for interpolation
-	if(.cdtData$GalParams$Grid.Creation$grid == '1'){
-		grd.lon <- rfeDataInfo$lon
-		grd.lat <- rfeDataInfo$lat
-	}else if(.cdtData$GalParams$Grid.Creation$grid == '2'){
-		grd.lon <- demData$lon
-		grd.lat <- demData$lat
-	}else if(.cdtData$GalParams$Grid.Creation$grid == '3'){
-		X0 <- .cdtData$GalParams$Grid.Creation$minlon
-		X1 <- .cdtData$GalParams$Grid.Creation$maxlon
-		pX <- .cdtData$GalParams$Grid.Creation$reslon
-		Y0 <- .cdtData$GalParams$Grid.Creation$minlat
-		Y1 <- .cdtData$GalParams$Grid.Creation$maxlat
-		pY <- .cdtData$GalParams$Grid.Creation$reslat
-		grd.lon <- seq(X0, X1, pX)
-		grd.lat <- seq(Y0, Y1, pY)
-	}
-	nlon0 <- length(grd.lon)
-	nlat0 <- length(grd.lat)
-	xy.grid <- list(lon = grd.lon, lat = grd.lat)
 
 	##################
 	## regrid DEM data
@@ -114,15 +95,14 @@ execMergeRain <- function(){
 	start.date <- as.Date(paste(start.year, start.mon, start.dek, sep = '/'), format = '%Y/%m/%d')
 	end.date <- as.Date(paste(end.year, end.mon, end.dek, sep = '/'), format = '%Y/%m/%d')
 
-	RFE.DIR <- .cdtData$GalParams$RFE$dir
-	RFE.Format <- .cdtData$GalParams$RFE$format
+	TMP.DIR <- .cdtData$GalParams$TEMP$dir
+	TMP.Format <- .cdtData$GalParams$TEMP$format
 
 	##################
-	errmsg <- "RFE or bias corrected RFE data not found"
-	ncInfo <- ncFilesInfo(freqData, start.date, end.date, months, RFE.DIR, RFE.Format, errmsg)
+	errmsg <- "No downscaled or Adjusted reanalysis data sample found"
+	ncInfo <- ncFilesInfo(freqData, start.date, end.date, months, TMP.DIR, TMP.Format, errmsg)
 	if(is.null(ncInfo)) return(NULL)
-	ncInfo$ncinfo <- rfeDataInfo
-	ncInfo$xy.rfe <- rfeDataInfo[c('lon', 'lat')]
+	ncInfo$ncinfo <- tmpDataInfo
 
 	##################
 	## blanking
@@ -143,26 +123,23 @@ execMergeRain <- function(){
 
 	Insert.Messages.Out('Data preparation finished')
 
-	##################
-
 	.cdtData$GalParams$mrgParms <- list(months = months, ncInfo = ncInfo,
 					stnData = stnData, demData = demData, merge.DIR = origdir,
 					interp.grid = list(grid = xy.grid, nlon = nlon0, nlat = nlat0), outMask = outMask)
 
-	ret <- Precip_MergingFunctions()
+	ret <- Temp_MergingFunctions()
 
-	rm(ncInfo)
+	rm(stnData, outMask, ncInfo, demData, tmpDataInfo)
 	gc()
 	if(!is.null(ret)){
-		if(ret != 0) return(ret) 
-	}else return(NULL)
-
-	return(0)
+		if(ret == 0) return(0)
+		else return(ret)
+	} else return(NULL)
 }
 
 ########################################################################################################
 
-Precip_MergingFunctions <- function(){
+Temp_MergingFunctions <- function(){
 	Insert.Messages.Out('Merge data ...')
 
 	mrgParms <- .cdtData$GalParams$mrgParms
@@ -180,9 +157,9 @@ Precip_MergingFunctions <- function(){
 	## Def ncdf
 	dx <- ncdim_def("Lon", "degreeE", xy.grid$lon)
 	dy <- ncdim_def("Lat", "degreeN", xy.grid$lat)
-	grd.nc.out <- ncvar_def("precip", "mm", list(dx, dy), -99,
-							longname = "Merged Station-Satellite Rainfall",
-							prec = "short", shuffle = TRUE, compression = 9)
+	grd.nc.out <- ncvar_def('temp', "DegC", list(dx, dy), -99,
+							longname = 'Reanalysis merged with station',
+							prec = "float", compression = 9)
 
 	#############
 	mrg.method <- .cdtData$GalParams$Merging$mrg.method
@@ -192,12 +169,6 @@ Precip_MergingFunctions <- function(){
 	maxdist <- .cdtData$GalParams$Merging$maxdist
 	vgm.model <- .cdtData$GalParams$Merging$vgm.model
 	min.stn <- .cdtData$GalParams$Merging$min.stn
-	min.non.zero <- .cdtData$GalParams$Merging$min.non.zero
-
-	use.RnoR <- .cdtData$GalParams$RnoR$use.RnoR
-	maxdist.RnoR <- .cdtData$GalParams$RnoR$maxdist.RnoR
-	smooth.RnoR <- .cdtData$GalParams$RnoR$smooth.RnoR
-	wet.day <- .cdtData$GalParams$RnoR$wet.day
 
 	#############
 	lon.stn <- mrgParms$stnData$lon
@@ -240,14 +211,14 @@ Precip_MergingFunctions <- function(){
 		if(mrg.method == "Regression Kriging"){
 			sp.trend.aux <- .cdtData$GalParams$Merging$sp.trend.aux
 			if(sp.trend.aux)
-				formuleRK <- formula(paste0('stn', '~', 'rfe', '+', paste(auxvar[is.auxvar], collapse = '+')))
+				formuleRK <- formula(paste0('stn', '~', 'tmp', '+', paste(auxvar[is.auxvar], collapse = '+')))
 			else
-				formuleRK <- formula(paste0('stn', '~', 'rfe'))
+				formuleRK <- formula(paste0('stn', '~', 'tmp'))
 		}
 	}else{
 		formule <- formula(paste0('res', '~', 1))
 		if(mrg.method == "Regression Kriging")
-			formuleRK <- formula(paste0('stn', '~', 'rfe'))
+			formuleRK <- formula(paste0('stn', '~', 'tmp'))
 	}
 
 	#############
@@ -284,12 +255,8 @@ Precip_MergingFunctions <- function(){
 	}
 
 	############# 
-	GalParams <- .cdtData$GalParams
+	paramsOutFmt <- .cdtData$GalParams$output$format
 	ncInfo <- mrgParms$ncInfo
-
-	#############
-	rfeSp <- defSpatialPixels(ncInfo$xy.rfe)
-	is.regridRFE <- is.diffSpatialPixelsObj(grdSp, rfeSp, tol = 1e-07)
 
 	#############
 	xlon <- ncInfo$ncinfo$lon
@@ -304,42 +271,36 @@ Precip_MergingFunctions <- function(){
 	{
 		if(ncInfo$exist[jj]){
 			nc <- nc_open(ncInfo$nc.files[jj])
-			xrfe <- ncvar_get(nc, varid = ncInfo$ncinfo$varid)
+			xtmp <- ncvar_get(nc, varid = ncInfo$ncinfo$varid)
 			nc_close(nc)
-			xrfe <- transposeNCDFData(xrfe, ncInfo$ncinfo)
+			xtmp <- transposeNCDFData(xtmp, ncInfo$ncinfo)
 		}else{
-			cat(paste(ncInfo$dates[jj], ":", "no RFE data", "|", "no file generated", "\n"),
+			cat(paste(ncInfo$dates[jj], ":", "no temperature data", "|", "no file generated", "\n"),
 				file = log.file, append = TRUE)
 			return(NULL)
 		}
 
-		if(all(is.na(xrfe))){
-			cat(paste(ncInfo$dates[jj], ":", "all RFE data are missing", "|", "no file generated", "\n"),
+		if(all(is.na(xtmp))){
+			cat(paste(ncInfo$dates[jj], ":", "all data are missing", "|", "no file generated", "\n"),
 				file = log.file, append = TRUE)
 			return(NULL)
-		}
-
-		############
-		if(is.regridRFE){
-			rfeGrid <- cdt.interp.surface.grid(list(lon = xlon, lat = xlat, z = xrfe), xy.grid)
-			xrfe <- rfeGrid$z
 		}
 
 		############
 
 		donne.stn <- data.stn[date.stn == ncInfo$dates[jj], , drop = FALSE]
 		if(nrow(donne.stn) == 0){
-			writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
-					mrgParms$merge.DIR, GalParams$output$format)
-			cat(paste(ncInfo$dates[jj], ":", "no station data", "|", "RFE data", "\n"), file = log.file, append = TRUE)
+			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
+					mrgParms$merge.DIR, paramsOutFmt)
+			cat(paste(ncInfo$dates[jj], ":", "no station data", "|", "Input temperature data", "\n"), file = log.file, append = TRUE)
 			return(NULL)
 		}
 		donne.stn <- data.frame(lon = lon.stn, lat = lat.stn, stn = c(donne.stn))
 		stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = TRUE)
 		if(is.null(stng)){
-			writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
-					mrgParms$merge.DIR, GalParams$output$format)
-			cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|", "RFE data", "\n"),
+			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
+					mrgParms$merge.DIR, paramsOutFmt)
+			cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|", "Input temperature data", "\n"),
 				file = log.file, append = TRUE)
 			return(NULL)
 		}
@@ -347,81 +308,73 @@ Precip_MergingFunctions <- function(){
 		############
 		locations.stn <- interp.grid$newgrid
 		locations.stn$stn <- stng
-		locations.stn$rfe <- c(xrfe)
+		locations.stn$tmp <- c(xtmp)
 
 		############
 		xadd <- interp.grid$coords.coarse
-		xadd$rfe <- xadd$stn <- c(xrfe[interp.grid$id.coarse$ix, interp.grid$id.coarse$iy])
+		xadd$tmp <- xadd$stn <- c(xtmp[interp.grid$id.coarse$ix, interp.grid$id.coarse$iy])
 		xadd$res <- 0
 
 		############
-		interp.grid$newgrid$rfe <- c(xrfe)
+		interp.grid$newgrid$tmp <- c(xtmp)
 		newdata <- interp.grid$newgrid
 
 		############
 		noNA <- !is.na(locations.stn$stn)
-		nb.stn.nonZero <- length(which(noNA & locations.stn$stn > 0))
 		locations.stn <- locations.stn[noNA, ]
 
 		############
-		if(all(is.na(locations.stn$rfe))){
-			writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
-					mrgParms$merge.DIR, GalParams$output$format)
-			cat(paste(ncInfo$dates[jj], ":", "all RFE data @ station location are missing", "|", "RFE data", "\n"),
+		if(all(is.na(locations.stn$tmp))){
+			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
+					mrgParms$merge.DIR, paramsOutFmt)
+			cat(paste(ncInfo$dates[jj], ":", "all temperature data @ station location are missing", "|", "Input temperature data", "\n"),
 				file = log.file, append = TRUE)
 			return(NULL)
 		}
 
 		############
 		# spatial trend
-		sp.trend <- xrfe
-		locations.stn$res <- locations.stn$stn - locations.stn$rfe
+		sp.trend <- xtmp
+		locations.stn$res <- locations.stn$stn - locations.stn$tmp
 
-		if(nb.stn.nonZero >= min.non.zero){
-			if(mrg.method == "Spatio-Temporal LM"){
-				mo <- as(substr(ncInfo$dates[jj], 5, 6), 'numeric')
-				sp.trend <- xrfe * MODEL.COEF[[mo]]$slope + MODEL.COEF[[mo]]$intercept
-				sp.trend[sp.trend < 0] <- 0
-				locations.stn$res <- locations.stn$stn - sp.trend[noNA]
+		if(mrg.method == "Spatio-Temporal LM"){
+			mo <- as(substr(ncInfo$dates[jj], 5, 6), 'numeric')
+			sp.trend <- xtmp * MODEL.COEF[[mo]]$slope + MODEL.COEF[[mo]]$intercept
+			locations.stn$res <- locations.stn$stn - sp.trend[noNA]
+		}
+		if(mrg.method == "Regression Kriging"){
+			simplediff <- if(var(locations.stn$stn) < 1e-07 | var(locations.stn$tmp, na.rm = TRUE) < 1e-07) TRUE else FALSE
+			if(simplediff){
+				cat(paste(ncInfo$dates[jj], ":", "Zero variance", "|", "Simple Bias Adjustment", "\n"),
+					file = log.file, append = TRUE)
 			}
-			if(mrg.method == "Regression Kriging"){
-				simplediff <- if(var(locations.stn$stn) < 1e-07 | var(locations.stn$rfe, na.rm = TRUE) < 1e-07) TRUE else FALSE
-				if(simplediff){
-					cat(paste(ncInfo$dates[jj], ":", "Zero variance", "|", "Simple Bias Adjustment", "\n"),
-						file = log.file, append = TRUE)
-				}
 
-				glm.stn <- glm(formuleRK, data = locations.stn, family = gaussian)
-				if(is.na(glm.stn$coefficients[2]) | glm.stn$coefficients[2] < 0){
-					simplediff <- TRUE
-					cat(paste(ncInfo$dates[jj], ":", "Invalid GLM coeffs", "|", "Simple Bias Adjustment", "\n"),
-						file = log.file, append = TRUE)
-				}
-				if(!simplediff){
-					sp.trend <- predict(glm.stn, newdata = interp.grid$newgrid)
-					sp.trend <- matrix(sp.trend, ncol = nlat0, nrow = nlon0)
-					ina.trend <- is.na(sp.trend)
-					sp.trend[ina.trend] <- xrfe[ina.trend]
-					sp.trend[sp.trend < 0] <- 0
-					locations.stn$res <- NA
-					if(length(glm.stn$na.action) > 0)
-						locations.stn$res[-glm.stn$na.action] <- glm.stn$residuals
-					else
-						locations.stn$res <- glm.stn$residuals
-				}
+			glm.stn <- glm(formuleRK, data = locations.stn, family = gaussian)
+			if(is.na(glm.stn$coefficients[2]) | glm.stn$coefficients[2] < 0){
+				simplediff <- TRUE
+				cat(paste(ncInfo$dates[jj], ":", "Invalid GLM coeffs", "|", "Simple Bias Adjustment", "\n"),
+					file = log.file, append = TRUE)
 			}
-		}else{
-			cat(paste(ncInfo$dates[jj], ":", paste("Too much zero >", min.non.zero), "|", "Simple Bias Adjustment", "\n"),
-				file = log.file, append = TRUE)
+			if(!simplediff){
+				sp.trend <- predict(glm.stn, newdata = interp.grid$newgrid)
+				sp.trend <- matrix(sp.trend, ncol = nlat0, nrow = nlon0)
+				ina.trend <- is.na(sp.trend)
+				sp.trend[ina.trend] <- xtmp[ina.trend]
+				locations.stn$res <- NA
+				if(length(glm.stn$na.action) > 0)
+					locations.stn$res[-glm.stn$na.action] <- glm.stn$residuals
+				else
+					locations.stn$res <- glm.stn$residuals
+			}
 		}
 
 		############
 		locations.stn <- locations.stn[!is.na(locations.stn$res), ]
 
 		if(length(locations.stn) < min.stn){
-			writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
-					mrgParms$merge.DIR, GalParams$output$format)
-			cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|", "RFE data", "\n"),
+			writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
+					mrgParms$merge.DIR, paramsOutFmt)
+			cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|", "Input temperature data", "\n"),
 				file = log.file, append = TRUE)
 			return(NULL)
 		}
@@ -432,10 +385,10 @@ Precip_MergingFunctions <- function(){
 			locations.stn <- locations.stn[Reduce("&", locations.df), ]
 
 			if(length(locations.stn) < min.stn){
-				writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
-						mrgParms$merge.DIR, GalParams$output$format)
+				writeNC.merging(xtmp, ncInfo$dates[jj], freqData, grd.nc.out,
+						mrgParms$merge.DIR, paramsOutFmt)
 				cat(paste(ncInfo$dates[jj], ":", "not enough station data combined with auxiliary var", "|",
-						"RFE data", "\n"), file = log.file, append = TRUE)
+						"Input temperature data", "\n"), file = log.file, append = TRUE)
 				return(NULL)
 			}
 		}
@@ -519,10 +472,7 @@ Precip_MergingFunctions <- function(){
 		resid[igrid] <- res.grd$var1.pred
 		resid[is.na(resid)] <- 0
 		resid <- matrix(resid, ncol = nlat0, nrow = nlon0)
-
-		###########
 		out.mrg <- sp.trend + resid
-		out.mrg[out.mrg < 0] <- 0
 
 		###########
 
@@ -533,142 +483,26 @@ Precip_MergingFunctions <- function(){
 			mout.in[is.na(mout.in)] <- TRUE
 			imout <- mout.in & igrid
 
-			out.tmp <- xrfe
+			out.tmp <- xtmp
 			out.tmp[bsmoo] <- out.mrg[bsmoo]
 			out.tmp <- smooth.matrix(out.tmp, 1)
-			out.mrg[!igrid] <- xrfe[!igrid]
+			out.mrg[!igrid] <- xtmp[!igrid]
 			out.mrg[imout] <- out.tmp[imout]
 			rm(bsmoo, mout.in, imout, out.tmp)
 		}
-
-		###########
 
 		rm(resid, sp.trend, res.grd, inside, ina, newdata0,
 			igrid, locations.stn, xadd, xadd.in, xadd.out,
 			buffer.ina, buffer.grid, buffer.xaddin, buffer.xaddout)
 
 		###########
-		# Rain-no-Rain
-		rnr <- matrix(1, ncol = nlat0, nrow = nlon0)
-		if(use.RnoR){
-			rnr.stn <- ifelse(stng < wet.day + 0.001, 0, 1)
-			rnr.rfe <- ifelse(xrfe < wet.day + 0.001, 0, 1)
-
-			locations.stn <- interp.grid$newgrid
-			locations.stn$rnr.stn <- rnr.stn
-			locations.stn$rnr.rfe <- c(rnr.rfe)
-			locations.stn <- locations.stn[, c('rnr.stn', 'rnr.rfe')]
-			locations.stn <- locations.stn[!is.na(locations.stn$rnr.stn) & !is.na(locations.stn$rnr.rfe), ]
-
-			if(length(locations.stn) < min.stn){
-				writeNC.merging(out.mrg, ncInfo$dates[jj], freqData, grd.nc.out,
-						mrgParms$merge.DIR, GalParams$output$format)
-				cat(paste(ncInfo$dates[jj], ":", "No rain-no-rain mask performed", "|", "Merged data", "\n"),
-					file = log.file, append = TRUE)
-				return(NULL)
-			}
-
-			###########
-			xadd <- interp.grid$coords.coarse
-			xadd$rnr.rfe <- xadd$rnr.stn <- c(rnr.rfe[interp.grid$id.coarse$ix, interp.grid$id.coarse$iy])
-			xadd <- xadd[, c('rnr.stn', 'rnr.rfe')]
-			xadd$rnr.res <- 0
-
-			###########
-			# binomial logistic regression
-			newdata.glm <- interp.grid$newgrid
-			newdata.glm$rnr.rfe <- c(rnr.rfe)
-			glm.binom <- glm(rnr.stn ~ rnr.rfe, data = locations.stn, family = binomial(link = "logit"))
-			locations.stn$rnr.res <- residuals(glm.binom)
-			rnr <- predict(glm.binom, newdata = newdata.glm, type = 'link')
-			rm(newdata.glm)
-
-			###########
-			buffer.rnor.in <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR / 2)
-			buffer.rnor.out <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR * 2.5)
-			buffer.rnor.grid <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR * 1.5)
-
-			############
-			# get coarse grid to add to location.stn
-			xadd.in <- !as.logical(over(xadd, buffer.rnor.in))
-			xadd.in[is.na(xadd.in)] <- TRUE
-			xadd.out <- as.logical(over(xadd, buffer.rnor.out))
-			xadd.out[is.na(xadd.out)] <- FALSE
-			iadd <- xadd.in & xadd.out
-			xadd <- xadd[iadd, ]
-
-			###########
-			row.names(locations.stn) <- 1:length(locations.stn)
-			row.names(xadd) <- length(locations.stn) + (1:length(xadd))
-			locations.stn <- maptools::spRbind(locations.stn, xadd)
-
-			###########
-
-			buff.rnr <- as.logical(over(newdata, buffer.rnor.grid))
-
-			## rnr interpolation grid
-			igrid.rnr <- buff.rnr
-			igrid.rnr[is.na(igrid.rnr)] <- FALSE
-			newdata0.rnr <- newdata[igrid.rnr, ]
-
-			## rnr.rfe outside interp grid
-			irnr <- !buff.rnr
-			irnr[is.na(irnr)] <- TRUE
-
-			###########
-			rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newdata0.rnr, maxdist = maxdist.RnoR, debug.level = 0)
-			ina <- is.na(rnr.res.grd$var1.pred)
-			if(any(ina)){
-				rnr.res.grd.na <- gstat::krige(var1.pred~1, locations = rnr.res.grd[!ina, ],
-										newdata = newdata0.rnr[ina, ], maxdist = maxdist.RnoR, debug.level = 0)
-				rnr.res.grd$var1.pred[ina] <- rnr.res.grd.na$var1.pred
-			}
-
-			rnr0 <- rep(0, length(newdata))
-			rnr0[igrid.rnr] <- rnr.res.grd$var1.pred
-			rnr0[is.na(rnr0)] <- 0
-
-			rnr <- rnr + rnr0
-			rnr <- exp(rnr) / (1 + exp(rnr))
-			### decision boundary 0.5
-			rnr[rnr >= 0.5] <- 1
-			rnr[rnr < 0.5] <- 0
-
-			rnr[!is.na(rnr.stn)] <- rnr.stn[!is.na(rnr.stn)]
-			rnr <- matrix(rnr, nrow = nlon0, ncol = nlat0)
-			imsk <- matrix(irnr, nrow = nlon0, ncol = nlat0)
-			rnr[imsk] <- rnr.rfe[imsk]
-			rnr[is.na(rnr)] <- 1
-
-			if(smooth.RnoR){
-				# buffer to smooth between stn convex hull and interp grid
-				rnr.in <- !as.logical(over(newdata, buffer.rnor.in))
-				rnr.in[is.na(rnr.in)] <- TRUE
-				rnr.out <- as.logical(over(newdata, buffer.rnor.grid))
-				rnr.out[is.na(rnr.out)] <- FALSE
-				irnr <- rnr.in & rnr.out
-				rnr0 <- smooth.matrix(rnr, 1)
-				rnr[irnr] <- rnr0[irnr]
-				rnr[imsk] <- rnr.rfe[imsk]
-				rm(rnr.in, rnr.out)
-			}
-
-			rm(rnr0, imsk, irnr, rnr.res.grd, newdata0.rnr, igrid.rnr, buff.rnr,
-				iadd, xadd, xadd.out, xadd.in, locations.stn, rnr.stn,
-				buffer.rnor.in, buffer.rnor.out, buffer.rnor.grid)
-		}
-
-		###########
-
-		out.mrg <- out.mrg * rnr
-
 		#Apply mask for area of interest
 		if(!is.null(mrgParms$outMask)) out.mrg[is.na(mrgParms$outMask)] <- NA
 
 		writeNC.merging(out.mrg, ncInfo$dates[jj], freqData, grd.nc.out,
-				mrgParms$merge.DIR, GalParams$output$format)
+				mrgParms$merge.DIR, paramsOutFmt)
 
-		rm(out.mrg, rnr, newdata, xrfe)
+		rm(out.mrg, xtmp, newdata)
 		gc()
 		return(0)
 	})
@@ -676,5 +510,3 @@ Precip_MergingFunctions <- function(){
 	Insert.Messages.Out('Merging finished')
 	return(0)
 }
-
-

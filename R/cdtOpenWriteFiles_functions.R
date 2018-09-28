@@ -119,6 +119,7 @@ getOpenShp <- function(parent){
 		return(NULL)
 	}else{
 		tkinsert(.cdtEnv$tcl$main$Openfiles, "end", basename(fileopen))
+		proj4string(shp.opfiles) <- CRS(as.character(NA))
 		return(list(basename(fileopen), shp.opfiles, fileopen))
 	}
 }

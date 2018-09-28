@@ -138,8 +138,10 @@ climdex.write.cdtstation <- function(don, year, outdir, namedir, head)
 	don.year <- round(don$year, 1)
 	don.year[is.na(don.year)] <- .cdtData$Config$missval
 	don.year <- rbind(cbind(c('ID.STN', 'LON', 'YEAR/LAT'), head), cbind(year, don.year))
+	nom.trend <- c("slope", "std.slope", "t-value.slope", "p-value.slope", "intercept", "std.intercept", "t-value.intercept", "p-value.intercept", "R2", "sigma")
 	don.trend <- rbind(cbind(c('ID.STN', 'LON', 'VARS/LAT'), head),
-					cbind(dimnames(don$trend)[[1]], round(don$trend, 6)))
+						cbind(nom.trend, round(don$trend, 6)))
+					# cbind(dimnames(don$trend)[[1]], round(don$trend, 6)))
 	writeFiles(don.year, file.path(dir.csv.year, paste0(namedir, '.csv')))
 	writeFiles(don.trend, file.path(dir.csv.trend, paste0(namedir, '.csv')))
 

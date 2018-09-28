@@ -143,16 +143,16 @@ climdexCalc.TT <- function(GeneralParameters){
 		}
 
 		if(jTmax){
-			stn.id <- tmax$id[id]
-			stn.lon <- tmax$lon[id]
-			stn.lat <- tmax$lat[id]
+			stn.id <- tmax$id
+			stn.lon <- tmax$lon
+			stn.lat <- tmax$lat
 
 			daty <- tmax$dates
 		}
 		if(jTmin){
-			stn.id <- tmin$id[id]
-			stn.lon <- tmin$lon[id]
-			stn.lat <- tmin$lat[id]
+			stn.id <- tmin$id
+			stn.lon <- tmin$lon
+			stn.lat <- tmin$lat
 
 			daty <- tmin$dates
 		}

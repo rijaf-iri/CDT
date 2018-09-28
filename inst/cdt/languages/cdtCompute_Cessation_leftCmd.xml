@@ -116,8 +116,8 @@
             <text lang="fr"> Subdivision à partir </text>
         </label>
         <label id="10">
-            <text lang="en"> Number of subdivisions belong latitude </text>
-            <text lang="fr"> Nombre de subdivisions suivant la latitude </text>
+            <text lang="en"> Number of subdivisions </text>
+            <text lang="fr"> Nombre de subdivisions </text>
         </label>
         <label id="11">
             <text lang="en"> Latitudes: </text>
@@ -153,7 +153,7 @@
         </label>
         <label id="19">
             <text lang="en"> for a period of </text>
-            <text lang="fr"> Pour la période de  </text>
+            <text lang="fr"> Pour la période de </text>
         </label>
         <label id="20">
             <text lang="en"> days </text>

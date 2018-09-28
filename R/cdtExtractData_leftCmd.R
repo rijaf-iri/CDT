@@ -331,8 +331,7 @@ ExtractDataPanelCmd <- function(){
 				tclvalue(.cdtData$EnvData$zoom$yy1) <- la1
 				tclvalue(.cdtData$EnvData$zoom$yy2) <- la2
 
-				.cdtData$EnvData$ZoomXYval <- as.numeric(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
-														tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
+				.cdtData$EnvData$ZoomXYval <- ZoomXYval0
 
 				imgContainer <- displayMap4Extraction(.cdtData$EnvData$tab$MapSelect)
 				.cdtData$EnvData$tab$MapSelect <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$MapSelect)

@@ -86,6 +86,8 @@ startCDT <- function(wd = NA, lang = NA){
 	## Widgets width function in %
 	.cdtEnv$tcl$fun$w.widgets <- function(percent) 
 			as.integer(.cdtEnv$tcl$fun$w.scale(percent) / .cdtEnv$tcl$data$sfont0)
+	.cdtEnv$tcl$fun$h.widgets <- function(percent) 
+			as.integer(.cdtEnv$tcl$fun$h.scale(percent) / .cdtEnv$tcl$data$sfont0)
 
 	if(WindowsOS()){
 		## Output message, tktext height
@@ -697,12 +699,12 @@ startCDT <- function(wd = NA, lang = NA){
 					tkadd(menu.valid1, "command", label = lang.menu[["merging.data"]][["7-1-1"]],
 						command = function()
 					{
-						# refreshCDT()
-						# spinbox.state(state = 'normal')
-						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# 	Validation.HOV.PanelCmd('RR')
-						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-						# }
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							Validation.HOV.PanelCmd('RR')
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
 					})
 
 					##########
@@ -712,12 +714,12 @@ startCDT <- function(wd = NA, lang = NA){
 					tkadd(menu.valid1, "command", label = lang.menu[["merging.data"]][["7-1-2"]],
 						command = function()
 					{
-						# refreshCDT()
-						# spinbox.state(state = 'normal')
-						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# 	Validation.HOV.PanelCmd('TT')
-						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-						# }
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							Validation.HOV.PanelCmd('TT')
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
 					})
 
 				##########
@@ -731,12 +733,12 @@ startCDT <- function(wd = NA, lang = NA){
 					tkadd(menu.valid2, "command", label = lang.menu[["merging.data"]][["7-2-1"]],
 						command = function()
 					{
-						# refreshCDT()
-						# spinbox.state(state = 'normal')
-						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# 	Validation.LOOCV.PanelCmd('RR')
-						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-						# }
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							Validation.LOOCV.PanelCmd('RR')
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
 					})
 
 					##########
@@ -746,12 +748,12 @@ startCDT <- function(wd = NA, lang = NA){
 					tkadd(menu.valid2, "command", label = lang.menu[["merging.data"]][["7-2-2"]],
 						command = function()
 					{
-						# refreshCDT()
-						# spinbox.state(state = 'normal')
-						# if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-						# 	Validation.LOOCV.PanelCmd('TT')
-						# 	.cdtEnv$tcl$data$lcmd.frame <- 1
-						# }
+						refreshCDT()
+						spinbox.state(state = 'normal')
+						if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+							Validation.LOOCV.PanelCmd('TT')
+							.cdtEnv$tcl$data$lcmd.frame <- 1
+						}
 					})
 
 		####################################
@@ -1487,7 +1489,7 @@ startCDT <- function(wd = NA, lang = NA){
 
 	#######
 	imglab.cdt <- tklabel(cdtfr.cdtname, image = imgAcc.cdt)
-	txtlab.cdt <- tklabel(cdtfr.cdtname, text = 'Climate Data Tools', font = cdtfont0, foreground = '#1461E2')
+	txtlab.cdt <- tklabel(cdtfr.cdtname, text = 'Climate Data Tools', font = cdtfont0, foreground = '#00227C')
 	txtlab.ver <- tklabel(cdtfr.cdtname, text = paste('Version', .cdtEnv$pkg$version), font = cdtfont1)
 	txtlab.auth <- tklabel(cdtfr.cdtname, text = 'Rija Faniriantsoa, Tufa Dinku', font = cdtfont2)
 
@@ -1497,8 +1499,10 @@ startCDT <- function(wd = NA, lang = NA){
 	tkgrid(txtlab.auth)
 
 	#######
-	hauteur_sep <- if(WindowsOS()) 9 else 10
-	largeur_sep <- if(WindowsOS()) 24 else 21
+	hauteur_sep <- if(WindowsOS()) 11 else 14
+	largeur_sep <- if(WindowsOS()) 17.5 else 17
+	hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(hauteur_sep)
+	largeur_sep <- .cdtEnv$tcl$fun$w.widgets(largeur_sep)
 
 	txtlab.tmp2 <- tklabel(cdtfr.tmp2, text = '', height = hauteur_sep)
 	tkgrid(txtlab.tmp2)

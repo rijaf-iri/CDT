@@ -139,37 +139,18 @@ testHomogeneityPanelCmd <- function(){
 
 		chk.RefS <- tkcheckbutton(frameRefS, variable = use.RefS, text = 'Use reference series', anchor = 'w', justify = 'left')
 		bt.RefS <- ttkbutton(frameRefS, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = "disabled")
-		txt.adjust <- tklabel(frameRefS, text = 'Series adjustment parameters', anchor = 'w', justify = 'left', width = largeur4)
-		bt.adjust <- ttkbutton(frameRefS, text = .cdtEnv$tcl$lang$global[['button']][['5']])
 
 		tkconfigure(bt.RefS, command = function(){
 			Params <- GeneralParameters[["series"]]
 			GeneralParameters[["series"]] <<- getParams.HomoRefSeries(Params)
 		})
 
-		tkconfigure(bt.adjust, command = function(){
-			states <- list(day = c('Day', 'normal', 'normal'),
-							pen = c('Pentad', 'normal', 'normal'),
-							dek = c('Day', 'disabled', 'normal'),
-							mon = c('Day', 'disabled', 'disabled'))
-
-			states <- unlist(states[CbperiodVAL %in% str_trim(tclvalue(timeSteps))])
-			label <- states[1]
-			state.dyp <- states[2]
-			state.dek <- states[3]
-			Params <- GeneralParameters[["adj"]]
-			GeneralParameters[["adj"]] <<- getParams.HomogAdjust(Params, label, state.dyp, state.dek)
-		})
-
 		tkgrid(chk.RefS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(bt.RefS, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.adjust, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(bt.adjust, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 		helpWidget(chk.RefS, 'Check to use reference series to perform the homogenization test',
 							'Check to use reference series to perform the homogenization test')
 		helpWidget(bt.RefS, 'Set parameters to create the reference series', 'Set parameters to create the reference series')
-		helpWidget(bt.adjust, 'Set parameters to adjust the series', 'Set parameters to adjust the series')
 
 		###############
 		tkbind(chk.RefS, "<Button-1>", function(){
@@ -374,7 +355,6 @@ testHomogeneityPanelCmd <- function(){
 
 			tkconfigure(cb.hom.mthd, state = stateQC)
 			tkconfigure(bt.hom.mthd, state = stateQC)
-			# tkconfigure(bt.adjust, state = stateQC)
 
 			tkconfigure(cb.Aggr, state = stateQC)
 			tkconfigure(en.Aggr, state = stateQC)
@@ -489,6 +469,8 @@ testHomogeneityPanelCmd <- function(){
 		ADJSERIES <- c("None", "Mean", "Quantile Matching")
 		.cdtData$EnvData$adj$adjseries <- tclVar(ADJSERIES[1])
 
+		txt.adjust <- tklabel(frameAdjust, text = 'Series adjustment parameters', anchor = 'w', justify = 'left')
+		bt.adjust <- ttkbutton(frameAdjust, text = .cdtEnv$tcl$lang$global[['button']][['5']])
 		cb.Adj.Hom <- ttkcombobox(frameAdjust, values = ADJSERIES, textvariable = .cdtData$EnvData$adj$adjseries, width = largeur6)
 		bt.Adj.Hom <- ttkbutton(frameAdjust, text = "ADJUST")
 
@@ -553,8 +535,26 @@ testHomogeneityPanelCmd <- function(){
 			Insert.Messages.Out(paste(stnid, ': Adjustment done'))
 		})
 
-		tkgrid(cb.Adj.Hom, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(bt.Adj.Hom, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkconfigure(bt.adjust, command = function(){
+			states <- list(day = c('Day', 'normal', 'normal'),
+							pen = c('Pentad', 'normal', 'normal'),
+							dek = c('Day', 'disabled', 'normal'),
+							mon = c('Day', 'disabled', 'disabled'))
+
+			states <- unlist(states[CbperiodVAL %in% str_trim(tclvalue(timeSteps))])
+			label <- states[1]
+			state.dyp <- states[2]
+			state.dek <- states[3]
+			Params <- GeneralParameters[["adj"]]
+			GeneralParameters[["adj"]] <<- getParams.HomogAdjust(Params, label, state.dyp, state.dek)
+		})
+
+		tkgrid(txt.adjust, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.adjust, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(cb.Adj.Hom, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.Adj.Hom, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		helpWidget(bt.adjust, 'Set parameters to adjust the series', 'Set parameters to adjust the series')
 
 		#######################
 
@@ -585,9 +585,9 @@ testHomogeneityPanelCmd <- function(){
 		chk.Adj.Mean <- tkcheckbutton(frAdjSel, variable = .cdtData$EnvData$plot$mean, text = "Adjusted by Mean", anchor = 'w', justify = 'left')
 		chk.Adj.QM <- tkcheckbutton(frAdjSel, variable = .cdtData$EnvData$plot$qm, text = "Adjusted by QM", anchor = 'w', justify = 'left')
 
-		tkgrid(chk.Adj.BaseS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(chk.Adj.Mean, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(chk.Adj.QM, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(chk.Adj.BaseS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(chk.Adj.Mean, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+		tkgrid(chk.Adj.QM, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
 
 		tkgrid(frAdjSel, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(bt.PlotAdj, row = 0, column = 1, sticky = 'we', rowspan = 3, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -650,12 +650,12 @@ testHomogeneityPanelCmd <- function(){
 
 		tkgrid(frameOutQC, row = 0, column = 0, rowspan = 1, columnspan = 5, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(frameStnId, row = 1, column = 0, rowspan = 1, columnspan = 5, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(bt.display.Hom, row = 2, column = 0, rowspan = 1, columnspan = 3, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
-		tkgrid(bt.undo.Hom, row = 2, column = 3, rowspan = 1, columnspan = 2, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
+		tkgrid(bt.display.Hom, row = 2, column = 0, rowspan = 1, columnspan = 3, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(bt.undo.Hom, row = 2, column = 3, rowspan = 1, columnspan = 2, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(framePlot, row = 3, column = 0, rowspan = 1, columnspan = 5, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(frameAdjust, row = 4, column = 0, rowspan = 1, columnspan = 5, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
+		tkgrid(frameAdjust, row = 4, column = 0, rowspan = 1, columnspan = 5, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(framePlotAdj, row = 5, column = 0, rowspan = 1, columnspan = 5, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(bt.display.Info, row = 6, column = 0, rowspan = 1, columnspan = 5, sticky = '', padx = 1, pady = 5, ipadx = 1, ipady = 1)
+		tkgrid(bt.display.Info, row = 6, column = 0, rowspan = 1, columnspan = 5, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 
 	#######################################################################################################

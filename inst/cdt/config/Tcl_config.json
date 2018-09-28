@@ -29,12 +29,12 @@
         // "Tktable.path": "/Library/Tcl/teapot/package/macosx10.5-i386-x86_64/lib/Tktable2.11",
 
         // Bwidget located under auto_path, installed with the Tcl/Tk library
-        "Bwidget.auto": false,
+        "Bwidget.auto": true,
         // Full path to Bwidget
         // Leave blank if "Bwidget.auto" is true
-        // "Bwidget.path": ""
-        // "Bwidget.path": "/opt/local/lib/BWidget"
-        "Bwidget.path": "/Library/Tcl/teapot/package/tcl/lib/BWidget1.9.8"
+        "Bwidget.path": ""
+            // "Bwidget.path": "/opt/local/lib/BWidget"
+            // "Bwidget.path": "/Library/Tcl/teapot/package/tcl/lib/BWidget1.9.8"
     },
     "Linux": {
         // Tktable located under auto_path, installed with the Tcl/Tk library
