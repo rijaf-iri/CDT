@@ -38,7 +38,9 @@ cdt.plotmap.args0 <- function(don,
 	return(pars)
 }
 
-cdt.plotmap.args <- function(don, MapOp, shpf, legend.text = NULL, label.fun = identity, ...)
+cdt.plotmap.args <- function(don, MapOp, shpf, 
+						mar.h = c(7, 4, 2.5, 2.5), mar.v = c(4, 4, 2.5, 6),
+						legend.text = NULL, label.fun = identity, ...)
 {
 	## colorscale title
 	if(MapOp$colkeyLab$user){
@@ -80,12 +82,12 @@ cdt.plotmap.args <- function(don, MapOp, shpf, legend.text = NULL, label.fun = i
 		horizontal <- TRUE
 		legend.mar <- 3.5
 		legend.width <- 0.7
-		mar <- c(7, 4, 2.5, 2.5)
+		mar <- mar.h
 		legend.args <- if(!is.null(legend.texta)) list(text = legend.texta, cex = 0.8, side = 1, line = 2) else NULL
 	}else{
 		horizontal <- FALSE
 		legend.mar <- 6.2
-		mar <- c(4, 4, 2.5, 6)
+		mar <- mar.v
 		legend.width <- 0.9
 		line <- if(max(nchar(as.character(breaks))) > 4) 3 else 2
 		legend.args <- if(!is.null(legend.texta)) list(text = legend.texta, cex = 0.8, side = 4, line = line) else NULL
@@ -96,6 +98,25 @@ cdt.plotmap.args <- function(don, MapOp, shpf, legend.text = NULL, label.fun = i
 		breaks = breaks, breaks1 = breaks1, breaks2 = breaks2,
 		legend.mar = legend.mar, legend.width = legend.width,
 		legend.args = legend.args, legendLabel = legendLabel)
+}
+
+cdt.plotmap.args.ncvar <- function(don, mapops, PlotType, shpf, SHPOp,
+								mar.h = c(5.5, 4, 2.5, 1), mar.v = c(3.5, 4, 2.5, 6),
+								legend.text = NULL, label.fun = identity, ...)
+{
+	if(!mapops$title$user){
+		.titre <- don$title
+	}else .titre <- mapops$title$title
+
+	map.args <- cdt.plotmap.args(don, mapops, shpf, mar.h, mar.v, legend.text, label.fun, ...)
+	mar <- map.args$mar
+	map.args.add <- list(titre = .titre,
+						SHPOp = SHPOp,
+						data.type = "Grid",
+						plot.type = PlotType)
+	map.args <- map.args[!(names(map.args) %in% "mar")]
+	map.args <- c(map.args, map.args.add)
+	list(mar = mar, map.args = map.args)
 }
 
 ####################################################################################################

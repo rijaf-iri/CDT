@@ -13,35 +13,31 @@
             <text lang="en"> Cancel </text>
             <text lang="fr"> Annuler </text>
         </button>
+        <button id="3">
+            <text lang="en"> Set Date Range </text>
+            <text lang="fr"> Set Date Range </text>
+        </button>
         <label id="1">
-            <text lang="en"> Start date </text>
-            <text lang="fr"> Date de début </text>
-        </label>
-        <label id="2">
-            <text lang="en"> End date </text>
-            <text lang="fr"> Date de fin </text>
-        </label>
-        <label id="3">
             <text lang="en"> Area of interest </text>
             <text lang="fr"> Zone d'interêt </text>
         </label>
-        <label id="4">
+        <label id="2">
             <text lang="en"> Longitude </text>
             <text lang="fr"> Longitude </text>
         </label>
-        <label id="5">
+        <label id="3">
             <text lang="en"> Latitude </text>
             <text lang="fr"> Latitude </text>
         </label>
-        <label id="6">
+        <label id="4">
             <text lang="en"> Minimum </text>
             <text lang="fr"> Minimum </text>
         </label>
-        <label id="7">
+        <label id="5">
             <text lang="en"> Maximum </text>
             <text lang="fr"> Maximum </text>
         </label>
-        <label id="8">
+        <label id="6">
             <text lang="en"> Directory to save downloaded files </text>
             <text lang="fr"> Répertoire pour sauver les fichiers téléchargés </text>
         </label>

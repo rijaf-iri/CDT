@@ -15,7 +15,7 @@
         </submenu>
         <submenu id="3">
             <text lang="en"> Open ESRI Shapefile </text>
-            <text lang="en"> Ouvrir un Shapefile ESRI </text>
+            <text lang="fr"> Ouvrir un Shapefile ESRI </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Save table </text>
@@ -378,12 +378,12 @@
             <text lang="fr"> Visualisation NetCDF (Fichiers Séquentiels) </text>
         </submenu>
         <submenu id="5">
-            <text lang="en"> Plot NetCDF Data (Several Files) </text>
-            <text lang="fr"> Visualisation NetCDF (Plusieurs fichiers) </text>
+            <text lang="en"> Plot NetCDF Data (Multiple Variables) </text>
+            <text lang="fr"> Visualisation NetCDF (Plusieurs Variables) </text>
         </submenu>
         <submenu id="6">
-            <text lang="en"> Plot Merging Outputs </text>
-            <text lang="fr"> Visualisation Sorties Fusion </text>
+            <text lang="en"> Plot NetCDF Data (Multiple Files) </text>
+            <text lang="fr"> Visualisation NetCDF (Plusieurs Fichiers) </text>
         </submenu>
     </menu>
     <menu id="help">

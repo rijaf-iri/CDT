@@ -1102,6 +1102,21 @@ startCDT <- function(wd = NA, lang = NA){
 				}
 			})
 
+			##########
+			tkadd(menu.plot, "separator")
+
+			##########
+			tkadd(menu.plot, "command", label = lang.menu[["plot.data"]][["5"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					PlotVarNetCDFFilesCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
+			})
+
 
 		####################################
 
@@ -1527,9 +1542,9 @@ startCDT <- function(wd = NA, lang = NA){
 
 	#######
 	tkgrid(cdtfr.irilogo0, row = 0, column = 0, sticky = 'nw', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(cdtfr.cdtname, row = 0, column = 1, sticky = 'nwe', rowspan = 2, columnspan = 3, padx = 1, pady = 1, ipadx = 3, ipady = 1)
+	tkgrid(cdtfr.cdtname, row = 0, column = 1, sticky = 'nwe', rowspan = 2, columnspan = 5, padx = 1, pady = 1, ipadx = 3, ipady = 1)
 
-	tkgrid(cdtfr.tmp2, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(cdtfr.tmp2, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 	tkgrid(cdtfr.tmp3a, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
@@ -1537,7 +1552,7 @@ startCDT <- function(wd = NA, lang = NA){
 	tkgrid(cdtfr.tmp4b, row = 4, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 	tkgrid(cdtfr.tmp4c, row = 4, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-	tkgrid(cdtfr.irilogo1, row = 4, column = 3, sticky = 'se', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(cdtfr.irilogo1, row = 4, column = 3, sticky = 'se', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 	#######
 	tkgrid(frameAcc, sticky = 'nsew', pady = 25, padx = 1, ipadx = 1, ipady = 1)

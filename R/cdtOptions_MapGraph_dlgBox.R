@@ -4254,3 +4254,248 @@ MapGraph.GraphOptions.Assess <- function(assessOp, parent.win = .cdtEnv$tcl$main
 	return(assessOp)
 }
 
+#######################################################################################################
+
+MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
+	if(WindowsOS()){
+		largeur1 <- 28
+		largeur2 <- 31
+		largeur3 <- .cdtEnv$tcl$fun$w.scale(21)
+		largeur4 <- 40
+		largeur5 <- 22
+	}else{
+		largeur1 <- 13
+		largeur2 <- 34
+		largeur3 <- .cdtEnv$tcl$fun$w.scale(20)
+		largeur4 <- 29
+		largeur5 <- 14
+	}
+
+	#####################
+	tt <- tktoplevel()
+	tkgrab.set(tt)
+	tkfocus(tt)
+
+	#####################
+	frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
+	frButt <- tkframe(tt)
+
+	#####################
+
+	frameColkey <- ttklabelframe(frDialog, text = "Colorkey", relief = 'groove')
+
+	preset.colkey <- c('tim.colors', 'rainbow', 'heat.colors', 'cm.colors', 'topo.colors',
+						'terrain.colors', 'spi.colors', 'precip.colors', 'decile.colors')
+
+	preset.color <- tclVar(climMapOpt$presetCol$color)
+	reverse.color <- tclVar(climMapOpt$presetCol$reverse)
+	custom.color <- tclVar(climMapOpt$userCol$custom)
+
+	stateKol1 <- if(climMapOpt$userCol$custom) "disabled" else "normal"
+	stateKol2 <- if(climMapOpt$userCol$custom) "normal" else "disabled"
+
+	cb.colkey <- ttkcombobox(frameColkey, values = preset.colkey, textvariable = preset.color, width = largeur1, state = stateKol1)
+	chk.colkey <- tkcheckbutton(frameColkey, variable = reverse.color, text = 'Reverse', anchor = 'e', justify = 'right', state = stateKol1)
+	chk.userKol <- tkcheckbutton(frameColkey, variable = custom.color, text = 'User customized colorkey', anchor = 'w', justify = 'left')
+	bt.userKol <- ttkbutton(frameColkey, text = "Custom", state = stateKol2)
+	canvas.preview <- tkcanvas(frameColkey, width = largeur3, height = 20, bg = 'white')
+
+	#########
+	##Preview Color
+	if(tclvalue(custom.color) == "0"){
+		funkol <- get(tclvalue(preset.color), mode = "function")
+		listCol <- funkol(10)
+		if(tclvalue(reverse.color) == '1') listCol <- rev(listCol)
+		kolor <- getGradientColor(listCol, 0:largeur3)
+		tkdelete(canvas.preview, 'gradlines0')
+		for(i in 0:largeur3) tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+	}else{
+		if(!is.null(climMapOpt$userCol$color) & length(climMapOpt$userCol$color) > 0){
+			kolor <- getGradientColor(climMapOpt$userCol$color, 0:largeur3)
+			tkdelete(canvas.preview, 'gradlines0')
+			for(i in 0:largeur3) tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+		}else tkdelete(canvas.preview, 'gradlines0')
+	}
+
+	tkconfigure(bt.userKol, command = function(){
+		climMapOpt$userCol$color <<- createColorkey(.cdtEnv$tcl$main$win, climMapOpt$userCol$color)
+		if(!is.null(climMapOpt$userCol$color)){
+			kolor <- getGradientColor(climMapOpt$userCol$color, 0:largeur3)
+			tkdelete(canvas.preview, 'gradlines0')
+			for(i in 0:largeur3) tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+		}else tkdelete(canvas.preview, 'gradlines0')
+	})
+
+	tkgrid(cb.colkey, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(chk.colkey, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(chk.userKol, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(bt.userKol, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(canvas.preview, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	#########
+
+	tkbind(chk.userKol, "<Button-1>", function(){
+		stateKol1 <- if(tclvalue(custom.color) == '1') 'normal' else 'disabled'
+		tkconfigure(cb.colkey, state = stateKol1)
+		tkconfigure(chk.colkey, state = stateKol1)
+		stateKol2 <- if(tclvalue(custom.color) == '0') 'normal' else 'disabled'
+		tkconfigure(bt.userKol, state = stateKol2)
+
+		if(tclvalue(custom.color) == '0'){
+			if(!is.null(climMapOpt$userCol$color)){
+				kolor <- getGradientColor(climMapOpt$userCol$color, 0:largeur3)
+				tkdelete(canvas.preview, 'gradlines0')
+				for(i in 0:largeur3) tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+			}else tkdelete(canvas.preview, 'gradlines0')
+		}else{
+			funkol <- get(tclvalue(preset.color), mode = "function")
+			listCol <- funkol(10)
+			if(tclvalue(reverse.color) == '1') listCol <- rev(listCol)
+			kolor <- getGradientColor(listCol, 0:largeur3)
+			tkdelete(canvas.preview, 'gradlines0')
+			for(i in 0:largeur3) tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+		}
+	})
+
+	tkbind(cb.colkey, "<<ComboboxSelected>>", function(){
+		funkol <- get(tclvalue(preset.color), mode = "function")
+		listCol <- funkol(10)
+		if(tclvalue(reverse.color) == '1') listCol <- rev(listCol)
+		kolor <- getGradientColor(listCol, 0:largeur3)
+		tkdelete(canvas.preview, 'gradlines0')
+		for(i in 0:largeur3) tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+	})
+
+	tkbind(chk.colkey, "<Button-1>", function(){
+		funkol <- get(tclvalue(preset.color), mode = "function")
+		listCol <- funkol(10)
+		if(tclvalue(reverse.color) == '0') listCol <- rev(listCol)
+		kolor <- getGradientColor(listCol, 0:largeur3)
+		tkdelete(canvas.preview, 'gradlines0')
+		for(i in 0:largeur3) tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+	})
+
+	#####################
+
+	frameLevel <- ttklabelframe(frDialog, text = "Levels", relief = 'groove')
+
+	equidist.level <- tclVar(climMapOpt$userLvl$equidist)
+	custom.level <- tclVar(climMapOpt$userLvl$custom)
+	stateEditLvl <- if(climMapOpt$userLvl$custom) 'normal' else 'disabled'
+
+	chk.Level <- tkcheckbutton(frameLevel, variable = custom.level, text = 'User customized levels', anchor = 'w', justify = 'left')
+	yscrLevel <- tkscrollbar(frameLevel, repeatinterval = 4, command = function(...) tkyview(textLevel, ...))
+	textLevel <- tktext(frameLevel, bg = "white", wrap = "word", height = 2, width = largeur2,
+							yscrollcommand = function(...) tkset(yscrLevel, ...))
+	chk.Equidist <- tkcheckbutton(frameLevel, variable = equidist.level, text = 'Equidistant colorkey breaks', anchor = 'w', justify = 'left')
+
+	tkgrid(chk.Level, sticky = "we")
+	tkgrid(textLevel, yscrLevel)
+	tkgrid.configure(yscrLevel, sticky = "ns")
+	tkgrid.configure(textLevel, sticky = 'nswe')
+	tkgrid(chk.Equidist, sticky = "we")
+
+	if(length(climMapOpt$userLvl$levels) > 0)
+		for(j in seq_along(climMapOpt$userLvl$levels))
+			tkinsert(textLevel, "end", paste0(climMapOpt$userLvl$levels[j], ', '))
+	tkconfigure(textLevel, state = stateEditLvl)
+
+	#########
+
+	tkbind(chk.Level, "<Button-1>", function(){
+		stateEditLvl <- if(tclvalue(custom.level) == '0') 'normal' else 'disabled'
+		tkconfigure(textLevel, state = stateEditLvl)
+	})
+
+	#####################
+
+	frameMapTitle <- ttklabelframe(frDialog, text = "Map title", relief = 'groove')
+
+	user.title <- tclVar(climMapOpt$title$user)
+	text.title <- tclVar(climMapOpt$title$title)
+
+	stateMpTlt <- if(climMapOpt$title$user) 'normal' else 'disabled'
+
+	chk.MpTlt <- tkcheckbutton(frameMapTitle, variable = user.title, anchor = 'e', justify = 'right')
+	en.MpTlt <- tkentry(frameMapTitle, textvariable = text.title, width = largeur4, state = stateMpTlt)
+
+	tkgrid(chk.MpTlt, row = 0, column = 0, sticky = 'e')
+	tkgrid(en.MpTlt, row = 0, column = 1, sticky = 'we')
+
+	#########
+
+	tkbind(chk.MpTlt, "<Button-1>", function(){
+		stateMpTlt <- if(tclvalue(user.title) == '0') 'normal' else 'disabled'
+		tkconfigure(en.MpTlt, state = stateMpTlt)
+	})
+
+	#####################
+	tkgrid(frameColkey, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(frameLevel, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(frameMapTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	#####################
+	bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+	bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+
+	tkconfigure(bt.opt.OK, command = function(){
+		climMapOpt$presetCol$color <<- str_trim(tclvalue(preset.color))
+		climMapOpt$presetCol$reverse <<- switch(tclvalue(reverse.color), '0' = FALSE, '1' = TRUE)
+		climMapOpt$userCol$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
+		climMapOpt$userLvl$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
+		climMapOpt$userLvl$equidist <<- switch(tclvalue(equidist.level), '0' = FALSE, '1' = TRUE)
+		if(climMapOpt$userLvl$custom){
+			vlevel <- tclvalue(tkget(textLevel, "0.0", "end"))
+			vlevel <- gsub("[\t\r\n]", "", vlevel)
+			vlevel <- gsub('\\s+', '', vlevel)
+			vlevel <- strsplit(vlevel, ",")[[1]]
+			vlevel <- vlevel[!is.na(vlevel) | vlevel != '']
+			if(length(vlevel) < 2){
+				tkmessageBox(message = "Invalid Levels", icon = "warning", type = "ok")
+				tkwait.window(tt)
+			}
+			climMapOpt$userLvl$levels <<- as.numeric(vlevel)
+		}
+		climMapOpt$title$user <<- switch(tclvalue(user.title), '0' = FALSE, '1' = TRUE)
+		climMapOpt$title$title <<- str_trim(tclvalue(text.title))
+
+		tkgrab.release(tt)
+		tkdestroy(tt)
+		tkfocus(parent.win)
+	})
+
+	tkconfigure(bt.opt.CA, command = function(){
+		tkgrab.release(tt)
+		tkdestroy(tt)
+		tkfocus(parent.win)
+	})
+
+	tkgrid(bt.opt.OK, row = 0, column = 0, padx = 5, pady = 1, ipadx = 1, sticky = 'w')
+	tkgrid(bt.opt.CA, row = 0, column = 1, padx = 5, pady = 1, ipadx = 1, sticky = 'e')
+
+	###############################################################
+
+	tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	tkwm.withdraw(tt)
+	tcl('update')
+	tt.w <- as.integer(tkwinfo("reqwidth", tt))
+	tt.h <- as.integer(tkwinfo("reqheight", tt))
+	tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+	tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+	tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+	tkwm.transient(tt)
+	tkwm.title(tt, "Options")
+	tkwm.deiconify(tt)
+
+	##################################################################
+	tkfocus(tt)
+	tkbind(tt, "<Destroy>", function(){
+		tkgrab.release(tt)
+		tkfocus(parent.win)
+	})
+	tkwait.window(tt)
+	return(climMapOpt)
+}
+

@@ -24,7 +24,7 @@ LatLonAxisLabels <- function(axis.x, axis.y){
 ########################################################################
 
 ## Layout for lattice plot
-manageLayout <- function(nbPlot, transpose = FALSE){
+manageLayout.sp <- function(nbPlot, transpose = FALSE){
 	 # nmaxPlot = n*n+n
 	n <- 5
 	nLayout <- cbind(c(rep(1:n, seq(1, n * 2, 2)), rep(n + 1, n)), rep(1:n, seq(2, n * 2, 2)))
@@ -46,6 +46,19 @@ manageLayout <- function(nbPlot, transpose = FALSE){
 
 	return(list(dim = dimLayout, order = orderLayout))
 }
+
+manageLayout <- function(nbPlot, n = 5){
+	nbseq <- rep(1:n, seq(1, n * 2, 2))
+	nc.layout <- nbseq[nbPlot]
+	seq.layout <- split(seq(nbPlot), ceiling(seq(nbPlot) / nc.layout))
+	nr.layout <- length(seq.layout)
+	mat <- rep(0, nc.layout * nr.layout)
+	mat[seq(nbPlot)] <- seq(nbPlot)
+	orderLayout <- c(matrix(mat, nr.layout, nc.layout, byrow = TRUE))
+	dimLayout <- c(nr.layout, nc.layout)
+	return(list(dim = dimLayout, order = orderLayout))
+}
+
 
 ################
 ## Axis ticks for levelplot
