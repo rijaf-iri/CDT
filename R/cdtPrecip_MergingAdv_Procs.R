@@ -187,6 +187,9 @@ Precip_MergingFunctions <- function(){
 	#############
 	mrg.method <- .cdtData$GalParams$Merging$mrg.method
 	interp.method <- .cdtData$GalParams$Merging$interp.method
+	local.interpolation <- .cdtData$GalParams$Merging$local.interpolation
+	pixelize.station <- .cdtData$GalParams$Merging$pixelize.station
+
 	nmin <- .cdtData$GalParams$Merging$nmin
 	nmax <- .cdtData$GalParams$Merging$nmax
 	maxdist <- .cdtData$GalParams$Merging$maxdist
@@ -213,9 +216,16 @@ Precip_MergingFunctions <- function(){
 	res.lat <- diff(range(xy.grid$lat)) / (nlat0 - 1)
 	res.latlon <- max(res.lon, res.lat)
 
-	if(maxdist < res.latlon) maxdist <- res.latlon * sqrt(2)
-	res.coarse <- maxdist / sqrt(2)
-	if(res.coarse < res.latlon) res.coarse <- maxdist
+	if(local.interpolation){
+		if(maxdist < res.latlon) maxdist <- res.latlon * sqrt(2)
+		res.coarse <- maxdist / sqrt(2)
+		if(res.coarse < res.latlon) res.coarse <- maxdist
+	}else{
+		maxdist <- res.latlon * 10
+		res.coarse <- maxdist / sqrt(2)
+	}
+
+	if(maxdist < maxdist.RnoR) maxdist.RnoR <- maxdist
 
 	if(!is.null(demData)){
 		slpasp <- raster.slope.aspect(demData)
@@ -334,8 +344,15 @@ Precip_MergingFunctions <- function(){
 			cat(paste(ncInfo$dates[jj], ":", "no station data", "|", "RFE data", "\n"), file = log.file, append = TRUE)
 			return(NULL)
 		}
+
 		donne.stn <- data.frame(lon = lon.stn, lat = lat.stn, stn = c(donne.stn))
-		stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = TRUE)
+		if(pixelize.station){
+			stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = TRUE)
+		}else{
+			stng <- donne.stn$stn
+			if(length(stng[!is.na(stng)]) < min.stn) stng <- NULL
+		}
+
 		if(is.null(stng)){
 			writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
 					mrgParms$merge.DIR, GalParams$output$format)
@@ -345,9 +362,18 @@ Precip_MergingFunctions <- function(){
 		}
 
 		############
-		locations.stn <- interp.grid$newgrid
-		locations.stn$stn <- stng
-		locations.stn$rfe <- c(xrfe)
+		if(pixelize.station){
+			locations.stn <- interp.grid$newgrid
+			locations.stn$stn <- stng
+			locations.stn$rfe <- c(xrfe)
+		}else{
+			locations.stn <- interp.grid$newgrid[ijGrd, ]
+			locations.stn@coords <- as.matrix(donne.stn[, c("lon", "lat")])
+			locations.stn$stn <- stng
+			locations.stn$rfe <- xrfe[ijGrd]
+			if(is.auxvar['lon']) locations.stn$alon <- donne.stn$lon
+			if(is.auxvar['lat']) locations.stn$alat <- donne.stn$lat
+		}
 
 		############
 		xadd <- interp.grid$coords.coarse
@@ -376,6 +402,7 @@ Precip_MergingFunctions <- function(){
 		# spatial trend
 		sp.trend <- xrfe
 		locations.stn$res <- locations.stn$stn - locations.stn$rfe
+		rfe.outside <- FALSE
 
 		if(nb.stn.nonZero >= min.non.zero){
 			if(mrg.method == "Spatio-Temporal LM"){
@@ -408,6 +435,7 @@ Precip_MergingFunctions <- function(){
 						locations.stn$res[-glm.stn$na.action] <- glm.stn$residuals
 					else
 						locations.stn$res <- glm.stn$residuals
+					rfe.outside <- TRUE
 				}
 			}
 		}else{
@@ -456,7 +484,7 @@ Precip_MergingFunctions <- function(){
 		# create buffer for stations
 		buffer.ina <- rgeos::gBuffer(locations.stn, width = maxdist)
 		buffer.grid <- rgeos::gBuffer(locations.stn, width = maxdist * 1.5)
-		buffer.xaddin <- rgeos::gBuffer(locations.stn, width = maxdist / 2)
+		buffer.xaddin <- rgeos::gBuffer(locations.stn, width = maxdist * 0.75)
 		buffer.xaddout <- rgeos::gBuffer(locations.stn, width = maxdist * 2.5)
 
 		############
@@ -473,7 +501,6 @@ Precip_MergingFunctions <- function(){
 		xadd.out[is.na(xadd.out)] <- FALSE
 		iadd <- xadd.in & xadd.out
 		xadd <- xadd[iadd, ]
-		## plot ici
 
 		############
 		## add coarse grid
@@ -490,8 +517,25 @@ Precip_MergingFunctions <- function(){
 
 		###########
 		# interpolate residual
-		res.grd <- gstat::krige(formule, locations = locations.stn, newdata = newdata0, model = vgm,
-						block = block, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
+		if(local.interpolation){
+			res.grd <- gstat::krige(formule, locations = locations.stn, newdata = newdata0, model = vgm,
+							block = block, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
+			# fill missing inside interpolation buffer.ina
+			inside <- as.logical(over(res.grd, buffer.ina))
+			inside[is.na(inside)] <- FALSE
+			ina <- is.na(res.grd$var1.pred) & inside
+			if(any(ina)){
+				tmp.res.grd <- res.grd[!ina, ]
+				tmp.res.grd <- tmp.res.grd[!is.na(tmp.res.grd$var1.pred), ]
+				res.grd.na <- gstat::krige(var1.pred~1, locations = tmp.res.grd, newdata = newdata0[ina, ], model = vgm,
+										block = bGrd, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
+				res.grd$var1.pred[ina] <- res.grd.na$var1.pred
+				rm(tmp.res.grd, res.grd.na)
+			}
+		}else{
+			res.grd <- gstat::krige(formule, locations = locations.stn, newdata = newdata0, model = vgm,
+									block = block, debug.level = 0)
+		}
 
 		###########
 		# remove extreme residuals outside station range
@@ -501,19 +545,6 @@ Precip_MergingFunctions <- function(){
 		res.grd$var1.pred[!is.na(res.grd$var1.pred) & res.grd$var1.pred < extrm1] <- extrm1
 		res.grd$var1.pred[!is.na(res.grd$var1.pred) & res.grd$var1.pred > extrm2] <- extrm2
 
-		# fill missing inside interpolation buffer.ina
-		inside <- as.logical(over(res.grd, buffer.ina))
-		inside[is.na(inside)] <- FALSE
-		ina <- is.na(res.grd$var1.pred) & inside
-		if(any(ina)){
-			tmp.res.grd <- res.grd[!ina, ]
-			tmp.res.grd <- tmp.res.grd[!is.na(tmp.res.grd$var1.pred), ]
-			res.grd.na <- gstat::krige(var1.pred~1, locations = tmp.res.grd, newdata = newdata0[ina, ], model = vgm,
-									block = bGrd, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
-			res.grd$var1.pred[ina] <- res.grd.na$var1.pred
-			rm(tmp.res.grd, res.grd.na)
-		}
-
 		###########
 		resid <- rep(0, length(newdata))
 		resid[igrid] <- res.grd$var1.pred
@@ -521,31 +552,31 @@ Precip_MergingFunctions <- function(){
 		resid <- matrix(resid, ncol = nlat0, nrow = nlon0)
 
 		###########
+		## "Regression Kriging"
+		if(rfe.outside){
+			smth.out <- as.logical(over(newdata, buffer.ina))
+			smth.out[is.na(smth.out)] <- FALSE
+			smth.in <- !as.logical(over(newdata, buffer.xaddin))
+			smth.in[is.na(smth.in)] <- TRUE
+			imout <- smth.in & igrid
+
+			out.tmp <- xrfe
+			out.tmp[smth.out] <- sp.trend[smth.out]
+			out.tmp <- smooth.matrix(out.tmp, 2)
+
+			sp.trend[!igrid] <- xrfe[!igrid]
+			sp.trend[imout] <- out.tmp[imout]
+			rm(smth.out, smth.in, imout, out.tmp)
+		}
+
+		###########
 		out.mrg <- sp.trend + resid
 		out.mrg[out.mrg < 0] <- 0
 
 		###########
 
-		if(mrg.method == "Regression Kriging"){
-			bsmoo <- as.logical(over(newdata, buffer.ina))
-			bsmoo[is.na(bsmoo)] <- FALSE
-			mout.in <- !as.logical(over(newdata, buffer.xaddin))
-			mout.in[is.na(mout.in)] <- TRUE
-			imout <- mout.in & igrid
-
-			out.tmp <- xrfe
-			out.tmp[bsmoo] <- out.mrg[bsmoo]
-			out.tmp <- smooth.matrix(out.tmp, 1)
-			out.mrg[!igrid] <- xrfe[!igrid]
-			out.mrg[imout] <- out.tmp[imout]
-			rm(bsmoo, mout.in, imout, out.tmp)
-		}
-
-		###########
-
-		rm(resid, sp.trend, res.grd, inside, ina, newdata0,
-			igrid, locations.stn, xadd, xadd.in, xadd.out,
-			buffer.ina, buffer.grid, buffer.xaddin, buffer.xaddout)
+		rm(resid, sp.trend, res.grd, inside, newdata0,
+			igrid, locations.stn, xadd, xadd.in, xadd.out)
 
 		###########
 		# Rain-no-Rain
@@ -554,9 +585,28 @@ Precip_MergingFunctions <- function(){
 			rnr.stn <- ifelse(stng < wet.day + 0.001, 0, 1)
 			rnr.rfe <- ifelse(xrfe < wet.day + 0.001, 0, 1)
 
-			locations.stn <- interp.grid$newgrid
-			locations.stn$rnr.stn <- rnr.stn
-			locations.stn$rnr.rfe <- c(rnr.rfe)
+			if(pixelize.station){
+				locations.stn <- interp.grid$newgrid
+				locations.stn$rnr.stn <- rnr.stn
+				locations.stn$rnr.rfe <- c(rnr.rfe)
+				ix.stn <- !is.na(rnr.stn)
+				stnRnR <- rnr.stn[ix.stn]
+			}else{
+				locations.stn <- interp.grid$newgrid[ijGrd, ]
+				locations.stn@coords <- as.matrix(donne.stn[, c("lon", "lat")])
+				locations.stn$rnr.stn <- rnr.stn
+				locations.stn$rnr.rfe <- rnr.rfe[ijGrd]
+				if(is.auxvar['lon']) locations.stn$alon <- donne.stn$lon
+				if(is.auxvar['lat']) locations.stn$alat <- donne.stn$lat
+
+				ix0 <- tapply(rnr.stn, ijGrd, mean, na.rm = TRUE)
+				ix0[is.nan(ix0)] <- NA
+				ix.stn <- as.numeric(names(ix0))
+				ix.stn <- ix.stn[!is.na(ix0)]
+				stnRnR <- as.numeric(ix0[!is.na(ix0)])
+				stnRnR <- ifelse(stnRnR > 0, 1, 0)
+			}
+
 			locations.stn <- locations.stn[, c('rnr.stn', 'rnr.rfe')]
 			locations.stn <- locations.stn[!is.na(locations.stn$rnr.stn) & !is.na(locations.stn$rnr.rfe), ]
 
@@ -569,32 +619,24 @@ Precip_MergingFunctions <- function(){
 			}
 
 			###########
-			xadd <- interp.grid$coords.coarse
-			xadd$rnr.rfe <- xadd$rnr.stn <- c(rnr.rfe[interp.grid$id.coarse$ix, interp.grid$id.coarse$iy])
-			xadd <- xadd[, c('rnr.stn', 'rnr.rfe')]
-			xadd$rnr.res <- 0
-
-			###########
 			# binomial logistic regression
 			newdata.glm <- interp.grid$newgrid
 			newdata.glm$rnr.rfe <- c(rnr.rfe)
 			glm.binom <- glm(rnr.stn ~ rnr.rfe, data = locations.stn, family = binomial(link = "logit"))
 			locations.stn$rnr.res <- residuals(glm.binom)
-			rnr <- predict(glm.binom, newdata = newdata.glm, type = 'link')
+			rnr.trend <- predict(glm.binom, newdata = newdata.glm, type = 'link')
 			rm(newdata.glm)
 
 			###########
-			buffer.rnor.in <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR / 2)
-			buffer.rnor.out <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR * 2.5)
-			buffer.rnor.grid <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR * 1.5)
+			## buffer
+			buffer.grid <- buffer.ina
+			buffer.ina <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR)
 
-			############
-			# get coarse grid to add to location.stn
-			xadd.in <- !as.logical(over(xadd, buffer.rnor.in))
-			xadd.in[is.na(xadd.in)] <- TRUE
-			xadd.out <- as.logical(over(xadd, buffer.rnor.out))
-			xadd.out[is.na(xadd.out)] <- FALSE
-			iadd <- xadd.in & xadd.out
+			###########
+			xadd <- interp.grid$coords.coarse
+			xadd$rnr.rfe <- xadd$rnr.stn <- c(rnr.rfe[interp.grid$id.coarse$ix, interp.grid$id.coarse$iy])
+			xadd <- xadd[, c('rnr.stn', 'rnr.rfe')]
+			xadd$rnr.res <- 0
 			xadd <- xadd[iadd, ]
 
 			###########
@@ -603,17 +645,16 @@ Precip_MergingFunctions <- function(){
 			locations.stn <- maptools::spRbind(locations.stn, xadd)
 
 			###########
-
-			buff.rnr <- as.logical(over(newdata, buffer.rnor.grid))
-
 			## rnr interpolation grid
-			igrid.rnr <- buff.rnr
+			igrid.rnr <- as.logical(over(newdata, buffer.grid))
 			igrid.rnr[is.na(igrid.rnr)] <- FALSE
 			newdata0.rnr <- newdata[igrid.rnr, ]
 
-			## rnr.rfe outside interp grid
-			irnr <- !buff.rnr
-			irnr[is.na(irnr)] <- TRUE
+			###########
+			## rnr.rfe outside maxdist.RnoR
+			imsk0 <- !as.logical(over(newdata, buffer.ina))
+			imsk0[is.na(imsk0)] <- TRUE
+			imsk0 <- matrix(imsk0, nrow = nlon0, ncol = nlat0)
 
 			###########
 			rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newdata0.rnr, maxdist = maxdist.RnoR, debug.level = 0)
@@ -628,34 +669,27 @@ Precip_MergingFunctions <- function(){
 			rnr0[igrid.rnr] <- rnr.res.grd$var1.pred
 			rnr0[is.na(rnr0)] <- 0
 
-			rnr <- rnr + rnr0
+			rnr <- rnr.trend + rnr0
 			rnr <- exp(rnr) / (1 + exp(rnr))
 			### decision boundary 0.5
 			rnr[rnr >= 0.5] <- 1
 			rnr[rnr < 0.5] <- 0
 
-			rnr[!is.na(rnr.stn)] <- rnr.stn[!is.na(rnr.stn)]
+			rnr[ix.stn] <- stnRnR
 			rnr <- matrix(rnr, nrow = nlon0, ncol = nlat0)
-			imsk <- matrix(irnr, nrow = nlon0, ncol = nlat0)
-			rnr[imsk] <- rnr.rfe[imsk]
-			rnr[is.na(rnr)] <- 1
 
 			if(smooth.RnoR){
-				# buffer to smooth between stn convex hull and interp grid
-				rnr.in <- !as.logical(over(newdata, buffer.rnor.in))
-				rnr.in[is.na(rnr.in)] <- TRUE
-				rnr.out <- as.logical(over(newdata, buffer.rnor.grid))
-				rnr.out[is.na(rnr.out)] <- FALSE
-				irnr <- rnr.in & rnr.out
-				rnr0 <- smooth.matrix(rnr, 1)
-				rnr[irnr] <- rnr0[irnr]
-				rnr[imsk] <- rnr.rfe[imsk]
-				rm(rnr.in, rnr.out)
+				rnr[imsk0] <- rnr.rfe[imsk0]
+				rnr[is.na(rnr)] <- 1
+				rnr <- smooth.matrix(rnr, 2)
+				rnr[imsk0] <- rnr.rfe[imsk0]
+			}else{
+				rnr[imsk0] <- rnr.rfe[imsk0]
+				rnr[is.na(rnr)] <- 1
 			}
 
-			rm(rnr0, imsk, irnr, rnr.res.grd, newdata0.rnr, igrid.rnr, buff.rnr,
-				iadd, xadd, xadd.out, xadd.in, locations.stn, rnr.stn,
-				buffer.rnor.in, buffer.rnor.out, buffer.rnor.grid)
+			rm(rnr0, imsk0, rnr.res.grd, newdata0.rnr, igrid.rnr, rnr.rfe,
+				iadd, xadd, xadd.out, xadd.in, locations.stn, rnr.stn)
 		}
 
 		###########

@@ -33,6 +33,12 @@
         // Kriging: Ordinary Kriging
         "interp.method": "IDW",
 
+        // Do a local or global interpolation
+        // Local interpolation uses only data points in the neighborhood
+        // of a grid point (need to set: nmin, nmax, maxdist)
+        // global interpolation uses all data points.
+        "local.interpolation": true,
+
         // Kriging & IDW interpolation parameters
         // nmin for gstat
         "nmin": 3,
@@ -44,6 +50,9 @@
         "vgm.model": ["Sph", "Exp", "Gau"],
         // using kriging of block mean values (true or false)
         "use.block": true,
+
+        // Pixelize station before doing the merging
+        "pixelize.station": true,
 
         // Minimum number of stations with data to be used to do the merging
         "min.stn": 10,

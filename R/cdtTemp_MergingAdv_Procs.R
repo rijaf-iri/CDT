@@ -485,7 +485,7 @@ Temp_MergingFunctions <- function(){
 
 			out.tmp <- xtmp
 			out.tmp[bsmoo] <- out.mrg[bsmoo]
-			out.tmp <- smooth.matrix(out.tmp, 1)
+			out.tmp <- smooth.matrix(out.tmp, 3)
 			out.mrg[!igrid] <- xtmp[!igrid]
 			out.mrg[imout] <- out.tmp[imout]
 			rm(bsmoo, mout.in, imout, out.tmp)
