@@ -677,15 +677,12 @@ Precip_MergingFunctions <- function(){
 
 			rnr[ix.stn] <- stnRnR
 			rnr <- matrix(rnr, nrow = nlon0, ncol = nlat0)
+			rnr[imsk0] <- rnr.rfe[imsk0]
+			rnr[is.na(rnr)] <- 1
 
 			if(smooth.RnoR){
-				rnr[imsk0] <- rnr.rfe[imsk0]
-				rnr[is.na(rnr)] <- 1
 				rnr <- smooth.matrix(rnr, 2)
 				rnr[imsk0] <- rnr.rfe[imsk0]
-			}else{
-				rnr[imsk0] <- rnr.rfe[imsk0]
-				rnr[is.na(rnr)] <- 1
 			}
 
 			rm(rnr0, imsk0, rnr.res.grd, newdata0.rnr, igrid.rnr, rnr.rfe,
