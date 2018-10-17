@@ -208,7 +208,7 @@ PlotVarNetCDFFilesCmd <- function(){
 
 		frameVARS <- ttklabelframe(subfr1, text = "Select variable to plot", relief = 'groove')
 
-		sel.vars <- bwTabScrollableFrame(frameVARS, wscrlwin = vars.w, hscrlwin = vars.h, bg = "red")
+		sel.vars <- bwTabScrollableFrame(frameVARS, wscrlwin = vars.w, hscrlwin = vars.h)
 
 		ncMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
 						userCol = list(custom = FALSE, color = NULL),

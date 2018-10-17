@@ -10,8 +10,8 @@
             <text lang="fr"> Ouvrir un data.frame </text>
         </submenu>
         <submenu id="2">
-            <text lang="en"> Open netcdf file </text>
-            <text lang="fr"> Ouvrir un fichier netcdf </text>
+            <text lang="en"> Open NetCDF file </text>
+            <text lang="fr"> Ouvrir un fichier NetCDF </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> Open ESRI Shapefile </text>

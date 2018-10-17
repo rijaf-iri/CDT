@@ -146,10 +146,10 @@ download_RFE <- function(){
 			.cdtData$GalParams$rfe.data <- str_trim(tclvalue(fileSource))
 			.cdtData$GalParams$dir2save <- str_trim(tclvalue(dir2save))
 
-			.cdtData$GalParams$minlon <- as.numeric(tclvalue(minLon))
-			.cdtData$GalParams$maxlon <- as.numeric(tclvalue(maxLon))
-			.cdtData$GalParams$minlat <- as.numeric(tclvalue(minLat))
-			.cdtData$GalParams$maxlat <- as.numeric(tclvalue(maxLat))
+			.cdtData$GalParams$bbox$minlon <- as.numeric(tclvalue(minLon))
+			.cdtData$GalParams$bbox$maxlon <- as.numeric(tclvalue(maxLon))
+			.cdtData$GalParams$bbox$minlat <- as.numeric(tclvalue(minLat))
+			.cdtData$GalParams$bbox$maxlat <- as.numeric(tclvalue(maxLat))
 
 
 			.cdtData$GalParams$message <- lang.dlg[['message']]
