@@ -395,7 +395,7 @@ Temp_MergingFunctions <- function(){
 
 		############
 		if(interp.method == 'Kriging'){
-			if(length(locations.stn$res) > 7){
+			if(length(locations.stn$res) > 7 & var(locations.stn$res) > 0){
 				vgm <- try(automap::autofitVariogram(formule, input_data = locations.stn, model = vgm.model, cressie = TRUE), silent = TRUE)
 				vgm <- if(!inherits(vgm, "try-error")) vgm$var_model else NULL
 			}else{

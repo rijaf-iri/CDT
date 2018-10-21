@@ -18,7 +18,7 @@ ExtractDataPanelCmd <- function(){
 	MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
 	GeneralParameters <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Extract_time_series.json'))
 	GeneralParameters$Geom <- list(minlon = '', maxlon = '', minlat = '', maxlat = '',
-								padlon = '', padlat = '', namePoly = '', multiObj = NULL)
+								padlon = 0, padlat = 0, namePoly = '', multiObj = NULL)
 	.cdtData$EnvData$multiptspoly <- NULL
 
 	# xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtExtractData_leftCmd.xml")
