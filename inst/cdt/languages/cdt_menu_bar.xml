@@ -257,6 +257,10 @@
             <text lang="en"> Temperature </text>
             <text lang="fr"> Température </text>
         </submenu>
+        <submenu id="7-3">
+            <text lang="en"> Validation Statistics </text>
+            <text lang="fr"> Statistiques de Validation </text>
+        </submenu>
     </menu>
     <menu id="data.analysis">
         <submenu id="0">

@@ -756,6 +756,21 @@ startCDT <- function(wd = NA, lang = NA){
 						}
 					})
 
+				##########
+				tkadd(menu.valid, "separator")
+
+				##########
+				tkadd(menu.valid, "command", label = lang.menu[["merging.data"]][["7-3"]],
+					command = function()
+				{
+					refreshCDT()
+					spinbox.state(state = 'normal')
+					if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+						Validation.STAT.PanelCmd()
+						.cdtEnv$tcl$data$lcmd.frame <- 1
+					}
+				})
+
 		####################################
 
 		menu.dataproc <- tkmenu(top.menu, tearoff = FALSE, relief = "flat")

@@ -1,44 +1,12 @@
 {
     // Time step of the input data
     "Tstep": "dekadal",
-    // Station data filename
-    "STN.file": "",
-
-    // ncdf data
-    "ncdf.file": {
-        // Full path to the directory of ncdf data
-        "dir": "",
-        // ncdf filename format 
-        "format": "rr_mrg_%s%s%s.nc",
-        // ncdf sample file
-        "sample": ""
-    },
-
-    // Extraction date range
-    "Extract.Date": {
-        "start.year": 1981,
-        "start.mon": 1,
-        "start.day": 1,
-        "end.year": 2016,
-        "end.mon": 12,
-        "end.day": 3,
-        // Months on which the extraction will be performed
-        "Months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-    },
-
-    // Selection type
-    // All Stations: "all"
-    // Rectangle: "rect"
-    // Polygons: "poly"
-    "type.select": "all",
-
-    // Shapefile to extract polygons
-    "shp.file": {
-        // shapefile filename
-        "shp": "",
-        // Attribute field to be used and displayed
-        "attr": ""
-    },
+    // Variable,  "RR": Precipitation, "TT": Temperature 
+    "clim.var": "RR",
+    // Station data filename used to validate
+    "STN.file1": "",
+    // Station data filename to be validated
+    "STN.file2": "",
 
     // Validation date for aggregation
     "date.range": {
