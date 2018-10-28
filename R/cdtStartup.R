@@ -1132,6 +1132,20 @@ startCDT <- function(wd = NA, lang = NA){
 				}
 			})
 
+			##########
+			tkadd(menu.plot, "separator")
+
+			##########
+			tkadd(menu.plot, "command", label = lang.menu[["plot.data"]][["6"]],
+				command = function()
+			{
+				refreshCDT()
+				spinbox.state(state = 'normal')
+				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+					PlotMulitpleDataCmd()
+					.cdtEnv$tcl$data$lcmd.frame <- 1
+				}
+			})
 
 		####################################
 

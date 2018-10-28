@@ -386,8 +386,8 @@
             <text lang="fr"> Visualisation NetCDF (Plusieurs Variables) </text>
         </submenu>
         <submenu id="6">
-            <text lang="en"> Plot NetCDF Data (Multiple Files) </text>
-            <text lang="fr"> Visualisation NetCDF (Plusieurs Fichiers) </text>
+            <text lang="en"> Plot multiple data sets </text>
+            <text lang="fr"> Visualisation de plusieurs ensembles de données </text>
         </submenu>
     </menu>
     <menu id="help">

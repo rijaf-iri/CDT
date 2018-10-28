@@ -211,33 +211,36 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
 	#####################
 
-	frameMpScale <- ttklabelframe(frDialog, text = "Scale bar", relief = 'groove')
+	if(!is.null(climMapOpt$scalebar)){
+		frameMpScale <- ttklabelframe(frDialog, text = "Scale bar", relief = 'groove')
 
-	place.scale <- c('bottomleft', 'bottomcenter', 'bottomright')
-	add.scale <- tclVar(climMapOpt$scalebar$add)
-	pos.scale <- tclVar(climMapOpt$scalebar$pos)
+		place.scale <- c('bottomleft', 'bottomcenter', 'bottomright')
+		add.scale <- tclVar(climMapOpt$scalebar$add)
+		pos.scale <- tclVar(climMapOpt$scalebar$pos)
 
-	stateSclBr <- if(climMapOpt$scalebar$add) 'normal' else 'disabled'
+		stateSclBr <- if(climMapOpt$scalebar$add) 'normal' else 'disabled'
 
-	chk.MpScl <- tkcheckbutton(frameMpScale, variable = add.scale, text = 'Add a map scale', anchor = 'w', justify = 'left')
-	cb.MpScl <- ttkcombobox(frameMpScale, values = place.scale, textvariable = pos.scale, width = largeur5, state = stateSclBr)
+		chk.MpScl <- tkcheckbutton(frameMpScale, variable = add.scale, text = 'Add a map scale', anchor = 'w', justify = 'left')
+		cb.MpScl <- ttkcombobox(frameMpScale, values = place.scale, textvariable = pos.scale, width = largeur5, state = stateSclBr)
 
-	tkgrid(chk.MpScl, row = 0, column = 0, sticky = 'we', padx = 1)
-	tkgrid(cb.MpScl, row = 0, column = 1, sticky = 'e', padx = 1)
+		tkgrid(chk.MpScl, row = 0, column = 0, sticky = 'we', padx = 1)
+		tkgrid(cb.MpScl, row = 0, column = 1, sticky = 'e', padx = 1)
 
-	#########
+		#########
 
-	tkbind(chk.MpScl, "<Button-1>", function(){
-		stateSclBr <- if(tclvalue(add.scale) == '0') 'normal' else 'disabled'
-		tkconfigure(cb.MpScl, state = stateSclBr)
-	})
+		tkbind(chk.MpScl, "<Button-1>", function(){
+			stateSclBr <- if(tclvalue(add.scale) == '0') 'normal' else 'disabled'
+			tkconfigure(cb.MpScl, state = stateSclBr)
+		})
+	}
 
 	#####################
 	tkgrid(frameColkey, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 	tkgrid(frameLevel, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 	tkgrid(frameMapTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 	tkgrid(frameColKeyLab, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frameMpScale, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	if(!is.null(climMapOpt$scalebar))
+		tkgrid(frameMpScale, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 	#####################
 	bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -265,8 +268,11 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 		climMapOpt$title$title <<- str_trim(tclvalue(text.title))
 		climMapOpt$colkeyLab$user <<- switch(tclvalue(user.clLab), '0' = FALSE, '1' = TRUE)
 		climMapOpt$colkeyLab$label <<- str_trim(tclvalue(text.clLab))
-		climMapOpt$scalebar$add <<- switch(tclvalue(add.scale), '0' = FALSE, '1' = TRUE)
-		climMapOpt$scalebar$pos <<- str_trim(tclvalue(pos.scale))
+
+		if(!is.null(climMapOpt$scalebar)){
+			climMapOpt$scalebar$add <<- switch(tclvalue(add.scale), '0' = FALSE, '1' = TRUE)
+			climMapOpt$scalebar$pos <<- str_trim(tclvalue(pos.scale))
+		}
 
 		if(!is.null(climMapOpt$pointSize))
 			climMapOpt$pointSize <<- as.numeric(str_trim(tclvalue(tkget(spin.PointSz))))
@@ -4497,5 +4503,129 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
 	})
 	tkwait.window(tt)
 	return(climMapOpt)
+}
+
+#######################################################################################################
+
+MapGraph.MultiDatasets <- function(mapOpt){
+	if(WindowsOS()){
+		largeur1 <- 32
+		largeur2 <- 21
+	}else{
+		largeur1 <- 29
+		largeur2 <- 14
+	}
+
+	#####################
+	tt <- tktoplevel()
+	tkgrab.set(tt)
+	tkfocus(tt)
+
+	#####################
+	frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
+	frButt <- tkframe(tt)
+
+	#####################
+
+	frameTitle <- tkframe(frDialog)
+
+	title.var <- tclVar(mapOpt$title)
+
+	txt.title <- tklabel(frameTitle, text = "Plot Title", anchor = 'w', justify = 'left')
+	en.title <- tkentry(frameTitle, textvariable = title.var, width = largeur1)
+
+	tkgrid(txt.title, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(en.title, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	#####################
+
+	framePlotType <- tkframe(frDialog)
+
+	cbPlotTypeVal <- if(mapOpt$map.type == "Points") c("Points", "Pixels") else c("Pixels", "Raster")
+	plotType <- if(mapOpt$plot.type %in% cbPlotTypeVal) mapOpt$plot.type else cbPlotTypeVal[1]
+	plot.type.var <- tclVar(plotType)
+
+	txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'w', justify = 'left')
+	cb.plotType <- ttkcombobox(framePlotType, values = cbPlotTypeVal, textvariable = plot.type.var, width = largeur2)
+
+	tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	#####################
+
+	if(mapOpt$map.type == "Points"){
+		framePtSz <- tkframe(frDialog)
+
+		statePts <- if(str_trim(tclvalue(plot.type.var)) == "Points") 'normal' else 'disabled'
+
+		txt.PointSz <- tklabel(framePtSz, text = "Points Size", anchor = 'w', justify = 'left')
+		spin.PointSz <- ttkspinbox(framePtSz, from = 0.3, to = 2.5, increment = 0.1, justify = 'center', width = 4, state = statePts)
+		tkset(spin.PointSz, mapOpt$point.size)
+
+		tkgrid(txt.PointSz, spin.PointSz)
+
+		tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
+			statePts <- if(str_trim(tclvalue(plot.type.var)) == "Points") 'normal' else 'disabled'
+			tkconfigure(spin.PointSz, state = statePts)
+		})
+	}
+
+	#####################
+
+	tkgrid(frameTitle, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(framePlotType, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	if(mapOpt$map.type == "Points")
+		tkgrid(framePtSz, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	#####################
+
+	bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+	bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+
+	tkconfigure(bt.opt.OK, command = function(){
+		mapOpt$title <<- str_trim(tclvalue(title.var))
+		mapOpt$plot.type <<- str_trim(tclvalue(plot.type.var))
+
+		if(mapOpt$map.type == "Points")
+			mapOpt$point.size <<- as.numeric(str_trim(tclvalue(tkget(spin.PointSz))))
+
+		tkgrab.release(tt)
+		tkdestroy(tt)
+		tkfocus(.cdtEnv$tcl$main$win)
+	})
+
+	tkconfigure(bt.opt.CA, command = function(){
+		tkgrab.release(tt)
+		tkdestroy(tt)
+		tkfocus(.cdtEnv$tcl$main$win)
+	})
+
+	tkgrid(bt.opt.OK, row = 0, column = 0, padx = 5, pady = 1, ipadx = 1, sticky = 'w')
+	tkgrid(bt.opt.CA, row = 0, column = 1, padx = 5, pady = 1, ipadx = 1, sticky = 'e')
+
+	###############################################################
+
+	tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	tkwm.withdraw(tt)
+	tcl('update')
+	tt.w <- as.integer(tkwinfo("reqwidth", tt))
+	tt.h <- as.integer(tkwinfo("reqheight", tt))
+	tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+	tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+	tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+	tkwm.transient(tt)
+	tkwm.title(tt, "Options")
+	tkwm.deiconify(tt)
+
+	##################################################################
+	tkfocus(tt)
+	tkbind(tt, "<Destroy>", function(){
+		tkgrab.release(tt)
+		tkfocus(.cdtEnv$tcl$main$win)
+	})
+	tkwait.window(tt)
+	return(mapOpt)
 }
 
