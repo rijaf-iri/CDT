@@ -1,9 +1,12 @@
 
-filterCDTdata <- function(GalParams){
+filterCDTdata <- function(){
+	GalParams <- .cdtData$GalParams
 	if(GalParams$filein == ""){
 		Insert.Messages.Out(GalParams[['message']][['4']], format = TRUE)
 		return(NULL)
 	}
+
+	Insert.Messages.Out(GalParams[['message']][['1']])
 
 	donne <- getStnOpenData(GalParams$filein)
 	if(is.null(donne)) return(NULL)
@@ -40,5 +43,3 @@ filterCDTdata <- function(GalParams){
 
 	return(0)
 }
-
-

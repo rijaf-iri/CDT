@@ -1,5 +1,5 @@
 
-merge2CDTdata <- function(GalParams){
+merge2CDTdata <- function(){
 	compareDonneCDT <- function(idc, idate, cdon1, cdon2){
 		ix <- sapply(seq_along(idc), function(j) isEqual(cdon1[, j], cdon2[, j]))
 		if(any(!ix)){
@@ -36,6 +36,9 @@ merge2CDTdata <- function(GalParams){
 	}
 
 	##########################
+
+	GalParams <- .cdtData$GalParams
+	Insert.Messages.Out(GalParams[['message']][['1']])
 
 	file1 <- GalParams$file1
 	file2 <- GalParams$file2

@@ -381,7 +381,7 @@ computeWB_getParams <- function(){
 	tkgrid(frWBalance, row = 4, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
 	############################################
-	
+
 	tkgrid(frLeft, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
 	############################################

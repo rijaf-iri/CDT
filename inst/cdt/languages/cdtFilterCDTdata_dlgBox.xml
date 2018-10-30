@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel_cmd>
+    <title>
+        <text lang="en"> Filtering CDT Station Data </text>
+        <text lang="fr"> Filtrage de Données Stations CDT </text>
+    </title>
     <widget>
         <label id="1">
-            <text lang="en"> Input CDT data </text>
+            <text lang="en"> Input CDT Station data </text>
             <text lang="fr"> Données d'entrée CDT </text>
         </label>
         <label id="2">
@@ -42,6 +46,14 @@
         <content id="5">
             <text lang="en"> The input data is not in a standard unambiguous CDT format </text>
             <text lang="fr"> Les données d'entrée ne sont pas dans un format CDT standard non ambigu </text>
+        </content>
+        <content id="6">
+            <text lang="en"> No input CDT station data found </text>
+            <text lang="fr"> Aucune donnée d'entrée CDT trouvée </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Browse or enter the file to save the filtered data </text>
+            <text lang="fr"> Parcourrir ou entrer le fichier pour enregistrer les données filtrées </text>
         </content>
     </message>
 </panel_cmd>

@@ -248,10 +248,8 @@ startCDT <- function(wd = NA, lang = NA){
 				command = function()
 			{
 				refreshCDT()
-				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-					merge2CDTdata.PanelCmd()
-					.cdtEnv$tcl$data$lcmd.frame <- 1
-				}
+				initialize.parameters('merge2CDT.stn', 'daily')
+				merge2CDTdata_getParams()
 			})
 
 			##########
@@ -259,10 +257,8 @@ startCDT <- function(wd = NA, lang = NA){
 				command = function()
 			{
 				refreshCDT()
-				if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-					filterCDTData.PanelCmd()
-					.cdtEnv$tcl$data$lcmd.frame <- 1
-				}
+				initialize.parameters('filter.data', 'daily')
+				filterCDTData_getParams()
 			})
 
 			##########

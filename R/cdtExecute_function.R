@@ -25,6 +25,24 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## Merge 2 CDTs station Data
+	if(.cdtData$GalParams$action == "merge2CDT.stn"){
+		ret <- try(merge2CDTdata(), silent = TRUE)
+
+		msg0 <- .cdtData$GalParams[['message']][['2']]
+		msg1 <- .cdtData$GalParams[['message']][['3']]
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
+	## Filtering CDT station Data
+	if(.cdtData$GalParams$action == "filter.data"){
+		ret <- try(filterCDTdata(), silent = TRUE)
+
+		msg0 <- .cdtData$GalParams[['message']][['2']]
+		msg1 <- .cdtData$GalParams[['message']][['3']]
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
 	## Create cdt dataset from ncdf files
 	if(.cdtData$GalParams$action == "create.CdtDataset"){
 		ret <- try(cdtDataset_readData(), silent = TRUE)

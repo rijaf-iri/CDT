@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <panel_cmd>
+    <title>
+        <text lang="en"> Merge CDTs Station Data </text>
+        <text lang="fr"> Combiner des Données Stations CDT </text>
+    </title>
     <widget>
         <label id="1">
             <text lang="en"> CDT station data format #1 </text>
@@ -46,6 +50,18 @@
         <content id="7">
             <text lang="en"> Different station coordinates </text>
             <text lang="fr"> Différentes coordonnées des stations </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No input for the file #1 </text>
+            <text lang="fr"> Le fichier #1 est vide </text>
+        </content>
+        <content id="9">
+            <text lang="en"> No input for the file #2 </text>
+            <text lang="fr"> Le fichier #2 est vide </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Browse or enter the file to save the merged data </text>
+            <text lang="fr"> Parcourrir ou entrer le fichier pour enregistrer les données combinées </text>
         </content>
     </message>
 </panel_cmd>

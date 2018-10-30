@@ -52,8 +52,8 @@
             <text lang="fr"> Combiner 2 données station CDT </text>
         </submenu>
         <submenu id="3">
-            <text lang="en"> Filtering CDT Data </text>
-            <text lang="fr"> Filtrer les données CDT </text>
+            <text lang="en"> Filtering CDT Station Data </text>
+            <text lang="fr"> Filtrer les données station CDT </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Transform NetCDF files into CDT Dataset </text>
