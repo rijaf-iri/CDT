@@ -778,8 +778,10 @@ PlotMulitpleDataCmd <- function(){
 
 		if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[1])
 			daty2plot <- paste0(year, mon, day, hour)
-		if(str_trim(tclvalue(timeSteps)) %in% CbperiodVAL[2:4])
+		if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[2])
 			daty2plot <- paste0(year, mon, day)
+		if(str_trim(tclvalue(timeSteps)) %in% CbperiodVAL[3:4])
+			daty2plot <- paste0(year, mon, as.numeric(day))
 		if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[5])
 			daty2plot <- paste0(year, mon)
 
@@ -794,11 +796,11 @@ PlotMulitpleDataCmd <- function(){
 				lon <- don$data$lon
 				lat <- don$data$lat
 				zval <- don$data$data[don$dates == daty2plot, , drop = FALSE]
-				zval <- as.numeric(zval[1, ])
-				if(length(zval) == 0){
+				if(nrow(zval) == 0){
 					msg <- paste(daty2plot, "does not exist in", params$pars$input$dir)
 					return(list(obj = NULL, msg = msg))
 				}
+				zval <- as.numeric(zval[1, ])
 
 				if(params$pars$plot.type == "Pixels"){
 					nx <- nx_ny_as.image(diff(range(lon)))
@@ -829,6 +831,10 @@ PlotMulitpleDataCmd <- function(){
 
 		Obj <- lapply(data.Obj, "[[", "obj")
 		no.data <- sapply(Obj, is.null)
+		if(all(no.data)){
+			Insert.Messages.Out("No data to plot", format = TRUE)
+			return(NULL)
+		}
 		if(any(no.data)) sapply(lapply(data.Obj[no.data], "[[", "msg"), Insert.Messages.Out, format = TRUE)
 
 		.cdtData$GalParams$donnees$date2plot <- daty2plot
