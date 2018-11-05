@@ -8,7 +8,7 @@
         <combobox id="1">
             <option id="1">
                 <text lang="en"> One NetCDF file </text>
-                 <text lang="fr"> Un fichier NetCDF </text>
+                <text lang="fr"> Un fichier NetCDF </text>
             </option>
             <option id="2">
                 <text lang="en"> Multiple NetCDF files </text>
@@ -22,7 +22,7 @@
             </option>
             <option id="2">
                 <text lang="en"> Disaggregate </text>
-                <text lang="en"> Désagréger </text>
+                <text lang="fr"> Désagréger </text>
             </option>
         </combobox>
         <label id="1">
