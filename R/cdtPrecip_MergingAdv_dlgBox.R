@@ -60,7 +60,7 @@ mergeGetInfoRain <- function(){
 		bt.DateRange <- ttkbutton(frtimestep, text = "Set Date Range")
 
 		tkconfigure(bt.DateRange, command = function(){
-			.cdtData$GalParams[["Merging.Date"]] <- getInfoDateRange(.cdtEnv$tcl$main$win,
+			.cdtData$GalParams[["Merging.Date"]] <- getInfoDateRange(tt,
 													.cdtData$GalParams[["Merging.Date"]],
 													daypendek.lab = tclvalue(day.txtVar),
 													state.dek = statedate)

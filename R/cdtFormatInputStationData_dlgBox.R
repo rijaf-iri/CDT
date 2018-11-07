@@ -31,79 +31,78 @@ Format_CDT_Input_Station_Data <- function(){
 	periodVAL <- c('daily', 'dekadal', 'monthly')
 	tclvalue(file.period) <- cb.periodVAL[periodVAL %in% .cdtData$GalParams$tstep]
 
-	lperiod <- tclVar(lang.dlg[['label']][['7']])
-	istart.yrs <- tclVar(.cdtData$GalParams$Date.Range$start.year)
-	istart.mon <- tclVar(.cdtData$GalParams$Date.Range$start.mon)
-	istart.day <- tclVar(.cdtData$GalParams$Date.Range$start.day)
-	iend.yrs <- tclVar(.cdtData$GalParams$Date.Range$end.year)
-	iend.mon <- tclVar(.cdtData$GalParams$Date.Range$end.mon)
-	iend.day <- tclVar(.cdtData$GalParams$Date.Range$end.day)
-
-	minperc <- tclVar(.cdtData$GalParams$min.perc)
+	txtdek <- if(.cdtData$GalParams$tstep == periodVAL[2]) lang.dlg[['label']][['4']] else lang.dlg[['label']][['3']]
+	day.txtVar <- tclVar(txtdek)
+	stateday <- if(.cdtData$GalParams$tstep %in% periodVAL[1:2]) 'normal' else 'disabled'
 
 	#########
 	cb.period <- ttkcombobox(frDate, values = cb.periodVAL, textvariable = file.period, width = largeur1)
-	frtxtDate <- ttklabelframe(frDate, text = lang.dlg[['label']][['1']], relief = 'groove')
-	minperc.lab <- tklabel(frDate, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
-	minperc.ent <- tkentry(frDate, width = 4, textvariable = minperc, justify = "right")
+	bt.period <- ttkbutton(frDate, text = lang.dlg[['button']][['1']], width = largeur2)
 
-	#########
-	deb.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
-	fin.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
-	yrs.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['5']])
-	mon.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['6']])
-	day.txt <- tklabel(frtxtDate, text = tclvalue(lperiod), textvariable = lperiod)
-	yrs1.v <- tkentry(frtxtDate, width = 4, textvariable = istart.yrs, justify = "right")
-	mon1.v <- tkentry(frtxtDate, width = 4, textvariable = istart.mon, justify = "right")
-	day1.v <- tkentry(frtxtDate, width = 4, textvariable = istart.day, justify = "right")
-	yrs2.v <- tkentry(frtxtDate, width = 4, textvariable = iend.yrs, justify = "right")
-	mon2.v <- tkentry(frtxtDate, width = 4, textvariable = iend.mon, justify = "right")
-	day2.v <- tkentry(frtxtDate, width = 4, textvariable = iend.day, justify = "right")
+	tkconfigure(bt.period, command = function(){
+		.cdtData$GalParams[["Date.Range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["Date.Range"]],
+																daypendek.lab = tclvalue(day.txtVar),
+																state.dek = stateday)
+	})
 
-	#########
-	tkgrid(deb.txt, row = 1, column = 0, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(fin.txt, row = 2, column = 0, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(yrs.txt, row = 0, column = 1, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(mon.txt, row = 0, column = 2, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(day.txt, row = 0, column = 3, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(yrs1.v, row = 1, column = 1, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(mon1.v, row = 1, column = 2, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(day1.v, row = 1, column = 3, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(yrs2.v, row = 2, column = 1, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(mon2.v, row = 2, column = 2, sticky = 'ew', padx = 1, pady = 1)
-	tkgrid(day2.v, row = 2, column = 3, sticky = 'ew', padx = 1, pady = 1)
-
-	#########
-	tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(minperc.lab, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(minperc.ent, row = 1, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frtxtDate, row = 0, column = 2, sticky = 'we', rowspan = 2, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-	#########
+	tkgrid(cb.period, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+	tkgrid(bt.period, row = 0, column = 1, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
 	helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
-	helpWidget(frtxtDate, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+	helpWidget(bt.period, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+
+	tkbind(cb.period, "<<ComboboxSelected>>", function(){
+		tstep <- str_trim(tclvalue(file.period))
+		tclvalue(day.txtVar) <- if(tstep == cb.periodVAL[2]) lang.dlg[['label']][['4']] else lang.dlg[['label']][['3']]
+		stateday <<- if(tstep %in% cb.periodVAL[1:2]) 'normal' else 'disabled'
+	})
+
+	############################################
+	frMinPerc <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
+
+	minperc <- tclVar(.cdtData$GalParams$min.perc)
+
+	minperc.lab <- tklabel(frMinPerc, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
+	minperc.ent <- tkentry(frMinPerc, width = 4, textvariable = minperc, justify = "right")
+
+	tkgrid(minperc.lab, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+	tkgrid(minperc.ent, row = 1, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
 	helpWidget(minperc.ent, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
-	#########
-	tkbind(cb.period, "<<ComboboxSelected>>", function(){
-		if(tclvalue(file.period) == cb.periodVAL[1]){
-			tclvalue(lperiod) <- lang.dlg[['label']][['7']]
-			tkconfigure(day1.v, state = 'normal')
-			tkconfigure(day2.v, state = 'normal')
-		}else if(tclvalue(file.period) == cb.periodVAL[2]){
-			tclvalue(lperiod) <- lang.dlg[['label']][['8']]
-			tkconfigure(day1.v, state = 'normal')
-			tkconfigure(day2.v, state = 'normal')
-		}else if(tclvalue(file.period) == cb.periodVAL[3]){
-			tclvalue(lperiod) <- lang.dlg[['label']][['7']]
-			tkconfigure(day1.v, state = 'disabled')
-			tkconfigure(day2.v, state = 'disabled')
-		}else{
-			tclvalue(lperiod) <- lang.dlg[['label']][['7']]
-			tkconfigure(day1.v, state = 'normal')
-			tkconfigure(day2.v, state = 'normal')
-		}
+	############################################
+	frData <- ttklabelframe(frMRG0, text = lang.dlg[['label']][['6']], labelanchor = "nw", relief = 'sunken', borderwidth = 2)
+
+	data.type <- tclVar()
+	FilesTYPE <- lang.dlg[['combobox']][['1']]
+	FilesTYPEin <- c('Multiple', 'Single')
+	tclvalue(data.type) <- FilesTYPE[FilesTYPEin %in% .cdtData$GalParams$data.type]
+
+	cb.dataType <- ttkcombobox(frData, values = FilesTYPE, textvariable = data.type, width = largeur1)
+	bt.dataType <- ttkbutton(frData, text = lang.dlg[['button']][['2']], width = largeur2)
+
+	if(tclvalue(data.type) == FilesTYPE[1]) dataType.Fun <- multipleFileCDTFormat
+	if(tclvalue(data.type) == FilesTYPE[2]) dataType.Fun <- singleFileCDTFormat
+
+	settingdone <- NULL
+	tkconfigure(bt.dataType, command = function(){
+		dataType.Fun(tt, cb.periodVAL, tclvalue(file.period))
+		settingdone <<- 1
+	})
+
+	tkgrid(cb.dataType, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+	tkgrid(bt.dataType, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+	helpWidget(frData, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+
+	tkbind(cb.dataType,"<<ComboboxSelected>>", function(){
+		if(tclvalue(data.type) == FilesTYPE[1]) dataType.Fun <- multipleFileCDTFormat
+		if(tclvalue(data.type) == FilesTYPE[2]) dataType.Fun <- singleFileCDTFormat
+
+		tkconfigure(bt.dataType, command = function(){
+			dataType.Fun(tt, cb.periodVAL, tclvalue(file.period))
+			settingdone <<- 1
+		})
 	})
 
 	############################################
@@ -111,7 +110,7 @@ Format_CDT_Input_Station_Data <- function(){
 
 	file.save1 <- tclVar(.cdtData$GalParams$IO.files$File2Save)
 
-	txt.file.save <- tklabel(frSave, text = lang.dlg[['label']][['9']], anchor = 'w', justify = 'left')
+	txt.file.save <- tklabel(frSave, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
 	en.file.save <- tkentry(frSave, textvariable = file.save1, width = largeur)
 	bt.file.save <- tkbutton(frSave, text = "...")
 
@@ -132,46 +131,10 @@ Format_CDT_Input_Station_Data <- function(){
 	helpWidget(bt.file.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
 	############################################
-	frData <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
-
-	data.type <- tclVar()
-	FilesTYPE <- lang.dlg[['combobox']][['1']]
-	FilesTYPEin <- c('Multiple', 'Single')
-	tclvalue(data.type) <- FilesTYPE[FilesTYPEin %in% .cdtData$GalParams$data.type]
-
-	txt.dataType <- tklabel(frData, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
-	cb.dataType <- ttkcombobox(frData, values = FilesTYPE, textvariable = data.type, width = largeur1)
-	bt.dataType <- ttkbutton(frData, text = lang.dlg[['button']][['1']], width = largeur2)
-
-	if(tclvalue(data.type) == FilesTYPE[1]) dataType.Fun <- multipleFileCDTFormat
-	if(tclvalue(data.type) == FilesTYPE[2]) dataType.Fun <- singleFileCDTFormat
-
-	settingdone <- NULL
-	tkconfigure(bt.dataType, command = function(){
-		dataType.Fun(tt, cb.periodVAL, tclvalue(file.period))
-		settingdone <<- 1
-	})
-
-	tkgrid(txt.dataType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(cb.dataType, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(bt.dataType, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-	helpWidget(frData, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-
-	tkbind(cb.dataType,"<<ComboboxSelected>>", function(){
-		if(tclvalue(data.type) == FilesTYPE[1]) dataType.Fun <- multipleFileCDTFormat
-		if(tclvalue(data.type) == FilesTYPE[2]) dataType.Fun <- singleFileCDTFormat
-
-		tkconfigure(bt.dataType, command = function(){
-			dataType.Fun(tt, cb.periodVAL, tclvalue(file.period))
-			settingdone <<- 1
-		})
-	})
-
-	############################################
-	tkgrid(frDate, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frSave, row = 1, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frData, row = 2, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(frDate, row = 0, column = 0, sticky = 'we', padx = 5, pady = 3, ipadx = 1, ipady = 1)
+	tkgrid(frMinPerc, row = 1, column = 0, sticky = '', padx = 5, pady = 3, ipadx = 1, ipady = 1)
+	tkgrid(frData, row = 2, column = 0, sticky = 'we', padx = 5, pady = 3, ipadx = 1, ipady = 1)
+	tkgrid(frSave, row = 3, column = 0, sticky = 'we', padx = 5, pady = 3, ipadx = 1, ipady = 1)
 
 	############################################
 
@@ -190,13 +153,6 @@ Format_CDT_Input_Station_Data <- function(){
 
 			.cdtData$GalParams$IO.files$File2Save <- str_trim(tclvalue(file.save1))
 			.cdtData$GalParams$min.perc <- as.numeric(str_trim(tclvalue(minperc)))
-
-			.cdtData$GalParams$Date.Range$start.year <- as.numeric(str_trim(tclvalue(istart.yrs)))
-			.cdtData$GalParams$Date.Range$start.mon <- as.numeric(str_trim(tclvalue(istart.mon)))
-			.cdtData$GalParams$Date.Range$start.day <- as.numeric(str_trim(tclvalue(istart.day)))
-			.cdtData$GalParams$Date.Range$end.year <- as.numeric(str_trim(tclvalue(iend.yrs)))
-			.cdtData$GalParams$Date.Range$end.mon <- as.numeric(str_trim(tclvalue(iend.mon)))
-			.cdtData$GalParams$Date.Range$end.day <- as.numeric(str_trim(tclvalue(iend.day)))
 
 			.cdtData$GalParams$message <- lang.dlg[['message']]
 

@@ -130,7 +130,7 @@ AggregateTS_GetInfo <- function(){
 
 	##############
 	cb.datatype <- ttkcombobox(frDataType, values = CbdatatypeVAL, textvariable = DataType, width = largeur2)
-	set.datatype <- ttkbutton(frDataType, text = lang.dlg[['button']][['1']], state = stateSetData)
+	set.datatype <- ttkbutton(frDataType, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetData)
 
 	txt.stnfl <- tklabel(frDataType, text = tclvalue(fileINdir), textvariable = fileINdir, anchor = 'w', justify = 'left')
 	if(.cdtData$GalParams$data.type == 'cdtstation'){

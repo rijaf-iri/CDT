@@ -15,10 +15,6 @@
                 <text lang="fr"> Données NetCDF </text>
             </option>
         </combobox>
-        <button id="1">
-            <text lang="en"> Settings </text>
-            <text lang="fr"> Configurations </text>
-        </button>
         <label id="1">
             <text lang="en"> Format of input data </text>
             <text lang="fr"> Format des données d'entrée </text>

@@ -5,31 +5,27 @@
         <text lang="fr"> Données NetCDF - Paramètres </text>
     </title>
     <widget>
+        <button id="1">
+            <text lang="en"> Set Date Range </text>
+            <text lang="fr"> Set Date Range </text>
+        </button>
         <label id="1">
-            <text lang="en"> Date Range </text>
-            <text lang="fr"> Plage des dates </text>
+            <text lang="en"> Day </text>
+            <text lang="fr"> Jour </text>
         </label>
         <label id="2">
-            <text lang="en"> Start date </text>
-            <text lang="fr"> Date de début </text>
+            <text lang="en"> Pentad </text>
+            <text lang="fr"> Pentad </text>
         </label>
         <label id="3">
-            <text lang="en"> End date </text>
-            <text lang="fr"> Date de fin </text>
+            <text lang="en"> Dekad </text>
+            <text lang="fr"> Décade </text>
         </label>
         <label id="4">
-            <text lang="en"> Year </text>
-            <text lang="fr"> Annee </text>
+            <text lang="en"> Netcdf data sample file </text>
+            <text lang="fr"> Echantillon de fichier Netcdf </text>
         </label>
         <label id="5">
-            <text lang="en"> Month </text>
-            <text lang="fr"> Mois </text>
-        </label>
-        <label id="6">
-            <text lang="en"> Netcdf data sample file </text>
-            <text lang="fr"> Exemple de fichier Netcdf </text>
-        </label>
-        <label id="7">
             <text lang="en"> Netcdf data filenames format </text>
             <text lang="fr"> Format des fichiers de données Netcdf </text>
         </label>

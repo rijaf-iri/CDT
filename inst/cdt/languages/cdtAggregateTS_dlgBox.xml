@@ -5,10 +5,6 @@
         <text lang="fr"> Series Temporelles-Agrégation </text>
     </title>
     <widget>
-        <button id="1">
-            <text lang="en"> Settings </text>
-            <text lang="fr"> Configurations </text>
-        </button>
         <label id="1">
             <text lang="en"> Time Series Aggregation </text>
             <text lang="fr"> Agrégation Series Temporelles </text>

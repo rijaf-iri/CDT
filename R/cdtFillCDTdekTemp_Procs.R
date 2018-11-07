@@ -31,6 +31,12 @@ fill_DekTemp_MissVal <- function(){
 	end.dek <- .cdtData$GalParams$Fill.Date.Range$end.dek
 	months <- .cdtData$GalParams$Fill.Months
 
+	if(!(start.dek %in% 1:3) | !(end.dek %in% 1:3))
+	{
+		Insert.Messages.Out(.cdtData$GalParams[['message']][['4']], format = TRUE)
+		return(NULL)
+	}
+
 	tempDir <- .cdtData$GalParams$NCDF$dir
 	tempfilefrmt <- .cdtData$GalParams$NCDF$format
 

@@ -5,43 +5,23 @@
         <text lang="fr"> Importer des fichiers NetCDF au jeu de données CDT </text>
     </title>
     <widget>
+        <button id="1">
+            <text lang="en"> Set Date Range </text>
+            <text lang="fr"> Set Date Range </text>
+        </button>
         <label id="1">
             <text lang="en"> Directory containing the NetCDF data </text>
             <text lang="fr"> Répertoire contenant les données NetCDF </text>
         </label>
         <label id="2">
-            <text lang="en"> Settings </text>
-            <text lang="fr"> Configurations </text>
-        </label>
-        <label id="3">
-            <text lang="en"> Date range to import </text>
-            <text lang="fr"> Plage de dates à importer </text>
-        </label>
-        <label id="4">
-            <text lang="en"> Start date </text>
-            <text lang="fr"> Date de Début </text>
-        </label>
-        <label id="5">
-            <text lang="en"> End date </text>
-            <text lang="fr"> Date de fin </text>
-        </label>
-        <label id="6">
-            <text lang="en"> Year </text>
-            <text lang="fr"> Année </text>
-        </label>
-        <label id="7">
-            <text lang="en"> Month </text>
-            <text lang="fr"> Mois </text>
-        </label>
-        <label id="8">
             <text lang="en"> Add new data to an existing dataset </text>
             <text lang="fr"> Ajouter de nouvelles données à des données existantes </text>
         </label>
-        <label id="9">
+        <label id="3">
             <text lang="en"> Directory to put the dataset </text>
             <text lang="fr"> Répertoire pour mettre le jeu de données </text>
         </label>
-        <label id="10">
+        <label id="4">
             <text lang="en"> Dataset name </text>
             <text lang="fr"> Nom du jeu de données </text>
         </label>

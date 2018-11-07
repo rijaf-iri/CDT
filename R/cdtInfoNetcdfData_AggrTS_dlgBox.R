@@ -19,52 +19,27 @@ AggregateTS_ncdfData <- function(parent.win, ncDIR,
 
 	###################
 
-	frDate <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
-
-	istart.yrs <- tclVar(.cdtData$GalParams$Date.Range$start.year)
-	istart.mon <- tclVar(.cdtData$GalParams$Date.Range$start.mon)
-	istart.day <- tclVar(.cdtData$GalParams$Date.Range$start.day)
-	iend.yrs <- tclVar(.cdtData$GalParams$Date.Range$end.year)
-	iend.mon <- tclVar(.cdtData$GalParams$Date.Range$end.mon)
-	iend.day <- tclVar(.cdtData$GalParams$Date.Range$end.day)
+	frDate <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2, pady = 5, padx = 5)
 
 	TSTEPVAL0 <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:5]
 
-	txtdek <- if(tstep == TSTEPVAL0[3]) 'Dek'
-			  else if(tstep == TSTEPVAL0[2]) 'Pen'
-			  else 'Day'
+	txtdek <- if(tstep == TSTEPVAL0[3]) lang.dlg[['label']][['3']]
+			  else if(tstep == TSTEPVAL0[2]) lang.dlg[['label']][['2']]
+			  else lang.dlg[['label']][['1']]
 	day.txtVar <- tclVar(txtdek)
 	stateDay <- if(tstep == TSTEPVAL0[4]) "disabled" else "normal"
 
-	frtxtDate <- ttklabelframe(frDate, text = lang.dlg[['label']][['1']], relief = 'groove')
+	bt.daterange <- ttkbutton(frDate, text = lang.dlg[['button']][['1']], width = largeur1)
 
-	txt.deb <- tklabel(frtxtDate, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
-	txt.fin <- tklabel(frtxtDate, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
-	txt.yrs <- tklabel(frtxtDate, text = lang.dlg[['label']][['4']])
-	txt.mon <- tklabel(frtxtDate, text = lang.dlg[['label']][['5']])
-	txt.day <- tklabel(frtxtDate, text = tclvalue(day.txtVar), textvariable = day.txtVar)
-	en.yrs1 <- tkentry(frtxtDate, width = 4, textvariable = istart.yrs, justify = "right")
-	en.mon1 <- tkentry(frtxtDate, width = 4, textvariable = istart.mon, justify = "right")
-	en.day1 <- tkentry(frtxtDate, width = 4, textvariable = istart.day, justify = "right", state = stateDay)
-	en.yrs2 <- tkentry(frtxtDate, width = 4, textvariable = iend.yrs, justify = "right")
-	en.mon2 <- tkentry(frtxtDate, width = 4, textvariable = iend.mon, justify = "right")
-	en.day2 <- tkentry(frtxtDate, width = 4, textvariable = iend.day, justify = "right", state = stateDay)
+	tkconfigure(bt.daterange, command = function(){
+		.cdtData$GalParams[["Date.Range"]] <- getInfoDateRange(tt1, .cdtData$GalParams[["Date.Range"]],
+																daypendek.lab = tclvalue(day.txtVar),
+																state.dek = stateDay)
+	})
 
-	tkgrid(txt.deb, row = 1, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(txt.fin, row = 2, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(txt.yrs, row = 0, column = 1, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(txt.mon, row = 0, column = 2, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(txt.day, row = 0, column = 3, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.yrs1, row = 1, column = 1, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.mon1, row = 1, column = 2, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.day1, row = 1, column = 3, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.yrs2, row = 2, column = 1, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.mon2, row = 2, column = 2, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.day2, row = 2, column = 3, rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(bt.daterange, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-	tkgrid(frtxtDate, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-
-	helpWidget(frtxtDate, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+	helpWidget(bt.daterange, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
 
 	###################
 
@@ -73,10 +48,10 @@ AggregateTS_ncdfData <- function(parent.win, ncDIR,
 	inrfeff <- tclVar(.cdtData$GalParams$cdtnetcdf$format)
 	rfesample <- tclVar(.cdtData$GalParams$cdtnetcdf$sample)
 
-	txt.ncsample <- tklabel(frFF, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
+	txt.ncsample <- tklabel(frFF, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
 	cb.ncsample <- ttkcombobox(frFF, values = unlist(listOpenFiles), textvariable = rfesample, width = largeur1)
 	bt.ncsample <- tkbutton(frFF, text = "...")
-	txt.inrfeff <- tklabel(frFF, text = lang.dlg[['label']][['7']], anchor = 'w', justify = 'left')
+	txt.inrfeff <- tklabel(frFF, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
 	en.inrfeff <- tkentry(frFF, textvariable = inrfeff, width = largeur1)
 
 	###################
@@ -111,8 +86,8 @@ AggregateTS_ncdfData <- function(parent.win, ncDIR,
 
 	###################
 
-	tkgrid(frDate, row = 0, column = 0, sticky = '', padx = 1, pady = 1)
-	tkgrid(frFF, row = 1, column = 0, sticky = 'ew', padx = 1, pady = 1)
+	tkgrid(frDate, row = 0, column = 0, sticky = '', padx = 1, pady = 3)
+	tkgrid(frFF, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1)
 
 	################################
 
@@ -126,13 +101,6 @@ AggregateTS_ncdfData <- function(parent.win, ncDIR,
 		}else{
 			.cdtData$GalParams$cdtnetcdf$format <- str_trim(tclvalue(inrfeff))
 			.cdtData$GalParams$cdtnetcdf$sample <- str_trim(tclvalue(rfesample))
-
-			.cdtData$GalParams$Date.Range$start.year <- as.numeric(str_trim(tclvalue(istart.yrs)))
-			.cdtData$GalParams$Date.Range$start.mon <- as.numeric(str_trim(tclvalue(istart.mon)))
-			.cdtData$GalParams$Date.Range$start.day <- as.numeric(str_trim(tclvalue(istart.day)))
-			.cdtData$GalParams$Date.Range$end.year <- as.numeric(str_trim(tclvalue(iend.yrs)))
-			.cdtData$GalParams$Date.Range$end.mon <- as.numeric(str_trim(tclvalue(iend.mon)))
-			.cdtData$GalParams$Date.Range$end.day <- as.numeric(str_trim(tclvalue(iend.day)))
 
 			lenS <- length(gregexpr('%s', .cdtData$GalParams$cdtnetcdf$format)[[1]])
 			if((tstep %in% TSTEPVAL0[1:3] & lenS != 3) |

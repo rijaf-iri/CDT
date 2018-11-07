@@ -120,7 +120,7 @@ CPT.convert_getParams <- function(){
 
 	##############
 	txt.indata <- tklabel(frameInData, text = tclvalue(txt.INDat.var), textvariable = txt.INDat.var, anchor = 'w', justify = 'left')
-	set.indata <- tkbutton(frameInData, text = lang.dlg[['button']][['1']], state = stateSetNC)
+	set.indata <- ttkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
 
 	if(.cdtData$GalParams$data.type == 'cdtstation'){
 		cb.en.indata <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.DataF, width = largeur1)

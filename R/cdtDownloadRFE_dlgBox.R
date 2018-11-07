@@ -1,11 +1,11 @@
 
 download_RFE <- function(){
 	if(WindowsOS()){
-		largeur <- 35
+		largeur <- 50
 		largeur1 <- 15
-		largeur2 <- 20
+		largeur2 <- 24
 	}else{
-		largeur <- 30
+		largeur <- 38
 		largeur1 <- 17
 		largeur2 <- 20
 	}
@@ -33,7 +33,7 @@ download_RFE <- function(){
 	nomdek <- if(.cdtData$GalParams$rfe.data %in% dekadRFE) 'Dekad' else 'Day'
 
 	cb.rfesource <- ttkcombobox(frA0, values = rfeChoix, textvariable = fileSource, width = largeur2)
-	bt.rfesource <- ttkbutton(frA0, text = lang.dlg[['button']][['3']])
+	bt.rfesource <- ttkbutton(frA0, text = lang.dlg[['button']][['3']], width = largeur2)
 
 	tkconfigure(bt.rfesource, command = function(){
 		Params <- .cdtData$GalParams[["date"]]
@@ -127,7 +127,7 @@ download_RFE <- function(){
 
 	######
 	tkgrid(frA0, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
-	tkgrid(frA1, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
+	tkgrid(frA1, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
 	tkgrid(frA2, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
 
 	######

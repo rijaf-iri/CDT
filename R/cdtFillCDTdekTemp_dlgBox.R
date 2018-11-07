@@ -3,10 +3,12 @@ fill_Miss_DekTemp <- function(){
 	listOpenFiles <- openFile_ttkcomboList()
 	if(WindowsOS()){
 		largeur <- 48
-		largeur1 <- 34
+		largeur1 <- 45
+		largeur2 <- 25
 	}else{
 		largeur <- 35
 		largeur1 <- 33
+		largeur2 <- 18
 	}
 
 	xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtFillCDTdekTemp_dlgBox.xml")
@@ -21,7 +23,6 @@ fill_Miss_DekTemp <- function(){
 	frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2)
 	frMRG1 <- tkframe(tt)
 	frLeft <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
-	frRight <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
 
 	############################################
 
@@ -60,7 +61,7 @@ fill_Miss_DekTemp <- function(){
 	dir.rfe <- tclVar(.cdtData$GalParams$NCDF$dir)
 
 	txt.dir.rfe <- tklabel(frRFE, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-	set.dir.rfe <- tkbutton(frRFE, text = lang.dlg[['label']][['3']])
+	set.dir.rfe <- ttkbutton(frRFE, text = .cdtEnv$tcl$lang$global[['button']][['5']])
 	en.dir.rfe <- tkentry(frRFE, textvariable = dir.rfe, width = largeur)
 	bt.dir.rfe <- tkbutton(frRFE, text = "...")
 
@@ -89,11 +90,41 @@ fill_Miss_DekTemp <- function(){
 
 	############################################
 
+	frPars <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+
+	min.len <- tclVar(.cdtData$GalParams$Fill.Params$min.length)
+
+	txt.min.len <- tklabel(frPars, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+	en.min.len <- tkentry(frPars, textvariable = min.len, width = 4)
+	bt.date.range <- ttkbutton(frPars, text = lang.dlg[['button']][['1']], width = largeur2)
+
+	tkconfigure(bt.date.range, command = function(){
+		Params <- .cdtData$GalParams[["Fill.Date.Range"]]
+		names(Params) <- c("start.year", "start.mon", "start.day",
+							"end.year", "end.mon", "end.day")
+		Params <- getInfoDateRange(tt, Params, daypendek.lab = lang.dlg[['label']][['4']])
+		.cdtData$GalParams$Fill.Date.Range$start.year <- Params$start.year
+		.cdtData$GalParams$Fill.Date.Range$start.mon <- Params$start.mon
+		.cdtData$GalParams$Fill.Date.Range$start.dek <- Params$start.day
+		.cdtData$GalParams$Fill.Date.Range$end.year <- Params$end.year
+		.cdtData$GalParams$Fill.Date.Range$end.mon <- Params$end.mon
+		.cdtData$GalParams$Fill.Date.Range$end.dek <- Params$end.day
+	})
+
+	tkgrid(txt.min.len, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(en.min.len, row = 0, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(bt.date.range, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+	helpWidget(bt.date.range, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+	helpWidget(en.min.len, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+
+	############################################
+
 	frSave <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
 
 	file.save1 <- tclVar(.cdtData$GalParams$out.file)
 
-	txt.file.save <- tklabel(frSave, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
+	txt.file.save <- tklabel(frSave, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
 	en.file.save <- tkentry(frSave, textvariable = file.save1, width = largeur)
 	bt.file.save <- tkbutton(frSave, text = "...")
 
@@ -113,73 +144,12 @@ fill_Miss_DekTemp <- function(){
 	############################################
 	tkgrid(frSTN, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 	tkgrid(frRFE, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frSave, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-	#######################  RIGHT   #####################
-
-	frDate <- tkframe(frRight, relief = 'sunken', borderwidth = 2)
-
-	istart.yrs <- tclVar(.cdtData$GalParams$Fill.Date.Range$start.year)
-	istart.mon <- tclVar(.cdtData$GalParams$Fill.Date.Range$start.mon)
-	istart.dek <- tclVar(.cdtData$GalParams$Fill.Date.Range$start.dek)
-	iend.yrs <- tclVar(.cdtData$GalParams$Fill.Date.Range$end.year)
-	iend.mon <- tclVar(.cdtData$GalParams$Fill.Date.Range$end.mon)
-	iend.dek <- tclVar(.cdtData$GalParams$Fill.Date.Range$end.dek)
-
-	frtxtDate <- ttklabelframe(frDate, text = lang.dlg[['label']][['5']], relief = 'groove')
-
-	deb.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
-	fin.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
-	yrs.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['8']])
-	mon.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['9']])
-	dek.txt <- tklabel(frtxtDate, text = lang.dlg[['label']][['10']])
-	yrs1.v <- tkentry(frtxtDate, width = 4, textvariable = istart.yrs, justify = "right")
-	mon1.v <- tkentry(frtxtDate, width = 4, textvariable = istart.mon, justify = "right")
-	dek1.v <- tkentry(frtxtDate, width = 4, textvariable = istart.dek, justify = "right")
-	yrs2.v <- tkentry(frtxtDate, width = 4, textvariable = iend.yrs, justify = "right")
-	mon2.v <- tkentry(frtxtDate, width = 4, textvariable = iend.mon, justify = "right")
-	dek2.v <- tkentry(frtxtDate, width = 4, textvariable = iend.dek, justify = "right")
-
-	tkgrid(deb.txt, row = 1, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(fin.txt, row = 2, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(yrs.txt, row = 0, column = 1, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(mon.txt, row = 0, column = 2, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(dek.txt, row = 0, column = 3, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(yrs1.v, row = 1, column = 1, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(mon1.v, row = 1, column = 2, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(dek1.v, row = 1, column = 3, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(yrs2.v, row = 2, column = 1, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(mon2.v, row = 2, column = 2, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(dek2.v, row = 2, column = 3, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-	tkgrid(frtxtDate, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 5, ipadx = 1, ipady = 1)
-
-	helpWidget(frtxtDate, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
-
-	############################################
-
-	frParams <- tkframe(frRight, relief = 'sunken', borderwidth = 2)
-
-	min.len <- tclVar(.cdtData$GalParams$Fill.Params$min.length)
-
-	txt0.min.len <- tklabel(frParams, text = lang.dlg[['label']][['11']], anchor = 'w', justify = 'left')
-	txt.min.len <- tklabel(frParams, text = lang.dlg[['label']][['12']], anchor = 'e', justify = 'right')
-	en.min.len <- tkentry(frParams, textvariable = min.len, width = 8)
-
-	tkgrid(txt0.min.len, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(txt.min.len, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.min.len, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-	helpWidget(en.min.len, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-
-	############################################
-	tkgrid(frDate, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frParams, row = 1, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 5)
+	tkgrid(frPars, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+	tkgrid(frSave, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 	############################################
 	
 	tkgrid(frLeft, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frRight, row = 0, column = 1, sticky = '', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
 	############################################
 
@@ -195,22 +165,10 @@ fill_Miss_DekTemp <- function(){
 		}else if(str_trim(tclvalue(file.save1)) %in% c("", "NA")){
 			tkmessageBox(message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
 			tkwait.window(tt)
-		}else if(!(as.numeric(str_trim(tclvalue(istart.dek))) %in% 1:3) |
-					!(as.numeric(str_trim(tclvalue(iend.dek))) %in% 1:3))
-		{
-			tkmessageBox(message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
-			tkwait.window(tt)
 		}else{
 			.cdtData$GalParams$STN.file <- str_trim(tclvalue(file.stnfl))
 			.cdtData$GalParams$NCDF$dir <- str_trim(tclvalue(dir.rfe))
 			.cdtData$GalParams$out.file <- str_trim(tclvalue(file.save1))
-
-			.cdtData$GalParams$Fill.Date.Range$start.year <- as.numeric(str_trim(tclvalue(istart.yrs)))
-			.cdtData$GalParams$Fill.Date.Range$start.mon <- as.numeric(str_trim(tclvalue(istart.mon)))
-			.cdtData$GalParams$Fill.Date.Range$start.dek <- as.numeric(str_trim(tclvalue(istart.dek)))
-			.cdtData$GalParams$Fill.Date.Range$end.year <- as.numeric(str_trim(tclvalue(iend.yrs)))
-			.cdtData$GalParams$Fill.Date.Range$end.mon <- as.numeric(str_trim(tclvalue(iend.mon)))
-			.cdtData$GalParams$Fill.Date.Range$end.dek <- as.numeric(str_trim(tclvalue(iend.dek)))
 
 			.cdtData$GalParams$Fill.Params$min.length <- as.numeric(str_trim(tclvalue(min.len)))
 			.cdtData$GalParams$message <- lang.dlg[['message']]

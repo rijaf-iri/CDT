@@ -1,6 +1,7 @@
 
 getInfoDateRange <- function(parent.win, Parameters, daypendek.lab = "Day",
-							state.dek = 'normal', state.hour = 'disabled')
+							state.dek = 'normal', state.hour = 'disabled',
+							state.mon = 'normal')
 {
 	# xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoDateRange_dlgBox.xml")
 	# lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
@@ -42,12 +43,12 @@ getInfoDateRange <- function(parent.win, Parameters, daypendek.lab = "Day",
 	hour.txt <- tklabel(frDatyR, text = 'Hour')
 
 	yrs1.v <- tkentry(frDatyR, width = 4, textvariable = istart.yrs, justify = "center")
-	mon1.v <- tkentry(frDatyR, width = 4, textvariable = istart.mon, justify = "center")
+	mon1.v <- tkentry(frDatyR, width = 4, textvariable = istart.mon, justify = "center", state = state.mon)
 	day1.v <- tkentry(frDatyR, width = 4, textvariable = istart.day, justify = "center", state = state.dek)
 	hour1.v <- tkentry(frDatyR, width = 4, textvariable = istart.hour, justify = "center", state = state.hour)
 
 	yrs2.v <- tkentry(frDatyR, width = 4, textvariable = iend.yrs, justify = "center")
-	mon2.v <- tkentry(frDatyR, width = 4, textvariable = iend.mon, justify = "center")
+	mon2.v <- tkentry(frDatyR, width = 4, textvariable = iend.mon, justify = "center", state = state.mon)
 	day2.v <- tkentry(frDatyR, width = 4, textvariable = iend.day, justify = "center", state = state.dek)
 	hour2.v <- tkentry(frDatyR, width = 4, textvariable = iend.hour, justify = "center", state = state.hour)
 

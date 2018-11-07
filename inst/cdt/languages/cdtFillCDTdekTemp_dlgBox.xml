@@ -5,53 +5,29 @@
         <text lang="fr"> Comblement des Températures décadaires manquantes </text>
     </title>
     <widget>
+        <button id="1">
+            <text lang="en"> Set Date Range </text>
+            <text lang="fr"> Set Date Range </text>
+        </button>
         <label id="1">
-            <text lang="en"> Temperature data file </text>
-            <text lang="fr"> Fichier de données de température </text>
+            <text lang="en"> Dekadal temperature data file </text>
+            <text lang="fr"> Fichier de données de température décadaire </text>
         </label>
         <label id="2">
             <text lang="en"> Directory of adjusted reanalysis files </text>
             <text lang="fr"> Répertoire des fichiers de réanalyse ajustés </text>
         </label>
         <label id="3">
-            <text lang="en"> Settings </text>
-            <text lang="fr"> Paramètres </text>
+            <text lang="en"> Min.len.Non.Missing </text>
+            <text lang="fr"> Long.min.Non.Manquante </text>
         </label>
         <label id="4">
-            <text lang="en"> File to save filled data </text>
-            <text lang="fr"> Fichier de sauvegarde données comblées </text>
-        </label>
-        <label id="5">
-            <text lang="en"> Date Range </text>
-            <text lang="fr"> Plage de dates </text>
-        </label>
-        <label id="6">
-            <text lang="en"> Start date </text>
-            <text lang="fr"> Date de début </text>
-        </label>
-        <label id="7">
-            <text lang="en"> End date </text>
-            <text lang="fr"> Date de fin </text>
-        </label>
-        <label id="8">
-            <text lang="en"> Year </text>
-            <text lang="fr"> Année </text>
-        </label>
-        <label id="9">
-            <text lang="en"> Month </text>
-            <text lang="fr"> Mois </text>
-        </label>
-        <label id="10">
             <text lang="en"> Dekad </text>
             <text lang="fr"> Décade </text>
         </label>
-        <label id="11">
-            <text lang="en"> Minimum length non missing data </text>
-            <text lang="fr"> Longueur minimale des données non manquantes </text>
-        </label>
-        <label id="12">
-            <text lang="en"> Minimum length </text>
-            <text lang="fr"> Longueur minimale </text>
+        <label id="5">
+            <text lang="en"> File to save filled data </text>
+            <text lang="fr"> Fichier de sauvegarde données comblées </text>
         </label>
     </widget>
     <help>

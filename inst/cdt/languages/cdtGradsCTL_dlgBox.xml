@@ -6,8 +6,8 @@
     </title>
     <widget>
         <button id="1">
-            <text lang="en"> Settings </text>
-            <text lang="fr"> Paramètres </text>
+            <text lang="en"> Set Date Range </text>
+            <text lang="fr"> Set Date Range </text>
         </button>
         <label id="1">
             <text lang="en"> Directory containing the NetCDF data </text>
@@ -16,30 +16,6 @@
         <label id="2">
             <text lang="en"> File to save the descriptor file </text>
             <text lang="fr"> Fichier pour enregistrer le fichier descripteur </text>
-        </label>
-        <label id="3">
-            <text lang="en"> Date Range </text>
-            <text lang="fr"> Plage des dates </text>
-        </label>
-        <label id="4">
-            <text lang="en"> Start date </text>
-            <text lang="fr"> Date de début </text>
-        </label>
-        <label id="5">
-            <text lang="en"> End date </text>
-            <text lang="fr"> Date de fin </text>
-        </label>
-        <label id="6">
-            <text lang="en"> Year </text>
-            <text lang="fr"> Année </text>
-        </label>
-        <label id="7">
-            <text lang="en"> Month </text>
-            <text lang="fr"> Mois </text>
-        </label>
-        <label id="8">
-            <text lang="en"> Day </text>
-            <text lang="fr"> Jour </text>
         </label>
     </widget>
     <help>
@@ -81,6 +57,16 @@
             <tooltip>
                 <text lang="en"> Enter the full path of the file to save the GrADS Data Descriptor File </text>
                 <text lang="fr"> Entrez le chemin complet du fichier pour enregistrer le fichier de descripteur de données GrADS </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Start and end date to be included in the descriptor file </text>
+                <text lang="fr"> Start and end date to be included in the descriptor file </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start and end date to be included in the descriptor file </text>
+                <text lang="fr"> Start and end date to be included in the descriptor file </text>
             </tooltip>
         </content>
     </help>
