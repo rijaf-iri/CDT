@@ -165,6 +165,15 @@ CDTdataStation.Display.Maps <- function(){
 		if(xyid$plotTS){
 			tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- xyid$crd
 
+			istn <- which(.cdtData$EnvData$don$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+			if(length(istn) == 0){
+				.cdtData$EnvData$stndata$series <- NULL
+				Insert.Messages.Out(paste(str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)), "doesn't exist"), format = TRUE)
+			}else{
+				.cdtData$EnvData$stndata$series$ts <- .cdtData$EnvData$don$data[, istn]
+				.cdtData$EnvData$stndata$series$id <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp))
+			}
+
 			titre1 <- paste('Station -', .cdtData$EnvData$stndata$series$id)
 			imgContainer1 <- CDT.Display.Graph(plotCDTStation.Graph, .cdtData$EnvData$tab$dataGraph, titre1)
 			.cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$dataGraph)

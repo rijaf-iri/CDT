@@ -230,6 +230,7 @@ cdt.index.aggregate <- function(dates,
 		if(tstep.in == "daily") nbd0 <- nb.Day.Of.Month(odaty)
 		if(tstep.in == "pentad") nbd0 <- rep(6, length(odaty))
 		if(tstep.in == "dekadal") nbd0 <- rep(3, length(odaty))
+		if(tstep.in == "monthly") nbd0 <- rep(1, length(odaty))
 	}
 
 	if(tstep.out == "annual"){

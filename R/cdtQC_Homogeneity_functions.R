@@ -51,7 +51,7 @@ homog.AggregateSeries <- function(don, intstep, aggr.pars)
 homog.DiffRatioUser.Simple <- function(x, opr = 1){
 	if(is.null(x)) return(x)
 	moy <- colMeans(x$data, na.rm = TRUE)
-	moy[moy == 0] <- moy[moy == 0] + 0.1
+	moy[moy == 0 & !is.na(moy)] <- moy[moy == 0 & !is.na(moy)] + 0.1
 	FUN <- if(opr == 1) "-" else "/"
 	sweep(x$data, 2, moy, FUN = FUN)
 }
@@ -62,7 +62,7 @@ homog.DiffRatioUser.Climato <- function(x, opr = 1){
 	index.anom <- cdt.index.Anomalies(x$date, index.clim, x$tstep)
 	moy <- lapply(index.clim$index, function(j) colMeans(x$data[j, , drop = FALSE], na.rm = TRUE))
 	moy <- do.call(rbind, moy)
-	moy[moy == 0] <- moy[moy == 0] + 0.1
+	moy[moy == 0 & !is.na(moy)] <- moy[moy == 0 & !is.na(moy)] + 0.1
 	data.mat <- x$data[index.anom$index[, 2], , drop = FALSE]
 	moy <- moy[index.anom$index[, 3], , drop = FALSE]
 	FUN <- if(opr == 1) `-` else `/`
@@ -116,7 +116,7 @@ homog.TestSeries.noRef <- function(x, pars, id = NULL)
 
 homog.DiffRatioRef.Simple <- function(x, opr = 1){
 	moy <- colMeans(x, na.rm = TRUE)
-	moy[moy == 0] <- moy[moy == 0] + 0.1
+	moy[moy == 0 & !is.na(moy)] <- moy[moy == 0 & !is.na(moy)] + 0.1
 	FUN <- if(opr == 1) "-" else "/"
 	sweep(x, 2, moy, FUN = FUN)
 }
@@ -124,7 +124,7 @@ homog.DiffRatioRef.Simple <- function(x, opr = 1){
 homog.DiffRatioRef.Climato <- function(x, index.clim, index.anom, opr = 1){
 	moy <- lapply(index.clim$index, function(j) colMeans(x[j, , drop = FALSE], na.rm = TRUE))
 	moy <- do.call(rbind, moy)
-	moy[moy == 0] <- moy[moy == 0] + 0.1
+	moy[moy == 0 & !is.na(moy)] <- moy[moy == 0 & !is.na(moy)] + 0.1
 	data.mat <- x[index.anom$index[, 2], , drop = FALSE]
 	moy <- moy[index.anom$index[, 3], , drop = FALSE]
 	FUN <- if(opr == 1) `-` else `/`

@@ -304,6 +304,7 @@ homogeneityTestProcs <- function(GeneralParameters){
 
 	frac.data.mon <- available.data.fraction(testS$don3$data)
 	id.ret1 <- (frac.data.mon$length / 12) >= parStats$min.year & frac.data.mon$frac >= parStats$min.frac
+
 	if(!any(id.ret1)){
 		Insert.Messages.Out("No enough data on test series to perform test for all stations", format = TRUE)
 		return(NULL)

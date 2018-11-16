@@ -9,6 +9,8 @@ homog.SNHT.Test <- function(x, h = NULL){
 	n <- length(x)
 	if(n < 3) return(NULL)
 	ll <- 1:n
+	sdx <- sd(x)
+	if(sdx < 1e-12) return(NULL)
 	x <- (x - mean(x)) / sd(x)
 	Ts <- numeric(n)
 
@@ -93,6 +95,7 @@ homog.CUSUM.Simple <- function(x, h = NULL){
 	ll <- 1:n
 	s <- sum(x)
 	sig <- sd(x)
+	if(sig < 1e-12) return(NULL)
 
 	if(!is.null(h)){
 		idh <- which(ll/n >= h & ll/n <= 1 - h)
@@ -153,6 +156,7 @@ homog.CUSUM.Trend <- function(x, h = NULL){
 	ll <- 1:n
 	epst <- as.vector(residuals(lm(x ~ ilen)))
 	sig <- sqrt(sum(epst^2) / (n - 2))
+	if(sig < 1e-12) return(NULL)
 
 	if(!is.null(h)){
 		idh <- which(ll/n >= h & ll/n <= 1 - h)
