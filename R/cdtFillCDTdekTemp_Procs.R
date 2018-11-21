@@ -47,8 +47,7 @@ fill_DekTemp_MissVal <- function(){
 	errmsg <- .cdtData$GalParams[['message']][['9']]
 	ncfiles <- list(Tstep = tstep, start.date = start.date, end.date = end.date,
 					months = months, ncDir = tempDir, ncFileFormat = tempfilefrmt)
-	ncinfo <- list(xo = ncDataInfo$ilon, yo = ncDataInfo$ilat, varid = ncDataInfo$varid)
-	read.ncdf.parms <- list(ncfiles = ncfiles, ncinfo = ncinfo, msg = msg, errmsg = errmsg)
+	read.ncdf.parms <- list(ncfiles = ncfiles, ncinfo = ncDataInfo, msg = msg, errmsg = errmsg)
 
 	TempData <- read.NetCDF.Data2Points(read.ncdf.parms, stnData[c('lon', 'lat')])
 	if(is.null(TempData)) return(NULL)

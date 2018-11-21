@@ -435,7 +435,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
 			.cdtData$EnvData$output <- don.anom
 			.cdtData$EnvData$PathAnom <- anom.dir
 
-			rm(tmp, don, anom, data.anom.csv, data.anom.rds, don.anom, dat.moy, dat.sds)
+			rm(tmp, don, anom, data.anom.csv, data.anom.rds, don.anom)
 		}else{
 			outDIR <- file.path(GeneralParameters$outdir$dir, "ANOMALIES_data")
 			dir.create(outDIR, showWarnings = FALSE, recursive = TRUE)
@@ -522,7 +522,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
 				dat.sds <- rbind(infohead, cbind(index0$id, dat.sds))
 				writeFiles(dat.sds, out.cdt.clim.sds)
 			}
-			rm(dat.moy, dat.sds, output, don, anom)
+			rm(output, don, anom)
 		}
 	}
 
