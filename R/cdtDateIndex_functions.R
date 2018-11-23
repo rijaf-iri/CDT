@@ -57,15 +57,18 @@ cdt.index.Anomalies <- function(dates, index.clim, tstep = "daily")
 	index <- cdt.index.Climatologies(dates, tstep, 0)
 	ixx <- match(index$id, index.clim$id)
 	ixx <- ixx[!is.na(ixx)]
-	index$id <- index$id[ixx]
-	index$index <- index$index[ixx]
+
+	if(length(ixx) >= 12){
+		index$id <- index$id[ixx]
+		index$index <- index$index[ixx]
+	}
 
 	index1 <- lapply(seq_along(index$id), function(j){
 		cbind(index$id[j], index$index[[j]], ixx[j])
 	})
 
 	index1 <- do.call(rbind, index1)
-	index1 <- index1[order(index1[, 2]), ]
+	index1 <- index1[order(index1[, 2]), , drop = FALSE]
 	dates <- dates[index1[, 2]]
 	return(list(date = dates, index = index1))
 }

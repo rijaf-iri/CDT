@@ -412,19 +412,10 @@ ExtractDataPanelCmd <- function(){
 		tkgrid(cb.endMonth, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 		tkconfigure(bt.Date.Range, command = function(){
-			Params <- GeneralParameters[["date.range"]]
-			Params <- getInfoDateRange(.cdtEnv$tcl$main$win, Params,
-										daypendek.lab = tclvalue(DayDek.txtVar),
-										state.dek = stateDR,
-										state.hour = stateHR)
-			GeneralParameters$date.range$start.year <<- Params$start.year
-			GeneralParameters$date.range$start.mon <<- Params$start.mon
-			GeneralParameters$date.range$start.dek <<- Params$start.day
-			GeneralParameters$date.range$start.hour <<- Params$start.hour
-			GeneralParameters$date.range$end.year <<- Params$end.year
-			GeneralParameters$date.range$end.mon <<- Params$end.mon
-			GeneralParameters$date.range$end.dek <<- Params$end.day
-			GeneralParameters$date.range$end.hour <<- Params$end.hour
+			GeneralParameters$date.range <<- getInfoDateRange(.cdtEnv$tcl$main$win, GeneralParameters$date.range,
+															daypendek.lab = tclvalue(DayDek.txtVar),
+															state.dek = stateDR,
+															state.hour = stateHR)
 		})
 
 		tkgrid(bt.Date.Range, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
