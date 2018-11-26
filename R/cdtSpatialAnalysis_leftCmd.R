@@ -1508,7 +1508,8 @@ spatialAnalysisPanelCmd <- function(){
 
 			if(readClimData){
 				don <- fread(filestat, header = FALSE, sep = ",", data.table = FALSE,
-									stringsAsFactors = FALSE, colClasses = "character")
+									stringsAsFactors = FALSE, colClasses = "character",
+									na.strings = .cdtData$Config$missval)
 
 				if(tclvalue(.cdtData$EnvData$climStat) == "Trend"){
 					.cdtData$EnvData$don <- list(
@@ -1651,7 +1652,8 @@ spatialAnalysisPanelCmd <- function(){
 
 			if(readTsData){
 				don <- fread(filetsdata, header = FALSE, sep = ",", data.table = FALSE,
-										stringsAsFactors = FALSE, colClasses = "character")
+										stringsAsFactors = FALSE, colClasses = "character",
+										na.strings = .cdtData$Config$missval)
 
 				.cdtData$EnvData$tsdata <- list(id = as.character(don[1, -1]), 
 												x0 = as.numeric(don[2, -1]),
@@ -1716,7 +1718,8 @@ spatialAnalysisPanelCmd <- function(){
 
 				if(readAnomData){
 					don <- data.table::fread(file.anom, header = FALSE, sep = ",", data.table = FALSE,
-												stringsAsFactors = FALSE, colClasses = "character")
+												stringsAsFactors = FALSE, colClasses = "character",
+												na.strings = .cdtData$Config$missval.anom)
 
 					.cdtData$EnvData$anomData <- list(id = as.character(don[1, -1]), 
 													x0 = as.numeric(don[2, -1]),

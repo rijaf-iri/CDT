@@ -1158,6 +1158,28 @@ startCDT <- function(wd = NA, lang = NA){
 			tkadd(menu.aide, "separator")
 
 			##########
+			tkadd(menu.aide, "command", label = "Update CDT from GitHub", command = function(){
+				tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
+				tcl('update')
+				on.exit({
+					tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+					tcl('update')
+				})
+
+				if(testConnection()){
+					Insert.Messages.Out("Updating CDT from GitHub .....")
+					devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, upgrade_dependencies = FALSE, force = TRUE)
+					Insert.Messages.Out("You have to start a new R session.")
+				}else{
+					Insert.Messages.Out("No Internet connection", format = TRUE)
+					return(NULL)
+				}
+			})
+
+			##########
+			tkadd(menu.aide, "separator")
+
+			##########
 			tkadd(menu.aide, "command", label = lang.menu[["help"]][["2"]], command = function() aboutCDT())
 
 	#################################################################################

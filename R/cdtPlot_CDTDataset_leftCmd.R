@@ -318,28 +318,31 @@ PlotCDTDatasetCmd <- function(){
 				.cdtData$EnvData$cdtdataset <- OutIndexdata
 				.cdtData$EnvData$cdtdataset$fileInfo <- file.CDT.Idx
 				.cdtData$EnvData$file.CDT.Idx <- file.CDT.Idx
+				####
+
+				.cdtData$EnvData$map <- readCdtDatasetChunk.multi.dates.order(file.CDT.Idx, OutIndexdata$dateInfo$date[1], onedate = TRUE)
 
 				####
-				chunkfile <- sort(unique(OutIndexdata$colInfo$index))
-				chunkcalc <- split(chunkfile, ceiling(chunkfile / OutIndexdata$chunkfac))
-				do.parChunk <- if(OutIndexdata$chunkfac > length(chunkcalc)) TRUE else FALSE
-				do.parCALC <- if(do.parChunk) FALSE else TRUE
+				# chunkfile <- sort(unique(OutIndexdata$colInfo$index))
+				# chunkcalc <- split(chunkfile, ceiling(chunkfile / OutIndexdata$chunkfac))
+				# do.parChunk <- if(OutIndexdata$chunkfac > length(chunkcalc)) TRUE else FALSE
+				# do.parCALC <- if(do.parChunk) FALSE else TRUE
 
-				is.parallel <- doparallel(do.parCALC & (length(chunkcalc) > 10))
-				`%parLoop%` <- is.parallel$dofun
-				moy <- foreach(jj = seq_along(chunkcalc), .packages = "doParallel") %parLoop% {
-					don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], file.CDT.Idx, do.par = do.parChunk)
-					don.data <- don.data[OutIndexdata$dateInfo$index, , drop = FALSE]
-					moy <- colMeans(don.data, na.rm = TRUE)
-					moy[is.nan(moy) | is.infinite(moy)] <- NA
-					return(moy)
-				}
-				if(is.parallel$stop) stopCluster(is.parallel$cluster)
+				# is.parallel <- doparallel(do.parCALC & (length(chunkcalc) > 10))
+				# `%parLoop%` <- is.parallel$dofun
+				# moy <- foreach(jj = seq_along(chunkcalc), .packages = "doParallel") %parLoop% {
+				# 	don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], file.CDT.Idx, do.par = do.parChunk)
+				# 	don.data <- don.data[OutIndexdata$dateInfo$index, , drop = FALSE]
+				# 	moy <- colMeans(don.data, na.rm = TRUE)
+				# 	moy[is.nan(moy) | is.infinite(moy)] <- NA
+				# 	return(moy)
+				# }
+				# if(is.parallel$stop) stopCluster(is.parallel$cluster)
 
-				moy <- do.call(c, moy)
-				moy <- moy[OutIndexdata$colInfo$order]
-				dim(moy) <- sapply(OutIndexdata$coords$mat, length)
-				.cdtData$EnvData$map <- c(OutIndexdata$coords$mat, list(z = moy))
+				# moy <- do.call(c, moy)
+				# moy <- moy[OutIndexdata$colInfo$order]
+				# dim(moy) <- sapply(OutIndexdata$coords$mat, length)
+				# .cdtData$EnvData$map <- c(OutIndexdata$coords$mat, list(z = moy))
 			}
 		}
 
