@@ -1159,6 +1159,7 @@ startCDT <- function(wd = NA, lang = NA){
 
 			##########
 			tkadd(menu.aide, "command", label = "Update CDT from GitHub", command = function(){
+				Insert.Messages.Out("Updating CDT from GitHub .....")
 				tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
 				tcl('update')
 				on.exit({
@@ -1167,8 +1168,8 @@ startCDT <- function(wd = NA, lang = NA){
 				})
 
 				if(testConnection()){
-					Insert.Messages.Out("Updating CDT from GitHub .....")
 					devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, upgrade_dependencies = FALSE, force = TRUE)
+					Insert.Messages.Out("Uptading CDT done!")
 					Insert.Messages.Out("You have to start a new R session.")
 				}else{
 					Insert.Messages.Out("No Internet connection", format = TRUE)
