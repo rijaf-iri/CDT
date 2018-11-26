@@ -29,8 +29,8 @@ extractTS.previewWin <- function(states, shpL, type){
 		coordsfiles <- tclVar()
 		coordsfrom <- tclVar('crd')
 
-		crdfrm1 <- tkradiobutton(frameType, variable = coordsfrom, value = "crd", text = "From coordinate file", anchor = 'w', justify = 'left', state = states[1])
-		crdfrm2 <- tkradiobutton(frameType, variable = coordsfrom, value = "cdt", text = "From CDT data", anchor = 'w', justify = 'left', state = states[1])
+		crdfrm1 <- tkradiobutton(frameType, variable = coordsfrom, value = "crd", text = "From CDT coordinates file", anchor = 'w', justify = 'left', state = states[1])
+		crdfrm2 <- tkradiobutton(frameType, variable = coordsfrom, value = "cdt", text = "From CDT stations data format", anchor = 'w', justify = 'left', state = states[1])
 		cbmltpts <- ttkcombobox(frameType, values = unlist(listOpenFiles), textvariable = coordsfiles, state = states[1], width = largeur)
 		btmltpts <- tkbutton(frameType, text = "...", state = states[1])
 
