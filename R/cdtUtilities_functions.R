@@ -54,16 +54,27 @@ cdt.foreach <- function(loopL, parsL = NULL, ..., FUN)
 {
 	FUN <- match.fun(FUN)
 
-	nb.cores <- detectCores() - 1
+	# nb.cores <- detectCores() - 1
+	# if(!is.null(parsL)){
+	# 	if(is.logical(parsL)){
+	# 		parsL <- list(condition = parsL, nb.cores = nb.cores)
+	# 	}else{
+	# 		if(is.null(parsL$condition)) parsL$condition <- FALSE
+	# 		if(is.null(parsL$nb.cores)) parsL$nb.cores <- nb.cores
+	# 	}
+	# }else{
+	# 	parsL <- list(condition = FALSE, nb.cores = nb.cores)
+	# }
+	# is.parallel <- do.call(doparallel, parsL)
+
 	if(!is.null(parsL)){
 		if(is.logical(parsL)){
-			parsL <- list(condition = parsL, nb.cores = nb.cores)
+			parsL <- list(condition = parsL)
 		}else{
 			if(is.null(parsL$condition)) parsL$condition <- FALSE
-			if(is.null(parsL$nb.cores)) parsL$nb.cores <- nb.cores
 		}
 	}else{
-		parsL <- list(condition = FALSE, nb.cores = nb.cores)
+		parsL <- list(condition = FALSE)
 	}
 	is.parallel <- do.call(doparallel, parsL)
 
