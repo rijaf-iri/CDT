@@ -10,5 +10,11 @@
     // Anomaly missing value code
     "missval.anom": "-9999",
     // full path to the working directory
-    "wd": ""
+    "wd": "",
+    // use parallel processing
+    "parallel": true,
+    // set number of cores automatically detectCores() - 1
+    "auto.cores": true,
+    // set the Number of cores to be used if "auto.cores": false,
+    "nb.cores": 3
 }

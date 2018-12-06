@@ -22,9 +22,17 @@ is.HelpServerRunning <- function(){
 
 ##############################################
 ## Create parallel loop
-doparallel <- function(condition, nb.cores = detectCores() - 1)
+doparallel <- function(condition)
 {
-	okpar <- if(detectCores() < 3) FALSE else TRUE
+	if(as.logical(.cdtData$Config$parallel)){
+		nb.cores <- detectCores() - 1
+		if(nb.cores >= 2){
+			okpar <- TRUE
+			if(!as.logical(.cdtData$Config$auto.cores))
+				nb.cores <- as.numeric(.cdtData$Config$nb.cores)
+		}else okpar <- FALSE
+	}else okpar <- FALSE
+
 	if(okpar & condition){
 		klust <- makeCluster(nb.cores)
 		registerDoParallel(klust)
