@@ -75,7 +75,7 @@ formatCDTDataMultiple.Files <- function(){
 										),
 								silent = TRUE)
 		if(inherits(donne, "try-error")) return(NULL)
-		donne <- getCDTTSdataAndDisplayMsg(donne, tstep, filefrmt, datefrmt, STN.sample)
+		donne <- getCDTTSdataAndDisplayMsg(donne, tstep, filefrmt, datefrmt, STN.sample, display = FALSE)
 		return(donne)
 	})
 

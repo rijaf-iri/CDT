@@ -70,9 +70,9 @@
 
         // Minimum length of non missing values to be used to calculate the factor
         // or to fit the distribution
-        "min.length": 15,
+        "min.length": 10,
         // Minimum number of non missing stations to interpolate bias
-        "min.stn": 10,
+        "min.stn": 5,
 
         // Use Shapiro-Wilk normality test to test if data follow a normal distribution
         "SWnorm.test": true
@@ -126,9 +126,9 @@
         "normalize": true,
 
         // Minimum length of non missing values to be used to perform LM
-        "min.length": 15,
+        "min.length": 10,
         // Minimum number of non missing stations to interpolate coef
-        "min.stn": 10,
+        "min.stn": 5,
 
         // true: use quantiles to perform regression; false: use raw data
         "useQuantile": false
@@ -159,7 +159,7 @@
         "use.block": true,
 
         // Minimum number of stations with data to be used to do the merging
-        "min.stn": 10,
+        "min.stn": 5,
 
         // Use auxiliary variables with GLM to calculate the spatial trend
         "sp.trend.aux": false

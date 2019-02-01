@@ -27,7 +27,7 @@ CDT.Display.Graph <- function(plot.graph, notebookTab, tab.title){
 	containerFrame <- bwScrollableFrame(scrollwin, width = wscrFrame, height = hscrFrame)
 	tcl("update")
 
-	img <- tkrplot(containerFrame, fun = plotIt, hscale = hscale, vscale = vscale)
+	img <- tkrplot1(containerFrame, fun = plotIt, hscale = hscale, vscale = vscale)
 	tkgrid(img)
 	tkgrid.rowconfigure(img, 0, weight = 1)
 	tkgrid.columnconfigure(img, 0, weight = 1)
@@ -63,7 +63,7 @@ CDT.Display.Map.inter <- function(plot.map, notebookTab, tab.title){
 	hscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH)))
 	vscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
 
-	img <- tkrplot(onglet[[2]], fun = plotIt, hscale = hscale, vscale = vscale)
+	img <- tkrplot1(onglet[[2]], fun = plotIt, hscale = hscale, vscale = vscale)
 	tkgrid(img)
 	tkgrid.rowconfigure(img, 0, weight = 1)
 	tkgrid.columnconfigure(img, 0, weight = 1)
@@ -132,7 +132,7 @@ CDT.Display.Points.Zoom <- function(plot.map, notebookTab, tab.title){
 	canvas <- tkcanvas(onglet[[2]])
 	tkgrid(canvas)
 
-	img <- tkrplot(canvas, fun = plotIt, hscale = hscale, vscale = vscale)
+	img <- tkrplot1(canvas, fun = plotIt, hscale = hscale, vscale = vscale)
 	img_w <- as.double(tcl('image', 'width', img$image))
 	img_h <- as.double(tcl('image', 'height', img$image))
 	tkconfigure(canvas, width = img_w, height = img_h)

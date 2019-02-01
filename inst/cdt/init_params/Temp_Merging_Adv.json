@@ -45,7 +45,7 @@
         "use.block": true,
 
         // Minimum number of stations with data to be used to do the merging
-        "min.stn": 10,
+        "min.stn": 5,
 
         // Use auxiliary variables with GLM to calculate the spatial trend
         "sp.trend.aux": false

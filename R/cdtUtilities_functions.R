@@ -435,7 +435,7 @@ getCDTdataAndDisplayMsg <- function(donne, tstep, filename){
 	return(donne)
 }
 
-getCDTTSdataAndDisplayMsg <- function(donne, period, filefrmt, datefrmt, filename){
+getCDTTSdataAndDisplayMsg <- function(donne, period, filefrmt, datefrmt, filename, display = TRUE){
 	if(is.null(donne)) return(NULL)
 	donne <- splitTsData(donne, period, filefrmt, datefrmt)
 	if(is.null(donne)) return(NULL)
@@ -457,7 +457,7 @@ getCDTTSdataAndDisplayMsg <- function(donne, period, filefrmt, datefrmt, filenam
 		outlist <- c(outlist, list('Missing dates', tmp0))
 	}
 
-	if(length(outlist) > 0){
+	if(length(outlist) > 0 & display){
 		containertab <- Display_Output_Console_Tab(outlist, title = filename)
 		ntab <- update.OpenTabs('ctxt', containertab)
 		tkselect(.cdtEnv$tcl$main$tknotes, ntab)

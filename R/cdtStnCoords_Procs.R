@@ -15,7 +15,6 @@ StnChkCoordsProcs <- function(GeneralParameters){
 		coords <- list(id = as.character(don0[, 1]),
 						lon = as.numeric(don0[, 3]),
 						lat = as.numeric(don0[, 4]))
-		coords$idx <- seq_along(coords$lon)
 	}
 
 	if(GeneralParameters$data.type == "cdtstation")
@@ -33,7 +32,6 @@ StnChkCoordsProcs <- function(GeneralParameters){
 		don.disp <- as.data.frame(don)
 		names(don.disp) <- nom.col
 		coords <- don[c('id', 'lon', 'lat')]
-		coords$idx <- seq_along(coords$lon)
 		rm(don)
 	}
 
@@ -72,11 +70,10 @@ StnChkCoordsProcs <- function(GeneralParameters){
 
 	############
 
-	output <- list(params = GeneralParameters, info = don.info, id = coords$idx)
+	output <- list(params = GeneralParameters, info = don.info, id = coords$id)
 
 	coords <- as.data.frame(coords)
 	coords$id <- as.character(coords$id)
-	don.disp$idx <- coords$idx
 	don.disp$LonX <- coords$lon
 	don.disp$LatX <- coords$lat
 	don.disp$StatusX <- rep("blue", length(coords$lon))
@@ -235,18 +232,21 @@ StnChkCoordsCorrect <- function(){
 		return(NULL)
 	}
 
-	idx0 <- as.numeric(as.character(.cdtData$EnvData$Table.Disp0$idx))
-	if(!is.null(.cdtData$EnvData$Table.Disp)){
-		idx <- as.numeric(as.character(.cdtData$EnvData$Table.Disp$idx))
-		nom <- names(.cdtData$EnvData$Table.Disp)
-		nom <- nom != "idx"
-		nom[1] <- FALSE
+	idx0 <- as.character(.cdtData$EnvData$Table.Disp0$ID)
+	fileTable <- file.path(.cdtData$EnvData$PathData, "CDTDATASET/Table.rds")
+	Table.Disp <- readRDS(fileTable)
+
+	if(!is.null(Table.Disp)){
+		idx <- as.character(Table.Disp$ID)
 		id.del0 <- idx0[!idx0 %in% idx]
-		change <- .cdtData$EnvData$Table.Disp[, nom, drop = FALSE]
+		change <- Table.Disp[, -1, drop = FALSE]
+
 		change <- as.matrix(change)
+		.cdtData$EnvData$Table.Disp <- Table.Disp
 	}else{
 		id.del0 <- idx0
-		change <- NULL
+		change <- matrix(NA, 0, 3)
+		.cdtData$EnvData$Table.Disp <- NULL
 	}
 
 	######
@@ -259,7 +259,7 @@ StnChkCoordsCorrect <- function(){
 	filemap <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', 'Display.rds')
 	map.disp <- readRDS(filemap)
 	nom1 <- names(map.disp)
-	nom1 <- which(!nom1 %in% c('idx', 'LonX', 'LatX', 'StatusX'))
+	nom1 <- which(!nom1 %in% c('LonX', 'LatX', 'StatusX'))
 
 	######
 	if(.cdtData$EnvData$output$params$data.type == "cdtcoords"){
@@ -290,11 +290,15 @@ StnChkCoordsCorrect <- function(){
 		}
 	}
 
-	if(length(id.del0)) .cdtData$EnvData$output$id <- .cdtData$EnvData$output$id[-ix1]
+	if(length(id.del0)){
+		.cdtData$EnvData$output$id <- .cdtData$EnvData$output$id[-ix1]
+		.cdtData$EnvData$Table.Disp0 <- .cdtData$EnvData$Table.Disp0[!idx0 %in% id.del0, , drop = FALSE]
+		if(nrow(.cdtData$EnvData$Table.Disp0) == 0) .cdtData$EnvData$Table.Disp0 <- NULL
+	}
 
 	######
 
-	idx1 <- .cdtData$EnvData$output$coords$idx
+	idx1 <- .cdtData$EnvData$output$coords$id
 	id.del1 <- if(length(id.del0)) idx1[idx1 %in% id.del0] else NULL
 
 	if(nrow(change) > 0){
@@ -320,15 +324,13 @@ StnChkCoordsCorrect <- function(){
 		.cdtData$EnvData$Maps.Disp$LatX[ix0] <- as.numeric(change0[, pos.lat])
 		if(any(ina)){
 			idx1 <- c(idx1, idx2)
-			## check invalid coordinates
 			tmp <- data.frame(id = as.character(change1[, 1]),
 							lon = as.numeric(change1[, pos.lon]),
 							lat = as.numeric(change1[, pos.lat]),
-							idx = idx2, stringsAsFactors = FALSE)
+							stringsAsFactors = FALSE)
 			.cdtData$EnvData$output$coords <- rbind(.cdtData$EnvData$output$coords, tmp)
 
 			tmp1 <- data.frame(change1,
-							idx = idx2,
 							LonX = as.numeric(change1[, pos.lon]),
 							LatX = as.numeric(change1[, pos.lat]),
 							StatusX = "red", stringsAsFactors = FALSE)

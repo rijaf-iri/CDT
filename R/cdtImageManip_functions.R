@@ -68,12 +68,21 @@ refreshPlot1 <- function(W, img, hscale, vscale){
 }
 
 refreshPlot <- function(W, img, hscale, vscale){
-	tkrreplot(img, hscale = hscale, vscale = vscale)
+	ret <- tkrreplot1(img, hscale = hscale, vscale = vscale)
+	if(is.null(ret)) return(NULL)
 	img_w <- as.double(tcl('image', 'width', img$image))
 	img_h <- as.double(tcl('image', 'height', img$image))
 	tkconfigure(W, width = img_w, height = img_h)
 	tcl('update')
 }
+
+# refreshPlot <- function(W, img, hscale, vscale){
+# 	tkrreplot(img, hscale = hscale, vscale = vscale)
+# 	img_w <- as.double(tcl('image', 'width', img$image))
+# 	img_h <- as.double(tcl('image', 'height', img$image))
+# 	tkconfigure(W, width = img_w, height = img_h)
+# 	tcl('update')
+# }
 
 ########################################################################
 

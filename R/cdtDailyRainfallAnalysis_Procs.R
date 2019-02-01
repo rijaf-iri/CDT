@@ -28,7 +28,7 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 	drywet.spell <- GeneralParameters$def$drywet.spell
 	aggr.pars <- list(min.frac = GeneralParameters$min.frac,
 						drywet.day = drywet.day,
-						drywet.spell = drywet.day)
+						drywet.spell = drywet.spell)
 
 	#######################
 
