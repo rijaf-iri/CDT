@@ -622,7 +622,7 @@ ExtractDataProcs <- function(GeneralParameters){
 				iyear <- (years >= climato$start.year & years <= climato$end.year)
 			years <- years[iyear]
 			rangeYear <- paste0(range(years), collapse = "-")
-			miss <- colSums(!is.na(AggrData[iyear, ])) < climato$min.year
+			miss <- colSums(!is.na(AggrData[iyear, , drop = FALSE])) < climato$min.year
 
 			if(tstep.Out %in% c('seasonal3', 'seasonal6', 'annual'))
 			{
