@@ -22,14 +22,19 @@ is.HelpServerRunning <- function(){
 
 ##############################################
 ## Create parallel loop
+
 doparallel <- function(condition)
 {
-	if(as.logical(.cdtData$Config$parallel)){
+	cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
+	Config <- jsonlite::fromJSON(cdt.file.conf)
+	Config <- lapply(Config, stringr::str_trim)
+
+	if(as.logical(Config$parallel)){
 		nb.cores <- detectCores() - 1
 		if(nb.cores >= 2){
 			okpar <- TRUE
-			if(!as.logical(.cdtData$Config$auto.cores))
-				nb.cores <- as.numeric(.cdtData$Config$nb.cores)
+			if(!as.logical(Config$auto.cores))
+				nb.cores <- as.numeric(Config$nb.cores)
 		}else okpar <- FALSE
 	}else okpar <- FALSE
 

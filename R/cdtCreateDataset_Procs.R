@@ -258,19 +258,26 @@ cdtDataset_readData <- function(){
 # don <- readCdtDatasetChunk.sequence(loc, fileInfo, do.par = TRUE)
 # return matrix,  row: all dates, col: sum of chunk col number
 
-readCdtDatasetChunk.sequence <- function(chunk, fileInfo, cdtData = NULL, do.par = TRUE)
+readCdtDatasetChunk.sequence <- function(chunk, fileInfo, do.par = TRUE)
 {
-	if(is.null(cdtData)) cdtData <- readRDS(fileInfo)
 	datadir <- file.path(dirname(fileInfo), "DATA")
-
-	is.parallel <- doparallel(do.par & (length(chunk) >= 20))
-	`%parLoop%` <- is.parallel$dofun
-	don <- foreach(j = chunk) %parLoop% {
-		file.rds <- file.path(datadir, paste0(j, ".rds"))
-		x <- readRDS(file.rds)
-		x
+	if(do.par){
+		is.parallel <- doparallel(length(chunk) >= 20)
+		`%parLoop%` <- is.parallel$dofun
+		don <- foreach(j = chunk) %parLoop% {
+			file.rds <- file.path(datadir, paste0(j, ".rds"))
+			x <- readRDS(file.rds)
+			x
+		}
+		if(is.parallel$stop) stopCluster(is.parallel$cluster)
+	}else{
+		don <- lapply(chunk, function(j){
+			file.rds <- file.path(datadir, paste0(j, ".rds"))
+			x <- readRDS(file.rds)
+			x
+		})
 	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+
 	do.call(cbind, don)
 }
 

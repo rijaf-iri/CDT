@@ -119,7 +119,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
 			is.parallel <- doparallel(do.parCALC & (length(chunkcalc) > 5))
 			`%parLoop%` <- is.parallel$dofun
 			ret <- foreach(ll = seq_along(chunkcalc), .packages = "doParallel") %parLoop% {
-				don <- readCdtDatasetChunk.sequence(chunkcalc[[ll]], GeneralParameters$in.file, cdtdata, do.par = do.parChunk)
+				don <- readCdtDatasetChunk.sequence(chunkcalc[[ll]], GeneralParameters$in.file, do.par = do.parChunk)
 				don <- don[cdtdata$dateInfo$index, , drop = FALSE]
 
 				AggrData <- cdt.data.aggregate(don, indx, pars = GeneralParameters$aggr.series)
@@ -235,7 +235,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
 		is.parallel <- doparallel(do.parCALC & (length(chunkcalc) > 5))
 		`%parLoop%` <- is.parallel$dofun
 		AnalysData <- foreach(ll = seq_along(chunkcalc), .packages = "doParallel") %parLoop% {
-			don <- readCdtDatasetChunk.sequence(chunkcalc[[ll]], AggrData$file, AggrData, do.par = do.parChunk)
+			don <- readCdtDatasetChunk.sequence(chunkcalc[[ll]], AggrData$file, do.par = do.parChunk)
 
 			if(funAnalysis != "anomaly"){
 				if(GeneralParameters$time.series$out.series == "monthly"){
