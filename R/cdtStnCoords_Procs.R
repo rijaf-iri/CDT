@@ -232,12 +232,12 @@ StnChkCoordsCorrect <- function(){
 		return(NULL)
 	}
 
-	idx0 <- as.character(.cdtData$EnvData$Table.Disp0$ID)
+	idx0 <- as.character(.cdtData$EnvData$Table.Disp0[, 2])
 	fileTable <- file.path(.cdtData$EnvData$PathData, "CDTDATASET/Table.rds")
 	Table.Disp <- readRDS(fileTable)
 
 	if(!is.null(Table.Disp)){
-		idx <- as.character(Table.Disp$ID)
+		idx <- as.character(Table.Disp[, 2])
 		id.del0 <- idx0[!idx0 %in% idx]
 		change <- Table.Disp[, -1, drop = FALSE]
 
