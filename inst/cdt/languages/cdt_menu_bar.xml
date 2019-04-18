@@ -55,6 +55,10 @@
             <text lang="en"> Filtering CDT Station Data </text>
             <text lang="fr"> Filtrer les données station CDT </text>
         </submenu>
+        <submenu id="3a">
+            <text lang="en"> Selecting CDT Station Data </text>
+            <text lang="fr"> Sélectionner les données station CDT </text>
+        </submenu>
         <submenu id="4">
             <text lang="en"> Transform NetCDF files into CDT Dataset </text>
             <text lang="fr"> Transformer fichiers NetCDF en données CDT </text>

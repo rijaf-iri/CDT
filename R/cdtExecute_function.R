@@ -43,6 +43,15 @@ Execute_Function <- function(){
 		Execute_end_msg(ret, msg0, msg1)
 	}
 
+	## selecting CDT station Data
+	if(.cdtData$GalParams$action == "selectCDT.data"){
+		ret <- try(selectCDTdata(), silent = TRUE)
+
+		msg0 <- .cdtData$GalParams[['message']][['2']]
+		msg1 <- .cdtData$GalParams[['message']][['3']]
+		Execute_end_msg(ret, msg0, msg1)
+	}
+
 	## Create cdt dataset from ncdf files
 	if(.cdtData$GalParams$action == "create.CdtDataset"){
 		ret <- try(cdtDataset_readData(), silent = TRUE)

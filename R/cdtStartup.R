@@ -262,6 +262,15 @@ startCDT <- function(wd = NA, lang = NA){
 			})
 
 			##########
+			tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["3a"]],
+				command = function()
+			{
+				refreshCDT()
+				initialize.parameters('selectCDT.data', 'daily')
+				selectCDTData_getParams()
+			})
+
+			##########
 			tkadd(menu.dataprep, "separator")
 
 			##########

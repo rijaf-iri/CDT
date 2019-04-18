@@ -21,6 +21,11 @@ cdt.init.params <- function(action, tstep){
 		ret.params <- list(action = action, filein = "", opfilter = ">=", valfilter = 20, file2save = "")
 	}
 
+	## Select CDT station Data
+	if(action == 'selectCDT.data'){
+		ret.params <- list(action = action, filein = "", filein1 = "", opfilter = ">=", valfilter = 20, file2save = "")
+	}
+
 	## Create cdt dataset from ncdf files
 	if(action == 'create.CdtDataset'){
 		ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Create_CDT_Dataset.json'))
