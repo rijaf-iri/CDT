@@ -28,8 +28,10 @@ install_github("rijaf-iri/CDT")
 
 ### 1) Install `XQuartz`
 Type `XQuartz` in Apple's search, if you don't find it, it means, `XQuartz` is not already installed. It's better to update `XQuartz` to the latest version if it is already installed.
+
 Download and install it from [https://www.xquartz.org](https://www.xquartz.org/).
-Restart your computer
+
+Restart your computer.
 
 ### 2) Install `Tcl/Tk`
 
@@ -112,16 +114,21 @@ and `BWidget` in `/Library/Tcl/teapot/package/tcl/lib/BWidget1.9.8`.
 ### 3) Install GDAL/GEOS/PROJ.4
 Download and install `GDAL` binaries from [http://www.kyngchaos.com/software/frameworks](http://www.kyngchaos.com/software/frameworks). Install the latest version of **GDAL Complete**.
 
-`GDAL` will be installed in `/Library/Frameworks/GDAL.framework`
+`GDAL` will be installed in `/Library/Frameworks/GDAL.framework`, 
+
 `GEOS` in `/Library/Frameworks/GEOS.framework`
-and `PROJ` in `/Library/Frameworks/PROJ.framework`
+
+and `PROJ` in `/Library/Frameworks/PROJ.framework`.
 
 The configuration files are located in
+
 `GEOS`:  `/Library/Frameworks/GEOS.framework/unix/bin/geos-config`
+
 `GDAL`:  `/Library/Frameworks/GDAL.framework/unix/bin/gdal-config`
 
 And `PROJ` `include` and `lib` are located in `/Library/Frameworks/PROJ.framework/unix/include` and
  `/Library/Frameworks/PROJ.framework/unix/lib` respectively.
+ 
 Remember these paths, you will need them when you install the package `rgdal` and `rgeos` on `R`.
 
 ### 4) Install `R`
