@@ -128,7 +128,7 @@ The configuration files are located in
 
 And `PROJ` `include` and `lib` are located in `/Library/Frameworks/PROJ.framework/unix/include` and
  `/Library/Frameworks/PROJ.framework/unix/lib` respectively.
- 
+
 Remember these paths, you will need them when you install the package `rgdal` and `rgeos` on `R`.
 
 ### 4) Install `R`
@@ -301,7 +301,7 @@ install.packages("rgeos", type = "source",
        )
 ```
 
-### 7) Install CDT
+### 7) Install `CDT`
 
 Open `R` and install `devtools` package with: 
 
