@@ -504,4 +504,3 @@ AggregateNcdf_GetInfo <- function(){
 	})
 	tkwait.window(tt)
 }
-
