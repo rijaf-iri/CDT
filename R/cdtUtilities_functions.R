@@ -917,6 +917,7 @@ available.data.fraction <- function(data.mat){
 ##############################################
 
 smooth.matrix <- function(mat, ns){
+	mat0 <- mat
 	M <- matrix(NA, nrow(mat) + 2 * ns, ncol(mat) + 2 * ns)
 	sqC <- (ns + 1):(ncol(M) - ns)
 	sqR <- (ns + 1):(nrow(M) - ns)
@@ -926,6 +927,7 @@ smooth.matrix <- function(mat, ns){
 		for(i in sqR)
 			mat[i - ns, j - ns] <- mean(M[i + sqN, j + sqN], na.rm = TRUE)
 	mat[is.nan(mat)] <- NA
+	mat <- (mat0 + mat)/2
 	return(mat)
 }
 

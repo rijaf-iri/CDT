@@ -10,7 +10,15 @@ Go to the CRAN website [CRAN](https://CRAN.R-project.org).
 Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`. For example: [Download R 3.6.0 for Windows](https://cran.r-project.org/bin/windows/base/R-3.6.0-win.exe) (62 megabytes, 32/64 bit).
 Install the downloaded file (example: R-3.6.0-win.exe). Perform a default installation (Just click on **Next**).
 
-### 2) Install `CDT`
+### 2) Install the package `tkrplot`
+
+Install the latest version of the package `tkrplot` by entering the following in `R`:
+
+```r
+install.packages("tkrplot")
+```
+
+### 3) Install `CDT`
 
 Open `R` and install `devtools` package with:
 
@@ -134,7 +142,15 @@ Remember these paths, you will need them when you install the package `rgdal` an
 ### 4) Install `R`
 Download and install `R` binary for your MacOS X version from [https://cran.r-project.org/bin/macosx](https://cran.r-project.org/bin/macosx/)
 
-### 5) Install `rgeos` and `rgdal`
+### 5) Install the package `tkrplot`
+
+Install the latest version of the package `tkrplot` by entering the following in `R`:
+
+```r
+install.packages("tkrplot")
+```
+
+### 6) Install `rgeos` and `rgdal`
 
 Open `R` and install `rgdal` package with:
 
@@ -157,7 +173,7 @@ configure.args =
 )
 ```
 
-### 6) Install `CDT`
+### 7) Install `CDT`
 Open `R` and install `devtools` package with: 
 
 ```r
@@ -271,7 +287,15 @@ install.packages('ncdf4', type = "source",
         configure.args = paste0('--with-nc-config=', nc_config))
 ```
 
-### 6) Install `rgeos` and `rgdal`
+### 6) Install the package `tkrplot`
+
+Install the latest version of the package `tkrplot` by entering the following in `R`:
+
+```r
+install.packages("tkrplot")
+```
+
+### 7) Install `rgeos` and `rgdal`
 
 Open `R` and install `rgdal` package with:
 
@@ -301,7 +325,7 @@ install.packages("rgeos", type = "source",
        )
 ```
 
-### 7) Install `CDT`
+### 8) Install `CDT`
 
 Open `R` and install `devtools` package with: 
 

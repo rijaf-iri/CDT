@@ -219,10 +219,15 @@ mrgGetInfoTemp <- function(){
 
 		cb.MrgMthd <- c("Regression Kriging", "Spatio-Temporal LM", "Simple Bias Adjustment")
 		mrg.method <- tclVar(str_trim(.cdtData$GalParams$Merging$mrg.method))
+		mrg.min.stn <- tclVar(.cdtData$GalParams$Merging$min.stn)
 
 		txt.mrg <- tklabel(frMrg, text = 'Merging method', anchor = 'w', justify = 'left')
 		cb.mrg <- ttkcombobox(frMrg, values = cb.MrgMthd, textvariable = mrg.method, width = largeur3)
 		bt.mrg.interp <- ttkbutton(frMrg, text = "Merging Interpolations Parameters")
+		fr.mrgMin <- tkframe(frMrg)
+
+		txt.min.nbrs.stn <- tklabel(fr.mrgMin, text = 'Minimum number of station', anchor = 'e', justify = 'right')
+		en.min.nbrs.stn <- tkentry(fr.mrgMin, width = 4, textvariable = mrg.min.stn, justify = 'right')
 
 		#####
 
@@ -231,12 +236,20 @@ mrgGetInfoTemp <- function(){
 		})
 
 		#####
+
 		tkgrid(txt.mrg, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(cb.mrg, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(bt.mrg.interp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(fr.mrgMin, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+		tkgrid(txt.min.nbrs.stn, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(en.min.nbrs.stn, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 		infobulle(cb.mrg, 'Method to be used to perform merging')
 		status.bar.display(cb.mrg, 'Method to be used to perform merging')
+
+		infobulle(en.min.nbrs.stn, 'Minimum number of station with data to be used to do the merging')
+		status.bar.display(en.min.nbrs.stn, 'Minimum number of station with data to be used to do the merging')
 
 		###############
 
@@ -478,6 +491,7 @@ mrgGetInfoTemp <- function(){
 			.cdtData$GalParams$TEMP$dir <- str_trim(tclvalue(dir.RFE))
 
 			.cdtData$GalParams$Merging$mrg.method <- str_trim(tclvalue(mrg.method))
+			.cdtData$GalParams$Merging$min.stn <- as.numeric(str_trim(tclvalue(mrg.min.stn)))
 			.cdtData$GalParams$LMCOEF$dir.LMCoef <- str_trim(tclvalue(LMCoef.dir))
 
 			.cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]

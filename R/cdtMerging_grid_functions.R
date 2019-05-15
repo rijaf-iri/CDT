@@ -1,4 +1,122 @@
 
+cos.spheric.distance <- function(xy.pt, XY){
+	# xy.pt: vector c(x, y)
+	# XY: matrix X Y
+	sin.y.p <- sin(xy.pt[2] * pi/180)
+	sin.y.m <- sin(XY[, 2] * pi/180)
+	cos.y.p <- cos(xy.pt[2] * pi/180)
+	cos.y.m <- cos(XY[, 2] * pi/180)
+	d.cos.x.pm <- cos((xy.pt[1] - XY[, 1]) * pi/180)
+	sin.y <- sin.y.p * sin.y.m
+	cos.y <- cos.y.p * cos.y.m
+	cosd <- as.numeric(sin.y + cos.y * d.cos.x.pm)
+	cosd[cosd > 1.0] <- 1.0
+	return(cosd)
+}
+
+spheric.distance <- function(xy.pt, XY){
+	# xy.pt: vector c(x, y)
+	# XY: matrix X Y
+	acos(cos.spheric.distance(xy.pt, XY))
+}
+
+cartesian.distance <- function(xy.pt, XY){
+	# xy.pt: vector c(x, y)
+	# XY: matrix X Y
+	as.numeric(sqrt((xy.pt[1] - XY[, 1])^2 + (xy.pt[2] - XY[, 2])^2))
+}
+
+distance.vector <- function(xy.pt, XY, spheric){
+	# xy.pt: vector c(x, y)
+	# XY: matrix X Y
+	if(spheric)
+		spheric.distance(xy.pt, XY)
+	else
+		cartesian.distance(xy.pt, XY)
+}
+
+distance.matrix <- function(xy.pts, XY, spheric){
+	# xy.pts: matrix X Y
+	# XY: matrix X Y
+	dst <- matrix(NA, nrow = nrow(XY), ncol = nrow(xy.pts))
+	for (i in 1:nrow(xy.pts))
+		dst[, i] <- distance.vector(as.numeric(xy.pts[i, ]), XY, spheric)
+	return(dst)
+}
+
+###########################################
+
+## create buffer for interpolation
+create_grid_buffer <- function(locations.stn, newgrid, radius, spheric)
+{
+	nx <- newgrid@grid@cells.dim[1]
+	ny <- newgrid@grid@cells.dim[2]
+	rx <- as.integer(radius/newgrid@grid@cellsize[1])
+	ry <- as.integer(radius/newgrid@grid@cellsize[2])
+	ix <- seq(1, newgrid@grid@cells.dim[1], rx)
+	iy <- seq(1, newgrid@grid@cells.dim[2], ry)
+	if(nx - ix[length(ix)] > rx/3) ix <- c(ix, nx)
+	if(ny - iy[length(iy)] > ry/3) iy <- c(iy, ny)
+	ixy <- expand.grid(ix, iy)
+	ixy <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
+	coarsegrid <- newgrid[ixy, ]
+	if(spheric){
+		ctr <- rowSums(coarsegrid@bbox)/2
+		pts <- c(ctr[1] + radius * cos(pi/4), ctr[2] + radius * sin(pi/4))
+		radS <- spheric.distance(pts, matrix(ctr, nrow = 1))
+	}else radS <- radius
+
+	dst <- distance.matrix(locations.stn@coords, coarsegrid@coords, spheric)
+	dst <- rowSums(dst < 0.5 * radS) == 0
+	coarsegrid <- coarsegrid[dst, ]
+
+	buffer.out <- rgeos::gBuffer(as(locations.stn, "SpatialPoints"), width = 2 * radius)
+	icoarse.out <- as.logical(over(coarsegrid, buffer.out))
+	icoarse.out[is.na(icoarse.out)] <- FALSE
+	coarsegrid <- coarsegrid[icoarse.out, ]
+
+	buffer.grid <- rgeos::gBuffer(as(locations.stn, "SpatialPoints"), width = radius)
+	igrid <- as.logical(over(newgrid, buffer.grid))
+	igrid[is.na(igrid)] <- FALSE
+	newdata0 <- newgrid[igrid, ]
+	list(grid.buff = newdata0, ij = igrid, coarse = coarsegrid)
+}
+
+# plot(buffer.out)
+# plot(as(coarsegrid, "SpatialPixels"), add = TRUE)
+# plot(buffer.grid, add = TRUE, border = 2)
+# plot(as(locations.stn, "SpatialPoints"), add = TRUE, pch = "*", col = 2)
+
+###########################################
+
+## create grid for stations data 
+createGrid.StnData <- function(donne.stn, ijGrd, newgrid, min.stn, weighted = FALSE){
+	ij <- !is.na(donne.stn$stn)
+	donne.stn <- donne.stn[ij, , drop = FALSE]
+	if(nrow(donne.stn) < min.stn) return(NULL)
+	ijGrd <- ijGrd[ij]
+	idx <- split(seq_along(ijGrd), ijGrd)
+
+	if(any(sapply(idx, length) > 1)){
+		w <- rep(1, length(ijGrd))
+		if(weighted){
+			idup <- duplicated(ijGrd) | duplicated(ijGrd, fromLast = TRUE)
+			stn.grd <- newgrid@coords[ijGrd, ]
+			dist <- 1 / ((stn.grd[idup, 1] - donne.stn$lon[idup])^2 + (stn.grd[idup, 2] - donne.stn$lat[idup])^2)
+			dist[is.infinite(dist)] <- 2 * max(dist[!is.infinite(dist)])
+			w[idup] <- dist
+		}
+		val <- sapply(idx, function(j) sum(w[j] * donne.stn$stn[j]) / sum(w[j]))
+	}else val <- donne.stn$stn[unlist(idx)]
+
+	ij <- as.numeric(names(idx))
+	stng <- rep(NA, length(newgrid))
+	stng[ij] <- val
+	return(stng)
+}
+
+###########################################
+
 ## gstat block size
 createBlock <- function(cellsize, fac = 0.5, len = 4){
 	sDX <- cellsize[1]*fac
@@ -8,6 +126,8 @@ createBlock <- function(cellsize, fac = 0.5, len = 4){
 	bGrd <- expand.grid(x = dBX, y = dBY)
 	return(bGrd)
 }
+
+###########################################
 
 ## create grid for interpolation 
 createGrid.merging <- function(grdData, ObjVar = NULL, coarse.grid = TRUE, res.coarse = 0.25){
@@ -65,6 +185,8 @@ createGrid.merging <- function(grdData, ObjVar = NULL, coarse.grid = TRUE, res.c
 	return(list(newgrid = gridS, coords.coarse = gridS1, coords.var = gridS2,
 				id.coarse = idcoarse, id.var = idcoarse1))
 }
+
+###########################################
 
 createGrid <- function(ObjStn, ObjGrd, ObjRfe = NULL, as.dim.elv = TRUE,
 						latlong = 'km', normalize = FALSE, coarse.grid = TRUE,
@@ -210,6 +332,7 @@ createGrid <- function(ObjStn, ObjGrd, ObjRfe = NULL, as.dim.elv = TRUE,
 				newgrid = gridS, idxy = idcoarse, idxy.rfe = idcoarse1))
 }
 
+###########################################
 
 ## get Coarse grid from matrix data with dim lon/lat
 indexCoarseGrid <- function(lon, lat, res = 0.25){
@@ -231,30 +354,4 @@ indexCoarseGrid <- function(lon, lat, res = 0.25){
 	if(iy[ny] < nlat)
 		iy <- if((lat[nlat] - lat[iy[ny]]) < res[2]/2) c(iy[-ny], nlat) else c(iy, nlat)
 	return(list(ix = ix, iy = iy))
-}
-
-## create grid for stations data 
-createGrid.StnData <- function(donne.stn, ijGrd, newgrid, min.stn, weighted = FALSE){
-	ij <- !is.na(donne.stn$stn)
-	donne.stn <- donne.stn[ij, , drop = FALSE]
-	if(nrow(donne.stn) < min.stn) return(NULL)
-	ijGrd <- ijGrd[ij]
-	idx <- split(seq_along(ijGrd), ijGrd)
-
-	if(any(sapply(idx, length) > 1)){
-		w <- rep(1, length(ijGrd))
-		if(weighted){
-			idup <- duplicated(ijGrd) | duplicated(ijGrd, fromLast = TRUE)
-			stn.grd <- newgrid@coords[ijGrd, ]
-			dist <- 1 / ((stn.grd[idup, 1] - donne.stn$lon[idup])^2 + (stn.grd[idup, 2] - donne.stn$lat[idup])^2)
-			dist[is.infinite(dist)] <- 2 * max(dist[!is.infinite(dist)])
-			w[idup] <- dist
-		}
-		val <- sapply(idx, function(j) sum(w[j] * donne.stn$stn[j]) / sum(w[j]))
-	}else val <- donne.stn$stn[unlist(idx)]
-
-	ij <- as.numeric(names(idx))
-	stng <- rep(NA, length(newgrid))
-	stng[ij] <- val
-	return(stng)
 }

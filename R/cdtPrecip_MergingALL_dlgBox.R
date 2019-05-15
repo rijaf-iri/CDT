@@ -202,16 +202,13 @@ Precip_mergeGetInfoALL <- function(){
 		cb.MrgMthd <- c("Regression Kriging", "Spatio-Temporal LM", "Simple Bias Adjustment")
 		mrg.method <- tclVar(str_trim(.cdtData$GalParams$Merging$mrg.method))
 		mrg.min.stn <- tclVar(.cdtData$GalParams$Merging$min.stn)
-		mrg.min.non.zero <- tclVar(.cdtData$GalParams$Merging$min.non.zero)
 
 		txt.mrg <- tklabel(frMrg, text = 'Merging method', anchor = 'w', justify = 'left')
 		cb.mrg <- ttkcombobox(frMrg, values = cb.MrgMthd, textvariable = mrg.method, width = largeur4)
 		bt.mrg.interp <- ttkbutton(frMrg, text = "Merging Interpolations Parameters")
 
-		txt.min.nbrs.stn <- tklabel(frMrg, text = 'Min.Nb.Stn', anchor = 'e', justify = 'right')
+		txt.min.nbrs.stn <- tklabel(frMrg, text = 'Minimum number of station', anchor = 'e', justify = 'right')
 		en.min.nbrs.stn <- tkentry(frMrg, width = 4, textvariable = mrg.min.stn, justify = 'right')
-		txt.min.non.zero <- tklabel(frMrg, text = 'Min.No.Zero', anchor = 'e', justify = 'right')
-		en.min.non.zero <- tkentry(frMrg, width = 4, textvariable = mrg.min.non.zero, justify = 'right')
 
 		tkconfigure(bt.mrg.interp, command = function(){
 			.cdtData$GalParams[["Merging"]] <- getInterpolationPars(tt, .cdtData$GalParams[["Merging"]], interpChoix = 0)
@@ -221,18 +218,14 @@ Precip_mergeGetInfoALL <- function(){
 		tkgrid(cb.mrg, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(bt.mrg.interp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-		tkgrid(txt.min.nbrs.stn, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.min.nbrs.stn, row = 2, column = 2, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.min.non.zero, row = 2, column = 3, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.min.non.zero, row = 2, column = 5, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(txt.min.nbrs.stn, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(en.min.nbrs.stn, row = 2, column = 5, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 		infobulle(cb.mrg, 'Method to be used to perform merging')
 		status.bar.display(cb.mrg, 'Method to be used to perform merging')
 
-		infobulle(en.min.nbrs.stn, 'Minimum number of gauges with data to be used to do the merging')
-		status.bar.display(en.min.nbrs.stn, 'Minimum number of gauges with data to be used to do the merging')
-		infobulle(en.min.non.zero, 'Minimum number of non-zero gauge values to perform the merging')
-		status.bar.display(en.min.non.zero, 'Minimum number of non-zero gauge values to perform the merging')
+		infobulle(en.min.nbrs.stn, 'Minimum number of station with data to be used to do the merging')
+		status.bar.display(en.min.nbrs.stn, 'Minimum number of station with data to be used to do the merging')
 
 		###############
 		tkbind(cb.mrg, "<<ComboboxSelected>>", function(){
@@ -261,7 +254,6 @@ Precip_mergeGetInfoALL <- function(){
 		frRnoR <- tkframe(frTab2, relief = 'sunken', borderwidth = 2, padx = 3, pady = 3)
 
 		use.RnoR <- tclVar(.cdtData$GalParams$RnoR$use.RnoR)
-		maxdist.RnoR <- tclVar(.cdtData$GalParams$RnoR$maxdist.RnoR)
 		smooth.RnoR <- tclVar(.cdtData$GalParams$RnoR$smooth.RnoR)
 
 		stateRnoR <- if(.cdtData$GalParams$RnoR$use.RnoR) 'normal' else 'disabled'
@@ -269,26 +261,19 @@ Precip_mergeGetInfoALL <- function(){
 		########
 		txt.mrg.pars <- tklabel(frRnoR, text = 'Rain-no-Rain mask', anchor = 'w', justify = 'left')
 		chk.use.rnr <- tkcheckbutton(frRnoR, variable = use.RnoR, text = 'Apply Rain-no-Rain mask', anchor = 'w', justify = 'left')
-		txt.maxdist.rnr <- tklabel(frRnoR, text = 'maxdist.RnoR', anchor = 'e', justify = 'right')
-		en.maxdist.rnr <- tkentry(frRnoR, width = 4, textvariable = maxdist.RnoR, justify = 'right', state = stateRnoR)
 		chk.smooth.rnr <- tkcheckbutton(frRnoR, variable = smooth.RnoR, text = 'Smooth Rain-no-Rain mask', anchor = 'w', justify = 'left', state = stateRnoR)
 
 		tkgrid(txt.mrg.pars, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 		tkgrid(chk.use.rnr, row = 1, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.maxdist.rnr, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(en.maxdist.rnr, row = 2, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(chk.smooth.rnr, row = 3, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+		tkgrid(chk.smooth.rnr, row = 2, column = 0, sticky = 'ew', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
 		infobulle(chk.use.rnr, 'Check this box to apply a mask over no rain area')
 		status.bar.display(chk.use.rnr, 'Check this box to apply a mask over no rain area')
-		infobulle(en.maxdist.rnr, 'Maximum distance (in decimal degrees) to be used to interpolate Rain-noRain mask')
-		status.bar.display(en.maxdist.rnr, 'Maximum distance (in decimal degrees) to be used to interpolate Rain-noRain mask')
 		infobulle(chk.smooth.rnr, 'Check this box to smooth the gradient between high value and no rain area')
 		status.bar.display(chk.smooth.rnr, 'Check this box to smooth the gradient between high value and no rain area')
 
 		tkbind(chk.use.rnr, "<Button-1>", function(){
 			stateRnoR <- if(tclvalue(use.RnoR) == '0') 'normal' else 'disabled'
-			tkconfigure(en.maxdist.rnr, state = stateRnoR)
 			tkconfigure(chk.smooth.rnr, state = stateRnoR)
 		})
 
@@ -679,7 +664,6 @@ Precip_mergeGetInfoALL <- function(){
 
 			.cdtData$GalParams$Merging$mrg.method <- str_trim(tclvalue(mrg.method))
 			.cdtData$GalParams$Merging$min.stn <- as.numeric(str_trim(tclvalue(mrg.min.stn)))
-			.cdtData$GalParams$Merging$min.non.zero <- as.numeric(str_trim(tclvalue(mrg.min.non.zero)))
 
 			.cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
 
@@ -687,7 +671,6 @@ Precip_mergeGetInfoALL <- function(){
 			.cdtData$GalParams$LMCOEF$dir.LMCoef <- str_trim(tclvalue(LMCoef.dir))
 
 			.cdtData$GalParams$RnoR$use.RnoR <- switch(tclvalue(use.RnoR), '0' = FALSE, '1' = TRUE)
-			.cdtData$GalParams$RnoR$maxdist.RnoR <- as.numeric(str_trim(tclvalue(maxdist.RnoR)))
 			.cdtData$GalParams$RnoR$smooth.RnoR <- switch(tclvalue(smooth.RnoR), '0' = FALSE, '1' = TRUE)
 
 			.cdtData$GalParams$DEM.file <- str_trim(tclvalue(file.grddem))

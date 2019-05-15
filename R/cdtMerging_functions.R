@@ -122,3 +122,150 @@ writeNC.merging <- function(mat, daty, tstep, grid.nc, dir2save, file.format, mi
 	nc_close(nc)
 }
 
+cdt.merging.functions <- function(locations.stn, newgrid, 
+								merging.method, interp.method,
+								formule, formuleRK,
+								maxdist, nmin, nmax, vgm.model,
+								neg.value, nc.date, MODEL.COEF, ijGrd)
+{
+
+	nx <- newgrid@grid@cells.dim[1]
+	ny <- newgrid@grid@cells.dim[2]
+	xy.grid <- create_grid_buffer(locations.stn, newgrid, maxdist, FALSE)
+
+	newdata0 <- xy.grid$grid.buff
+
+	igrid <- xy.grid$ij
+	coarsegrid <- xy.grid$coarse
+	coarse.df <- as.data.frame(!is.na(coarsegrid@data))
+	coarsegrid <- coarsegrid[Reduce("&", coarse.df), ]
+	coarsegrid$stn <- coarsegrid$grd
+	coarsegrid$res <- rep(0, length(coarsegrid))
+
+	######### sp.trend & residuals
+
+	sp.trend <- newdata0@data$grd
+	xres <- locations.stn$stn - locations.stn$grd
+
+	## RK
+	if(merging.method == "Regression Kriging"){
+		if(var(locations.stn$stn) < 1e-07 | var(locations.stn$grd, na.rm = TRUE) < 1e-07){
+			cat(paste(nc.date, ":", "Zero variance", "|", "Simple Bias Adjustment", "\n"),
+				file = log.file, append = TRUE)
+		}else{
+			glm.stn <- glm(formuleRK, data = locations.stn, family = gaussian)
+			if(is.na(glm.stn$coefficients[2]) | glm.stn$coefficients[2] < 0){
+				cat(paste(nc.date, ":", "Invalid GLM coeffs", "|", "Simple Bias Adjustment", "\n"),
+					file = log.file, append = TRUE)
+			}else{
+				sp.trend <- predict(glm.stn, newdata = newdata0)
+				ina.out <- is.na(sp.trend)
+				sp.trend[ina.out] <- newdata0@data$grd[ina.out]
+				xres <- rep(NA, length(locations.stn))
+				if(length(glm.stn$na.action) > 0)
+					xres[-glm.stn$na.action] <- glm.stn$residuals
+				else
+					xres <- glm.stn$residuals
+			}
+		}
+	}
+
+	if(merging.method == "Spatio-Temporal LM"){
+		mo <- as(substr(nc.date, 5, 6), 'numeric')
+		sp.trend <- matrix(newgrid$grd, nx, ny) * MODEL.COEF[[mo]]$slope + MODEL.COEF[[mo]]$intercept
+		sp.trend <- c(sp.trend)
+		iloc <- over(as(locations.stn, "SpatialPoints"), as(newgrid, "SpatialPixels"))
+		xres <- locations.stn$stn - sp.trend[iloc]
+		sp.trend <- sp.trend[igrid]
+	}
+
+	locations.stn$res <- xres
+
+	#########
+
+	vgm <- NULL
+	if(interp.method == 'Kriging'){
+		loc.stn <- as(locations.stn, "SpatialPointsDataFrame")
+		calc.vgm <- if(length(loc.stn$res) > 7 & var(loc.stn$res) > 1e-15) TRUE else FALSE
+		if(calc.vgm){
+			vgm <- try(automap::autofitVariogram(formule, input_data = loc.stn, model = vgm.model, cressie = TRUE), silent = TRUE)
+			if(!inherits(vgm, "try-error")){
+				vgm <- vgm$var_model
+			}else{
+				cat(paste(nc.date, ":", "Unable to compute variogram", "|", "Interpolation using IDW", "\n"),
+					file = log.file, append = TRUE)
+				vgm <- NULL
+			}
+		}else{
+			cat(paste(nc.date, ":", "Unable to compute variogram", "|", "Interpolation using IDW", "\n"),
+				file = log.file, append = TRUE)
+			vgm <- NULL
+		}
+	}
+
+	#########
+
+	row.names(locations.stn) <- 1:length(locations.stn)
+	row.names(coarsegrid) <- length(locations.stn) + (1:length(coarsegrid))
+	locations.stn <- maptools::spRbind(locations.stn, coarsegrid)
+
+	#########
+
+	res.grd <- gstat::krige(formule, locations = locations.stn, newdata = newdata0, model = vgm, nmin = nmin, nmax = nmax, debug.level = 0)
+	xtrm <- range(locations.stn$res, na.rm = TRUE)
+	extrm1 <- xtrm[1] - diff(xtrm) * 0.05
+	extrm2 <- xtrm[2] + diff(xtrm) * 0.05
+	res.grd$var1.pred[!is.na(res.grd$var1.pred) & res.grd$var1.pred < extrm1] <- extrm1
+	res.grd$var1.pred[!is.na(res.grd$var1.pred) & res.grd$var1.pred > extrm2] <- extrm2
+
+	resid <- rep(0, length(newgrid))
+	resid[igrid] <- res.grd$var1.pred
+	resid[is.na(resid)] <- 0
+	resid <- matrix(resid, ncol = ny, nrow = nx)
+	res0 <- resid[ijGrd]
+	resid <- smooth.matrix(resid, 3)
+	resid[ijGrd] <- res0
+
+	out.mrg <- newgrid@data$grd
+	out.mrg[igrid] <- sp.trend + resid[igrid]
+	if(!neg.value) out.mrg[out.mrg < 0] <- 0
+	ina <- is.na(out.mrg)
+	out.mrg[ina] <- newgrid@data$grd[ina]
+	out.mrg <- matrix(out.mrg, ncol = ny, nrow = nx)
+
+	return(out.mrg)
+}
+
+rain_no_rain.mask <- function(locations.stn, newgrid, pars.RnoR)
+{
+	wet.day <- pars.RnoR$wet.day
+	if(wet.day <= 0) wet.day <- wet.day + 1e-13
+	rnr.grd <- ifelse(newgrid@data$grd < wet.day, 0, 1)
+	ij <- over(locations.stn, as(newgrid, "SpatialPixels"))
+	locations.stn$rnr.stn <- ifelse(locations.stn$stn < wet.day, 0, 1)
+	locations.stn$rnr.grd <- ifelse(rnr.grd[ij] < wet.day, 0, 1)
+
+	glm.binom <- glm(rnr.stn ~ rnr.grd, data = locations.stn, family = binomial(link = "logit"))
+
+	nlon <- newgrid@grid@cells.dim[1]
+	nlat <- newgrid@grid@cells.dim[2]
+	rnr <- matrix(1, ncol = nlat, nrow = nlon)
+	if(!is.na(glm.binom$coef[2])){
+		locations.stn$rnr.res <- residuals(glm.binom)
+		rnr.trend <- predict(glm.binom, newdata = newgrid, type = 'link')
+
+		rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newgrid, debug.level = 0)
+		rnr <- rnr.trend + rnr.res.grd$var1.pred
+
+		rnr <- exp(rnr) / (1 + exp(rnr))
+		### decision boundary 0.5
+		rnr[rnr >= 0.5] <- 1
+		rnr[rnr < 0.5] <- 0
+		rnr <- matrix(rnr, ncol = nlat, nrow = nlon)
+		rnr[is.na(rnr)] <- 1
+		if(pars.RnoR$smooth.RnoR) rnr <- smooth.matrix(rnr, 2)
+	}
+
+	return(rnr)
+}
+

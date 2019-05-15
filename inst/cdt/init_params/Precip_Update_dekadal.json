@@ -1,7 +1,7 @@
 {
     // Merging date
     "Merging.Date": [{
-        "year": 2017,
+        "year": 2018,
         "month": 8,
         "dekad": 1
     }],
@@ -66,24 +66,17 @@
         // nmin for gstat
         "nmin": 3,
         // nmax for gstat
-        "nmax": 5,
+        "nmax": 9,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.3,
+        "maxdist": 0.65,
         // variogram model, see gstat package for list of available model
         "vgm.model": ["Sph", "Exp", "Gau"],
-        // using kriging of block mean values (true or false)
-        "use.block": true,
 
         // Pixelize station before doing the merging
-        "pixelize.station": true,
+        "pixelize.station": false,
 
         // Minimum number of stations with data to be used to do the merging
         "min.stn": 10,
-        // Minimum number of non-zero station values to perform the merging
-        "min.non.zero": 7,
-
-        // LMCoef directory
-        // "LMCoef.dir": ""
 
         // Use auxiliary variables with GLM to calculate the spatial trend
         "sp.trend.aux": false
@@ -98,8 +91,6 @@
     "RnoR": {
         // use Rain-no-Rain mask (true or false)
         "use.RnoR": true,
-        // Maximum distance (in decimal degrees) for interpolating Rain-no-Rain mask
-        "maxdist.RnoR": 0.25,
         // Smooth Rain-no-Rain mask (true or false)
         "smooth.RnoR": false,
         // wet day definition, rainfall >= wet.day
