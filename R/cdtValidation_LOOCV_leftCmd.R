@@ -320,46 +320,36 @@ Validation.LOOCV.PanelCmd <- function(clim.var){
 		frMrgPars <- ttklabelframe(subfr2, text = "Merging Parameters", relief = 'groove')
 
 		mrg.min.stn <- tclVar(GeneralParameters$Merging$min.stn)
-		mrg.min.non.zero <- tclVar(GeneralParameters$Merging$min.non.zero)
 		use.RnoR <- tclVar(GeneralParameters$RnoR$use.RnoR)
-		maxdist.RnoR <- tclVar(GeneralParameters$RnoR$maxdist.RnoR)
+		smooth.RnoR <- tclVar(GeneralParameters$RnoR$smooth.RnoR)
 
 		if(clim.var == 'RR') stateClimVar <- "normal"
 		if(clim.var == 'TT') stateClimVar <- "disabled"
 		stateRnoR <- if(GeneralParameters$RnoR$use.RnoR & clim.var == 'RR') 'normal' else 'disabled'
 
-		txt.min.nbrs.stn <- tklabel(frMrgPars, text = 'Min.Nb.Stn', anchor = 'e', justify = 'right')
+		txt.min.nbrs.stn <- tklabel(frMrgPars, text = 'Minimum number of station', anchor = 'e', justify = 'right')
 		en.min.nbrs.stn <- tkentry(frMrgPars, width = 4, textvariable = mrg.min.stn, justify = 'right')
-		txt.min.non.zero <- tklabel(frMrgPars, text = 'Min.No.Zero', anchor = 'e', justify = 'right')
-		en.min.non.zero <- tkentry(frMrgPars, width = 4, textvariable = mrg.min.non.zero, justify = 'right', state = stateClimVar)
 
 		chk.use.rnr <- tkcheckbutton(frMrgPars, variable = use.RnoR, text = 'Apply Rain-no-Rain mask', width = largeur5, anchor = 'w', justify = 'left', state = stateClimVar)
-		txt.maxdist.rnr <- tklabel(frMrgPars, text = 'maxdist.RnoR', anchor = 'e', justify = 'right')
-		en.maxdist.rnr <- tkentry(frMrgPars, width = 4, textvariable = maxdist.RnoR, justify = 'right', state = stateRnoR)
+		chk.smooth.rnr <- tkcheckbutton(frMrgPars, variable = smooth.RnoR, text = 'Smooth Rain-no-Rain mask', anchor = 'w', justify = 'left', state = stateRnoR)
 
-		tkgrid(txt.min.nbrs.stn, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 0)
-		tkgrid(en.min.nbrs.stn, row = 0, column = 2, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 0)
-		tkgrid(txt.min.non.zero, row = 0, column = 3, sticky = 'e', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 0)
-		tkgrid(en.min.non.zero, row = 0, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 0)
-
+		tkgrid(txt.min.nbrs.stn, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 9, padx = 1, pady = 0, ipadx = 1, ipady = 0)
+		tkgrid(en.min.nbrs.stn, row = 0, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 0)
 		tkgrid(chk.use.rnr, row = 1, column = 0, sticky = 'ew', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-		tkgrid(txt.maxdist.rnr, row = 2, column = 3, sticky = 'e', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 0)
-		tkgrid(en.maxdist.rnr, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 0)
+		tkgrid(chk.smooth.rnr, row = 2, column = 0, sticky = 'ew', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-		infobulle(en.min.nbrs.stn, 'Minimum number of gauges with data to be used to do the merging')
-		status.bar.display(en.min.nbrs.stn, 'Minimum number of gauges with data to be used to do the merging')
-		infobulle(en.min.non.zero, 'Minimum number of non-zero gauge values to perform the merging')
-		status.bar.display(en.min.non.zero, 'Minimum number of non-zero gauge values to perform the merging')
-
+		infobulle(en.min.nbrs.stn, 'Minimum number of station with data to be used to do the merging')
+		status.bar.display(en.min.nbrs.stn, 'Minimum number of station with data to be used to do the merging')
 		infobulle(chk.use.rnr, 'Check this box to apply a mask over no rain area')
 		status.bar.display(chk.use.rnr, 'Check this box to apply a mask over no rain area')
-		infobulle(en.maxdist.rnr, 'Maximum distance (in decimal degrees) to be used to interpolate Rain-noRain mask')
-		status.bar.display(en.maxdist.rnr, 'Maximum distance (in decimal degrees) to be used to interpolate Rain-noRain mask')
+		infobulle(chk.smooth.rnr, 'Check this box to smooth the gradient between high value and no rain area')
+		status.bar.display(chk.smooth.rnr, 'Check this box to smooth the gradient between high value and no rain area')
 
 		###############
 		tkbind(chk.use.rnr, "<Button-1>", function(){
 			stateRnoR <- if(tclvalue(use.RnoR) == '0' & clim.var == 'RR') 'normal' else 'disabled'
-			tkconfigure(en.maxdist.rnr, state = stateRnoR)
+			tkconfigure(chk.smooth.rnr, state = stateRnoR)
+
 		})
 
 		##############################################
@@ -440,10 +430,9 @@ Validation.LOOCV.PanelCmd <- function(clim.var){
 			GeneralParameters$LMCOEF$dir.LMCoef <- str_trim(tclvalue(LMCoef.dir))
 
 			GeneralParameters$Merging$min.stn <- as.numeric(str_trim(tclvalue(mrg.min.stn)))
-			GeneralParameters$Merging$min.non.zero <- as.numeric(str_trim(tclvalue(mrg.min.non.zero)))
 
 			GeneralParameters$RnoR$use.RnoR <- switch(tclvalue(use.RnoR), '0' = FALSE, '1' = TRUE)
-			GeneralParameters$RnoR$maxdist.RnoR <- as.numeric(str_trim(tclvalue(maxdist.RnoR)))
+			GeneralParameters$RnoR$smooth.RnoR <- switch(tclvalue(smooth.RnoR), '0' = FALSE, '1' = TRUE)
 
 			GeneralParameters$auxvar$dem <- switch(tclvalue(dem.auxvar), '0' = FALSE, '1' = TRUE)
 			GeneralParameters$auxvar$slope <- switch(tclvalue(slope.auxvar), '0' = FALSE, '1' = TRUE)

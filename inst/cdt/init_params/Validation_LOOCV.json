@@ -33,31 +33,21 @@
         // Kriging: Ordinary Kriging
         "interp.method": "IDW",
 
-        // Do a local or global interpolation
-        // Local interpolation uses only data points in the neighborhood
-        // of a grid point (need to set: nmin, nmax, maxdist)
-        // global interpolation uses all data points.
-        "local.interpolation": true,
-
         // Kriging & IDW interpolation parameters
         // nmin for gstat
         "nmin": 3,
         // nmax for gstat
-        "nmax": 5,
+        "nmax": 9,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.45,
+        "maxdist": 2.5,
         // variogram model, see gstat package for list of available model
-        "vgm.model": ["Sph", "Exp", "Gau"],
-        // using kriging of block mean values (true or false)
-        "use.block": true,
-
+        "vgm.model": ["Sph", "Exp", "Gau", "Pen"],
+ 
         // Pixelize station before doing the merging
-        "pixelize.station": true,
+        "pixelize.station": false,
 
         // Minimum number of stations with data to be used to do the merging
-        "min.stn": 10,
-        // Minimum number of non-zero station values to perform the merging
-        "min.non.zero": 4,
+        "min.stn": 7,
 
         // Use auxiliary variables with GLM to calculate the spatial trend
         "sp.trend.aux": false
@@ -65,10 +55,10 @@
 
     // Merging date range
     "Merging.Date": {
-        "start.year": 1981,
+        "start.year": 2010,
         "start.mon": 1,
         "start.day": 1,
-        "end.year": 2016,
+        "end.year": 2015,
         "end.mon": 12,
         "end.day": 3,
         // Months on which merging will be performed
@@ -78,10 +68,8 @@
     "RnoR": {
         // use Rain-no-Rain mask (true or false)
         "use.RnoR": true,
-        // Maximum distance (in decimal degrees) for interpolating Rain-no-Rain mask
-        "maxdist.RnoR": 0.15,
         // Smooth Rain-no-Rain mask (true or false)
-        "smooth.RnoR": true,
+        "smooth.RnoR": false,
         // wet day definition, rainfall >= wet.day
         "wet.day": 1.0
     },
@@ -98,9 +86,9 @@
     // Validation date for aggregation
     "date.range": {
         // start year 
-        "start.year": 1981,
+        "start.year": 2010,
         // end year
-        "end.year": 2016,
+        "end.year": 2015,
         // start month 
         "start.month": 1,
         // end month

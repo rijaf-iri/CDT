@@ -109,28 +109,24 @@ LOOCV_MergingDataProcs <- function(mrgParms){
 	GeneralParameters <- mrgParms$GeneralParameters
 	freqData <- GeneralParameters$Tstep
 
+	log.file <- file.path(mrgParms$outdir, "log_file.txt")
+
 	#############
 	xy.grid <- mrgParms$interp.grid$grid
-	grdSp <- defSpatialPixels(xy.grid)
-	nlon0 <- mrgParms$interp.grid$nlon
-	nlat0 <- mrgParms$interp.grid$nlat
+	newgrid <- defSpatialPixels(xy.grid)
 
 	#############
 	mrg.method <- GeneralParameters$Merging$mrg.method
 	interp.method <- GeneralParameters$Merging$interp.method
+	pixelize.station <- GeneralParameters$Merging$pixelize.station
+
 	nmin <- GeneralParameters$Merging$nmin
 	nmax <- GeneralParameters$Merging$nmax
 	maxdist <- GeneralParameters$Merging$maxdist
 	vgm.model <- GeneralParameters$Merging$vgm.model
 	min.stn <- GeneralParameters$Merging$min.stn
 
-	if(GeneralParameters$clim.var == "RR"){
-		min.non.zero <- GeneralParameters$Merging$min.non.zero
-		use.RnoR <- GeneralParameters$RnoR$use.RnoR
-		maxdist.RnoR <- GeneralParameters$RnoR$maxdist.RnoR
-		smooth.RnoR <- GeneralParameters$RnoR$smooth.RnoR
-		wet.day <- GeneralParameters$RnoR$wet.day
-	}
+	if(GeneralParameters$clim.var == "RR") pars.RnoR <- GeneralParameters$RnoR
 
 	#############
 	lon.stn <- mrgParms$stnData$lon
@@ -142,63 +138,46 @@ LOOCV_MergingDataProcs <- function(mrgParms){
 
 	#############
 
-	res.lon <- diff(range(xy.grid$lon)) / (nlon0 - 1)
-	res.lat <- diff(range(xy.grid$lat)) / (nlat0 - 1)
-	res.latlon <- max(res.lon, res.lat)
-
-	if(maxdist < res.latlon) maxdist <- res.latlon * sqrt(2)
-	res.coarse <- maxdist / sqrt(2)
-	if(res.coarse < res.latlon) res.coarse <- maxdist
-
-	if(!is.null(demData)){
-		slpasp <- raster.slope.aspect(demData)
-		demData$slp <- slpasp$slope
-		demData$asp <- slpasp$aspect
-	}else{
-		demData <- list(x = xy.grid$lon, y = xy.grid$lat,
-						z = matrix(1, nlon0, nlat0),
-						slp = matrix(0, nlon0, nlat0),
-						asp = matrix(0, nlon0, nlat0))
-	}
-
-	interp.grid <- createGrid.merging(demData, res.coarse = res.coarse)
-	cells <- SpatialPixels(points = interp.grid$newgrid, tolerance = sqrt(sqrt(.Machine$double.eps)))@grid
-	bGrd <- if(GeneralParameters$Merging$use.block) createBlock(cells@cellsize, 1, 5) else NULL
-
-	#############
 	auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
 	is.auxvar <- unlist(GeneralParameters$auxvar)
+
+	formuleRK <- formula(paste0('stn', '~', 'grd'))
+	formule <- formula(paste0('res', '~', 1))
 	if(any(is.auxvar)){
 		formule <- formula(paste0('res', '~', paste(auxvar[is.auxvar], collapse = '+')))
-		if(mrg.method == "Regression Kriging"){
-			sp.trend.aux <- GeneralParameters$Merging$sp.trend.aux
-			if(sp.trend.aux)
-				formuleRK <- formula(paste0('stn', '~', 'tmp', '+', paste(auxvar[is.auxvar], collapse = '+')))
-			else
-				formuleRK <- formula(paste0('stn', '~', 'tmp'))
-		}
-	}else{
-		formule <- formula(paste0('res', '~', 1))
-		if(mrg.method == "Regression Kriging")
-			formuleRK <- formula(paste0('stn', '~', 'tmp'))
+		if(mrg.method == "Regression Kriging" & GeneralParameters$Merging$sp.trend.aux)
+			formuleRK <- formula(paste0('stn', '~', 'grd', '+', paste(auxvar[is.auxvar], collapse = '+')))
 	}
 
 	#############
-	if(is.auxvar['lon']){
-		interp.grid$coords.coarse$alon <- interp.grid$coords.coarse@coords[, 'lon']
-		if(!is.null(interp.grid$coords.var)) interp.grid$coords.var$alon <- interp.grid$coords.var@coords[, 'lon']
-		interp.grid$newgrid$alon <- interp.grid$newgrid@coords[, 'lon']
+
+	if(is.auxvar['dem']){
+		if(!is.null(demData))
+			newgrid$dem <- c(demData$z)
+		else
+			Insert.Messages.Out("Elevation data doesn't find", format = TRUE)
 	}
 
-	if(is.auxvar['lat']){
-		interp.grid$coords.coarse$alat <- interp.grid$coords.coarse@coords[, 'lat']
-		if(!is.null(interp.grid$coords.var)) interp.grid$coords.var$alat <- interp.grid$coords.var@coords[, 'lat']
-		interp.grid$newgrid$alat <- interp.grid$newgrid@coords[, 'lat']
+	if(is.auxvar['slope'] | is.auxvar['aspect']){
+		if(!is.null(demData)){
+			slpasp <- raster.slope.aspect(demData)
+			if(is.auxvar['slope'])
+				newgrid$slp <- c(slpasp$slope)
+			if(is.auxvar['aspect'])
+				newgrid$asp <- c(slpasp$aspect)
+		}else{
+			Insert.Messages.Out("Elevation data doesn't find", format = TRUE)
+		}
 	}
+
+	if(is.auxvar['lon']) newgrid$alon <- newgrid@coords[, 'lon']
+
+	if(is.auxvar['lat']) newgrid$alat <- newgrid@coords[, 'lat']
 
 	#############
 
 	months <- mrgParms$months
+	MODEL.COEF <- NULL
 	if(mrg.method == "Spatio-Temporal LM"){
 		coefFiles <- file.path(GeneralParameters$LMCOEF$dir.LMCoef, sprintf(GeneralParameters$LMCOEF$format, months))
 		existLMCfl <- file.exists(coefFiles)
@@ -222,12 +201,13 @@ LOOCV_MergingDataProcs <- function(mrgParms){
 
 	if(GeneralParameters$clim.var == "RR"){
 		rfeSp <- defSpatialPixels(ncInfo$xy.rfe)
-		is.regridRFE <- is.diffSpatialPixelsObj(grdSp, rfeSp, tol = 1e-07)
+		is.regridRFE <- is.diffSpatialPixelsObj(newgrid, rfeSp, tol = 1e-07)
 	}
 
 	xlon <- ncInfo$ncinfo$lon
 	xlat <- ncInfo$ncinfo$lat
 	ijGrd <- grid2pointINDEX(list(lon = lon.stn, lat = lat.stn), list(lon = xlon, lat = xlat))
+	ijStn <- seq(nstn)
 
 	#############
 
@@ -235,16 +215,28 @@ LOOCV_MergingDataProcs <- function(mrgParms){
 						parsL = length(which(ncInfo$exist)) >= 20,
 						.packages = c('sp', 'ncdf4'), FUN = function(jj)
 	{
-		valid.out <- rep(NA, ncol(data.stn))
+		valid.out <- rep(NA, nstn)
+
+		############
 
 		if(ncInfo$exist[jj]){
 			nc <- nc_open(ncInfo$nc.files[jj])
 			xtmp <- ncvar_get(nc, varid = ncInfo$ncinfo$varid)
 			nc_close(nc)
 			xtmp <- transposeNCDFData(xtmp, ncInfo$ncinfo)
-		}else return(valid.out)
+		}else{
+			xmsg <- if(GeneralParameters$clim.var == "RR") "no RFE data" else "no temperature data"
+			xmsg <- paste(ncInfo$dates[jj], ":", xmsg, "|", "no data generated", "\n")
+			cat(xmsg, file = log.file, append = TRUE)
+			return(NULL)
+		}
 
-		if(all(is.na(xtmp))) return(valid.out)
+		if(all(is.na(xtmp))){
+			xmsg <- if(GeneralParameters$clim.var == "RR") "all RFE data are missing" else "all gridded data are missing"
+			xmsg <- paste(ncInfo$dates[jj], ":", xmsg, "|", "no data generated", "\n")
+			cat(xmsg, file = log.file, append = TRUE)
+			return(NULL)
+		}
 
 		############
 		if(GeneralParameters$clim.var == "RR" & is.regridRFE){
@@ -254,203 +246,76 @@ LOOCV_MergingDataProcs <- function(mrgParms){
 
 		############
 
+		newgrid$grd <- c(xtmp)
+
 		donne.stn <- data.stn[date.stn == ncInfo$dates[jj], , drop = FALSE]
 		if(nrow(donne.stn) == 0){
-			valid.out <- xtmp[ijGrd]
-			return(valid.out)
+			xmsg <- paste(ncInfo$dates[jj], ":", "no station data", "|", "no data generated", "\n")
+			cat(xmsg, file = log.file, append = TRUE)
+			return(NULL)
 		}
-		donne.stn <- data.frame(lon = lon.stn, lat = lat.stn, stn = c(donne.stn))
-		ina.stn <- which(!is.na(donne.stn$stn))
-		donne.stn <- donne.stn[ina.stn, , drop = FALSE]
-		if(nrow(donne.stn) < min.stn){
-			valid.out <- xtmp[ijGrd]
-			return(valid.out)
+
+		donne.stn <- data.frame(lon = lon.stn, lat = lat.stn, stn = c(donne.stn[1, ]))
+		if(pixelize.station){
+			stng <- createGrid.StnData(donne.stn, ijGrd, newgrid, min.stn, weighted = TRUE)
+		}else{
+			stng <- donne.stn$stn
+			if(length(stng[!is.na(stng)]) < min.stn) stng <- NULL
+		}
+
+		if(is.null(stng)){
+			xmsg <- paste(ncInfo$dates[jj], ":", "not enough station data", "|", "no data generated", "\n")
+			cat(xmsg, file = log.file, append = TRUE)
+			return(NULL)
 		}
 
 		############
 
-		ret.out.stn <- lapply(seq_along(ina.stn), function(istn){
-			locations.stn <- interp.grid$newgrid[ijGrd[ina.stn], ]
+		if(pixelize.station){
+			locations.stn <- newgrid
+			locations.stn$stn <- stng
+		}else{
+			locations.stn <- newgrid[ijGrd, ]
 			locations.stn@coords <- as.matrix(donne.stn[, c("lon", "lat")])
-			locations.stn$stn <- donne.stn$stn
-			locations.stn$tmp <- xtmp[ijGrd[ina.stn]]
+			locations.stn$stn <- stng
+		}
 
-			############
-			xadd <- interp.grid$coords.coarse
-			xadd$stn <- xadd$tmp <- c(xtmp[interp.grid$id.coarse$ix, interp.grid$id.coarse$iy])
-			xadd$res <- 0
+		############
+		noNA <- !is.na(locations.stn$stn)
+		locations.stn <- locations.stn[noNA, ]
+		ijn <- if(pixelize.station) ijStn[noNA[ijGrd]] else ijStn[noNA]
 
-			############
-			interp.grid$newgrid$tmp <- c(xtmp)
-			newdata <- locations.stn[istn, ]
-			newdata <- newdata[, !names(newdata) %in% "stn"]
-			locations.stn <- locations.stn[-istn, ]
+		locations.df <- as.data.frame(!is.na(locations.stn@data))
+		loc.df <- Reduce("&", locations.df)
+		locations.stn <- locations.stn[loc.df, ]
+		ijn <- ijn[loc.df]
 
-			############
-			if(all(is.na(locations.stn$tmp))) return(NA)
+		############
 
-			############
-			is.do.RK <- TRUE
-			if(GeneralParameters$clim.var == "RR"){
-				nb.stn.nonZero <- length(which(locations.stn$stn > 0))
-				if(nb.stn.nonZero < min.non.zero) is.do.RK <- FALSE
-			}
+		if(length(locations.stn) < min.stn){
+			xmsg <- paste(ncInfo$dates[jj], ":", "not enough data", "|", "no data generated", "\n")
+			cat(xmsg, file = log.file, append = TRUE)
+			return(NULL)
+		}
 
-			############
-			# spatial trend
-			sp.trend <- xtmp
-			locations.stn$res <- locations.stn$stn - locations.stn$tmp
+		############
 
-			if(is.do.RK){
-				if(mrg.method == "Spatio-Temporal LM"){
-					mo <- as(substr(ncInfo$dates[jj], 5, 6), 'numeric')
-					sp.trend <- xtmp * MODEL.COEF[[mo]]$slope + MODEL.COEF[[mo]]$intercept
-					locations.stn$res <- locations.stn$stn - sp.trend[ijGrd[ina.stn]][-istn]
-				}
-				if(mrg.method == "Regression Kriging"){
-					simplediff <- if(var(locations.stn$stn) < 1e-07 | var(locations.stn$tmp, na.rm = TRUE) < 1e-07) TRUE else FALSE
-					glm.stn <- glm(formuleRK, data = locations.stn, family = gaussian)
-					if(is.na(glm.stn$coefficients[2]) | glm.stn$coefficients[2] < 0) simplediff <- TRUE
-
-					if(!simplediff){
-						sp.trend <- predict(glm.stn, newdata = interp.grid$newgrid)
-						sp.trend <- matrix(sp.trend, ncol = nlat0, nrow = nlon0)
-						ina.trend <- is.na(sp.trend)
-						sp.trend[ina.trend] <- xtmp[ina.trend]
-						locations.stn$res <- NA
-						if(length(glm.stn$na.action) > 0)
-							locations.stn$res[-glm.stn$na.action] <- glm.stn$residuals
-						else
-							locations.stn$res <- glm.stn$residuals
-					}
-				}
-			}
-
-			sp.trend <- sp.trend[ijGrd[ina.stn]][istn]
-
-			############
-
-			locations.stn <- locations.stn[!is.na(locations.stn$res), ]
-			if(length(locations.stn) < min.stn){
-				v.out <- xtmp[ijGrd[ina.stn]][istn]
-				return(v.out)
-			}
-
-			############
-			if(any(is.auxvar)){
-				locations.df <- as.data.frame(!is.na(locations.stn@data[, auxvar[is.auxvar]]))
-				locations.stn <- locations.stn[Reduce("&", locations.df), ]
-
-				if(length(locations.stn) < min.stn){
-					v.out <- xtmp[ijGrd[ina.stn]][istn]
-					return(v.out)
-				}
-			}
-
-			############
-			if(interp.method == 'Kriging'){
-				if(length(locations.stn$res) > 7){
-					vgm <- try(automap::autofitVariogram(formule, input_data = locations.stn, model = vgm.model, cressie = TRUE), silent = TRUE)
-					vgm <- if(!inherits(vgm, "try-error")) vgm$var_model else NULL
-				}else vgm <- NULL
-			}else vgm <- NULL
-
-			############
-			# create buffer for stations
-			buffer.xaddin <- rgeos::gBuffer(locations.stn, width = maxdist / 2)
-
-			############
-			# get coarse grid to add to location.stn
-			xadd.in <- !as.logical(over(xadd, buffer.xaddin))
-			xadd.in[is.na(xadd.in)] <- TRUE
-			xadd <- xadd[xadd.in, ]
-
-			############
-			## add coarse grid
-			row.names(locations.stn) <- 1:length(locations.stn)
-			row.names(xadd) <- length(locations.stn) + (1:length(xadd))
-			locations.stn <- maptools::spRbind(locations.stn, xadd)
-
-			###########
-			if(any(is.auxvar)){
-				locations.df <- as.data.frame(!is.na(locations.stn@data[, auxvar[is.auxvar]]))
-				locations.stn <- locations.stn[Reduce("&", locations.df), ]
-				block <- NULL
-			}else block <- bGrd
-
-			###########
-			# interpolate residual
-			res.grd <- gstat::krige(formule, locations = locations.stn, newdata = newdata, model = vgm,
-							block = block, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
-
-			out.mrg <- sp.trend + res.grd$var1.pred
-			if(GeneralParameters$clim.var == "RR")
-				if(out.mrg < 0) out.mrg <- 0
-
-			###########
-			# Rain-no-Rain
-			if(GeneralParameters$clim.var == "RR" & use.RnoR){
-				locations.stn <- interp.grid$newgrid[ijGrd[ina.stn], ]
-				locations.stn@coords <- as.matrix(donne.stn[, c("lon", "lat")])
-				locations.stn$rnr.stn <- ifelse(donne.stn$stn < wet.day + 0.001, 0, 1)
-				locations.stn$rnr.rfe <- ifelse(xtmp[ijGrd[ina.stn]] < wet.day + 0.001, 0, 1)
-				locations.stn <- locations.stn[, c('rnr.stn', 'rnr.rfe')]
-				locations.stn <- locations.stn[!is.na(locations.stn$rnr.stn) & !is.na(locations.stn$rnr.rfe), ]
-
-				if(length(locations.stn) < min.stn) return(out.mrg)
-
-				###########
-				rnr.rfe <- ifelse(xtmp < wet.day + 0.001, 0, 1)
-				xadd <- interp.grid$coords.coarse
-				xadd$rnr.stn <- xadd$rnr.rfe <- c(rnr.rfe[interp.grid$id.coarse$ix, interp.grid$id.coarse$iy])
-				xadd <- xadd[, c('rnr.stn', 'rnr.rfe')]
-				xadd$rnr.res <- 0
-
-				###########
-				newdata.glm <- locations.stn[istn, ]
-				newdata.glm <- newdata.glm[, !names(newdata.glm) %in% "rnr.stn"]
-				locations.stn <- locations.stn[-istn, ]
-
-				###########
-				# binomial logistic regression
-				glm.binom <- glm(rnr.stn ~ rnr.rfe, data = locations.stn, family = binomial(link = "logit"))
-				locations.stn$rnr.res <- residuals(glm.binom)
-				rnr <- predict(glm.binom, newdata = newdata.glm, type = 'link')
-
-				###########
-				buffer.rnor.in <- rgeos::gBuffer(locations.stn, width = maxdist.RnoR / 2)
-
-				############
-				# get coarse grid to add to location.stn
-				xadd.in <- !as.logical(over(xadd, buffer.rnor.in))
-				xadd.in[is.na(xadd.in)] <- TRUE
-				xadd <- xadd[xadd.in, ]
-
-				###########
-				row.names(locations.stn) <- 1:length(locations.stn)
-				row.names(xadd) <- length(locations.stn) + (1:length(xadd))
-				locations.stn <- maptools::spRbind(locations.stn, xadd)
-
-				###########
-				rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newdata.glm, maxdist = maxdist.RnoR, debug.level = 0)
-
-				rnr0 <- rnr.res.grd$var1.pred
-				rnr0[is.na(rnr0)] <- 0
-
-				rnr <- rnr + rnr0
-				rnr <- exp(rnr) / (1 + exp(rnr))
-				### decision boundary 0.5
-				rnr[rnr >= 0.5] <- 1
-				rnr[rnr < 0.5] <- 0
-
+		for(istn in seq_along(locations.stn)){
+			loc.stn <- locations.stn[-istn, ]
+			out.mrg <- cdt.merging.functions(loc.stn, newgrid, 
+											mrg.method, interp.method,
+											formule, formuleRK,
+											maxdist, nmin, nmax, vgm.model,
+											FALSE, ncInfo$dates[jj], MODEL.COEF,
+											ijGrd, log.file)
+			if(GeneralParameters$clim.var == "RR" & pars.RnoR$use.RnoR){
+				rnr <- rain_no_rain.mask(loc.stn, newgrid, pars.RnoR)
 				out.mrg <- out.mrg * rnr
 			}
 
-			return(out.mrg)
-		})
+			valid.out[ijn[istn]] <- out.mrg[ijGrd[ijn[istn]]]
+		}
 
-		ret.out.stn <- do.call(c, ret.out.stn)
-		valid.out[ina.stn] <- ret.out.stn
 		return(valid.out)
 	})
 
