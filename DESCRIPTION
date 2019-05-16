@@ -23,6 +23,7 @@ Depends:
     sp
 Imports: 
     R.utils,
+    stringr,
     grid,
     lattice,
     latticeExtra,
@@ -48,6 +49,7 @@ Imports:
     jsonlite (>= 1.2),
     XML,
     gmt
+StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues
 RoxygenNote: 6.0.1

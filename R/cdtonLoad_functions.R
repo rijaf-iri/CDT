@@ -23,74 +23,6 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 	if(MacOSXP()) ostype <- "MacOS"
 	if(LinuxOS()) ostype <- "Linux"
 
-	editcfg.msg <- function(X)
-		paste("\nInstall", X, "or edit the configuration file:\n", tcl.file.conf.json)
-
-	#############################
-
-	tcl.file.conf.json <- file.path(.cdtDir$dirLocal, "config", "Tcl_config.json")
-	tcl.conf <- jsonlite::fromJSON(tcl.file.conf.json)
-
-	if(WindowsOS()){
-		if(tcl.conf[[ostype]]$UseOtherTclTk){
-			tclbin <- stringr::str_trim(tcl.conf[[ostype]]$Tclbin)
-			if(!dir.exists(tclbin)) stop(paste0(tclbin, " does not exist", editcfg.msg("Tcl/Tk")))
-			tclsh <- file.path(tclbin, "tclsh.exe")
-			tcl_lib <- file.path(.cdtDir$dirLocal, "library.tcl")
-			cat("puts $tcl_library\n", file = tcl_lib)
-			tcllib <- system(paste(tclsh, tcl_lib), intern = TRUE)
-			if(length(tcllib) == 0){
-				unlink(tcl_lib)
-				stop("Unable to locate Tcl library")
-			}
-			unlink(tcl_lib)
-
-			Sys.setenv(MY_TCLTK = tclbin)
-			Sys.setenv(TCL_LIBRARY = tcllib)
-			library.dynam("tcltk", "tcltk", .libPaths(), DLLpath = tclbin)
-		}
-	}else{
-		tclsh <- suppressWarnings(system("which tclsh", intern = TRUE))
-		if(length(tclsh) == 0) stop("No Tcl/Tk installation found")
-		tcllib <- suppressWarnings(system("echo 'puts $tcl_library;exit 0' | tclsh", intern = TRUE))
-		if(!dir.exists(tcllib)) stop("Tcl library installation not found")
-		# tkllib <- suppressWarnings(system("echo 'puts $tk_library;exit 0' | wish", intern = TRUE))
-	}
-
-	if(!tcl.conf[[ostype]]$Tktable.auto){
-		Tktable.path <- stringr::str_trim(tcl.conf[[ostype]]$Tktable.path)
-		if(!dir.exists(Tktable.path)) stop(paste(Tktable.path, "does not found"))
-		if(!WindowsOS()){
-			Sys.setenv(TK_TABLE_LIBRARY = Tktable.path)
-			Sys.setenv(TK_TABLE_LIBRARY_FILE = "tkTable.tcl")
-		}
-	}else Tktable.path <- NULL
-
-	if(!tcl.conf[[ostype]]$Bwidget.auto){
-		Bwidget.path <- stringr::str_trim(tcl.conf[[ostype]]$Bwidget.path)
-		if(!dir.exists(Bwidget.path)) warning(paste(Bwidget.path, "does not found"))
-	}else Bwidget.path <- NULL
-
-	if(!isNamespaceLoaded("tcltk")){
-		loadNamespace("tcltk")
-		attachNamespace("tcltk")
-	}
-	if(!isNamespaceLoaded("tkrplot")){
-		loadNamespace("tkrplot")
-		attachNamespace("tkrplot")
-	}
-
-	if(!is.null(Tktable.path)) addTclPath(path = Tktable.path)
-	is.notkt <- tclRequire("Tktable")
-	if(is.logical(is.notkt)) warning(paste0("Tcl package 'Tktable' not found", editcfg.msg('Tktable')))
-	if(!is.null(Bwidget.path)) addTclPath(path = Bwidget.path)
-	is.nobw <- tclRequire("BWidget")
-	if(is.logical(is.nobw)) warning(paste0("Tcl package 'BWidget' not found", editcfg.msg('BWidget')))
-
-	invisible()
-}
-
-.onAttach <- function(libname, pkgname){
 	## Copy config directories to local dir
 	if(!dir.exists(.cdtDir$dirLocal)){
 		dir.create(.cdtDir$dirLocal, recursive = TRUE, showWarnings = FALSE)
@@ -173,6 +105,74 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 
 	#############################
 
+	editcfg.msg <- function(X)
+		paste("\nInstall", X, "or edit the configuration file:\n", tcl.file.conf.json)
+
+	#############################
+
+	tcl.file.conf.json <- file.path(.cdtDir$dirLocal, "config", "Tcl_config.json")
+	tcl.conf <- jsonlite::fromJSON(tcl.file.conf.json)
+
+	if(WindowsOS()){
+		if(tcl.conf[[ostype]]$UseOtherTclTk){
+			tclbin <- stringr::str_trim(tcl.conf[[ostype]]$Tclbin)
+			if(!dir.exists(tclbin)) stop(paste0(tclbin, " does not exist", editcfg.msg("Tcl/Tk")))
+			tclsh <- file.path(tclbin, "tclsh.exe")
+			tcl_lib <- file.path(.cdtDir$dirLocal, "library.tcl")
+			cat("puts $tcl_library\n", file = tcl_lib)
+			tcllib <- system(paste(tclsh, tcl_lib), intern = TRUE)
+			if(length(tcllib) == 0){
+				unlink(tcl_lib)
+				stop("Unable to locate Tcl library")
+			}
+			unlink(tcl_lib)
+
+			Sys.setenv(MY_TCLTK = tclbin)
+			Sys.setenv(TCL_LIBRARY = tcllib)
+			library.dynam("tcltk", "tcltk", .libPaths(), DLLpath = tclbin)
+		}
+	}else{
+		tclsh <- suppressWarnings(system("which tclsh", intern = TRUE))
+		if(length(tclsh) == 0) stop("No Tcl/Tk installation found")
+		tcllib <- suppressWarnings(system("echo 'puts $tcl_library;exit 0' | tclsh", intern = TRUE))
+		if(!dir.exists(tcllib)) stop("Tcl library installation not found")
+		# tkllib <- suppressWarnings(system("echo 'puts $tk_library;exit 0' | wish", intern = TRUE))
+	}
+
+	if(!tcl.conf[[ostype]]$Tktable.auto){
+		Tktable.path <- stringr::str_trim(tcl.conf[[ostype]]$Tktable.path)
+		if(!dir.exists(Tktable.path)) stop(paste(Tktable.path, "does not found"))
+		if(!WindowsOS()){
+			Sys.setenv(TK_TABLE_LIBRARY = Tktable.path)
+			Sys.setenv(TK_TABLE_LIBRARY_FILE = "tkTable.tcl")
+		}
+	}else Tktable.path <- NULL
+
+	if(!tcl.conf[[ostype]]$Bwidget.auto){
+		Bwidget.path <- stringr::str_trim(tcl.conf[[ostype]]$Bwidget.path)
+		if(!dir.exists(Bwidget.path)) warning(paste(Bwidget.path, "does not found"))
+	}else Bwidget.path <- NULL
+
+	if(!isNamespaceLoaded("tcltk")){
+		loadNamespace("tcltk")
+		attachNamespace("tcltk")
+	}
+	if(!isNamespaceLoaded("tkrplot")){
+		loadNamespace("tkrplot")
+		attachNamespace("tkrplot")
+	}
+
+	if(!is.null(Tktable.path)) addTclPath(path = Tktable.path)
+	is.notkt <- tclRequire("Tktable")
+	if(is.logical(is.notkt)) warning(paste0("Tcl package 'Tktable' not found", editcfg.msg('Tktable')))
+	if(!is.null(Bwidget.path)) addTclPath(path = Bwidget.path)
+	is.nobw <- tclRequire("BWidget")
+	if(is.logical(is.nobw)) warning(paste0("Tcl package 'BWidget' not found", editcfg.msg('BWidget')))
+
+	invisible()
+}
+
+.onAttach <- function(libname, pkgname){
 	packageStartupMessage("
 	-----------------------------------------------------------
 	CDT version ", .cdtEnv$pkg$version, " -- Copyright (C) 2014-", format(Sys.Date(), "%Y"), "
