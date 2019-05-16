@@ -35,13 +35,13 @@
 
         // Kriging & IDW interpolation parameters
         // nmin for gstat
-        "nmin": 4,
+        "nmin": 3,
         // nmax for gstat
-        "nmax": 8,
+        "nmax": 9,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.6,
+        "maxdist": 2.5,
         // variogram model, see gstat package for list of available model
-        "vgm.model": ["Sph", "Exp", "Gau"],
+        "vgm.model": ["Sph", "Exp", "Gau", "Pen"],
         // using kriging of block mean values (true or false)
         "use.block": true
     },

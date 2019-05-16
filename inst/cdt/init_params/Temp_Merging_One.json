@@ -44,23 +44,23 @@
         // nmin for gstat
         "nmin": 3,
         // nmax for gstat
-        "nmax": 5,
+        "nmax": 9,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.75,
+        "maxdist": 2.5,
         // variogram model, see gstat package for list of available model
-        "vgm.model": ["Sph", "Exp", "Gau"],
+        "vgm.model": ["Sph", "Exp", "Gau", "Pen"],
         // using kriging of block mean values (true or false)
         "use.block": true,
 
         // nearest-neighbor interpolation parameters
 
         // Maximum radius of interpolation for nearest-neighbor
-        // 10 times of data resolution belong longitude
-        "rad.lon": 10,
-        // 10 times of data resolution belong latitude
-        "rad.lat": 10,
+        // 50 times of data resolution belong longitude
+        "rad.lon": 50,
+        // 50 times of data resolution belong latitude
+        "rad.lat": 50,
         // 4 times of elevation resolution (elevation is discretized by 100 m)
-        "rad.elv": 4,
+        "rad.elv": 5,
         //use elevation as 3rd dimension true/false
         "elev.3rd.dim": true,
         // convert lat/lon units km/m
@@ -102,22 +102,22 @@
         // nmin for gstat
         "nmin": 3,
         // nmax for gstat
-        "nmax": 5,
+        "nmax": 9,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.75,
+        "maxdist": 2.5,
         // variogram model, see gstat package for list of available model
-        "vgm.model": ["Sph", "Exp", "Gau"],
+        "vgm.model": ["Sph", "Exp", "Gau", "Pen"],
         // using kriging of block mean values (true or false)
         "use.block": true,
 
         // nearest-neighbor interpolation parameters
         // Maximum radius of interpolation for nearest-neighbor
-        // 10 times of data resolution belong longitude
-        "rad.lon": 10,
-        // 10 times of data resolution belong latitude
-        "rad.lat": 10,
-        // 4 times of elevation resolution (elevation is discretized by 100 m)
-        "rad.elv": 4,
+        // 50 times of data resolution belong longitude
+        "rad.lon": 50,
+        // 50 times of data resolution belong latitude
+        "rad.lat": 50,
+        // 5 times of elevation resolution (elevation is discretized by 100 m)
+        "rad.elv": 5,
         //use elevation as 3rd dimension true/false
         "elev.3rd.dim": true,
         // convert lat/lon units km/m
@@ -152,7 +152,7 @@
         // nmax for gstat
         "nmax": 9,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.85,
+        "maxdist": 2.5,
         // variogram model, see gstat package for list of available model
         "vgm.model": ["Sph", "Exp", "Gau", "Pen"],
 

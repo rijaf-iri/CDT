@@ -188,11 +188,3 @@ if(LinuxOS()) .cdtDir$dirLocal <- path.expand('~/.local/CDT')
 
 	invisible()
 }
-
-# .onUnload <- function(libpath) {
-# 	options(warn = 0)
-# 	# rm(.cdtData)
-# 	# rm(.cdtEnv)
-# 	# rm(.cdtDir)
-# 	# gc()
-# }

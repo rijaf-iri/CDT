@@ -172,10 +172,7 @@ Precip_MergingFunctions <- function(){
 
 	#############
 	xy.grid <- mrgParms$interp.grid$grid
-	# grdSp <- defSpatialPixels(xy.grid)
 	newgrid <- defSpatialPixels(xy.grid)
-	# nlon0 <- mrgParms$interp.grid$nlon
-	# nlat0 <- mrgParms$interp.grid$nlat
 
 	#############
 	## Def ncdf
@@ -188,7 +185,6 @@ Precip_MergingFunctions <- function(){
 	#############
 	mrg.method <- .cdtData$GalParams$Merging$mrg.method
 	interp.method <- .cdtData$GalParams$Merging$interp.method
-	# local.interpolation <- .cdtData$GalParams$Merging$local.interpolation
 	pixelize.station <- .cdtData$GalParams$Merging$pixelize.station
 
 	nmin <- .cdtData$GalParams$Merging$nmin
@@ -196,12 +192,7 @@ Precip_MergingFunctions <- function(){
 	maxdist <- .cdtData$GalParams$Merging$maxdist
 	vgm.model <- .cdtData$GalParams$Merging$vgm.model
 	min.stn <- .cdtData$GalParams$Merging$min.stn
-	# min.non.zero <- .cdtData$GalParams$Merging$min.non.zero
 
-	# use.RnoR <- .cdtData$GalParams$RnoR$use.RnoR
-	# maxdist.RnoR <- .cdtData$GalParams$RnoR$maxdist.RnoR
-	# smooth.RnoR <- .cdtData$GalParams$RnoR$smooth.RnoR
-	# wet.day <- .cdtData$GalParams$RnoR$wet.day
 	pars.RnoR <- .cdtData$GalParams$RnoR
 
 	#############
@@ -209,40 +200,7 @@ Precip_MergingFunctions <- function(){
 	lat.stn <- mrgParms$stnData$lat
 	date.stn <- mrgParms$stnData$dates
 	data.stn <- mrgParms$stnData$data
-	# nstn <- length(lon.stn)
 	demData <- mrgParms$demData
-
-	#############
-
-	# res.lon <- diff(range(xy.grid$lon)) / (nlon0 - 1)
-	# res.lat <- diff(range(xy.grid$lat)) / (nlat0 - 1)
-	# res.latlon <- max(res.lon, res.lat)
-
-	# if(local.interpolation){
-	# 	if(maxdist < res.latlon) maxdist <- res.latlon * sqrt(2)
-	# 	res.coarse <- maxdist / sqrt(2)
-	# 	if(res.coarse < res.latlon) res.coarse <- maxdist
-	# }else{
-	# 	maxdist <- res.latlon * 10
-	# 	res.coarse <- maxdist / sqrt(2)
-	# }
-
-	# if(maxdist < maxdist.RnoR) maxdist.RnoR <- maxdist
-
-	# if(!is.null(demData)){
-	# 	slpasp <- raster.slope.aspect(demData)
-	# 	demData$slp <- slpasp$slope
-	# 	demData$asp <- slpasp$aspect
-	# }else{
-	# 	demData <- list(x = xy.grid$lon, y = xy.grid$lat,
-	# 					z = matrix(1, nlon0, nlat0),
-	# 					slp = matrix(0, nlon0, nlat0),
-	# 					asp = matrix(0, nlon0, nlat0))
-	# }
-
-	# interp.grid <- createGrid.merging(demData, res.coarse = res.coarse)
-	# cells <- SpatialPixels(points = interp.grid$newgrid, tolerance = sqrt(sqrt(.Machine$double.eps)))@grid
-	# bGrd <- if(.cdtData$GalParams$Merging$use.block) createBlock(cells@cellsize, 1, 5) else NULL
 
 	#############
 	auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
@@ -255,24 +213,6 @@ Precip_MergingFunctions <- function(){
 		if(mrg.method == "Regression Kriging" & .cdtData$GalParams$Merging$sp.trend.aux)
 			formuleRK <- formula(paste0('stn', '~', 'grd', '+', paste(auxvar[is.auxvar], collapse = '+')))
 	}
-
-	# #############
-	# auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
-	# is.auxvar <- unlist(.cdtData$GalParams$auxvar)
-	# if(any(is.auxvar)){
-	# 	formule <- formula(paste0('res', '~', paste(auxvar[is.auxvar], collapse = '+')))
-	# 	if(mrg.method == "Regression Kriging"){
-	# 		sp.trend.aux <- .cdtData$GalParams$Merging$sp.trend.aux
-	# 		if(sp.trend.aux)
-	# 			formuleRK <- formula(paste0('stn', '~', 'rfe', '+', paste(auxvar[is.auxvar], collapse = '+')))
-	# 		else
-	# 			formuleRK <- formula(paste0('stn', '~', 'rfe'))
-	# 	}
-	# }else{
-	# 	formule <- formula(paste0('res', '~', 1))
-	# 	if(mrg.method == "Regression Kriging")
-	# 		formuleRK <- formula(paste0('stn', '~', 'rfe'))
-	# }
 
 	#############
 
@@ -298,19 +238,6 @@ Precip_MergingFunctions <- function(){
 	if(is.auxvar['lon']) newgrid$alon <- newgrid@coords[, 'lon']
 
 	if(is.auxvar['lat']) newgrid$alat <- newgrid@coords[, 'lat']
-
-	#############
-	# if(is.auxvar['lon']){
-	# 	interp.grid$coords.coarse$alon <- interp.grid$coords.coarse@coords[, 'lon']
-	# 	if(!is.null(interp.grid$coords.var)) interp.grid$coords.var$alon <- interp.grid$coords.var@coords[, 'lon']
-	# 	interp.grid$newgrid$alon <- interp.grid$newgrid@coords[, 'lon']
-	# }
-
-	# if(is.auxvar['lat']){
-	# 	interp.grid$coords.coarse$alat <- interp.grid$coords.coarse@coords[, 'lat']
-	# 	if(!is.null(interp.grid$coords.var)) interp.grid$coords.var$alat <- interp.grid$coords.var@coords[, 'lat']
-	# 	interp.grid$newgrid$alat <- interp.grid$newgrid@coords[, 'lat']
-	# }
 
 	#############
 
@@ -377,31 +304,6 @@ Precip_MergingFunctions <- function(){
 
 		############
 
-		# donne.stn <- data.stn[date.stn == ncInfo$dates[jj], , drop = FALSE]
-		# if(nrow(donne.stn) == 0){
-		# 	writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
-		# 			mrgParms$merge.DIR, GalParams$output$format)
-		# 	cat(paste(ncInfo$dates[jj], ":", "no station data", "|", "RFE data", "\n"), file = log.file, append = TRUE)
-		# 	return(NULL)
-		# }
-
-		# donne.stn <- data.frame(lon = lon.stn, lat = lat.stn, stn = c(donne.stn))
-		# if(pixelize.station){
-		# 	stng <- createGrid.StnData(donne.stn, ijGrd, interp.grid$newgrid, min.stn, weighted = TRUE)
-		# }else{
-		# 	stng <- donne.stn$stn
-		# 	if(length(stng[!is.na(stng)]) < min.stn) stng <- NULL
-		# }
-
-		# if(is.null(stng)){
-		# 	writeNC.merging(xrfe, ncInfo$dates[jj], freqData, grd.nc.out,
-		# 			mrgParms$merge.DIR, GalParams$output$format)
-		# 	cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|", "RFE data", "\n"),
-		# 		file = log.file, append = TRUE)
-		# 	return(NULL)
-		# }
-
-
 		newgrid$grd <- c(xtmp)
 
 		donne.stn <- data.stn[date.stn == ncInfo$dates[jj], , drop = FALSE]
@@ -429,18 +331,6 @@ Precip_MergingFunctions <- function(){
 		}
 
 		############
-		# if(pixelize.station){
-		# 	locations.stn <- interp.grid$newgrid
-		# 	locations.stn$stn <- stng
-		# 	locations.stn$rfe <- c(xrfe)
-		# }else{
-		# 	locations.stn <- interp.grid$newgrid[ijGrd, ]
-		# 	locations.stn@coords <- as.matrix(donne.stn[, c("lon", "lat")])
-		# 	locations.stn$stn <- stng
-		# 	locations.stn$rfe <- xrfe[ijGrd]
-		# 	if(is.auxvar['lon']) locations.stn$alon <- donne.stn$lon
-		# 	if(is.auxvar['lat']) locations.stn$alat <- donne.stn$lat
-		# }
 
 		if(pixelize.station){
 			locations.stn <- newgrid
@@ -450,7 +340,6 @@ Precip_MergingFunctions <- function(){
 			locations.stn@coords <- as.matrix(donne.stn[, c("lon", "lat")])
 			locations.stn$stn <- stng
 		}
-
 
 		############
 		noNA <- !is.na(locations.stn$stn)
@@ -474,7 +363,8 @@ Precip_MergingFunctions <- function(){
 										mrg.method, interp.method,
 										formule, formuleRK,
 										maxdist, nmin, nmax, vgm.model,
-										FALSE, ncInfo$dates[jj], MODEL.COEF, ijGrd)
+										FALSE, ncInfo$dates[jj], MODEL.COEF,
+										ijGrd, log.file)
 		if(pars.RnoR$use.RnoR){
 			rnr <- rain_no_rain.mask(locations.stn, newgrid, pars.RnoR)
 			out.mrg <- out.mrg * rnr

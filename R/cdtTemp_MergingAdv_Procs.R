@@ -150,8 +150,6 @@ Temp_MergingFunctions <- function(){
 	#############
 	xy.grid <- mrgParms$interp.grid$grid
 	newgrid <- defSpatialPixels(xy.grid)
-	# nlon0 <- mrgParms$interp.grid$nlon
-	# nlat0 <- mrgParms$interp.grid$nlat
 
 	#############
 	## Def ncdf
@@ -330,7 +328,8 @@ Temp_MergingFunctions <- function(){
 										mrg.method, interp.method,
 										formule, formuleRK,
 										maxdist, nmin, nmax, vgm.model,
-										TRUE, ncInfo$dates[jj], MODEL.COEF, ijGrd)
+										TRUE, ncInfo$dates[jj], MODEL.COEF,
+										ijGrd, log.file)
 		###########
 		#Apply mask for area of interest
 		if(!is.null(mrgParms$outMask)) out.mrg[is.na(mrgParms$outMask)] <- NA

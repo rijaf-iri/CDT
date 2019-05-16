@@ -126,7 +126,8 @@ cdt.merging.functions <- function(locations.stn, newgrid,
 								merging.method, interp.method,
 								formule, formuleRK,
 								maxdist, nmin, nmax, vgm.model,
-								neg.value, nc.date, MODEL.COEF, ijGrd)
+								neg.value, nc.date, MODEL.COEF,
+								ijGrd, log.file)
 {
 
 	nx <- newgrid@grid@cells.dim[1]

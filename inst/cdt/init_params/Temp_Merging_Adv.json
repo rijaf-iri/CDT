@@ -38,7 +38,7 @@
         // nmax for gstat
         "nmax": 9,
         // maxdist for gstat (in decimal degree)
-        "maxdist": 0.85,
+        "maxdist": 2.5,
         // variogram model, see gstat package for list of available model
         "vgm.model": ["Sph", "Exp", "Gau", "Pen"],
 
