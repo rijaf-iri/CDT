@@ -244,31 +244,44 @@ startCDT <- function(wd = NA, lang = NA){
 			})
 
 			##########
-			tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["2"]],
-				command = function()
-			{
-				refreshCDT()
-				initialize.parameters('merge2CDT.stn', 'daily')
-				merge2CDTdata_getParams()
-			})
+			tkadd(menu.dataprep, "separator")
 
 			##########
-			tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["3"]],
-				command = function()
-			{
-				refreshCDT()
-				initialize.parameters('filter.data', 'daily')
-				filterCDTData_getParams()
-			})
+			menu.cdt.data <- tkmenu(top.menu, tearoff = FALSE)
+			tkadd(menu.dataprep, "cascade", label = lang.menu[["data.preparation"]][["2"]], menu = menu.cdt.data)
 
-			##########
-			tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["3a"]],
-				command = function()
-			{
-				refreshCDT()
-				initialize.parameters('selectCDT.data', 'daily')
-				selectCDTData_getParams()
-			})
+				##########
+				tkadd(menu.cdt.data, "command", label = lang.menu[["data.preparation"]][["2-1"]],
+					command = function()
+				{
+					refreshCDT()
+					initialize.parameters('merge2CDT.stn', 'daily')
+					merge2CDTdata_getParams()
+				})
+
+				########
+				tkadd(menu.cdt.data, "separator")
+
+				##########
+				tkadd(menu.cdt.data, "command", label = lang.menu[["data.preparation"]][["2-2"]],
+					command = function()
+				{
+					refreshCDT()
+					initialize.parameters('filter.data', 'daily')
+					filterCDTData_getParams()
+				})
+
+				########
+				tkadd(menu.cdt.data, "separator")
+
+				##########
+				tkadd(menu.cdt.data, "command", label = lang.menu[["data.preparation"]][["2-3"]],
+					command = function()
+				{
+					refreshCDT()
+					initialize.parameters('selectCDT.data', 'daily')
+					selectCDTData_getParams()
+				})
 
 			##########
 			tkadd(menu.dataprep, "separator")
@@ -1160,7 +1173,7 @@ startCDT <- function(wd = NA, lang = NA){
 			##########
 			tkadd(menu.aide, "command", label = lang.menu[["help"]][["1"]], command = function(){
 				# start help server ifnot
-				# browseURL(paste0('file://',file.path(apps.dir, 'help', 'html', 'index.html')))
+				browseURL(paste0('file://',file.path(.cdtDir$Root, 'help', 'index.html')))
 			})
 
 			##########

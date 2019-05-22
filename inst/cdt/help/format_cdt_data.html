@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Format CDT Input Station Data</title>
+
+<script src="libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="libs/navigation-1.1/tabsets.js"></script>
+<link href="libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">CDT User Guide</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    CDT
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="cdt_file_menu.html">CDT GUI</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="cdt_data_input.html">CDT Data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Preparation
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="format_cdt_data.html">Format CDTs Input Data</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="manipulate_cdt_data.html">Manipulating CDT station data format</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="transform_cdt_dataset.html">Transform NetCDF files into CDT Dataset</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="download_data.html">Download Data</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="fill_na_temp.html">Filling missing dekadal temperature values</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="data_conversion.html">Data Format Conversion</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="aggregate_TS.html">Aggregating Time Series</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="aggregate_SP.html">Aggregate/Disaggregate Spatial NetCDF data</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Quality Control
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="check_stations_coords.html">Check Stations Coordinates</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="assess_availability.html">Assess Data Availability</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="quality_control.html">Quality Control</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="homogeneity_test.html">Homogeneity Test</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Merging Data
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="merging_rainfall.html">Merging Rainfall</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="merging_temperature.html">Merging Temperature</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="scale_merged_data.html">Scale merged data</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="update_dekadal_rainfall.html">Updating Dekadal Rainfall</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="validation.html">Validation</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Data Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="data_extraction.html">Data Extraction</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="summary_statistics.html">Summary Statistics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="derived_climate_variables.html">Derived Climate Variables</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="climatologies_anomalies.html">Climatologies and Anomalies</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="spatial_analysis.html">Spatial Analysis</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="daily_rainfall_analysis.html">Daily Rainfall Analysis</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="rainy_season_characteristics.html">Rainy Season Characteristics</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="rainy_season_analysis.html">Rainy Season Analysis</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="climate_extremes_indices.html">Climate Extremes Indices</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="drought_indices.html">Drought Indices</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Plot Data
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="plot_station_data.html">Plot CDT Station Data</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_cdt_dataset.html">Plot CDT Gridded Dataset</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_ncdf_one.html">Plot NetCDF Data (One File)</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_ncdf_seq.html">Plot NetCDF Data (Sequential Files)</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_ncdf_vars.html">Plot NetCDF Data (Multiple Variables)</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_multiple_dataset.html">Plot multiple data sets</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/rijaf-iri/CDT">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Format CDT Input Station Data</h1>
+
+</div>
+
+
+<p>If you do not yet have a data in CDT station format to work with, you can format your data to <a href="cdt_data_input.html#cdt.format.data">CDT station data format</a> using the menu <span class="menuselection">Data Preparation ‣ Format CDT Input Station Data</span>  .</p>
+<p>CDT can format two types of input files:</p>
+<ul>
+<li>the data is already grouped together in a single file but not yet in CDT station format</li>
+<li>or each station has its data in a separate file</li>
+</ul>
+<p>The menu <span class="menuselection">Data Preparation ‣ Format CDT Input Station Data</span>   opens a dialog where you can enter the required input and select the options corresponding to your type of data.</p>
+<center>
+<p><img src="images/data_prepraration/format_cdt_data/format_cdt_input_data.gif" style="width:60.0%;height:60.0%" /></p>
+</center>
+<p><br></p>
+<ol style="list-style-type: decimal">
+<li><p>Select the time step of your data, there are three choices available: daily, dekadal and monthly data.</p></li>
+<li><p>Set <a href="cdt_data_input.html#cdt.date.range">the date range</a> by entering the start and end date to take account in CDT station data output.</p>
+<blockquote>
+<p><strong>Note</strong><br />
+You can select a desired period for the final CDT station data output, even if each station data has different date range. The missing dates (which not match the selected period) from the stations will be filled with missing values.</p>
+</blockquote></li>
+<li><p>Enter here the minimum percentage (related to the period you selected) of non-missing values from a station to be accepted for the final CDT station data output.</p></li>
+<li><p>Select the type of input files to be converted to CDT station format, two choices are available: <a href="#multiple.files">Multiple Files</a> and <a href="#single.file">Single File</a>.</p></li>
+<li><p>Click on <span class="buttonclass">   Input File Setting </span>   to set the parameters required for the input file.</p></li>
+<li><p>Type the name of the file to save the formatted stations data or the full path to the file. You can also click on <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left, it opens a file dialog where you can select and/or type the name, path and type of file (txt or csv).</p></li>
+</ol>
+<div id="multiple-files" class="section level2">
+<h2>Multiple Files <a name="multiple.files"></a></h2>
+<p>In this case, each station has its own file. Several formats are possible, the data can have header (the column names) or not and can contain one or three variables in the following order: <em>precipitation - maximum temperature - minimum temperature</em>. Observations dates can be grouped or separated. The following examples give us an overview of possibility.</p>
+<div id="onestnseries">
+<!-- html table generated in R 3.6.0 by xtable 1.8-4 package -->
+<!-- Wed May 22 07:54:15 2019 -->
+<table id="cdtInputData" class="cdtInputData1" border="0">
+<caption align="top">
+Daily time series, 1 variable, grouped date, no header
+</caption>
+<tr>
+<td align="right">
+20090111
+</td>
+<td align="right">
+2.60
+</td>
+</tr>
+<tr>
+<td align="right">
+20090112
+</td>
+<td align="right">
+1.10
+</td>
+</tr>
+<tr>
+<td align="right">
+20090113
+</td>
+<td align="right">
+1.40
+</td>
+</tr>
+<tr>
+<td align="right">
+20090114
+</td>
+<td align="right">
+18.70
+</td>
+</tr>
+<tr>
+<td align="right">
+20090115
+</td>
+<td align="right">
+0.00
+</td>
+</tr>
+<tr>
+<td align="right">
+20090116
+</td>
+<td align="right">
+9.00
+</td>
+</tr>
+</table>
+<!-- html table generated in R 3.6.0 by xtable 1.8-4 package -->
+<!-- Wed May 22 07:54:15 2019 -->
+<table id="cdtInputData" class="cdtInputData1" border="0">
+<caption align="top">
+Daily time series, 3 variables, separated date, with header
+</caption>
+<tr>
+<td>
+year
+</td>
+<td>
+month
+</td>
+<td>
+day
+</td>
+<td>
+precip
+</td>
+<td>
+tmax
+</td>
+<td>
+tmin
+</td>
+</tr>
+<tr>
+<td>
+2009
+</td>
+<td>
+1
+</td>
+<td>
+11
+</td>
+<td>
+2.6
+</td>
+<td>
+31.4
+</td>
+<td>
+21.9
+</td>
+</tr>
+<tr>
+<td>
+2009
+</td>
+<td>
+1
+</td>
+<td>
+12
+</td>
+<td>
+1.1
+</td>
+<td>
+29.9
+</td>
+<td>
+22.4
+</td>
+</tr>
+<tr>
+<td>
+2009
+</td>
+<td>
+1
+</td>
+<td>
+13
+</td>
+<td>
+1.4
+</td>
+<td>
+30
+</td>
+<td>
+22.7
+</td>
+</tr>
+<tr>
+<td>
+2009
+</td>
+<td>
+1
+</td>
+<td>
+14
+</td>
+<td>
+18.7
+</td>
+<td>
+29
+</td>
+<td>
+23.7
+</td>
+</tr>
+<tr>
+<td>
+2009
+</td>
+<td>
+1
+</td>
+<td>
+15
+</td>
+<td>
+0
+</td>
+<td>
+31.5
+</td>
+<td>
+22.8
+</td>
+</tr>
+</table>
+<div id="clearleft">
+
+</div>
+</div>
+<p><br></p>
+<div id="onestnseries">
+<!-- html table generated in R 3.6.0 by xtable 1.8-4 package -->
+<!-- Wed May 22 07:54:15 2019 -->
+<table id="cdtInputData" class="cdtInputData1" border="0">
+<caption align="top">
+Dekadal time series, 1 variable, separated date, with header
+</caption>
+<tr>
+<td>
+year
+</td>
+<td>
+month
+</td>
+<td>
+dekad
+</td>
+<td>
+tmax
+</td>
+</tr>
+<tr>
+<td>
+2010
+</td>
+<td>
+8
+</td>
+<td>
+1
+</td>
+<td>
+29
+</td>
+</tr>
+<tr>
+<td>
+2010
+</td>
+<td>
+8
+</td>
+<td>
+2
+</td>
+<td>
+29.8
+</td>
+</tr>
+<tr>
+<td>
+2010
+</td>
+<td>
+8
+</td>
+<td>
+3
+</td>
+<td>
+29.6
+</td>
+</tr>
+<tr>
+<td>
+2010
+</td>
+<td>
+9
+</td>
+<td>
+1
+</td>
+<td>
+30.6
+</td>
+</tr>
+<tr>
+<td>
+2010
+</td>
+<td>
+9
+</td>
+<td>
+2
+</td>
+<td>
+30.6
+</td>
+</tr>
+</table>
+<!-- html table generated in R 3.6.0 by xtable 1.8-4 package -->
+<!-- Wed May 22 07:54:15 2019 -->
+<table id="cdtInputData" class="cdtInputData1" border="0">
+<caption align="top">
+Dekadal time series, 3 variables, grouped date, no header
+</caption>
+<tr>
+<td align="right">
+2010081
+</td>
+<td align="right">
+9.50
+</td>
+<td align="right">
+29.00
+</td>
+<td align="right">
+19.70
+</td>
+</tr>
+<tr>
+<td align="right">
+2010082
+</td>
+<td align="right">
+3.80
+</td>
+<td align="right">
+29.80
+</td>
+<td align="right">
+19.40
+</td>
+</tr>
+<tr>
+<td align="right">
+2010083
+</td>
+<td align="right">
+15.70
+</td>
+<td align="right">
+29.60
+</td>
+<td align="right">
+20.30
+</td>
+</tr>
+<tr>
+<td align="right">
+2010091
+</td>
+<td align="right">
+2.70
+</td>
+<td align="right">
+30.60
+</td>
+<td align="right">
+19.80
+</td>
+</tr>
+<tr>
+<td align="right">
+2010092
+</td>
+<td align="right">
+0.00
+</td>
+<td align="right">
+30.60
+</td>
+<td align="right">
+20.70
+</td>
+</tr>
+<tr>
+<td align="right">
+2010093
+</td>
+<td align="right">
+10.50
+</td>
+<td align="right">
+30.20
+</td>
+<td align="right">
+20.40
+</td>
+</tr>
+</table>
+<div id="clearleft">
+
+</div>
+</div>
+<p><br></p>
+<div id="onestnseries">
+<!-- html table generated in R 3.6.0 by xtable 1.8-4 package -->
+<!-- Wed May 22 07:54:15 2019 -->
+<table id="cdtInputData" class="cdtInputData1" border="0">
+<caption align="top">
+Monthly time series, 1 variable, separated date, no header
+</caption>
+<tr>
+<td align="right">
+2010
+</td>
+<td align="right">
+1
+</td>
+<td align="right">
+408.60
+</td>
+</tr>
+<tr>
+<td align="right">
+2010
+</td>
+<td align="right">
+2
+</td>
+<td align="right">
+108.80
+</td>
+</tr>
+<tr>
+<td align="right">
+2010
+</td>
+<td align="right">
+3
+</td>
+<td align="right">
+160.30
+</td>
+</tr>
+<tr>
+<td align="right">
+2010
+</td>
+<td align="right">
+4
+</td>
+<td align="right">
+13.20
+</td>
+</tr>
+<tr>
+<td align="right">
+2010
+</td>
+<td align="right">
+5
+</td>
+<td align="right">
+17.90
+</td>
+</tr>
+<tr>
+<td align="right">
+2010
+</td>
+<td align="right">
+6
+</td>
+<td align="right">
+56.40
+</td>
+</tr>
+</table>
+<!-- html table generated in R 3.6.0 by xtable 1.8-4 package -->
+<!-- Wed May 22 07:54:15 2019 -->
+<table id="cdtInputData" class="cdtInputData1" border="0">
+<caption align="top">
+Monthly time series, 3 variables, grouped date, with header
+</caption>
+<tr>
+<td>
+date
+</td>
+<td>
+precip
+</td>
+<td>
+tmax
+</td>
+<td>
+tmin
+</td>
+</tr>
+<tr>
+<td>
+201001
+</td>
+<td>
+408.6
+</td>
+<td>
+31.1
+</td>
+<td>
+23
+</td>
+</tr>
+<tr>
+<td>
+201002
+</td>
+<td>
+108.8
+</td>
+<td>
+32.2
+</td>
+<td>
+23.9
+</td>
+</tr>
+<tr>
+<td>
+201003
+</td>
+<td>
+160.3
+</td>
+<td>
+31.3
+</td>
+<td>
+23.3
+</td>
+</tr>
+<tr>
+<td>
+201004
+</td>
+<td>
+13.2
+</td>
+<td>
+32
+</td>
+<td>
+23.2
+</td>
+</tr>
+<tr>
+<td>
+201005
+</td>
+<td>
+17.9
+</td>
+<td>
+31.7
+</td>
+<td>
+22.6
+</td>
+</tr>
+</table>
+<div id="clearleft">
+
+</div>
+</div>
+<p><br></p>
+<p>As we can see, observations date can have two types of template formats: grouped and separated.</p>
+<blockquote>
+<p><em><strong>Grouped</strong></em></p>
+<p>There is no space between the years (YYYY), months (MM), dekads (D) or the days (DD)<br />
+<strong>Daily series</strong> : <strong><code>YYYYMMDD</code></strong>; YYYY: year, MM: month (01-12), DD: day (01-31)<br />
+<strong>Dekadal series</strong> : <strong><code>YYYYMMD</code></strong>; YYYY: year, MM: month (01-12), D: dekad (1-3)<br />
+<strong>Monthly series</strong> : <strong><code>YYYYMM</code></strong>; YYYY: year, MM: month (01-12)</p>
+</blockquote>
+<blockquote>
+<p><em><strong>Separated</strong></em></p>
+<p>Date separation depends on the field separator character of the file (space, tabs, comma, semicolon, …), the month and day format can be one or two digit.<br />
+<strong>Daily series</strong> : <strong><code>YYYY MM DD</code></strong><br />
+<strong>Dekadal series</strong> : <strong><code>YYYY MM D</code></strong><br />
+<strong>Monthly series</strong> : <strong><code>YYYY MM</code></strong></p>
+</blockquote>
+<p><em><strong>Example:</strong></em><br />
+As a simple illustration, suppose we have a daily precipitation data for 5 stations, each station has its own file and the name of each file should be the IDs of the station.</p>
+<pre><code>102001.txt
+102021.txt
+102038.txt
+102304.txt
+102305.txt</code></pre>
+<p>The format of data for each station must be the same. If we have a daily time series with separated date, the format of data in each file should be as follows</p>
+<pre><code>  .....
+2004 7 1 -99
+2004 7 2 0
+2004 7 3 10.6
+2004 7 4 0
+2004 7 5 0
+2004 7 6 0
+2004 7 7 0
+2004 7 8 0
+  .....</code></pre>
+<p>And the coordinates of the stations are saved in a separate file and in the format <a href="cdt_data_input.html#cdt.coords.data">CDT coordinates file</a>.</p>
+<center>
+<p><img src="images/data_prepraration/format_cdt_data/coordinates_file.gif" style="width:50.0%;height:50.0%" /></p>
+</center>
+<p><br></p>
+<p>To provide all of this information to CDT, click on the button <span class="buttonclass">   Input File Setting </span>  , it displays a dialog box</p>
+<center>
+<p><img src="images/data_prepraration/format_cdt_data/format_cdt_input_data1.gif" style="width:40.0%;height:45.0%" /></p>
+</center>
+<p><br></p>
+<ol style="list-style-type: decimal">
+<li>Enter the full path to directory containing the station files, or browse through <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" />.</li>
+<li>Provide a sample of the data.</li>
+<li>Select the file containing the station coordinates, if it is not opened yet, open it from <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" />.</li>
+<li>Check this box, if you want to include the elevation data to the final CDT station data output, the <a href="cdt_data_input.html#cdt.coords.data">CDT coordinates file</a> must have a non-missing elevation data.</li>
+<li>Choose the number of climate variables in the file. On our example, we have only one variable (daily rainfall).</li>
+<li>Choose the format of date (grouped or separated). On our example, the date is separated with the format <em>YYYY MM DD</em>.</li>
+</ol>
+<p>Click on the button <img src="images/common/execute24.gif" title="Execute the append task" id="cdtIcons" class="cdtIcons" /> to execute.</p>
+</div>
+<div id="single-file" class="section level2">
+<h2>Single File <a name="single.file"></a></h2>
+<p>This time, all station data are already put together in a single file with a specific format which are described below. After selected <em>Single File</em> from the drop-down list “Format of input files” and clicked the button <span class="buttonclass">   Input File Setting </span>  , which will display a dialog box.</p>
+<center>
+<p><img src="images/data_prepraration/format_cdt_data/format_cdt_input_data2.gif" style="width:40.0%;height:45.0%" /></p>
+</center>
+<p><br></p>
+<ol style="list-style-type: decimal">
+<li>Select the file containing the station data to be formatted, if the file is not loaded yet and therefore not listed, use <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> to open it.</li>
+<li>Check this box, if the coordinates of the station are included in the data.</li>
+<li>Select the file containing the station coordinates, if it is not included in the file containing the data. If the file is not loaded yet and therefore not listed, use <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> to open it.</li>
+<li>Check this box, if you want to include the elevation data to the final CDT station data output, provided that the data file contains an elevation data or the elevation data is not missing on the coordinates file.</li>
+<li>Specify the column number for:
+<ul>
+<li><strong>COL.ID</strong>: stations IDs</li>
+<li><strong>COL.LON</strong>: longitude</li>
+<li><strong>COL.LAT</strong>: latitude</li>
+<li><strong>COL.ELEV</strong>: elevation data</li>
+<li><strong>COL.YEAR</strong>: column containing the year</li>
+<li><strong>COL.MONTH</strong>: month</li>
+<li><strong>COL.DAY/DEK</strong>: column containing the day or dekad</li>
+<li><strong>COL.DATA</strong>: column containing the climate variable or from which climate variable starts</li>
+</ul></li>
+<li>Select the number of columns containing the climate variable.
+<ul>
+<li>For daily data, there are 2 possible formats:
+<ul>
+<li><p>1 column: the climate variable is placed in a single column.<br />
+</p>
+<center>
+<p><img src="images/data_prepraration/format_cdt_data/daily_wCrd_1Col.gif" style="width:80.0%;height:60.0%" /><br />
+<span class="img-caption"> Format of data: one column, coordinates included </span></p>
+</center>
+<p><br></p></li>
+<li><p>31 columns: each month the climate variable is placed in 31 columns, one column is equivalent to one day.<br />
+</p>
+<center>
+<p><img src="images/data_prepraration/format_cdt_data/daily_wCrd_31Col.gif" style="width:100.0%;height:90.0%" /><br />
+<span class="img-caption"> Format of data: 31 columns, coordinates included </span></p>
+</center>
+<p><br><br />
+</p>
+<center>
+<p><img src="images/data_prepraration/format_cdt_data/daily_noCrd_31col.gif" style="width:100.0%;height:90.0%" /><br />
+<span class="img-caption"> Format of data: 31 columns, coordinates on a separate file </span></p>
+</center>
+<p><br></p>
+<blockquote>
+<p><strong>Note</strong><br />
+If you edit the data on Excel spreadsheet, you can leave blank the cells with missing values or fill it with missing values flag, then save it as a Comma Separated Values (CSV) file.<br />
+In addition, you can leave empty a whole line.</p>
+</blockquote></li>
+</ul></li>
+<li>Dekadal data, there are 3 possible formats:
+<ul>
+<li>1 column: the climate variable is placed in a single column.<br />
+
+<center>
+<img src="images/data_prepraration/format_cdt_data/dek_wCrd_1Col.gif" style="width:80.0%;height:60.0%" /><br />
+<span class="img-caption"> Format of data: one column, coordinates included </span>
+</center>
+<br></li>
+<li>3 columns: each month the climate variable is placed in 3 columns, one column is equivalent to one dekad.<br />
+
+<center>
+<img src="images/data_prepraration/format_cdt_data/dek_wCrd_3Col.gif" style="width:90.0%;height:70.0%" /><br />
+<span class="img-caption"> Format of data: 3 columns, coordinates included </span>
+</center>
+<br></li>
+<li>36 columns: each year the climate variable is placed in 36 columns, one column is equivalent to one dekad.<br />
+
+<center>
+<img src="images/data_prepraration/format_cdt_data/dek_noCrd_36Col.gif" style="width:110.0%;height:110.0%" /><br />
+<span class="img-caption"> Format of data: 36 columns, without coordinates included </span>
+</center>
+<br></li>
+</ul></li>
+<li>Monthly data, there are 2 possible formats:
+<ul>
+<li>1 column: the climate variable is placed in a single column.<br />
+
+<center>
+<img src="images/data_prepraration/format_cdt_data/mon_wCrd_1Col.gif" style="width:80.0%;height:60.0%" /><br />
+<span class="img-caption"> Format of data: one column, coordinates included </span>
+</center>
+<br></li>
+<li>12 columns: each year the climate variable is placed in 12 columns, one column is equivalent to one month.<br />
+
+<center>
+<img src="images/data_prepraration/format_cdt_data/mon_wCrd_12Col.gif" style="width:100.0%;height:90.0%" /><br />
+<span class="img-caption"> Format of data: 12 columns, coordinates included </span>
+</center>
+<br></li>
+</ul></li>
+</ul></li>
+</ol>
+<p>Click on the button <img src="images/common/execute24.gif" title="Execute the append task" id="cdtIcons" class="cdtIcons" /> to execute.</p>
+</div>
+
+<footer class="navbar navbar-inverse  navbar-fixed-bottom">
+    <p>
+        <small class="footer">
+           <a href="index.html">Climate Data Tools, 2018</a> &nbsp;
+           <a  class="navbar-footer" href="https://iri.columbia.edu/"><img src="images/common/iri_logo_full.gif" alt="IRI"/></a> 
+         </small>
+    </p>
+</footer>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+
+</body>
+</html>

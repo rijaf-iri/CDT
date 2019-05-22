@@ -44,18 +44,22 @@
             <text lang="fr"> Préparation Données </text>
         </submenu>
         <submenu id="1">
-            <text lang="en"> Format CDTs Input Data </text>
+            <text lang="en"> Format CDT Input Station Data </text>
             <text lang="fr"> Formater données d'entréé CDT </text>
         </submenu>
         <submenu id="2">
+            <text lang="en"> Manipulating CDT Station Data </text>
+            <text lang="fr"> Manipulation de données station CDT </text>
+        </submenu>
+        <submenu id="2-1">
             <text lang="en"> Merge two CDT Station Data </text>
             <text lang="fr"> Combiner 2 données station CDT </text>
         </submenu>
-        <submenu id="3">
+        <submenu id="2-2">
             <text lang="en"> Filtering CDT Station Data </text>
             <text lang="fr"> Filtrer les données station CDT </text>
         </submenu>
-        <submenu id="3a">
+        <submenu id="2-3">
             <text lang="en"> Selecting CDT Station Data </text>
             <text lang="fr"> Sélectionner les données station CDT </text>
         </submenu>
