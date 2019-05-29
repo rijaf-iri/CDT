@@ -458,7 +458,15 @@ $(document).ready(function () {
     </li>
     <li class="divider"></li>
     <li>
-      <a href="plot_ncdf.html">Plot NetCDF Data</a>
+      <a href="plot_ncdf_one.html">Plot NetCDF Data (One File)</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_ncdf_seq.html">Plot NetCDF Data (Sequential Files)</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_ncdf_vars.html">Plot NetCDF Data (Multiple Variables)</a>
     </li>
     <li class="divider"></li>
     <li>
@@ -488,17 +496,51 @@ $(document).ready(function () {
 </div>
 
 
-<!--
-image dir /images/data_prepraration/aggregate_data
--->
+<p>The menu <span class="menuselection">Aggregate Data ‣ Aggregating Time Series</span>   allows to do a temporal aggregation. For example, if you have daily data, you can aggregate into pentad, dekadal, monthly or seasonal data.</p>
 <center>
 <p><img src="images/data_prepraration/aggregate_data/aggregate_TS.gif" style="width:55.0%;height:50.0%" /></p>
 </center>
 <p><br></p>
+<ol style="list-style-type: decimal">
+<li>Select the time step of the input data to aggregate. Valid options: daily, pentad, dekadal or monthly.</li>
+<li>Select the time step in which the data will be aggregated.
+<ul>
+<li>Pentad: There are 6 pentads in a calendar month. The pentad must be 1, 2, 3, 4, 5 or 6; pentad 1 (contains the days from the 1st to 5th), pentad 2 (6th to 10th), pentad 3 (11th to 15th), pentad 4 (16th to 20th), pentad 5 (21st to 25th) and pentad 6 (26th to the end of the month).</li>
+<li>Dekadal: There are 3 dekads in a calendar month. The dekad must be 1, 2 or 3; dekad 1 (contains the days from the 1st to 10th), dekad 2 (11th to 20th) and dekad 3 (21st to the end of the month).</li>
+<li>Monthly: The data will be aggregated monthly.</li>
+<li>Annual: The data will be aggregated from January to December for each year.</li>
+<li>Seasonal: The data will be aggregated for each season of the year. The length of the season varies from 2 to 12 months.</li>
+<li>Rolling Seasonal: The data will be aggregated over a rolling season. For example, for a seasonal data with 3 months length, the following seasons will be calculated for each year: JFM, FMA, MAM, AMJ, MJJ, JJA, JAS, ASO, SON, OND, NDJ, DJF.</li>
+</ul></li>
+<li>If the outputs are seasonal, specify the start month of the season.</li>
+<li>If the outputs are seasonal or rolling seasonal, specify the length of the season.</li>
+<li>Select the input data format to convert. Available data formats are: <a href="cdt_data_input.html#cdt.format.data"><strong>CDT stations data format</strong></a>, <a href="cdt_data_input.html#cdt.dataset"><strong>CDT dataset format (gridded)</strong></a> and <a href="cdt_data_input.html#cdt.ncdf.data"><strong>NetCDF gridded data</strong></a>.</li>
+<li>If the input data is a <em>CDT station data format</em>, select from the drop-down list the file containing the station data to be converted if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right. If the input data is a <em>CDT dataset format (gridded)</em>, type the full path to the index file of the CDT dataset or browse it. In case of <em>NetCDF gridded data</em>, type the full path to the folder containing the NetCDF files or browse it.</li>
+<li>In case of <em>NetCDF gridded data</em>, click on the button <span class="buttonclass">   Settings </span>  . A dialog box will be displayed in which you can set the date range, provide a sample file and change the filename format of the NetCDF file.</li>
+</ol>
 <center>
 <p><img src="images/data_prepraration/aggregate_data/set_ncdf.gif" style="width:35.0%;height:30.0%" /></p>
 </center>
 <p><br></p>
+<div style="display: inline-block; float: right; width: 95%">
+<ul>
+<li>(<strong>a</strong>) Set the date range of the data to be aggregated. See <a href="cdt_data_input.html#cdt.date.range">Setting date range</a> for more details.</li>
+<li>(<strong>b</strong>) Provide a NetCDF sample file.</li>
+<li>(<strong>c</strong>) Change the filename format to conform with the NetCDF files name. See <a href="cdt_data_input.html#cdt.ncdf.ffrmt">NetCDF filename format</a> for more details.</li>
+</ul>
+</div>
+<div style="clear: right;">
+
+</div>
+<ol start="8" style="list-style-type: decimal">
+<li>Select the function to use to aggregate the data. Valid options: <strong>mean</strong> (average), <strong>sum</strong> (total), <strong>max</strong> (maximum) or <strong>min</strong> (minimum). If the time step of the input data is daily, a function <strong>count</strong> is available which allows to compute the number of days when a variable is less or greater than a given threshold.</li>
+<li>Minimum fraction of available data that must be present within each output time step (otherwise result is missing).</li>
+<li>In case of the function <strong>count</strong>, select the operator to be applied.</li>
+<li>In case of the function <strong>count</strong>, specify the threshold to be used.</li>
+<li>If the input data is a <em>CDT station data format</em>, type the name of the file to save the aggregated data or the full path to the file or browse it from the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right. For <em>CDT dataset format (gridded)</em> and <em>NetCDF gridded data</em>, type the full path to the folder to save the aggregated data or browse it.</li>
+</ol>
+<p>Click on the button <img src="images/common/execute24.gif" title="Execute the append task" id="cdtIcons" class="cdtIcons" /> to aggregate the data.</p>
+<p>For <em>CDT dataset format (gridded)</em> and <em>NetCDF gridded data</em>, the aggregated data are saved in a new folder named <strong>Aggregated_Data</strong> under the folder you provided to save the output in (<strong>12</strong>).</p>
 
 <footer class="navbar navbar-inverse  navbar-fixed-bottom">
     <p>

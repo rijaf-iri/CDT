@@ -458,7 +458,15 @@ $(document).ready(function () {
     </li>
     <li class="divider"></li>
     <li>
-      <a href="plot_ncdf.html">Plot NetCDF Data</a>
+      <a href="plot_ncdf_one.html">Plot NetCDF Data (One File)</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_ncdf_seq.html">Plot NetCDF Data (Sequential Files)</a>
+    </li>
+    <li class="divider"></li>
+    <li>
+      <a href="plot_ncdf_vars.html">Plot NetCDF Data (Multiple Variables)</a>
     </li>
     <li class="divider"></li>
     <li>
@@ -488,13 +496,29 @@ $(document).ready(function () {
 </div>
 
 
-<!--
-image dir /images/data_prepraration/aggregate_data
--->
+<p>The menu <span class="menuselection">Aggregate Data ‣ Aggregate/Disaggregate Spatial NetCDF data</span>   allows to perform a spatial aggregation and disaggregation, in other words, regridding. Regridding is the process of interpolating from one grid resolution to a different grid resolution.</p>
 <center>
 <p><img src="images/data_prepraration/aggregate_data/aggregate_SP.gif" style="width:65.0%;height:60.0%" /></p>
 </center>
 <p><br></p>
+<ol style="list-style-type: decimal">
+<li>Select the number of files to regrid. Valid options: <em>One NetCDF file</em> or <em>Multiple NetCDF files</em>.</li>
+<li>If you want to regrid one NetCDF file, select the file from the drop-down list if it is already loaded or open it from the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> in the right. In case of multiple NetCDF files, type the full path to the folder containing the NetCDF files or browse it.</li>
+<li>In case of multiple NetCDF files, provide a NetCDF sample file.</li>
+<li>The bounding box and the resolution of the data will be displayed in this area.</li>
+<li>Check this box if the grid points to be used for the regridding are from other NetCDF file.</li>
+<li>Provide the NetCDF file whose grid will be used to regrid the data.</li>
+<li>Select the regridding to use. Valid options:
+<ul>
+<li><strong>Aggregate</strong>: regrid data from high resolution into coarse resolution.</li>
+<li><strong>Disaggregate</strong>: regrid data from coarse resolution into high resolution. <strong><em>Spatial disaggregation should be used and interpreted with the utmost caution</em></strong>. No additional information other than what is already contained in the original data is obtained.</li>
+</ul></li>
+<li>In case of aggregation, if you set yourself the new grid, two interpolation methods are available: <strong>mean</strong> and <strong>bilinear</strong> interpolation. The <em>mean</em> method consist in averaging the values from the old grid points which are included in the new grid point. This method is usually used to aggregate elevation data from a high resolution Digital Elevation Model. If you use a grid points from other NetCDF file, the <em>bilinear</em> method only is available. For disaggregation, only the <em>bilinear</em> method is available.</li>
+<li>If a grid from other NetCDF data is not used to regrid, (<strong>5</strong> is not checked), specify here the bounding box and the resolution of the new grid.</li>
+<li>Type the full path to the folder to save the regridded data or browse it.</li>
+</ol>
+<p>Click on the button <img src="images/common/execute24.gif" title="Execute the append task" id="cdtIcons" class="cdtIcons" /> to regrid the data.</p>
+<p>The regridded data are saved in a new folder named <strong>Regrided_NetCDF</strong> under the folder you provided to save the output in (<strong>10</strong>).</p>
 
 <footer class="navbar navbar-inverse  navbar-fixed-bottom">
     <p>

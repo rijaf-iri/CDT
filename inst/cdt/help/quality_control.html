@@ -613,7 +613,7 @@ div.tocify {
 </center>
 <p><br></p>
 <ol style="list-style-type: decimal">
-<li><p>Select from the drop-down list the file containing the station data to be checked if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left.</p></li>
+<li><p>Select from the drop-down list the file containing the station data to be checked if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right.</p></li>
 <li><p>Click on this button to set the parameters to be used for the false-zeros check. It displays a dialog box</p></li>
 </ol>
 <center>
@@ -629,7 +629,7 @@ div.tocify {
 <li>(<strong>e</strong>) Specify the minimum threshold to be used to flag that a month contains a false zero. If the ratio of the percentage of zero at the target station and the average of the percentage of zero of the neighbor stations is greater than this threshold the corresponding month is flagged as suspicious.</li>
 </ul>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="3" style="list-style-type: decimal">
@@ -648,7 +648,7 @@ div.tocify {
 </center>
 <p><br></p>
 <ol style="list-style-type: decimal">
-<li>If you already performed a false zeros check, you do not need to run it again, you can check this box, the input field below will be activated and you can provide the full path to <strong>FalseZeros.rds</strong> under the folder <strong>FALSE.ZEROS.CHECK_data</strong> by browsing it through the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left.</li>
+<li>If you already performed a false zeros check, you do not need to run it again, you can check this box, the input field below will be activated and you can provide the full path to <strong>FalseZeros.rds</strong> under the folder <strong>FALSE.ZEROS.CHECK_data</strong> by browsing it through the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right.</li>
 <li>The stations with a month containing false zeros are listed here. You can select a station and click on the button <span class="buttonclass">       View &amp; Edit Result     </span>   to view the results. You can use the buttons <span class="buttonclass">   &lt;&lt; </span>   or <span class="buttonclass">   &gt;&gt; </span>   to switch to the previous or next station. It will open a table on the right panel showing the output of the false zeros for the selected station.</li>
 </ol>
 <center>
@@ -669,13 +669,13 @@ div.tocify {
 </li>
 </ul>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <div style="display: inline-block; float: right; width: 95%">
 <p>After verifying each month flagged as containing false zeros, if you find that the month does not have false zeros, you can remove it from the table by right-clicking on the column of row number corresponding to this month then from the pop menu click on <span class="menuselection">Delete selected row</span>  .</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <center>
@@ -685,7 +685,7 @@ div.tocify {
 <div style="display: inline-block; float: right; width: 95%">
 <p>After editing this table, you have to save the changes you made. You can go to the menu <span class="menuselection">File ‣ Save table</span>   or click on the button <img src="images/common/save_table24.gif" title="Save table" id="cdtIcons" class="cdtIcons" /> in the toolbar to save the table. If the table is saved correctly, you should see an output message <em>“Table saved successfully”</em>.</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="3" style="list-style-type: decimal">
@@ -714,7 +714,7 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 <p><br></p>
 <ol style="list-style-type: decimal">
 <li>Select the time step of the station data to be checked.</li>
-<li>Select from the drop-down list the file containing the station data to be checked if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left.</li>
+<li>Select from the drop-down list the file containing the station data to be checked if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right.</li>
 <li>If you want to use elevation data to select the neighbor stations, check this box and click on the button <span class="buttonclass">   Settings </span>  , it will display a dialog box which allows to specify the elevation data to be used.</li>
 </ol>
 <center>
@@ -724,7 +724,7 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 <div style="display: inline-block; float: right; width: 95%">
 <p>If the elevation data come from DEM (<em>Digital Elevation Model</em>), select (<strong>a1</strong>), you have to provide the DEM file in (<strong>a2</strong>) in NetCDF format, select it from the drop-down list if it is already loaded or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" />. If the elevation data come from the station data select (<strong>b</strong>).</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="4" style="list-style-type: decimal">
@@ -745,7 +745,7 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 <li>(<strong>g</strong>) and (<strong>h</strong>) provide the thresholds to check if the value at the target is an <strong>isolated precipitation</strong></li>
 </ul>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <center>
@@ -759,9 +759,10 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 </center>
 <p>Where<br />
 <strong><em>Pmax</em></strong>: maximum value of neighboring stations<br />
-<strong><em>Pobs</em></strong>: value of target station</p>
+<strong><em>Pobs</em></strong>: value of target station<br />
+<strong><em>ISPMAX</em></strong> and <strong><em>ISPOBS</em></strong>: values to be provided by the user, depend on the climatology of the region</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <div style="display: inline-block; float: right; width: 95%">
@@ -769,7 +770,7 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 <li>(<strong>i</strong>), (<strong>j</strong>) and (<strong>k</strong>) provide the thresholds to check if the value at the target is an <strong>isolated dryness</strong></li>
 </ul>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <center>
@@ -784,31 +785,33 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 <p>Where<br />
 <strong><em>Pmin</em></strong> : minimum value of neighboring stations<br />
 <strong><em>Pobs</em></strong> : value of target station<br />
-<strong><em>P25</em></strong> : the first quartile of neighboring stations</p>
+<strong><em>P25</em></strong> : the first quartile of neighboring stations<br />
+<strong><em>ISDMIN</em></strong>, <strong><em>ISDOBS</em></strong> and <strong><em>ISDQ1</em></strong>: values to be provided by the user, depend on the climatology of the region</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <div style="display: inline-block; float: right; width: 95%">
 <ul>
-<li>(<strong>l</strong>) a multiplier factor to be provided (usually between 2 and 4, the default value is 2.8) to check the <strong>too large deviation</strong> values.</li>
+<li>(<strong>l</strong>) interquartile range factor (<strong><em>IQRF</em></strong>): a multiplier factor to be provided by the user (usually between 2 and 4, the default value is 2.8) to check the <strong>too large deviation</strong> values.</li>
 </ul>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <div style="display: inline-block; float: right; width: 85%">
 <p>To check the deviation of an observation from the values of the neighbor stations, the approach using the Z-score will be applied.</p>
 <p>If an observation is strongly deviate to the right-tail (<strong>too large deviation above</strong>) and stated as implausible if</p>
 <center>
-<strong>(<em>Pobs</em> - <em>Q50</em>) / <em>IRQ</em> &gt; 2 . <em>IQRF</em></strong> and <strong><em>Pobs</em> &gt; <em>ISPBOS</em></strong>
+<strong>(<em>Pobs</em> - <em>Q50</em>) / <em>IQR</em> &gt; 2 . <em>IQRF</em></strong> and <strong><em>Pobs</em> &gt; <em>ISPBOS</em></strong>
 </center>
 <p>Where<br />
 <strong><em>Pobs</em></strong> : value of target station<br />
 <strong><em>Q50</em></strong> : the median of neighboring stations<br />
-<strong><em>IQR</em></strong> : the interquartile range of neighboring stations</p>
+<strong><em>IQR</em></strong> : the interquartile range of neighboring stations<br />
+<strong><em>IQRF</em></strong>: value to be provided by the user</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <center>
@@ -818,10 +821,10 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 <div style="display: inline-block; float: right; width: 85%">
 <p>If an observation is strongly deviate to the left-tail (<strong>too large deviation below</strong>) and stated as implausible if</p>
 <center>
-<strong>(<em>Pobs</em> - <em>Q50</em>) / <em>IRQ</em> &lt; -<em>IQRF</em></strong> and <strong><em>Pobs</em> ≤ <em>ISPBOS</em></strong>
+<strong>(<em>Pobs</em> - <em>Q50</em>) / <em>IQR</em> &lt; -<em>IQRF</em></strong> and <strong><em>Pobs</em> ≤ <em>ISDOBS</em></strong>
 </center>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <center>
@@ -844,7 +847,7 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 </center>
 <p><br></p>
 <ol style="list-style-type: decimal">
-<li>If you already performed an outliers check, you do not need to run it again, you can check this box, the input field below will be activated and you can provide the full path to <strong>OutliersCheck.rds</strong> under the folder <strong>RR.OUTLIERS.CHECK_data</strong> by browsing it through the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left.</li>
+<li>If you already performed an outliers check, you do not need to run it again, you can check this box, the input field below will be activated and you can provide the full path to <strong>OutliersCheck.rds</strong> under the folder <strong>RR.OUTLIERS.CHECK_data</strong> by browsing it through the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right.</li>
 <li>The stations with suspicious values are listed here. You can select a station and click on the button <span class="buttonclass">       View &amp; Edit Result     </span>   to view and edit the result of the QC for this station. You can use the buttons <span class="buttonclass">   &lt;&lt; </span>   or <span class="buttonclass">   &gt;&gt; </span>   to switch to the previous or next station. It will open a table on the right panel showing the output of the QC for the selected station.</li>
 </ol>
 <center>
@@ -877,7 +880,7 @@ CDT:::FalseZerosCheck_replaceAll(indexFZ, action = &quot;all&quot;)</code></pre>
 </ul>
 <p>After editing this table, you have to save the changes you made. You can go to the menu <span class="menuselection">File ‣ Save table</span>   or click on the button <img src="images/common/save_table24.gif" title="Save table" id="cdtIcons" class="cdtIcons" /> in the toolbar to save the table. If the table is saved correctly, you should see an output message <em>“Table saved successfully”</em>.</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="3" style="list-style-type: decimal">
@@ -946,7 +949,7 @@ CDT:::QC.RR_replaceAll(indexQC, action = &quot;all&quot;)</code></pre>
 <ol style="list-style-type: decimal">
 <li>Select the time step of the station data to be checked.</li>
 <li>Choose the variable to be checked between the maximum and minimum temperature.</li>
-<li>Select from the drop-down list the file containing the station data to be checked if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left.
+<li>Select from the drop-down list the file containing the station data to be checked if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right.
 <ul>
 <li>If TMAX is selected in (<strong>2</strong>), this should be the file containing the maximum temperature.</li>
 <li>If TMIN is selected in (<strong>2</strong>), this should be the file containing the minimum temperature.</li>
@@ -965,7 +968,7 @@ CDT:::QC.RR_replaceAll(indexQC, action = &quot;all&quot;)</code></pre>
 <div style="display: inline-block; float: right; width: 95%">
 <p>If the elevation data come from DEM (<em>Digital Elevation Model</em>), select (<strong>a1</strong>), you have to provide the DEM file in (<strong>a2</strong>) in NetCDF format, select it from the drop-down list if it is already loaded or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" />. If the elevation data come from the station data select (<strong>b</strong>).</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="6" style="list-style-type: decimal">
@@ -987,7 +990,7 @@ CDT:::QC.RR_replaceAll(indexQC, action = &quot;all&quot;)</code></pre>
 <li>(<strong>h</strong>) If using elevation data to select the neighbor stations, specify the maximum altitude difference (in meter) to be used to select the neighbor stations. For example, 800 m means the stations located 400 m above and below the target station will be selected.</li>
 </ul>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="7" style="list-style-type: decimal">
@@ -1004,7 +1007,7 @@ CDT:::QC.RR_replaceAll(indexQC, action = &quot;all&quot;)</code></pre>
 </center>
 <p><br></p>
 <ol style="list-style-type: decimal">
-<li>If you already performed an outliers check, you do not need to run it again, you can check this box, the input field below will be activated and you can provide the full path to <strong>OutliersCheck.rds</strong> under the folder <strong>TMAX.OUTLIERS.CHECK_data</strong> or <strong>TMIN.OUTLIERS.CHECK_data</strong> by browsing it through the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left.</li>
+<li>If you already performed an outliers check, you do not need to run it again, you can check this box, the input field below will be activated and you can provide the full path to <strong>OutliersCheck.rds</strong> under the folder <strong>TMAX.OUTLIERS.CHECK_data</strong> or <strong>TMIN.OUTLIERS.CHECK_data</strong> by browsing it through the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right.</li>
 <li>The stations with suspicious values are listed here. You can select a station and click on the button <span class="buttonclass">       View &amp; Edit Result     </span>   to view and edit the result of the QC for this station. You can use the buttons <span class="buttonclass">   &lt;&lt; </span>   or <span class="buttonclass">   &gt;&gt; </span>   to switch to the previous or next station. It will open a table on the right panel showing the output of the QC for the selected station.</li>
 </ol>
 <center>
@@ -1038,7 +1041,7 @@ CDT:::QC.RR_replaceAll(indexQC, action = &quot;all&quot;)</code></pre>
 </ul>
 <p>After editing this table, you have to save the changes you made. You can go to the menu <span class="menuselection">File ‣ Save table</span>   or click on the button <img src="images/common/save_table24.gif" title="Save table" id="cdtIcons" class="cdtIcons" /> in the toolbar to save the table. If the table is saved correctly, you should see an output message <em>“Table saved successfully”</em>.</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="3" style="list-style-type: decimal">

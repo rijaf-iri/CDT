@@ -610,7 +610,7 @@ div.tocify {
 <p><br></p>
 <ol style="list-style-type: decimal">
 <li><p>Select the input data format to convert. Available data formats are: <a href="cdt_data_input.html#cdt.format.data"><strong>CDT stations data format</strong></a>, <a href="cdt_data_input.html#cdt.ncdf.data"><strong>NetCDF gridded data</strong></a>.</p></li>
-<li><p>If the input data is a <em>CDT station data format</em>, select from the drop-down list the file containing the dekadal temperature data to be converted if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left. In case of <em>NetCDF gridded data</em>, type the full path to the folder containing the NetCDF files or browse it from the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left. Then click on the button <span class="buttonclass">   Settings </span>  . A dialog box will be displayed in which you can provide a sample file and change the filename format of the NetCDF file.</p></li>
+<li><p>If the input data is a <em>CDT station data format</em>, select from the drop-down list the file containing the station data to be converted if it is already loaded, or open it from the browse button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right. In case of <em>NetCDF gridded data</em>, type the full path to the folder containing the NetCDF files or browse it from the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right. Then click on the button <span class="buttonclass">   Settings </span>  . A dialog box will be displayed in which you can provide a sample file and change the filename format of the NetCDF file.</p></li>
 </ol>
 <center>
 <p><img src="images/data_prepraration/data_conversion/set_ncdf1.gif" style="width:40.0%;height:35.0%" /></p>
@@ -629,7 +629,7 @@ div.tocify {
 </ul></li>
 </ul>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <div style="display: inline-block; float: right; width: 90%">
@@ -637,7 +637,7 @@ div.tocify {
 If you have a NetCDF dataset with the file name <strong>outTS_2017-12_2018-02.nc</strong>, the format should be like this <strong>outTS_%Y-%M_%Y-%M.nc</strong>.<br />
 If the file name is <strong>onset_20181201.nc</strong>, the format should be like this <strong>onset_%Y%M%D.nc</strong>.</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="3" style="list-style-type: decimal">
@@ -647,7 +647,7 @@ If the file name is <strong>onset_20181201.nc</strong>, the format should be lik
 <li><strong>Field Units</strong>: the CPT tag <em>cpt:units</em> for the units in which the data are stored.</li>
 <li><strong>Missing Value</strong>: the CPT tag <em>cpt:missing</em> for the missing value code.</li>
 </ul></li>
-<li>Type the name of the file to save the converted data or the full path to the file. You can also click on <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left, it opens a file dialog where you can select and/or type the name, the path and the file extension.</li>
+<li>Type the name of the file to save the converted data or the full path to the file. You can also click on <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right, it opens a file dialog where you can select and/or type the name, the path and the file extension.</li>
 </ol>
 <p>Click on the button <img src="images/common/execute24.gif" title="Execute the append task" id="cdtIcons" class="cdtIcons" /> to start the conversion.</p>
 </div>
@@ -660,7 +660,7 @@ If the file name is <strong>onset_20181201.nc</strong>, the format should be lik
 <p><br></p>
 <ol style="list-style-type: decimal">
 <li>Select the format of the data to convert and the format in which the data will be converted.</li>
-<li>Type the full path to the folder containing the files to convert or browse it from the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left.</li>
+<li>Type the full path to the folder containing the files to convert or browse it from the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right.</li>
 <li>Type the full path to the folder to save the converted files or browse it using the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" />.</li>
 <li>If the output files are in NetCDF format, all these fields will be activated allow you to define the NetCDF variable. Take a look at the function <code>ncvar_def</code> of the <code>R</code> package <code>ncdf4</code> for more details.</li>
 </ol>
@@ -676,7 +676,7 @@ If the file name is <strong>onset_20181201.nc</strong>, the format should be lik
 <ol style="list-style-type: decimal">
 <li>Select the time step of the NetCDF data.</li>
 <li>Set the date range you want to include to the data descriptor file. See <a href="cdt_data_input.html#cdt.date.range">Setting date range</a> for more details.</li>
-<li>Type the full path to the folder containing the NetCDF files or browse it from the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left. Then click on the button <span class="buttonclass">   Settings </span>  . A dialog box will be displayed in which you can provide a sample file and change the filename format of the NetCDF file.</li>
+<li>Type the full path to the folder containing the NetCDF files or browse it from the button <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right. Then click on the button <span class="buttonclass">   Settings </span>  . A dialog box will be displayed in which you can provide a sample file and change the filename format of the NetCDF file.</li>
 </ol>
 <center>
 <p><img src="images/data_prepraration/data_conversion/set_ncdf2.gif" style="width:40.0%;height:35.0%" /></p>
@@ -693,7 +693,7 @@ If the file name is <strong>onset_20181201.nc</strong>, the format should be lik
 </ul></li>
 </ul>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <div style="display: inline-block; float: right; width: 90%">
@@ -701,11 +701,11 @@ If the file name is <strong>onset_20181201.nc</strong>, the format should be lik
 If you have a NetCDF dataset with the file name <strong>rr_mrg_20180121_ALL.nc</strong>, the format should be like this <strong>rr_mrg_%Y%M%D_ALL.nc</strong>.<br />
 If the file name is <strong>rfe_201801.nc</strong>, the format should be like this <strong>rfe_%Y%M.nc</strong>.</p>
 </div>
-<div style="clear: both;">
+<div style="clear: right;">
 
 </div>
 <ol start="4" style="list-style-type: decimal">
-<li>Type the name of the file to save the data descriptor file or the full path to the file. You can also click on <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the left, it opens a file dialog where you can select and/or type the name, the path and the file extension.</li>
+<li>Type the name of the file to save the data descriptor file or the full path to the file. You can also click on <img src="images/common/browsefiledir.png" title="Browse for a file" id="cdtIconsBr" class="cdtIconsBr" /> on the right, it opens a file dialog where you can select and/or type the name, the path and the file extension.</li>
 </ol>
 <p>Click on the button <img src="images/common/execute24.gif" title="Execute the append task" id="cdtIcons" class="cdtIcons" /> to create the data descriptor file.</p>
 </div>
