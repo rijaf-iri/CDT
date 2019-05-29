@@ -245,6 +245,7 @@ rain_no_rain.mask <- function(locations.stn, newgrid, pars.RnoR)
 	ij <- over(locations.stn, as(newgrid, "SpatialPixels"))
 	locations.stn$rnr.stn <- ifelse(locations.stn$stn < wet.day, 0, 1)
 	locations.stn$rnr.grd <- ifelse(rnr.grd[ij] < wet.day, 0, 1)
+	locations.stn <- locations.stn[!is.na(locations.stn$rnr.grd), ]
 
 	glm.binom <- glm(rnr.stn ~ rnr.grd, data = locations.stn, family = binomial(link = "logit"))
 
