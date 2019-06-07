@@ -290,8 +290,6 @@ Validation.STAT.PanelCmd <- function(){
 			stateHOVd <- if(tclvalue(.cdtData$EnvData$hovd) == '1') 'disabled' else 'normal'
 			tkconfigure(en.hovd, state = stateHOVd)
 			tkconfigure(bt.hovd, state = stateHOVd)
-			stateBTEx <- if(tclvalue(.cdtData$EnvData$hovd) == '1') 'normal' else 'disabled'
-			tkconfigure(bt.extract.station, state = stateBTEx)
 		})
 
 		##############################################

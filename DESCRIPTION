@@ -48,7 +48,6 @@ Imports:
     RCurl,
     jsonlite (>= 1.2),
     XML,
-    gmt
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues
