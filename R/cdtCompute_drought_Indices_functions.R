@@ -1,17 +1,19 @@
 
 SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = 'Gamma')
 {
+	min.non.na <- 5
 	nl <- nrow(data.mat)
 	don.tmp0 <- data.mat * NA
-	icol <- which(colSums(!is.na(data.mat)) > 4)
+	icol <- which(colSums(!is.na(data.mat)) >= min.non.na)
 	if(length(icol) == 0) return(don.tmp0)
 	data.mat <- data.mat[, icol, drop = FALSE]
 
+	don.tmp <- data.mat
 	if(tscale > 1){
 		don.tmp <- don.tmp0
 		for(k in 1:(nl - tscale + 1))
 			don.tmp[k + tscale - 1, ] <- colSums(data.mat[k:(k + tscale - 1), , drop = FALSE], na.rm = TRUE)
-	}else don.tmp <- data.mat
+	}
 
 	estime.pars.fun <- switch(distribution,
 						"Gamma" = list(lmomco::pargam, lmomco::cdfgam),
@@ -20,7 +22,10 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
 
 	estime.pars <- function(x){
 		x <- x[!is.na(x)]
-		if(length(x) < 5) return(NULL)
+		n <- length(x)
+		if(n < min.non.na) return(NULL)
+		if(length(unique(x)) == 1)
+			x <- x + runif(n, min = 0.1, max = 0.5)
 		lmr <- lmomco::lmoms(x)
 		if(!lmomco::are.lmom.valid(lmr)) return(NULL)
 		estime.pars.fun[[1]](lmr)
@@ -32,8 +37,7 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
 		spi.out <- don.mon * NA
 
 		no.na <- colSums(!is.na(don.mon))
-		don.sd <- matrixStats::colSds(don.mon, na.rm = TRUE)
-		icol1 <- no.na > 4 & !is.na(don.sd) & don.sd != 0
+		icol1 <- no.na >= min.non.na
 		if(!any(icol1)) return(spi.out)
 		don.mon <- don.mon[, icol1, drop = FALSE]
 
@@ -57,7 +61,7 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
 				# qnorm(estime.pars.fun[[2]](don.mon1[, j], PARS[[j]]))
 				ina <- !is.na(don.mon1[, j])
 				out <- don.mon1[, j] * NA
-				if(length(which(ina)) < 4) return(out)
+				if(length(which(ina)) < (min.non.na - 1)) return(out)
 				out[ina] <- qnorm(estime.pars.fun[[2]](don.mon1[ina, j], PARS[[j]]))
 				out[is.infinite(out) & sign(out) == -1] <- -5
 				out[is.infinite(out) & sign(out) == 1] <- 5
@@ -72,16 +76,18 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
 		}
 
 		if(distribution == 'Z-Score'){
-			don.sd <- don.sd[icol1]
+			don.sd <- matrixStats::colSds(don.mon, na.rm = TRUE)
 			don.mean <- colMeans(don.mon, na.rm = TRUE)
 			SPI <- sweep(sweep(don.mon, 2, don.mean, FUN = "-"), 2, don.sd, FUN = "/")
+			SPI[is.nan(SPI) | is.infinite(SPI)] <- 0
 		}
 
 		spi.out[, icol1] <- SPI
 		return(spi.out)
 	})
 
-	for(k in 1:frequency) don.tmp[seq(k + tscale - 1, nl, frequency), ] <- spi[[k]]
+	for(k in 1:frequency)
+		don.tmp[seq(k + tscale - 1, nl, frequency), ] <- spi[[k]]
 	don.tmp0[, icol] <- don.tmp
 	rm(spi, don.tmp)
 	return(don.tmp0)
@@ -104,9 +110,10 @@ SPEI_Aggregate_data <- function(data.mat, tscale = 1)
 
 SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distribution = 'Gamma')
 {
+	min.non.na <- 5
 	nl <- nrow(data.mat)
 	dist.params <- matrix(list(NA), nrow = frequency, ncol = ncol(data.mat))
-	icol <- which(colSums(!is.na(data.mat)) > 4)
+	icol <- which(colSums(!is.na(data.mat)) >= min.non.na)
 	if(length(icol) == 0) return(dist.params)
 	data.mat <- data.mat[, icol, drop = FALSE]
 
@@ -117,7 +124,10 @@ SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distributi
 
 	estime.pars <- function(x){
 		x <- x[!is.na(x)]
-		if(length(x) < 5) return(NULL)
+		n <- length(x)
+		if(n < min.non.na) return(NULL)
+		if(length(unique(x)) == 1)
+			x <- x + runif(n, min = 0.1, max = 0.5)
 		lmr <- lmomco::lmoms(x)
 		if(!lmomco::are.lmom.valid(lmr)) return(NULL)
 		estime.pars.fun(lmr)
@@ -129,8 +139,7 @@ SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distributi
 		pars.out <- matrix(list(NA), nrow = 1, ncol = ncol(don.mon))
 
 		no.na <- colSums(!is.na(don.mon))
-		don.sd <- matrixStats::colSds(don.mon, na.rm = TRUE)
-		icol1 <- no.na > 4 & !is.na(don.sd) & don.sd != 0
+		icol1 <- no.na >= min.non.na
 		if(!any(icol1)) return(pars.out)
 		don.mon <- don.mon[, icol1, drop = FALSE]
 
@@ -148,7 +157,7 @@ SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distributi
 		}
 
 		if(distribution == 'Z-Score'){
-			don.sd <- don.sd[icol1]
+			don.sd <- matrixStats::colSds(don.mon, na.rm = TRUE)
 			don.mean <- colMeans(don.mon, na.rm = TRUE)
 			PARS <- lapply(seq_along(don.mean), function(j) list(mean = don.mean[j], sd = don.sd[j]))
 		}
@@ -205,6 +214,7 @@ SPEI_computation <- function(data.mat, params, tscale = 1, frequency = 12, distr
 			don.sd <- sapply(params[k, ], '[[', 'sd')
 			don.mean <- sapply(params[k, ], '[[', 'mean')
 			spi <- sweep(sweep(don.tmp, 2, don.mean, FUN = "-"), 2, don.sd, FUN = "/")
+			spi[is.nan(spi) | is.infinite(spi)] <- 0
 		}
 
 		return(spi)
