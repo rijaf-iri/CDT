@@ -1,6 +1,5 @@
 
 cdtDataset_readData <- function(){
-	stt <- Sys.time()
 
 	datarepo <- file.path(.cdtData$GalParams$output$dir, .cdtData$GalParams$output$data.name)
 	datadir <- file.path(datarepo, 'DATA')
@@ -145,31 +144,34 @@ cdtDataset_readData <- function(){
 
 	#########################################################
 
-	chunkdate <- split(seq_along(ncInfo$dates), ceiling(seq_along(ncInfo$dates) / 30))
+	Insert.Messages.Out("Reading NetCDF data .....")
+
+	chunkdate <- split(seq_along(ncInfo$dates), ceiling(seq_along(ncInfo$dates) / 1825))
 
 	is.parallel <- doparallel(length(chunkdate) >= 10)
 	`%parLoop%` <- is.parallel$dofun
 	ret <- foreach(jj = seq_along(chunkdate), .packages = "ncdf4") %parLoop% {
-		retdaty <- lapply(chunkdate[[jj]], function(j){
+		retdat <- lapply(chunkdate[[jj]], function(j){
 			nc <- try(nc_open(ncInfo$nc.files[j]), silent = TRUE)
 			if(inherits(nc, "try-error")) return(NULL)
 			vars <- ncvar_get(nc, varid = ncInfo$ncinfo$varid)
 			nc_close(nc)
 			vars <- if(ncInfo$ncinfo$xo < ncInfo$ncinfo$yo) vars[xo, yo] else t(vars)[xo, yo]
-			vars <- round(c(vars), 4)
 
-			file.tmp <- file.path(datadir, paste0(jj, ".gz"))
-			con <- gzfile(file.tmp, open = "a", compression = 6)
-			cat(c(vars, "\n"), file = con)
-			close(con)
-			return(ncInfo$dates[j])
+			return(c(vars))
 		})
+		inull <- sapply(retdat, is.null)
+		retdat <- do.call(rbind, retdat)
+		retdaty <- ncInfo$dates[chunkdate[[jj]]][!inull]
 
-		retdaty <- do.call(c, retdaty)
+		saveRDS(retdat, file = file.path(datadir, paste0(jj, "_v.rds")))
 		saveRDS(retdaty, file = file.path(datadir, paste0(jj, "_d.rds")))
+		rm(retdaty, retdat); gc()
 		return(0)
 	}
 	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+
+	Insert.Messages.Out("Reading NetCDF data done!")
 
 	###################
 
@@ -183,18 +185,16 @@ cdtDataset_readData <- function(){
 
 	###################
 
+	Insert.Messages.Out("Creating CDT gridded dataset .....")
+
 	toExports <- c("col.idx", "datadir")
-	is.parallel <- doparallel(length(col.idx) >= 50)
+	is.parallel <- doparallel(length(col.idx) >= 200)
 	`%parLoop%` <- is.parallel$dofun
 
 	ret <- lapply(seq_along(chunkdate), function(jj){
-		file.gz <- file.path(datadir, paste0(jj, ".gz"))
-		gunzip(file.gz)
-		file.tmp <- file_path_sans_ext(file.gz)
-		tmp <- fread(file.tmp, header = FALSE, sep = " ", stringsAsFactors = FALSE, colClasses = "numeric")
+		file.tmp <- file.path(datadir, paste0(jj, "_v.rds"))
+		tmp <- readRDS(file.tmp)
 		unlink(file.tmp)
-		tmp <- as.matrix(tmp)
-		dimnames(tmp) <- NULL
 
 		ret <- foreach(j = seq_along(col.idx), .export = toExports) %parLoop% {
 			chk <- tmp[, col.idx[[j]], drop = FALSE]
@@ -212,15 +212,12 @@ cdtDataset_readData <- function(){
 			return(0)
 		}
 
-		stt0 <- Sys.time() - stt
-		vdaty <- ncInfo$dates[chunkdate[[jj]]]
-		Insert.Messages.Out(paste("Date:", vdaty[1], "-", vdaty[length(vdaty)],
-							"| Elapsed time:", as.character(stt0), attr(stt0, "units")))
-
 		rm(tmp); gc()
 		return(0)
 	})
 	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+
+	Insert.Messages.Out("Creating CDT gridded dataset done!")
 
 	#########################################################
 
@@ -239,9 +236,6 @@ cdtDataset_readData <- function(){
 	open(con, "wb")
 	saveRDS(cdtTmpVar, con)
 	close(con)
-
-	stt <- Sys.time()-stt
-	Insert.Messages.Out(paste("Elapsed time:", as.character(stt), attr(stt, "units")))
 
 	rm(ncDaty, idx, odaty, Adates, Aindex, cdtTmpVar, ncDataInfo, ncInfo)
 	gc()

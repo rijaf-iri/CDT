@@ -219,24 +219,28 @@ climdexCalc.RR <- function(GeneralParameters){
 
 		################################
 		# R95pTOT: Annual total PRCP when RR > 95p
-		if(is.R95pTOT & pTOT){
-			don.r95 <- don$data[, !miss.data, drop = FALSE]
-			ix95 <- sweep(don.r95, 2, precentiles[, 1], FUN = '<')
-			don.r95[ix95 & !is.na(don.r95)] <- 0
-
-			pars.R95pTOT <- list(min.frac = 0.95, aggr.fun = "sum")
-			R95pTOT <- climdex_aggr.fun(don.r95, GeneralParameters$start.july,
-										ndim, pars.R95pTOT, pars.trend, index.NS)
-			rm(ix95, don.r95)
-
+		if(is.R95pTOT){
+			R95pTOT <- NULL
 			year.don <- matrix(NA, y.nrow, d.ncol)
-			year.don[, !miss.data] <- R95pTOT$year
-			R95pTOT$year <- year.don
-			rm(year.don)
 			trend.don <- matrix(NA, 10, d.ncol)
-			trend.don[, !miss.data] <- R95pTOT$trend
+			if(pTOT){
+				don.r95 <- don$data[, !miss.data, drop = FALSE]
+				ix95 <- sweep(don.r95, 2, precentiles[, 1], FUN = '<')
+				don.r95[ix95 & !is.na(don.r95)] <- 0
+
+				pars.R95pTOT <- list(min.frac = 0.95, aggr.fun = "sum")
+				ndim0 <- ndim
+				ndim0$ncol <- ncol(don.r95)
+				R95pTOT <- climdex_aggr.fun(don.r95, GeneralParameters$start.july,
+											ndim0, pars.R95pTOT, pars.trend, index.NS)
+				rm(ix95, don.r95)
+
+				year.don[, !miss.data] <- R95pTOT$year
+				trend.don[, !miss.data] <- R95pTOT$trend
+			}
+			R95pTOT$year <- year.don
 			R95pTOT$trend <- trend.don
-			rm(trend.don)
+			rm(year.don, trend.don)
 
 			climdex.write.cdtstation(R95pTOT, index.NS$year, outDIR, "R95pTOT", xhead)
 			rm(R95pTOT)
@@ -244,24 +248,28 @@ climdexCalc.RR <- function(GeneralParameters){
 
 		################################
 		# R99pTOT: Annual total PRCP when RR > 99p
-		if(is.R99pTOT & pTOT){
-			don.r99 <- don$data[, !miss.data, drop = FALSE]
-			ix99 <- sweep(don.r99, 2, precentiles[, 2], FUN = '<')
-			don.r99[ix99 & !is.na(don.r99)] <- 0
-
-			pars.R99pTOT <- list(min.frac = 0.95, aggr.fun = "sum")
-			R99pTOT <- climdex_aggr.fun(don.r99, GeneralParameters$start.july,
-										ndim, pars.R99pTOT, pars.trend, index.NS)
-			rm(ix99, don.r99)
-
+		if(is.R99pTOT){
+			R99pTOT <- NULL
 			year.don <- matrix(NA, y.nrow, d.ncol)
-			year.don[, !miss.data] <- R99pTOT$year
-			R99pTOT$year <- year.don
-			rm(year.don)
 			trend.don <- matrix(NA, 10, d.ncol)
-			trend.don[, !miss.data] <- R99pTOT$trend
+			if(pTOT){
+				don.r99 <- don$data[, !miss.data, drop = FALSE]
+				ix99 <- sweep(don.r99, 2, precentiles[, 2], FUN = '<')
+				don.r99[ix99 & !is.na(don.r99)] <- 0
+
+				pars.R99pTOT <- list(min.frac = 0.95, aggr.fun = "sum")
+				ndim0 <- ndim
+				ndim0$ncol <- ncol(don.r99)
+				R99pTOT <- climdex_aggr.fun(don.r99, GeneralParameters$start.july,
+											ndim0, pars.R99pTOT, pars.trend, index.NS)
+				rm(ix99, don.r99)
+
+				year.don[, !miss.data] <- R99pTOT$year
+				trend.don[, !miss.data] <- R99pTOT$trend
+			}
+			R99pTOT$year <- year.don
 			R99pTOT$trend <- trend.don
-			rm(trend.don)
+			rm(year.don, trend.don)
 
 			climdex.write.cdtstation(R99pTOT, index.NS$year, outDIR, "R99pTOT", xhead)
 			rm(R99pTOT)
@@ -562,24 +570,28 @@ climdexCalc.RR <- function(GeneralParameters){
 
 			################################
 			# R95pTOT: Annual total PRCP when RR > 95p
-			if(is.R95pTOT & pTOT){
-				don.r95 <- don.data[, !miss.data, drop = FALSE]
-				ix95 <- sweep(don.r95, 2, precentiles[, 1], FUN = '<')
-				don.r95[ix95 & !is.na(don.r95)] <- 0
-
-				pars.R95pTOT <- list(min.frac = 0.95, aggr.fun = "sum")
-				R95pTOT <- climdex_aggr.fun(don.r95, GeneralParameters$start.july,
-											ndim, pars.R95pTOT, pars.trend, index.NS1)
-				rm(ix95, don.r95)
-
+			if(is.R95pTOT){
+				R95pTOT <- NULL
 				year.don <- matrix(NA, y.nrow, d.ncol)
-				year.don[, !miss.data] <- R95pTOT$year
-				R95pTOT$year <- year.don
-				rm(year.don)
 				trend.don <- matrix(NA, 10, d.ncol)
-				trend.don[, !miss.data] <- R95pTOT$trend
+				if(pTOT){
+					don.r95 <- don.data[, !miss.data, drop = FALSE]
+					ix95 <- sweep(don.r95, 2, precentiles[, 1], FUN = '<')
+					don.r95[ix95 & !is.na(don.r95)] <- 0
+
+					pars.R95pTOT <- list(min.frac = 0.95, aggr.fun = "sum")
+					ndim0 <- ndim
+					ndim0$ncol <- ncol(don.r95)
+					R95pTOT <- climdex_aggr.fun(don.r95, GeneralParameters$start.july,
+												ndim0, pars.R95pTOT, pars.trend, index.NS1)
+					rm(ix95, don.r95)
+
+					year.don[, !miss.data] <- R95pTOT$year
+					trend.don[, !miss.data] <- R95pTOT$trend
+				}
+				R95pTOT$year <- year.don
 				R95pTOT$trend <- trend.don
-				rm(trend.don)
+				rm(year.don, trend.don)
 
 				writeCdtDatasetChunk.sequence(R95pTOT$year, chunkcalc[[chkj]], index.data.year,
 											paths.index[["R95pTOT"]]$dir.year.data, do.par = do.parChunk)
@@ -590,24 +602,28 @@ climdexCalc.RR <- function(GeneralParameters){
 
 			################################
 			# R99pTOT: Annual total PRCP when RR > 99p
-			if(is.R99pTOT & pTOT){
-				don.r99 <- don.data[, !miss.data, drop = FALSE]
-				ix99 <- sweep(don.r99, 2, precentiles[, 2], FUN = '<')
-				don.r99[ix99 & !is.na(don.r99)] <- 0
-
-				pars.R99pTOT <- list(min.frac = 0.95, aggr.fun = "sum")
-				R99pTOT <- climdex_aggr.fun(don.r99, GeneralParameters$start.july,
-											ndim, pars.R99pTOT, pars.trend, index.NS1)
-				rm(ix99, don.r99)
-
+			if(is.R99pTOT){
+				R99pTOT <- NULL
 				year.don <- matrix(NA, y.nrow, d.ncol)
-				year.don[, !miss.data] <- R99pTOT$year
-				R99pTOT$year <- year.don
-				rm(year.don)
 				trend.don <- matrix(NA, 10, d.ncol)
-				trend.don[, !miss.data] <- R99pTOT$trend
+				if(pTOT){
+					don.r99 <- don.data[, !miss.data, drop = FALSE]
+					ix99 <- sweep(don.r99, 2, precentiles[, 2], FUN = '<')
+					don.r99[ix99 & !is.na(don.r99)] <- 0
+
+					pars.R99pTOT <- list(min.frac = 0.95, aggr.fun = "sum")
+					ndim0 <- ndim
+					ndim0$ncol <- ncol(don.r99)
+					R99pTOT <- climdex_aggr.fun(don.r99, GeneralParameters$start.july,
+												ndim0, pars.R99pTOT, pars.trend, index.NS1)
+					rm(ix99, don.r99)
+
+					year.don[, !miss.data] <- R99pTOT$year
+					trend.don[, !miss.data] <- R99pTOT$trend
+				}
+				R99pTOT$year <- year.don
 				R99pTOT$trend <- trend.don
-				rm(trend.don)
+				rm(year.don, trend.don)
 
 				writeCdtDatasetChunk.sequence(R99pTOT$year, chunkcalc[[chkj]], index.data.year,
 											paths.index[["R99pTOT"]]$dir.year.data, do.par = do.parChunk)
