@@ -640,7 +640,12 @@ PlotMulitpleDataCmd <- function(){
 	#######################################################################################################
 
 	getDatasets <- function(){
-		Infodata <- lapply(.cdtData$GalParams$DATASETs, function(don) don$pars$input[c('dir', 'format')])
+		# Infodata <- lapply(.cdtData$GalParams$DATASETs, function(don) don$pars$input[c('dir', 'format')])
+		Infodata <- lapply(.cdtData$GalParams$DATASETs, function(don){
+			dir <- str_trim(tclvalue(don$tcl$input.file))
+			format <- don$pars$input$format
+			list(dir = dir, format = format)
+		})
 
 		getdatasets <- TRUE
 		if(!is.null(.cdtData$GalParams$Infodata))
@@ -648,10 +653,11 @@ PlotMulitpleDataCmd <- function(){
 
 		if(getdatasets){
 			tmp.don <- lapply(.cdtData$GalParams$DATASETs, function(don){
+				input.file <- str_trim(tclvalue(don$tcl$input.file))
 				if(don$pars$data.type == "cdtstation"){
-					ret <- list(data = NULL, dates = NULL, msg = paste("Unable to read station data:", don$pars$input$dir))
+					ret <- list(data = NULL, dates = NULL, msg = paste("Unable to read station data:", input.file))
 
-					dat <- getStnOpenData(don$pars$input$dir)
+					dat <- getStnOpenData(input.file)
 					if(is.null(dat))  return(ret)
 
 					dat <- splitCDTData0(dat)
@@ -708,10 +714,10 @@ PlotMulitpleDataCmd <- function(){
 
 					ret <- list(data = NULL, dates = NULL, msg = NULL)
 
-					nc.path <- file.path(don$pars$input$dir, ncfiles)
+					nc.path <- file.path(input.file, ncfiles)
 					nc.exist <- file.exists(nc.path)
 					if(!any(nc.exist)){
-						ret$msg <- paste("No netcdf files found in:", don$pars$input$dir)
+						ret$msg <- paste("No netcdf files found in:", input.file)
 						return(ret)
 					}
 

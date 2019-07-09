@@ -1190,6 +1190,7 @@ startCDT <- function(wd = NA, lang = NA){
 				})
 
 				if(testConnection()){
+					if(Sys.getenv("TAR")[1] == "") Sys.setenv("TAR" = "internal")
 					devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, upgrade_dependencies = FALSE, force = TRUE)
 					Insert.Messages.Out("Uptading CDT done!")
 					Insert.Messages.Out("You have to start a new R session.")
