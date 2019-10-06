@@ -14,7 +14,7 @@ Install the downloaded file (example: R-3.6.1-win.exe). Perform a default instal
 
 Go to the CRAN website [CRAN](https://CRAN.R-project.org).
 Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Download the recommended version of `Rtools`.
-Install the downloaded file. Use the default installation path **C:\Rtools**, install all components, and add `Rtools` to the system the system PATH.
+Install the downloaded file. Use the default installation path **C:\Rtools**, install all components, and add `Rtools` to the system PATH.
 
 ### 3) Install the package `tkrplot`
 
