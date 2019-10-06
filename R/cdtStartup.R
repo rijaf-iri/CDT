@@ -1218,24 +1218,23 @@ startCDT <- function(wd = NA, lang = NA){
 
             ##########
             tkadd(menu.aide, "command", label = lang.menu[["help"]][["2"]], command = function(){
-                Insert.Messages.Out("Under Construction", TRUE, 'w')
-                # Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['11']], TRUE, 'i')
-                # tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
-                # tcl('update')
-                # on.exit({
-                #     tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
-                #     tcl('update')
-                # })
+                Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['11']], TRUE, 'i')
+                tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
+                tcl('update')
+                on.exit({
+                    tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+                    tcl('update')
+                })
 
-                # if(testConnection()){
-                #     if(Sys.getenv("TAR")[1] == "") Sys.setenv("TAR" = "internal")
-                #     devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, upgrade_dependencies = FALSE, force = TRUE)
-                #     Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['12']], TRUE, 's')
-                #     Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['13']], TRUE, 'i')
-                # }else{
-                #     Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['14']], TRUE, 'e')
-                #     return(NULL)
-                # }
+                if(testConnection()){
+                    if(Sys.getenv("TAR")[1] == "") Sys.setenv("TAR" = "internal")
+                    devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, upgrade_dependencies = FALSE, force = TRUE)
+                    Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['12']], TRUE, 's')
+                    Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['13']], TRUE, 'i')
+                }else{
+                    Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['14']], TRUE, 'e')
+                    return(NULL)
+                }
             })
 
             ##########
