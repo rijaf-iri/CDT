@@ -15,7 +15,7 @@ local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Co
 
 #############################
 
-.onLoad <- function(...){
+.onLoad <- function(libname, pkgname){
     if(WindowsOS()) ostype <- "Windows"
     if(MacOSXP()) ostype <- "MacOS"
     if(LinuxOS()) ostype <- "Linux"
