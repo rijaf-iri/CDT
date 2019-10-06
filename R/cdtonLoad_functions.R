@@ -36,69 +36,70 @@ local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Co
         bak.files <- c("Tcl_config.json_orig.bak", "cdt_config.json_orig.bak")
         config.dir <- file.path(.cdtDir$dirLocal, "config")
         file.copy(file.path(config.dir, orig.files), file.path(config.dir, bak.files), overwrite = TRUE)
-    }else{
-        dirs <- c("config", "languages")
-        md5.cdt.f <- file.path(.cdtDir$Root, "config", "cdt_md5_files")
-        md5.loc.f <- file.path(.cdtDir$dirLocal, "config", "cdt_md5_files")
-        md5.cdt <- readRDS(md5.cdt.f)
-        md5.loc <- readRDS(md5.loc.f)
-
-        if(!isTRUE(all.equal(md5.cdt, md5.loc))){
-            for(j in seq_along(dirs)){
-                cdtDirRoot <- file.path(.cdtDir$Root, dirs[j])
-                cdtDirLocal <- file.path(.cdtDir$dirLocal, dirs[j])
-                cdt <- md5.cdt[[dirs[j]]]
-                loc <- md5.loc[[dirs[j]]]
-                if(!isTRUE(all.equal(cdt, loc))){
-                    ## new
-                    new <- !cdt$files %in% loc$files
-                    if(any(new)){
-                        tocp <- file.path(cdtDirRoot, cdt$files[new])
-                        vers <- file.path(cdtDirLocal, cdt$files[new])
-                        ret <- file.copy(tocp, vers, overwrite = TRUE)
-                        if(any(!ret)){
-                            warning("Unable to copy")
-                            for(i in which(!ret))
-                                warning(paste(tocp[i], "to", dirname(vers[i])))
-                             warning("Please copy manually")
-                            warning("Copy of configurations files to local directory failed.")
-                        }
-                    }
-                    ## change
-                    ixfl1 <- match(loc$files, cdt$files)
-                    ixfl1 <- ixfl1[!is.na(ixfl1)]
-                    cdt.files <- cdt$files[ixfl1]
-                    cdt.md5 <- cdt$md5[ixfl1]
-                    ixfl2 <- loc$files %in% cdt.files
-                    loc.files <- loc$files[ixfl2]
-                    loc.md5 <- loc$md5[ixfl2]
-
-                    change <- cdt.md5 != loc.md5
-                    if(any(change)){
-                        tocp <- file.path(cdtDirRoot, cdt.files[change])
-                        vers <- file.path(cdtDirLocal, cdt.files[change])
-                        bak <- paste0(vers, "_bak-", format(Sys.time(), "%Y%m%d%H%M"))
-                        file.copy(vers, bak, overwrite = TRUE)
-                        ret <- file.copy(tocp, vers, overwrite = TRUE)
-                        if(any(!ret)){
-                            warning("Unable to copy")
-                            for(i in which(!ret))
-                                warning(paste(tocp[i], "to", dirname(vers[i])))
-                            warning("Please copy manually")
-                            warning("Copy of configurations files to local directory failed.")
-                        }
-                    }
-                }
-            }
-            ret <- file.copy(md5.cdt.f, md5.loc.f, overwrite = TRUE)
-            if(!ret){
-                msg1 <- "Unable to copy\n"
-                msg2 <- paste(md5.cdt.f, "to", file.path(.cdtDir$dirLocal, "config"))
-                warning(paste(msg1, msg2))
-                warning("Unable to update local CDT configuration.")
-            }
-        }
     }
+    # else{
+    #     dirs <- c("config", "languages")
+    #     md5.cdt.f <- file.path(.cdtDir$Root, "config", "cdt_md5_files")
+    #     md5.loc.f <- file.path(.cdtDir$dirLocal, "config", "cdt_md5_files")
+    #     md5.cdt <- readRDS(md5.cdt.f)
+    #     md5.loc <- readRDS(md5.loc.f)
+
+    #     if(!isTRUE(all.equal(md5.cdt, md5.loc))){
+    #         for(j in seq_along(dirs)){
+    #             cdtDirRoot <- file.path(.cdtDir$Root, dirs[j])
+    #             cdtDirLocal <- file.path(.cdtDir$dirLocal, dirs[j])
+    #             cdt <- md5.cdt[[dirs[j]]]
+    #             loc <- md5.loc[[dirs[j]]]
+    #             if(!isTRUE(all.equal(cdt, loc))){
+    #                 ## new
+    #                 new <- !cdt$files %in% loc$files
+    #                 if(any(new)){
+    #                     tocp <- file.path(cdtDirRoot, cdt$files[new])
+    #                     vers <- file.path(cdtDirLocal, cdt$files[new])
+    #                     ret <- file.copy(tocp, vers, overwrite = TRUE)
+    #                     if(any(!ret)){
+    #                         warning("Unable to copy")
+    #                         for(i in which(!ret))
+    #                             warning(paste(tocp[i], "to", dirname(vers[i])))
+    #                          warning("Please copy manually")
+    #                         warning("Copy of configurations files to local directory failed.")
+    #                     }
+    #                 }
+    #                 ## change
+    #                 ixfl1 <- match(loc$files, cdt$files)
+    #                 ixfl1 <- ixfl1[!is.na(ixfl1)]
+    #                 cdt.files <- cdt$files[ixfl1]
+    #                 cdt.md5 <- cdt$md5[ixfl1]
+    #                 ixfl2 <- loc$files %in% cdt.files
+    #                 loc.files <- loc$files[ixfl2]
+    #                 loc.md5 <- loc$md5[ixfl2]
+
+    #                 change <- cdt.md5 != loc.md5
+    #                 if(any(change)){
+    #                     tocp <- file.path(cdtDirRoot, cdt.files[change])
+    #                     vers <- file.path(cdtDirLocal, cdt.files[change])
+    #                     bak <- paste0(vers, "_bak-", format(Sys.time(), "%Y%m%d%H%M"))
+    #                     file.copy(vers, bak, overwrite = TRUE)
+    #                     ret <- file.copy(tocp, vers, overwrite = TRUE)
+    #                     if(any(!ret)){
+    #                         warning("Unable to copy")
+    #                         for(i in which(!ret))
+    #                             warning(paste(tocp[i], "to", dirname(vers[i])))
+    #                         warning("Please copy manually")
+    #                         warning("Copy of configurations files to local directory failed.")
+    #                     }
+    #                 }
+    #             }
+    #         }
+    #         ret <- file.copy(md5.cdt.f, md5.loc.f, overwrite = TRUE)
+    #         if(!ret){
+    #             msg1 <- "Unable to copy\n"
+    #             msg2 <- paste(md5.cdt.f, "to", file.path(.cdtDir$dirLocal, "config"))
+    #             warning(paste(msg1, msg2))
+    #             warning("Unable to update local CDT configuration.")
+    #         }
+    #     }
+    # }
 
     #############################
 
