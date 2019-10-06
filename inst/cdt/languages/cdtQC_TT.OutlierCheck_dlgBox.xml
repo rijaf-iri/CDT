@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Outliers Check Parameters </text>
+    </title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Use Elevation Data </text>
+        </checkbutton>
+        <label id="1-1">
+            <text lang="en"> Minimum Temperature </text>
+        </label>
+        <label id="1-2">
+            <text lang="en"> Maximum Temperature </text>
+        </label>
+        <label id="2-1">
+            <text lang="en"> Time window </text>
+        </label>
+        <label id="2-2">
+            <text lang="en"> Multiplier of SD </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Elevation </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Neighborhood Selection </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Min number neighbors </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Max number neighbors </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Max search distance </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Elevation difference </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1-1">
+            <status>
+                <text lang="en"> Minimum value of temperature (degC) to be considered </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum value of temperature (degC) to be considered </text>
+            </tooltip>
+        </content>
+        <content id="1-2">
+            <status>
+                <text lang="en"> Maximum value of temperature (degC) to be considered </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum value of temperature (degC) to be considered </text>
+            </tooltip>
+        </content>
+        <content id="2-1">
+            <status>
+                <text lang="en"> Sliding time window to be used on regression </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Sliding time window to be used on regression </text>
+            </tooltip>
+        </content>
+        <content id="2-2">
+            <status>
+                <text lang="en"> Multiplier of standard deviation to be used </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Multiplier of standard deviation to be used </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Check this box if you want to use elevation data to select neighbors stations </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if you want to use elevation data to select neighbors stations </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Select the elevation data to be used </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the elevation data to be used </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Minimum number of neighbors stations to be selected </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of neighbors stations to be selected </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Maximum number of neighbors stations to be selected </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum number of neighbors stations to be selected </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Maximum search distance (in km) for neighbors stations </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum search distance (in km) for neighbors stations </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Maximum altitude difference (in m) for neighbors stations to be selected </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum altitude difference (in m) for neighbors stations to be selected </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

@@ -1,5 +1,5 @@
 Package: CDT
-Version: 5.0
+Version: 6.0
 Title: Climate Data Tools
 Description: Climate Data Tools (CDT) is a set of utility functions
     for meteorological data quality control, homogenization
@@ -12,42 +12,46 @@ Authors@R: c(
     )
 Author: Rija Faniriantsoa [aut, cre],
     Tufa Dinku [aut],
-    Bernard Minoungou [ctb]
+    Bernard Minoungou [ctb] (Translation to french)
 Maintainer: Rija Faniriantsoa <rijaf@iri.columbia.com>
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
+NeedsCompilation: yes
 Depends: 
-    R (>= 3.2.0),
-    ncdf4,
-    sp
+    R (>= 3.5.0),
 Imports: 
-    R.utils,
+    ncdf4,
+    sp,
+    jsonlite (>= 1.2),
     stringr,
-    grid,
-    lattice,
-    latticeExtra,
-    parallel,
-    foreach,
-    doParallel,
+    XML,
+    rgdal,
+    rgeos,
+    raster,
     gstat,
     automap,
+    maptools,
+    reshape2,
+    foreach,
+    doParallel,
+    doSNOW,
+    R.utils,
+    matrixStats,
+    urltools,
+    curl,
     fields,
     maps,
-    maptools,
-    raster,
-    rgeos,
-    rgdal,
-    matrixStats,
-    reshape2,
-    data.table,
+    methods,
+    devtools,
     fitdistrplus,
-    lmomco,
-    qmap,
     ADGofTest,
-    RCurl,
-    jsonlite (>= 1.2),
-    XML,
+    qmap,
+    lmomco,
+    lattice,
+    latticeExtra,
+    dynamicTreeCut,
+    hexbin,
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues

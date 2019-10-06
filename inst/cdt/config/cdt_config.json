@@ -11,10 +11,29 @@
     "missval.anom": "-9999",
     // full path to the working directory
     "wd": "",
+    // region of interest
+    "region":
+    {
+        "minlon": 42,
+        "maxlon": 52,
+        "minlat": -26,
+        "maxlat": -11.5
+    },
+    // Precipitation merging precision
+    "prec.precip":
+    {
+        // If true, the precision of the variable will be taken from the data source
+        "from.data": true,
+        // If "from.data": false, specify the precision.
+        // Valid options: "short", "integer", "float" or "double"
+        "prec": "short"
+    },
     // use parallel processing
-    "parallel": true,
+    "dopar": true,
     // set number of cores automatically detectCores() - 1
-    "auto.cores": true,
-    // set the Number of cores to be used if "auto.cores": false,
-    "nb.cores": 2
+    "detect.cores": false,
+    // set the Number of cores to be used if "detect.cores": false,
+    "nb.cores": 3,
+    // to use Google Maps API key, put null if you do not have api key
+    "Google.Maps.API.key": null
 }

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Dates and Times Range Settings </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Start datetime </text>
+        </label>
+        <label id="2">
+            <text lang="en"> End datetime </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Year </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Dekad </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Pentad </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Day </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Hour </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Minute </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Invalid date and time </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Month must between 1 and 12 </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Dekad must between 1 and 3 </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Pentad must between 1 and 6 </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Day must between 1 and 31 </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Hour must between 0 and 23 </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Minute must between 0 and 59 </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Invalid start date and time </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Invalid end date and time </text>
+        </content>
+    </message>
+</dialog_box>

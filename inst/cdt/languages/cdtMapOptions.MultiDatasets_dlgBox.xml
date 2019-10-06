@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Plot Title </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Points Size </text>
+        </label>
+    </widget>
+</dialog_box>

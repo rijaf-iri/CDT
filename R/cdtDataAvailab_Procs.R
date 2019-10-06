@@ -1,7 +1,8 @@
 
 AssessDataAvailProcs <- function(GeneralParameters){
 	if(!dir.exists(GeneralParameters$outdir)){
-		Insert.Messages.Out(paste(GeneralParameters$outdir, "did not find"), format = TRUE)
+		msg <- paste(GeneralParameters$outdir, .cdtData$EnvData$message[[6]])
+		Insert.Messages.Out(msg, TRUE, "e")
 		return(NULL)
 	}
 
@@ -85,7 +86,7 @@ AssessDataAvailProcs <- function(GeneralParameters){
 	###################
 
 	jstn <- lapply(seq(nbstn), function(j){
-		x <- which(complete.cases(don$data[, j]))
+		x <- which(stats::complete.cases(don$data[, j]))
 		if(length(x)) c(min(x), max(x)) else integer(0)
 	})
 
@@ -102,11 +103,13 @@ AssessDataAvailProcs <- function(GeneralParameters){
 
 	if(GeneralParameters$intstep == "pentad"){
 		seqtime <- as.Date(don$dates, "%Y%m%d")
-		daty <- as.Date(paste0(format(seqtime, "%Y-%m-"), c(1, 6, 11, 16, 21, 26)[as.numeric(format(seqtime, "%d"))]))
+		pen <- c(1, 6, 11, 16, 21, 26)[as.numeric(format(seqtime, "%d"))]
+		daty <- as.Date(paste0(format(seqtime, "%Y-%m-"), pen))
 	}
 	if(GeneralParameters$intstep == "dekadal"){
 		seqtime <- as.Date(don$dates, "%Y%m%d")
-		daty <- as.Date(paste0(format(seqtime, "%Y-%m-"), c(1, 11, 21)[as.numeric(format(seqtime, "%d"))]))
+		dek <- c(1, 11, 21)[as.numeric(format(seqtime, "%d"))]
+		daty <- as.Date(paste0(format(seqtime, "%Y-%m-"), dek))
 	}
 	if(GeneralParameters$intstep == "monthly")
 		daty <- as.Date(paste0(don$dates, "01"), "%Y%m%d")
@@ -137,7 +140,7 @@ AssessDataAvailProcs <- function(GeneralParameters){
 
 	xdist <- Distance.Correlation(donne, cbind(lon, lat))
 	xsummary <- summary.Distance.Correlation(xdist[, 1], xdist[, 2])
-	loess <- loess.smooth(xdist[, 1], xdist[, 2])
+	loess <- stats::loess.smooth(xdist[, 1], xdist[, 2])
 
 	dist.cor <- list(dst.cor = xdist, summary = xsummary, loess = loess)
 	saveRDS(dist.cor, file.path(dataCDTdir, "Distance_Correlation.rds"))
@@ -159,7 +162,7 @@ Distance.Correlation <- function(data.mat, lonlat){
 	corm <- suppressWarnings(cor(data.mat, use = 'pairwise.complete.obs'))
 	corm[lower.tri(corm, diag = TRUE)] <- NA
 
-	dist <- rdist.earth(lonlat, miles = FALSE)
+	dist <- fields::rdist.earth(lonlat, miles = FALSE)
 	dist[lower.tri(dist, diag = TRUE)] <- NA
 
 	idn <- which(!is.na(corm))

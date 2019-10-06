@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Select NetCDF Variable </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Select variable and dimensions </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Data information </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Select Variable </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> unable to open </text>
+        </content>
+        <content id="2">
+            <text lang="en"> The NetCDF file must have at least 3 dimensions </text>
+        </content>
+        <content id="3">
+            <text lang="en"> The variable must have at least 3 dimensions </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Select the variable to extract </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Select the dimensions associated with the variable </text>
+        </content>
+    </message>
+</dialog_box>

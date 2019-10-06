@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Locations </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Output </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> One Point </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Multiple Points </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Rectangle </text>
+            </option>
+            <option id="4">
+                <text lang="en"> One Polygon </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Multiple Polygons </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Set Date-Time Range </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Open Attribute Table </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Display Map </text>
+        </button>
+        <button id="4">
+            <text lang="en"> ADD </text>
+        </button>
+        <button id="5">
+            <text lang="en"> GET </text>
+        </button>
+        <button id="6">
+            <text lang="en"> EXTRACT DATA </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Spatial Average Over Selected Area </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Time step of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Input Data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Directory of the NetCDF files </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Index file (*.rds) of the dataset </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Format </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Months to extract </text>
+        </label>
+        <label id="7">
+            <text lang="en"> From </text>
+        </label>
+        <label id="8">
+            <text lang="en"> to </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Shapefile for Administrative Boundaries </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Attribute field to be used and displayed </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Zoom </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Extraction Type </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Type </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Pad </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Latitude </text>
+        </label>
+        <label id="17">
+            <text lang="en"> Polygon </text>
+        </label>
+        <label id="18">
+            <text lang="en"> Output File Format </text>
+        </label>
+        <label id="19">
+            <text lang="en"> File to save extracted data </text>
+        </label>
+        <label id="20">
+            <text lang="en"> Directory to save extracted data </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the NetCDF files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers NetCDF </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the NetCDF files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers NetCDF </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Start and end date to be extracted </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start and end date to be extracted </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Zoom In </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom In </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Zoom Out </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Out </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Zoom Area </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Area </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Pan Tool </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Pan Tool </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Redraw Map </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Redraw Map </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Zoom Reset </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Reset </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> Add value in decimal degree to get \n rectangle centered at the target points </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Add value in decimal degree to get rectangle centered at the target points </text>
+            </tooltip>
+        </content>
+        <content id="14">
+            <status>
+                <text lang="en"> Add value in decimal degree to get rectangle \n centered at the target points </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Add value in decimal degree to get rectangle centered at the target points </text>
+            </tooltip>
+        </content>
+        <content id="15">
+            <status>
+                <text lang="en"> Before to click on the map to select object,\n click here to activate the function </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Before to click on the map to select object, click here to activate the function </text>
+            </tooltip>
+        </content>
+        <content id="16">
+            <status>
+                <text lang="en"> Multiple Points and Polygons: after selecting object from the map \n click here to add the object to the list </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Multiple Points and Polygons: after selecting object from the map \n click here to add the object to the list </text>
+            </tooltip>
+        </content>
+        <content id="17">
+            <status>
+                <text lang="en"> Select the format of the output data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the output data </text>
+            </tooltip>
+        </content>
+        <content id="18">
+            <status>
+                <text lang="en"> Enter the full path to directory to save extracted data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save extracted data </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Provide the ESRI shapefile of the administrative boundaries </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Longitude min not valid </text>
+        </content>
+        <content id="2-1">
+            <text lang="en"> Longitude max not valid </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Latitude min not valid </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Latitude max not valid </text>
+        </content>
+        <content id="5">
+            <text lang="en"> You have to set the NetCDF files parameters </text>
+            <text lang="fr"> Vous devez définir les paramètres des fichiers NetCDF </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Starting extraction ........... </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Extraction finished successfully </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Extraction failed </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Some warnings </text>
+        </content>
+    </message>
+</panel_cmd>

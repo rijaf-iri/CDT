@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Plot NetCDF Data </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Blank grid outside the boundaries </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Add boundaries to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> NetCDF data file </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Boundaries </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the file containing the ESRI shapefiles </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the ESRI shapefiles </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> No shapefiles found </text>
+        </content>
+    </message>
+</panel_cmd>

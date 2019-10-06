@@ -1,260 +1,250 @@
 
 cdtDataset_getParams <- function(){
-	listOpenFiles <- openFile_ttkcomboList()
-	if(WindowsOS()){
-		largeur1 <- 21
-		largeur2 <- 45
-		largeur3 <- 28
-	}else{
-		largeur1 <- 18
-		largeur2 <- 35
-		largeur3 <- 25
-	}
+    listOpenFiles <- openFile_ttkcomboList()
+    if(WindowsOS()){
+        largeur1 <- 31
+        largeur2 <- 65
+        largeur3 <- 54
+    }else{
+        largeur1 <- .cdtEnv$tcl$fun$w.widgets(20.5)
+        largeur2 <- .cdtEnv$tcl$fun$w.widgets(39)
+        largeur3 <- .cdtEnv$tcl$fun$w.widgets(34)
+    }
 
-	xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCreateDataset_dlgBox.xml")
-	lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCreateDataset_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
-	############################################
+    ############################################
 
-	tt <- tktoplevel()
-	tkgrab.set(tt)
-	tkfocus(tt)
+    tt <- tktoplevel()
+    tkgrab.set(tt)
+    tkfocus(tt)
 
-	frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2)
-	frMRG1 <- tkframe(tt)
-	frLeft <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
+    frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2)
+    frMRG1 <- tkframe(tt)
+    frLeft <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
 
-	############################################
+    ############################################
 
-	frtimestep <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+    frtimestep <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
 
-	file.period <- tclVar()
-	cb.periodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:5]
-	periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
-	tclvalue(file.period) <- cb.periodVAL[periodVAL %in% .cdtData$GalParams$Tstep]
+    file.period <- tclVar()
+    cb.periodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
+    periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
+    tclvalue(file.period) <- cb.periodVAL[periodVAL %in% .cdtData$GalParams$tstep]
 
-	txtdek <- switch(.cdtData$GalParams$Tstep, 'dekadal' = 'Dekad', 'pentad' = 'Pentad', 'Day')
-	day.txtVar <- tclVar(txtdek)
-	statedate <- if(.cdtData$GalParams$Tstep == 'monthly') 'disabled' else 'normal'
+    cb.period <- ttkcombobox(frtimestep, values = cb.periodVAL, textvariable = file.period, width = largeur1)
+    bt.period <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur1)
 
-	cb.period <- ttkcombobox(frtimestep, values = cb.periodVAL, textvariable = file.period, width = largeur1)
-	bt.period <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur1)
+    tkconfigure(bt.period, command = function(){
+        months <- .cdtData$GalParams$date.range$Months
+        tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+        .cdtData$GalParams$date.range$Months <- months
+    })
 
-	tkconfigure(bt.period, command = function(){
-		Params <- .cdtData$GalParams[["date.range"]]
-		names(Params) <- c("start.year", "start.mon", "start.day",
-							"end.year", "end.mon", "end.day", "Months")
-		Params <- getInfoDateRange(tt, Params,
-								daypendek.lab = tclvalue(day.txtVar),
-								state.dek = statedate)
-		.cdtData$GalParams$date.range$start.year <- Params$start.year
-		.cdtData$GalParams$date.range$start.mon <- Params$start.mon
-		.cdtData$GalParams$date.range$start.dek <- Params$start.day
-		.cdtData$GalParams$date.range$end.year <- Params$end.year
-		.cdtData$GalParams$date.range$end.mon <- Params$end.mon
-		.cdtData$GalParams$date.range$end.dek <- Params$end.day
-	})
+    tkgrid(cb.period, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(bt.period, row = 0, column = 1, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
-	tkgrid(cb.period, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-	tkgrid(bt.period, row = 0, column = 1, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.period, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
-	helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
-	helpWidget(bt.period, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    ############################################
 
-	###########
-	tkbind(cb.period, "<<ComboboxSelected>>", function(){
-		tstep <- str_trim(tclvalue(file.period))
-		tclvalue(day.txtVar) <- ifelse(tstep == cb.periodVAL[3], 'Dekad',
-								ifelse(tstep == cb.periodVAL[2], 'Pentad', 'Day'))
-		statedate <<- if(tstep == cb.periodVAL[4]) 'disabled' else 'normal'
-	})
+    frameNCDF <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
 
-	############################################
+    dir.NCDF <- tclVar(.cdtData$GalParams$NCDF$dir)
 
-	frameNCDF <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+    txt.NCDF <- tklabel(frameNCDF, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
+    set.NCDF <- ttkbutton(frameNCDF, text = .cdtEnv$tcl$lang$global[['button']][['5']])
+    en.NCDF <- tkentry(frameNCDF, textvariable = dir.NCDF, width = largeur2)
+    bt.NCDF <- tkbutton(frameNCDF, text = "...")
 
-	dir.NCDF <- tclVar(.cdtData$GalParams$NCDF$dir)
+    ######
+    tkconfigure(set.NCDF, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        .cdtData$GalParams[["NCDF"]] <- getInfoNetcdfData(tt, .cdtData$GalParams[["NCDF"]],
+                                                          str_trim(tclvalue(dir.NCDF)),
+                                                          tclvalue(file.period))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+    })
 
-	txt.NCDF <- tklabel(frameNCDF, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-	set.NCDF <- ttkbutton(frameNCDF, text = .cdtEnv$tcl$lang$global[['button']][['5']])
-	en.NCDF <- tkentry(frameNCDF, textvariable = dir.NCDF, width = largeur2)
-	bt.NCDF <- tkbutton(frameNCDF, text = "...")
+    tkconfigure(bt.NCDF, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        dirnc <- tk_choose.dir(getwd(), "")
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        tclvalue(dir.NCDF) <- if(!is.na(dirnc)) dirnc else ""
+    })
 
-	######
-	tkconfigure(set.NCDF, command = function(){
-		.cdtData$GalParams[["NCDF"]] <- getInfoNetcdfData(tt, .cdtData$GalParams[["NCDF"]],
-										str_trim(tclvalue(dir.NCDF)), tclvalue(file.period))
-	})
+    ######
+    tkgrid(txt.NCDF, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(set.NCDF, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(en.NCDF, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(bt.NCDF, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-	tkconfigure(bt.NCDF, command = function(){
-		dirnc <- tk_choose.dir(getwd(), "")
-		tclvalue(dir.NCDF) <- if(!is.na(dirnc)) dirnc else ""
-	})
+    helpWidget(en.NCDF, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+    helpWidget(bt.NCDF, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(set.NCDF, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
-	######
-	tkgrid(txt.NCDF, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-	tkgrid(set.NCDF, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-	tkgrid(en.NCDF, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-	tkgrid(bt.NCDF, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+    ############################################
 
-	helpWidget(en.NCDF, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
-	helpWidget(bt.NCDF, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
-	helpWidget(set.NCDF, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    frUpdate <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
 
-	############################################
+    update.data <- tclVar(.cdtData$GalParams$Update)
+    file.dataRDS <- tclVar(.cdtData$GalParams$cdtDataSet)
 
-	frUpdate <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+    stateUp <- if(tclvalue(update.data) == "1") "normal" else "disabled"
 
-	update.data <- tclVar(.cdtData$GalParams$Update)
-	file.dataRDS <- tclVar(.cdtData$GalParams$cdtDataSet)
+    chk.update <- tkcheckbutton(frUpdate, variable = update.data, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
+    en.update <- tkentry(frUpdate, textvariable = file.dataRDS, width = largeur2, state = stateUp)
+    bt.update <- tkbutton(frUpdate, text = "...", state = stateUp)
 
-	stateUp <- if(tclvalue(update.data) == "1") "normal" else "disabled"
+    tkconfigure(bt.update, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        path.update <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(path.update == "") return(NULL)
+        tclvalue(file.dataRDS) <- path.update
 
-	chk.update <- tkcheckbutton(frUpdate, variable = update.data, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-	en.update <- tkentry(frUpdate, textvariable = file.dataRDS, width = largeur2, state = stateUp)
-	bt.update <- tkbutton(frUpdate, text = "...", state = stateUp)
+        if(file.exists(tclvalue(file.dataRDS))){
+            tclvalue(dir2save) <- dirname(dirname(tclvalue(file.dataRDS)))
+            tclvalue(nom.data) <- basename(dirname(tclvalue(file.dataRDS)))
+        }
+    })
 
-	tkconfigure(bt.update, command = function(){
-		path.update <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
-		if(path.update == "") return(NULL)
-		tclvalue(file.dataRDS) <- path.update
+    tkgrid(chk.update, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.update, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.update, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-		if(file.exists(tclvalue(file.dataRDS))){
-			tclvalue(dir2save) <- dirname(dirname(tclvalue(file.dataRDS)))
-			tclvalue(nom.data) <- basename(dirname(tclvalue(file.dataRDS)))
-		}
-	})
+    helpWidget(chk.update, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    helpWidget(en.update, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+    helpWidget(bt.update, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
-	tkgrid(chk.update, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.update, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(bt.update, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    ###############
 
-	helpWidget(chk.update, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-	helpWidget(en.update, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
-	helpWidget(bt.update, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    tkbind(chk.update, "<Button-1>", function(){
+        stateUp <- if(tclvalue(update.data) == '1') 'disabled' else 'normal'
+        tkconfigure(en.update, state = stateUp)
+        tkconfigure(bt.update, state = stateUp)
+        stateOUT <- if(tclvalue(update.data) == '1') 'normal' else 'disabled'
+        tkconfigure(en.dir2save, state = stateOUT)
+        tkconfigure(bt.dir2save, state = stateOUT)
+        tkconfigure(en.nomdata, state = stateOUT)
+    })
 
-	###############
+    ############################################
 
-	tkbind(chk.update, "<Button-1>", function(){
-		stateUp <- if(tclvalue(update.data) == '1') 'disabled' else 'normal'
-		tkconfigure(en.update, state = stateUp)
-		tkconfigure(bt.update, state = stateUp)
-		stateOUT <- if(tclvalue(update.data) == '1') 'normal' else 'disabled'
-		tkconfigure(en.dir2save, state = stateOUT)
-		tkconfigure(bt.dir2save, state = stateOUT)
-		tkconfigure(en.nomdata, state = stateOUT)
-	})
+    frOutput <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
 
-	############################################
+    dir2save <- tclVar(.cdtData$GalParams$output$dir)
+    nom.data <- tclVar(.cdtData$GalParams$output$data.name)
 
-	frOutput <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+    stateOUT <- if(tclvalue(update.data) == "0") "normal" else "disabled"
 
-	dir2save <- tclVar(.cdtData$GalParams$output$dir)
-	nom.data <- tclVar(.cdtData$GalParams$output$data.name)
+    txt.dir2save <- tklabel(frOutput, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
+    en.dir2save <- tkentry(frOutput, textvariable = dir2save, width = largeur2, state = stateOUT)
+    bt.dir2save <- tkbutton(frOutput, text = "...", state = stateOUT)
+    txt.nomdata <- tklabel(frOutput, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
+    en.nomdata <- tkentry(frOutput, textvariable = nom.data, width = largeur3, state = stateOUT)
 
-	stateOUT <- if(tclvalue(update.data) == "0") "normal" else "disabled"
+    #####
 
-	txt.dir2save <- tklabel(frOutput, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
-	en.dir2save <- tkentry(frOutput, textvariable = dir2save, width = largeur2, state = stateOUT)
-	bt.dir2save <- tkbutton(frOutput, text = "...", state = stateOUT)
-	txt.nomdata <- tklabel(frOutput, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
-	en.nomdata <- tkentry(frOutput, textvariable = nom.data, width = largeur3, state = stateOUT)
+    tkconfigure(bt.dir2save, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        dir2savepth <- tk_choose.dir(.cdtData$GalParams$output$dir, "")
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(is.na(dir2savepth)) tclvalue(dir2save) <- .cdtData$GalParams$output$dir
+        else{
+            dir.create(dir2savepth, showWarnings = FALSE, recursive = TRUE)
+            tclvalue(dir2save) <- dir2savepth
+        }
+    })
 
-	#####
+    #####
 
-	tkconfigure(bt.dir2save, command = function(){
-		dir2savepth <- tk_choose.dir(.cdtData$GalParams$output$dir, "")
-		if(is.na(dir2savepth)) tclvalue(dir2save) <- .cdtData$GalParams$output$dir
-		else{
-			dir.create(dir2savepth, showWarnings = FALSE, recursive = TRUE)
-			tclvalue(dir2save) <- dir2savepth
-		}
-	})
+    tkgrid(txt.dir2save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.dir2save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.dir2save, row = 1, column = 6, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.nomdata, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.nomdata, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-	#####
+    helpWidget(en.dir2save, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+    helpWidget(bt.dir2save, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(en.nomdata, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
 
-	tkgrid(txt.dir2save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.dir2save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(bt.dir2save, row = 1, column = 6, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(txt.nomdata, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(en.nomdata, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    ############################################
+    tkgrid(frtimestep, row = 0, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameNCDF, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frUpdate, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frOutput, row = 3, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
-	helpWidget(en.dir2save, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
-	helpWidget(bt.dir2save, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
-	helpWidget(en.nomdata, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+    ############################################
+    
+    tkgrid(frLeft, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
-	############################################
-	tkgrid(frtimestep, row = 0, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frameNCDF, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-	tkgrid(frUpdate, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-	tkgrid(frOutput, row = 3, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    ############################################
 
-	############################################
-	
-	tkgrid(frLeft, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    bt.prm.OK <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+    bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
-	############################################
+    tkconfigure(bt.prm.OK, command = function(){
+        if(str_trim(tclvalue(dir.NCDF)) %in% c("", "NA")){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }else if((tclvalue(update.data) == "1") & str_trim(tclvalue(file.dataRDS)) %in% c("", "NA")){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }else if((tclvalue(update.data) == "0") & str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }else{
+            .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
+            .cdtData$GalParams$NCDF$dir <- str_trim(tclvalue(dir.NCDF))
 
-	bt.prm.OK <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['1']])
-	bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+            .cdtData$GalParams$Update <- switch(tclvalue(update.data), '0' = FALSE, '1' = TRUE)
+            .cdtData$GalParams$cdtDataSet <- str_trim(tclvalue(file.dataRDS))
+            .cdtData$GalParams$output$dir <- str_trim(tclvalue(dir2save))
+            .cdtData$GalParams$output$data.name <- str_trim(tclvalue(nom.data))
 
-	tkconfigure(bt.prm.OK, command = function(){
-		if(str_trim(tclvalue(dir.NCDF)) %in% c("", "NA")){
-			tkmessageBox(message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
-			tkwait.window(tt)
-		}else if((tclvalue(update.data) == "1") & str_trim(tclvalue(file.dataRDS)) %in% c("", "NA")){
-			tkmessageBox(message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
-			tkwait.window(tt)
-		}else if((tclvalue(update.data) == "0") & str_trim(tclvalue(dir2save)) %in% c("", "NA")){
-			tkmessageBox(message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
-			tkwait.window(tt)
-		}else{
-			.cdtData$GalParams$Tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
-			.cdtData$GalParams$NCDF$dir <- str_trim(tclvalue(dir.NCDF))
+            .cdtData$GalParams$message <- lang.dlg[['message']]
 
-			.cdtData$GalParams$Update <- switch(tclvalue(update.data), '0' = FALSE, '1' = TRUE)
-			.cdtData$GalParams$cdtDataSet <- str_trim(tclvalue(file.dataRDS))
-			.cdtData$GalParams$output$dir <- str_trim(tclvalue(dir2save))
-			.cdtData$GalParams$output$data.name <- str_trim(tclvalue(nom.data))
+            tkgrab.release(tt)
+            tkdestroy(tt)
+            tkfocus(.cdtEnv$tcl$main$win)
+        }
+    })
 
-			.cdtData$GalParams$message <- lang.dlg[['message']]
+    tkconfigure(bt.prm.CA, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(.cdtEnv$tcl$main$win)
+    })
 
-			tkgrab.release(tt)
-			tkdestroy(tt)
-			tkfocus(.cdtEnv$tcl$main$win)
-		}
-	})
+    tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
-	tkconfigure(bt.prm.CA, command = function(){
-		tkgrab.release(tt)
-		tkdestroy(tt)
-		tkfocus(.cdtEnv$tcl$main$win)
-	})
+    ############################################
 
-	tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frMRG0, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frMRG1, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-	############################################
+    ############################3
+    tkwm.withdraw(tt)
+    tcl('update')
+    tt.w <- as.integer(tkwinfo("reqwidth", tt))
+    tt.h <- as.integer(tkwinfo("reqheight", tt))
+    tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+    tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+    tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+    tkwm.transient(tt)
+    tkwm.title(tt, lang.dlg[['title']])
+    tkwm.deiconify(tt)
+    tcl('wm', 'attributes', tt, topmost = TRUE)
 
-	tkgrid(frMRG0, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-	tkgrid(frMRG1, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-	############################3
-	tkwm.withdraw(tt)
-	tcl('update')
-	tt.w <- as.integer(tkwinfo("reqwidth", tt))
-	tt.h <- as.integer(tkwinfo("reqheight", tt))
-	tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
-	tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
-	tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
-	tkwm.transient(tt)
-	tkwm.title(tt, lang.dlg[['title']])
-	tkwm.deiconify(tt)
-
-	tkfocus(tt)
-	tkbind(tt, "<Destroy>", function(){
-		tkgrab.release(tt)
-		tkfocus(.cdtEnv$tcl$main$win)
-	})
-	tkwait.window(tt)
+    tkfocus(tt)
+    tkbind(tt, "<Destroy>", function(){
+        tkgrab.release(tt)
+        tkfocus(.cdtEnv$tcl$main$win)
+    })
+    tkwait.window(tt)
 }

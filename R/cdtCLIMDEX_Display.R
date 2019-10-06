@@ -20,7 +20,7 @@ Climdex.plotMapTrend <- function(){
 	opar <- par(mar = map.args$mar)
 	map.args.add <- list(titre = .titre,
 						SHPOp = .cdtData$EnvData$SHPOp,
-						# MapOp = dataMapOp,
+						MapOp = dataMapOp,
 						data.type = .data.type,
 						plot.type = .plot.type)
 	map.args <- map.args[!(names(map.args) %in% "mar")]
@@ -206,7 +206,7 @@ Climdex.plotVarGraph <- function(){
 	#########
 
 	if(GRAPHTYPE == "Line"){
-		climdex.plot.line(daty, don, trend, xlim = xlim, ylim = ylim,
+		ret <- climdex.plot.line(daty, don, trend, xlim = xlim, ylim = ylim,
 						xlab = xlab, ylab = ylab, title = titre,
 						title.position = titre.pos, axis.font = 1,
 						plotl = optsgph$plot, legends = optsgph$legend,
@@ -214,12 +214,14 @@ Climdex.plotVarGraph <- function(){
 	}
 
 	if(GRAPHTYPE == "Barplot"){
-		climdex.plot.bar(daty, don, trend, xlim = xlim, ylim = ylim,
+		ret <- climdex.plot.bar(daty, don, trend, xlim = xlim, ylim = ylim,
 						xlab = xlab, ylab = ylab, title = titre,
 						title.position = titre.pos, axis.font = 1,
 						barcol = optsgph$colors$col,
 						location = .cdtData$EnvData$location)
 	}
+
+	return(ret)
 }
 
 ##############################################################################
@@ -233,6 +235,7 @@ Climdex.Display.MapsTrend <- function(){
 
 	###############
 	tkbind(imgContainer[[2]], "<Button-1>", function(W, x, y){
+		if(is.null(.cdtData$EnvData$plot.maps$data.type)) return(NULL)
 		if(.cdtData$EnvData$plot.maps$data.type == "cdtstation"){
 			xyid <- getIDLatLonCoords(W, x, y, imgContainer[[3]], getStnIDLabel,
 							stn.coords = .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')])
@@ -264,6 +267,7 @@ Climdex.Display.MapYear <- function(){
 
 	###############
 	tkbind(imgContainer[[2]], "<Button-1>", function(W, x, y){	
+		if(is.null(.cdtData$EnvData$plot.maps$data.type)) return(NULL)
 		if(.cdtData$EnvData$plot.maps$data.type == "cdtstation"){
 			xyid <- getIDLatLonCoords(W, x, y, imgContainer[[3]], getStnIDLabel,
 							stn.coords = .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')])

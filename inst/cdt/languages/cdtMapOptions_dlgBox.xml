@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Custom </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Reverse </text>
+        </label>
+        <label id="2">
+            <text lang="en"> User customized colorkey </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Points Size </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Levels </text>
+        </label>
+        <label id="5">
+            <text lang="en"> User customized levels </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Equidistant colorkey breaks </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Map title </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Colorkey label </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Scale bar </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Add a map scale </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Invalid Levels </text>
+        </content>
+    </message>
+</dialog_box>

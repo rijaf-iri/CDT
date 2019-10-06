@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input Data </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Maps </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Add Data Sets </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Remove </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Save </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Load </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Add boundaries to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Time step </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Data set# </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Map </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Year </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Dekad </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Pentad </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Day </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Hour </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Minute </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Boundaries </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Set netcdf data (sample and filenames format) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Set netcdf data (sample and filenames format) </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the file containing the station data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the netcdf files </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Pentad must be between 1 and 6 </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Dekad must be 1, 2 or 3 </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Hour must be between 0 and 23 </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Minute must be between 0 and 59 </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Invalid date </text>
+        </content>
+        <content id="6">
+            <text lang="en"> does not exist in </text>
+            <text lang="fr"> n'existe pas dans </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Provide a valid file name to save plot data </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Plot data saved successfully. </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Not multiple data sets plot </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Unable to read station data: </text>
+        </content>
+        <content id="11">
+            <text lang="en"> No NetCDF files found in: </text>
+        </content>
+        <content id="12">
+            <text lang="en"> No NetCDF data sample found </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Dates do not overlap </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Unable to read: </text>
+        </content>
+        <content id="15">
+            <text lang="en"> No data to plot </text>
+        </content>
+    </message>
+</panel_cmd>

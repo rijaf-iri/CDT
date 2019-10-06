@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Color Selection </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Add </text>
+            <text lang="fr"> Ajouter </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Save </text>
+            <text lang="fr"> Enregistrer </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Open </text>
+            <text lang="fr"> Ouvrir </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Show </text>
+            <text lang="fr"> Afficher </text>
+        </button>
+        <button id="5">
+            <text lang="en"> Preview </text>
+            <text lang="fr"> Aperçu </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Color: </text>
+            <text lang="fr"> Couleur: </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Edit Colors </text>
+            <text lang="fr"> Éditer les Couleurs </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Change this color </text>
+            <text lang="fr"> Modifier cette couleur </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Remove this color </text>
+            <text lang="fr"> Supprimer cette couleur </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Unknown color name: </text>
+        </content>
+        <content id="2">
+            <text lang="en"> No valid color name </text>
+        </content>
+    </message>
+</dialog_box>

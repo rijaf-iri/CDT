@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> NetCDF Data </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Maps </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Add boundaries to Maps </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Draw a box around plots </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Directory containing the NetCDF data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> NetCDF data sample file </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Filename format </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Dimensions </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Latitude </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Select variable to plot </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Map </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Boundaries </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> File containing a sample of the data in NetCDF, browse with (...) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> File containing a sample of the data in NetCDF, browse with (...) </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Browse here the sample file </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse here the sample file </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the filename format of NetCDF data, example: Bernoulli-Gamma_Pars.STN_2.nc\nReplace the whole string representing the date or sequence by %S\nBernoulli-Gamma_Pars.STN_2.nc becomes Bernoulli-Gamma_Pars.STN_%S.nc </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the filename format of NetCDF data, example: Bernoulli-Gamma_Pars.STN_2.nc </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> The NetCDF must be a spatial data </text>
+        </content>
+        <content id="2">
+            <text lang="en"> No variables found in the NetCDF file </text>
+        </content>
+        <content id="3">
+            <text lang="en"> does not exist </text>
+        </content>
+        <content id="4">
+            <text lang="en"> No NetCDF files found </text>
+        </content>
+        <content id="5">
+            <text lang="en"> No selected variables to plot </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Unable to open: </text>
+        </content>
+        <content id="7">
+            <text lang="en"> not a spatial data </text>
+        </content>
+    </message>
+</panel_cmd>

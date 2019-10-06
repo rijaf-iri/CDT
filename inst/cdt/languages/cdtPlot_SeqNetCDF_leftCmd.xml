@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Plot NetCDF Data </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Add boundaries to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Directory containing the NetCDF data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> NetCDF data sample file </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Filename format </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Map </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Boundaries </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> File containing a sample of the data in NetCDF </text>
+            </status>
+            <tooltip>
+                <text lang="en"> File containing a sample of the data in NetCDF </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the filename format of NetCDF data, example: rfe_2017_01-dk2.nc\nReplace the whole string representing the date or sequence by %S\nrfe_2017_01-dk2.nc becomes rfe_%S.nc </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the filename format of NetCDF data, example: rfe_2017_01-dk2.nc </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> No NetCDF files found </text>
+        </content>
+        <content id="2">
+            <text lang="en"> No NetCDF data sample found </text>
+        </content>
+    </message>
+</panel_cmd>

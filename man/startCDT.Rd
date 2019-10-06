@@ -15,6 +15,8 @@ startCDT(wd = NA, lang = NA)
 Starting CDT GUI from R console.
 }
 \examples{
+
+\dontrun{
 library(CDT)
 
 # Default working directory and English language
@@ -25,5 +27,6 @@ startCDT(lang = "fr")
 
 # Setting both working directory and language
 startCDT("C:/Users/rijaf/Documents/AGHRYMET_ENACTS", "fr")
+}
 
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Colors </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Stations Coordinates </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Color </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Symbol </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Size </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Width </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Duplicates Coordinates </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Coordinates Outside Boundaries </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Boundaries Properties </text>
+        </label>
+    </widget>
+</dialog_box>

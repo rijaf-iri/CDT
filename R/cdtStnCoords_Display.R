@@ -20,19 +20,19 @@ StnChkCoordsPlotMap <- function(){
 	ymax <- .cdtData$EnvData$ZoomXYval[4]
 
 	if(is.na(xmin) | is.null(xmin) | is.infinite(xmin)){
-		Insert.Messages.Out('Longitude min not valid', format = TRUE)
+		Insert.Messages.Out(.cdtData$EnvData[['message']][['19']], format = TRUE)
 		return(NULL)
 	}
 	if(is.na(xmax) | is.null(xmax) | is.infinite(xmax)){
-		Insert.Messages.Out('Longitude max not valid', format = TRUE)
+		Insert.Messages.Out(.cdtData$EnvData[['message']][['20']], format = TRUE)
 		return(NULL)
 	}
 	if(is.na(ymin) | is.null(ymin) | is.infinite(ymin)){
-		Insert.Messages.Out('Latitude min not valid', format = TRUE)
+		Insert.Messages.Out(.cdtData$EnvData[['message']][['21']], format = TRUE)
 		return(NULL)
 	}
 	if(is.na(ymax) | is.null(ymax) | is.infinite(ymax)){
-		Insert.Messages.Out('Latitude max not valid', format = TRUE)
+		Insert.Messages.Out(.cdtData$EnvData[['message']][['22']], format = TRUE)
 		return(NULL)
 	}
 
@@ -40,10 +40,10 @@ StnChkCoordsPlotMap <- function(){
 	opar <- par(mar = c(4, 4, 2, 2))
 	plot(1, xlim = c(xmin, xmax), ylim = c(ymin, ymax), xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
 	lines(ocrds[, 1], ocrds[, 2], lwd = MapOp$shp$lwd, col = MapOp$shp$col)
-	abline(h = axTicks(2), v = axTicks(1) , col = "lightgray", lty = 3)
+	abline(h = axTicks(2), v = axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
 	axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
-	axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 0.8)
-	axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tck = -0.01, las = 1, cex.axis = 0.8)
+	axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 1.0)
+	axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tck = -0.01, las = 1, cex.axis = 1.0)
 
 	points(don$LonX, don$LatX, col = loko, pch = pch, cex = cex)
 

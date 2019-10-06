@@ -1,7 +1,8 @@
 
 StnChkCoordsProcs <- function(GeneralParameters){
 	if(!dir.exists(GeneralParameters$output)){
-		Insert.Messages.Out(paste(GeneralParameters$output, "did not find"), format = TRUE)
+		msg <- paste(GeneralParameters$output, .cdtData$EnvData[['message']][['9']])
+		Insert.Messages.Out(msg, TRUE, 'e')
 		return(NULL)
 	}
 
@@ -51,20 +52,21 @@ StnChkCoordsProcs <- function(GeneralParameters){
 
 	if(GeneralParameters$shpfile == "")
 	{
-		Insert.Messages.Out("No ESRI shapefile found", format = TRUE)
-		Insert.Messages.Out("The stations outside the boundaries will not be checked", format = TRUE)
+		Insert.Messages.Out(.cdtData$EnvData[['message']][['10']], TRUE, "w")
+		Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], TRUE, "w")
 		shpd <- NULL
 	}else{
 		shpd <- getShpOpenData(GeneralParameters$shpfile)
 		if(is.null(shpd)){
-			Insert.Messages.Out(paste('Unable to open', GeneralParameters$shpfile, 'or it is not an ESRI shapefile'), format = TRUE)
-			Insert.Messages.Out("The stations outside the boundaries will not be checked", format = TRUE)
+			msg <- paste(.cdtData$EnvData[['message']][['12']], GeneralParameters$shpfile)
+			Insert.Messages.Out(msg, TRUE, "e")
+			Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], TRUE, "w")
 			shpd <- NULL
 		}else{
 			shpd <- as(shpd[[2]], "SpatialPolygons")
-			shpd <- gUnaryUnion(shpd)
-			shpd <- gSimplify(shpd, tol = 0.05, topologyPreserve = TRUE)
-			shpd <- gBuffer(shpd, width = GeneralParameters$buffer/111)
+			shpd <- rgeos::gUnaryUnion(shpd)
+			shpd <- rgeos::gSimplify(shpd, tol = 0.05, topologyPreserve = TRUE)
+			shpd <- rgeos::gBuffer(shpd, width = GeneralParameters$buffer/111)
 		}
 	}
 
@@ -84,7 +86,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
 	## Missing coords
 	imiss <- is.na(coords$lon) | is.na(coords$lat)
 	if(any(imiss)){
-		don.table$miss <- data.frame(State = 'Missing Coordinates', don.disp[imiss, , drop = FALSE])
+		don.table$miss <- data.frame(State = .cdtData$EnvData[['message']][['13']], don.disp[imiss, , drop = FALSE])
 		don.disp <- don.disp[!imiss, , drop = FALSE]
 		coords <- coords[!imiss, , drop = FALSE]
 	}
@@ -92,7 +94,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
 	## Wrong coords
 	iwrong <- coords$lon < -180 | coords$lon > 360 | coords$lat < -90 | coords$lat > 90
 	if(any(iwrong)){
-		don.table$wrong <- data.frame(State = 'Invalid Coordinates', don.disp[iwrong, , drop = FALSE])
+		don.table$wrong <- data.frame(State = .cdtData$EnvData[['message']][['14']], don.disp[iwrong, , drop = FALSE])
 		don.disp <- don.disp[!iwrong, , drop = FALSE]
 		coords <- coords[!iwrong, , drop = FALSE]
 	}
@@ -100,7 +102,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
 	## Duplicated ID
 	iddup <- duplicated(coords$id) | duplicated(coords$id, fromLast = TRUE)
 	if(any(iddup)){
-		don.table$iddup <- data.frame(State = 'Duplicate ID', don.disp[iddup, , drop = FALSE])
+		don.table$iddup <- data.frame(State = .cdtData$EnvData[['message']][['15']], don.disp[iddup, , drop = FALSE])
 		don.table$iddup <- don.table$iddup[order(coords$id[iddup]), , drop = FALSE]
 		don.disp$StatusX[iddup] <- "orange"
 	}
@@ -109,7 +111,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
 	crddup <- duplicated(coords[, c('lon', 'lat'), drop = FALSE]) |
 			duplicated(coords[, c('lon', 'lat'), drop = FALSE], fromLast = TRUE)
 	if(any(crddup)){
-		don.table$crddup <- data.frame(State = 'Duplicate Coordinates', don.disp[crddup, , drop = FALSE])
+		don.table$crddup <- data.frame(State = .cdtData$EnvData[['message']][['16']], don.disp[crddup, , drop = FALSE])
 		don.table$crddup <- don.table$crddup[order(paste0(coords$lon[crddup], coords$lat[crddup])), , drop = FALSE]
 		don.disp$StatusX[crddup] <- "orange"
 	}
@@ -120,7 +122,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
 		coordinates(spcoords) <- ~lon+lat
 		iout <- is.na(over(spcoords, geometry(shpd)))
 		if(any(iout)){
-			don.table$out <- data.frame(State = 'Coordinates Outside', don.disp[iout, , drop = FALSE])
+			don.table$out <- data.frame(State = .cdtData$EnvData[['message']][['17']], don.disp[iout, , drop = FALSE])
 			don.table$out <- don.table$out[order(coords$id[iout]), , drop = FALSE]
 			don.disp$StatusX[iout] <- "red"
 		}
@@ -173,8 +175,8 @@ StnChkCoordsDataStn <- function(GeneralParameters){
 		nom.col <- names(don0)
 		don.orig <- don0
 		coords <- list(id = as.character(don0[, 1]),
-						lon = as.numeric(don0[, 3]),
-						lat = as.numeric(don0[, 4]))
+					   lon = as.numeric(don0[, 3]),
+					   lat = as.numeric(don0[, 4]))
 	}
 
 	if(GeneralParameters$data.type == "cdtstation")
@@ -228,7 +230,7 @@ StnChkCoordsDataStn <- function(GeneralParameters){
 
 StnChkCoordsCorrect <- function(){
 	if(is.null(.cdtData$EnvData$Table.Disp0)){
-		Insert.Messages.Out("No stations to be corrected")
+		Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], TRUE, "i")
 		return(NULL)
 	}
 

@@ -53,12 +53,12 @@
         </content>
         <content id="3">
             <status>
-                <text lang="en"> Enter the filename format of netcdf data, example: </text>
-                <text lang="fr"> Entrez le format du nom de fichier des données netcdf, exemple: </text>
+                <text lang="en"> Enter the filename format of netcdf data </text>
+                <text lang="fr"> Entrez le format du nom de fichier des données netcdf </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of netcdf data, example: </text>
-                <text lang="fr"> Entrez le format du nom de fichier des données netcdf, exemple: </text>
+                <text lang="en"> Enter the filename format of netcdf data </text>
+                <text lang="fr"> Entrez le format du nom de fichier des données netcdf </text>
             </tooltip>
         </content>
     </help>

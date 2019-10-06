@@ -10,14 +10,10 @@
             <text lang="fr"> Données d'entrée CDT </text>
         </label>
         <label id="2">
-            <text lang="en"> Filter Stations with </text>
-            <text lang="fr"> Filtrer les Stations avec </text>
+            <text lang="en"> Filter Stations with non-missing values </text>
+            <text lang="fr"> Filtrer les stations avec des valeurs non manquantes </text>
         </label>
         <label id="3">
-            <text lang="en"> Non-missing values </text>
-            <text lang="fr"> Valeurs non manquantes </text>
-        </label>
-        <label id="4">
             <text lang="en"> File to save filtered data </text>
             <text lang="fr"> Fichier de sauvegarde des données filtrées </text>
         </label>

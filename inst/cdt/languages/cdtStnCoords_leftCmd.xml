@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Maps </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Zoom </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> CDT coordinates file </text>
+            </option>
+            <option id="2">
+                <text lang="en"> CDT stations data format </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Check Coordinates </text>
+        </button>
+        <button id="2">
+            <text lang="en"> View/Edit Results </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Correct Coordinates </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Display Stations Coordinates </text>
+        </button>
+        <button id="5">
+            <text lang="en"> Display on Google Maps </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Stations coordinates already exist </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Display non checked coordinates </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Coordinates From </text>
+        </label>
+        <label id="2">
+            <text lang="en"> File containing CDT stations coordinates </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing CDT stations data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Country Boundaries Shapefiles </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Distance from boundaries (km) </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Directory to save the outputs </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Stations coordinates data </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Zoom </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Distance in km, outside the country boundaries to be considered </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Distance in km, outside the country boundaries to be considered </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Zoom In </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom In </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Zoom Out </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Out </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Zoom Area </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Area </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Pan Tool </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Pan Tool </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Redraw Map </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Redraw Map </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Zoom Reset </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Reset </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Check coordinates ...... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Stations coordinates checked successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Stations coordinates checking failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> All station's coordinates are OK </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Correction done! </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Correction failed </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Unable to load station coordinates data </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No Internet Connection </text>
+        </content>
+        <content id="9">
+            <text lang="en"> did not find </text>
+        </content>
+        <content id="10">
+            <text lang="en"> No ESRI shapefile found </text>
+        </content>
+        <content id="11">
+            <text lang="en"> The stations outside the boundaries will not be checked </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Unable to open </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Missing Coordinates </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Invalid Coordinates </text>
+        </content>
+        <content id="15">
+            <text lang="en"> Duplicate ID </text>
+        </content>
+        <content id="16">
+            <text lang="en"> Duplicate Coordinates </text>
+        </content>
+        <content id="17">
+            <text lang="en"> Coordinates Outside </text>
+        </content>
+        <content id="18">
+            <text lang="en"> No stations to be corrected </text>
+        </content>
+        <content id="19">
+            <text lang="en"> Longitude min not valid </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Longitude max not valid </text>
+        </content>
+        <content id="21">
+            <text lang="en"> Latitude min not valid </text>
+        </content>
+        <content id="22">
+            <text lang="en"> Latitude max not valid </text>
+        </content>
+    </message>
+</panel_cmd>

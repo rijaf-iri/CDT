@@ -1,0 +1,308 @@
+
+## Test leap year
+
+is.leapyear <- function(year){
+    leap <- year %% c(4, 100, 400)
+    ((leap[1] == 0) & (leap[2] != 0)) | (leap[3] == 0)
+}
+
+is.leapyears <- function(years){
+    leap <- sapply(years, function(x) x %% c(4, 100, 400))
+    ((leap[1, ] == 0) & (leap[2, ] != 0)) | (leap[3, ] == 0)
+}
+
+##############################################
+
+## Check class Date
+is.date <- function(x) inherits(x, "Date")
+
+##############################################
+
+## Number of days
+# daty: character representing the date
+
+nb.Day.Of.Year <- function(daty){
+    year <- as.numeric(substr(daty, 1, 4))
+    ifelse(is.leapyears(year), 366, 365)
+}
+
+Day.Of.Month <- function(year, mon){
+    rev((28:31)[!is.na(as.Date(paste(year, mon, 28:31, sep = '-')))])[1]
+}
+
+nb.Day.Of.Month <- function(daty){
+    nbm <- mapply(Day.Of.Month, substr(daty, 1, 4), substr(daty, 5, 6), USE.NAMES = FALSE)
+    as.numeric(nbm)
+}
+
+nb.Day.Of.Pentad <- function(daty){
+    day <- as.numeric(substr(daty, 7, 7))
+    nbp <- rep(5, length(daty))
+    nbp[day >= 6] <- nb.Day.Of.Month(daty[day == 6]) - 25
+    return(nbp)
+}
+
+nb.Day.Of.Dekad <- function(daty){
+    day <- as.numeric(substr(daty, 7, 7))
+    nbd <- rep(10, length(daty))
+    nbd[day == 3] <- nb.Day.Of.Month(daty[day == 3]) - 20
+    return(nbd)
+}
+
+##############################################
+
+## Cycle month,
+# start: month, n: number of month (DJF, start = 'December', n = 3)
+# full = TRUE (July),  FALSE (Jul)
+# return end month
+
+cycleMonth <- function(start, n, full = FALSE){
+    frmt <- if(full) "%B" else "%b"
+    mois <- format(ISOdate(2014, 1:12, 1), frmt)
+    ix <- which(mois == start)
+    im <- (ix + (n - 1)) %% 12
+    if(im == 0) im <- 12
+    return(mois[im])
+}
+
+##############################################
+
+## Add or subtract months
+# daty: object of class "Date"
+
+addMonths <- function(daty, n = 1){
+    foo <- function(daty, n){
+        date0 <- seq(daty, by = paste(n, "months"), length = 2)[2]
+        date1 <- seq(as.Date(paste(format(daty, '%Y-%m'), '01', sep = '-')),
+                    by = paste(n + 1, "months"), length = 2)[2] - 1
+        if(date0 > date1) date1 else date0
+    }
+    daty <- if(length(daty) == 1) foo(daty, n) else do.call(c, lapply(daty, foo, n))
+    return(daty)
+}
+
+##############################################
+
+## Add or subtract dekads
+# daty: object of class "Date"
+
+addDekads <- function(daty, n = 1){
+    foo <- function(daty, n){
+        idek <- as.numeric(format(daty, '%d')) + n
+        dek <- idek %% 3
+        if(dek == 0) dek <- 3
+        daty <- format(addMonths(daty, floor((idek - 1) / 3)), '%Y-%m')
+        as.Date(paste(daty, dek, sep = '-'))
+    }
+    daty <- if(length(daty) == 1) foo(daty, n) else do.call(c, lapply(daty, foo, n))
+    return(daty)
+}
+
+##############################################
+
+## Add or subtract pentads
+# daty: object of class "Date"
+
+addPentads <- function(daty, n = 1){
+    foo <- function(daty, n){
+        ipen <- as.numeric(format(daty, '%d')) + n
+        pen <- ipen %% 6
+        if(pen == 0) pen <- 6
+        daty <- format(addMonths(daty, floor((ipen - 1) / 6)), '%Y-%m')
+        as.Date(paste(daty, pen, sep = '-'))
+    }
+    daty <- if(length(daty) == 1) foo(daty, n) else do.call(c, lapply(daty, foo, n))
+    return(daty)
+}
+
+##############################################
+
+format.plot.date <- function(dates, tstep){
+    if(tstep == "daily")
+        daty <- as.Date(dates, "%Y%m%d")
+    if(tstep == "pentad"){
+        pen <- c(1, 6, 11, 16, 21, 26)[as.numeric(substr(dates, 7, 7))]
+        daty <- as.Date(paste0(substr(dates, 1, 6), pen), "%Y%m%d")
+    }
+    if(tstep == "dekadal"){
+        dek <- c(1, 11, 21)[as.numeric(substr(dates, 7, 7))]
+        daty <- as.Date(paste0(substr(dates, 1, 6), dek), "%Y%m%d")
+    }
+    if(tstep == "monthly")
+        daty <- as.Date(paste0(dates, 1), "%Y%m%d")
+    return(daty)
+}
+
+format.plot.date.label <- function(x, tstep){
+    if(is.character(x)){
+        daty <- switch(tstep,
+                    "daily" = as.Date(x, "%Y%m%d"),
+                    "pentad" = local({
+                        pen <- c(1, 6, 11, 16, 21, 26)[as.numeric(substr(x, 7, 7))]
+                        as.Date(paste0(substr(x, 1, 6), pen), "%Y%m%d")
+                    }) ,
+                    "dekadal" = local({
+                        dek <- c(1, 11, 21)[as.numeric(substr(x, 7, 7))]
+                        as.Date(paste0(substr(x, 1, 6), dek), "%Y%m%d")
+                    }),
+                    "monthly" = as.Date(paste0(x, 1), "%Y%m%d"))
+    }
+    if(is.numeric(x))
+        daty <- as.Date(x, origin = '1970-1-1')
+    if(is.date(x)) daty <- x
+
+    #######
+    if(tstep == 'daily')
+        labdates <- format(daty, '%d-%b-%Y')
+
+    if(tstep %in% c('pentad', 'dekadal')){
+        brks <- if(tstep == 'dekadal') c(1, 10, 20, 31) else c(1, 5, 10, 15, 20, 25, 31)
+        day <- as.numeric(format(daty, '%d'))
+        pdk <- findInterval(day, brks, rightmost.closed = TRUE, left.open = TRUE)
+        labdates <- paste0(pdk, '-', format(daty, '%b-%Y'))
+    }
+
+    if(tstep == 'monthly')
+        labdates <- format(daty,'%b-%Y')
+
+    return(labdates)
+}
+
+##############################################
+
+get.range.date.time <- function(date.range, tstep, minhour = NA){
+    if(tstep %in% c("daily", "pentad", "dekadal", "monthly")){
+        dekpenday <- switch(tstep,
+                            "daily" = c("start.day", "end.day"),
+                            "pentad" = c("start.pen", "end.pen"),
+                            "dekadal" = c("start.dek", "end.dek"),
+                            "monthly" = c("start.day", "end.day"))
+
+        start <- date.range[c('start.year', 'start.mon', dekpenday[1])]
+        if(tstep == "monthly") start$start.day <- 1
+        start <- paste(unlist(start), collapse = "-")
+        start <- as.Date(start)
+
+        end <- date.range[c('end.year', 'end.mon', dekpenday[2])]
+        if(tstep == "monthly") end$end.day <- 1
+        end <- paste(unlist(end), collapse = "-")
+        end <- as.Date(end)
+
+        pas <- if(tstep == "monthly") "month" else "day"
+    }
+
+    if(tstep == "hourly"){
+        start <- date.range[c('start.year', 'start.mon', 'start.day', 'start.hour')]
+        if(minhour > 1){
+            divh <- start$start.hour %% minhour
+            if(divh != 0) start$start.hour <- start$start.hour - divh
+        }
+        start <- paste(unlist(start), collapse = "-")
+        start <- as.POSIXct(start, tz = "UTC", format = "%Y-%m-%d-%H")
+
+        end <- date.range[c('end.year', 'end.mon', 'end.day', 'end.hour')]
+        end <- paste(unlist(end), collapse = "-")
+        end <- as.POSIXct(end, tz = "UTC", format = "%Y-%m-%d-%H")
+
+        pas <- paste(minhour, "hour")
+    }
+
+    if(tstep == "minute"){
+        start <- date.range[c('start.year', 'start.mon', 'start.day', 'start.hour', 'start.min')]
+        divm <- start$start.min %% minhour
+        if(divm != 0) start$start.min <- start$start.min - divm
+        start <- paste(unlist(start), collapse = "-")
+        start <- as.POSIXct(start, tz = "UTC", format = "%Y-%m-%d-%H-%M")
+
+        end <- date.range[c('end.year', 'end.mon', 'end.day', 'end.hour', 'end.min')]
+        end <- paste(unlist(end), collapse = "-")
+        end <- as.POSIXct(end, tz = "UTC", format = "%Y-%m-%d-%H-%M")
+
+        pas <- paste(minhour, "min")
+    }
+
+    list(start = start, end = end, step = pas)
+}
+
+get.seq.date.time <- function(date.range, tstep, minhour = NA){
+    daty <- get.range.date.time(date.range, tstep, minhour)
+    seq(daty$start, daty$end, daty$step)
+}
+
+table.format.date.time <- function(tstep, date.range, minhour = NA){
+    dates <- get.seq.date.time(date.range, tstep, minhour)
+
+    if(tstep %in% c("daily", "hourly", "minute")){
+        doy <- strftime(dates, format = "%j", tz = "UTC")
+        format <- switch(tstep,
+                         "minute" = "%Y-%m-%d-%H-%M",
+                         "hourly" = "%Y-%m-%d-%H",
+                         "daily" = "%Y-%m-%d"
+                        )
+        dates <- format(dates, format)
+        dates <- do.call(rbind, strsplit(dates, "-"))
+        dates <- cbind(dates, doy)
+    }
+
+    if(tstep %in% c("pentad", "dekadal")){
+        dates <- format(dates, '%Y-%m-%d')
+        dates <- do.call(rbind, strsplit(dates, "-"))
+
+        n <- switch(tstep, "pentad" = 6, "dekadal" = 3)
+        xx <- as.numeric(dates[, 3])
+        dates <- dates[xx <= n, , drop = FALSE]
+        xx <- cbind(str_pad(rep(1:12, each = n), 2, pad = "0"),
+                    str_pad(rep(1:n, 12), 2, pad = "0"))
+        p1 <- paste(dates[, 2], dates[, 3], sep = "-")
+        p2 <- paste(xx[, 1], xx[, 2], sep = "-")
+        xx <- str_pad(match(p1, p2), 2, pad = "0")
+        dates <- cbind(dates[, 1:2], as.numeric(dates[, 3]), xx)
+    }
+
+    if(tstep == "monthly"){
+        dates <- format(dates, '%Y-%m-%d')
+        dates <- do.call(rbind, strsplit(dates, "-"))
+    }
+
+    return(dates)
+}
+
+##############################################
+
+iridl.format.date <- function(tstep, date.range)
+{
+    mois <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    dates <- table.format.date.time(tstep, date.range)
+    dates0 <- dates
+
+    if(tstep == "dekadal"){
+        dates[dates[, 3] == '1', 3] <- '1-10'
+        dates[dates[, 3] == '2', 3] <- '11-20'
+        ix3 <- dates[, 3] == '3'
+        endm <- nb.Day.Of.Month(paste0(dates[ix3, 1], dates[ix3, 2]))
+        dates[ix3, 3] <- paste0(21, "-", endm)
+    }
+
+    dates[, 2] <- mois[as.numeric(dates[, 2])]
+    if(tstep == "monthly"){
+        indate <- paste(dates[, 2], dates[, 1])
+        outdate <- paste0(dates0[, 1], dates0[, 2])
+    }else{
+        indate <- paste(dates[, 3], dates[, 2], dates[, 1])
+        outdate <- paste0(dates0[, 1], dates0[, 2], dates0[, 3])
+    }
+
+    list(dates = indate, out = outdate)
+}
+
+##############################################
+
+table.annuel <- function(){
+    uneAnne <- seq(as.Date('2014-1-1'), by = 'day', length.out = 365)
+    day <- as.numeric(format(uneAnne, "%d"))
+    mon <- as.numeric(format(uneAnne, "%m"))
+    vtimes <- cbind(day, mon, 1:365)
+    vtimes
+}
+

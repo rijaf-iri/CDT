@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Axis Labels </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Graph Title </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Color </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Color Selection </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Invalid Levels </text>
+        </content>
+    </message>
+</dialog_box>

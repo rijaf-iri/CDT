@@ -77,6 +77,9 @@
             <text lang="en"> Directory to save results </text>
             <text lang="fr"> Répertoire de sauvegarde des données </text>
         </label>
+        <label id="14">
+            <text lang="en"> Regrid and change "var" and "dim" names </text>
+        </label>
     </widget>
     <help>
         <content id="1">
@@ -147,6 +150,14 @@
             <tooltip>
                 <text lang="en"> or browse here </text>
                 <text lang="en"> ou parcourir ici </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Regrid and change the variable and dimensions names\n to match the target grid </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Regrid and change the variable and dimensions names\n to match the target grid </text>
             </tooltip>
         </content>
     </help>

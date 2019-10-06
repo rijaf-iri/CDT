@@ -7,10 +7,16 @@ Climate Data Tools `CDT` is a  set of utility functions for meteorological data 
 ### 1) Install `R`
 
 Go to the CRAN website [CRAN](https://CRAN.R-project.org).
-Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`. For example: [Download R 3.6.0 for Windows](https://cran.r-project.org/bin/windows/base/R-3.6.0-win.exe) (62 megabytes, 32/64 bit).
-Install the downloaded file (example: R-3.6.0-win.exe). Perform a default installation (Just click on **Next**).
+Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`. For example: [Download R 3.6.1 for Windows](https://cran.r-project.org/bin/windows/base/R-3.6.1-win.exe) (62 megabytes, 32/64 bit).
+Install the downloaded file (example: R-3.6.1-win.exe). Perform a default installation (Just click on **Next**).
 
-### 2) Install the package `tkrplot`
+### 2) Install `Rtools`
+
+Go to the CRAN website [CRAN](https://CRAN.R-project.org).
+Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Download the recommended version of `Rtools`.
+Install the downloaded file. Use the default installation path **C:\Rtools**, install all components, and add `Rtools` to the system the system PATH.
+
+### 3) Install the package `tkrplot`
 
 Install the latest version of the package `tkrplot` by entering the following in `R`:
 
@@ -18,13 +24,14 @@ Install the latest version of the package `tkrplot` by entering the following in
 install.packages("tkrplot")
 ```
 
-### 3) Install `CDT`
+### 4) Install `CDT`
 
 Open `R` and install `devtools` package with:
 
 ```
 install.packages("devtools")
 ```
+
 Now, you can install the the development version of `CDT` from GitHub with:
 
 ``` r

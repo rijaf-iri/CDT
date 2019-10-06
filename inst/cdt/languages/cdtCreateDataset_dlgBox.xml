@@ -179,5 +179,21 @@
             <text lang="en"> Data have different resolution or bbox </text>
             <text lang="fr"> Les données ont une résolution ou des limites différentes </text>
         </content>
+        <content id="16">
+            <text lang="en"> Reading NetCDF data ..... </text>
+            <text lang="fr"> Lecture des données NetCDF .... </text>
+        </content>
+        <content id="17">
+            <text lang="en"> Reading NetCDF data done </text>
+            <text lang="fr"> Lecture des données NetCDF terminée </text>
+        </content>
+        <content id="18">
+            <text lang="en"> Creating CDT gridded dataset ..... </text>
+            <text lang="fr"> Création des données sur grille en format CDT .... </text>
+        </content>
+        <content id="19">
+            <text lang="en"> Creating CDT gridded dataset done </text>
+            <text lang="fr"> Création des données sur grille en format CDT terminée </text>
+        </content>
     </message>
 </dialog_box>

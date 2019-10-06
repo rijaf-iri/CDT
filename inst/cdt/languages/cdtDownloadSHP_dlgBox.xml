@@ -14,31 +14,33 @@
             <text lang="fr"> Annuler </text>
         </button>
         <label id="1">
+            <text lang="en"> Select Region </text>
+            <text lang="fr"> Choisissez la région </text>
+        </label>
+        <label id="2">
             <text lang="en"> Select Country </text>
             <text lang="fr"> Choisissez le pays </text>
         </label>
-        <label id="2">
+        <label id="3">
             <text lang="en"> Select level subdivisions </text>
             <text lang="fr"> Choisissez le niveau de subdivisions </text>
         </label>
-        <label id="3">
+        <label id="4">
             <text lang="en"> Directory to save downloaded files </text>
             <text lang="fr"> Répertoire pour enregistrer les fichiers téléchargés </text>
         </label>
-        <label id="4">
-            <text lang="en"> Resolution </text>
-            <text lang="fr"> Résolution </text>
-        </label>
-        <label id="5">
-            <text lang="en"> Width </text>
-            <text lang="fr"> Largeur </text>
-        </label>
-        <label id="6">
-            <text lang="en"> Height </text>
-            <text lang="fr"> Hauteur </text>
-        </label>
     </widget>
     <help>
+        <content id="0">
+            <status>
+                <text lang="en"> Select a region </text>
+                <text lang="fr"> Sélectionnez une région </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select a region </text>
+                <text lang="fr"> Sélectionnez une région </text>
+            </tooltip>
+        </content>
         <content id="1">
             <status>
                 <text lang="en"> Select a country </text>
@@ -99,7 +101,7 @@
         </content>
         <content id="5">
             <text lang="en"> Download failed </text>
-             <text lang="en"> Téléchargement échoué </text>
+            <text lang="en"> Téléchargement échoué </text>
         </content>
     </message>
 </dialog_box>

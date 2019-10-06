@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Data and Parameters </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> False-Zeros Output </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <button id="1">
+            <text lang="en"> False-Zeros Check Parameters </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Check False-Zeros </text>
+        </button>
+        <button id="3">
+            <text lang="en"> View and Edit Result </text>
+        </button>
+        <button id="4">
+            <text lang="en"> DISPLAY </text>
+        </button>
+        <button id="5">
+            <text lang="en"> Replace False Zeros </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Load existing False-Zeros Check session </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Station Data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> File containing daily Precip data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Directory to save the outputs </text>
+        </label>
+        <label id="4">
+            <text lang="en"> False-Zeros Data </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Select station </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Display neighbors stations </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Boundaries </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Boundaries </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Boundaries </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the file containing stations daily precipitation data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing stations daily precipitation data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Set the parameters of the False-Zeros check </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Set the parameters of the False-Zeros check </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Display the neighbors values on a table for the same month </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Display the neighbors values on a table for the same month </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Replaces false zeros with missing values </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Replaces false zeros with missing values </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Check False-Zeros ...... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> False-zeros checking finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> False-zeros checking failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> No suspicious False-Zeros found </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Unable to load False-Zeros data </text>
+        </content>
+        <content id="6">
+            <text lang="en"> not found </text>
+        </content>
+        <content id="7">
+            <text lang="en"> replacement done </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No replacement performed </text>
+        </content>
+    </message>
+</panel_cmd>

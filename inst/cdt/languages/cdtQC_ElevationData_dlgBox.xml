@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Elevation data </text>
+    </title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Elevation from DEM </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Elevation from station data </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> File containing DEM </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the file containing the elevation data in NetCDF </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the elevation data in NetCDF </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

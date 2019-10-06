@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Plot CDT Dataset </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Graphs </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Open Attribute Table </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Display Map </text>
+        </button>
+        <label id="1">
+            <text lang="en"> CDT Dataset </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Index file (*.rds) of the dataset </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Shapefile for Administrative Boundaries </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Attribute field to be displayed </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Graph </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Enter longitude and latitude to plot </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Latitude </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Spatial Average (Padding) </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Add value in decimal degree to get rectangle centered at the target points </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Add value in decimal degree to get rectangle centered at the target points </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Add value in decimal degree to get rectangle centered at the target points </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Add value in decimal degree to get rectangle centered at the target points </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Pentad must be between 1 and 6 </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Dekad must be 1, 2 or 3 </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Hour must be between 0 and 23 </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Minute must be between 0 and 59 </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Invalid date </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Unable to load the dataset </text>
+        </content>
+        <content id="7">
+            <text lang="en"> xlim must be an integer value </text>
+        </content>
+    </message>
+</panel_cmd>

@@ -1,245 +1,265 @@
 
 cdtDataset_readData <- function(){
 
-	datarepo <- file.path(.cdtData$GalParams$output$dir, .cdtData$GalParams$output$data.name)
-	datadir <- file.path(datarepo, 'DATA')
-	datafileIdx <- file.path(datarepo, paste0(.cdtData$GalParams$output$data.name, '.rds'))
+    datarepo <- file.path(.cdtData$GalParams$output$dir, .cdtData$GalParams$output$data.name)
+    datadir <- file.path(datarepo, 'DATA')
+    datafileIdx <- file.path(datarepo, paste0(.cdtData$GalParams$output$data.name, '.rds'))
 
-	#######
-	if(.cdtData$GalParams$Update){
-		Insert.Messages.Out(.cdtData$GalParams[['message']][['6']])
-		if(!dir.exists(datarepo)){
-			Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], format = TRUE)
-			return(NULL)
-		}
-		if(!dir.exists(datadir)){
-			Insert.Messages.Out(.cdtData$GalParams[['message']][['8']], format = TRUE)
-			return(NULL)
-		}
-		if(!file.exists(datafileIdx)){
-			Insert.Messages.Out(paste(paste0(.cdtData$GalParams$output$data.name, '.rds'),
-								.cdtData$GalParams[['message']][['9']]), format = TRUE)
-			return(NULL)
-		}
-		cdtTmpVar <- try(readRDS(datafileIdx), silent = TRUE)
-		if(inherits(cdtTmpVar, "try-error")){
-			Insert.Messages.Out(paste(.cdtData$GalParams[['message']][['10']], datafileIdx), format = TRUE)
-			return(NULL)
-		}
-		chunksize <- cdtTmpVar$chunksize
-	}else{
-		Insert.Messages.Out(.cdtData$GalParams[['message']][['11']])
-		if(!dir.exists(datarepo)) dir.create(datarepo, showWarnings = FALSE, recursive = TRUE)
-		if(!dir.exists(datadir)) dir.create(datadir, showWarnings = FALSE, recursive = TRUE)
-		cdtTmpVar <- NULL
-		cdtTmpVar$TimeStep <- .cdtData$GalParams$Tstep
-		chunksize <- .cdtData$GalParams$chunk$chunksize
-		cdtTmpVar$chunkfac <- .cdtData$GalParams$chunk$chunkfac
-	}
+    #######
+    if(.cdtData$GalParams$Update){
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['6']], TRUE, "i")
+        if(!dir.exists(datarepo)){
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], format = TRUE)
+            return(NULL)
+        }
+        if(!dir.exists(datadir)){
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['8']], format = TRUE)
+            return(NULL)
+        }
+        if(!file.exists(datafileIdx)){
+            Insert.Messages.Out(paste(paste0(.cdtData$GalParams$output$data.name, '.rds'),
+                                .cdtData$GalParams[['message']][['9']]), format = TRUE)
+            return(NULL)
+        }
+        cdtTmpVar <- try(readRDS(datafileIdx), silent = TRUE)
+        if(inherits(cdtTmpVar, "try-error")){
+            Insert.Messages.Out(paste(.cdtData$GalParams[['message']][['10']], datafileIdx), format = TRUE)
+            return(NULL)
+        }
+        chunksize <- cdtTmpVar$chunksize
+    }else{
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['11']], TRUE, "i")
+        if(!dir.exists(datarepo))
+            dir.create(datarepo, showWarnings = FALSE, recursive = TRUE)
+        if(!dir.exists(datadir))
+            dir.create(datadir, showWarnings = FALSE, recursive = TRUE)
+        cdtTmpVar <- NULL
+        cdtTmpVar$TimeStep <- .cdtData$GalParams$tstep
+        chunksize <- .cdtData$GalParams$chunk$chunksize
+        cdtTmpVar$chunkfac <- .cdtData$GalParams$chunk$chunkfac
+    }
 
-	##################
-	ncDataInfo <- getNCDFSampleData(.cdtData$GalParams$NCDF$sample)
-	if(is.null(ncDataInfo)){
-		Insert.Messages.Out(.cdtData$GalParams[['message']][['12']], format = TRUE)
-		return(NULL)
-	}
+    ##################
+    ncDataInfo <- getNCDFSampleData(.cdtData$GalParams$NCDF$sample)
+    if(is.null(ncDataInfo)){
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['12']], TRUE, "e")
+        return(NULL)
+    }
 
-	##################
-	tstep <- .cdtData$GalParams$Tstep
-	start.year <- .cdtData$GalParams$date.range$start.year
-	start.mon <- .cdtData$GalParams$date.range$start.mon
-	start.dek <- .cdtData$GalParams$date.range$start.dek
-	end.year <- .cdtData$GalParams$date.range$end.year
-	end.mon <- .cdtData$GalParams$date.range$end.mon
-	end.dek <- .cdtData$GalParams$date.range$end.dek
-	months <- .cdtData$GalParams$date.range$Months
-	start.date <- as.Date(paste(start.year, start.mon, start.dek, sep = '/'), format = '%Y/%m/%d')
-	end.date <- as.Date(paste(end.year, end.mon, end.dek, sep = '/'), format = '%Y/%m/%d')
+    ##################
 
-	NCDF.DIR <- .cdtData$GalParams$NCDF$dir
-	NCDF.Format <- .cdtData$GalParams$NCDF$format
+    # tstep <- .cdtData$GalParams$tstep
+    # suffix <- switch(tstep, "daily" = "day", "pentad" = "pen", "dekadal" = "dek")
+    # is <- paste0("start.", suffix)
+    # ie <- paste0("end.", suffix)
 
-	errmsg <- .cdtData$GalParams[['message']][['13']]
-	ncInfo <- ncFilesInfo(tstep, start.date, end.date, months, NCDF.DIR, NCDF.Format, errmsg)
-	if(is.null(ncInfo)) return(NULL)
-	ncInfo$ncinfo <- list(xo = ncDataInfo$ilon, yo = ncDataInfo$ilat, varid = ncDataInfo$varid)
+    # start.year <- .cdtData$GalParams$date.range$start.year
+    # start.mon <- .cdtData$GalParams$date.range$start.mon
+    # start.dek <- .cdtData$GalParams$date.range[[is]]
+    # end.year <- .cdtData$GalParams$date.range$end.year
+    # end.mon <- .cdtData$GalParams$date.range$end.mon
+    # end.dek <- .cdtData$GalParams$date.range[[ie]]
+    # months <- .cdtData$GalParams$date.range$Months
+    # start.date <- as.Date(paste(start.year, start.mon, start.dek, sep = '/'), format = '%Y/%m/%d')
+    # end.date <- as.Date(paste(end.year, end.mon, end.dek, sep = '/'), format = '%Y/%m/%d')
 
-	ncInfo$dates <- ncInfo$dates[ncInfo$exist]
-	ncInfo$nc.files <- ncInfo$nc.files[ncInfo$exist]
-	ncInfo$exist <- ncInfo$exist[ncInfo$exist]
+    # NCDF.DIR <- .cdtData$GalParams$NCDF$dir
+    # NCDF.Format <- .cdtData$GalParams$NCDF$format
 
-	###################
-	if(.cdtData$GalParams$Update){
-		readDate <- !ncInfo$dates %in% cdtTmpVar$dateInfo$date
-		if(!any(readDate)){
-			Insert.Messages.Out(.cdtData$GalParams[['message']][['14']])
-			return(NULL)
-		}
-		ncInfo$dates <- ncInfo$dates[readDate]
-		ncInfo$nc.files <- ncInfo$nc.files[readDate]
-		ncInfo$exist <- ncInfo$exist[readDate]
-	}
+    # errmsg <- .cdtData$GalParams[['message']][['13']]
+    # ncInfo <- ncFilesInfo(tstep, start.date, end.date, months, NCDF.DIR, NCDF.Format, errmsg)
+    # if(is.null(ncInfo)) return(NULL)
 
-	##################
-	nc <- nc_open(ncInfo$nc.files[1])
-	nc.lon <- nc$var[[ncInfo$ncinfo$varid]]$dim[[ncInfo$ncinfo$xo]]$vals
-	nc.lat <- nc$var[[ncInfo$ncinfo$varid]]$dim[[ncInfo$ncinfo$yo]]$vals
-	varInfo <- nc$var[[ncInfo$ncinfo$varid]][c('name', 'prec', 'units', 'longname')]
-	nc_close(nc)
 
-	xo <- order(nc.lon)
-	nc.lon <- nc.lon[xo]
-	yo <- order(nc.lat)
-	nc.lat <- nc.lat[yo]
-	len.lon <- length(nc.lon)
-	len.lat <- length(nc.lat)
+    ncInfo <- ncInfo.with.date.range(.cdtData$GalParams$NCDF,
+                                     .cdtData$GalParams$date.range,
+                                     .cdtData$GalParams$tstep)
+    if(is.null(ncInfo)){
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['13']], TRUE, "e")
+        return(NULL)
+    }
+    ncInfo$ncinfo <- ncDataInfo
 
-	##################
+    # ncInfo$ncinfo <- ncDataInfo[c('ilon', 'ilat', 'varid')]
 
-	if(.cdtData$GalParams$Update){
-		SP1 <- cdtTmpVar$coords$mat
-		SP1 <- defSpatialPixels(list(lon = SP1$x, lat = SP1$y))
-		SP2 <- defSpatialPixels(list(lon = nc.lon, lat = nc.lat))
-		if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-			Insert.Messages.Out(.cdtData$GalParams[['message']][['15']], format = TRUE)
-			return(NULL)
-		}
-		rm(SP1, SP2)
-	}
+    ncInfo$dates <- ncInfo$dates[ncInfo$exist]
+    ncInfo$ncfiles <- ncInfo$ncfiles[ncInfo$exist]
+    ncInfo$exist <- ncInfo$exist[ncInfo$exist]
 
-	###################
+    ###################
+    if(.cdtData$GalParams$Update){
+        readDate <- !ncInfo$dates %in% cdtTmpVar$dateInfo$date
+        if(!any(readDate)){
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['14']], TRUE, "w")
+            return(NULL)
+        }
+        ncInfo$dates <- ncInfo$dates[readDate]
+        ncInfo$ncfiles <- ncInfo$ncfiles[readDate]
+        ncInfo$exist <- ncInfo$exist[readDate]
+    }
 
-	## square chunk
-	nxy.chunksize <- round(sqrt(chunksize))
-	seqlon <- seq_along(nc.lon)
-	seqlat <- seq_along(nc.lat)
-	seqcol <- cbind(id = seq(len.lon * len.lat), expand.grid(x = seqlon, y = seqlat))
+    ##################
+    # nc <- nc_open(ncInfo$ncfiles[1])
+    # nc.lon <- nc$var[[ncInfo$ncinfo$varid]]$dim[[ncInfo$ncinfo$ilon]]$vals
+    # nc.lat <- nc$var[[ncInfo$ncinfo$varid]]$dim[[ncInfo$ncinfo$ilat]]$vals
+    # varInfo <- nc$var[[ncInfo$ncinfo$varid]][c('name', 'prec', 'units', 'longname')]
+    # nc_close(nc)
 
-	split.lon <- split(seqlon, ceiling(seqlon / nxy.chunksize))
-	split.lat <- split(seqlat, ceiling(seqlat / nxy.chunksize))
-	xgrid <- expand.grid(x = seq_along(split.lon), y = seq_along(split.lat))
+    # ncInfo$ncinfo$xo <- order(nc.lon)
+    # nc.lon <- nc.lon[ncInfo$ncinfo$xo]
+    # ncInfo$ncinfo$yo <- order(nc.lat)
+    # nc.lat <- nc.lat[ncInfo$ncinfo$yo]
+    # len.lon <- length(nc.lon)
+    # len.lat <- length(nc.lat)
+    # varInfo <- ncInfo$ncinfo$varinfo
 
-	xarrg <- lapply(seq(nrow(xgrid)), function(j){
-		crd <- expand.grid(x = nc.lon[split.lon[[xgrid$x[j]]]], y = nc.lat[split.lat[[xgrid$y[j]]]])
-		id <- seqcol$id[(seqcol$x %in% split.lon[[xgrid$x[j]]]) & (seqcol$y %in% split.lat[[xgrid$y[j]]])]
-		list(coords = crd, id = id, grp = rep(j, length(id)))
-	})
+    nc.lon <- ncInfo$ncinfo$lon
+    nc.lat <- ncInfo$ncinfo$lat
+    len.lon <- ncInfo$ncinfo$nx
+    len.lat <- ncInfo$ncinfo$ny
 
-	col.idx <- lapply(xarrg, function(x) x$id)
-	col.id <- do.call(c, col.idx)
-	col.grp <- do.call(c, lapply(xarrg, function(x) x$grp))
-	xy.exp <- do.call(rbind, lapply(xarrg, function(x) x$coords))
-	col.order <- order(col.id)
+    ##################
 
-	###################
+    if(.cdtData$GalParams$Update){
+        SP1 <- cdtTmpVar$coords$mat
+        SP1 <- defSpatialPixels(list(lon = SP1$x, lat = SP1$y))
+        SP2 <- defSpatialPixels(list(lon = nc.lon, lat = nc.lat))
+        if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['15']], TRUE, "e")
+            return(NULL)
+        }
+        rm(SP1, SP2)
+    }
 
-	if(!.cdtData$GalParams$Update){
-		cdtTmpVar$chunksize <- nxy.chunksize * nxy.chunksize
-		cdtTmpVar$coords$mat <- list(x = nc.lon, y = nc.lat)
-		cdtTmpVar$coords$df <- xy.exp
-		attr(cdtTmpVar$coords$df, "out.attrs") <- NULL
-		cdtTmpVar$colInfo <- list(id = col.id, index = col.grp, order = col.order)
-		cdtTmpVar$varInfo <- varInfo
-	}
+    ###################
 
-	#########################################################
+    ## square chunk
+    nxy.chunksize <- round(sqrt(chunksize))
+    seqlon <- seq_along(nc.lon)
+    seqlat <- seq_along(nc.lat)
+    seqcol <- cbind(id = seq(len.lon * len.lat), expand.grid(x = seqlon, y = seqlat))
 
-	Insert.Messages.Out("Reading NetCDF data .....")
+    split.lon <- split(seqlon, ceiling(seqlon / nxy.chunksize))
+    split.lat <- split(seqlat, ceiling(seqlat / nxy.chunksize))
+    xgrid <- expand.grid(x = seq_along(split.lon), y = seq_along(split.lat))
 
-	chunkdate <- split(seq_along(ncInfo$dates), ceiling(seq_along(ncInfo$dates) / 1825))
+    xarrg <- lapply(seq(nrow(xgrid)), function(j){
+        crd <- expand.grid(x = nc.lon[split.lon[[xgrid$x[j]]]],
+                           y = nc.lat[split.lat[[xgrid$y[j]]]])
+        id <- seqcol$id[(seqcol$x %in% split.lon[[xgrid$x[j]]]) &
+                        (seqcol$y %in% split.lat[[xgrid$y[j]]])]
+        list(coords = crd, id = id, grp = rep(j, length(id)))
+    })
 
-	is.parallel <- doparallel(length(chunkdate) >= 10)
-	`%parLoop%` <- is.parallel$dofun
-	ret <- foreach(jj = seq_along(chunkdate), .packages = "ncdf4") %parLoop% {
-		retdat <- lapply(chunkdate[[jj]], function(j){
-			nc <- try(nc_open(ncInfo$nc.files[j]), silent = TRUE)
-			if(inherits(nc, "try-error")) return(NULL)
-			vars <- ncvar_get(nc, varid = ncInfo$ncinfo$varid)
-			nc_close(nc)
-			vars <- if(ncInfo$ncinfo$xo < ncInfo$ncinfo$yo) vars[xo, yo] else t(vars)[xo, yo]
+    col.idx <- lapply(xarrg, function(x) x$id)
+    col.id <- do.call(c, col.idx)
+    col.grp <- do.call(c, lapply(xarrg, function(x) x$grp))
+    xy.exp <- do.call(rbind, lapply(xarrg, function(x) x$coords))
+    col.order <- order(col.id)
 
-			return(c(vars))
-		})
-		inull <- sapply(retdat, is.null)
-		retdat <- do.call(rbind, retdat)
-		retdaty <- ncInfo$dates[chunkdate[[jj]]][!inull]
+    ###################
 
-		saveRDS(retdat, file = file.path(datadir, paste0(jj, "_v.rds")))
-		saveRDS(retdaty, file = file.path(datadir, paste0(jj, "_d.rds")))
-		rm(retdaty, retdat); gc()
-		return(0)
-	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+    if(!.cdtData$GalParams$Update){
+        cdtTmpVar$chunksize <- nxy.chunksize * nxy.chunksize
+        cdtTmpVar$coords$mat <- list(x = nc.lon, y = nc.lat)
+        cdtTmpVar$coords$df <- xy.exp
+        attr(cdtTmpVar$coords$df, "out.attrs") <- NULL
+        cdtTmpVar$colInfo <- list(id = col.id, index = col.grp, order = col.order)
+        cdtTmpVar$varInfo <- ncInfo$ncinfo$varinfo
+    }
 
-	Insert.Messages.Out("Reading NetCDF data done!")
+    #########################################################
 
-	###################
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['16']], TRUE, "i")
 
-	ncDaty <- lapply(seq_along(chunkdate), function(jj){
-		file.tmp <- file.path(datadir, paste0(jj, "_d.rds"))
-		dd <- readRDS(file.tmp)
-		unlink(file.tmp)
-		return(dd)
-	})
-	ncDaty <- do.call(c, ncDaty)
+    chunkdate <- split(seq_along(ncInfo$dates), ceiling(seq_along(ncInfo$dates) / 1825))
 
-	###################
+    parsL <- doparallel.cond(length(chunkdate) >= 10)
+    ret <- cdt.foreach(seq_along(chunkdate), parsL = parsL, FUN = function(jj)
+    {
+        retdat <- lapply(chunkdate[[jj]], function(j){
+            nc <- try(ncdf4::nc_open(ncInfo$ncfiles[j]), silent = TRUE)
+            if(inherits(nc, "try-error")) return(NULL)
+            vars <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varid)
+            ncdf4::nc_close(nc)
+            vars <- transposeNCDFData(vars, ncInfo$ncinfo)
+            c(vars)
+        })
+        inull <- sapply(retdat, is.null)
+        retdat <- do.call(rbind, retdat)
+        retdaty <- ncInfo$dates[chunkdate[[jj]]][!inull]
 
-	Insert.Messages.Out("Creating CDT gridded dataset .....")
+        saveRDS(retdat, file = file.path(datadir, paste0(jj, "_v.rds")))
+        saveRDS(retdaty, file = file.path(datadir, paste0(jj, "_d.rds")))
+        return(0)
+    })
 
-	toExports <- c("col.idx", "datadir")
-	is.parallel <- doparallel(length(col.idx) >= 200)
-	`%parLoop%` <- is.parallel$dofun
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['17']], TRUE, "s")
 
-	ret <- lapply(seq_along(chunkdate), function(jj){
-		file.tmp <- file.path(datadir, paste0(jj, "_v.rds"))
-		tmp <- readRDS(file.tmp)
-		unlink(file.tmp)
+    ###################
 
-		ret <- foreach(j = seq_along(col.idx), .export = toExports) %parLoop% {
-			chk <- tmp[, col.idx[[j]], drop = FALSE]
-			file.rds <- file.path(datadir, paste0(j, ".rds"))
-			if(file.exists(file.rds)){
-				y <- readRDS(file.rds)
-				chk <- rbind(y, chk)
-			}
+    ncDaty <- lapply(seq_along(chunkdate), function(jj){
+        file.tmp <- file.path(datadir, paste0(jj, "_d.rds"))
+        dd <- readRDS(file.tmp)
+        unlink(file.tmp)
+        return(dd)
+    })
+    ncDaty <- do.call(c, ncDaty)
 
-			con <- gzfile(file.rds, compression = 7)
-			open(con, "wb")
-			saveRDS(chk, con)
-			close(con)
+    ###################
 
-			return(0)
-		}
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['18']], TRUE, "i")
 
-		rm(tmp); gc()
-		return(0)
-	})
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
+    toExports <- c("col.idx", "datadir")
+    parsL <- doparallel.cond(length(col.idx) >= 200)
 
-	Insert.Messages.Out("Creating CDT gridded dataset done!")
+    ret <- lapply(seq_along(chunkdate), function(jj){
+        file.tmp <- file.path(datadir, paste0(jj, "_v.rds"))
+        tmp <- readRDS(file.tmp)
+        unlink(file.tmp)
 
-	#########################################################
+        ret <- cdt.foreach(seq_along(col.idx), parsL = parsL,
+                           .export = toExports, FUN = function(j)
+        {
+            chk <- tmp[, col.idx[[j]], drop = FALSE]
+            file.rds <- file.path(datadir, paste0(j, ".rds"))
+            if(file.exists(file.rds)){
+                y <- readRDS(file.rds)
+                chk <- rbind(y, chk)
+            }
 
-	idx <- seq(length(ncDaty))
-	if(.cdtData$GalParams$Update){
-		Adates <- c(cdtTmpVar$dateInfo$date, ncDaty)
-		Aindex <- c(cdtTmpVar$dateInfo$index, max(cdtTmpVar$dateInfo$index) + idx)
-	}else{
-		Adates <- ncDaty
-		Aindex <- idx
-	}
-	odaty <- order(Adates)
-	cdtTmpVar$dateInfo <- list(date = Adates[odaty], index = Aindex[odaty])
+            con <- gzfile(file.rds, compression = 7)
+            open(con, "wb")
+            saveRDS(chk, con)
+            close(con)
 
-	con <- gzfile(datafileIdx, compression = 6)
-	open(con, "wb")
-	saveRDS(cdtTmpVar, con)
-	close(con)
+            return(0)
+        })
 
-	rm(ncDaty, idx, odaty, Adates, Aindex, cdtTmpVar, ncDataInfo, ncInfo)
-	gc()
-	return(0)
+        return(0)
+    })
+
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['19']], TRUE, "s")
+
+    #########################################################
+
+    idx <- seq(length(ncDaty))
+    if(.cdtData$GalParams$Update){
+        Adates <- c(cdtTmpVar$dateInfo$date, ncDaty)
+        Aindex <- c(cdtTmpVar$dateInfo$index, max(cdtTmpVar$dateInfo$index) + idx)
+    }else{
+        Adates <- ncDaty
+        Aindex <- idx
+    }
+    odaty <- order(Adates)
+    cdtTmpVar$dateInfo <- list(date = Adates[odaty], index = Aindex[odaty])
+
+    con <- gzfile(datafileIdx, compression = 6)
+    open(con, "wb")
+    saveRDS(cdtTmpVar, con)
+    close(con)
+
+    return(0)
 }
 
 ###########################################################
@@ -254,47 +274,38 @@ cdtDataset_readData <- function(){
 
 readCdtDatasetChunk.sequence <- function(chunk, fileInfo, do.par = TRUE)
 {
-	datadir <- file.path(dirname(fileInfo), "DATA")
-	if(do.par){
-		is.parallel <- doparallel(length(chunk) >= 20)
-		`%parLoop%` <- is.parallel$dofun
-		don <- foreach(j = chunk) %parLoop% {
-			file.rds <- file.path(datadir, paste0(j, ".rds"))
-			x <- readRDS(file.rds)
-			x
-		}
-		if(is.parallel$stop) stopCluster(is.parallel$cluster)
-	}else{
-		don <- lapply(chunk, function(j){
-			file.rds <- file.path(datadir, paste0(j, ".rds"))
-			x <- readRDS(file.rds)
-			x
-		})
-	}
+    datadir <- file.path(dirname(fileInfo), "DATA")
 
-	do.call(cbind, don)
+    parsL <- doparallel.cond(length(chunk) >= 20 & do.par)
+    don <- cdt.foreach(chunk, parsL = parsL, FUN = function(j)
+    {
+        file.rds <- file.path(datadir, paste0(j, ".rds"))
+        x <- readRDS(file.rds)
+        x
+    })
+
+    do.call(cbind, don)
 }
 
 ####################
 
 writeCdtDatasetChunk.sequence <- function(mat, chunk, cdtData, datadir, do.par = TRUE)
 {
-	col.grp <- cdtData$colInfo$index[cdtData$colInfo$index %in% chunk]
-	col.grp <- split(seq(ncol(mat)), col.grp)
+    col.grp <- cdtData$colInfo$index[cdtData$colInfo$index %in% chunk]
+    col.grp <- split(seq(ncol(mat)), col.grp)
 
-	is.parallel <- doparallel(do.par & (length(chunk) >= 20))
-	`%parLoop%` <- is.parallel$dofun
-	don <- foreach(j = seq_along(chunk)) %parLoop% {
-		tmp <- mat[, col.grp[[j]], drop = FALSE]
-		file.rds <- file.path(datadir, paste0(chunk[j], ".rds"))
-		con <- gzfile(file.rds, compression = 5)
-		open(con, "wb")
-		saveRDS(tmp, con)
-		close(con)
-		rm(tmp); gc()
-	}
-	if(is.parallel$stop) stopCluster(is.parallel$cluster)
-	return(0)
+    parsL <- doparallel.cond(length(chunk) >= 20 & do.par)
+    don <- cdt.foreach(seq_along(chunk), parsL = parsL, FUN = function(j)
+    {
+        tmp <- mat[, col.grp[[j]], drop = FALSE]
+        file.rds <- file.path(datadir, paste0(chunk[j], ".rds"))
+        con <- gzfile(file.rds, compression = 5)
+        open(con, "wb")
+        saveRDS(tmp, con)
+        close(con)
+    })
+
+    return(0)
 }
 
 ####################
@@ -308,39 +319,30 @@ writeCdtDatasetChunk.sequence <- function(mat, chunk, cdtData, datadir, do.par =
 
 readCdtDatasetChunk.sepdir.dates.order <- function(fileInfo, datadir, dates, do.par = TRUE, coords = FALSE, onedate = FALSE)
 {
-	cdtdata <- readRDS(fileInfo)
-	chunk <- seq(max(cdtdata$colInfo$index))
-	idaty <- cdtdata$dateInfo$index[match(dates, cdtdata$dateInfo$date)]
-	# dates <- dates[!is.na(idaty)]
-	idaty <- idaty[!is.na(idaty)]
-	if(length(idaty) == 0) return(NULL)
-	if(onedate) idaty <- idaty[1]
+    cdtdata <- readRDS(fileInfo)
+    chunk <- seq(max(cdtdata$colInfo$index))
+    idaty <- cdtdata$dateInfo$index[match(dates, cdtdata$dateInfo$date)]
+    # dates <- dates[!is.na(idaty)]
+    idaty <- idaty[!is.na(idaty)]
+    if(length(idaty) == 0) return(NULL)
+    if(onedate) idaty <- idaty[1]
 
-	if(do.par){
-		is.parallel <- doparallel(length(chunk) >= 50)
-		`%parLoop%` <- is.parallel$dofun
-		don <- foreach(j = chunk) %parLoop% {
-			file.rds <- file.path(datadir, paste0(j, ".rds"))
-			x <- readRDS(file.rds)
-			x[idaty, , drop = FALSE]
-		}
-		if(is.parallel$stop) stopCluster(is.parallel$cluster)
-	}else{
-		don <- lapply(chunk, function(j){
-			file.rds <- file.path(datadir, paste0(j, ".rds"))
-			x <- readRDS(file.rds)
-			x[idaty, , drop = FALSE]
-		})
-	}
+    parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
+    don <- cdt.foreach(chunk, parsL = parsL, FUN = function(j)
+    {
+        file.rds <- file.path(datadir, paste0(j, ".rds"))
+        x <- readRDS(file.rds)
+        x[idaty, , drop = FALSE]
+    })
 
-	don <- do.call(cbind, don)
-	don <- don[, cdtdata$colInfo$order, drop = FALSE]
-	if(onedate){
-		dim(don) <- sapply(cdtdata$coords$mat, length)
-		return(c(cdtdata$coords$mat, list(z = don)))
-	}
-	if(coords) return(c(cdtdata$coords$mat, list(z = don)))
-	return(don)
+    don <- do.call(cbind, don)
+    don <- don[, cdtdata$colInfo$order, drop = FALSE]
+    if(onedate){
+        dim(don) <- sapply(cdtdata$coords$mat, length)
+        return(c(cdtdata$coords$mat, list(z = don)))
+    }
+    if(coords) return(c(cdtdata$coords$mat, list(z = don)))
+    return(don)
 }
 
 ####################
@@ -355,39 +357,30 @@ readCdtDatasetChunk.sepdir.dates.order <- function(fileInfo, datadir, dates, do.
 
 readCdtDatasetChunk.multi.dates.order <- function(fileInfo, dates, do.par = TRUE, coords = FALSE, onedate = FALSE)
 {
-	datadir <- file.path(dirname(fileInfo), "DATA")
-	cdtdata <- readRDS(fileInfo)
-	chunk <- seq(max(cdtdata$colInfo$index))
-	idaty <- cdtdata$dateInfo$index[match(dates, cdtdata$dateInfo$date)]
-	# dates <- dates[!is.na(idaty)]
-	idaty <- idaty[!is.na(idaty)]
-	if(onedate) idaty <- idaty[1]
+    datadir <- file.path(dirname(fileInfo), "DATA")
+    cdtdata <- readRDS(fileInfo)
+    chunk <- seq(max(cdtdata$colInfo$index))
+    idaty <- cdtdata$dateInfo$index[match(dates, cdtdata$dateInfo$date)]
+    # dates <- dates[!is.na(idaty)]
+    idaty <- idaty[!is.na(idaty)]
+    if(onedate) idaty <- idaty[1]
 
-	if(do.par){
-		is.parallel <- doparallel(length(chunk) >= 50)
-		`%parLoop%` <- is.parallel$dofun
-		don <- foreach(j = chunk) %parLoop% {
-			file.rds <- file.path(datadir, paste0(j, ".rds"))
-			x <- readRDS(file.rds)
-			x[idaty, , drop = FALSE]
-		}
-		if(is.parallel$stop) stopCluster(is.parallel$cluster)
-	}else{
-		don <- lapply(chunk, function(j){
-			file.rds <- file.path(datadir, paste0(j, ".rds"))
-			x <- readRDS(file.rds)
-			x[idaty, , drop = FALSE]
-		})
-	}
+    parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
+    don <- cdt.foreach(chunk, parsL = parsL, FUN = function(j)
+    {
+        file.rds <- file.path(datadir, paste0(j, ".rds"))
+        x <- readRDS(file.rds)
+        x[idaty, , drop = FALSE]
+    })
 
-	don <- do.call(cbind, don)
-	don <- don[, cdtdata$colInfo$order, drop = FALSE]
-	if(onedate){
-		dim(don) <- sapply(cdtdata$coords$mat, length)
-		return(c(cdtdata$coords$mat, list(z = don)))
-	}
-	if(coords) return(c(cdtdata$coords$mat, list(z = don)))
-	return(don)
+    don <- do.call(cbind, don)
+    don <- don[, cdtdata$colInfo$order, drop = FALSE]
+    if(onedate){
+        dim(don) <- sapply(cdtdata$coords$mat, length)
+        return(c(cdtdata$coords$mat, list(z = don)))
+    }
+    if(coords) return(c(cdtdata$coords$mat, list(z = don)))
+    return(don)
 }
 
 ########################
@@ -399,41 +392,32 @@ readCdtDatasetChunk.multi.dates.order <- function(fileInfo, dates, do.par = TRUE
 # don <- readCdtDatasetChunk.locations(loc, fileInfo, do.par = TRUE)
 # return matrix,  row: all dates, col: correspond to loc (same length as loc)
 
-
 readCdtDatasetChunk.locations <- function(loc, fileInfo, cdtData = NULL, chunkDir = "DATA", do.par = TRUE)
 {
-	if(is.null(cdtData)) cdtData <- readRDS(fileInfo)
-	datadir <- file.path(dirname(fileInfo), chunkDir)
+    if(is.null(cdtData)) cdtData <- readRDS(fileInfo)
+    datadir <- file.path(dirname(fileInfo), chunkDir)
 
-	id <- match(loc, cdtData$colInfo$id)
-	col.id <- split(cdtData$colInfo$id[id], cdtData$colInfo$index[id])
-	chunk <- as.numeric(names(col.id))
-	grp <- cdtData$colInfo$index%in%chunk
-	col.grp <- split(cdtData$colInfo$id[grp], cdtData$colInfo$index[grp])
-	# idx <- lapply(seq_along(chunk), function(j) which(col.grp[[j]]%in%col.id[[j]]))
-	idx <- lapply(seq_along(chunk), function(j) match(col.id[[j]], col.grp[[j]]))
-	xcrd <- do.call(c, lapply(seq_along(chunk), function(j) col.grp[[j]][idx[[j]]]))
-	coords <- cdtData$coords$df[match(xcrd, cdtData$colInfo$id), , drop = FALSE]
-	rownames(coords) <- NULL
+    id <- match(loc, cdtData$colInfo$id)
+    col.id <- split(cdtData$colInfo$id[id], cdtData$colInfo$index[id])
+    chunk <- as.numeric(names(col.id))
+    grp <- cdtData$colInfo$index%in%chunk
+    col.grp <- split(cdtData$colInfo$id[grp], cdtData$colInfo$index[grp])
+    # idx <- lapply(seq_along(chunk), function(j) which(col.grp[[j]]%in%col.id[[j]]))
+    idx <- lapply(seq_along(chunk), function(j) match(col.id[[j]], col.grp[[j]]))
+    xcrd <- do.call(c, lapply(seq_along(chunk), function(j) col.grp[[j]][idx[[j]]]))
+    coords <- cdtData$coords$df[match(xcrd, cdtData$colInfo$id), , drop = FALSE]
+    rownames(coords) <- NULL
 
-	if(do.par){
-		is.parallel <- doparallel(length(chunk) >= 50)
-		`%parLoop%` <- is.parallel$dofun
-		don <- foreach(j = seq_along(chunk)) %parLoop% {
-			file.rds <- file.path(datadir, paste0(chunk[j], ".rds"))
-			x <- readRDS(file.rds)
-			x[, idx[[j]], drop = FALSE]
-		}
-		if(is.parallel$stop) stopCluster(is.parallel$cluster)
-	}else{
-		don <- lapply(seq_along(chunk), function(j){
-			file.rds <- file.path(datadir, paste0(chunk[j], ".rds"))
-			x <- readRDS(file.rds)
-			x[, idx[[j]], drop = FALSE]
-		})
-	}
-	don <- do.call(cbind, don)
-	list(coords = coords, data = don)
+    parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
+    don <- cdt.foreach(seq_along(chunk), parsL = parsL, FUN = function(j)
+    {
+        file.rds <- file.path(datadir, paste0(chunk[j], ".rds"))
+        x <- readRDS(file.rds)
+        x[, idx[[j]], drop = FALSE]
+    })
+
+    don <- do.call(cbind, don)
+    list(coords = coords, data = don)
 }
 
 ###########################################################
@@ -447,78 +431,78 @@ readCdtDatasetChunk.locations <- function(loc, fileInfo, cdtData = NULL, chunkDi
 # pady <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latPAD)))
 
 cdtdataset.extarct.TS <- function(cdtdataset, fileInfo, xloc, yloc, padx = 0, pady = 0, ...){
-	if(padx == 0 & pady == 0)
-		cdtdataset.one.pixel(cdtdataset, fileInfo, xloc, yloc, ...)
-	else
-		cdtdataset.pad.pixel(cdtdataset, fileInfo, xloc, yloc, padx, pady, ...)
+    if(padx == 0 & pady == 0)
+        cdtdataset.one.pixel(cdtdataset, fileInfo, xloc, yloc, ...)
+    else
+        cdtdataset.pad.pixel(cdtdataset, fileInfo, xloc, yloc, padx, pady, ...)
 }
 
 ## extract one pixel
 cdtdataset.one.pixel <- function(cdtdataset, fileInfo, xloc, yloc, ...){
-	xlon <- cdtdataset$coords$mat$x
-	xlat <- cdtdataset$coords$mat$y
+    xlon <- cdtdataset$coords$mat$x
+    xlat <- cdtdataset$coords$mat$y
 
-	ilon <- xloc
-	ilat <- yloc
+    ilon <- xloc
+    ilat <- yloc
 
-	iclo <- findInterval(ilon, xlon)
-	ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])
-	icla <- findInterval(ilat, xlat)
-	ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
+    iclo <- findInterval(ilon, xlon)
+    ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])
+    icla <- findInterval(ilat, xlat)
+    ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
 
-	if(length(ilo) == 0 | length(ila) == 0){
-		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
-		return(NULL)
-	}
+    if(length(ilo) == 0 | length(ila) == 0){
+        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
+        return(NULL)
+    }
 
-	if(is.na(ilo) | is.na(ila)){
-		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
-		return(NULL)
-	}
-	ixy <- ilo + length(xlon) * (ila - 1)
+    if(is.na(ilo) | is.na(ila)){
+        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
+        return(NULL)
+    }
+    ixy <- ilo + length(xlon) * (ila - 1)
 
-	don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
-	coords <- don$coords
-	don <- don$data[, 1]
-	daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
+    don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
+    coords <- don$coords
+    don <- don$data[, 1]
+    daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
 
-	list(data = don, date = daty, coords = coords)
+    list(data = don, date = daty, coords = coords)
 }
 
 ## spatially averaged over a rectangle (padding)
 cdtdataset.pad.pixel <- function(cdtdataset, fileInfo, xloc, yloc, padx, pady, ...){
-	xlon <- cdtdataset$coords$mat$x
-	xlat <- cdtdataset$coords$mat$y
+    xlon <- cdtdataset$coords$mat$x
+    xlat <- cdtdataset$coords$mat$y
 
-	nx <- xlon[2] - xlon[1]
-	ny <- xlat[2] - xlat[1]
-	padx <- round(padx / nx)
-	pady <- round(pady / ny)
-	voisin <- expand.grid(x = xloc + nx * (-padx:padx), y =  yloc + ny * (-pady:pady))
+    nx <- xlon[2] - xlon[1]
+    ny <- xlat[2] - xlat[1]
+    padx <- round(padx / nx)
+    pady <- round(pady / ny)
+    voisin <- expand.grid(x = xloc + nx * (-padx:padx), y =  yloc + ny * (-pady:pady))
 
-	ilon <- voisin$x
-	ilat <- voisin$y
+    ilon <- voisin$x
+    ilat <- voisin$y
 
-	iclo <- findInterval(ilon, xlon)
-	ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])
-	icla <- findInterval(ilat, xlat)
-	ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
+    iclo <- findInterval(ilon, xlon)
+    ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])
+    icla <- findInterval(ilat, xlat)
+    ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
 
-	if(length(ilo) == 0 | length(ila) == 0){
-		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
-		return(NULL)
-	}
+    if(length(ilo) == 0 | length(ila) == 0){
+        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
+        return(NULL)
+    }
 
-	ina <- !is.na(ilo) & !is.na(ila)
-	if(all(!ina)){
-		Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
-		return(NULL)
-	}
-	ixy <- ilo[ina] + length(xlon) * (ila[ina] - 1)
+    ina <- !is.na(ilo) & !is.na(ila)
+    if(all(!ina)){
+        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['7']], format = TRUE)
+        return(NULL)
+    }
+    ixy <- ilo[ina] + length(xlon) * (ila[ina] - 1)
 
-	don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
-	don <- rowMeans(don$data, na.rm = TRUE)
-	daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
+    don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
+    don <- rowMeans(don$data, na.rm = TRUE)
+    daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
 
-	list(data = don, date = daty)
+    list(data = don, date = daty)
 }

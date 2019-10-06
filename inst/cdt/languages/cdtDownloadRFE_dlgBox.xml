@@ -14,36 +14,87 @@
             <text lang="fr"> Annuler </text>
         </button>
         <button id="3">
-            <text lang="en"> Set Date Range </text>
-            <text lang="fr"> Set Date Range </text>
+            <text lang="en"> Set Date-Time Range </text>
+            <text lang="fr"> Set Date-Time Range </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Data Source Info </text>
+            <text lang="fr"> Data Source Info </text>
         </button>
         <label id="1">
+            <text lang="en"> Minute </text>
+            <text lang="fr"> Minute </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Hourly </text>
+            <text lang="fr"> Heure </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Time Resolution </text>
+            <text lang="fr"> Résolution Temporelle </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Satellite Rainfall Product </text>
+            <text lang="fr"> Satellite Rainfall Product </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Login to : </text>
+            <text lang="fr"> Login to : </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Username </text>
+            <text lang="fr"> Username </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Password </text>
+            <text lang="fr"> Password </text>
+        </label>
+        <label id="8">
             <text lang="en"> Area of interest </text>
             <text lang="fr"> Zone d'interêt </text>
         </label>
-        <label id="2">
+        <label id="9">
             <text lang="en"> Longitude </text>
             <text lang="fr"> Longitude </text>
         </label>
-        <label id="3">
+        <label id="10">
             <text lang="en"> Latitude </text>
             <text lang="fr"> Latitude </text>
         </label>
-        <label id="4">
+        <label id="11">
             <text lang="en"> Minimum </text>
             <text lang="fr"> Minimum </text>
         </label>
-        <label id="5">
+        <label id="12">
             <text lang="en"> Maximum </text>
             <text lang="fr"> Maximum </text>
         </label>
-        <label id="6">
+        <label id="13">
             <text lang="en"> Directory to save downloaded files </text>
             <text lang="fr"> Répertoire pour sauver les fichiers téléchargés </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Download from IRI Data Library </text>
         </label>
     </widget>
     <help>
         <content id="1">
+            <status>
+                <text lang="en"> Select the time resolution </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time resolution </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the time in minute or hour </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time in minute or hour </text>
+            </tooltip>
+        </content>
+        <content id="2a">
             <status>
                 <text lang="en"> Select the data source </text>
                 <text lang="fr"> Sélectionnez la source de données </text>
@@ -53,13 +104,13 @@
                 <text lang="fr"> Sélectionnez la source de données </text>
             </tooltip>
         </content>
-        <content id="2">
+        <content id="2b">
             <status>
-                <text lang="en"> Start and end date to download RFE </text>
+                <text lang="en"> Start and end date and time to download RFE </text>
                 <text lang="fr"> Date de début et de fin pour télécharger RFE </text>
             </status>
             <tooltip>
-                <text lang="en"> Start and end date to download RFE </text>
+                <text lang="en"> Start and end date and time to download RFE </text>
                 <text lang="fr"> Date de début et de fin pour télécharger RFE </text>
             </tooltip>
         </content>
@@ -150,20 +201,10 @@
             <text lang="fr"> Certains fichiers ne peuvent pas être téléchargés </text>
         </content>
         <content id="7">
-            <text lang="en"> Check the start date </text>
-            <text lang="fr"> Vérifiez la date de début </text>
+            <text lang="en"> Invalid choice </text>
         </content>
         <content id="8">
-            <text lang="en"> Check the end date </text>
-            <text lang="fr"> Vérifier la date de fin </text>
-        </content>
-        <content id="9">
-            <text lang="en"> Dekad must be between 1 and 3 </text>
-            <text lang="fr"> Décade doit être comprise entre 1 et 3 </text>
-        </content>
-        <content id="10">
-            <text lang="en"> Cannot open the connection or file does not exist: </text>
-            <text lang="fr"> Impossible d'ouvrir la connexion ou le fichier n'existe pas: </text>
+            <text lang="en"> Wrong area subsetting </text>
         </content>
     </message>
 </dialog_box>

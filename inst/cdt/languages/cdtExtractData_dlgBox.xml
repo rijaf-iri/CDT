@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <widget>
+        <button id="1">
+            <text lang="en"> Get All Polygons </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Clear all </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Multiple Points </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Multiple Polygons </text>
+        </label>
+        <label id="3">
+            <text lang="en"> From CDT coordinates file </text>
+        </label>
+        <label id="4">
+            <text lang="en"> From CDT stations data format </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> The coordinates come from a coordinate file </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The coordinates come from a coordinate file </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> The coordinates come from a CDT station data format file </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The coordinates come from a CDT station data format file </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> File containing the ids and coordinates of points to be extracted </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Choose the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Get all the polygons from the shapefile </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Get all the polygons from the shapefile </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

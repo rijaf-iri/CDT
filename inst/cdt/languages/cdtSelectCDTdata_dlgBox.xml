@@ -11,12 +11,9 @@
             <text lang="en"> CDT Station data #2: to exclude from #1 </text>
         </label>
         <label id="2">
-            <text lang="en"> Filter Stations with </text>
+            <text lang="en"> Filter Stations with non-missing values </text>
         </label>
         <label id="3">
-            <text lang="en"> Non-missing values </text>
-        </label>
-        <label id="4">
             <text lang="en"> File to save selected data </text>
         </label>
         <button id="1">

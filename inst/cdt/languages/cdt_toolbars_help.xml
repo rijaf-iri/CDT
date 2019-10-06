@@ -111,6 +111,16 @@
                 <text lang="fr"> Quitter CDT </text>
             </tooltip>
         </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Redraw plot </text>
+                <text lang="fr"> Re-afficher l'image </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Redraw plot </text>
+                <text lang="fr"> Re-afficher l'image </text>
+            </tooltip>
+        </content>
     </help>
     <message>
         <content id="1">

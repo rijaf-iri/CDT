@@ -18,14 +18,10 @@
             <text lang="fr"> Répertoire des fichiers de réanalyse ajustés </text>
         </label>
         <label id="3">
-            <text lang="en"> Min.len.Non.Missing </text>
-            <text lang="fr"> Long.min.Non.Manquante </text>
+            <text lang="en"> Minimum number of non missing values </text>
+            <text lang="fr"> Nombre minimum des valuers non manquantes </text>
         </label>
         <label id="4">
-            <text lang="en"> Dekad </text>
-            <text lang="fr"> Décade </text>
-        </label>
-        <label id="5">
             <text lang="en"> File to save filled data </text>
             <text lang="fr"> Fichier de sauvegarde données comblées </text>
         </label>

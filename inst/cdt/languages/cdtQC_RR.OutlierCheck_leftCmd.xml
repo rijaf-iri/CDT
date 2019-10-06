@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Data </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> QC Outputs </text>
+        </tab>
+        <tab id="2-1">
+            <text lang="en"> MixedTemp </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Zoom </text>
+        </tab>
+        <tab id="4">
+            <text lang="en"> Add Layers </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Outliers Check Parameters </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Check Outliers </text>
+        </button>
+        <button id="3">
+            <text lang="en"> View and Edit Result </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Replace Outliers </text>
+        </button>
+        <button id="5">
+            <text lang="en"> Display Table </text>
+        </button>
+        <button id="6">
+            <text lang="en"> Plot Time Series </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Load existing QC session </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Add boundaries to Map </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Add DEM to map </text>
+        </checkbutton>
+        <checkbutton id="4">
+            <text lang="en"> Add gridded data to map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Time step of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Station Data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing stations input data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Directory to save the outputs </text>
+        </label>
+        <label id="5">
+            <text lang="en"> QC Data </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Select station </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Plot Outliers by month </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Plot Spatial Check </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Zoom </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Temperature mixed with rainfall data </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the input data </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Set the parameters of the outliers check </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Set the parameters of the outliers check </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Plot outliers for each month </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Plot outliers for each month </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Display map of outliers </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Display map of outliers </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Replaces outliers with the correct values or a missing values </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Replaces outliers with the correct values or a missing values </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Zoom In </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom In </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Zoom Out </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Out </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Zoom Area </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Area </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> Pan Tool </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Pan Tool </text>
+            </tooltip>
+        </content>
+        <content id="14">
+            <status>
+                <text lang="en"> Redraw Map </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Redraw Map </text>
+            </tooltip>
+        </content>
+        <content id="15">
+            <status>
+                <text lang="en"> Zoom Reset </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Reset </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Check outliers ...... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Outliers check finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Outliers check failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> No suspicious values found </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Unable to load QC output data </text>
+        </content>
+        <content id="6">
+            <text lang="en"> not found </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Unable to read DEM data </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No sample data found </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Unable to save table </text>
+        </content>
+        <content id="10">
+            <text lang="en"> replacement done </text>
+        </content>
+        <content id="11">
+            <text lang="en"> No DEM file found </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Unable to read DEM data </text>
+        </content>
+        <content id="13">
+            <text lang="en"> No elevation data in station data </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Neighbor stations will be selected without considering elevation data </text>
+        </content>
+    </message>
+</panel_cmd>

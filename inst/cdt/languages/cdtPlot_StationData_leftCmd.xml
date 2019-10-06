@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Plot CDT Station Data </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Boundaries </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Add boundaries to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Station Data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Time step </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing CDT stations data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Map </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Dates or Index </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Year </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Dekad </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Pentad </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Day </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Hour </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Minute </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Graph </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Stations </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Boundaries </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Pentad must be between 1 and 6 </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Dekad must be 1, 2 or 3 </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Hour must be between 0 and 23 </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Minute must be between 0 and 59 </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Invalid date </text>
+        </content>
+        <content id="6">
+            <text lang="en"> does not exist </text>
+            <text lang="fr"> n'existe pas </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Invalid date or index </text>
+        </content>
+        <content id="8">
+            <text lang="en"> xlim must be an integer value </text>
+        </content>
+    </message>
+</panel_cmd>
