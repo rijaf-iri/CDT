@@ -7,7 +7,7 @@ LinuxOS <- function() if(Sys.info()["sysname"] == "Linux") TRUE else FALSE
 ##############################################
 
 ## Test Internet connection
-testConnection <- function(url = "https://cloud.r-project.org") {
+testConnection <- function(url = "https://cran.r-project.org") {
     if(!as.logical(capabilities(what = "http/ftp"))) return(FALSE)
     test <- try(suppressWarnings(readLines(url, n = 1)), silent = TRUE)
     ifelse(inherits(test, "try-error"), FALSE, TRUE)
