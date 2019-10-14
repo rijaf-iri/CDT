@@ -231,9 +231,9 @@ merging.functions <- function(locations.stn, newgrid, params,
         #########
 
         rg.res <- range(loc.stn$res)
-        margin <- 0.1 * diff(rg.res)
+        margin <- 0.01 * diff(rg.res)
         interp.res[!is.na(interp.res) & (interp.res < (rg.res[1] - margin))] <- rg.res[1] - margin
-        interp.res[!is.na(interp.res) & (interp.res > (rg.res[1] + margin))] <- rg.res[1] + margin
+        interp.res[!is.na(interp.res) & (interp.res > (rg.res[2] + margin))] <- rg.res[2] + margin
 
         #########
 
@@ -325,7 +325,9 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
         params$interp$maxdist <- maxdist
     }else{
         bx <- diff(sapply(stnData[c('lon', 'lat')], range))
-        dg <- sqrt(bx[1]^2 + bx[2]^2) / 4
+        # dg <- sqrt(bx[1]^2 + bx[2]^2) / 4
+        dg <- sqrt(bx[1]^2 + bx[2]^2)
+        dg <- 0.08 * dg + 0.199
         params$interp$maxdist <- params$MRG$pass * dg
     }
 
