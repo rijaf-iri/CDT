@@ -256,7 +256,7 @@ table.format.date.time <- function(tstep, date.range, minhour = NA){
         p1 <- paste(dates[, 2], dates[, 3], sep = "-")
         p2 <- paste(xx[, 1], xx[, 2], sep = "-")
         xx <- str_pad(match(p1, p2), 2, pad = "0")
-        dates <- cbind(dates[, 1:2], as.numeric(dates[, 3]), xx)
+        dates <- cbind(dates[, 1:2, drop = FALSE], as.numeric(dates[, 3]), xx)
     }
 
     if(tstep == "monthly"){
