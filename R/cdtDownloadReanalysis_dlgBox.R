@@ -91,9 +91,9 @@ reanal.need.extern <- function(prod, src){
 
 reanal.under.construction <- function(parent, prod, src){
     ok <- FALSE
-    if(prod == "jra55"){
-        if(src != "rda.ucar.edu") ok <- TRUE
-    }
+    # if(prod == "jra55"){
+    #     if(src != "rda.ucar.edu") ok <- TRUE
+    # }
     if(prod == "merra2"){
         if(src != "iridl.ldeo.columbia.edu") ok <- TRUE
     }
@@ -139,8 +139,17 @@ download_Reanalysis <- function(){
     frRFE <- tkframe(frGrd0, relief = 'sunken', bd = 2)
 
     downVar <- tclVar()
-    CbvarsVAL <- lang.dlg[['combobox']][['1']]
-    varsVAL <- c('tmax', 'tmin')
+
+    if(.cdtData$GalParams$prod == "jra55" &
+       .cdtData$GalParams$src == "jra.kishou.go.jp")
+    {
+        CbvarsVAL <- c(lang.dlg[['combobox']][['2']], '')
+        varsVAL <- c('tmax', '')
+    }else{
+        CbvarsVAL <- lang.dlg[['combobox']][['1']]
+        varsVAL <- c('tmax', 'tmin')
+    }
+
     tclvalue(downVar) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$var]
 
     reanalProd <- tclVar()
@@ -256,6 +265,20 @@ download_Reanalysis <- function(){
         tkconfigure(en.pwd, state = statepwd)
 
         ########
+        if(prod == "jra55" & src == "jra.kishou.go.jp")
+        {
+            CbvarsVAL <<- c(lang.dlg[['combobox']][['2']], '')
+            varsVAL <<- c('tmax', '')
+        }else{
+            CbvarsVAL <<- lang.dlg[['combobox']][['1']]
+            varsVAL <<- c('tmax', 'tmin')
+        }
+
+        tkconfigure(cb.vars, values = CbvarsVAL)
+        if(!str_trim(tclvalue(downVar)) %in% CbvarsVAL)
+            tclvalue(downVar) <- CbvarsVAL[1]
+
+        ########
         progexe <- reanal.need.extern(prod, src)
         tclvalue(proglab) <- switch(progexe$text,
                                    "grads" = lang.dlg[['label']][['7-1']],
@@ -269,6 +292,20 @@ download_Reanalysis <- function(){
     tkbind(cb.src, "<<ComboboxSelected>>", function(){
         prod <- prodVAL[CbprodVAL %in% str_trim(tclvalue(reanalProd))]
         src <- str_trim(tclvalue(reanalSrc))
+
+        ########
+        if(prod == "jra55" & src == "jra.kishou.go.jp")
+        {
+            CbvarsVAL <<- c(lang.dlg[['combobox']][['2']], '')
+            varsVAL <<- c('tmax', '')
+        }else{
+            CbvarsVAL <<- lang.dlg[['combobox']][['1']]
+            varsVAL <<- c('tmax', 'tmin')
+        }
+
+        tkconfigure(cb.vars, values = CbvarsVAL)
+        if(!str_trim(tclvalue(downVar)) %in% CbvarsVAL)
+            tclvalue(downVar) <- CbvarsVAL[1]
 
         ########
         need.pwd <- reanal.need.usrpwd(prod, src)
@@ -401,6 +438,8 @@ download_Reanalysis <- function(){
                         Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "s")
                     if(ret == 1)
                         Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, "w")
+                    if(ret == 2)
+                        Insert.Messages.Out(paste(.cdtData$GalParams$path.exe, "not found!"), TRUE, "e")
                     if(ret == -1)
                         Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "w")
                     if(ret == -2)

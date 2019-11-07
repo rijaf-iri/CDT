@@ -10,7 +10,7 @@ exec.download_Reanalysis <- function(){
    download.fun <- switch(.cdtData$GalParams$prod,
                         "jra55" = switch(.cdtData$GalParams$src,
                                     "rda.ucar.edu" = jra55.download.rda.ucar,
-                                    "jra.kishou.go.jp" = NULL,
+                                    "jra.kishou.go.jp" = jra55.download.jra.kishou,
                                     NULL),
                         "merra2" =  switch(.cdtData$GalParams$src,
                                     "iridl.ldeo.columbia.edu" = merra2.download.iridl,

@@ -13,6 +13,11 @@
                 <text lang="en"> Minimum temperature at 2m above ground </text>
             </option>
         </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Max and Min temperature at 2m above ground </text>
+            </option>
+        </combobox>
         <button id="1">
             <text lang="en"> Download </text>
             <text lang="fr"> Télécharger </text>

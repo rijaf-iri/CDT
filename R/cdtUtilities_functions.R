@@ -407,3 +407,10 @@ cdt.2matrices.mv <- function(x, y, sr, sc, fun, ...){
 }
 
 ########################################
+
+split_path <- function(path){
+    # https://stackoverflow.com/q/29214932
+    if (dirname(path) %in% c(".", path)) return(basename(path))
+    return(c(basename(path), split_path(dirname(path))))
+}
+
