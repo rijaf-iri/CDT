@@ -9,7 +9,7 @@ execAdjBiasRain <- function(){
         xfin <- format(daty$end, "%b%Y")
     }else{
         xdeb <- paste0(as.numeric(format(daty$start, "%d")), format(daty$start, "%b%Y"))
-        xfin <- paste0(as.numeric(format(daty$start, "%d")), format(daty$end, "%b%Y"))
+        xfin <- paste0(as.numeric(format(daty$end, "%d")), format(daty$end, "%b%Y"))
     }
 
     outdir <- file.path(.cdtData$GalParams$output$dir,
