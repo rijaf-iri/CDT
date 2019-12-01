@@ -60,7 +60,7 @@ split_3d.netcdf_writeNC <- function(){
 
     ncpars <- .cdtData$GalParams$ncpars
     outdir <- .cdtData$GalParams$output
-    outdir <- file.path(outdir, "Splitted_NetCDF")
+    outdir <- file.path(outdir, "CDT_NetCDF_Format")
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     nc.dir <- dirname(.cdtData$GalParams$ncdf$file)

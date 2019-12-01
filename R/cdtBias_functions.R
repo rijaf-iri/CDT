@@ -174,6 +174,15 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
     if(bias.method %in% c("mbvar", "mbmon")){
         ptsData <- stnData[c('lon', 'lat')]
         grdData <- readNetCDFData2Points(ncInfo, ptsData, GUI)
+
+        istn <- match(ncInfo$dates, stnData$dates)
+        istn <- istn[!is.na(istn)]
+        stnData$dates <- stnData$dates[istn]
+        stnData$data <- stnData$data[istn, , drop = FALSE]
+        igrd <- ncInfo$dates %in% stnData$dates
+        ncInfo$dates <- ncInfo$dates[igrd]
+        grdData <- grdData[igrd, , drop = FALSE]
+
         biasData <- list(dates = stnData$dates,
                          # dates = ncInfo$dates,
                          lon = stnData$lon,
@@ -207,6 +216,15 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
         xlon <- xlon[!icoarse.out]
         xlat <- xlat[!icoarse.out]
 
+        istn <- match(ncInfo$dates, stnData$dates)
+        istn <- istn[!is.na(istn)]
+        stnData$dates <- stnData$dates[istn]
+        stnData$data <- stnData$data[istn, , drop = FALSE]
+        igrd <- ncInfo$dates %in% stnData$dates
+        ncInfo$dates <- ncInfo$dates[igrd]
+        grd <- grd[igrd, , drop = FALSE]
+        xgrd <- xgrd[igrd, , drop = FALSE]
+
         biasData <- list(dates = stnData$dates,
                          # dates = ncInfo$dates,
                          slon = stnData$lon,
@@ -231,6 +249,14 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
         })
         stn <- do.call(cbind, stn)
         bbx.crd <- expand.grid(grdData[c('lon', 'lat')])
+
+        istn <- match(ncInfo$dates, stnData$dates)
+        istn <- istn[!is.na(istn)]
+        stnData$dates <- stnData$dates[istn]
+        stn <- stn[istn, , drop = FALSE]
+        igrd <- ncInfo$dates %in% stnData$dates
+        ncInfo$dates <- ncInfo$dates[igrd]
+        grdData$data <- grdData$data[igrd, , drop = FALSE]
 
         biasData <- list(dates = stnData$dates,
                          # dates = ncInfo$dates,
