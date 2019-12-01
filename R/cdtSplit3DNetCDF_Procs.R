@@ -42,7 +42,8 @@ get.netcdf.time <- function(time.dim){
         if(grepl("julian", temps, ignore.case = TRUE)){
             units <- "julian"
             # Unix Time
-            daty <- as.POSIXct((time.dim$vals - 2440587.5) * 86400, origin = "1970-01-01", tz = "GMT")
+            origin <- "1970-01-01"
+            daty <- as.POSIXct((time.dim$vals - 2440587.5) * 86400, origin = origin, tz = "GMT")
         }else{
             origin <- NULL
             units <- temps
