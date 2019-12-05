@@ -183,9 +183,11 @@ merging.functions <- function(locations.stn, newgrid, params,
 
         #########
 
-        row.names(loc.stn) <- 1:length(loc.stn)
-        row.names(coarsegrid) <- length(loc.stn) + (1:length(coarsegrid))
-        loc.stn <- maptools::spRbind(loc.stn, coarsegrid)
+        if(length(coarsegrid) > 0){
+            row.names(loc.stn) <- 1:length(loc.stn)
+            row.names(coarsegrid) <- length(loc.stn) + (1:length(coarsegrid))
+            loc.stn <- maptools::spRbind(loc.stn, coarsegrid)
+        }
 
         #########
 

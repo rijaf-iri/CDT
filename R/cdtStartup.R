@@ -1632,8 +1632,12 @@ startCDT <- function(wd = NA, lang = NA){
         tkgrid(txtlab.auth)
 
         #######
-        hauteur_sep <- if(WindowsOS()) 17 else 14
-        largeur_sep <- if(WindowsOS()) 21 else 17
+        # hauteur_sep <- if(WindowsOS()) 17 else 14
+        # largeur_sep <- if(WindowsOS()) 21 else 17
+
+        hauteur_sep <- if(WindowsOS()) 8 else 14
+        largeur_sep <- if(WindowsOS()) 17 else 17
+
         hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(hauteur_sep)
         largeur_sep <- .cdtEnv$tcl$fun$w.widgets(largeur_sep)
 
