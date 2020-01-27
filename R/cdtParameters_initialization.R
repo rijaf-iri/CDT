@@ -61,7 +61,7 @@ cdt.init.params <- function(action, tstep){
       output <- list(dir = getwd(), data.name = "PRECIP")
       ret.params <- list(action = action, tstep = tstep, date.range = date.range,
                          NCDF = NCDF, output = output, Update = FALSE, cdtDataSet = "",
-                         chunk = list(chunksize = 100, chunkfac = 5)
+                         chunk = .cdtData$Config$cdtDataset.chunk
                         )
   }
 

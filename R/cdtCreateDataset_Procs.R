@@ -48,29 +48,6 @@ cdtDataset_readData <- function(){
 
     ##################
 
-    # tstep <- .cdtData$GalParams$tstep
-    # suffix <- switch(tstep, "daily" = "day", "pentad" = "pen", "dekadal" = "dek")
-    # is <- paste0("start.", suffix)
-    # ie <- paste0("end.", suffix)
-
-    # start.year <- .cdtData$GalParams$date.range$start.year
-    # start.mon <- .cdtData$GalParams$date.range$start.mon
-    # start.dek <- .cdtData$GalParams$date.range[[is]]
-    # end.year <- .cdtData$GalParams$date.range$end.year
-    # end.mon <- .cdtData$GalParams$date.range$end.mon
-    # end.dek <- .cdtData$GalParams$date.range[[ie]]
-    # months <- .cdtData$GalParams$date.range$Months
-    # start.date <- as.Date(paste(start.year, start.mon, start.dek, sep = '/'), format = '%Y/%m/%d')
-    # end.date <- as.Date(paste(end.year, end.mon, end.dek, sep = '/'), format = '%Y/%m/%d')
-
-    # NCDF.DIR <- .cdtData$GalParams$NCDF$dir
-    # NCDF.Format <- .cdtData$GalParams$NCDF$format
-
-    # errmsg <- .cdtData$GalParams[['message']][['13']]
-    # ncInfo <- ncFilesInfo(tstep, start.date, end.date, months, NCDF.DIR, NCDF.Format, errmsg)
-    # if(is.null(ncInfo)) return(NULL)
-
-
     ncInfo <- ncInfo.with.date.range(.cdtData$GalParams$NCDF,
                                      .cdtData$GalParams$date.range,
                                      .cdtData$GalParams$tstep)
@@ -99,20 +76,6 @@ cdtDataset_readData <- function(){
     }
 
     ##################
-    # nc <- nc_open(ncInfo$ncfiles[1])
-    # nc.lon <- nc$var[[ncInfo$ncinfo$varid]]$dim[[ncInfo$ncinfo$ilon]]$vals
-    # nc.lat <- nc$var[[ncInfo$ncinfo$varid]]$dim[[ncInfo$ncinfo$ilat]]$vals
-    # varInfo <- nc$var[[ncInfo$ncinfo$varid]][c('name', 'prec', 'units', 'longname')]
-    # nc_close(nc)
-
-    # ncInfo$ncinfo$xo <- order(nc.lon)
-    # nc.lon <- nc.lon[ncInfo$ncinfo$xo]
-    # ncInfo$ncinfo$yo <- order(nc.lat)
-    # nc.lat <- nc.lat[ncInfo$ncinfo$yo]
-    # len.lon <- length(nc.lon)
-    # len.lat <- length(nc.lat)
-    # varInfo <- ncInfo$ncinfo$varinfo
-
     nc.lon <- ncInfo$ncinfo$lon
     nc.lat <- ncInfo$ncinfo$lat
     len.lon <- ncInfo$ncinfo$nx
@@ -210,7 +173,6 @@ cdtDataset_readData <- function(){
 
     Insert.Messages.Out(.cdtData$GalParams[['message']][['18']], TRUE, "i")
 
-    toExports <- c("col.idx", "datadir")
     parsL <- doparallel.cond(length(col.idx) >= 200)
 
     ret <- lapply(seq_along(chunkdate), function(jj){
@@ -218,8 +180,10 @@ cdtDataset_readData <- function(){
         tmp <- readRDS(file.tmp)
         unlink(file.tmp)
 
-        ret <- cdt.foreach(seq_along(col.idx), parsL = parsL,
-                           .export = toExports, FUN = function(j)
+        col.idx <- col.idx
+        datadir <- datadir
+
+        ret <- cdt.foreach(seq_along(col.idx), parsL = parsL, FUN = function(j)
         {
             chk <- tmp[, col.idx[[j]], drop = FALSE]
             file.rds <- file.path(datadir, paste0(j, ".rds"))

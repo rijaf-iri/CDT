@@ -28,6 +28,14 @@
         // Valid options: "short", "integer", "float" or "double"
         "prec": "short"
     },
+    // CDT dataset chunk 
+    "cdtDataset.chunk":
+    {
+        // Number of pixels per chunk
+        "chunksize": 100,
+        // Number of chunk files to be used for each calculation
+        "chunkfac": 5
+    },
     // use parallel processing
     "dopar": true,
     // set number of cores automatically detectCores() - 1
