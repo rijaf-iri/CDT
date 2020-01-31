@@ -833,7 +833,7 @@ startCDT <- function(wd = NA, lang = NA){
                     refreshCDT(staterun = "disabled")
                     spinbox.state(state = 'normal')
                     if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-                        # Validation.MultiData.PanelCmd('TT')
+                        Validation.MultiData.PanelCmd('TT')
                         .cdtEnv$tcl$data$lcmd.frame <- 1
                     }
                 })

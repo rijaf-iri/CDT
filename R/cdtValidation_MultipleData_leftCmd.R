@@ -10,18 +10,16 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         largeur5 <- 30
 
         data.w <- .cdtEnv$tcl$fun$w.scale(25)
-        # data.h <- .cdtEnv$tcl$fun$h.scale(40)
         data.h <- .cdtEnv$tcl$fun$h.scale(27)
     }else{
         largeur0 <- .cdtEnv$tcl$fun$w.widgets(26)
         largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
         largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
         largeur3 <- .cdtEnv$tcl$fun$w.widgets(14)
-        largeur4 <- 20
+        largeur4 <- 21
         largeur5 <- 22
 
         data.w <- .cdtEnv$tcl$fun$w.scale(25)
-        # data.h <- .cdtEnv$tcl$fun$h.scale(40)
         data.h <- .cdtEnv$tcl$fun$h.scale(27)
     }
 
@@ -29,19 +27,20 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
     GeneralParameters <- list(intstep = "dekadal", outdir = "", STN.file = "",
                               date.range = list(start.year = 1981, start.month = 1, end.year = 2018, end.month = 12),
-                              aggr.series = list(aggr.data = FALSE, aggr.fun = "sum", min.frac = 0.95, opr.fun = ">=", opr.thres = 0),
+                              aggr.series = list(aggr.data = FALSE, aggr.fun = "sum", min.frac = 0.80, opr.fun = ">=", opr.thres = 0),
                               dicho.fcst = list(opr.fun = ">=", opr.thres = 1), stat.data = "all",
                               add.to.plot = list(add.shp = FALSE, shp.file = "")
                             )
 
+    pointSizeI <- 1.0
     .cdtData$EnvData$statMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
                                        userCol = list(custom = FALSE, color = NULL),
                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
-                                       pointSize = 1.0)
+                                       pointSize = pointSizeI)
 
-    # .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
     MOIS <- format(ISOdate(2014, 1:12, 1), "%b")
 
@@ -52,12 +51,22 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
     ###################
 
-    CHXSTATS0 <- c('Correlation', 'Nash-Sutcliffe Efficiency', 'Bias', 'Mean Absolute Error', 'Mean Error', 'Root Mean Square Error')
-    CHXSTATS1 <- c('Probability Of Detection', 'False Alarm Ratio', 'Frequency Bias', 'Critical Success Index', 'Heidke Skill Score')
-    CHXSTATS2 <- c('Volumetric Hit Index', 'Quantile Probability of Detection', 'Volumetric False Alarm Ratio',
-                    'Quantile False Alarm Ratio', 'Volumetric Miss Index', 'Volumetric Critical Success Index',
-                    'Quantile Critical Success Index')
-    CHXSTATS <- c(CHXSTATS0, CHXSTATS1, CHXSTATS2)
+    CHXSTATS0 <- c('Correlation', 'Coefficient of determination (R2) multiplied by the regression slope',
+                   'Bias', 'Percent Bias', 'Mean Error', 'Mean Absolute Error', 'Root Mean Square Error',
+                   'Nash-Sutcliffe Efficiency', 'Modified Nash-Sutcliffe efficiency', 'Relative Nash-Sutcliffe efficiency',
+                   'Index of Agreement', 'Modified index of agreement', 'Relative Index of Agreement')
+    CHXSTATS1 <- c('Probability Of Detection', 'Probability Of False Detection',
+                   'False Alarm Ratio', 'Frequency Bias (Bias score)',
+                   'Critical Success Index', 'Heidke Skill Score')
+
+    CHXSTATS2 <- c("Mean Quantile Bias", "Mean Quantile Error",
+                   "Volumetric Hit Index", "Quantile Probability of Detection",
+                   "Volumetric False Alarm Ratio", "Quantile False Alarm Ratio",
+                   "Volumetric Miss Index", "Quantile Miss Index",
+                   "Volumetric Critical Success Index", "Quantile Critical Success Index")
+
+    if(clim.var == "RR") CHXSTATS <- c(CHXSTATS0, CHXSTATS1, CHXSTATS2)
+    if(clim.var == "TT") CHXSTATS <- c(CHXSTATS0, CHXSTATS1)
 
     ###################
 
@@ -173,12 +182,12 @@ Validation.MultiData.PanelCmd <- function(clim.var){
     tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir2save, isFile = FALSE))
 
     ##################
-    tkgrid(frameInValid, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameInValid, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(sep_dataset, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     subfr1 <- bwTabScrollableFrame(cmd.tab1, hscrlwin = data.h, wscrlwin = data.w)
     tkgrid(bt.AddData, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameDirSav, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameDirSav, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ##############################################
 
@@ -196,24 +205,6 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkgrid(txt.tstep, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.tstep, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ########
-
-        # tkbind(cb.tstep, "<<ComboboxSelected>>", function(){
-        #     tkdestroy(frTS0)
-        #     frTS0 <<- tkframe(framePlotMap)
-
-        #     intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-        #     date.time.selection(intstep, frTS0)
-
-        #     tkgrid(frTS0, row = 0, column = 0, sticky = '', padx = 1, pady = 1, columnspan = 3)
-
-        #     ##############
-        #     minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
-        #     retminhr <- set.hour.minute(intstep, minhour)
-        #     tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
-        #     tclvalue(minhour.tclVar) <- retminhr$val
-        # })
 
         #######################
 
@@ -277,17 +268,16 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         stateHOVd <- if(tclvalue(.cdtData$EnvData$hovd) == "1") "normal" else "disabled"
 
         chk.hovd <- tkcheckbutton(frameHOV, variable = .cdtData$EnvData$hovd, text = "Validation already performed", anchor = 'w', justify = 'left')
-        en.hovd <- tkentry(frameHOV, textvariable = file.hovd, width = largeur1, state = stateHOVd)
-        bt.hovd <- tkbutton(frameHOV, text = "...", state = stateHOVd)
+        en.hovd <- tkentry(frameHOV, textvariable = file.hovd, width = largeur1 + 7, state = stateHOVd)
+        bt.hovd <- tkbutton(frameHOV, text = "Load Data", state = stateHOVd)
 
-        tkgrid(chk.hovd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.hovd, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.hovd, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.hovd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.hovd, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.hovd, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ###############
 
         valdataExist <- NULL
-        dataNAME <- NULL
 
         tkconfigure(bt.hovd, command = function(){
             path.hovd <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -305,6 +295,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 .cdtData$EnvData$file.hovd <- str_trim(tclvalue(file.hovd))
                 .cdtData$EnvData$GeneralParameters <- hovd.data$GeneralParameters
                 .cdtData$EnvData$cdtData <- hovd.data$cdtData
+                .cdtData$EnvData$VALID.names <- hovd.data$VALID.names
 
                 if(!is.null(hovd.data$opDATA)){
                     .cdtData$EnvData$opDATA <- hovd.data$opDATA
@@ -313,7 +304,6 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
                 ###
                 tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% hovd.data$GeneralParameters$intstep]
-                dataNAME <<- .cdtData$EnvData$GeneralParameters$VALID.names
 
                 ##
                 AGGREGFUN <- c("mean", "sum", "count")
@@ -337,15 +327,19 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                     tkconfigure(cb.stats.maps, state = stateMaps)
                     tkconfigure(bt.stats.maps, state = stateMaps)
                     tkconfigure(cb.plot.type, state = stateMaps)
-
-                    tkconfigure(cb.data.sets, values = .cdtData$EnvData$GeneralParameters$VALID.names, state = stateMaps)
-                    tclvalue(datasets.name) <- .cdtData$EnvData$GeneralParameters$VALID.names[1]
+                    tkconfigure(bt.stats.Opt, state = stateMaps)
 
                     stateStnID <- if(str_trim(tclvalue(stat.data)) == STATDATATYPE[3]) 'normal' else 'disabled'
+
                     tkconfigure(cb.stn.graph, values = .cdtData$EnvData$opDATA$id, state = stateStnID)
                     tclvalue(.cdtData$EnvData$stnIDGraph) <- .cdtData$EnvData$opDATA$id[1]
                     tkconfigure(bt.stn.graph.prev, state = stateStnID)
                     tkconfigure(bt.stn.graph.next, state = stateStnID)
+
+                    tkconfigure(cb.rank.sel, values = .cdtData$EnvData$opDATA$id, state = stateStnID)
+                    tclvalue(.cdtData$EnvData$stnIDRank) <- .cdtData$EnvData$opDATA$id[1]
+                    tkconfigure(bt.rank.prev, state = stateStnID)
+                    tkconfigure(bt.rank.next, state = stateStnID)
 
                     TYPEGRAPH <- c("Scatter", "CDF", "Lines")
                     if(str_trim(tclvalue(stat.data)) == STATDATATYPE[1]){
@@ -517,12 +511,16 @@ Validation.MultiData.PanelCmd <- function(clim.var){
             tkconfigure(cb.stats.maps, state = stateMaps)
             tkconfigure(bt.stats.maps, state = stateMaps)
             tkconfigure(cb.plot.type, state = stateMaps)
-            tkconfigure(cb.data.sets, state = stateMaps)
+            tkconfigure(bt.stats.Opt, state = stateMaps)
 
             stateStnID <- if(str_trim(tclvalue(stat.data)) == STATDATATYPE[3]) 'normal' else 'disabled'
             tkconfigure(cb.stn.graph, state = stateStnID)
             tkconfigure(bt.stn.graph.prev, state = stateStnID)
             tkconfigure(bt.stn.graph.next, state = stateStnID)
+
+            tkconfigure(cb.rank.sel, state = stateStnID)
+            tkconfigure(bt.rank.prev, state = stateStnID)
+            tkconfigure(bt.rank.next, state = stateStnID)
 
             TYPEGRAPH <- c("Scatter", "CDF", "Lines")
             if(str_trim(tclvalue(stat.data)) == STATDATATYPE[1]){
@@ -594,10 +592,13 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 }
             }
 
+            ######################
             GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
 
             GeneralParameters$outdir <- str_trim(tclvalue(dir2save))
             GeneralParameters$STN.file <- str_trim(tclvalue(file.stnfl))
+
+            ######################
 
             GeneralParameters$date.range$start.month <- which(MOIS %in% str_trim(tclvalue(start.mois)))
             GeneralParameters$date.range$end.month <- which(MOIS %in% str_trim(tclvalue(end.mois)))
@@ -616,8 +617,6 @@ Validation.MultiData.PanelCmd <- function(clim.var){
             GeneralParameters$dicho.fcst$opr.fun <- str_trim(tclvalue(dicho.opr))
 
             GeneralParameters$clim.var <- clim.var
-            GeneralParameters$VALID.names <- sapply(.cdtData$GalParams$DATASETs, function(don) str_trim(tclvalue(don$tcl$data.name)))
-            dataNAME <<- GeneralParameters$VALID.names
 
             #####
 
@@ -642,14 +641,14 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                     Insert.Messages.Out(msg0, TRUE, "s")
 
                     if(str_trim(tclvalue(stat.data)) == STATDATATYPE[3]){
-                        tkconfigure(cb.data.sets, values = GeneralParameters$VALID.names)
-                        tclvalue(datasets.name) <- GeneralParameters$VALID.names[1]
-
                         tkconfigure(cb.stat.sel, values = .cdtData$EnvData$opDATA$id)
                         tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[1]
 
                         tkconfigure(cb.stn.graph, values = .cdtData$EnvData$opDATA$id, state = 'normal')
                         tclvalue(.cdtData$EnvData$stnIDGraph) <- .cdtData$EnvData$opDATA$id[1]
+
+                        tkconfigure(cb.rank.sel, values = .cdtData$EnvData$opDATA$id, state = 'normal')
+                        tclvalue(.cdtData$EnvData$stnIDRank) <- .cdtData$EnvData$opDATA$id[1]
                     }
                 }else Insert.Messages.Out(msg1, format = TRUE)
             }else Insert.Messages.Out(msg1, format = TRUE)
@@ -708,7 +707,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                     don <- rbind(cont.stats, catg.stats, volume.stats)
                     descrp <- c(descrp1, descrp2, descrp3)
                     dat2disp <- data.frame(Name = rownames(don), Statistics = don, Description = descrp)
-                    names(dat2disp) <- c('Name', dataNAME, 'Description')
+                    names(dat2disp) <- c('Name', .cdtData$EnvData$VALID.names, 'Description')
                     rownames(dat2disp) <- NULL
 
                     titleTab <- 'All-Data Statistics'
@@ -727,7 +726,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                     don <- rbind(cont.stats, catg.stats, volume.stats)
                     descrp <- c(descrp1, descrp2, descrp3)
                     dat2disp <- data.frame(Name = rownames(don), Statistics = don, Description = descrp)
-                    names(dat2disp) <- c('Name', dataNAME, 'Description')
+                    names(dat2disp) <- c('Name', .cdtData$EnvData$VALID.names, 'Description')
                     rownames(dat2disp) <- NULL
 
                     titleTab <- 'Spatial-Average Statistics'
@@ -736,7 +735,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                     istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(stn.stat.tab)))
 
                     don <- .cdtData$EnvData$Statistics$STN
-                    stats <- lapply(seq_along(dataNAME), function(j){
+                    stats <- lapply(seq_along(.cdtData$EnvData$VALID.names), function(j){
                         cont.stats <- don$cont[[j]]$statistics[, istn]
                         catg.stats <- don$catg[[j]]$statistics[, istn]
                         if(clim.var == "RR")
@@ -752,7 +751,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                     descrp <- c(descrp1, descrp2, descrp3)
 
                     dat2disp <- data.frame(Name = rownames(stats), Statistics = stats, Description = descrp)
-                    names(dat2disp) <- c('Name', dataNAME, 'Description')
+                    names(dat2disp) <- c('Name', .cdtData$EnvData$VALID.names, 'Description')
                     rownames(dat2disp) <- NULL
 
                     titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
@@ -770,7 +769,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
 
                 don <- .cdtData$EnvData$Statistics$STN
-                stats <- lapply(seq_along(dataNAME), function(j){
+                stats <- lapply(seq_along(.cdtData$EnvData$VALID.names), function(j){
                     cont.stats <- don$cont[[j]]$statistics[, istn]
                     catg.stats <- don$catg[[j]]$statistics[, istn]
                     if(clim.var == "RR")
@@ -786,7 +785,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 descrp <- c(descrp1, descrp2, descrp3)
 
                 dat2disp <- data.frame(Name = rownames(stats), Statistics = stats, Description = descrp)
-                names(dat2disp) <- c('Name', dataNAME, 'Description')
+                names(dat2disp) <- c('Name', .cdtData$EnvData$VALID.names, 'Description')
                 rownames(dat2disp) <- NULL
 
                 titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
@@ -803,7 +802,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
 
                 don <- .cdtData$EnvData$Statistics$STN
-                stats <- lapply(seq_along(dataNAME), function(j){
+                stats <- lapply(seq_along(.cdtData$EnvData$VALID.names), function(j){
                     cont.stats <- don$cont[[j]]$statistics[, istn]
                     catg.stats <- don$catg[[j]]$statistics[, istn]
                     if(clim.var == "RR")
@@ -819,7 +818,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 descrp <- c(descrp1, descrp2, descrp3)
 
                 dat2disp <- data.frame(Name = rownames(stats), Statistics = stats, Description = descrp)
-                names(dat2disp) <- c('Name', dataNAME, 'Description')
+                names(dat2disp) <- c('Name', .cdtData$EnvData$VALID.names, 'Description')
                 rownames(dat2disp) <- NULL
 
                 titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
@@ -836,21 +835,45 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         typeMapPLOT <- c("Points", "Pixels")
         .cdtData$EnvData$typeMap <- tclVar("Points")
 
-        datasets.name <- tclVar()
-
         stateMaps <- if(GeneralParameters$stat.data == 'stn') 'normal' else 'disabled'
 
-        cb.data.sets <- ttkcombobox(frameMap, values = "", textvariable = datasets.name, width = largeur5, state = stateMaps,  justify = 'center')
         cb.stats.maps <- ttkcombobox(frameMap, values = CHXSTATS, textvariable = .cdtData$EnvData$statistics, width = largeur5, state = stateMaps)
         bt.stats.maps <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], state = stateMaps)
+        bt.stats.Opt <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateMaps)
         txt.plot.type <- tklabel(frameMap, text = "Plot Type", anchor = "e", justify = "right")
         cb.plot.type <- ttkcombobox(frameMap, values = typeMapPLOT, textvariable = .cdtData$EnvData$typeMap, width = 5, state = stateMaps)
 
-        tkgrid(cb.data.sets, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.stats.maps, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stats.maps, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(txt.plot.type, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(cb.plot.type, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(cb.stats.maps, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stats.maps, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(txt.plot.type, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(cb.plot.type, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stats.Opt, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+
+        ##############
+
+        tkconfigure(bt.stats.Opt, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                mapstat <- str_trim(tclvalue(.cdtData$EnvData$statistics))
+                istat <- sapply(lapply(.cdtData$EnvData$Statistics$STN, '[[', 1), function(x){
+                    ll <- which(x$description == mapstat)
+                    if(length(ll)) ll else 0
+                })
+                ix <- which(istat != 0)
+                don <- lapply(.cdtData$EnvData$Statistics$STN[[ix]], function(x) x$statistics[istat[ix], ])
+                don <- do.call(c, don)
+                atlevel <- pretty(don, n = 10, min.n = 7)
+                if(is.null(.cdtData$EnvData$statMapOp$userLvl$levels)){
+                    .cdtData$EnvData$statMapOp$userLvl$levels <- atlevel
+                }else{
+                    if(!.cdtData$EnvData$statMapOp$userLvl$custom)
+                        .cdtData$EnvData$statMapOp$userLvl$levels <- atlevel
+                }
+            }
+            .cdtData$EnvData$statMapOp <- MapGraph.MapOptions(.cdtData$EnvData$statMapOp)
+
+            if(str_trim(tclvalue(.cdtData$EnvData$typeMap)) == "Points")
+                pointSizeI <<- .cdtData$EnvData$statMapOp$pointSize
+        })
 
         ##############
 
@@ -858,14 +881,8 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stats.maps, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                .cdtData$EnvData$xlim.maps <- range(.cdtData$EnvData$opDATA$lon, na.rm = TRUE)
-                .cdtData$EnvData$ylim.maps <- range(.cdtData$EnvData$opDATA$lat, na.rm = TRUE)
-                .cdtData$EnvData$plot.maps$data.type <- "cdtstation"
-                .cdtData$EnvData$plot.maps$lon <- .cdtData$EnvData$opDATA$lon
-                .cdtData$EnvData$plot.maps$lat <- .cdtData$EnvData$opDATA$lat
-                .cdtData$EnvData$plot.maps$id <- .cdtData$EnvData$opDATA$id
-
-                # Validation.DisplayStatMaps()
+                imgContainer <- CDT.Display.Graph(multiValidation.plotStatMaps, .cdtData$EnvData$tab$Maps, 'Statistics-Maps')
+                .cdtData$EnvData$tab$Maps <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Maps)
             }
         })
 
@@ -898,33 +915,85 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         .cdtData$EnvData$tab$Graph <- NULL
 
         tkconfigure(bt.stats.graph, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
-                # imgContainer <- CDT.Display.Graph(Validation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
-                # .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
+                imgContainer <- CDT.Display.Graph(multiValidation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
+                .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
             }
         })
 
         tkconfigure(bt.stn.graph.prev, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDGraph)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
                 tclvalue(.cdtData$EnvData$stnIDGraph) <- .cdtData$EnvData$opDATA$id[istn]
 
-                # imgContainer <- CDT.Display.Graph(Validation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
-                # .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
+                imgContainer <- CDT.Display.Graph(multiValidation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
+                .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
             }
         })
 
         tkconfigure(bt.stn.graph.next, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDGraph)))
                 istn <- istn + 1
                 if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
                 tclvalue(.cdtData$EnvData$stnIDGraph) <- .cdtData$EnvData$opDATA$id[istn]
 
-                # imgContainer <- CDT.Display.Graph(Validation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
-                # .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
+                imgContainer <- CDT.Display.Graph(multiValidation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
+                .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
+            }
+        })
+
+        ##############################################
+
+        framePerform <- ttklabelframe(subfr3, text = "Performance Map", relief = 'groove')
+
+        STNIDRANK <- ""
+        .cdtData$EnvData$stnIDRank <- tclVar()
+
+        bt.rank.disp <- ttkbutton(framePerform, text = "Display Rank")
+        bt.rank.prev <- ttkbutton(framePerform, text = "<<", state = stateDispSTN, width = 4)
+        bt.rank.next <- ttkbutton(framePerform, text = ">>", state = stateDispSTN, width = 4)
+        cb.rank.sel <- ttkcombobox(framePerform, values = STNIDRANK, textvariable = .cdtData$EnvData$stnIDRank, width = largeur4, state = stateDispSTN,  justify = 'center')
+
+        tkgrid(bt.rank.disp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.rank.prev, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.rank.sel, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.rank.next, row = 2, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ##############
+
+        .cdtData$EnvData$tab$Performap <- NULL
+
+        tkconfigure(bt.rank.disp, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                imgContainer <- CDT.Display.Graph(multiValidation.plotRank, .cdtData$EnvData$tab$Performap, 'Validation-Plot')
+                .cdtData$EnvData$tab$Performap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Performap)
+            }
+        })
+
+        tkconfigure(bt.rank.prev, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDRank)))
+                istn <- istn - 1
+                if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
+                tclvalue(.cdtData$EnvData$stnIDRank) <- .cdtData$EnvData$opDATA$id[istn]
+
+                imgContainer <- CDT.Display.Graph(multiValidation.plotRank, .cdtData$EnvData$tab$Performap, 'Validation-Plot')
+                .cdtData$EnvData$tab$Performap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Performap)
+            }
+        })
+
+        tkconfigure(bt.rank.next, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDRank)))
+                istn <- istn + 1
+                if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
+                tclvalue(.cdtData$EnvData$stnIDRank) <- .cdtData$EnvData$opDATA$id[istn]
+
+                imgContainer <- CDT.Display.Graph(multiValidation.plotRank, .cdtData$EnvData$tab$Performap, 'Validation-Plot')
+                .cdtData$EnvData$tab$Performap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Performap)
             }
         })
 
@@ -932,6 +1001,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         tkgrid(frameStatTab, row = 0, column = 0, sticky = 'we')
         tkgrid(frameMap, row = 1, column = 0, sticky = 'we', pady = 3)
         tkgrid(frameGraph, row = 2, column = 0, sticky = 'we', pady = 1)
+        tkgrid(framePerform, row = 3, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
 
@@ -1022,4 +1092,3 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
     invisible()
 }
-

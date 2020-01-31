@@ -125,7 +125,7 @@ ValidationDataProcs <- function(GeneralParameters){
     ## change from GeneralParameters leftCmd
     names(dichotomous) <- c("fun", "thres")
 
-    #######
+    ####### STN
     cont.stats <- cdtValidation.Cont.Stats(AggrcdtData, AggrncdfData)
     catg.stats <- cdtValidation.Categ.Stats(AggrcdtData, AggrncdfData, dichotomous)
     volume.stats <- list(statistics = NULL, description = NULL, perfect.score = NULL)
@@ -148,7 +148,7 @@ ValidationDataProcs <- function(GeneralParameters){
 
     .cdtData$EnvData$Statistics$STN <- tmp
 
-    #######
+    ####### ALL
     matSTN <- matrix(AggrcdtData, ncol = 1)
     matCDF <- matrix(AggrncdfData, ncol = 1)
 
@@ -174,7 +174,7 @@ ValidationDataProcs <- function(GeneralParameters){
 
     .cdtData$EnvData$Statistics$ALL <- tmp
 
-    #######
+    ####### Spatial AVG
     matSTN <- matrix(rowMeans(AggrcdtData, na.rm = TRUE), ncol = 1)
     matCDF <- matrix(rowMeans(AggrncdfData, na.rm = TRUE), ncol = 1)
 
@@ -213,16 +213,19 @@ ValidationDataProcs <- function(GeneralParameters){
     dir.create(dirSTATS, showWarnings = FALSE, recursive = TRUE)
 
     stat.ALL <- .cdtData$EnvData$Statistics$ALL
-    stat.ALL <- data.frame(Name = rownames(stat.ALL$statistics), Statistics = stat.ALL$statistics, Description = stat.ALL$description)
+    stat.ALL <- data.frame(Name = rownames(stat.ALL$statistics), Statistics = stat.ALL$statistics,
+                           Description = stat.ALL$description, Perfect.Score = stat.ALL$perfect.score)
     file.stat.all <- file.path(dirSTATS, "All_Data_Statistics.csv")
     writeFiles(stat.ALL, file.stat.all)
 
     stat.AVG <- .cdtData$EnvData$Statistics$AVG
-    stat.AVG <- data.frame(Name = rownames(stat.AVG$statistics), Statistics = stat.AVG$statistics, Description = stat.AVG$description)
+    stat.AVG <- data.frame(Name = rownames(stat.AVG$statistics), Statistics = stat.AVG$statistics,
+                           Description = stat.AVG$description, Perfect.Score = stat.AVG$perfect.score)
     file.stat.avg <- file.path(dirSTATS, "Spatial_Average_Statistics.csv")
     writeFiles(stat.AVG, file.stat.avg)
 
-    headinfo <- cbind(c("Station", "LON", "STATS/LAT"), do.call(rbind, .cdtData$EnvData$opDATA[c('id', 'lon', 'lat')]))
+    headinfo <- cbind(c("Station", "LON", "STATS/LAT"),
+                      do.call(rbind, .cdtData$EnvData$opDATA[c('id', 'lon', 'lat')]))
     stat.STN <- .cdtData$EnvData$Statistics$STN$statistics
     stat.STN <- cbind(rownames(stat.STN), stat.STN)
     stat.STN <- rbind(headinfo, stat.STN)

@@ -104,12 +104,8 @@ read_ValidationMultipleData <- function(GeneralParameters){
 
             tmp.don <- lapply(.cdtData$EnvData$vldData$data, function(don){
                 inx <- match(.cdtData$EnvData$vldData$dates, don$dates)
-                # inx <- inx[!is.na(inx)]
-                # don$dates <- don$dates[inx]
                 don$data <- don$data[inx, , drop = FALSE]
                 jnx <- match(.cdtData$EnvData$vldData$ids, don$id)
-                # jnx <- jnx[!is.na(jnx)]
-                # don$id <- don$id[jnx]
                 don$lon <- don$lon[jnx]
                 don$lat <- don$lat[jnx]
                 don$data <- don$data[, jnx, drop = FALSE]
@@ -118,14 +114,8 @@ read_ValidationMultipleData <- function(GeneralParameters){
 
             stn.don <- NULL
             inx <- match(.cdtData$EnvData$vldData$dates, .cdtData$EnvData$stnData$data$dates)
-            # inx <- inx[!is.na(inx)]
-            # stn.don$dates <- .cdtData$EnvData$stnData$data$dates[inx]
             stn.don$data <- .cdtData$EnvData$stnData$data$data[inx, , drop = FALSE]
             jnx <- match(.cdtData$EnvData$vldData$ids, .cdtData$EnvData$stnData$data$id)
-            # jnx <- jnx[!is.na(jnx)]
-            # stn.don$id <- .cdtData$EnvData$stnData$data$id[jnx]
-            # stn.don$lon <- .cdtData$EnvData$stnData$data$lon[jnx]
-            # stn.don$lat <- .cdtData$EnvData$stnData$data$lat[jnx]
             stn.don$data <- stn.don$data[, jnx, drop = FALSE]
 
             lon <- do.call(cbind, lapply(tmp.don, "[[", "lon"))
@@ -133,13 +123,16 @@ read_ValidationMultipleData <- function(GeneralParameters){
             lon <- apply(lon, 1, function(x) x[!is.na(x)][1])
             lat <- apply(lat, 1, function(x) x[!is.na(x)][1])
 
-            .cdtData$EnvData$cdtData$dates <- .cdtData$EnvData$vldData$dates
-            .cdtData$EnvData$cdtData$info$id <- .cdtData$EnvData$vldData$ids
-            .cdtData$EnvData$cdtData$info$lon <- lon
-            .cdtData$EnvData$cdtData$info$lat <- lat
+            nid <- apply(stn.don$data, 2, function(x) !all(is.na(x)))
 
-            .cdtData$EnvData$cdtData$fcst <- lapply(tmp.don, "[[", "data")
-            .cdtData$EnvData$cdtData$obs <- stn.don$data
+            .cdtData$EnvData$cdtData$dates <- .cdtData$EnvData$vldData$dates
+            .cdtData$EnvData$cdtData$info$id <- .cdtData$EnvData$vldData$ids[nid]
+            .cdtData$EnvData$cdtData$info$lon <- lon[nid]
+            .cdtData$EnvData$cdtData$info$lat <- lat[nid]
+
+            tmp.don <- lapply(tmp.don, "[[", "data")
+            .cdtData$EnvData$cdtData$fcst <- lapply(tmp.don, function(don) don[, nid, drop = FALSE])
+            .cdtData$EnvData$cdtData$obs <- stn.don$data[, nid, drop = FALSE]
 
             .cdtData$EnvData$GeneralParameters <- GeneralParameters
 
@@ -176,7 +169,8 @@ read_ValidationMultipleData <- function(GeneralParameters){
             fileValidOut <- file.path(outValidation, "VALIDATION_DATA_OUT.rds")
 
             # stats.data <- .cdtData$EnvData[c('GeneralParameters', 'cdtData', 'vldData', 'stnData')]
-            stats.data <- .cdtData$EnvData[c('GeneralParameters', 'cdtData')]
+            .cdtData$EnvData$VALID.names <- GeneralParameters$VALID.names
+            stats.data <- .cdtData$EnvData[c('GeneralParameters', 'cdtData', 'VALID.names')]
             saveRDS(stats.data, file = fileValidOut)
         }
 
@@ -200,7 +194,7 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
         return(NULL)
     }
 
-    xvargal <- c("date.range", "aggr.series", "dicho.fcst", "stat.data", "add.to.plot", "clim.var", "VALID.names")
+    xvargal <- c("date.range", "aggr.series", "dicho.fcst", "stat.data", "add.to.plot", "clim.var")
     .cdtData$EnvData$GeneralParameters[xvargal] <- GeneralParameters[xvargal]
     GeneralParameters <- .cdtData$EnvData$GeneralParameters
     clim.var <- GeneralParameters$clim.var
@@ -261,10 +255,6 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
         .cdtData$EnvData$opDATA$stn <- .cdtData$EnvData$cdtData$obs[idx, , drop = FALSE]
         .cdtData$EnvData$opDATA$ncdf <- lapply(.cdtData$EnvData$cdtData$fcst, function(don) don[idx, , drop = FALSE])
 
-        # inNA <- is.na(.cdtData$EnvData$opDATA$stn) | is.na(.cdtData$EnvData$opDATA$ncdf)
-        # .cdtData$EnvData$opDATA$stn[inNA] <- NA
-        # .cdtData$EnvData$opDATA$ncdf[inNA] <- NA
-
         ###################
         xtm <- .cdtData$EnvData$opDATA$dates
         if(timestep == "daily")
@@ -320,7 +310,6 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     catg.stats <- lapply(AggrncdfData, function(X) cdtValidation.Categ.Stats(AggrcdtData, X, dichotomous))
 
     volume.stats <- NULL
-    # volume.stats <- list(statistics = NULL, description = NULL, perfect.score = NULL)
     if(clim.var == "RR"){
         ## unique values
         quant.thres <- dichotomous$thres
@@ -333,14 +322,6 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
 
     .cdtData$EnvData$Statistics$STN <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
 
-    # tmp <- list(
-    #             statistics = rbind(cont.stats$statistics, catg.stats$statistics, volume.stats$statistics),
-    #             description = c(cont.stats$description, catg.stats$description, volume.stats$description),
-    #             perfect.score = c(cont.stats$perfect.score, catg.stats$perfect.score, volume.stats$perfect.score)
-    #            )
-
-    # .cdtData$EnvData$Statistics$STN <- tmp
-
     ####### ALL
     matSTN <- matrix(AggrcdtData, ncol = 1)
     matCDF <- lapply(AggrncdfData, function(X) matrix(X, ncol = 1))
@@ -349,21 +330,12 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     catg.stats <- lapply(matCDF, function(X) cdtValidation.Categ.Stats(matSTN, X, dichotomous))
 
     volume.stats <- NULL
-    # volume.stats <- list(statistics = NULL, description = NULL, perfect.score = NULL)
     if(clim.var == "RR"){
         quant.thres <- dichotomous$thres
         volume.stats <- lapply(matCDF, function(X) cdtVolumetricQuantileStats(matSTN, X, quant.thres))
     }
 
     .cdtData$EnvData$Statistics$ALL <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
-
-    # tmp <- list(
-    #             statistics = rbind(cont.stats$statistics, catg.stats$statistics, volume.stats$statistics),
-    #             description = c(cont.stats$description, catg.stats$description, volume.stats$description),
-    #             perfect.score = c(cont.stats$perfect.score, catg.stats$perfect.score, volume.stats$perfect.score)
-    #            )
-
-    # .cdtData$EnvData$Statistics$ALL <- tmp
 
     ####### AVG
     matSTN <- matrix(rowMeans(AggrcdtData, na.rm = TRUE), ncol = 1)
@@ -373,7 +345,6 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     catg.stats <- lapply(matCDF, function(X) cdtValidation.Categ.Stats(matSTN, X, dichotomous))
 
     volume.stats <- NULL
-    # volume.stats <- list(statistics = NULL, description = NULL, perfect.score = NULL)
     if(clim.var == "RR"){
         quant.thres <- dichotomous$thres
         volume.stats <- lapply(matCDF, function(X) cdtVolumetricQuantileStats(matSTN, X, quant.thres))
@@ -381,18 +352,10 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
 
     .cdtData$EnvData$Statistics$AVG <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
 
-    # tmp <- list(
-    #             statistics = rbind(cont.stats$statistics, catg.stats$statistics, volume.stats$statistics),
-    #             description = c(cont.stats$description, catg.stats$description, volume.stats$description),
-    #             perfect.score = c(cont.stats$perfect.score, catg.stats$perfect.score, volume.stats$perfect.score)
-    #            )
-
-    # .cdtData$EnvData$Statistics$AVG <- tmp
-
     ###################
 
     fileValidOut <- file.path(outValidation, "VALIDATION_DATA_OUT.rds")
-    hovd.data <- .cdtData$EnvData[c('opDATA', 'Statistics', 'GeneralParameters', 'cdtData')]
+    hovd.data <- .cdtData$EnvData[c('opDATA', 'Statistics', 'GeneralParameters', 'cdtData', 'VALID.names')]
     saveRDS(hovd.data, file = fileValidOut)
 
     ###################
@@ -400,7 +363,7 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     if(clim.var != "RR"){
         volume.stats <- NULL
         descrp3 <- NULL
-        # pscores3 <- NULL
+        pscores3 <- NULL
     }
 
     # write to table
@@ -410,22 +373,24 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     stat.ALL <- .cdtData$EnvData$Statistics$ALL
     cont.stats <- do.call(cbind, lapply(stat.ALL$cont, "[[", "statistics"))
     descrp1 <- stat.ALL$cont[[1]]$description
-    # pscores1 <- stat.ALL$cont[[1]]$perfect.score
+    pscores1 <- stat.ALL$cont[[1]]$perfect.score
 
     catg.stats <- do.call(cbind, lapply(stat.ALL$catg, "[[", "statistics"))
     descrp2 <- stat.ALL$catg[[1]]$description
-    # pscores2 <- stat.ALL$catg[[1]]$perfect.score
+    pscores2 <- stat.ALL$catg[[1]]$perfect.score
 
     if(clim.var == "RR"){
         volume.stats <- do.call(cbind, lapply(stat.ALL$volume, "[[", "statistics"))
         descrp3 <- stat.ALL$volume[[1]]$description
-        # pscores3 <- stat.ALL$volume[[1]]$perfect.score
+        pscores3 <- stat.ALL$volume[[1]]$perfect.score
     }
 
     stat.ALL <- rbind(cont.stats, catg.stats, volume.stats)
     descrp <- c(descrp1, descrp2, descrp3)
-    stat.ALL <- data.frame(Name = rownames(stat.ALL), Statistics = stat.ALL, Description = descrp)
-    names(stat.ALL) <- c('Name', GeneralParameters$VALID.names, 'Description')
+    pscores <- c(pscores1, pscores2, pscores3)
+    stat.ALL <- data.frame(Name = rownames(stat.ALL), Statistics = stat.ALL,
+                           Description = descrp, pscores = pscores)
+    names(stat.ALL) <- c('Name', .cdtData$EnvData$VALID.names, 'Description', 'Perfect.Score')
     file.stat.all <- file.path(dirSTATS, "All_Data_Statistics.csv")
     writeFiles(stat.ALL, file.stat.all, col.names = TRUE)
 
@@ -433,31 +398,34 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     stat.AVG <- .cdtData$EnvData$Statistics$AVG
     cont.stats <- do.call(cbind, lapply(stat.AVG$cont, "[[", "statistics"))
     descrp1 <- stat.AVG$cont[[1]]$description
-    # pscores1 <- stat.AVG$cont[[1]]$perfect.score
+    pscores1 <- stat.AVG$cont[[1]]$perfect.score
 
     catg.stats <- do.call(cbind, lapply(stat.AVG$catg, "[[", "statistics"))
     descrp2 <- stat.AVG$catg[[1]]$description
-    # pscores2 <- stat.AVG$catg[[1]]$perfect.score
+    pscores2 <- stat.AVG$catg[[1]]$perfect.score
 
     if(clim.var == "RR"){
         volume.stats <- do.call(cbind, lapply(stat.AVG$volume, "[[", "statistics"))
         descrp3 <- stat.AVG$volume[[1]]$description
-        # pscores3 <- stat.AVG$volume[[1]]$perfect.score
+        pscores3 <- stat.AVG$volume[[1]]$perfect.score
     }
 
     stat.AVG <- rbind(cont.stats, catg.stats, volume.stats)
     descrp <- c(descrp1, descrp2, descrp3)
-    stat.AVG <- data.frame(Name = rownames(stat.AVG), Statistics = stat.AVG, Description = descrp)
-    names(stat.AVG) <- c('Name', GeneralParameters$VALID.names, 'Description')
+    pscores <- c(pscores1, pscores2, pscores3)
+    stat.AVG <- data.frame(Name = rownames(stat.AVG), Statistics = stat.AVG,
+                           Description = descrp, pscores = pscores)
+    names(stat.AVG) <- c('Name', .cdtData$EnvData$VALID.names, 'Description', 'Perfect.Score')
     file.stat.avg <- file.path(dirSTATS, "Spatial_Average_Statistics.csv")
     writeFiles(stat.AVG, file.stat.avg, col.names = TRUE)
 
     ######
 
-    headinfo <- cbind(c("Station", "LON", "STATS/LAT"), do.call(rbind, .cdtData$EnvData$opDATA[c('id', 'lon', 'lat')]))
-    VALID.names <- gsub(" ", "_", GeneralParameters$VALID.names)
+    headinfo <- cbind(c("Station", "LON", "STATS/LAT"),
+                      do.call(rbind, .cdtData$EnvData$opDATA[c('id', 'lon', 'lat')]))
+    VALID.names <- gsub(" ", "_", .cdtData$EnvData$VALID.names)
 
-    for(j in seq_along(GeneralParameters$VALID.names)){
+    for(j in seq_along(.cdtData$EnvData$VALID.names)){
         stat.STN <- .cdtData$EnvData$Statistics$STN
         cont.stats <- stat.STN$cont[[j]]$statistics
         catg.stats <- stat.STN$catg[[j]]$statistics
@@ -469,7 +437,7 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
         stat.STN <- rbind(headinfo, stat.STN)
 
         file.stat.stn <- file.path(dirSTATS, paste0(VALID.names[j], ".csv"))
-        writeFiles(stat.STN, file.stat.stn, col.names = TRUE)
+        writeFiles(stat.STN, file.stat.stn)
     }
 
     Insert.Messages.Out('Statistics calculation done!', TRUE, 's')

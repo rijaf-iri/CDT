@@ -753,14 +753,14 @@ Validation.STAT.PanelCmd <- function(clim.var){
         .cdtData$EnvData$tab$Graph <- NULL
 
         tkconfigure(bt.stats.graph, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 imgContainer <- CDT.Display.Graph(Validation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
                 .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
             }
         })
 
         tkconfigure(bt.stn.graph.prev, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDGraph)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
@@ -772,7 +772,7 @@ Validation.STAT.PanelCmd <- function(clim.var){
         })
 
         tkconfigure(bt.stn.graph.next, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDGraph)))
                 istn <- istn + 1
                 if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1

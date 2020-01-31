@@ -5,6 +5,15 @@ cdt.aggregate <- function(MAT, pars){
     miss.args <- !names(pars0) %in% names(pars)
     if(any(miss.args)) pars <- c(pars, pars0[miss.args])
 
+    # ex: x <- c(F, F, T, T, T, T, T, T, F, F, F, F, T, T, F, T, T, T, F, T)
+    #  res <- c(6, 2, 3, 1)
+    # count: number of T in x, here 12
+    # count.rle.max : maximum number of consecutive T in x, here 6
+    # count.rle.min : minimum number of consecutive T in x, here 1
+    # count.rle.nb  : number of consecutive T in x which satisfy rle.fun and rle.thres
+    # if rle.fun = '>' and rle.thres = 2 then the result is 2,  (count of 6 and 3)
+    # count.rle.list: return res
+
     if(pars$aggr.fun %in% c("count", "count.rle.list", "count.rle.nb",
                             "count.rle.max", "count.rle.min"))
     {
@@ -19,16 +28,18 @@ cdt.aggregate <- function(MAT, pars){
                         if(length(rr) == 0) rr <- 0
                         rr
                     })
-            
-            count.rle.fun <- switch(pars$aggr.fun,
-                                "count.rle.max" = max,
-                                "count.rle.min" = min, 
-                                "count.rle.nb" = function(x){
+            if(pars$aggr.fun != "count.rle.list"){
+                count.rle.fun <- switch(pars$aggr.fun,
+                                        "count.rle.max" = max,
+                                        "count.rle.min" = min, 
+                                        "count.rle.nb" = 
+                                                function(x){
                                                     rle.fun <- get(pars$rle.fun, mode = "function")
                                                     sum(rle.fun(x, pars$rle.thres))
                                                 }
-                               )
-            res <- sapply(res, count.rle.fun)
+                                   )
+                res <- sapply(res, count.rle.fun)
+            }
         }else{
             res <- colSums(MAT, na.rm = TRUE)
         }
