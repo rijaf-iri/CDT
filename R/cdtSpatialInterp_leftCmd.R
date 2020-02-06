@@ -341,7 +341,7 @@ SpatialInterpPanelCmd <- function(){
             GeneralParameters$cdtstation <- str_trim(tclvalue(input.file))
             GeneralParameters$outdir <- str_trim(tclvalue(dir.save))
 
-            # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
+            assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
             Insert.Messages.Out("Interpolating data ...", TRUE, "i")
 
@@ -350,7 +350,8 @@ SpatialInterpPanelCmd <- function(){
             ret <- tryCatch(
                         {
                             # interpStationsProcs(GeneralParameters)
-                            NULL
+                            # NULL
+                            0
                         },
                         warning = function(w) warningFun(w),
                         error = function(e) errorFun(e),

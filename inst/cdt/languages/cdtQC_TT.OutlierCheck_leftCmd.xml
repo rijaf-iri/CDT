@@ -7,6 +7,9 @@
         <tab id="2">
             <text lang="en"> QC Outputs </text>
         </tab>
+        <tab id="2-1">
+            <text lang="en"> MixedData </text>
+        </tab>
         <tab id="3">
             <text lang="en"> Zoom </text>
         </tab>
@@ -26,6 +29,9 @@
         </button>
         <button id="4">
             <text lang="en"> Replace Outliers </text>
+        </button>
+        <button id="5">
+            <text lang="en"> Display Table </text>
         </button>
         <checkbutton id="1">
             <text lang="en"> Load existing QC session </text>
@@ -74,6 +80,12 @@
         </label>
         <label id="10">
             <text lang="en"> Plot Type </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Suspicious equal observations </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Invalid temperature data </text>
         </label>
     </widget>
     <help>

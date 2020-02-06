@@ -1,5 +1,9 @@
 
 cdtValidation.Cont.Stats <- function(x, y){
+    ina <- is.na(x) | is.na(y)
+    x[ina] <- NA
+    y[ina] <- NA
+
     nbcol <- ncol(x)
     nbrow <- nrow(x)
     naCol <- colSums(is.na(x))
@@ -87,6 +91,10 @@ cdtValidation.Cont.Stats <- function(x, y){
 ##################
 
 cdtValidation.Categ.Stats <- function(x, y, dichotomous = list(thres = 1, fun = ">=")){
+    ina <- is.na(x) | is.na(y)
+    x[ina] <- NA
+    y[ina] <- NA
+
     nbrow <- nrow(x)
     naCol <- colSums(is.na(x))
     colNA <- naCol == nbrow
@@ -160,6 +168,10 @@ cdtValidation.Categ.Stats <- function(x, y, dichotomous = list(thres = 1, fun = 
 # CSI ~ VCSI
 
 cdtVolumetricQuantileStats <- function(x, y, thres = NULL){
+    ina <- is.na(x) | is.na(y)
+    x[ina] <- NA
+    y[ina] <- NA
+
     nbcol <- ncol(x)
     nbrow <- nrow(x)
     if(is.null(thres)) stop("Threshold must not be null")

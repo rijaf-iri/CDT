@@ -592,30 +592,21 @@ qcRROutlierCheckPanelCmd <- function(){
 
         ##############################################
 
-        frameStnId.MXD <- ttklabelframe(subfr2a, text = lang.dlg[['label']][['6']], relief = 'groove')
+        frameStnId.MXD <- ttklabelframe(subfr2a, text = lang.dlg[['label']][['11']], relief = 'groove')
 
         .cdtData$EnvData$MXD$STN$stnID <- tclVar()
 
         bt.MxstnID.prev <- ttkbutton(frameStnId.MXD, text = "<<", width = 5)
         bt.MxstnID.next <- ttkbutton(frameStnId.MXD, text = ">>", width = 5)
         .cdtData$EnvData$MXD$STN$cb.stnID <- ttkcombobox(frameStnId.MXD, values = "", textvariable = .cdtData$EnvData$MXD$STN$stnID, width = largeur4, justify = 'center')
+        bt.display.MXD <- ttkbutton(frameStnId.MXD, text = lang.dlg[['button']][['5']])
+        bt.plotTS.MXD <- ttkbutton(frameStnId.MXD, text = lang.dlg[['button']][['6']])
 
         tkgrid(bt.MxstnID.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(.cdtData$EnvData$MXD$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.MxstnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-
-        #########
-
-        txt.Temp.MXD <- tklabel(subfr2a, text = lang.dlg[['label']][['11']])
-        bt.display.MXD <- ttkbutton(subfr2a, text = lang.dlg[['button']][['5']])
-        bt.plotTS.MXD <- ttkbutton(subfr2a, text = lang.dlg[['button']][['6']])
-
-        #########
-
-        tkgrid(txt.Temp.MXD, row = 0, column = 0, sticky = 'we', pady = 2)
-        tkgrid(frameStnId.MXD, row = 1, column = 0, sticky = 'we', pady = 2)
-        tkgrid(bt.display.MXD, row = 2, column = 0, sticky = 'we', pady = 2)
-        tkgrid(bt.plotTS.MXD, row = 3, column = 0, sticky = 'we', pady = 2)
+        tkgrid(bt.display.MXD, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.plotTS.MXD, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         #######################
 
@@ -661,6 +652,60 @@ qcRROutlierCheckPanelCmd <- function(){
             .cdtData$EnvData$tab$PlotMxTS <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$PlotMxTS)
         })
 
+        #########################################
+
+        frameStnId.SEQ <- ttklabelframe(subfr2a, text = lang.dlg[['label']][['12']], relief = 'groove')
+
+        .cdtData$EnvData$SEQ$STN$stnID <- tclVar()
+
+        bt.SqstnID.prev <- ttkbutton(frameStnId.SEQ, text = "<<", width = 5)
+        bt.SqstnID.next <- ttkbutton(frameStnId.SEQ, text = ">>", width = 5)
+        .cdtData$EnvData$SEQ$STN$cb.stnID <- ttkcombobox(frameStnId.SEQ, values = "", textvariable = .cdtData$EnvData$SEQ$STN$stnID, width = largeur4, justify = 'center')
+
+        bt.display.SEQ <- ttkbutton(frameStnId.SEQ, text = lang.dlg[['button']][['5']])
+
+        tkgrid(bt.SqstnID.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(.cdtData$EnvData$SEQ$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.SqstnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.display.SEQ, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #######################
+
+        tkconfigure(bt.SqstnID.prev, command = function(){
+            if(!is.null(.cdtData$EnvData$outqc$sequence)){
+                STNID <- .cdtData$EnvData$outqc$sequence$stn
+                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID)))
+                istn <- istn - 1
+                if(istn < 1) istn <- length(STNID)
+                tclvalue(.cdtData$EnvData$SEQ$STN$stnID) <- STNID[istn]
+            }
+        })
+
+        tkconfigure(bt.SqstnID.next, command = function(){
+            if(!is.null(.cdtData$EnvData$outqc$sequence)){
+                STNID <- .cdtData$EnvData$outqc$sequence$stn
+                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID)))
+                istn <- istn + 1
+                if(istn > length(STNID)) istn <- 1
+                tclvalue(.cdtData$EnvData$SEQ$STN$stnID) <- STNID[istn]
+            }
+        })
+
+        .cdtData$EnvData$tab$TableSEQ <- NULL
+
+        tkconfigure(bt.display.SEQ, command = function(){
+            stnid <- str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
+            if(stnid == "") return(NULL)
+            donSEQ <- .cdtData$EnvData$outqc$sequence$res[[stnid]]$tab
+            tab.title <- paste0(stnid, "-Data-Invalid")
+
+            .cdtData$EnvData$tab$TableSEQ <- tableNotebookTab_unik(donSEQ, .cdtData$EnvData$tab$TableSEQ, tab.title, 10)
+        })
+
+        #########################################
+
+        tkgrid(frameStnId.MXD, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameStnId.SEQ, row = 1, column = 0, sticky = 'we', padx = 1, pady = 2, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -1090,8 +1135,16 @@ qcRROutlierCheckPanelCmd <- function(){
         tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[1]
 
         STNID1 <- .cdtData$EnvData$outqc$mixed$stn
-        tkconfigure(.cdtData$EnvData$MXD$STN$cb.stnID, values = STNID1)
-        tclvalue(.cdtData$EnvData$MXD$STN$stnID) <- STNID1[1]
+        if(length(STNID1) > 0){
+            tkconfigure(.cdtData$EnvData$MXD$STN$cb.stnID, values = STNID1)
+            tclvalue(.cdtData$EnvData$MXD$STN$stnID) <- STNID1[1]
+        }
+
+        STNID2 <- .cdtData$EnvData$outqc$sequence$stn
+        if(length(STNID2) > 0){
+            tkconfigure(.cdtData$EnvData$SEQ$STN$cb.stnID, values = STNID2)
+            tclvalue(.cdtData$EnvData$SEQ$STN$stnID) <- STNID2[1]
+        }
     }
 
     set.date.outliers <- function(){

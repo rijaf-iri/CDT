@@ -107,6 +107,10 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     index.date <- seq_along(don$dates)
     index.mon <- split(seq_along(don$dates), substr(don$dates, 5, 6))
 
+    don.len <- nrow(don.qc)
+
+    ###################
+
     ## min non-missing
     min.length <- switch(GeneralParameters$intstep,
                             'daily' = 300,
@@ -436,9 +440,10 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     ## check if mixed with temperature data
 
     min.seq <- 10
+    min.temp <- 5
 
     tmp <- don.qc
-    itmp <- !is.na(tmp) & tmp >= 5
+    itmp <- !is.na(tmp) & tmp >= min.temp
     tmp[!itmp] <- NA
     tmp <- cdt.roll.fun(tmp, 5, "mean", na.rm = TRUE, min.data = 3, align = "right")
     tmp <- rbind(diff(tmp), NA)
@@ -452,9 +457,11 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
         is <- c(1, ie[-length(ie)] + 1)
         ie <- ie[x$values & x$lengths >= min.seq]
         is <- is[x$values & x$lengths >= min.seq]
+
         vx <- sapply(seq_along(is), function(i) var(diff(tmp[is[i]:ie[i], j])))
         ix <- vx < 1.5
         if(!any(ix)) return(NULL)
+
         cbind(is[ix], ie[ix], vx[ix])
     })
 
@@ -480,8 +487,54 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     }
 
     ###################
+    ## Check consecutive values
+
+    min.len <- 5
+
+    tmp <- don.qc
+    tmp[is.na(tmp)] <- 0
+    tmp <- rbind(diff(tmp), 0)
+    tmp <- tmp == 1
+
+    iseq <- lapply(seq(ncol(tmp)), function(j){
+        x <- tmp[, j]
+        x <- rle(x)
+        if(!any(x$lengths[x$values] >= min.len)) return(NULL)
+        ie <- cumsum(x$lengths)
+        is <- c(1, ie[-length(ie)] + 1)
+        ie <- ie[x$values & x$lengths >= min.len]
+        is <- is[x$values & x$lengths >= min.len]
+        ie <- ie + 1
+        ie[ie > don.len] <- don.len
+        cbind(is, ie, 0)
+    })
+
+    inull <- sapply(iseq, is.null)
+    iseq <- iseq[!inull]
+    outqc.seq <- NULL
+    if(length(iseq) > 0){
+        istn <- which(!inull)
+        xtmp <- lapply(seq_along(iseq), function(j){
+            ix <- iseq[[j]]
+            xx <- lapply(seq(nrow(ix)), function(i){
+              is <- ix[i, 1]:ix[i, 2]
+              cbind(don$dates[is], don.qc[is, istn[j]])
+            })
+            xx <- do.call(rbind, xx)
+            id <- don$id[istn[j]]
+            tab <- data.frame(id, xx)
+            names(tab) <- c("STN.ID", "DATE", "STN.VAL")
+            list(tab = tab, index = ix)
+        })
+        names(xtmp) <- don$id[istn]
+        outqc.seq <- list(res = xtmp, stn = don$id[istn])
+    }
+
+    ###################
 
     outqc$mixed <- outqc.temp
+    outqc$sequence <- outqc.seq
+
     .cdtData$EnvData$outqc <- outqc
 
     ix <- c('id', 'lon', 'lat', 'dates', 'data')

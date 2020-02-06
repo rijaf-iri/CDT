@@ -137,6 +137,8 @@ qcTTOutliersCheckProcs <- function(GeneralParameters){
     index.date <- seq_along(don$dates)
     index.mon <- split(seq_along(don$dates), substr(don$dates, 5, 6))
 
+    don.len <- nrow(don.qc)
+
     ###################
     # Tmax & Tmin comparison
 
@@ -510,7 +512,9 @@ qcTTOutliersCheckProcs <- function(GeneralParameters){
 
     ###################
 
-    outqc <- rbind(outqc.txtn, outqc.min, outqc.max, outqc.outlier.up, outqc.outlier.low, outqc.spatial)
+    outqc <- rbind(outqc.txtn, outqc.min, outqc.max,
+                   outqc.outlier.up, outqc.outlier.low,
+                   outqc.spatial)
 
     if(!is.null(outqc)){
         index.stn <- split(seq(nrow(outqc)), outqc$stn.id)
@@ -564,7 +568,100 @@ qcTTOutliersCheckProcs <- function(GeneralParameters){
 
     ###################
 
+    ## Check equal values
+
+    min.len <- 5
+
+    tmp <- don.qc
+    tmp <- cdt.roll.fun(tmp, 2, "mean", na.rm = TRUE, min.data = 1, align = "right")
+    tmp <- rbind(diff(tmp), 1)
+    tmp <- !is.na(tmp) & tmp == 0
+
+    ieqval <- lapply(seq(ncol(tmp)), function(j){
+        x <- tmp[, j]
+        x <- rle(x)
+        if(!any(x$lengths[x$values] >= min.len)) return(NULL)
+        ie <- cumsum(x$lengths)
+        is <- c(1, ie[-length(ie)] + 1)
+        ie <- ie[x$values & x$lengths >= min.len]
+        is <- is[x$values & x$lengths >= min.len]
+        ie <- ie + 1
+        ie[ie > don.len] <- don.len
+        cbind(is, ie, 0)
+    })
+
+    inull <- sapply(ieqval, is.null)
+    ieqval <- ieqval[!inull]
+    outqc.equal <- NULL
+    if(length(ieqval) > 0){
+        istn <- which(!inull)
+        xtmp <- lapply(seq_along(ieqval), function(j){
+            ix <- ieqval[[j]]
+            xx <- lapply(seq(nrow(ix)), function(i){
+              is <- ix[i, 1]:ix[i, 2]
+              cbind(don$dates[is], don.qc[is, istn[j]])
+            })
+            xx <- do.call(rbind, xx)
+            id <- don$id[istn[j]]
+            tab <- data.frame(id, xx)
+            names(tab) <- c("STN.ID", "DATE", "STN.VAL")
+            list(tab = tab, index = ix)
+        })
+        names(xtmp) <- don$id[istn]
+        outqc.equal <- list(res = xtmp, stn = don$id[istn])
+    }
+
+    ###################
+    ## Check consecutive values
+
+    min.len <- 5
+
+    tmp <- don.qc
+    tmp[is.na(tmp)] <- 0
+    tmp <- rbind(diff(tmp), 0)
+    tmp <- tmp == 1
+
+    iseq <- lapply(seq(ncol(tmp)), function(j){
+        x <- tmp[, j]
+        x <- rle(x)
+        if(!any(x$lengths[x$values] >= min.len)) return(NULL)
+        ie <- cumsum(x$lengths)
+        is <- c(1, ie[-length(ie)] + 1)
+        ie <- ie[x$values & x$lengths >= min.len]
+        is <- is[x$values & x$lengths >= min.len]
+        ie <- ie + 1
+        ie[ie > don.len] <- don.len
+        cbind(is, ie, 0)
+    })
+
+    inull <- sapply(iseq, is.null)
+    iseq <- iseq[!inull]
+    outqc.seq <- NULL
+    if(length(iseq) > 0){
+        istn <- which(!inull)
+        xtmp <- lapply(seq_along(iseq), function(j){
+            ix <- iseq[[j]]
+            xx <- lapply(seq(nrow(ix)), function(i){
+              is <- ix[i, 1]:ix[i, 2]
+              cbind(don$dates[is], don.qc[is, istn[j]])
+            })
+            xx <- do.call(rbind, xx)
+            id <- don$id[istn[j]]
+            tab <- data.frame(id, xx)
+            names(tab) <- c("STN.ID", "DATE", "STN.VAL")
+            list(tab = tab, index = ix)
+        })
+        names(xtmp) <- don$id[istn]
+        outqc.seq <- list(res = xtmp, stn = don$id[istn])
+    }
+
+    ###################
+
+    outqc$equal <- outqc.equal
+    outqc$sequence <- outqc.seq
+
     .cdtData$EnvData$outqc <- outqc
+
     ix <- c('id', 'lon', 'lat', 'dates', 'data')
     if(!is.null(don$elv)) ix <- c(ix, 'elv')
     .cdtData$EnvData$stn.data <- don[ix]

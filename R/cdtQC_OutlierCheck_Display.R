@@ -164,9 +164,22 @@ qcPlot_Spatial.Check <- function(){
     stn1.x <- NA
     stn1.y <- NA
     stn1.z <- NA
-    vois <- .cdtData$EnvData$stn.data$id[.cdtData$EnvData$outqc$res[[stnid]]$stn]
-    ivois <- .cdtData$EnvData$stn.data$id %in% vois
-    if(any(ivois)){
+
+    # vois <- .cdtData$EnvData$stn.data$id[.cdtData$EnvData$outqc$res[[stnid]]$stn]
+    # ivois <- .cdtData$EnvData$stn.data$id %in% vois
+    # if(any(ivois)){
+    #     stn1 <- don[ivois, , drop = FALSE]
+    #     stn1 <- stn1[!is.na(stn1[, 3]), , drop = FALSE]
+    #     if(nrow(stn1)){
+    #         stn1.x <- stn1[, 1]
+    #         stn1.y <- stn1[, 2]
+    #         stn1.z <- stn1[, 3]
+    #     }
+    #     don <- don[!(istn | ivois), ]
+    # }else don <- don[!istn, , drop = FALSE]
+
+    ivois <- .cdtData$EnvData$outqc$res[[stnid]]$stn
+    if(length(ivois)){
         stn1 <- don[ivois, , drop = FALSE]
         stn1 <- stn1[!is.na(stn1[, 3]), , drop = FALSE]
         if(nrow(stn1)){
@@ -174,7 +187,7 @@ qcPlot_Spatial.Check <- function(){
             stn1.y <- stn1[, 2]
             stn1.z <- stn1[, 3]
         }
-        don <- don[!(istn | ivois), ]
+        don <- don[-c(which(istn), ivois), ]
     }else don <- don[!istn, , drop = FALSE]
 
     stn2.x <- NA

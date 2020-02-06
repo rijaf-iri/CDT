@@ -58,17 +58,18 @@ qcRRZeroCheckProcs <- function(GeneralParameters){
 
         res <- lapply(index.mon, function(ix){
             x0 <- don$data[ix, stn]
-            if(sum(is.na(x0)) > params$min.days) return(NULL)
+            x0 <- x0[!is.na(x0)]
+            if(length(x0) < params$min.days) return(NULL)
+
+            zr0 <- 100 * sum(x0 == 0) / length(x0)
+            ## percentage of zero greater than 75%
+            if(zr0 < 75) return(NULL)
+
             x <- don$data[ix, istn, drop = FALSE]
             ina <- colSums(is.na(x)) > params$min.days
             dst <- dist[!ina]
             if(length(dst) < params$min.nbrs) return(NULL)
             x <- x[, !ina, drop = FALSE]
-
-            x0 <- x0[!is.na(x0)]
-            zr0 <- 100 * sum(x0 == 0) / length(x0)
-            ## percentage of zero greater than 75%
-            if(zr0 < 75) return(NULL)
 
             nl <- colSums(!is.na(x))
             zr <- 100 * colSums(!is.na(x) & x == 0) / nl

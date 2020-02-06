@@ -58,8 +58,6 @@ qcTTOutlierCheckPanelCmd <- function(){
                                     user.levels = list(custom = TRUE, levels = NULL, equidist = TRUE)
                                 )
 
-
-
     ###################
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtQC_TT.OutlierCheck_leftCmd.xml")
@@ -73,6 +71,7 @@ qcTTOutlierCheckPanelCmd <- function(){
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
     cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
     cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab2a <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2-1']])
     cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
     cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
 
@@ -80,11 +79,13 @@ qcTTOutlierCheckPanelCmd <- function(){
 
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab2a, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab4, 0, weight = 1)
 
     tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab2a, 0, weight = 1)
     tkgrid.rowconfigure(cmd.tab3, 0, weight = 1)
     tkgrid.rowconfigure(cmd.tab4, 0, weight = 1)
 
@@ -644,6 +645,116 @@ qcTTOutlierCheckPanelCmd <- function(){
 
     #######################################################################################################
 
+    #Tab2a
+    subfr2a <- bwTabScrollableFrame(cmd.tab2a)
+
+        ##############################################
+
+        frameStnId.EQL <- ttklabelframe(subfr2a, text = lang.dlg[['label']][['11']], relief = 'groove')
+
+        .cdtData$EnvData$EQL$STN$stnID <- tclVar()
+
+        bt.EqstnID.prev <- ttkbutton(frameStnId.EQL, text = "<<", width = 5)
+        bt.EqstnID.next <- ttkbutton(frameStnId.EQL, text = ">>", width = 5)
+        .cdtData$EnvData$EQL$STN$cb.stnID <- ttkcombobox(frameStnId.EQL, values = "", textvariable = .cdtData$EnvData$EQL$STN$stnID, width = largeur4, justify = 'center')
+
+        bt.display.EQL <- ttkbutton(frameStnId.EQL, text = lang.dlg[['button']][['5']])
+
+        tkgrid(bt.EqstnID.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(.cdtData$EnvData$EQL$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.EqstnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.display.EQL, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #######################
+
+        tkconfigure(bt.EqstnID.prev, command = function(){
+            if(!is.null(.cdtData$EnvData$outqc$equal)){
+                STNID <- .cdtData$EnvData$outqc$equal$stn
+                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID)))
+                istn <- istn - 1
+                if(istn < 1) istn <- length(STNID)
+                tclvalue(.cdtData$EnvData$EQL$STN$stnID) <- STNID[istn]
+            }
+        })
+
+        tkconfigure(bt.EqstnID.next, command = function(){
+            if(!is.null(.cdtData$EnvData$outqc$equal)){
+                STNID <- .cdtData$EnvData$outqc$equal$stn
+                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID)))
+                istn <- istn + 1
+                if(istn > length(STNID)) istn <- 1
+                tclvalue(.cdtData$EnvData$EQL$STN$stnID) <- STNID[istn]
+            }
+        })
+
+        .cdtData$EnvData$tab$TableEQL <- NULL
+
+        tkconfigure(bt.display.EQL, command = function(){
+            stnid <- str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID))
+            if(stnid == "") return(NULL)
+            donEQL <- .cdtData$EnvData$outqc$equal$res[[stnid]]$tab
+            tab.title <- paste0(stnid, "-Data-Invalid")
+
+            .cdtData$EnvData$tab$TableEQL <- tableNotebookTab_unik(donEQL, .cdtData$EnvData$tab$TableEQL, tab.title, 10)
+        })
+
+        #########################################
+
+        frameStnId.SEQ <- ttklabelframe(subfr2a, text = lang.dlg[['label']][['12']], relief = 'groove')
+
+        .cdtData$EnvData$SEQ$STN$stnID <- tclVar()
+
+        bt.SqstnID.prev <- ttkbutton(frameStnId.SEQ, text = "<<", width = 5)
+        bt.SqstnID.next <- ttkbutton(frameStnId.SEQ, text = ">>", width = 5)
+        .cdtData$EnvData$SEQ$STN$cb.stnID <- ttkcombobox(frameStnId.SEQ, values = "", textvariable = .cdtData$EnvData$SEQ$STN$stnID, width = largeur4, justify = 'center')
+
+        bt.display.SEQ <- ttkbutton(frameStnId.SEQ, text = lang.dlg[['button']][['5']])
+
+        tkgrid(bt.SqstnID.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(.cdtData$EnvData$SEQ$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.SqstnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.display.SEQ, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #######################
+
+        tkconfigure(bt.SqstnID.prev, command = function(){
+            if(!is.null(.cdtData$EnvData$outqc$sequence)){
+                STNID <- .cdtData$EnvData$outqc$sequence$stn
+                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID)))
+                istn <- istn - 1
+                if(istn < 1) istn <- length(STNID)
+                tclvalue(.cdtData$EnvData$SEQ$STN$stnID) <- STNID[istn]
+            }
+        })
+
+        tkconfigure(bt.SqstnID.next, command = function(){
+            if(!is.null(.cdtData$EnvData$outqc$sequence)){
+                STNID <- .cdtData$EnvData$outqc$sequence$stn
+                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID)))
+                istn <- istn + 1
+                if(istn > length(STNID)) istn <- 1
+                tclvalue(.cdtData$EnvData$SEQ$STN$stnID) <- STNID[istn]
+            }
+        })
+
+        .cdtData$EnvData$tab$TableSEQ <- NULL
+
+        tkconfigure(bt.display.SEQ, command = function(){
+            stnid <- str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
+            if(stnid == "") return(NULL)
+            donSEQ <- .cdtData$EnvData$outqc$sequence$res[[stnid]]$tab
+            tab.title <- paste0(stnid, "-Data-Invalid")
+
+            .cdtData$EnvData$tab$TableSEQ <- tableNotebookTab_unik(donSEQ, .cdtData$EnvData$tab$TableSEQ, tab.title, 10)
+        })
+
+        #########################################
+
+        tkgrid(frameStnId.EQL, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameStnId.SEQ, row = 1, column = 0, sticky = 'we', padx = 1, pady = 2, ipadx = 1, ipady = 1)
+
+    #######################################################################################################
+
     #Tab3
     subfr3 <- bwTabScrollableFrame(cmd.tab3)
 
@@ -1067,6 +1178,18 @@ qcTTOutlierCheckPanelCmd <- function(){
         STNID <- .cdtData$EnvData$outqc$stn
         tkconfigure(.cdtData$EnvData$STN$cb.stnID, values = STNID)
         tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[1]
+
+        STNID1 <- .cdtData$EnvData$outqc$equal$stn
+        if(length(STNID1) > 0){
+            tkconfigure(.cdtData$EnvData$EQL$STN$cb.stnID, values = STNID1)
+            tclvalue(.cdtData$EnvData$EQL$STN$stnID) <- STNID1[1]
+        }
+
+        STNID2 <- .cdtData$EnvData$outqc$sequence$stn
+        if(length(STNID2) > 0){
+            tkconfigure(.cdtData$EnvData$SEQ$STN$cb.stnID, values = STNID2)
+            tclvalue(.cdtData$EnvData$SEQ$STN$stnID) <- STNID2[1]
+        }
     }
 
     set.date.outliers <- function(){

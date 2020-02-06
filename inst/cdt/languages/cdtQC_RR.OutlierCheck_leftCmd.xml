@@ -8,7 +8,7 @@
             <text lang="en"> QC Outputs </text>
         </tab>
         <tab id="2-1">
-            <text lang="en"> MixedTemp </text>
+            <text lang="en"> MixedData </text>
         </tab>
         <tab id="3">
             <text lang="en"> Zoom </text>
@@ -80,6 +80,9 @@
         </label>
         <label id="11">
             <text lang="en"> Temperature mixed with rainfall data </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Invalid rainfall data </text>
         </label>
     </widget>
     <help>
