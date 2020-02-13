@@ -104,7 +104,7 @@ getInterpolationPars2 <- function(parent.win, Parameters){
             txt.mdst <- tklabel(frInterpP, text = "maxdist", anchor = 'e', justify = 'right')
             en.nmin <- tkentry(frInterpP, width = 5, textvariable = nmin.var, justify = 'right')
             en.nmax <- tkentry(frInterpP, width = 5, textvariable = nmax.var, justify = 'right')
-            en.mdst <- tkentry(frInterpP, width = 5, textvariable = maxdist.var, justify = 'right')
+            en.mdst <- tkentry(frInterpP, width = 5, textvariable = maxdist.var, justify = 'right', state = 'disabled')
             chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = "Use block mean values", anchor = 'w', justify = 'left')
 
             fr.vgm <- tkframe(frInterpP)
@@ -229,7 +229,7 @@ getInterpolationPars2 <- function(parent.win, Parameters){
             txt.mdst <- tklabel(frInterpP, text = "maxdist", anchor = 'e', justify = 'right')
             en.nmin <- tkentry(frInterpP, width = 5, textvariable = nmin.var, justify = 'right')
             en.nmax <- tkentry(frInterpP, width = 5, textvariable = nmax.var, justify = 'right')
-            en.mdst <- tkentry(frInterpP, width = 5, textvariable = maxdist.var, justify = 'right')
+            en.mdst <- tkentry(frInterpP, width = 5, textvariable = maxdist.var, justify = 'right', state = 'disabled')
 
             tkgrid(txt.nmin, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(en.nmin, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

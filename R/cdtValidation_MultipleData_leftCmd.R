@@ -25,6 +25,14 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
     ###################
 
+    if(clim.var == "RR"){
+        vmin <- 0
+        vmax <- 200
+    }else{
+        vmin <- 5
+        vmax <- 35
+    }
+
     GeneralParameters <- list(intstep = "dekadal", outdir = "", STN.file = "",
                               date.range = list(start.year = 1981, start.month = 1, end.year = 2018, end.month = 12),
                               aggr.series = list(aggr.data = FALSE, aggr.fun = "sum", min.frac = 0.80, opr.fun = ">=", opr.thres = 0),
@@ -39,6 +47,35 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
                                        pointSize = pointSizeI)
+
+    .cdtData$EnvData$GraphOp <- list(
+                                scatter = list(xylim = list(is.min = FALSE, min = vmin, is.max = FALSE, max = vmax),
+                                           axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                           title = list(is.title = FALSE, title = ''),
+                                           plot = list(type = "points", # "hexbin"
+                                                       col.points = "black", cex.points = 0.9,
+                                                       # col.hexbin = c('red', 'ornage', 'yellow', 'green', 'blue'),
+                                                       col.hexbin = rev(RColorBrewer::brewer.pal(11, 'Spectral')),
+                                                       col.line = "red", wd.line = 2)
+                                        ),
+                                cdf = list(xlim = list(is.min = FALSE, min = vmin, is.max = FALSE, max = vmax),
+                                       ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 1),
+                                       axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                       title = list(is.title = FALSE, title = ''),
+                                       col.obs = "black",
+                                       col.est = list(preset = TRUE, fun = "rainbow",
+                                                      col = c('red', 'ornage', 'yellow', 'green', 'blue'))
+                                    ),
+                                lines = list(xlim = list(is.min = FALSE, min = '2017-01-01', is.max = FALSE, max = '2019-12-31'),
+                                         ylim = list(is.min = FALSE, min = vmin, is.max = FALSE, max = vmax),
+                                         axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                         title = list(is.title = FALSE, title = ''),
+                                         col.obs = "black",
+                                         col.est = list(preset = TRUE, fun = "rainbow",
+                                                        col = c('red', 'ornage', 'yellow', 'green', 'blue'))
+                                    )
+                            )
+
 
     .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 

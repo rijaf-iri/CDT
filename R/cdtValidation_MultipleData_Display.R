@@ -28,9 +28,20 @@ multiValidation.plotGraph <- function(){
     data.name <- .cdtData$EnvData$VALID.names
 
     ##############
+    GraphOp <- .cdtData$EnvData$GraphOp
+
     plotType <- tclvalue(.cdtData$EnvData$type.graph)
 
-    ## choix xlim&ylim default
+    if(plotType == "Scatter") optsgph <- GraphOp$scatter
+    if(plotType == "CDF") optsgph <- GraphOp$cdf
+    if(plotType == "Lines") optsgph <- GraphOp$lines
+
+    ##############
+    if(optsgph$title$is.title)
+        title <- optsgph$title$title
+
+    ##############
+
     xmin0 <- min(c(x, sapply(y, min, na.rm = TRUE)), na.rm = TRUE)
     xmin <- ifelse(is.infinite(xmin0), 0, xmin0)
     xmax0 <- max(c(x, sapply(y, max, na.rm = TRUE)), na.rm = TRUE)
@@ -41,47 +52,139 @@ multiValidation.plotGraph <- function(){
         ylim <- c(xmin, xmax)
         xlim <- xlim + diff(xlim) * c(-1, 1) * 0.001
         ylim <- ylim + diff(ylim) * c(-1, 1) * 0.001
+        if(optsgph$xylim$is.min){
+            xx <- str_trim(optsgph$xylim$min)
+            ylim[1] <- xlim[1] <- as.numeric(xx)
+        }
+        if(optsgph$xylim$is.max){
+            xx <- str_trim(optsgph$xylim$max)
+            ylim[2] <- xlim[2] <- as.numeric(xx)
+        }
 
+        #####
         xlab <- if(is.na(units)) expression(paste("Station (" * degree, "C)")) else paste('Station', units)
         ylab <- if(is.na(units)) expression(paste("Estimate (" * degree, "C)")) else paste('Estimate', units)
+        if(optsgph$axislabs$is.xlab)
+            xlab <- optsgph$axislabs$xlab
+        if(optsgph$axislabs$is.ylab)
+            ylab <- optsgph$axislabs$ylab
 
+        #####
         legendlab <- NA
-        plotScatter <- "points"
-        # plotScatter <- "hexbin"
+
+        #####
+        plotScatter <- optsgph$plot$type
         if(plotScatter == "points"){
-            kol.points <- "black"
-            kol.line <- 'red'
+            kol.points <- optsgph$plot$col.points
+            cex.points <- optsgph$plot$cex.points
         }else{
-            kol.hexbin <- colorRampPalette(rev(RColorBrewer::brewer.pal(11, 'Spectral')))
-            kol.line <- 'red'
+            kol.hexbin <- colorRampPalette(optsgph$plot$col.hexbin)
         }
+
+        #####
+        kol.line <- optsgph$plot$col.line
+        lwd.line <- optsgph$plot$wd.line
     }
     if(plotType == "CDF"){
         xlim <- c(xmin, xmax)
         ylim <- c(0, 1)
+        if(optsgph$xlim$is.min){
+            xx <- str_trim(optsgph$xlim$min)
+            xlim[1] <- as.numeric(xx)
+        }
+        if(optsgph$xlim$is.max){
+            xx <- str_trim(optsgph$xlim$max)
+            xlim[2] <- as.numeric(xx)
+        }
+        if(optsgph$ylim$is.min){
+            xx <- str_trim(optsgph$ylim$min)
+            ylim[1] <- as.numeric(xx)
+        }
+        if(optsgph$ylim$is.max){
+            xx <- str_trim(optsgph$ylim$max)
+            ylim[2] <- as.numeric(xx)
+        }
 
+        #######
         xlab <- if(.cdtData$EnvData$GeneralParameters$clim.var == "RR") "Rainfall" else "Temperature"
         xlab <- if(is.na(units)) expression(paste(xlab, "(" * degree, "C)")) else paste(xlab, units)
         ylab <- "Cumulative density"
+        if(optsgph$axislabs$is.xlab)
+            xlab <- optsgph$axislabs$xlab
+        if(optsgph$axislabs$is.ylab)
+            ylab <- optsgph$axislabs$ylab
 
-        kol.Obs <- 'black'
-        # kol.Est <- c('red', 'green', 'blue')
-        kol.Est <- rainbow(length(data.name))
+        #######
+        kol.Obs <- optsgph$col.obs
+        nlkol <- length(data.name)
+        if(optsgph$col.est$preset){
+            funkol <- get(optsgph$col.est$fun, mode = "function")
+            kol.Est <- funkol(nlkol)
+        }else{
+            if(length(optsgph$col.est$col) == nlkol){
+                kol.Est <- optsgph$col.est$col
+            }else{
+                kol.Est <- colorRampPalette(optsgph$col.est$col)(nlkol)
+            }
+        }
 
+        #######
         legendlab <- c('Station', data.name)
     }
     if(plotType == "Lines"){
         xlim <- range(.cdtData$EnvData$opDATA$temps, na.rm = TRUE)
         ylim <- c(xmin, xmax)
 
+        if(optsgph$xlim$is.min){
+            xx <- as.Date(str_trim(optsgph$xlim$min))
+            if(is.na(xx)){
+                Insert.Messages.Out("Invalid xlim", format = TRUE)
+                return(NULL)
+            }
+            xlim[1] <- as.numeric(xx)
+        }
+        if(optsgph$xlim$is.max){
+            xx <- as.Date(str_trim(optsgph$xlim$max))
+            if(is.na(xx)){
+                Insert.Messages.Out("Invalid xlim", format = TRUE)
+                return(NULL)
+            }
+            xlim[2] <- as.numeric(xx)
+        }
+        if(optsgph$ylim$is.min){
+            xx <- str_trim(optsgph$ylim$min)
+            ylim[1] <- as.numeric(xx)
+        }
+        if(optsgph$ylim$is.max){
+            xx <- str_trim(optsgph$ylim$max)
+            ylim[2] <- as.numeric(xx)
+        }
+
+        #######
         xlab <- ""
         ylab <- if(.cdtData$EnvData$GeneralParameters$clim.var == "RR") "Rainfall" else "Temperature"
         ylab <- if(is.na(units)) expression(paste(ylab, "(" * degree, "C)")) else paste(ylab, units)
 
-        kol.Obs <- 'black'
-        # kol.Est <- c('red', 'green', 'blue')
-        kol.Est <- rainbow(length(data.name))
+        if(optsgph$axislabs$is.xlab)
+            xlab <- optsgph$axislabs$xlab
+        if(optsgph$axislabs$is.ylab)
+            ylab <- optsgph$axislabs$ylab
 
+        #######
+        kol.Obs <- optsgph$col.obs
+        nlkol <- length(data.name)
+        if(optsgph$col.est$preset){
+            funkol <- get(optsgph$col.est$fun, mode = "function")
+            kol.Est <- funkol(nlkol)
+        }else{
+            if(length(optsgph$col.est$col) == nlkol){
+                kol.Est <- optsgph$col.est$col
+            }else{
+                kol.Est <- colorRampPalette(optsgph$col.est$col)(nlkol)
+            }
+        }
+
+        #######
         legendlab <- c('Station', data.name)
     }
 
@@ -91,7 +194,7 @@ multiValidation.plotGraph <- function(){
         don <- lapply(seq_along(y), function(i) data.frame(x = x, y = y[[i]], name = data.name[i]))
         don <- do.call(rbind, don)
 
-        xyax <- pretty(as.matrix(don[, c('x', 'y')]))
+        xyax <- pretty(xlim)
 
         par.StripText <- list(cex = 1.0, col = 'black', font = 2)
         par.stripCust <- lattice::strip.custom(factor.levels = data.name, bg = 'lightblue')
@@ -106,8 +209,8 @@ multiValidation.plotGraph <- function(){
                             panel = function(x, y, ...){
                                 lattice::panel.abline(h = xyax, v = xyax, col = "lightgray", lty = 3, lwd = 1.3)
                                 # lattice::panel.xyplot(x, y, ...)
-                                lattice::panel.points(x, y, pch = 20, col = kol.points, cex = 0.8)
-                                lattice::panel.abline(a = 0, b = 1, lwd = 2, col = kol.line)
+                                lattice::panel.points(x, y, pch = 20, col = kol.points, cex = cex.points)
+                                lattice::panel.abline(a = 0, b = 1, lwd = lwd.line, col = kol.line)
                             }
                         )
         }else{
@@ -115,7 +218,7 @@ multiValidation.plotGraph <- function(){
                             panel = function(x, y, ...){
                                 lattice::panel.abline(h = xyax, v = xyax, col = "lightgray", lty = 3, lwd = 1.3)
                                 hexbin::panel.hexbinplot(x, y, ...)
-                                lattice::panel.abline(a = 0, b = 1, lwd = 2, col = kol.line)
+                                lattice::panel.abline(a = 0, b = 1, lwd = lwd.line, col = kol.line)
                             },
                             trans = log, inv = exp, colramp = kol.hexbin, colorkey = TRUE
                         )
@@ -127,7 +230,7 @@ multiValidation.plotGraph <- function(){
                      xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = title
                     )
 
-        print(pp)                  
+        print(pp)
     }
 
     if(plotType == "CDF"){
