@@ -232,11 +232,11 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
 
         ######
         if(interp$method == "okr"){
-            if(nstn >= interp$minstn){
+            if(nstn < interp$minstn){
                 msg <- list(msg = "No enough data to compute variogram", status = NULL)
                 return(msg)
             }
-            if(var(locations.stn$stn) > 1e-15){
+            if(var(locations.stn$stn) < 1e-15){
                 msg <- list(msg = "Unable to compute variogram: variance null", status = NULL)
                 return(msg)
             }
@@ -251,13 +251,13 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
         }
 
         if(interp$method == "ukr"){
-            if(nstn >= interp$minstn){
+            if(nstn < interp$minstn){
                 msg <- list(msg = "No enough data to compute variogram", status = NULL)
                 return(msg)
             }
 
             vars <- matrixStats::colVars(as.matrix(locations.stn@data))
-            if(all(vars > 1e-15)){
+            if(all(vars < 1e-15)){
                 msg <- list(msg = "Unable to compute variogram: variance null", status = NULL)
                 return(msg)
             }
@@ -330,7 +330,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
         names(msg) <- don$dates[ierror]
         saveRDS(msg, file = file.path(cdtOUT, "Error_log.rds"))
 
-        error.mgs <- paste(names(meg), do.call(c, msg))
+        error.mgs <- paste(names(msg), do.call(c, msg))
         xx <- paste(error.mgs, collapse = "\n")
 
         if(GUI){
