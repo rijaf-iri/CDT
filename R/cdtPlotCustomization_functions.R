@@ -355,3 +355,24 @@ image.plot_Legend_pars <- function(Zmat, user.levels, user.colors, preset.colors
         legend.axis = list(at = breaks1, labels = legend.label), colors = kolor)
 }
 
+########################################################################
+
+## from
+# https://r.789695.n4.nabble.com/Creating-smooth-color-regions-with-panel-contourplot-td866253.html
+
+panel.filledcontour <- function(x, y, z, subscripts, at, col.regions, ...){
+    z <- matrix(z[subscripts],
+                nrow = length(unique(x[subscripts])),
+                ncol = length(unique(y[subscripts])))
+    if(!is.double(z)) storage.mode(z) <- "double"
+    opar <- par(no.readonly = TRUE)
+    on.exit(par(opar))
+    if(lattice::panel.number() > 1) par(new = TRUE)
+    par(fig = gridBase::gridFIG(), omi = c(0, 0, 0, 0), mai = c(0, 0, 0, 0))
+    cpl <- lattice::current.panel.limits()
+    plot.window(xlim = cpl$xlim, ylim = cpl$ylim, log = "", xaxs = "i", yaxs = "i")
+    .filled.contour(as.double(lattice::do.breaks(cpl$xlim, nrow(z) - 1)),
+                    as.double(lattice::do.breaks(cpl$ylim, ncol(z) - 1)),
+                    z, as.double(at), col = col.regions)
+}
+

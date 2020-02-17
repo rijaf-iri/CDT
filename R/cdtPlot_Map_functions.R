@@ -7,7 +7,7 @@ cdt.plotmap.args0 <- function(don,
 {
     brks <- image.plot_Legend_pars(don$z, user.levels, user.colors, preset.colors)
     don$z <- don$z + 1e-15
-    keyColLab <- round(brks$legend.axis$labels, 10)
+    keyColLab <- round(brks$legend.axis$labels, 6)
     pars0 <- list(
                     don = don,
                     zlim = brks$legend.breaks$zlim,
@@ -58,7 +58,7 @@ cdt.plotmap.args <- function(don, MapOp, shpf,
     breaks2 <- brks$legend.breaks$breaks
     kolor <- brks$colors
     breaks1 <- brks$legend.axis$at
-    lab.breaks <- brks$legend.axis$labels
+    lab.breaks <- round(brks$legend.axis$labels, 6)
 
     ## legend label
     legendLabel <- label.fun(lab.breaks, ...)

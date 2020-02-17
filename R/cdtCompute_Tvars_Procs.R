@@ -141,7 +141,7 @@ computeTvarsProcs <- function(){
         len.lat <- length(nc.lat)
 
         nc <- nc_open(tmaxInfo$nc.files[1])
-        tmaxvarid <- tminInfo$ncinfo$varid
+        tmaxvarid <- tmaxInfo$ncinfo$varid
         nc.lon1 <- nc$var[[tmaxvarid]]$dim[[tmaxInfo$ncinfo$xo]]$vals
         nc.lat1 <- nc$var[[tmaxvarid]]$dim[[tmaxInfo$ncinfo$yo]]$vals
         nc_close(nc)

@@ -40,7 +40,8 @@ SpatialInterpPanelCmd <- function(){
                                                          lon = FALSE, lat = FALSE)
                                            ),
                              negative = list(set = FALSE, value = 0),
-                              date = list(year = 2017, mon = 1, day = 1,
+                             blank = list(blank = FALSE, shpf = ""),
+                             date = list(year = 2017, mon = 1, day = 1,
                                           hour = 1, min = 0, other = ""))
 
     pointSizeI <- 1.0
@@ -49,6 +50,7 @@ SpatialInterpPanelCmd <- function(){
                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
+                                       pointCol = 'black',
                                        pointSize = pointSizeI)
 
     .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
@@ -250,7 +252,7 @@ SpatialInterpPanelCmd <- function(){
                 update.OpenFiles('ascii', dat.opfiles)
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(input.file) <- dat.opfiles[[1]]
-                lapply(list(cb.cdtdata2, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+                lapply(list(cb.cdtdata2, cb.blankgrid, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -325,8 +327,47 @@ SpatialInterpPanelCmd <- function(){
         tkgrid(en.negval, row = 0, column = 1, sticky = 'w', pady = 1, ipadx = 1, ipady = 1)
 
         tkbind(chk.negval, "<Button-1>", function(){
-            statenegval <- if(tclvalue(set.neg.value) == "0")  'normal' else 'disabled'
+            if(tclvalue(interpData) == '0'){
+                statenegval <- if(tclvalue(set.neg.value) == "0")  'normal' else 'disabled'
+            }else statenegval <- 'disabled'
             tkconfigure(en.negval, state = statenegval)
+        })
+
+        ##############################################
+
+        frameBlank <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
+
+        blankGrid <- tclVar(GeneralParameters$blank$blank)
+        file.blankShp <- tclVar(GeneralParameters$blank$shpf)
+        stateSHP <- if(GeneralParameters$blank$blank) "normal" else "disabled"
+
+        chk.blankgrid <- tkcheckbutton(frameBlank, variable = blankGrid, text = "Blank grid outside the boundaries", anchor = 'w', justify = 'left')
+        cb.blankgrid <- ttkcombobox(frameBlank, values = unlist(listOpenFiles), textvariable = file.blankShp, width = largeur1, state = stateSHP)
+        bt.blankgrid <- tkbutton(frameBlank, text = "...", state = stateSHP)
+
+        ########
+        tkgrid(chk.blankgrid, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(cb.blankgrid, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1)
+        tkgrid(bt.blankgrid, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
+
+        ########
+
+        tkconfigure(bt.blankgrid, command = function(){
+            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
+            if(!is.null(shp.opfiles)){
+                update.OpenFiles('shp', shp.opfiles)
+                tclvalue(file.blankShp) <- shp.opfiles[[1]]
+                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
+                lapply(list(cb.cdtdata2, cb.blankgrid, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+            }
+        })
+
+        tkbind(chk.blankgrid, "<Button-1>", function(){
+            if(tclvalue(interpData) == '0'){
+                stateSHP <- if(tclvalue(blankGrid) == "1") "disabled" else "normal"
+            }else stateSHP <- "disabled"
+            tkconfigure(cb.blankgrid, state = stateSHP)
+            tkconfigure(bt.blankgrid, state = stateSHP)
         })
 
         ##############################################
@@ -362,8 +403,10 @@ SpatialInterpPanelCmd <- function(){
             GeneralParameters$negative$value <- as.numeric(str_trim(tclvalue(val.neg.value)))
             GeneralParameters$cdtstation <- str_trim(tclvalue(input.file))
             GeneralParameters$outdir <- str_trim(tclvalue(dir.save))
+            GeneralParameters$blank$blank <- switch(tclvalue(blankGrid), '0' = FALSE, '1' = TRUE)
+            GeneralParameters$blank$shpf <- str_trim(tclvalue(file.blankShp))
 
-            assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
+            # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
             Insert.Messages.Out("Interpolating data ...", TRUE, "i")
 
@@ -409,8 +452,9 @@ SpatialInterpPanelCmd <- function(){
         tkgrid(btInterpMthd, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(btGridInterp, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameNegVal, row = 4, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameDirSav, row = 5, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(btInterpolate, row = 6, column = 0, sticky = 'we', padx = 1, pady = 10, ipadx = 1, ipady = 1)
+        tkgrid(frameBlank, row = 5, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(frameDirSav, row = 6, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(btInterpolate, row = 7, column = 0, sticky = 'we', padx = 1, pady = 10, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -418,6 +462,100 @@ SpatialInterpPanelCmd <- function(){
     subfr2 <- bwTabScrollableFrame(cmd.tab2)
 
         ##############################################
+
+        frameINTRP <- ttklabelframe(subfr2, text = "Interpolation data", relief = 'groove')
+
+        interpData <- tclVar(0)
+        file.interpData <- tclVar()
+
+        stateIntD <- if(tclvalue(interpData) == "1") "normal" else "disabled"
+
+        chk.IntD <- tkcheckbutton(frameINTRP, variable = interpData, text = "Interpolated data already exist", anchor = 'w', justify = 'left')
+        en.IntD <- tkentry(frameINTRP, textvariable = file.interpData, width = largeur2, state = stateIntD)
+        bt.IntD <- tkbutton(frameINTRP, text = "Load Data", state = stateIntD)
+
+        tkgrid(chk.IntD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.IntD, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.IntD, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ##############
+
+        tkconfigure(bt.IntD, command = function(){
+            path.Interp <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+            if(path.Interp == "") return(NULL)
+            tclvalue(file.interpData) <- path.Interp
+
+            path.Interp <- str_trim(tclvalue(file.interpData))
+            if(file.exists(path.Interp)){
+                interp.data <- try(readRDS(path.Interp), silent = TRUE)
+                if(inherits(interp.data, "try-error")){
+                    Insert.Messages.Out('Unable to load the interpolated data', format = TRUE)
+                    Insert.Messages.Out(gsub('[\r\n]', '', interp.data[1]), format = TRUE)
+                    return(NULL)
+                }
+
+                .cdtData$EnvData$stnData <- interp.data$stn
+                .cdtData$EnvData$ncdfOUT <- file.path(dirname(path.Interp), 'DATA_NetCDF')
+                .cdtData$EnvData$first.date <- interp.data$first.date
+                .cdtData$EnvData$last.date <- interp.data$last.date
+
+                if(interp.data$params$intstep == "others"){
+                    tkconfigure(cb.other, values = .cdtData$EnvData$stnData$dates)
+                    tclvalue(date.other) <- .cdtData$EnvData$stnData$dates[1]
+                }else{
+                    daty <- .cdtData$EnvData$last.date
+                    tclvalue(date.year) <- as.numeric(format(daty, '%Y'))
+                    tclvalue(date.mon) <- as.numeric(format(daty, '%m'))
+                    tclvalue(date.day) <- as.numeric(format(daty, '%d'))
+                    tclvalue(date.hour) <- as.numeric(format(daty, '%H'))
+                    tclvalue(date.min) <- as.numeric(format(daty, '%M'))
+                }
+
+                tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% interp.data$params$intstep]
+                retminhr <- set.hour.minute(interp.data$params$intstep, interp.data$params$minhour)
+                tclvalue(minhour.tclVar) <- retminhr$val
+                tkconfigure(cb.minhour, values = retminhr$cb)
+            }
+        })
+
+        tkbind(chk.IntD, "<Button-1>", function(){
+            stateIntD <- if(tclvalue(interpData) == '1') 'disabled' else 'normal'
+            tkconfigure(bt.IntD, state = stateIntD)
+            tkconfigure(en.IntD, state = stateIntD)
+
+            stateDataIn <- if(tclvalue(interpData) == '1') 'normal' else 'disabled'
+            tkconfigure(cb.cdtdata1, state = stateDataIn)
+            tkconfigure(cb.cdtdata2, state = stateDataIn)
+            tkconfigure(bt.cdtdata, state = stateDataIn)
+            tkconfigure(btInterpMthd, state = stateDataIn)
+            tkconfigure(btGridInterp, state = stateDataIn)
+            tkconfigure(chk.negval, state = stateDataIn)
+            tkconfigure(chk.blankgrid, state = stateDataIn)
+            tkconfigure(en.dir.save, state = stateDataIn)
+            tkconfigure(bt.dir.save, state = stateDataIn)
+            tkconfigure(btInterpolate, state = stateDataIn)
+
+            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+
+            stateminhr <- if((intstep %in% c('minute', 'hourly')) & tclvalue(interpData) == '1') "normal" else "disabled"
+            tkconfigure(cb.minhour, state = stateminhr)
+            statedate <- if(intstep != "others" & tclvalue(interpData) == '1') "normal" else "disabled"
+            tkconfigure(btDateRange, state = statedate)
+            
+            if(tclvalue(interpData) == '1'){
+                statenegval <- if(tclvalue(set.neg.value) == "1") "normal" else "disabled"
+                stateSHP <- if(tclvalue(blankGrid) == "1") "normal" else "disabled"
+            }else{
+                statenegval <- "disabled"
+                stateSHP <- "disabled"
+            }
+
+            tkconfigure(en.negval, state = statenegval)
+            tkconfigure(cb.blankgrid, state = stateSHP)
+            tkconfigure(bt.blankgrid, state = stateSHP)
+        })
+
+        ##############
 
         frameMap <- ttklabelframe(subfr2, text = "Map", relief = 'groove')
 
@@ -443,19 +581,61 @@ SpatialInterpPanelCmd <- function(){
 
         ##############
 
+        frPLOTpanel <- tkframe(frameMap)
+
+        .cdtData$EnvData$map$panelMap <- 'two'
+        panelMapVar <- tclVar()
+        panelMaps <- c("one panel", "a separate panels")
+        panelNumber <- c('one', 'two')
+        tclvalue(panelMapVar) <- panelMaps[panelNumber %in% .cdtData$EnvData$map$panelMap]
+
+        txt.Map.panel <- tklabel(frPLOTpanel, text = "Plot map on", anchor = 'w', justify = 'left')
+        cb.Map.panel <- ttkcombobox(frPLOTpanel, values = panelMaps, textvariable = panelMapVar, width = largeur0)
+
+        tkgrid(txt.Map.panel, row = 0, column = 0, sticky = 'e', padx = 0, pady = 1, columnspan = 1)
+        tkgrid(cb.Map.panel, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+
+        ##############
+
+        tkbind(cb.Map.panel, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$map$panelMap <- panelNumber[panelMaps %in% str_trim(tclvalue(panelMapVar))]
+
+            statetypeMapPLOT1 <- if(.cdtData$EnvData$map$panelMap == "one") "disabled" else "normal"
+            tkconfigure(cb.Map.type1, state = statetypeMapPLOT1)
+        })
+
+        ##############
+
         frOPTS0 <- tkframe(frameMap)
 
+        .cdtData$EnvData$map$typeMap1 <- "Points"
         typeMapPLOT1 <- c("Points", "Pixels")
-        .cdtData$EnvData$map$typeMap1 <- tclVar("Points")
+        typeMap1Var <- tclVar(.cdtData$EnvData$map$typeMap1)
 
+        statetypeMapPLOT1 <- if(.cdtData$EnvData$map$panelMap == "one") "disabled" else "normal"
+
+        .cdtData$EnvData$map$typeMap2 <- "Pixels"
         typeMapPLOT2 <- c("Pixels", "FilledContour")
-        .cdtData$EnvData$map$typeMap2 <- tclVar("Pixels")
+        typeMap2Var <- tclVar(.cdtData$EnvData$map$typeMap2)
 
         txt.Map.type1 <- tklabel(frOPTS0, text = "Points", anchor = 'w', justify = 'left')
-        cb.Map.type1 <- ttkcombobox(frOPTS0, values = typeMapPLOT1, textvariable = .cdtData$EnvData$map$typeMap1, width = largeur3)
+        cb.Map.type1 <- ttkcombobox(frOPTS0, values = typeMapPLOT1, textvariable = typeMap1Var, width = largeur3, state = statetypeMapPLOT1)
 
         txt.Map.type2 <- tklabel(frOPTS0, text = "Grid", anchor = 'w', justify = 'left')
-        cb.Map.type2 <- ttkcombobox(frOPTS0, values = typeMapPLOT2, textvariable = .cdtData$EnvData$map$typeMap2, width = largeur3)
+        cb.Map.type2 <- ttkcombobox(frOPTS0, values = typeMapPLOT2, textvariable = typeMap2Var, width = largeur3)
+
+        ##############
+
+        tkbind(cb.Map.type1, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$map$typeMap1 <- str_trim(tclvalue(typeMap1Var))
+            if(.cdtData$EnvData$map$typeMap1 == "Points"){
+                .cdtData$EnvData$dataMapOp$pointSize <- pointSizeI
+            }else .cdtData$EnvData$dataMapOp$pointSize <- NULL
+        })
+
+        tkbind(cb.Map.type2, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$map$typeMap2 <- str_trim(tclvalue(typeMap2Var))
+        })
 
         ##############
 
@@ -475,8 +655,9 @@ SpatialInterpPanelCmd <- function(){
         tkgrid(bt.date.prev, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
         tkgrid(bt.Map.plot, row = 1, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
         tkgrid(bt.date.next, row = 1, column = 2, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(frOPTS0, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 2)
-        tkgrid(bt.Map.Opt, row = 2, column = 2, sticky = 'we', padx = 1, pady = 1, rowspan = 2, columnspan = 1)
+        tkgrid(frPLOTpanel, row = 2, column = 0, sticky = '', padx = 1, pady = 5, columnspan = 3)
+        tkgrid(frOPTS0, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 2)
+        tkgrid(bt.Map.Opt, row = 3, column = 2, sticky = 'we', padx = 1, pady = 1, rowspan = 2, columnspan = 1)
 
         ##############
 
@@ -492,10 +673,9 @@ SpatialInterpPanelCmd <- function(){
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$map$typeMap1)) == "Points")
+            if(.cdtData$EnvData$map$typeMap1 == "Points")
                 pointSizeI <<- .cdtData$EnvData$dataMapOp$pointSize
         })
-
 
         ##############
 
@@ -509,11 +689,9 @@ SpatialInterpPanelCmd <- function(){
                 return(NULL)
             }
 
-            # ####
-            # CDTdataStation.Display.Maps()
-
-            # imgContainer <- CDT.Display.Graph(spatialInterp.plotMap, .cdtData$EnvData$tab$dataMap, 'Spatial-Interpolation')
-            # .cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
+            ####
+            imgContainer <- CDT.Display.Graph(spatialInterp.plotMap, .cdtData$EnvData$tab$dataMap, 'Spatial-Interpolation')
+            .cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
         })
 
         tkconfigure(bt.date.prev, command = function(){
@@ -542,11 +720,9 @@ SpatialInterpPanelCmd <- function(){
                 return(NULL)
             }
 
-            # ####
-            # CDTdataStation.Display.Maps()
-
-            # imgContainer <- CDT.Display.Graph(spatialInterp.plotMap, .cdtData$EnvData$tab$dataMap, 'Spatial-Interpolation')
-            # .cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
+            ####
+            imgContainer <- CDT.Display.Graph(spatialInterp.plotMap, .cdtData$EnvData$tab$dataMap, 'Spatial-Interpolation')
+            .cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
         })
 
         tkconfigure(bt.date.next, command = function(){
@@ -575,21 +751,9 @@ SpatialInterpPanelCmd <- function(){
                 return(NULL)
             }
 
-            # ####
-            # CDTdataStation.Display.Maps()
-
-            # imgContainer <- CDT.Display.Graph(spatialInterp.plotMap, .cdtData$EnvData$tab$dataMap, 'Spatial-Interpolation')
-            # .cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
-        })
-
-        ##############
-
-        tkbind(cb.Map.type1, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$map$typeMap1)) == "Points"){
-                .cdtData$EnvData$dataMapOp$pointSize <- pointSizeI
-            }else .cdtData$EnvData$dataMapOp$pointSize <- NULL
-
-            getStnMap()
+            ####
+            imgContainer <- CDT.Display.Graph(spatialInterp.plotMap, .cdtData$EnvData$tab$dataMap, 'Spatial-Interpolation')
+            .cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
         })
 
         ############################################
@@ -618,7 +782,7 @@ SpatialInterpPanelCmd <- function(){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(file.plotShp) <- shp.opfiles[[1]]
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                lapply(list(cb.cdtdata2, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+                lapply(list(cb.cdtdata2, cb.blankgrid, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
                 shpofile <- getShpOpenData(file.plotShp)
                 if(is.null(shpofile))
@@ -653,8 +817,9 @@ SpatialInterpPanelCmd <- function(){
 
         ############################################
 
-        tkgrid(frameMap, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameSHP, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameINTRP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameMap, row = 1, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSHP, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -666,8 +831,8 @@ SpatialInterpPanelCmd <- function(){
             tcl('update')
         })
 
-        typemap1 <- str_trim(tclvalue(.cdtData$EnvData$map$typeMap1))
-        typemap2 <- str_trim(tclvalue(.cdtData$EnvData$map$typeMap2))
+        typemap1 <- .cdtData$EnvData$map$typeMap1
+        typemap2 <- .cdtData$EnvData$map$typeMap2
         tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
 
         if(tstep != "others"){
@@ -679,44 +844,44 @@ SpatialInterpPanelCmd <- function(){
             getSpat <- list(yrs, mon, dpk, hrs, min, typemap1)
         }else getSpat <- list(str_trim(tclvalue(date.other)), typemap1)
 
-        formatSpData <- TRUE
-        if(!is.null(.cdtData$EnvData$mapdata$spatial)){
-            formatSpData <- all.equal(.cdtData$EnvData$mapdata$spatial, getSpat)
-            formatSpData <- if(!isTRUE(formatSpData)) TRUE else FALSE
-        }
+        if(tstep != "others"){
+            if(tstep == "minute"){
+                mins <- paste(yrs, mon, dpk, hrs, min, sep = "-")
+                daty <- format(as.POSIXct(mins, format = "%Y-%m-%d-%H-%M"), "%Y%m%d%H%M")
+            }
+            if(tstep == "hourly"){
+                hhrs <- paste(yrs, mon, dpk, hrs, sep = "-")
+                daty <- format(as.POSIXct(hhrs, format = "%Y-%m-%d-%H"), "%Y%m%d%H")
+            }
+            if(tstep == "daily")
+                daty <- format(as.Date(paste(yrs, mon, dpk, sep = "-")), "%Y%m%d")
+            if(tstep == "pentad"){
+                pen <- as.Date(paste(yrs, mon, dpk, sep = "-"))
+                daty <- paste0(format(pen, "%Y%m"), dpk)
+            }
+            if(tstep == "dekadal"){
+                dek <- as.Date(paste(yrs, mon, dpk, sep = "-"))
+                daty <- paste0(format(dek, "%Y%m"), dpk)
+            }
+            if(tstep == "monthly")
+                daty <- format(as.Date(paste(yrs, mon, dpk, sep = "-")), "%Y%m")
+        }else daty <- str_trim(tclvalue(date.other))
 
-        if(formatSpData){
-            if(tstep != "others"){
-                if(tstep == "minute"){
-                    mins <- paste(yrs, mon, dpk, hrs, min, sep = "-")
-                    daty <- format(as.POSIXct(mins, format = "%Y-%m-%d-%H-%M"), "%Y%m%d%H%M")
-                }
-                if(tstep == "hourly"){
-                    hhrs <- paste(yrs, mon, dpk, hrs, sep = "-")
-                    daty <- format(as.POSIXct(hhrs, format = "%Y-%m-%d-%H"), "%Y%m%d%H")
-                }
-                if(tstep == "daily")
-                    daty <- format(as.Date(paste(yrs, mon, dpk, sep = "-")), "%Y%m%d")
-                if(tstep == "pentad"){
-                    pen <- as.Date(paste(yrs, mon, dpk, sep = "-"))
-                    daty <- paste0(format(pen, "%Y%m"), dpk)
-                }
-                if(tstep == "dekadal"){
-                    dek <- as.Date(paste(yrs, mon, dpk, sep = "-"))
-                    daty <- paste0(format(dek, "%Y%m"), dpk)
-                }
-                if(tstep == "monthly")
-                    daty <- format(as.Date(paste(yrs, mon, dpk, sep = "-")), "%Y%m")
-            }else daty <- str_trim(tclvalue(date.other))
+        idaty <- which(.cdtData$EnvData$stnData$dates == daty)
 
-            idaty <- which(.cdtData$EnvData$stnData$dates == daty)
+        if(length(idaty) == 0){
+            .cdtData$EnvData$mapdata$mapstn <- NULL
+            .cdtData$EnvData$mapdata$mapncdf <- NULL
+            Insert.Messages.Out('Invalid date or index', TRUE, "e")
+            return(NULL)
+        }else{
+            formatSpData <- TRUE
+            if(!is.null(.cdtData$EnvData$mapdata$spatial)){
+                formatSpData <- all.equal(.cdtData$EnvData$mapdata$spatial, getSpat)
+                formatSpData <- if(!isTRUE(formatSpData)) TRUE else FALSE
+            }
 
-            if(length(idaty) == 0){
-                .cdtData$EnvData$mapdata$mapstn <- NULL
-                .cdtData$EnvData$mapdata$mapncdf <- NULL
-                Insert.Messages.Out('Invalid date or index', TRUE, "e")
-                return(NULL)
-            }else{
+            if(formatSpData){
                 if(typemap1 == "Points"){
                     .cdtData$EnvData$mapdata$mapstn$x <- .cdtData$EnvData$stnData$lon
                     .cdtData$EnvData$mapdata$mapstn$y <- .cdtData$EnvData$stnData$lat
@@ -733,29 +898,45 @@ SpatialInterpPanelCmd <- function(){
                     .cdtData$EnvData$mapdata$mapstn$z <- tmp$z
                 }
 
-                .cdtData$EnvData$mapdata$t <- daty
-                .cdtData$EnvData$mapdata$mapstn$p <- typemap1
+                .cdtData$EnvData$mapdata$spatial <- getSpat
+            }
 
-                ################
+            ################
 
-                ncfile <- paste0("stn_interp_", daty, ".nc")
-                ncpath <- file.path(.cdtData$EnvData$ncdfOUT, ncfile)
+            ncfile <- paste0("stn_interp_", daty, ".nc")
+            ncpath <- file.path(.cdtData$EnvData$ncdfOUT, ncfile)
+
+            readNCDF <- TRUE
+            if(!is.null(.cdtData$EnvData$mapdata$readnc)){
+                readNCDF <- all.equal(.cdtData$EnvData$mapdata$readnc, ncpath)
+                readNCDF <- if(!isTRUE(readNCDF)) TRUE else FALSE
+            }
+
+            if(readNCDF){
                 if(file.exists(ncpath)){
                     nc <- ncdf4::nc_open(ncpath)
                     .cdtData$EnvData$mapdata$mapncdf$x <- nc$dim[[1]]$vals
                     .cdtData$EnvData$mapdata$mapncdf$y <- nc$dim[[2]]$vals
                     .cdtData$EnvData$mapdata$mapncdf$z <- ncdf4::ncvar_get(nc, "var")
                     ncdf4::nc_close(nc)
-
-                    .cdtData$EnvData$mapdata$mapncdf$p <- typemap2
                 }else{
                     .cdtData$EnvData$mapdata$mapncdf <- NULL
                     Insert.Messages.Out(paste(ncpath, "does not exist"), TRUE, "e")
                 }
+
+                .cdtData$EnvData$mapdata$readnc <- ncpath
             }
 
-            .cdtData$EnvData$mapdata$spatial <- getSpat
+            .cdtData$EnvData$mapdata$t <- daty
+            .cdtData$EnvData$mapdata$mapstn$p <- typemap1
+            .cdtData$EnvData$mapdata$mapstn$mp <- "Points"
+
+            if(!is.null(.cdtData$EnvData$mapdata$mapncdf)){
+                .cdtData$EnvData$mapdata$mapncdf$p <- typemap2
+                .cdtData$EnvData$mapdata$mapncdf$mp <- "Grid"
+            }
         }
+
         return(0)
     }
 

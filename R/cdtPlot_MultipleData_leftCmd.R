@@ -347,7 +347,7 @@ PlotMulitpleDataCmd <- function(){
             .cdtData$GalParams$DATASETs[[jj]]$pars$data.type <- "cdtstation"
             .cdtData$GalParams$DATASETs[[jj]]$pars$map.type <- "Points"
             .cdtData$GalParams$DATASETs[[jj]]$pars$plot.type <- "Points"
-            .cdtData$GalParams$DATASETs[[jj]]$pars$point.size <- 0.8
+            .cdtData$GalParams$DATASETs[[jj]]$pars$point.size <- 1.0
             .cdtData$GalParams$DATASETs[[jj]]$pars$title <- paste("Data set", ids)
             .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- ""
             .cdtData$GalParams$DATASETs[[jj]]$pars$input$sample <- ""

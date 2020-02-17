@@ -92,7 +92,11 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     }
 
     .cdtData$EnvData$stnData <- don
-    saveRDS(don, file = file.path(cdtOUT, "Station_data.rds"))
+    
+    outRDS <- list(stn = don, params = GeneralParameters,
+                   first.date = .cdtData$EnvData$first.date,
+                   last.date = .cdtData$EnvData$last.date)
+    saveRDS(outRDS, file = file.path(outdir, 'SpatialInterpolation.rds'))
 
     #####################
     if(GeneralParameters$grid$from == "new"){
@@ -139,6 +143,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     nmax <- interp$nmax
     maxdist <- interp$maxdist
     negVal <- GeneralParameters$negative
+    blankGrid <- GeneralParameters$blank
 
     if(interp$method %in% c("idw", "okr", "ukr")){
         bGrd <- NULL
@@ -158,6 +163,17 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
         demData <- demData[[2]][c('x', 'y', 'z')]
         names(demData) <- c('lon', 'lat', 'z')
         demData <- cdt.interp.surface.grid(demData, xy.grid)
+    }
+
+    #####################
+
+    if(blankGrid$blank){
+        shpdata <- getShpOpenData(blankGrid$shpf)[[2]]
+        if(is.null(shpdata)){
+            Insert.Messages.Out("No shapefiles found", TRUE, "e")
+            return(NULL)
+        }
+        maskGrid <- create.mask.grid(shpdata, xy.grid)
     }
 
     #####################
@@ -305,6 +321,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
         #######
         out <- matrix(interp.stn, nlon, nlat)
         if(negVal$set) out[out < 0] <- negVal$value
+        if(blankGrid$blank) out <- out * maskGrid
         out[is.na(out)] <- miss.val
 
         ncfile <- paste0("stn_interp_", don$dates[jj], ".nc")
