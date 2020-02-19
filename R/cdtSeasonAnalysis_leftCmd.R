@@ -1086,7 +1086,6 @@ SeasonAnalysisPanelCmd <- function(){
         .cdtData$EnvData$daily.precip <- readRDS(file.daily.rr)
     }
 
-
     #######################################################################################################
 
     read.PicsaTSData <- function(){
@@ -1209,7 +1208,9 @@ SeasonAnalysisPanelCmd <- function(){
 
             if(readTsData){
                 if(tsdata.dir == "Dry_Spells"){
-                    .cdtData$EnvData$tsdata <- readCdtDatasetChunk.sepdir.dates.order(tsdata.index, tsdata.path, idaty, onedate = TRUE)
+                    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+                    .cdtData$EnvData$tsdata <- readCdtDatasetChunk.sepdir.dates.order(tsdata.index, tsdata.path, idaty,
+                                                                                      cdtParallelCond, onedate = TRUE)
                     zdim <- dim(.cdtData$EnvData$tsdata$z)
                     nval <- sapply(.cdtData$EnvData$tsdata$z, function(x) (length(x) == 1) & is.na(x[1]))
                     zval <- sapply(.cdtData$EnvData$tsdata$z, function(x) sum(!is.na(x) & x >= dryspl))

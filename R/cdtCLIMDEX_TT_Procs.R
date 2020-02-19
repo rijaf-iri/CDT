@@ -734,17 +734,19 @@ climdexCalc.TT <- function(GeneralParameters){
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
         GeneralParameters <- GeneralParameters
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(chkj)
         {
             if(!noTmin){
-                tmin.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], GeneralParameters$cdtdataset$tn, do.par = do.parChunk)
+                tmin.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], GeneralParameters$cdtdataset$tn, cdtParallelCond, do.par = do.parChunk)
                 tmin.data <- tmin.data[tmin$dateInfo$index, , drop = FALSE]
                 d.ncol <- ncol(tmin.data)
             }
             if(!noTmax){
-                tmax.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], GeneralParameters$cdtdataset$tx, do.par = do.parChunk)
+                tmax.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], GeneralParameters$cdtdataset$tx, cdtParallelCond, do.par = do.parChunk)
                 tmax.data <- tmax.data[tmax$dateInfo$index, , drop = FALSE]
                 d.ncol <- ncol(tmax.data)
             }
@@ -768,9 +770,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         ndim, pars.TXn, pars.trend, index.NS1,
                                         month.data = FALSE, index.M = NULL)
                 writeCdtDatasetChunk.sequence(TXn$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TXn"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TXn"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TXn$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TXn"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TXn"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TXn)
             }
 
@@ -782,9 +784,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         ndim, pars.TXx, pars.trend, index.NS1,
                                         month.data = FALSE, index.M = NULL)
                 writeCdtDatasetChunk.sequence(TXx$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TXx"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TXx"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TXx$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TXx"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TXx"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TXx)
             }
 
@@ -796,9 +798,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         ndim, pars.TNn, pars.trend, index.NS1,
                                         month.data = FALSE, index.M = NULL)
                 writeCdtDatasetChunk.sequence(TNn$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TNn"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TNn"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TNn$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TNn"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TNn"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TNn)
             }
 
@@ -810,9 +812,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         ndim, pars.TNx, pars.trend, index.NS1,
                                         month.data = FALSE, index.M = NULL)
                 writeCdtDatasetChunk.sequence(TNx$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TNx"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TNx"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TNx$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TNx"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TNx"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TNx)
             }
 
@@ -824,9 +826,9 @@ climdexCalc.TT <- function(GeneralParameters){
                 SU <- climdex_aggr.fun(tmax.data, GeneralParameters$start.july,
                                         ndim, pars.SU, pars.trend, index.NS1)
                 writeCdtDatasetChunk.sequence(SU$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["SU"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["SU"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(SU$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["SU"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["SU"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(SU)
             }
 
@@ -838,9 +840,9 @@ climdexCalc.TT <- function(GeneralParameters){
                 ID <- climdex_aggr.fun(tmax.data, GeneralParameters$start.july,
                                         ndim, pars.ID, pars.trend, index.NS1)
                 writeCdtDatasetChunk.sequence(ID$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["ID"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["ID"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(ID$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["ID"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["ID"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(ID)
             }
 
@@ -852,9 +854,9 @@ climdexCalc.TT <- function(GeneralParameters){
                 FD <- climdex_aggr.fun(tmin.data, GeneralParameters$start.july,
                                         ndim, pars.FD, pars.trend, index.NS1)
                 writeCdtDatasetChunk.sequence(FD$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["FD"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["FD"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(FD$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["FD"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["FD"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(FD)
             }
 
@@ -866,9 +868,9 @@ climdexCalc.TT <- function(GeneralParameters){
                 TR <- climdex_aggr.fun(tmin.data, GeneralParameters$start.july,
                                         ndim, pars.TR, pars.trend, index.NS1)
                 writeCdtDatasetChunk.sequence(TR$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TR"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TR"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TR$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TR"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TR"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TR)
             }
 
@@ -985,9 +987,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         Exceedance.rate = TRUE)
                 rm(Q10)
                 writeCdtDatasetChunk.sequence(TX10p$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TX10p"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TX10p"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TX10p$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TX10p"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TX10p"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TX10p)
             }
 
@@ -1002,9 +1004,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         Exceedance.rate = TRUE)
                 rm(Q90)
                 writeCdtDatasetChunk.sequence(TX90p$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TX90p"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TX90p"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TX90p$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TX90p"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TX90p"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TX90p)
             }
 
@@ -1019,9 +1021,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         Exceedance.rate = TRUE)
                 rm(Q10)
                 writeCdtDatasetChunk.sequence(TN10p$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TN10p"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TN10p"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TN10p$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TN10p"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TN10p"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TN10p)
             }
 
@@ -1036,9 +1038,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         Exceedance.rate = TRUE)
                 rm(Q90)
                 writeCdtDatasetChunk.sequence(TN90p$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["TN90p"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["TN90p"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(TN90p$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["TN90p"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["TN90p"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(TN90p)
             }
 
@@ -1053,9 +1055,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         ndim, pars.WSDI, pars.trend, index.NS1)
                 rm(Q90)
                 writeCdtDatasetChunk.sequence(WSDI$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["WSDI"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["WSDI"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(WSDI$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["WSDI"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["WSDI"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(WSDI)
             }
 
@@ -1070,9 +1072,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         ndim, pars.CSDI, pars.trend, index.NS1)
                 rm(Q10)
                 writeCdtDatasetChunk.sequence(CSDI$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["CSDI"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["CSDI"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(CSDI$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["CSDI"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["CSDI"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(CSDI)
             }
 
@@ -1086,9 +1088,9 @@ climdexCalc.TT <- function(GeneralParameters){
                                         month.data = FALSE, index.M = NULL)
                 rm(tmp)
                 writeCdtDatasetChunk.sequence(DTR$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["DTR"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["DTR"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(DTR$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["DTR"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["DTR"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(DTR)
             }
 
@@ -1114,9 +1116,9 @@ climdexCalc.TT <- function(GeneralParameters){
                 GSL <- climdex_GSL.fun(tmean, daty, index.NS1, ndim, pars.GSL, pars.trend.GSL)
                 rm(tmean)
                 writeCdtDatasetChunk.sequence(GSL$year, chunkcalc[[chkj]], index.data.year,
-                                            paths.index[["GSL"]]$dir.year.data, do.par = do.parChunk)
+                                            paths.index[["GSL"]]$dir.year.data, cdtParallelCond, do.par = do.parChunk)
                 writeCdtDatasetChunk.sequence(GSL$trend, chunkcalc[[chkj]], index.data.trend,
-                                            paths.index[["GSL"]]$dir.trend.data, do.par = do.parChunk)
+                                            paths.index[["GSL"]]$dir.trend.data, cdtParallelCond, do.par = do.parChunk)
                 rm(GSL)
             }
 
@@ -1162,7 +1164,7 @@ climdexCalc.TT <- function(GeneralParameters){
 
             vars <- varInfo[[nom.idx]]
             nc.grd <- ncvar_def(vars$name, vars$units, xy.dim, -99, vars$longname, vars$prec, compression = 9)
-            data.year <- readCdtDatasetChunk.multi.dates.order(paths.index[[nom.idx]]$file.index.year, YEAR)
+            data.year <- readCdtDatasetChunk.multi.dates.order(paths.index[[nom.idx]]$file.index.year, YEAR, cdtParallelCond)
             for(j in seq_along(YEAR)){
                 don.year <- data.year[j, ]
                 dim(don.year) <- c(nx, ny)
@@ -1175,7 +1177,7 @@ climdexCalc.TT <- function(GeneralParameters){
             }
             rm(don.year, data.year)
 
-            data.trend <- readCdtDatasetChunk.multi.dates.order(paths.index[[nom.idx]]$file.index.trend, trend.vars)
+            data.trend <- readCdtDatasetChunk.multi.dates.order(paths.index[[nom.idx]]$file.index.trend, trend.vars, cdtParallelCond)
             outfile <- file.path(dir.trend, paste0(nom.idx, ".nc"))
             nc <- nc_create(outfile, trend.vars.grd)
             for(j in seq_along(trend.vars.grd)){

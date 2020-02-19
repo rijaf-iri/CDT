@@ -61,11 +61,12 @@ summarizeDataProcs <- function(GeneralParameters){
         do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         moy <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(jj)
         {
-            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], input.file, do.par = do.parChunk)
+            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], input.file, cdtParallelCond, do.par = do.parChunk)
             don.data <- don.data[don$dateInfo$index, , drop = FALSE]
             moy <- colMeans(don.data, na.rm = TRUE)
             moy[is.nan(moy) | is.infinite(moy)] <- NA

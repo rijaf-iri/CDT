@@ -625,15 +625,16 @@ compute_RainySeasonData <- function(GeneralParameters){
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
         GeneralParameters <- GeneralParameters
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(jj)
         {
-            ons.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], onset.file, do.par = do.parChunk)
+            ons.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], onset.file, cdtParallelCond, do.par = do.parChunk)
             ons.data <- ons.data[idx.ons, , drop = FALSE]
 
-            cess.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], cessa.file, do.par = do.parChunk)
+            cess.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], cessa.file, cdtParallelCond, do.par = do.parChunk)
             cess.data <- cess.data[idx.cess, , drop = FALSE]
 
             #########################################
@@ -677,7 +678,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             SEASON.LENGTH <- cess.data - ons.data
 
             ######
-            writeCdtDatasetChunk.sequence(SEASON.LENGTH, chunkcalc[[jj]], index.out, Season_length.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(SEASON.LENGTH, chunkcalc[[jj]], index.out, Season_length.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(SEASON.LENGTH); gc()
 
             ###################
@@ -685,7 +686,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             ONSET <- ons.data - as.integer(onset$start.date)
 
             ######
-            writeCdtDatasetChunk.sequence(ONSET, chunkcalc[[jj]], index.out, Onset_days.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(ONSET, chunkcalc[[jj]], index.out, Onset_days.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(ONSET); gc()
 
             ###################
@@ -693,14 +694,14 @@ compute_RainySeasonData <- function(GeneralParameters){
             CESSAT <- cess.data - as.integer(onset$start.date)
 
             ######
-            writeCdtDatasetChunk.sequence(CESSAT, chunkcalc[[jj]], index.out, Cessation_days.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(CESSAT, chunkcalc[[jj]], index.out, Cessation_days.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(CESSAT)
 
             rm(cess.data, ons.data); gc()
 
             #########################################
 
-            prec.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], onset$params$cdtdataset$prec, do.par = do.parChunk)
+            prec.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], onset$params$cdtdataset$prec, cdtParallelCond, do.par = do.parChunk)
             prec.data <- prec.data[prec$dateInfo$index, , drop = FALSE]
 
             datDaily <- lapply(seq(ncol(indexDaily)), function(j){
@@ -724,7 +725,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             rm(datDaily, prec.data); gc()
 
             if(GeneralParameters$seastot$useTotal){
-                prec1.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$seastot$cdtdataset$prec, do.par = do.parChunk)
+                prec1.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$seastot$cdtdataset$prec, cdtParallelCond, do.par = do.parChunk)
                 prec1.data <- prec1.data[prec1$dateInfo$index, , drop = FALSE]
 
                 datSeas <- lapply(seq(ncol(indexSeason)), function(j){
@@ -756,7 +757,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             RAINTOTAL[is.na(FracDaily)] <- NA
 
             ######
-            writeCdtDatasetChunk.sequence(RAINTOTAL, chunkcalc[[jj]], index.out, Seasonal_rain_amount.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(RAINTOTAL, chunkcalc[[jj]], index.out, Seasonal_rain_amount.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(RAINTOTAL); gc()
             if(GeneralParameters$seastot$useTotal) rm(PREC1)
 
@@ -767,7 +768,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             NBRAINDAYS[is.na(FracDaily)] <- NA
 
             ######
-            writeCdtDatasetChunk.sequence(NBRAINDAYS, chunkcalc[[jj]], index.out, Number_rainy_day.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(NBRAINDAYS, chunkcalc[[jj]], index.out, Number_rainy_day.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(NBRAINDAYS); gc()
 
             ###################
@@ -777,7 +778,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             RAINMAX24H[is.na(FracDaily)] <- NA
 
             ######
-            writeCdtDatasetChunk.sequence(RAINMAX24H, chunkcalc[[jj]], index.out, Maximum_rain_daily.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(RAINMAX24H, chunkcalc[[jj]], index.out, Maximum_rain_daily.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(RAINMAX24H); gc()
 
             ###################
@@ -800,15 +801,15 @@ compute_RainySeasonData <- function(GeneralParameters){
             rm(xtmp); gc()
 
             ######
-            writeCdtDatasetChunk.sequence(Q95th, chunkcalc[[jj]], index.out, Percentile_95th.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(Q95th, chunkcalc[[jj]], index.out, Percentile_95th.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(Q95th)
 
             ######
-            writeCdtDatasetChunk.sequence(NbQ95th, chunkcalc[[jj]], index.out, Number_day_above_Perc95th.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(NbQ95th, chunkcalc[[jj]], index.out, Number_day_above_Perc95th.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(NbQ95th); gc()
 
             ######
-            writeCdtDatasetChunk.sequence(TotalQ95th, chunkcalc[[jj]], index.out, Total_rain_above_Perc95th.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(TotalQ95th, chunkcalc[[jj]], index.out, Total_rain_above_Perc95th.Dir, cdtParallelCond, do.par = do.parChunk)
             rm(TotalQ95th); gc()
 
             ###################
@@ -826,7 +827,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             DRYSPELLS[is.na(FracDaily)] <- NA
 
             #######
-            writeCdtDatasetChunk.sequence(DRYSPELLS, chunkcalc[[jj]], index.out, Dry_Spells.Dir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(DRYSPELLS, chunkcalc[[jj]], index.out, Dry_Spells.Dir, cdtParallelCond, do.par = do.parChunk)
 
             rm(PREC, DRYSPELLS, FracDaily); gc()
 
@@ -892,7 +893,7 @@ compute_RainySeasonData <- function(GeneralParameters){
         ######################
         ret <- lapply(chunkdate, function(dates){
 
-            seasL <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Season_length.Dir, dates)
+            seasL <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Season_length.Dir, dates, cdtParallelCond)
             seasL[is.na(seasL)] <- -99
             nc.grd <- ncvar_def("seas.len", "days", xy.dim, -99, "Length of the rainy season", "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
@@ -903,7 +904,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             }
             rm(seasL)
 
-            onsetD <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Onset_days.Dir, dates)
+            onsetD <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Onset_days.Dir, dates, cdtParallelCond)
             onsetD[is.na(onsetD)] <- -99
             for(j in seq_along(dates)){
                 units <- paste("days since", dates[j])
@@ -915,7 +916,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             }
             rm(onsetD)
 
-            cessaD <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Cessation_days.Dir, dates)
+            cessaD <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Cessation_days.Dir, dates, cdtParallelCond)
             cessaD[is.na(cessaD)] <- -99
             for(j in seq_along(dates)){
                 units <- paste("days since", dates[j])
@@ -927,7 +928,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             }
             rm(cessaD)
 
-            seasTot <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Seasonal_rain_amount.Dir, dates)
+            seasTot <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Seasonal_rain_amount.Dir, dates, cdtParallelCond)
             seasTot[is.na(seasTot)] <- -99
             nc.grd <- ncvar_def("seas.precip", "mm", xy.dim, -99, "Seasonal rainfall amounts", "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
@@ -938,7 +939,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             }
             rm(seasTot)
 
-            nbDay <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Number_rainy_day.Dir, dates)
+            nbDay <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Number_rainy_day.Dir, dates, cdtParallelCond)
             nbDay[is.na(nbDay)] <- -99
             nc.grd <- ncvar_def("nb.rain", "days", xy.dim, -99, "Seasonal number of rainy days", "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
@@ -949,7 +950,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             }
             rm(nbDay)
 
-            max24h <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Maximum_rain_daily.Dir, dates)
+            max24h <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Maximum_rain_daily.Dir, dates, cdtParallelCond)
             max24h[is.na(max24h)] <- -99
             nc.grd <- ncvar_def("max24h", "mm", xy.dim, -99, 'Seasonal maximum of daily rainfall', "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
@@ -960,7 +961,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             }
             rm(max24h)
 
-            nb95 <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Number_day_above_Perc95th.Dir, dates)
+            nb95 <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Number_day_above_Perc95th.Dir, dates, cdtParallelCond)
             nb95[is.na(nb95)] <- -99
             nc.grd <- ncvar_def("nbq95th", "days", xy.dim, -99, 'Seasonal count of days when RR > 95th percentile', "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
@@ -971,7 +972,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             }
             rm(nb95)
 
-            tot95 <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Total_rain_above_Perc95th.Dir, dates)
+            tot95 <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Total_rain_above_Perc95th.Dir, dates, cdtParallelCond)
             tot95[is.na(tot95)] <- -99
             nc.grd <- ncvar_def("totq95th", "mm", xy.dim, -99, 'Seasonal total of precipitation when RR > 95th percentile', "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
@@ -982,7 +983,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             }
             rm(tot95)
 
-            drySpell <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Dry_Spells.Dir, dates)
+            drySpell <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Dry_Spells.Dir, dates, cdtParallelCond)
 
             drySpell7 <- sapply(drySpell, function(x) sum(!is.na(x) & x >= 7))
             dim(drySpell7) <- dim(drySpell)

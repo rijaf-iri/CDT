@@ -242,16 +242,17 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
         GeneralParameters <- GeneralParameters
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(jj)
         {
-            rr.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$prec, do.par = do.parChunk)
+            rr.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$prec, cdtParallelCond, do.par = do.parChunk)
             rr.data <- rr.data[prec$dateInfo$index, , drop = FALSE]
 
             if(any(omethods == 2)){
-                et.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$etp, do.par = do.parChunk)
+                et.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$etp, cdtParallelCond, do.par = do.parChunk)
                 et.data <- et.data[etp$dateInfo$index, , drop = FALSE]
             }else et.data <- NULL
 
@@ -273,7 +274,7 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
 
             ####################################
 
-            writeCdtDatasetChunk.sequence(onset, chunkcalc[[jj]], index.out, datadir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(onset, chunkcalc[[jj]], index.out, datadir, cdtParallelCond, do.par = do.parChunk)
 
             rm(rr.data, et.data, onset); gc()
             return(start.date)
@@ -312,7 +313,7 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
         dy <- ncdim_def("Lat", "degreeN", y)
 
         ret <- lapply(chunkdate, function(dates){
-            dat <- readCdtDatasetChunk.multi.dates.order(datafileIdx, dates)
+            dat <- readCdtDatasetChunk.multi.dates.order(datafileIdx, dates, cdtParallelCond)
             for(j in seq_along(dates)){
                 time0 <- as.integer(as.Date(dates[j], "%Y%m%d"))
                 don <- dat[j, ] - time0

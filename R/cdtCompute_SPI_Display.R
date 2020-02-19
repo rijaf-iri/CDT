@@ -190,6 +190,8 @@ SPICalc.Plot.VizTS <- function(){
         tcl('update')
     })
 
+    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+
     op <- par(bg = "white")
 
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
@@ -237,12 +239,12 @@ SPICalc.Plot.VizTS <- function(){
         ixy <- ilo + length(xlon) * (ila - 1)
 
         if(.cdtData$EnvData$output$params$Indices %in% c("SPI", "Decile")){
-            don <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, do.par = FALSE)
+            don <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, parllCond = cdtParallelCond, do.par = FALSE)
             don <- as.numeric(don$data[, 1])
             daty <- cdtdataset$dateInfo$date
         }else{
-            prec <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo.prec, cdtdataset$prec, do.par = FALSE)
-            etp <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo.etp, cdtdataset$etp, do.par = FALSE)
+            prec <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo.prec, cdtdataset$prec, parllCond = cdtParallelCond, do.par = FALSE)
+            etp <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo.etp, cdtdataset$etp, parllCond = cdtParallelCond, do.par = FALSE)
             don <- as.numeric(prec$data[, 1]) - as.numeric(etp$data[, 1])
             daty <- cdtdataset$prec$dateInfo$date
         }

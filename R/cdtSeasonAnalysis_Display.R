@@ -183,6 +183,8 @@ SeasonAnalysis.plot.TSGraph <- function(){
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
     dryspl <- as.numeric(str_trim(tclvalue(tkget(.cdtData$EnvData$spin.TsMap.dryspell))))
     varPICSA <- str_trim(tclvalue(.cdtData$EnvData$varPICSA))
+    
+    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
     if(.cdtData$EnvData$output$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
@@ -241,7 +243,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
         ixy <- ilo + length(xlon) * (ila - 1)
 
         if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$varTSp)) == "From Maps"){
-            don <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = tsdata.dir, do.par = FALSE)
+            don <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = tsdata.dir, parllCond = cdtParallelCond, do.par = FALSE)
 
             if(varPICSA == "Dry Spells"){
                 nval <- sapply(don, function(x) (length(x) == 1) & is.na(x[1]))
@@ -257,7 +259,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
             dates <- cdtdataset$dateInfo$date
             daty <- as.numeric(substr(dates, 1, 4))
         }else{
-            don <- readCdtDatasetChunk.locations(ixy, .cdtData$EnvData$output$daily.precip, .cdtData$EnvData$daily.precip, do.par = FALSE)
+            don <- readCdtDatasetChunk.locations(ixy, .cdtData$EnvData$output$daily.precip, .cdtData$EnvData$daily.precip, parllCond = cdtParallelCond, do.par = FALSE)
             don <- as.numeric(don$data[.cdtData$EnvData$daily.precip$dateInfo$index, 1])
             dates <- .cdtData$EnvData$daily.precip$dateInfo$date
         }
@@ -355,9 +357,9 @@ SeasonAnalysis.plot.TSGraph <- function(){
             cessat <- readRDS(file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET", "Cessation_days.rds"))
             cessat <- as.numeric(cessat[, ixy])
         }else{
-            onset <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = "Onset_days", do.par = FALSE)
+            onset <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = "Onset_days", parllCond = cdtParallelCond, do.par = FALSE)
             onset <- as.numeric(onset$data[.cdtData$EnvData$daily.precip$dateInfo$index, 1])
-            cessat <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = "Cessation_days", do.par = FALSE)
+            cessat <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = "Cessation_days", parllCond = cdtParallelCond, do.par = FALSE)
             cessat <- as.numeric(cessat$data[.cdtData$EnvData$daily.precip$dateInfo$index, 1])
         }
 

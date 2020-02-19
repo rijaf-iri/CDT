@@ -37,6 +37,9 @@
             <text lang="en"> Calculate </text>
             <text lang="fr"> Calculer </text>
         </button>
+        <button id="3">
+            <text lang="en"> Aggregation Function </text>
+        </button>
         <checkbutton id="1">
             <text lang="en"> Climatologies data already computed </text>
             <text lang="fr"> Données climatologiques déjà calculées </text>
@@ -46,8 +49,11 @@
             <text lang="fr"> Ajouter des contours à la carte </text>
         </checkbutton>
         <label id="1">
-            <text lang="en"> Time step of input data </text>
-            <text lang="fr"> Pas de temps des données d'entrée </text>
+            <text lang="en"> Input Data </text>
+            <text lang="fr"> Données d'entrée </text>
+        </label>
+        <label id="1a">
+            <text lang="en"> Output Climatology </text>
         </label>
         <label id="2">
             <text lang="en"> Input Data </text>
@@ -117,6 +123,12 @@
             <text lang="en"> Latitude </text>
             <text lang="fr"> Latitude </text>
         </label>
+        <label id="23">
+            <text lang="en"> Start Month </text>
+        </label>
+        <label id="24">
+            <text lang="en"> Length </text>
+        </label>
     </widget>
     <help>
         <content id="1">
@@ -127,6 +139,14 @@
             <tooltip>
                 <text lang="en"> Select the time step of the data </text>
                 <text lang="fr"> Sélectionnez le pas de temps des données </text>
+            </tooltip>
+        </content>
+        <content id="1a">
+            <status>
+                <text lang="en"> Select the time step of the output climatology </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the output climatology </text>
             </tooltip>
         </content>
         <content id="2">
@@ -217,6 +237,22 @@
             <tooltip>
                 <text lang="en"> Enter the full path to directory to save outputs </text>
                 <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver les sorties </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> Select the start month of the season </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the start month of the season </text>
+            </tooltip>
+        </content>
+        <content id="14">
+            <status>
+                <text lang="en"> Select the length of the season (e.g., 3 for three-month season) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the length of the season (e.g., 3 for three-month season) </text>
             </tooltip>
         </content>
     </help>

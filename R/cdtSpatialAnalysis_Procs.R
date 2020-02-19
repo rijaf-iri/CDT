@@ -14,6 +14,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
     #############
     ## pour parallel
     # GeneralParameters <- GeneralParameters
+    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
     #############
     outputDIR <- file.path(GeneralParameters$out.dir, paste0("SPATIAL.ANALYSIS_",
@@ -130,12 +131,12 @@ spatialAnalysisProcs <- function(GeneralParameters){
             ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                progress = TRUE, FUN = function(ll)
             {
-                don <- readCdtDatasetChunk.sequence(chunkcalc[[ll]], GeneralParameters$in.file, do.par = do.parChunk)
+                don <- readCdtDatasetChunk.sequence(chunkcalc[[ll]], GeneralParameters$in.file, cdtParallelCond, do.par = do.parChunk)
                 don <- don[cdtdata$dateInfo$index, , drop = FALSE]
 
                 AggrData <- cdt.data.aggregate(don, indx, pars = GeneralParameters$aggr.series)
                 
-                writeCdtDatasetChunk.sequence(AggrData, chunkcalc[[ll]], cdtdata, outChunkDIR, do.par = do.parChunk)
+                writeCdtDatasetChunk.sequence(AggrData, chunkcalc[[ll]], cdtdata, outChunkDIR, cdtParallelCond, do.par = do.parChunk)
 
                 rm(AggrData, don)
                 return(0)
@@ -246,7 +247,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
         AnalysData <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(ll)
         {
-            don <- readCdtDatasetChunk.sequence(chunkcalc[[ll]], AggrData$file, do.par = do.parChunk)
+            don <- readCdtDatasetChunk.sequence(chunkcalc[[ll]], AggrData$file, cdtParallelCond, do.par = do.parChunk)
 
             if(funAnalysis != "anomaly"){
                 if(GeneralParameters$time.series$out.series == "monthly"){
@@ -276,7 +277,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
                 })
                 AnalysData <- do.call(rbind, AnalysData)
                 AnalysData <- AnalysData[order(unlist(ixm)), , drop = FALSE]
-                writeCdtDatasetChunk.sequence(AnalysData, chunkcalc[[ll]], AggrData, outChunkAnom, do.par = do.parChunk)
+                writeCdtDatasetChunk.sequence(AnalysData, chunkcalc[[ll]], AggrData, outChunkAnom, cdtParallelCond, do.par = do.parChunk)
                 return(NULL)
             }else if(funAnalysis == "trend"){
                 AnalysData <- lapply(ixm, function(ix){
@@ -436,7 +437,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
             grdAnom <- ncvar_def("anom", "", xy.dim, NA, longname = longname, prec = "float", compression = 6)
             for(jj in seq_along(ixm)){
                 tsdaty <- odaty[[jj]]
-                AnalysData <- readCdtDatasetChunk.sepdir.dates.order(AggrData$file, outChunkAnom, tsdaty)
+                AnalysData <- readCdtDatasetChunk.sepdir.dates.order(AggrData$file, outChunkAnom, tsdaty, cdtParallelCond)
                 outTSdaty <- vector(mode = "character", length = length(tsdaty))
 
                 for(ii in seq_along(tsdaty)){
@@ -482,7 +483,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
             grdTS <- ncvar_def("ts", "", xy.dim, NA, longname = "Time series", prec = "float", compression = 6)
             for(jj in seq_along(ixm)){
                 tsdaty <- odaty[[jj]]
-                aggrdatTS <- readCdtDatasetChunk.multi.dates.order(AggrData$file, tsdaty)
+                aggrdatTS <- readCdtDatasetChunk.multi.dates.order(AggrData$file, tsdaty, cdtParallelCond)
                 outTSdaty <- vector(mode = "character", length = length(tsdaty))
 
                 for(ii in seq_along(tsdaty)){

@@ -4,6 +4,8 @@ computeSPEIProcs <- function(GeneralParameters){
     input.PREC <- if(GeneralParameters$data.type == 'cdtstation') GeneralParameters$cdtstation$prec else GeneralParameters$cdtdataset$prec
     input.ETP <- if(GeneralParameters$data.type == 'cdtstation') GeneralParameters$cdtstation$etp else GeneralParameters$cdtdataset$etp
 
+    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+
     if(input.PREC %in% c("", "NA")){
         Insert.Messages.Out('No input  precipitation data found', format = TRUE)
         return(NULL)
@@ -597,11 +599,11 @@ computeSPEIProcs <- function(GeneralParameters){
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(chkj)
         {
-            prec.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.aggr.prec, do.par = do.parChunk)
+            prec.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.aggr.prec, cdtParallelCond, do.par = do.parChunk)
             prec.data <- prec.data[prec$dateInfo$index, , drop = FALSE]
             prec.data <- prec.data[idaty, , drop = FALSE]
 
-            etp.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.aggr.etp, do.par = do.parChunk)
+            etp.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.aggr.etp, cdtParallelCond, do.par = do.parChunk)
             etp.data <- etp.data[etp$dateInfo$index, , drop = FALSE]
             etp.data <- etp.data[idaty, , drop = FALSE]
 
@@ -609,11 +611,11 @@ computeSPEIProcs <- function(GeneralParameters){
 
             ###########
             if(GeneralParameters$monitoring){
-                params <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.PARS.index, do.par = do.parChunk)
+                params <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.PARS.index, cdtParallelCond, do.par = do.parChunk)
                 params <- params[match(temps, index.pars$dateInfo$date), , drop = FALSE]
             }else{
                 params <- SPEI_Compute_params(data.mat, spi.tscale, spi.frequency, spi.distribution)
-                writeCdtDatasetChunk.sequence(params, chunkcalc[[chkj]], index.pars, dataPARAMdir, do.par = do.parChunk)
+                writeCdtDatasetChunk.sequence(params, chunkcalc[[chkj]], index.pars, dataPARAMdir, cdtParallelCond, do.par = do.parChunk)
             }
 
             ###########
@@ -622,7 +624,7 @@ computeSPEIProcs <- function(GeneralParameters){
 
             ###########
             if(GeneralParameters$monitoring){
-                data.spi0 <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.spi.index, do.par = do.parChunk)
+                data.spi0 <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.spi.index, cdtParallelCond, do.par = do.parChunk)
                 data.spi <- data.spi[idt, , drop = FALSE]
 
                 if(length(ix) == 0){
@@ -633,7 +635,7 @@ computeSPEIProcs <- function(GeneralParameters){
                 }
             }else data.spi0 <- data.spi
 
-            writeCdtDatasetChunk.sequence(data.spi0, chunkcalc[[chkj]], index.spi, dataSPIdir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(data.spi0, chunkcalc[[chkj]], index.spi, dataSPIdir, cdtParallelCond, do.par = do.parChunk)
             rm(data.spi, data.spi0, prec.data, etp.data, data.mat, params); gc()
         })
 
@@ -665,7 +667,7 @@ computeSPEIProcs <- function(GeneralParameters){
                            progress = TRUE, FUN = function(jj)
         {
             daty0 <- datyread[[jj]]
-            dat.spi <- readCdtDatasetChunk.sepdir.dates.order(file.spi.index, dataSPIdir, daty0, do.par = do.parChunk)
+            dat.spi <- readCdtDatasetChunk.sepdir.dates.order(file.spi.index, dataSPIdir, daty0, cdtParallelCond, do.par = do.parChunk)
 
             dat.spi[is.nan(dat.spi)] <- NA
             dat.spi[is.infinite(dat.spi)] <- NA

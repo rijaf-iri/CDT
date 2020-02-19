@@ -325,7 +325,9 @@ PlotCDTDatasetCmd <- function(){
                 .cdtData$EnvData$file.CDT.Idx <- file.CDT.Idx
                 ####
 
-                .cdtData$EnvData$map <- readCdtDatasetChunk.multi.dates.order(file.CDT.Idx, OutIndexdata$dateInfo$date[1], onedate = TRUE)
+                cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+
+                .cdtData$EnvData$map <- readCdtDatasetChunk.multi.dates.order(file.CDT.Idx, OutIndexdata$dateInfo$date[1], cdtParallelCond, onedate = TRUE)
             }
         }
 

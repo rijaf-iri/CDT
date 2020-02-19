@@ -7,8 +7,12 @@ Climate Data Tools `CDT` is a  set of utility functions for meteorological data 
 ### 1) Install `R`
 
 Go to the CRAN website [CRAN](https://CRAN.R-project.org).
-Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`. For example: [Download R 3.6.1 for Windows](https://cran.r-project.org/bin/windows/base/R-3.6.1-win.exe) (62 megabytes, 32/64 bit).
-Install the downloaded file (example: R-3.6.1-win.exe). Perform a default installation (Just click on **Next**).
+Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`. For example: [Download R 3.6.2 for Windows](https://cran.r-project.org/bin/windows/base/R-3.6.2-win.exe) (62 megabytes, 32/64 bit).
+Install the downloaded file (example: R-3.6.2-win.exe). Perform a default installation (Just click on **Next**).
+
+```
+CDT requires R version 3.5.0 or higher. We recommend that you have the latest version of R.
+```
 
 ### 2) Install `Rtools`
 
@@ -149,6 +153,10 @@ Remember these paths, you will need them when you install the package `rgdal` an
 ### 4) Install `R`
 Download and install `R` binary for your MacOS X version from [https://cran.r-project.org/bin/macosx](https://cran.r-project.org/bin/macosx/)
 
+```
+CDT requires R version 3.5.0 or higher. We recommend that you have the latest version of R.
+```
+
 ### 5) Install the package `tkrplot`
 
 Install the latest version of the package `tkrplot` by entering the following in `R`:
@@ -260,6 +268,10 @@ sudo apt-get install netcdf-bin libnetcdf-dev
 
 Install `R` if not installed yet.
 Add the `R` repository to your sources
+
+```
+CDT requires R version 3.5.0 or higher. We recommend that you have the latest version of R, this implies that you have to install R from source.
+```
 
 ```bash
 sudo add-apt-repository "deb http://cran.rstudio.com/bin/linux/ubuntu $(lsb_release -sc)/"

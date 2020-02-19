@@ -100,8 +100,11 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 
     ################################################
 
-    toAggr <- list(index, c(start.year, end.year), c(start.mon, start.day, end.mon, end.day),
-                GeneralParameters$stats$daily, c(drywet.day, drywet.spell), GeneralParameters$min.frac)
+    toAggr <- list(index, c(start.year, end.year),
+                   c(start.mon, start.day, end.mon, end.day),
+                   GeneralParameters$stats$daily,
+                   c(drywet.day, drywet.spell),
+                   GeneralParameters$min.frac)
 
     if(is.null(.cdtData$EnvData$toAggr)){
         aggregatData <- TRUE
@@ -198,11 +201,12 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
             do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
             do.parCALC <- if(do.parChunk) FALSE else TRUE
 
+            cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
             parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
             ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                progress = TRUE, FUN = function(chkj)
             {
-                don.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], GeneralParameters$cdtdataset, do.par = do.parChunk)
+                don.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], GeneralParameters$cdtdataset, cdtParallelCond, do.par = do.parChunk)
                 don.data <- don.data[don$dateInfo$index, , drop = FALSE]
                 don.data <- don.data[iyear, , drop = FALSE]
 
@@ -214,7 +218,7 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
                 })
                 dat.analys <- do.call(rbind, dat.analys)
 
-                writeCdtDatasetChunk.sequence(dat.analys, chunkcalc[[chkj]], index.out, datadir, do.par = do.parChunk)
+                writeCdtDatasetChunk.sequence(dat.analys, chunkcalc[[chkj]], index.out, datadir, cdtParallelCond, do.par = do.parChunk)
                 rm(dat.analys, don.data); gc()
             })
 
@@ -228,7 +232,7 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 
             ######################
 
-            dat.analys <- readCdtDatasetChunk.multi.dates.order(file.index, out.daty)
+            dat.analys <- readCdtDatasetChunk.multi.dates.order(file.index, out.daty, cdtParallelCond)
 
             for(j in seq_along(out.daty)){
                 ncdat.seas <- dat.analys[j, ]

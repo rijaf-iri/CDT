@@ -1,6 +1,5 @@
 
 cdtDataset_readData <- function(){
-
     datarepo <- file.path(.cdtData$GalParams$output$dir, .cdtData$GalParams$output$data.name)
     datadir <- file.path(datarepo, 'DATA')
     datafileIdx <- file.path(datarepo, paste0(.cdtData$GalParams$output$data.name, '.rds'))
@@ -135,7 +134,7 @@ cdtDataset_readData <- function(){
 
     Insert.Messages.Out(.cdtData$GalParams[['message']][['16']], TRUE, "i")
 
-    chunkdate <- split(seq_along(ncInfo$dates), ceiling(seq_along(ncInfo$dates) / 1825))
+    chunkdate <- split(seq_along(ncInfo$dates), ceiling(seq_along(ncInfo$dates) / 365))
 
     parsL <- doparallel.cond(length(chunkdate) >= 10)
     ret <- cdt.foreach(seq_along(chunkdate), parsL = parsL, FUN = function(jj)
@@ -173,7 +172,7 @@ cdtDataset_readData <- function(){
 
     Insert.Messages.Out(.cdtData$GalParams[['message']][['18']], TRUE, "i")
 
-    parsL <- doparallel.cond(length(col.idx) >= 200)
+    parsL <- doparallel.cond(length(col.idx) >= 100)
 
     ret <- lapply(seq_along(chunkdate), function(jj){
         file.tmp <- file.path(datadir, paste0(jj, "_v.rds"))
@@ -236,11 +235,12 @@ cdtDataset_readData <- function(){
 # don <- readCdtDatasetChunk.sequence(loc, fileInfo, do.par = TRUE)
 # return matrix,  row: all dates, col: sum of chunk col number
 
-readCdtDatasetChunk.sequence <- function(chunk, fileInfo, do.par = TRUE)
+readCdtDatasetChunk.sequence <- function(chunk, fileInfo, parllCond, do.par = TRUE)
 {
     datadir <- file.path(dirname(fileInfo), "DATA")
 
-    parsL <- doparallel.cond(length(chunk) >= 20 & do.par)
+    parsL <- doparallel.cond(length(chunk) >= 20 & do.par, parllCond)
+    # parsL <- doparallel.cond(length(chunk) >= 20 & do.par)
     don <- cdt.foreach(chunk, parsL = parsL, FUN = function(j)
     {
         file.rds <- file.path(datadir, paste0(j, ".rds"))
@@ -253,12 +253,13 @@ readCdtDatasetChunk.sequence <- function(chunk, fileInfo, do.par = TRUE)
 
 ####################
 
-writeCdtDatasetChunk.sequence <- function(mat, chunk, cdtData, datadir, do.par = TRUE)
+writeCdtDatasetChunk.sequence <- function(mat, chunk, cdtData, datadir, parllCond, do.par = TRUE)
 {
     col.grp <- cdtData$colInfo$index[cdtData$colInfo$index %in% chunk]
     col.grp <- split(seq(ncol(mat)), col.grp)
 
-    parsL <- doparallel.cond(length(chunk) >= 20 & do.par)
+    parsL <- doparallel.cond(length(chunk) >= 20 & do.par, parllCond)
+    # parsL <- doparallel.cond(length(chunk) >= 20 & do.par)
     don <- cdt.foreach(seq_along(chunk), parsL = parsL, FUN = function(j)
     {
         tmp <- mat[, col.grp[[j]], drop = FALSE]
@@ -281,7 +282,8 @@ writeCdtDatasetChunk.sequence <- function(mat, chunk, cdtData, datadir, do.par =
 # don <- readCdtDatasetChunk.sepdir.dates.order(fileInfo, dates, do.par = TRUE)
 # return matrix,  row: date, col: expand x y coords reorder
 
-readCdtDatasetChunk.sepdir.dates.order <- function(fileInfo, datadir, dates, do.par = TRUE, coords = FALSE, onedate = FALSE)
+readCdtDatasetChunk.sepdir.dates.order <- function(fileInfo, datadir, dates, parllCond, do.par = TRUE,
+                                                   coords = FALSE, onedate = FALSE)
 {
     cdtdata <- readRDS(fileInfo)
     chunk <- seq(max(cdtdata$colInfo$index))
@@ -291,7 +293,8 @@ readCdtDatasetChunk.sepdir.dates.order <- function(fileInfo, datadir, dates, do.
     if(length(idaty) == 0) return(NULL)
     if(onedate) idaty <- idaty[1]
 
-    parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
+    parsL <- doparallel.cond(length(chunk) >= 50 & do.par, parllCond)
+    # parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
     don <- cdt.foreach(chunk, parsL = parsL, FUN = function(j)
     {
         file.rds <- file.path(datadir, paste0(j, ".rds"))
@@ -319,7 +322,8 @@ readCdtDatasetChunk.sepdir.dates.order <- function(fileInfo, datadir, dates, do.
 # coords = TRUE; list(x = xcoord, y = ycoord, z = matrix{row: date (same dates length), col: expand x y coords})
 # onedate = TRUE; list(x = xcoord, y = ycoord, z = matrix), used by image
 
-readCdtDatasetChunk.multi.dates.order <- function(fileInfo, dates, do.par = TRUE, coords = FALSE, onedate = FALSE)
+readCdtDatasetChunk.multi.dates.order <- function(fileInfo, dates, parllCond, do.par = TRUE,
+                                                  coords = FALSE, onedate = FALSE)
 {
     datadir <- file.path(dirname(fileInfo), "DATA")
     cdtdata <- readRDS(fileInfo)
@@ -329,7 +333,8 @@ readCdtDatasetChunk.multi.dates.order <- function(fileInfo, dates, do.par = TRUE
     idaty <- idaty[!is.na(idaty)]
     if(onedate) idaty <- idaty[1]
 
-    parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
+    parsL <- doparallel.cond(length(chunk) >= 50 & do.par, parllCond)
+    # parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
     don <- cdt.foreach(chunk, parsL = parsL, FUN = function(j)
     {
         file.rds <- file.path(datadir, paste0(j, ".rds"))
@@ -356,7 +361,8 @@ readCdtDatasetChunk.multi.dates.order <- function(fileInfo, dates, do.par = TRUE
 # don <- readCdtDatasetChunk.locations(loc, fileInfo, do.par = TRUE)
 # return matrix,  row: all dates, col: correspond to loc (same length as loc)
 
-readCdtDatasetChunk.locations <- function(loc, fileInfo, cdtData = NULL, chunkDir = "DATA", do.par = TRUE)
+readCdtDatasetChunk.locations <- function(loc, fileInfo, cdtData = NULL, chunkDir = "DATA",
+                                          parllCond, do.par = TRUE)
 {
     if(is.null(cdtData)) cdtData <- readRDS(fileInfo)
     datadir <- file.path(dirname(fileInfo), chunkDir)
@@ -372,7 +378,8 @@ readCdtDatasetChunk.locations <- function(loc, fileInfo, cdtData = NULL, chunkDi
     coords <- cdtData$coords$df[match(xcrd, cdtData$colInfo$id), , drop = FALSE]
     rownames(coords) <- NULL
 
-    parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
+    parsL <- doparallel.cond(length(chunk) >= 50 & do.par, parllCond)
+    # parsL <- doparallel.cond(length(chunk) >= 50 & do.par)
     don <- cdt.foreach(seq_along(chunk), parsL = parsL, FUN = function(j)
     {
         file.rds <- file.path(datadir, paste0(chunk[j], ".rds"))
@@ -425,7 +432,8 @@ cdtdataset.one.pixel <- function(cdtdataset, fileInfo, xloc, yloc, ...){
     }
     ixy <- ilo + length(xlon) * (ila - 1)
 
-    don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
+    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, parllCond = cdtParallelCond, do.par = FALSE, ...)
     coords <- don$coords
     don <- don$data[, 1]
     daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
@@ -464,7 +472,8 @@ cdtdataset.pad.pixel <- function(cdtdataset, fileInfo, xloc, yloc, padx, pady, .
     }
     ixy <- ilo[ina] + length(xlon) * (ila[ina] - 1)
 
-    don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, do.par = FALSE, ...)
+    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, parllCond = cdtParallelCond, do.par = FALSE, ...)
     don <- rowMeans(don$data, na.rm = TRUE)
     daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
 

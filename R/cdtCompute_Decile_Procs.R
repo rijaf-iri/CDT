@@ -470,11 +470,13 @@ computeDecileProcs <- function(GeneralParameters){
         do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(chkj)
         {
-            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.aggr, do.par = do.parChunk)
+            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.aggr, cdtParallelCond, do.par = do.parChunk)
             don.data <- don.data[don$dateInfo$index, , drop = FALSE]
             don.data <- don.data[idaty, , drop = FALSE]
             don.dates <- don$dateInfo$date[idaty]
@@ -483,12 +485,12 @@ computeDecileProcs <- function(GeneralParameters){
 
             ###########
             if(GeneralParameters$monitoring){
-                decile <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.PARS.index, do.par = do.parChunk)
+                decile <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.PARS.index, cdtParallelCond, do.par = do.parChunk)
                 decile <- decile[itmp, , drop = FALSE]
                 index.pars$dateInfo$date <- index.pars$dateInfo$date[itmp]
             }else{
                 decile <- Decile_Compute_params(data.mat, don.dates, temps, base.period, GeneralParameters$outfreq)
-                writeCdtDatasetChunk.sequence(decile, chunkcalc[[chkj]], index.pars, dataPARAMdir, do.par = do.parChunk)
+                writeCdtDatasetChunk.sequence(decile, chunkcalc[[chkj]], index.pars, dataPARAMdir, cdtParallelCond, do.par = do.parChunk)
             }
             decile.params <- list(index = index.pars$dateInfo$date, decile = decile)
 
@@ -498,7 +500,7 @@ computeDecileProcs <- function(GeneralParameters){
 
             ###########
             if(GeneralParameters$monitoring){
-                data.decile0 <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.decile.index, do.par = do.parChunk)
+                data.decile0 <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], file.decile.index, cdtParallelCond, do.par = do.parChunk)
                 data.decile <- data.decile[idt, , drop = FALSE]
 
                 if(length(ix) == 0){
@@ -509,7 +511,7 @@ computeDecileProcs <- function(GeneralParameters){
                 }
             }else data.decile0 <- data.decile
 
-            writeCdtDatasetChunk.sequence(data.decile0, chunkcalc[[chkj]], index.decile, dataSPIdir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(data.decile0, chunkcalc[[chkj]], index.decile, dataSPIdir, cdtParallelCond, do.par = do.parChunk)
             rm(data.decile, data.decile0, don.data, data.mat, decile.params, decile); gc()
         })
 
@@ -541,7 +543,7 @@ computeDecileProcs <- function(GeneralParameters){
                            progress = TRUE, FUN = function(jj)
         {
             daty0 <- datyread[[jj]]
-            dat.decile <- readCdtDatasetChunk.sepdir.dates.order(file.decile.index, dataSPIdir, daty0, do.par = do.parChunk)
+            dat.decile <- readCdtDatasetChunk.sepdir.dates.order(file.decile.index, dataSPIdir, daty0, cdtParallelCond, do.par = do.parChunk)
 
             dat.decile[is.nan(dat.decile)] <- NA
             dat.decile[is.infinite(dat.decile)] <- NA

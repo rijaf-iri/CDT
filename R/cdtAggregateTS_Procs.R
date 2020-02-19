@@ -119,6 +119,7 @@ AggregateTS_Execute <- function(){
         chunkcalc <- split(chunkfile, ceiling(chunkfile / donne$chunkfac))
  
         GalParams <- .cdtData$GalParams
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
         ##########
 
@@ -127,10 +128,10 @@ AggregateTS_Execute <- function(){
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI, progress, FUN = function(jj)
         {
-            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GalParams$cdtdataset, do.par = do.parChunk)
+            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GalParams$cdtdataset, cdtParallelCond, do.par = do.parChunk)
             don.data <- don.data[donne$dateInfo$index, , drop = FALSE]
             cdtdata <- cdt.data.aggregate(don.data, index, pars = GalParams$aggr.series)
-            writeCdtDatasetChunk.sequence(cdtdata, chunkcalc[[jj]], index.agg, dataDIR, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(cdtdata, chunkcalc[[jj]], index.agg, dataDIR, cdtParallelCond, do.par = do.parChunk)
             rm(don.data, cdtdata); gc()
             return(0)
         })

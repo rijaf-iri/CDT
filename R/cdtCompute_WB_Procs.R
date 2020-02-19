@@ -249,15 +249,16 @@ computeWBProcs <- function(){
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
         GalParams <- .cdtData$GalParams
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 5))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(j)
         {
-            rr <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$prec, do.par = do.parChunk)
+            rr <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$prec, cdtParallelCond, do.par = do.parChunk)
             rr <- rr[prec$dateInfo$index, , drop = FALSE]
 
-            et <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$etp, do.par = do.parChunk)
+            et <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$etp, cdtParallelCond, do.par = do.parChunk)
             et <- et[etp$dateInfo$index, , drop = FALSE]
 
             if(GalParams$swhc$multi){
@@ -278,7 +279,7 @@ computeWBProcs <- function(){
             WB <- do.call(rbind, WB)
             WB <- WB[startDaty:endDaty, , drop = FALSE]
 
-            writeCdtDatasetChunk.sequence(WB, chunkcalc[[j]], index.out, datadir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(WB, chunkcalc[[j]], index.out, datadir, cdtParallelCond, do.par = do.parChunk)
 
             rm(rr, et, WB); gc()
             return(0)

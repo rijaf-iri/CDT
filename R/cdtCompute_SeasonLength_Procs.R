@@ -193,20 +193,21 @@ compute_SeasonLength_Procs <- function(GeneralParameters){
         do.parChunk <- if(onset.index$chunkfac > length(chunkcalc)) TRUE else FALSE
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(jj)
         {
-            ons.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], onset.file, do.par = do.parChunk)
+            ons.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], onset.file, cdtParallelCond, do.par = do.parChunk)
             ons.data <- ons.data[idx.ons, , drop = FALSE]
 
-            cess.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], cessa.file, do.par = do.parChunk)
+            cess.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], cessa.file, cdtParallelCond, do.par = do.parChunk)
             cess.data <- cess.data[idx.cess, , drop = FALSE]
 
             seasonL <- cess.data - ons.data
             seasonL[seasonL < 0] <- NA
 
-            writeCdtDatasetChunk.sequence(seasonL, chunkcalc[[jj]], index.out, datadir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(seasonL, chunkcalc[[jj]], index.out, datadir, cdtParallelCond, do.par = do.parChunk)
 
             rm(ons.data, cess.data, seasonL); gc()
             return(0)

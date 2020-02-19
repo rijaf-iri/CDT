@@ -292,22 +292,23 @@ computeTvarsProcs <- function(){
 
         ##########
         GalParams <- .cdtData$GalParams
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
         ##########
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 20))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(j)
         {
-            tn <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$tmin, do.par = do.parChunk)
+            tn <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$tmin, cdtParallelCond, do.par = do.parChunk)
             tn <- tn[tmin$dateInfo$index, , drop = FALSE]
 
-            tx <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$tmax, do.par = do.parChunk)
+            tx <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$tmax, cdtParallelCond, do.par = do.parChunk)
             tx <- tx[tmax$dateInfo$index, , drop = FALSE]
 
             if(GalParams$variable == "Mean") outdon <- (tx + tn) / 2
             if(GalParams$variable == "Range") outdon <- tx - tn
 
-            writeCdtDatasetChunk.sequence(outdon, chunkcalc[[j]], index.out, datadir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(outdon, chunkcalc[[j]], index.out, datadir, cdtParallelCond, do.par = do.parChunk)
 
             rm(tn, tx, outdon); gc()
             return(0)

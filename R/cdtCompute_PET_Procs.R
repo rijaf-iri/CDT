@@ -486,20 +486,21 @@ computePETProcs <- function(){
 
         ##################
         GalParams <- .cdtData$GalParams
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
         ##################
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(j)
         {
-            tn <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$tmin, do.par = do.parChunk)
+            tn <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$tmin, cdtParallelCond, do.par = do.parChunk)
             tn <- tn[tmin$dateInfo$index, , drop = FALSE]
 
-            tx <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$tmax, do.par = do.parChunk)
+            tx <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$tmax, cdtParallelCond, do.par = do.parChunk)
             tx <- tx[tmax$dateInfo$index, , drop = FALSE]
 
             if(GalParams$method == "MHAR"){
-                rr <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$prec, do.par = do.parChunk)
+                rr <- readCdtDatasetChunk.sequence(chunkcalc[[j]], GalParams$cdtdataset$prec, cdtParallelCond, do.par = do.parChunk)
                 rr <- rr[prec$dateInfo$index, , drop = FALSE]
             }else rr <- NULL
 
@@ -509,7 +510,7 @@ computePETProcs <- function(){
             etp <- Ref.ET.Hargreaves(tx, tn, Ra, GalParams$Tstep, rr)
             etp <- indx$multi * etp
 
-            writeCdtDatasetChunk.sequence(etp, chunkcalc[[j]], index.out, datadir, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(etp, chunkcalc[[j]], index.out, datadir, cdtParallelCond, do.par = do.parChunk)
 
             rm(tn, tx, rr, Ra, etp); gc()
             return(0)

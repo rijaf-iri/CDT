@@ -5,6 +5,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
     #############
     ## pour parallel
     GeneralParameters <- GeneralParameters
+    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
     #############
 
@@ -299,14 +300,14 @@ anomaliesCalcProcs <- function(GeneralParameters){
                 ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                    progress = TRUE, FUN = function(jj)
                 {
-                    don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, do.par = do.parChunk)
+                    don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, cdtParallelCond, do.par = do.parChunk)
                     don.data <- don.data[don$dateInfo$index, , drop = FALSE]
                     don.data <- don.data[iyear, , drop = FALSE]
 
                     dat.clim <- .cdt.Climatologies(index0, don.data, minyear, freqData, xwin)
 
-                    writeCdtDatasetChunk.sequence(dat.clim$mean, chunkcalc[[jj]], index.out.clim, datadir1, do.par = do.parChunk)
-                    writeCdtDatasetChunk.sequence(dat.clim$sd, chunkcalc[[jj]], index.out.clim, datadir2, do.par = do.parChunk)
+                    writeCdtDatasetChunk.sequence(dat.clim$mean, chunkcalc[[jj]], index.out.clim, datadir1, cdtParallelCond, do.par = do.parChunk)
+                    writeCdtDatasetChunk.sequence(dat.clim$sd, chunkcalc[[jj]], index.out.clim, datadir2, cdtParallelCond, do.par = do.parChunk)
                     rm(dat.clim, don.data); gc()
                 })
 
@@ -322,7 +323,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
 
                 ######################
                 ret <- lapply(index0$id, function(id){
-                    dat.moy <- readCdtDatasetChunk.multi.dates.order(index.file.moy, id, onedate = TRUE)
+                    dat.moy <- readCdtDatasetChunk.multi.dates.order(index.file.moy, id, cdtParallelCond, onedate = TRUE)
                     dat.moy <- dat.moy$z
                     dat.moy[is.na(dat.moy)] <- -99
                     filenc <- file.path(ncdfOUT1, paste0("clim_", id, ".nc"))
@@ -330,7 +331,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
                     ncvar_put(nc, nc.grd, dat.moy)
                     nc_close(nc)
 
-                    dat.sds <- readCdtDatasetChunk.multi.dates.order(index.file.sds, id, onedate = TRUE)
+                    dat.sds <- readCdtDatasetChunk.multi.dates.order(index.file.sds, id, cdtParallelCond, onedate = TRUE)
                     dat.sds <- dat.sds$z
                     dat.sds[is.na(dat.sds)] <- -99
                     filenc <- file.path(ncdfOUT2, paste0("clim_", id, ".nc"))
@@ -574,19 +575,19 @@ anomaliesCalcProcs <- function(GeneralParameters){
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(jj)
         {
-            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, do.par = do.parChunk)
+            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, cdtParallelCond, do.par = do.parChunk)
             don.data <- don.data[don$dateInfo$index, , drop = FALSE]
             don.data <- don.data[iyear, , drop = FALSE]
 
-            dat.moy <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.moy, do.par = do.parChunk)
+            dat.moy <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.moy, cdtParallelCond, do.par = do.parChunk)
 
             data.sds <- NULL
             if(anomaly.fonct == "Standardized")
-                data.sds <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.sds, do.par = do.parChunk)
+                data.sds <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.sds, cdtParallelCond, do.par = do.parChunk)
             anom <- .cdt.Anomalies(index1, don.data, dat.moy, data.sds, anomaly.fonct)
 
             if(GeneralParameters$outdir$update){
-                dat.anom <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.anomal, do.par = do.parChunk)
+                dat.anom <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], index.file.anomal, cdtParallelCond, do.par = do.parChunk)
                 if(length(ixold) == 0){
                     anom <- rbind(dat.anom, anom)
                 }else{
@@ -594,7 +595,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
                 }
                 rm(dat.anom)
             }
-            writeCdtDatasetChunk.sequence(anom, chunkcalc[[jj]], index.out, datadir3, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(anom, chunkcalc[[jj]], index.out, datadir3, cdtParallelCond, do.par = do.parChunk)
 
             rm(don.data, dat.moy, anom); gc()
         })
@@ -626,7 +627,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
                            progress = TRUE, FUN = function(jj)
         {
             daty0 <- datyread[[jj]]
-            dat.anom <- readCdtDatasetChunk.multi.dates.order(index.file.anomal, daty0, do.par = do.parChunk)
+            dat.anom <- readCdtDatasetChunk.multi.dates.order(index.file.anomal, daty0, cdtParallelCond, do.par = do.parChunk)
 
             for(j in seq_along(daty0)){
                 anom <- dat.anom[j, ]

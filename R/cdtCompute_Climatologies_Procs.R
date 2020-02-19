@@ -204,18 +204,20 @@ climatologiesCalcProcs <- function(GeneralParameters){
         do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(jj)
         {
-            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, do.par = do.parChunk)
+            don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, cdtParallelCond, do.par = do.parChunk)
             don.data <- don.data[don$dateInfo$index, , drop = FALSE]
             don.data <- don.data[iyear, , drop = FALSE]
 
             dat.clim <- .cdt.Climatologies(index, don.data, minyear, freqData, xwin)
 
-            writeCdtDatasetChunk.sequence(dat.clim$mean, chunkcalc[[jj]], index.out, datadir1, do.par = do.parChunk)
-            writeCdtDatasetChunk.sequence(dat.clim$sd, chunkcalc[[jj]], index.out, datadir2, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(dat.clim$mean, chunkcalc[[jj]], index.out, datadir1, cdtParallelCond, do.par = do.parChunk)
+            writeCdtDatasetChunk.sequence(dat.clim$sd, chunkcalc[[jj]], index.out, datadir2, cdtParallelCond, do.par = do.parChunk)
             rm(dat.clim, don.data); gc()
         })
 
@@ -230,7 +232,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
         ######################
         ret <- lapply(index$id, function(id){
-            dat.moy <- readCdtDatasetChunk.multi.dates.order(file.index1, id, onedate = TRUE)
+            dat.moy <- readCdtDatasetChunk.multi.dates.order(file.index1, id, cdtParallelCond, onedate = TRUE)
             dat.moy <- dat.moy$z
             dat.moy[is.na(dat.moy)] <- -99
             filenc <- file.path(ncdfOUT1, paste0("clim_", id, ".nc"))
@@ -238,7 +240,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
             ncvar_put(nc, nc.grd, dat.moy)
             nc_close(nc)
 
-            dat.sds <- readCdtDatasetChunk.multi.dates.order(file.index2, id, onedate = TRUE)
+            dat.sds <- readCdtDatasetChunk.multi.dates.order(file.index2, id, cdtParallelCond, onedate = TRUE)
             dat.sds <- dat.sds$z
             dat.sds[is.na(dat.sds)] <- -99
             filenc <- file.path(ncdfOUT2, paste0("clim_", id, ".nc"))
