@@ -73,11 +73,11 @@ AggregateSpNc_Execute <- function(){
     ###########################################
 
     ncinfo <- ncDataInfo[c('ilon', 'ilat', 'varid')]
-    old.grid <- defSpatialPixels(ncDataInfo[c('lon', 'lat')])
+    old.grid <- defSpatialPixels(ncDataInfo[c('lon', 'lat')], regrid = TRUE)
 
     ###########################################
 
-    new.grid <- defSpatialPixels(list(lon = grd.lon, lat = grd.lat))
+    new.grid <- defSpatialPixels(list(lon = grd.lon, lat = grd.lat), regrid = TRUE)
     is.regridNC <- is.diffSpatialPixelsObj(old.grid, new.grid, tol = 1e-07)
     if(!is.regridNC){
         Insert.Messages.Out(.cdtData$GalParams[['message']][['8']], TRUE, "i")

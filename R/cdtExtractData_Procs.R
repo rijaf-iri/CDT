@@ -336,7 +336,7 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
         lat <- indexfile$coords$mat$y
     }
 
-    spxycrd <- defSpatialPixels(list(lon = lon, lat = lat))
+    spxycrd <- defSpatialPixels(list(lon = lon, lat = lat), regrid = TRUE)
 
     #####################################
     ## Extraction Geometry

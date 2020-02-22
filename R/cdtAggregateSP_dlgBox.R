@@ -20,7 +20,7 @@ AggregateNcdf_GetInfo <- function(){
 
     infoOpenNC <- function(ncfichier){
         ncDataInfo <- getNCDFSampleData(ncfichier)
-        ncDataInfo <- defSpatialPixels(ncDataInfo[c('lon', 'lat')])
+        ncDataInfo <- defSpatialPixels(ncDataInfo[c('lon', 'lat')], regrid = TRUE)
         nxy <- ncDataInfo@grid
         minlon <- nxy@cellcentre.offset["lon"]
         reslon <- nxy@cellsize["lon"]
@@ -49,7 +49,7 @@ AggregateNcdf_GetInfo <- function(){
 
     infoOpenNC1 <- function(ncfichier){
         ncDataInfo <- getNCDFSampleData(ncfichier)
-        ncDataInfo <- defSpatialPixels(ncDataInfo[c('lon', 'lat')])
+        ncDataInfo <- defSpatialPixels(ncDataInfo[c('lon', 'lat')], regrid = TRUE)
         nxy <- ncDataInfo@grid
         minlon <- nxy@cellcentre.offset["lon"]
         reslon <- nxy@cellsize["lon"]

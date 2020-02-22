@@ -109,14 +109,33 @@ all.equal.elements.num <- function(x, tol = .Machine$double.eps ^ 0.5){
 ##############################################
 
 ## Define spatialPixels
-defSpatialPixels <- function(grd_Coords, projCRS = CRS(as.character(NA)))
+defSpatialPixels <- function(grd_Coords, projCRS = CRS(as.character(NA)), regrid = FALSE)
 {
-    grd0 <- expand.grid(lon = grd_Coords$lon, lat = grd_Coords$lat)
-    coordinates(grd0) <- ~lon+lat
+    if(regrid){
+        x <- grd_Coords$lon
+        xrg <- diff(range(diff(x)))
+        if(xrg > 0.0001){
+            xr <- range(x)
+            x <- seq(xr[1], xr[2], length.out = length(x))
+        }
+        y <- grd_Coords$lat
+        yrg <- diff(range(diff(y)))
+        if(yrg > 0.0001){
+            yr <- range(y)
+            y <- seq(yr[1], yr[2], length.out = length(y))
+        }
 
-    foo <- function(tol) SpatialPixels(points = grd0, tolerance = tol, proj4string = projCRS)
-    grd <- try(foo(sqrt(sqrt(.Machine$double.eps))), silent = TRUE)
-    if(inherits(grd, "try-error")) grd <- foo(0.005)
+        grd0 <- expand.grid(lon = x, lat = y)
+        coordinates(grd0) <- ~lon+lat
+        grd <- SpatialPixels(points = grd0, tolerance = 0.0002, proj4string = projCRS)
+    }else{
+        grd0 <- expand.grid(lon = grd_Coords$lon, lat = grd_Coords$lat)
+        coordinates(grd0) <- ~lon+lat
+
+        foo <- function(tol) SpatialPixels(points = grd0, tolerance = tol, proj4string = projCRS)
+        grd <- try(foo(sqrt(sqrt(.Machine$double.eps))), silent = TRUE)
+        if(inherits(grd, "try-error")) grd <- foo(0.005)
+    }
 
     return(grd)
 }
