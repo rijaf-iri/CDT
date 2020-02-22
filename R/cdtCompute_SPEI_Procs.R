@@ -311,11 +311,15 @@ computeSPEIProcs <- function(GeneralParameters){
             ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                progress = TRUE, FUN = function(chkj)
             {
-                drought.indices.aggr.cdt(prec, idaty0, agg.index$index, ifull, file.aggr.prec, GeneralParameters$monitoring,
-                                        GeneralParameters$cdtdataset$prec, index.prec0, datadir.prec, chunkcalc[[chkj]], do.parChunk)
+                drought.indices.aggr.cdt(prec, idaty0, agg.index$index, ifull, file.aggr.prec,
+                                         GeneralParameters$monitoring, GeneralParameters$cdtdataset$prec,
+                                         index.prec0, datadir.prec, chunkcalc[[chkj]],
+                                         do.parChunk, cdtParallelCond)
 
-                drought.indices.aggr.cdt(etp, idaty0, agg.index$index, ifull, file.aggr.etp, GeneralParameters$monitoring,
-                                        GeneralParameters$cdtdataset$etp, index.etp0, datadir.etp, chunkcalc[[chkj]], do.parChunk)
+                drought.indices.aggr.cdt(etp, idaty0, agg.index$index, ifull, file.aggr.etp,
+                                         GeneralParameters$monitoring, GeneralParameters$cdtdataset$etp,
+                                         index.etp0, datadir.etp, chunkcalc[[chkj]],
+                                         do.parChunk, cdtParallelCond)
             })
 
             prec <- index.prec0$index
@@ -367,11 +371,15 @@ computeSPEIProcs <- function(GeneralParameters){
                     ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                        progress = TRUE, FUN = function(chkj)
                     {
-                        drought.indices.update.cdt(prec, idaty0, file.aggr.prec, GeneralParameters$cdtdataset$prec,
-                                                    index.prec0, datadir.prec, chunkcalc[[chkj]], do.parChunk)
+                        drought.indices.update.cdt(prec, idaty0, file.aggr.prec,
+                                                   GeneralParameters$cdtdataset$prec,
+                                                   index.prec0, datadir.prec, chunkcalc[[chkj]],
+                                                   do.parChunk, cdtParallelCond)
 
-                        drought.indices.update.cdt(etp, idaty0, file.aggr.etp, GeneralParameters$cdtdataset$etp,
-                                                    index.etp0, datadir.etp, chunkcalc[[chkj]], do.parChunk)
+                        drought.indices.update.cdt(etp, idaty0, file.aggr.etp,
+                                                   GeneralParameters$cdtdataset$etp,
+                                                   index.etp0, datadir.etp, chunkcalc[[chkj]],
+                                                   do.parChunk, cdtParallelCond)
                     })
 
                     index.prec0 <- index.prec0$index

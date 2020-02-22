@@ -306,7 +306,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         chk.hovd <- tkcheckbutton(frameHOV, variable = .cdtData$EnvData$hovd, text = "Validation already performed", anchor = 'w', justify = 'left')
         en.hovd <- tkentry(frameHOV, textvariable = file.hovd, width = largeur1 + 7, state = stateHOVd)
-        bt.hovd <- tkbutton(frameHOV, text = "Load Data", state = stateHOVd)
+        bt.hovd <- tkbutton(frameHOV, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateHOVd)
 
         tkgrid(chk.hovd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.hovd, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

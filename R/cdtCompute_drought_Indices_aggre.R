@@ -76,12 +76,12 @@ drought.indices.update.index.cdt <- function(index.out, idaty, file.aggr){
     return(index.out)
 }
 
-drought.indices.concatenate.cdt <- function(don.data, index.out, file.aggr, chunkcalc, do.parChunk)
+drought.indices.concatenate.cdt <- function(don.data, index.out, file.aggr, chunkcalc,
+                                            do.parChunk, cdtParallelCond)
 {
     don0 <- index.out$don
     ix <- index.out$ix
     iy <- index.out$iy
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
     don.data0 <- readCdtDatasetChunk.sequence(chunkcalc, file.aggr, cdtParallelCond, do.par = do.parChunk)
     if(length(ix) == 0){
         don.data0 <- rbind(don.data0, don.data)
@@ -93,9 +93,9 @@ drought.indices.concatenate.cdt <- function(don.data, index.out, file.aggr, chun
 }
 
 drought.indices.aggr.cdt <- function(don, idaty, index, ifull, file.aggr, monitoring,
-                                    cdtdataset, index.out, datadir, chunkcalc, do.parChunk)
+                                     cdtdataset, index.out, datadir, chunkcalc,
+                                     do.parChunk, cdtParallelCond)
 {
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
     don.data <- readCdtDatasetChunk.sequence(chunkcalc, cdtdataset, cdtParallelCond, do.par = do.parChunk)
     don.data <- don.data[don$dateInfo$index, , drop = FALSE]
     don.data <- don.data[idaty, , drop = FALSE]
@@ -104,21 +104,23 @@ drought.indices.aggr.cdt <- function(don, idaty, index, ifull, file.aggr, monito
     pars <- list(min.frac = 0.95, aggr.fun = "sum")
     data.aggr[ifull, ] <- cdt.data.aggregate(don.data, index[ifull], pars)
     if(monitoring)
-        data.aggr <- drought.indices.concatenate.cdt(data.aggr, index.out, file.aggr, chunkcalc, do.parChunk)
+        data.aggr <- drought.indices.concatenate.cdt(data.aggr, index.out, file.aggr, chunkcalc,
+                                                     do.parChunk, cdtParallelCond)
 
-    writeCdtDatasetChunk.sequence(data.aggr, chunkcalc, index.out$index, datadir, cdtParallelCond, do.par = do.parChunk)
+    writeCdtDatasetChunk.sequence(data.aggr, chunkcalc, index.out$index, datadir,
+                                  cdtParallelCond, do.par = do.parChunk)
     rm(data.aggr, don.data); gc()
     invisible()
 }
 
 drought.indices.update.cdt <- function(don, idaty, file.aggr, cdtdataset, index.out,
-                                        datadir, chunkcalc, do.parChunk)
+                                       datadir, chunkcalc, do.parChunk, cdtParallelCond)
 {
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
     don.data <- readCdtDatasetChunk.sequence(chunkcalc, cdtdataset, cdtParallelCond, do.par = do.parChunk)
     don.data <- don.data[don$dateInfo$index, , drop = FALSE]
     don.data <- don.data[idaty, , drop = FALSE]
-    don.data <- drought.indices.concatenate.cdt(don.data, index.out, file.aggr, chunkcalc, do.parChunk)
+    don.data <- drought.indices.concatenate.cdt(don.data, index.out, file.aggr, chunkcalc,
+                                                do.parChunk, cdtParallelCond)
 
     writeCdtDatasetChunk.sequence(don.data, chunkcalc, index.out$index, datadir, cdtParallelCond, do.par = do.parChunk)
     rm(don.data); gc()

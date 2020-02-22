@@ -250,24 +250,32 @@ SPICalcPanelCmd <- function(){
 
         tkbind(chk.Moni, "<Button-1>", function(){
             if(tclvalue(monitoring) == "0"){
-                statedates <- 'normal'
-                statedatedek <<- if(str_trim(tclvalue(out.spifreq)) == 'month') 'disabled' else 'normal'
+                if(tclvalue(spiDataExist) == '0'){
+                    statedates <- 'normal'
+                    statedatedek <<- if(str_trim(tclvalue(out.spifreq)) == 'month') 'disabled' else 'normal'
+                    tclvalue(txt.save.var) <- "Index file (SPI.rds) for SPI data"
+                    tkconfigure(bt.outSPI, command = function(){
+                        path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+                        tclvalue(outSPIdir) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+                    })
+                }else{
+                    statedates <- 'disabled'
+                    statedatedek <<- 'disabled'
+                }
                 stateDistr <- 'disabled'
-                tclvalue(txt.save.var) <- "Index file (SPI.rds) for SPI data"
-
-                tkconfigure(bt.outSPI, command = function(){
-                    path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
-                    tclvalue(outSPIdir) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
-                })
             }else{
                 statedates <- 'disabled'
                 statedatedek <<- 'disabled'
-                stateDistr <- 'normal'
-                tclvalue(txt.save.var) <- "Directory to save the outputs"
-                tkconfigure(bt.outSPI, command = function(){
-                    dirSPI <- tk_choose.dir(getwd(), "")
-                    tclvalue(outSPIdir) <- if(dirSPI %in% c("", "NA") | is.na(dirSPI)) "" else dirSPI
-                })
+                if(tclvalue(spiDataExist) == '0'){
+                    stateDistr <- 'normal'
+                    tclvalue(txt.save.var) <- "Directory to save the outputs"
+                    tkconfigure(bt.outSPI, command = function(){
+                        dirSPI <- tk_choose.dir(getwd(), "")
+                        tclvalue(outSPIdir) <- if(dirSPI %in% c("", "NA") | is.na(dirSPI)) "" else dirSPI
+                    })
+                }else{
+                    stateDistr <- 'disabled'
+                }
             }
 
             tkconfigure(bt.DateRange, state = statedates)
@@ -459,14 +467,20 @@ SPICalcPanelCmd <- function(){
 
         frameDataExist <- ttklabelframe(subfr2, text = "SPI data", relief = 'groove')
 
-        .cdtData$EnvData$DirExist <- tclVar(0)
+        spiDataExist <- tclVar(0)
         file.dataIndex <- tclVar()
 
-        stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
+        stateExistData <- if(tclvalue(spiDataExist) == "1") "normal" else "disabled"
 
-        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = .cdtData$EnvData$DirExist, text = "SPI data already computed", anchor = 'w', justify = 'left')
+        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = spiDataExist, text = "SPI data already computed", anchor = 'w', justify = 'left')
         en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2, state = stateExistData)
-        bt.dataIdx <- tkbutton(frameDataExist, text = "...", state = stateExistData)
+        bt.dataIdx <- tkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
+
+        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ###############
 
         tkconfigure(bt.dataIdx, command = function(){
             path.Stat <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -501,18 +515,36 @@ SPICalcPanelCmd <- function(){
             }
         })
 
-        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.dataIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
         ###############
 
         tkbind(chk.dataIdx, "<Button-1>", function(){
-            stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
+            stateExistData <- if(tclvalue(spiDataExist) == '1') 'disabled' else 'normal'
             tkconfigure(en.dataIdx, state = stateExistData)
             tkconfigure(bt.dataIdx, state = stateExistData)
-            stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
+            stateCaclBut <- if(tclvalue(spiDataExist) == '1') 'normal' else 'disabled'
             tkconfigure(calculateBut, state = stateCaclBut)
+            tkconfigure(cb.fperiod, state = stateCaclBut)
+            tkconfigure(cb.datatype, state = stateCaclBut)
+            tkconfigure(cb.en.infile, state = stateCaclBut)
+            tkconfigure(bt.infile, state = stateCaclBut)
+            tkconfigure(chk.Moni, state = stateCaclBut)
+            tkconfigure(cb.SPIfreq, state = stateCaclBut)
+            tkconfigure(en.outSPI, state = stateCaclBut)
+            tkconfigure(bt.outSPI, state = stateCaclBut)
+
+            if(tclvalue(spiDataExist) == '1'){
+                statedates <- if(tclvalue(monitoring) == "1") "normal" else "disabled"
+                statedatedek <<- if(str_trim(tclvalue(out.spifreq)) == 'month') 'normal' else 'disabled'
+                stateDistr <- if(tclvalue(monitoring) == "1") 'disabled' else 'normal'
+            }else{
+                statedates <- 'disabled'
+                statedatedek <<- 'disabled'
+                stateDistr <- 'disabled'
+            }
+
+            tkconfigure(bt.DateRange, state = statedates)
+            tkconfigure(spin.Tscale, state = statedatedek)
+            tkconfigure(cb.Distrb, state = stateDistr)
         })
 
         ##############################################

@@ -200,8 +200,10 @@ computeSPIProcs <- function(GeneralParameters){
             ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                progress = TRUE, FUN = function(chkj)
             {
-                drought.indices.aggr.cdt(don, idaty0, agg.index$index, ifull, file.aggr, GeneralParameters$monitoring,
-                                        GeneralParameters$cdtdataset, index.out0, datadir, chunkcalc[[chkj]], do.parChunk)
+                drought.indices.aggr.cdt(don, idaty0, agg.index$index, ifull, file.aggr,
+                                         GeneralParameters$monitoring, GeneralParameters$cdtdataset,
+                                         index.out0, datadir, chunkcalc[[chkj]],
+                                         do.parChunk, cdtParallelCond)
             })
 
             don <- index.out0$index
@@ -243,8 +245,10 @@ computeSPIProcs <- function(GeneralParameters){
                     ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                        progress = TRUE, FUN = function(chkj)
                     {
-                        drought.indices.update.cdt(don, idaty0, file.aggr, GeneralParameters$cdtdataset,
-                                                    index.out0, datadir, chunkcalc[[chkj]], do.parChunk)
+                        drought.indices.update.cdt(don, idaty0, file.aggr,
+                                                   GeneralParameters$cdtdataset,
+                                                   index.out0, datadir, chunkcalc[[chkj]],
+                                                   do.parChunk, cdtParallelCond)
                     })
 
                     index.out0 <- index.out0$index

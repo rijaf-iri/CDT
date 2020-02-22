@@ -146,6 +146,9 @@ computeDecileProcs <- function(GeneralParameters){
     #####################
 
     GeneralParameters <- GeneralParameters
+    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+
+    #####################
 
     toAggr <- list(input.file, freqData, GeneralParameters$outfreq, idaty0)
 
@@ -197,8 +200,10 @@ computeDecileProcs <- function(GeneralParameters){
             ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                progress = TRUE, FUN = function(chkj)
             {
-                drought.indices.aggr.cdt(don, idaty0, agg.index$index, ifull, file.aggr, GeneralParameters$monitoring,
-                                        GeneralParameters$cdtdataset, index.out0, datadir, chunkcalc[[chkj]], do.parChunk)
+                drought.indices.aggr.cdt(don, idaty0, agg.index$index, ifull, file.aggr,
+                                         GeneralParameters$monitoring, GeneralParameters$cdtdataset,
+                                         index.out0, datadir, chunkcalc[[chkj]],
+                                         do.parChunk, cdtParallelCond)
             })
 
             don <- index.out0$index
@@ -240,8 +245,10 @@ computeDecileProcs <- function(GeneralParameters){
                     ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                        progress = TRUE, FUN = function(chkj)
                     {
-                        drought.indices.update.cdt(don, idaty0, file.aggr, GeneralParameters$cdtdataset,
-                                                    index.out0, datadir, chunkcalc[[chkj]], do.parChunk)
+                        drought.indices.update.cdt(don, idaty0, file.aggr,
+                                                   GeneralParameters$cdtdataset,
+                                                   index.out0, datadir, chunkcalc[[chkj]],
+                                                   do.parChunk, cdtParallelCond)
                     })
 
                     index.out0 <- index.out0$index
@@ -469,8 +476,6 @@ computeDecileProcs <- function(GeneralParameters){
 
         do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
         do.parCALC <- if(do.parChunk) FALSE else TRUE
-
-        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,

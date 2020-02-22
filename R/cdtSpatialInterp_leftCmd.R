@@ -472,7 +472,7 @@ SpatialInterpPanelCmd <- function(){
 
         chk.IntD <- tkcheckbutton(frameINTRP, variable = interpData, text = "Interpolated data already exist", anchor = 'w', justify = 'left')
         en.IntD <- tkentry(frameINTRP, textvariable = file.interpData, width = largeur2, state = stateIntD)
-        bt.IntD <- tkbutton(frameINTRP, text = "Load Data", state = stateIntD)
+        bt.IntD <- tkbutton(frameINTRP, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateIntD)
 
         tkgrid(chk.IntD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.IntD, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

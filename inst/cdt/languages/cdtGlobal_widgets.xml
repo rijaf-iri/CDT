@@ -21,6 +21,10 @@
             <text lang="en"> Settings </text>
             <text lang="fr"> Paramètres </text>
         </button>
+        <button id="6">
+            <text lang="en"> Load Data </text>
+            <text lang="fr"> Charger Données </text>
+        </button>
         <label id="1">
             <text lang="en"> Open Files </text>
             <text lang="fr"> Fichiers Ouverts </text>
