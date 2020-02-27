@@ -10,33 +10,44 @@ climatologiesCalc.plotClimMaps <- function(){
         year2 <- .cdtData$EnvData$output$params$climato$end
         titre3 <- paste0("(", year1, "-", year2, ")")
 
-        if(.cdtData$EnvData$output$params$intstep == "daily"){
-            titre1 <- "Daily"
-            titre4 <- "for"
-            seqtime <- format(seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day'), "%B %d")
-        }
-        if(.cdtData$EnvData$output$params$intstep == "pentad"){
-            titre1 <- "Pentad"
-            titre4 <- "for the"
-            seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
-            pen <- findInterval(as.numeric(format(seqtime, "%d")), c(1, 5, 10, 15, 20, 25, 31), rightmost.closed = TRUE, left.open = TRUE)
-            seqtime <- as.Date(names(split(seq_along(seqtime), paste0(format(seqtime, "%Y-%m-"), pen))))
-            ordNum <- c('1st', '2nd', '3rd', '4th', '5th', '6th')
-            seqtime <- paste(ordNum[as.numeric(format(seqtime, "%d"))], "pentad of", format(seqtime, "%B"))
-        }
-        if(.cdtData$EnvData$output$params$intstep == "dekadal"){
-            titre1 <- "Dekadal"
-            titre4 <- "for the"
-            seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
-            dek <- findInterval(as.numeric(format(seqtime, "%d")), c(1, 10, 20, 31), rightmost.closed = TRUE, left.open = TRUE)
-            seqtime <- as.Date(names(split(seq_along(seqtime), paste0(format(seqtime, "%Y-%m-"), dek))))
-            ordNum <- c('1st', '2nd', '3rd')
-            seqtime <- paste(ordNum[as.numeric(format(seqtime, "%d"))], "dekad of", format(seqtime, "%B"))
-        }
-        if(.cdtData$EnvData$output$params$intstep == "monthly"){
-            titre1 <- "Monthly"
-            titre4 <- "for"
-            seqtime <- format(seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'month'), "%B")
+        if(.cdtData$EnvData$output$params$outstep %in% c('annual', 'seasonal')){
+            if(.cdtData$EnvData$output$params$outstep == 'annual'){
+                titre1 <- "Annuall"
+            }
+            if(.cdtData$EnvData$output$params$outstep == 'seasonal'){
+                titre1 <- "Seasonal"
+            }
+                titre4 <- ""
+                seqtime <- ""
+        }else{
+            if(.cdtData$EnvData$output$params$intstep == "daily"){
+                titre1 <- "Daily"
+                titre4 <- "for"
+                seqtime <- format(seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day'), "%B %d")
+            }
+            if(.cdtData$EnvData$output$params$intstep == "pentad"){
+                titre1 <- "Pentad"
+                titre4 <- "for the"
+                seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
+                pen <- findInterval(as.numeric(format(seqtime, "%d")), c(1, 5, 10, 15, 20, 25, 31), rightmost.closed = TRUE, left.open = TRUE)
+                seqtime <- as.Date(names(split(seq_along(seqtime), paste0(format(seqtime, "%Y-%m-"), pen))))
+                ordNum <- c('1st', '2nd', '3rd', '4th', '5th', '6th')
+                seqtime <- paste(ordNum[as.numeric(format(seqtime, "%d"))], "pentad of", format(seqtime, "%B"))
+            }
+            if(.cdtData$EnvData$output$params$intstep == "dekadal"){
+                titre1 <- "Dekadal"
+                titre4 <- "for the"
+                seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
+                dek <- findInterval(as.numeric(format(seqtime, "%d")), c(1, 10, 20, 31), rightmost.closed = TRUE, left.open = TRUE)
+                seqtime <- as.Date(names(split(seq_along(seqtime), paste0(format(seqtime, "%Y-%m-"), dek))))
+                ordNum <- c('1st', '2nd', '3rd')
+                seqtime <- paste(ordNum[as.numeric(format(seqtime, "%d"))], "dekad of", format(seqtime, "%B"))
+            }
+            if(.cdtData$EnvData$output$params$intstep == "monthly"){
+                titre1 <- "Monthly"
+                titre4 <- "for"
+                seqtime <- format(seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'month'), "%B")
+            }
         }
 
         ipos <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$climDate)))
@@ -243,25 +254,27 @@ climatologiesCalc.Display.Maps <- function(){
     .cdtData$EnvData$tab$ClimMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$ClimMap)
 
     ###############
-    tkbind(imgContainer[[2]], "<Button-1>", function(W, x, y){
-        if(is.null(.cdtData$EnvData$plot.maps$data.type)) return(NULL)
-        if(.cdtData$EnvData$plot.maps$data.type == "cdtstation"){
-            xyid <- getIDLatLonCoords(W, x, y, imgContainer[[3]], getStnIDLabel,
-                            stn.coords = .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')])
-            if(xyid$plotTS)
-                tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- xyid$crd
-        }else{
-            xyid <- getIDLatLonCoords(W, x, y, imgContainer[[3]], getPixelLatlon)
-            if(xyid$plotTS){
-                tclvalue(.cdtData$EnvData$plot.maps$lonLOC) <- xyid$crd$x
-                tclvalue(.cdtData$EnvData$plot.maps$latLOC) <- xyid$crd$y
+    if(!.cdtData$EnvData$output$params$outstep %in% c('annual', 'seasonal')){
+        tkbind(imgContainer[[2]], "<Button-1>", function(W, x, y){
+            if(is.null(.cdtData$EnvData$plot.maps$data.type)) return(NULL)
+            if(.cdtData$EnvData$plot.maps$data.type == "cdtstation"){
+                xyid <- getIDLatLonCoords(W, x, y, imgContainer[[3]], getStnIDLabel,
+                                stn.coords = .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')])
+                if(xyid$plotTS)
+                    tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- xyid$crd
+            }else{
+                xyid <- getIDLatLonCoords(W, x, y, imgContainer[[3]], getPixelLatlon)
+                if(xyid$plotTS){
+                    tclvalue(.cdtData$EnvData$plot.maps$lonLOC) <- xyid$crd$x
+                    tclvalue(.cdtData$EnvData$plot.maps$latLOC) <- xyid$crd$y
+                }
             }
-        }
 
-        if(xyid$plotTS){
-            imgContainer1 <- CDT.Display.Graph(climatologiesCalc.plotClimGraph, .cdtData$EnvData$tab$ClimGraph, 'Climatology-Graph')
-            .cdtData$EnvData$tab$ClimGraph <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$ClimGraph)
-        }
-    })
+            if(xyid$plotTS){
+                imgContainer1 <- CDT.Display.Graph(climatologiesCalc.plotClimGraph, .cdtData$EnvData$tab$ClimGraph, 'Climatology-Graph')
+                .cdtData$EnvData$tab$ClimGraph <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$ClimGraph)
+            }
+        })
+    }
 }
 

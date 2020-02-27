@@ -42,6 +42,11 @@ cdt.index.Climatologies <- function(dates, tstep = "daily", xwin = 0){
         idx.stn <- seq_along(dates)
     }
 
+    if(tstep %in% c('seasonal', 'annual')){
+        times.stn <- rep(1, length(dates))
+        idx.stn <- seq_along(dates)
+    }
+
     index <- split(idx.stn, times.stn)
     return(list(id = as.numeric(names(index)), index = index))
 }

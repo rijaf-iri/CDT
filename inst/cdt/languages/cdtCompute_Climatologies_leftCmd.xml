@@ -41,8 +41,8 @@
             <text lang="en"> Aggregation Function </text>
         </button>
         <checkbutton id="1">
-            <text lang="en"> Climatologies data already computed </text>
-            <text lang="fr"> Données climatologiques déjà calculées </text>
+            <text lang="en"> Climatologies already computed </text>
+            <text lang="fr"> Climatologies déjà calculées </text>
         </checkbutton>
         <checkbutton id="2">
             <text lang="en"> Add boundaries to Map </text>
@@ -328,6 +328,18 @@
         <content id="18">
             <text lang="en"> NetCDF data not found </text>
             <text lang="fr"> Donnée NetCDF introuvable </text>
+        </content>
+        <content id="19">
+            <text lang="en"> No aggregation, too much missing values </text>
+            <text lang="fr"> No aggregation, too much missing values </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Aggregate time series ... </text>
+            <text lang="fr"> Agrégation des series temporelles ... </text>
+        </content>
+        <content id="21">
+            <text lang="en"> Aggregating time series finished </text>
+            <text lang="fr"> Agrégation des series temporelles effectuée </text>
         </content>
     </message>
 </panel_cmd>
