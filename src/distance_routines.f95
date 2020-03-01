@@ -130,47 +130,47 @@
   !!!!!!!!!!!!!!!!! distance_pixel !!!!!!!!!!!!!!!!!
   ! Fixed radius of influence
 
-  subroutine distance_pixel_fixed(xyp, xym, n, nmin, nmax, spheric, dst, rmax, npts, order)
-    implicit none
-    integer, parameter :: rp = selected_real_kind(15)
-    integer, intent(in) :: n, nmin, nmax
-    integer, intent(in) :: spheric
-    real(rp), intent(in) :: xyp(2), xym(n, 2)
-    real(rp), intent(inout) :: rmax
-    real(rp), intent(out) :: dst(n)
-    integer, intent(out) :: order(n), npts
-    real(rp) :: rsconst
-    integer :: nmean, npl(n)
+  ! subroutine distance_pixel_fixed(xyp, xym, n, nmin, nmax, spheric, dst, rmax, npts, order)
+  !   implicit none
+  !   integer, parameter :: rp = selected_real_kind(15)
+  !   integer, intent(in) :: n, nmin, nmax
+  !   integer, intent(in) :: spheric
+  !   real(rp), intent(in) :: xyp(2), xym(n, 2)
+  !   real(rp), intent(inout) :: rmax
+  !   real(rp), intent(out) :: dst(n)
+  !   integer, intent(out) :: order(n), npts
+  !   real(rp) :: rsconst
+  !   integer :: nmean, npl(n)
 
-    call distance_vector(xyp, xym, n, spheric, dst)
-    call order_vector(dst, n, order)
+  !   call distance_vector(xyp, xym, n, spheric, dst)
+  !   call order_vector(dst, n, order)
 
-    ! nmean = int((nmin + nmax)/2)
-    ! if(nmean > n) nmean = n
-    ! rsconst = sum(dst(1:nmean))/nmean
+  !   ! nmean = int((nmin + nmax)/2)
+  !   ! if(nmean > n) nmean = n
+  !   ! rsconst = sum(dst(1:nmean))/nmean
 
-    where(dst <= rmax)
-      npl = 1
-    elsewhere
-      npl = 0
-    endwhere
-    npts = sum(npl)
+  !   where(dst <= rmax)
+  !     npl = 1
+  !   elsewhere
+  !     npl = 0
+  !   endwhere
+  !   npts = sum(npl)
 
-    ! if(npts < nmin) then
-    !   rmax = dst(nmin)
-    ! else if(npts > nmax) then
-    !   rmax = dst(nmax)
-    ! else
-    !   rmax = rsconst
-    ! end if
+  !   ! if(npts < nmin) then
+  !   !   rmax = dst(nmin)
+  !   ! else if(npts > nmax) then
+  !   !   rmax = dst(nmax)
+  !   ! else
+  !   !   rmax = rsconst
+  !   ! end if
 
-    ! where(dst <= rmax)
-    !   npl = 1
-    ! elsewhere
-    !   npl = 0
-    ! endwhere
-    ! npts = sum(npl)
-  end subroutine distance_pixel_fixed
+  !   ! where(dst <= rmax)
+  !   !   npl = 1
+  !   ! elsewhere
+  !   !   npl = 0
+  !   ! endwhere
+  !   ! npts = sum(npl)
+  ! end subroutine distance_pixel_fixed
 
   !!!!!!!!!!!!!!!!! order small array !!!!!!!!!!!!!!!!!
 

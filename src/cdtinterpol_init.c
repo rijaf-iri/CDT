@@ -1,7 +1,7 @@
 
+#include <R_ext/RS.h>
 #include <stdlib.h>
 #include <R_ext/Rdynload.h>
-#include <R_ext/RS.h>
 
 /* .Fortran calls */
 extern void F77_NAME(idw_interp)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
