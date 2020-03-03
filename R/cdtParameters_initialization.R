@@ -73,6 +73,14 @@ cdt.init.params <- function(action, tstep){
                           output = "")
   }
 
+  ## Blank NetCDF files
+  if(action == 'blank.NetCDF'){
+      ret.params <- list(action = action,
+                          nbnc = "one", dirnc = "",
+                          sample = "", shpf = "",
+                          output = "")
+  }
+
   #################################################################
 
   ## Download DEM

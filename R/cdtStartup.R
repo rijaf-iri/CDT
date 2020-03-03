@@ -436,6 +436,18 @@ startCDT <- function(wd = NA, lang = NA){
             tkadd(menu.dataprep, "separator")
 
             ##########
+            tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["11"]],
+                  command = function()
+            {
+                refreshCDT(staterun = "normal")
+                initialize.parameters('blank.NetCDF')
+                blankNcdf_GetInfo()
+            })
+
+            ##########
+            tkadd(menu.dataprep, "separator")
+
+            ##########
             menu.dataConv <- tkmenu(top.menu, tearoff = FALSE)
             tkadd(menu.dataprep, "cascade", label = lang.menu[["data.preparation"]][["9"]], menu = menu.dataConv)
 

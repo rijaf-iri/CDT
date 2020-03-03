@@ -74,6 +74,15 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
+    ## Blanking NetCDF grid
+    if(.cdtData$GalParams$action == 'blank.NetCDF'){
+        ret <- try(blankNcdf_Execute(), silent = TRUE)
+
+        msg0 <- "Blanking NetCDF data finished successfully"
+        msg1 <- "Blanking NetCDF data failed"
+        Execute_end_msg(ret, msg0, msg1)
+    }
+
     ## Conversion to CPT data format
     if(.cdtData$GalParams$action == "convert.CPTdata"){
         ret <- try(CPT.convertProcs(), silent = TRUE)

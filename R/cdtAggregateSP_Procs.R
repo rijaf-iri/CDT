@@ -172,14 +172,7 @@ AggregateSpNc_Execute <- function(){
     ###########################################
 
     if(.cdtData$GalParams$nb.ncfile == "several"){
-        allncfiles <- list.files(.cdtData$GalParams$ncdf$fileordir, ".nc", full.names = TRUE)
-        fexist <- sapply(allncfiles, file.exists)
-        if(length(fexist) == 0){
-            Insert.Messages.Out(.cdtData$GalParams[['message']][['11']], format = TRUE)
-            return(NULL)
-        }
-        
-        allncfiles <- allncfiles[fexist]
+        allncfiles <- list.files(.cdtData$GalParams$ncdf$fileordir, ".+\\.nc$", full.names = TRUE)
         if(length(allncfiles) == 0){
             Insert.Messages.Out(.cdtData$GalParams[['message']][['11']], format = TRUE)
             return(NULL)

@@ -81,6 +81,7 @@ AggregateTS_Execute <- function(){
 
     if(datatype == 'cdtstation'){
         cdtdata <- cdt.data.aggregate(donne$data, index, pars = .cdtData$GalParams$aggr.series)
+        cdtdata <- round(cdtdata, 5)
 
         if(is.null(donne$elv)){
             headers <- t(cbind(donne$id, donne$lon, donne$lat))
