@@ -104,7 +104,7 @@ tamsat.extract.data <- function(dest, ncfl, bbox){
         dy <- ncdf4::ncdim_def("lat", "degreeN", lat, longname = "Latitude")
         missval <- -99
         ncgrd <- ncdf4::ncvar_def("rfe", "mm", list(dx, dy), missval,
-                                  "Rainfall Estimate", "short",
+                                  "Rainfall Estimate", "float",
                                   compression = 9)
         val[is.na(val)] <- missval
 
