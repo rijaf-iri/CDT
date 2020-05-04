@@ -64,7 +64,7 @@ cdt.aggregate <- function(MAT, pars){
 
 cdt.data.aggregate <- function(MAT, index, pars)
 {
-    pars0 <- list(min.frac = 0.95, aggr.fun = "sum", opr.fun = ">",
+    pars0 <- list(min.frac = 0.1, aggr.fun = "sum", opr.fun = ">",
                   opr.thres = 0, rle.fun = ">=", rle.thres = 6)
     miss.args <- !names(pars0) %in% names(pars)
     if(any(miss.args)) pars <- c(pars, pars0[miss.args])
@@ -77,6 +77,48 @@ cdt.data.aggregate <- function(MAT, index, pars)
         out[!miss] <- cdt.aggregate(don[, !miss, drop = FALSE], pars = pars)
         out
     })
+    do.call(rbind, data)
+}
+
+#############################################
+## with multiple min.frac
+
+cdt.data.aggregateTS <- function(MAT, index, pars, min.frac)
+{
+    pars0 <- list(aggr.fun = "sum", opr.fun = ">",
+                  opr.thres = 0, rle.fun = ">=", rle.thres = 6)
+    miss.args <- !names(pars0) %in% names(pars)
+    if(any(miss.args)) pars <- c(pars, pars0[miss.args])
+    nc <- ncol(MAT)
+
+    if(min.frac$unique){
+        full <- (index$nba / index$nb0) >= min.frac$all
+    }else{
+        full <- sapply(index$nb.mon, function(x){
+            all(x$nba / x$nb0 >= min.frac$month[x$mo])
+        })
+    }
+
+    data <- lapply(seq_along(index$index), function(j){
+        out <- rep(NA, nc)
+        if(!full[j]) return(out)
+        don <- MAT[index$index[[j]], , drop = FALSE]
+        if(min.frac$unique){
+            miss <- (colSums(!is.na(don)) / index$nb0[j]) < min.frac$all
+        }else{
+            ix <- index$nb.mon[[j]]
+            ii <- split(seq_along(ix$tsmo), ix$tsmo)
+            miss <- lapply(seq_along(ii), function(i){
+                colSums(!is.na(don[ii[[i]], , drop = FALSE]))/ix$nb0[i] < min.frac$month[ix$mo[i]]
+            })
+            miss <- do.call(rbind, miss)
+            miss <- apply(miss, 2, any)
+        }
+        if(all(miss)) return(out)
+        out[!miss] <- cdt.aggregate(don[, !miss, drop = FALSE], pars = pars)
+        out
+    })
+
     do.call(rbind, data)
 }
 

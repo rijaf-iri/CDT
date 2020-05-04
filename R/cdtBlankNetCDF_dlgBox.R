@@ -11,8 +11,8 @@ blankNcdf_GetInfo <- function(){
         largeur2 <- 23
     }
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtBlankNetCDF_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtBlankNetCDF_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ###################
 
@@ -28,7 +28,7 @@ blankNcdf_GetInfo <- function(){
     frNCDF <- tkframe(frMRG0, relief = "sunken", borderwidth = 2)
 
     nbcnfile <- tclVar()
-    NBNCF <- c("One NetCDF file", "Multiple NetCDF files")
+    NBNCF <- lang.dlg[['combobox']][['1']]
     NBNC <- c('one', 'several')
     tclvalue(nbcnfile) <- NBNCF[NBNC %in% .cdtData$GalParams$nbnc]
 
@@ -37,8 +37,8 @@ blankNcdf_GetInfo <- function(){
 
     statesample <- if(.cdtData$GalParams$nbnc == "one") "disabled" else "normal"
 
-    txtfiledir <- if(.cdtData$GalParams$nbnc == "one") "NetCDF data file"
-                  else "Directory containing the netcdf data (*.nc)"
+    idx <- if(.cdtData$GalParams$nbnc == "one") "1" else "2"
+    txtfiledir <- lang.dlg[['label']][[idx]]
     fileINdir <- tclVar(txtfiledir)
 
     cb.nbncf <- ttkcombobox(frNCDF, values = NBNCF, textvariable = nbcnfile, width = largeur2)
@@ -51,7 +51,7 @@ blankNcdf_GetInfo <- function(){
     }
     bt.ncfldir <- tkbutton(frNCDF, text = "...")
 
-    txt.ncsample <- tklabel(frNCDF, text = "NetCDF data sample file", anchor = 'w', justify = 'left')
+    txt.ncsample <- tklabel(frNCDF, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
     cb.ncsample <- ttkcombobox(frNCDF, values = unlist(listOpenFiles), textvariable = ncsample, width = largeur0, state = statesample)
     bt.ncsample <- tkbutton(frNCDF, text = "...", state = statesample)
 
@@ -111,7 +111,7 @@ blankNcdf_GetInfo <- function(){
         nbnc <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
 
         if(nbnc == 'one'){
-            tclvalue(fileINdir) <- "NetCDF data file"
+            tclvalue(fileINdir) <- lang.dlg[['label']][['1']]
 
             cb.ncfldir <- ttkcombobox(frNCDF, values = unlist(listOpenFiles), textvariable = ncfiledir, width = largeur0)
 
@@ -135,7 +135,7 @@ blankNcdf_GetInfo <- function(){
 
         #######
         if(nbnc == 'several'){
-            tclvalue(fileINdir) <- "Directory containing the netcdf data (*.nc)"
+            tclvalue(fileINdir) <- lang.dlg[['label']][['2']]
 
             cb.ncfldir <- tkentry(frNCDF, textvariable = ncfiledir, width = largeur1)
 
@@ -163,7 +163,7 @@ blankNcdf_GetInfo <- function(){
 
     blank.shpf <- tclVar(.cdtData$GalParams$shpf)
 
-    txt.blank <- tklabel(frSHP, text = "ESRI shapefiles used for blanking", anchor = 'w', justify = 'left')
+    txt.blank <- tklabel(frSHP, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
     cb.blank <- ttkcombobox(frSHP, values = unlist(listOpenFiles), textvariable = blank.shpf, width = largeur0)
     bt.blank <- tkbutton(frSHP, text = "...")
 
@@ -171,8 +171,8 @@ blankNcdf_GetInfo <- function(){
     tkgrid(cb.blank, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.blank, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.blank, 'Select the file in the list', 'Select the file containing the ESRI shapefiles')
-    helpWidget(bt.blank, 'Browse file if not listed', 'Browse file if not listed')
+    helpWidget(cb.blank, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.blank, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     ########
 
@@ -198,7 +198,7 @@ blankNcdf_GetInfo <- function(){
 
     dir2save <- tclVar(.cdtData$GalParams$output)
 
-    txt.dir2save <- tklabel(frSave, text = "Directory to save the output", anchor = 'w', justify = 'left')
+    txt.dir2save <- tklabel(frSave, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
     en.dir2save <- tkentry(frSave, textvariable = dir2save, width = largeur1)
     bt.dir2save <- tkbutton(frSave, text = "...")
 
@@ -206,11 +206,8 @@ blankNcdf_GetInfo <- function(){
     tkgrid(en.dir2save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.dir2save, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    helpSave <- "Enter the full path to directory to save results"
-    helpWidget(en.dir2save, helpSave, helpSave)
-    helpWidget(bt.dir2save, "or browse here", "or browse here")
-    # helpWidget(en.dir2save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-    # helpWidget(bt.dir2save, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+    helpWidget(en.dir2save, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(bt.dir2save, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
     #####
 
@@ -245,6 +242,8 @@ blankNcdf_GetInfo <- function(){
         .cdtData$GalParams$shpf <- str_trim(tclvalue(blank.shpf))
         .cdtData$GalParams$output <- str_trim(tclvalue(dir2save))
 
+        .cdtData$GalParams$message <- lang.dlg[['message']]
+
         tkgrab.release(tt)
         tkdestroy(tt)
         tkfocus(.cdtEnv$tcl$main$win)
@@ -274,7 +273,7 @@ blankNcdf_GetInfo <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, "Blank NetCDF Data")
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

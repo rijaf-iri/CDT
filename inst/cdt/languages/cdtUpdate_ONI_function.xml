@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <message>
+        <content id="1">
+            <text lang="en"> No Internet connection </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Updating Oceanic Nino Index (ONI) ... </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Updating ONI finished successfully </text>
+        </content>
+    </message>
+</dialog_box>

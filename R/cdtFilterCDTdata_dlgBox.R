@@ -3,9 +3,11 @@ filterCDTData_getParams <- function(){
     if(WindowsOS()){
         largeur1 <- 61
         largeur2 <- 60
+        largeur3 <- 41
     }else{
         largeur1 <- 41
         largeur2 <- 40
+        largeur3 <- 21
     }
 
     ############################################
@@ -27,27 +29,14 @@ filterCDTData_getParams <- function(){
     frInput <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
 
     file.stnfl1 <- tclVar(.cdtData$GalParams$filein)
-    filter.crt <- tclVar(.cdtData$GalParams$opfilter)
-    filter.val <- tclVar(.cdtData$GalParams$valfilter)
-    file.save1 <- tclVar(.cdtData$GalParams$file2save)
 
     txtStnfl1 <- tklabel(frInput, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     cbStnfl1 <- ttkcombobox(frInput, values = unlist(listOpenFiles), textvariable = file.stnfl1, width = largeur2)
     btStnfl1 <- tkbutton(frInput, text = "...")
 
-    sep.filter1 <- ttkseparator(frInput)
-
-    frFilter <- tkframe(frInput)
-    txtFilter1 <- tklabel(frFilter, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
-    cbFilter <- ttkcombobox(frFilter, values = c(">=", ">", "<=", "<"), textvariable = filter.crt, width = 4)
-    enFilter <- tkentry(frFilter, textvariable = filter.val, width = 4)
-    txtFilter2 <- tklabel(frFilter, text = '%', anchor = 'w', justify = 'left')
-
-    sep.filter2 <- ttkseparator(frInput)
-
-    txtFileSave <- tklabel(frInput, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
-    enFileSave <- tkentry(frInput, textvariable = file.save1, width = largeur1)
-    btFileSave <- tkbutton(frInput, text = "...")
+    tkgrid(txtStnfl1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(cbStnfl1, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(btStnfl1, row = 1, column = 9, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
     #############
 
@@ -63,6 +52,94 @@ filterCDTData_getParams <- function(){
         }
     })
 
+    ############################################
+
+    frPeriod <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
+
+    timeSteps <- tclVar()
+    CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:6]
+    periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
+    tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$tstep]
+
+    all.period <- tclVar(.cdtData$GalParams$all.period)
+
+    retminhr <- set.hour.minute(.cdtData$GalParams$tstep, .cdtData$GalParams$minhour)
+    minhour.tclVar <- tclVar(retminhr$val)
+
+    statePeriod0 <- if(tclvalue(all.period) == "1") "disabled" else "normal"
+    statePeriod1 <- if(tclvalue(all.period) == "1") "disabled" else retminhr$state
+
+    chk.Period <- tkcheckbutton(frPeriod, variable = all.period, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
+    txt.Tstep <- tklabel(frPeriod, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
+    cb.Tstep <- ttkcombobox(frPeriod, values = CbperiodVAL, textvariable = timeSteps, state = statePeriod0, width = largeur3)
+    cb.minhour <- ttkcombobox(frPeriod, values = retminhr$cb, textvariable = minhour.tclVar, state = statePeriod1, width = 2)
+    bt.Period <- ttkbutton(frPeriod, text = lang.dlg[['button']][['1']], state = statePeriod0)
+    txt.Period1 <- tklabel(frPeriod, text = "", anchor = 'e', justify = 'right', width = 10)
+
+    tkgrid(chk.Period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.Period1, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.Tstep, row = 1, column = 2, sticky = 'e', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.Tstep, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.minhour, row = 1, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.Period, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+
+    #############
+
+    tkconfigure(bt.Period, command = function(){
+        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], intstep)
+    })
+
+    tkbind(chk.Period, "<Button-1>", function(){
+        statePeriod0 <- if(tclvalue(all.period) == '1') 'normal' else 'disabled'
+        tkconfigure(cb.Tstep, state = statePeriod0)
+        tkconfigure(bt.Period, state = statePeriod0)
+        statePeriod1 <- if(tclvalue(all.period) == "1") retminhr$state else "disabled"
+        tkconfigure(cb.minhour, state = statePeriod1)
+    })
+
+    tkbind(cb.Tstep, "<<ComboboxSelected>>", function(){
+        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+
+        minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        retminhr <<- set.hour.minute(intstep, minhour)
+        tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
+        tclvalue(minhour.tclVar) <- retminhr$val
+    })
+
+    ############################################
+
+    frPercent <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
+
+    filter.crt <- tclVar(.cdtData$GalParams$opfilter)
+    filter.val <- tclVar(.cdtData$GalParams$valfilter)
+
+    txtFilter1 <- tklabel(frPercent, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
+    cbFilter <- ttkcombobox(frPercent, values = c(">=", ">", "<=", "<"), textvariable = filter.crt, width = 4)
+    enFilter <- tkentry(frPercent, textvariable = filter.val, width = 4)
+    txtFilter2 <- tklabel(frPercent, text = '%', anchor = 'w', justify = 'left')
+
+    tkgrid(txtFilter1, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(cbFilter, row = 0, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(enFilter, row = 0, column = 2, sticky = 'e', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(txtFilter2, row = 0, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+    ############################################
+
+    frOutput <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
+
+    file.save1 <- tclVar(.cdtData$GalParams$file2save)
+
+    txtFileSave <- tklabel(frOutput, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
+    enFileSave <- tkentry(frOutput, textvariable = file.save1, width = largeur1)
+    btFileSave <- tkbutton(frOutput, text = "...")
+
+    tkgrid(txtFileSave, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(enFileSave, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+    tkgrid(btFileSave, row = 1, column = 9, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+    #############
+
     tkconfigure(btFileSave, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         file2save1 <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes1)
@@ -70,30 +147,12 @@ filterCDTData_getParams <- function(){
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
-    #############
-
-    tkgrid(txtFilter1, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(cbFilter, row = 0, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(enFilter, row = 0, column = 2, sticky = 'e', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(txtFilter2, row = 0, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-    #############
-
-    tkgrid(txtStnfl1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(cbStnfl1, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(btStnfl1, row = 1, column = 9, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-    tkgrid(sep.filter1, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frFilter, row = 3, column = 0, sticky = 'e', rowspan = 1, columnspan = 10, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(sep.filter2, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    tkgrid(txtFileSave, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(enFileSave, row = 6, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(btFileSave, row = 6, column = 9, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
     ############################################
 
-    tkgrid(frInput, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frInput, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frPeriod, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frPercent, row = 2, column = 0, sticky = 'e', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frOutput, row = 3, column = 0, sticky = 'ws', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
 
@@ -109,6 +168,9 @@ filterCDTData_getParams <- function(){
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$filein <- str_trim(tclvalue(file.stnfl1))
+            .cdtData$GalParams$all.period <- switch(tclvalue(all.period), '0' = FALSE, '1' = TRUE)
+            .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            .cdtData$GalParams$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
             .cdtData$GalParams$opfilter <- str_trim(tclvalue(filter.crt))
             .cdtData$GalParams$valfilter <- as.numeric(str_trim(tclvalue(filter.val)))
             .cdtData$GalParams$file2save <- str_trim(tclvalue(file.save1))

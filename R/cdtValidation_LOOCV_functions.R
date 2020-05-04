@@ -48,6 +48,22 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
     params$MRG$negative <- switch(variable, "rain" = FALSE, "temp" = TRUE)
 
     ##################
+    tmpdir <- file.path(outdir, "tmp")
+    dir.create(tmpdir, showWarnings = FALSE, recursive = TRUE)
+
+    ##################
+
+    stnInfo <- lapply(stnData[c("id", "lon", "lat")], function(x) x[stnVID])
+    stnInfo <- do.call(rbind, stnInfo)
+    stnInfo <- cbind(c("ID", "LON", "DATE/LAT"), stnInfo)
+
+    stndat <- stnData$data[which(stnData$date %in% ncInfo$dates), stnVID, drop = FALSE]
+    stndat <- cbind(ncInfo$dates, stndat)
+    stndat <- rbind(stnInfo, stndat)
+    outstnf <- file.path(outdir, "STATIONS_DATA.csv")
+    write.table(stndat, outstnf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+
+    ##################
 
     newgrid <- defSpatialPixels(xy.grid)
 
@@ -62,7 +78,9 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         params$interp$maxdist <- maxdist
     }else{
         bx <- diff(sapply(stnData[c('lon', 'lat')], range))
-        dg <- sqrt(bx[1]^2 + bx[2]^2) / 4
+        # dg <- sqrt(bx[1]^2 + bx[2]^2) / 4
+        dg <- sqrt(bx[1]^2 + bx[2]^2)
+        dg <- 0.08 * dg + 0.199
         params$interp$maxdist <- params$MRG$pass * dg
     }
 
@@ -72,7 +90,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
     locations.stn$stn <- rep(NA,  length(locations.stn))
 
     xy.data <- defSpatialPixels(ncinfo[c('lon', 'lat')])
-    ijgs <- over(locations.stn, xy.data)
+    # ijgs <- over(locations.stn, xy.data)
 
     ##################
 
@@ -133,7 +151,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
 
         ######
 
-        locations.stn$grd <- nc.val[ijgs]
+        # locations.stn$grd <- nc.val[ijgs]
         newgrid$grd <- if(is.null(ijnc)) c(nc.val) else nc.val[ijnc]
 
         donne.stn <- stnData$data[which(stnData$date == ncInfo$dates[jj]), , drop = FALSE]
@@ -146,6 +164,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         locations.stn$stn <- as.numeric(donne.stn[1, ])
         noNA <- !is.na(locations.stn$stn)
         locations.stn <- locations.stn[noNA, ]
+
         ijv <- which(which(noNA) %in% stnVID)
         ijout <- ijs[noNA][ijv]
 
@@ -185,26 +204,25 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         out <- rep(NA, length(stnVID))
         ix <- which(stnVID %in% as.integer(names(ijout)))
         out[ix] <- do.call(c, xstn)
-        return(round(out, 1))
+        out <- round(out, 1)
+
+        tmpf <- file.path(tmpdir, paste0(ncInfo$dates[jj], '.txt'))
+        tmp <- matrix(c(ncInfo$dates[jj], out), nrow = 1)
+        write.table(tmp, tmpf, sep = ',', na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+
+        return(out)
     })
 
     inull <- sapply(ret, is.null)
     ret[inull] <- NA
     ret <- do.call(rbind, ret)
 
-    stnInfo <- lapply(stnData[c("id", "lon", "lat")], function(x) x[stnVID])
-    stnInfo <- do.call(rbind, stnInfo)
-    stnInfo <- cbind(c("ID", "LON", "DATE/LAT"), stnInfo)
     ret <- cbind(ncInfo$dates, ret)
     ret <- rbind(stnInfo, ret)
     outcvf <- file.path(outdir, "CROSS-VALIDATION_DATA.csv")
     write.table(ret, outcvf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
 
-    stndat <- stnData$data[which(stnData$date %in% ncInfo$dates), stnVID, drop = FALSE]
-    stndat <- cbind(ncInfo$dates, stndat)
-    stndat <- rbind(stnInfo, stndat)
-    outstnf <- file.path(outdir, "STATIONS_DATA.csv")
-    write.table(stndat, outstnf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+    unlink(tmpdir, recursive = TRUE)
 
     if(any(inull)) return(-1)
     return(0)

@@ -6,14 +6,14 @@ AssessDataPanelCmd <- function(){
         largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
         largeur3 <- 19
         largeur4 <- 21
-        largeur5 <- 13
+        largeur5 <- 14
         largeur6 <- 26
     }else{
         largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
         largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
         largeur3 <- 14
         largeur4 <- 14
-        largeur5 <- 10
+        largeur5 <- 11
         largeur6 <- 22
     }
 
@@ -206,14 +206,14 @@ AssessDataPanelCmd <- function(){
         stateAssesDat <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
 
         chk.dataIdx <- tkcheckbutton(frameAssesDat, variable = .cdtData$EnvData$DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-        en.dataIdx <- tkentry(frameAssesDat, textvariable = file.Index, width = largeur2, state = stateAssesDat)
-        bt.dataIdx <- tkbutton(frameAssesDat, text = "...", state = stateAssesDat)
+        en.dataIdx <- tkentry(frameAssesDat, textvariable = file.Index, width = largeur2 + 5, state = stateAssesDat)
+        bt.dataIdx <- tkbutton(frameAssesDat, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateAssesDat)
 
         ###############
 
-        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.dataIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ###############
 
@@ -425,7 +425,7 @@ AssessDataPanelCmd <- function(){
 
         tkgrid(frameAssesDat, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameAvailab, row = 1, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameYearMap, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(frameYearMap, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(framePlotType, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################

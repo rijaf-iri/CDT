@@ -385,66 +385,111 @@ cdt.index.aggregate <- function(dates, tstep.in = c("minute", "hourly", "daily",
 
     if(tstep.out == "minute"){
         index <- cdt.index.min2min(dates, outMinHour)
-        nbd0 <- rep(outMinHour/inMinHour, length(index))
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6)))[1])
+        nbd1 <- lapply(seq_along(pmon), function(j){
+                        list(mo = pmon[[j]], nb = outMinHour/inMinHour)
+                    })
     }
 
     if(tstep.out == "hourly"){
         fun <- switch(tstep.in, 'minute' = cdt.index.min2hour, 'hourly' = cdt.index.hour2hour)
         fac <- switch(tstep.in, 'minute' = 60, 'hourly' = 1)
         index <- fun(dates, outMinHour)
-        nbd0 <- fac * outMinHour/inMinHour
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6)))[1])
+        nbd1 <- lapply(seq_along(pmon), function(j){
+                        list(mo = pmon[[j]], nb = fac * outMinHour/inMinHour)
+                    })
     }
 
     if(tstep.out == "daily"){
         index <- cdt.index.minhr2daily(dates, tstep.in, obs.hour)
         fac <- switch(tstep.in, 'minute' = 60, 'hourly' = 1)
-        nbd0 <- rep(fac * 24/inMinHour, length(index))
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6)))[1])
+        nbd1 <- lapply(seq_along(pmon), function(j){
+                        list(mo = pmon[[j]], nb = fac * 24/inMinHour)
+                    })
     }
 
     if(tstep.out == "pentad"){
         index <- cdt.index.daily2pentad(dates)
-        nbd0 <- nb.Day.Of.Pentad(names(index))
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6))))
+        nbd1 <- lapply(seq_along(pmon), function(j){
+                        list(mo = pmon[[j]], nb = nb.Day.Of.Pentad(names(pmon[j])))
+                    })
     }
 
     if(tstep.out == "dekadal"){
         index <- cdt.index.daypen2dekad(dates, tstep.in)
-        nbd0 <- switch(tstep.in,
-                        "daily" = nb.Day.Of.Dekad(names(index)),
-                        "pentad" = rep(2, length(index))
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6))))
+        nbd1 <- switch(tstep.in,
+                       "daily" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = nb.Day.Of.Dekad(names(pmon[j])))
+                                }),
+                       "pentad" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = 2)
+                                }),
                       )
     }
 
     if(tstep.out == "monthly"){
         index <- split(seq_along(dates), substr(dates, 1, 6))
-        nbd0 <- switch(tstep.in,
-                        "daily" = nb.Day.Of.Month(names(index)),
-                        "pentad" = rep(6, length(index)),
-                        "dekadal" = rep(3, length(index))
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6))))
+        nbd1 <- switch(tstep.in,
+                       "daily" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = nb.Day.Of.Month(names(pmon[j])))
+                                }),
+                       "pentad" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = 6)
+                                }),
+                       "dekadal" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = 3)
+                                })
                       )
     }
 
     if(tstep.out == "annual"){
         index <- split(seq_along(dates), substr(dates, 1, 4))
-        nbd0 <- switch(tstep.in,
-                        "daily" = nb.Day.Of.Year(names(index)),
-                        "pentad" = rep(72, length(index)),
-                        "dekadal" = rep(36, length(index)),
-                        "monthly" = rep(12, length(index))
+        pmon <- lapply(index, function(x) 1:12)
+        nbd1 <- switch(tstep.in,
+                       "daily" = lapply(seq_along(pmon), function(j){
+                                    mon <- as.Date(paste(names(pmon[j]), pmon[[j]], 1, sep = '-'))
+                                    mon <- format(mon, "%Y%m")
+                                    list(mo = pmon[[j]], nb = nb.Day.Of.Month(mon))
+                                }),
+                       "pentad" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = rep(6, length(pmon[[j]])))
+                                }),
+                       "dekadal" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = rep(3, length(pmon[[j]])))
+                                }),
+                       "monthly" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = rep(1, length(pmon[[j]])))
+                                })
                       )
     }
 
    if(tstep.out %in% c("seasonal", "roll.seas")){
         index <- cdt.index.rollSeasonal(dates, seasonLength)
-        nbd0 <- switch(tstep.in,
-                        "daily" = sapply(names(index), function(x){
-                                        mon <- as.Date(paste(strsplit(x, "_")[[1]], 1, sep = '-'))
-                                        mon <- format(seq(mon[1], mon[2], 'month'), "%Y%m")
-                                        sum(nb.Day.Of.Month(mon))
-                                    }, USE.NAMES = FALSE),
-                        "pentad" = rep(6 * seasonLength, length(index)),
-                        "dekadal" = rep(3 * seasonLength, length(index)),
-                        "monthly" = rep(seasonLength, length(index))
+        dmon <- lapply(names(index), function(x){
+            mon <- as.Date(paste(strsplit(x, "_")[[1]], 1, sep = '-'))
+            format(seq(mon[1], mon[2], 'month'), "%Y%m")
+        })
+        pmon <- lapply(dmon, function(x) as.numeric(substr(x, 5, 6)))
+        nbd1 <- switch(tstep.in,
+                       "daily" = lapply(dmon, function(x){
+                                    list(mo = as.numeric(substr(x, 5, 6)), nb = nb.Day.Of.Month(x))
+                                }),
+                       "pentad" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = rep(6, length(pmon[[j]])))
+                                }),
+                       "dekadal" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = rep(3, length(pmon[[j]])))
+                                }),
+                       "monthly" = lapply(seq_along(pmon), function(j){
+                                    list(mo = pmon[[j]], nb = rep(1, length(pmon[[j]])))
+                                })
                       )
+
         if(tstep.out == "seasonal"){
             seasMonth <- (startMonth:(startMonth + (seasonLength - 1))) %% 12
             seasMonth[seasMonth == 0] <- 12
@@ -454,13 +499,32 @@ cdt.index.aggregate <- function(dates, tstep.in = c("minute", "hourly", "daily",
             mon2 <- sapply(lapply(monseas, '[[', 2), '[[', 2)
             ix <- mon1 == mon[1] & mon2 == mon[2]
             index <- index[ix]
-            nbd0 <- nbd0[ix]
+            nbd1 <- nbd1[ix]
         }
     }
 
+    #########
     odaty <- names(index)
-    nbda <- unname(sapply(index, length))
-    list(index = index, date = odaty, nb0 = nbd0, nba = nbda)
+    nbd0 <- sapply(lapply(nbd1, '[[', 'nb'), sum)
+
+    nbd1 <- lapply(seq_along(nbd1), function(j){
+        mon <- substr(dates[index[[j]]], 5, 6)
+        nba <- lapply(split(rep(1, length(mon)), mon), sum)
+        if(tstep.out %in% c("minute", "hourly", "daily")){
+            nm <- names(nba)[1]
+            nba <- list(do.call(sum, nba))
+            names(nba) <- nm
+            mon <- rep(mon[1], length(mon))
+        }
+        nba <- nba[match(nbd1[[j]]$mo, as.numeric(names(nba)))]
+        nba <- lapply(nba, function(ii) if(is.null(ii)) 0 else ii)
+        nba <- unlist(nba, use.names = FALSE)
+        list(mo = nbd1[[j]]$mo, nb0 = nbd1[[j]]$nb, nba = nba, tsmo = as.numeric(mon))
+    })
+    nbda <- sapply(lapply(nbd1, '[[', 'nba'), sum)
+
+    list(index = index, date = odaty,
+         nb0 = nbd0, nba = nbda, nb.mon = nbd1)
 }
 
 #############################################

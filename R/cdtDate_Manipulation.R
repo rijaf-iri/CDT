@@ -170,6 +170,44 @@ format.plot.date.label <- function(x, tstep){
 
 ##############################################
 
+get.date.time.cdt.station <- function(dates, tstep){
+    format <- switch(tstep,
+                     "minute" = "%Y%m%d%H%M",
+                     "hourly" = "%Y%m%d%H",
+                                "%Y%m%d"
+                    )
+    if(tstep == "monthly") dates <- paste0(dates, "15")
+    dates <- as.POSIXct(dates, tz = "UTC", format = format)
+    if(tstep %in% c("daily", "pentad", "dekadal", "monthly"))
+        dates <- as.Date(dates)
+    return(dates)
+}
+
+##############################################
+
+get.date.time.range.cdt.station <- function(dates, tstep){
+    format <- switch(tstep,
+                     "minute" = "%Y-%m-%d-%H-%M",
+                     "hourly" = "%Y-%m-%d-%H",
+                                "%Y-%m-%d")
+    tmp <- c('year', 'mon', 'dek', 'pen', 'day', 'hour', 'min')
+    dates <- get.date.time.cdt.station(dates, tstep)
+    rgDate <- format(range(dates, na.rm = TRUE), format)
+    date.range <- as.numeric(unlist(strsplit(rgDate, "-")))
+    date.range <- as.list(date.range)
+    idx <- switch(tstep,
+                  "minute" = c(1:2, 5:7),
+                  "hourly" = c(1:2, 5:6),
+                  "daily" = c(1:2, 5),
+                  "pentad" = c(1:2, 4),
+                  "dekadal" = 1:3,
+                  "monthly" = c(1:2, 5))
+    names(date.range) <- c(paste0('start.', tmp[idx]), paste0('end.', tmp[idx]))
+    return(date.range)
+}
+
+##############################################
+
 get.range.date.time <- function(date.range, tstep, minhour = NA){
     if(tstep %in% c("daily", "pentad", "dekadal", "monthly")){
         dekpenday <- switch(tstep,
@@ -224,10 +262,32 @@ get.range.date.time <- function(date.range, tstep, minhour = NA){
     list(start = start, end = end, step = pas)
 }
 
+##############################################
+
 get.seq.date.time <- function(date.range, tstep, minhour = NA){
     daty <- get.range.date.time(date.range, tstep, minhour)
     seq(daty$start, daty$end, daty$step)
 }
+
+get.format.seq.date.time <- function(date.range, tstep, minhour = NA){
+    daty <- get.seq.date.time(date.range, tstep, minhour)
+    if(tstep == "minute") daty <- format(daty, "%Y%m%d%H%M")
+    if(tstep == "hourly") daty <- format(daty, "%Y%m%d%H")
+    if(tstep == "daily") daty <- format(daty, "%Y%m%d")
+    if(tstep == "pentad"){
+        pen <- as.numeric(format(daty, "%d"))
+        daty <- paste0(format(daty, "%Y%m"), pen)[pen <= 6]
+    }
+    if(tstep == "dekadal"){
+        dek <- as.numeric(format(daty, "%d"))
+        daty <- paste0(format(daty, "%Y%m"), dek)[dek <= 3]
+    }
+    if(tstep == "monthly") daty <- format(daty, "%Y%m")
+
+    return(daty)
+}
+
+##############################################
 
 table.format.date.time <- function(tstep, date.range, minhour = NA){
     dates <- get.seq.date.time(date.range, tstep, minhour)

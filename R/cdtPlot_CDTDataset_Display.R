@@ -86,11 +86,6 @@ CDTdataset.Plot.Graph <- function(){
     location <- paste0("Longitude: ", round(xloc, 5), ", Latitude: ", round(yloc, 5))
 
     #######
-    odaty <- order(daty)
-    daty <- daty[odaty]
-    don <- don[odaty]
-
-    #######
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
     GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))

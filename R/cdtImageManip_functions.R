@@ -36,6 +36,7 @@ DisplayPlot <- function(parent, fun, hscale = 1, vscale = 1){
     lab$fun <- fun
     lab$hscale <- hscale
     lab$vscale <- vscale
+    lab$source <- 'cdt'
     return(lab)
 }
 

@@ -107,6 +107,10 @@
             <text lang="en"> Aggregate/Disaggregate Spatial NetCDF data </text>
             <text lang="fr"> Agréger/Désagréger données spatiales NetCDF </text>
         </submenu>
+        <submenu id="7-3">
+            <text lang="en"> Aggregating Time Series - Moving window</text>
+            <text lang="fr"> Agréger Series Temporelles - Fenêtre glissante</text>
+        </submenu>
         <submenu id="8">
             <text lang="en"> Filling missing dekadal temperature values </text>
             <text lang="fr"> Combler les températures décadaires manquantes </text>

@@ -87,8 +87,8 @@ displayMap4Extraction <- function(notebookTab){
             tkconfigure(canvas, cursor = 'sizing')
         else if(tclvalue(.cdtData$EnvData$zoom$pressButRect) == "1")
             tkconfigure(canvas, cursor = 'sizing')
-        # else if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1")
-        #     tkconfigure(canvas, cursor = 'hand1')
+        else if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1")
+            tkconfigure(canvas, cursor = 'hand1')
         else if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1")
             tkconfigure(canvas, cursor = 'draped_box')
         else
@@ -113,7 +113,7 @@ displayMap4Extraction <- function(notebookTab){
 
     ## Pan Image
     panZoomInit <- c(0, 0, 0, 0, 0, 0)
-    factPan <- 0.2
+    factPan <- 0.7
 
     ##########
     ## first click on map
@@ -234,12 +234,12 @@ displayMap4Extraction <- function(notebookTab){
                 tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
                 tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
                 tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-                # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+                tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
                 
                 tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
                 tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
                 tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-                # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+                tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
                 tkconfigure(W, cursor = 'crosshair')
             }else{
@@ -264,18 +264,18 @@ displayMap4Extraction <- function(notebookTab){
             rectZoomInit[3] <<- ret$yc
         }
 
-        # ##Pan image
-        # if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1" & !ret$oin){
-        #     panZoomInit[1] <<- ret$xc
-        #     panZoomInit[2] <<- ret$yc
+        ##Pan image
+        if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1" & !ret$oin){
+            panZoomInit[1] <<- ret$xc
+            panZoomInit[2] <<- ret$yc
 
-        #     panZoomInit[3] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$xx1))
-        #     panZoomInit[4] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$xx2))
-        #     panZoomInit[5] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$yy1))
-        #     panZoomInit[6] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$yy2))
+            panZoomInit[3] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$xx1))
+            panZoomInit[4] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$xx2))
+            panZoomInit[5] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$yy1))
+            panZoomInit[6] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$yy2))
 
-        #     tkconfigure(canvas, cursor = 'hand2')
-        # }
+            tkconfigure(canvas, cursor = 'hand2')
+        }
     })
 
     ##########
@@ -304,27 +304,27 @@ displayMap4Extraction <- function(notebookTab){
             pMoveRect(W, x, y)
         }
 
-        # ##Pan image
-        # if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"){
-        #     transX <- ret$xc - panZoomInit[1]
-        #     transY <- ret$yc - panZoomInit[2]
+        ##Pan image
+        if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"){
+            transX <- ret$xc - panZoomInit[1]
+            transY <- ret$yc - panZoomInit[2]
 
-        #     tclvalue(.cdtData$EnvData$zoom$xx1) <- round(panZoomInit[3] + factPan * transX, 4)
-        #     tclvalue(.cdtData$EnvData$zoom$xx2) <- round(panZoomInit[4] + factPan * transX, 4)
-        #     tclvalue(.cdtData$EnvData$zoom$yy1) <- round(panZoomInit[5] + factPan * transY, 4)
-        #     tclvalue(.cdtData$EnvData$zoom$yy2) <- round(panZoomInit[6] + factPan * transY, 4)
+            tclvalue(.cdtData$EnvData$zoom$xx1) <- round(panZoomInit[3] + factPan * transX, 4)
+            tclvalue(.cdtData$EnvData$zoom$xx2) <- round(panZoomInit[4] + factPan * transX, 4)
+            tclvalue(.cdtData$EnvData$zoom$yy1) <- round(panZoomInit[5] + factPan * transY, 4)
+            tclvalue(.cdtData$EnvData$zoom$yy2) <- round(panZoomInit[6] + factPan * transY, 4)
 
-        #     .cdtData$EnvData$ZoomXYval <- as.numeric(c(
-        #                                                 tclvalue(.cdtData$EnvData$zoom$xx1),
-        #                                                 tclvalue(.cdtData$EnvData$zoom$xx2),
-        #                                                 tclvalue(.cdtData$EnvData$zoom$yy1),
-        #                                                 tclvalue(.cdtData$EnvData$zoom$yy2)
-        #                                             ))
-        #     refreshPlot(W, img,
-        #                 hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
-        #                 vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
-        #                 )
-        # }
+            .cdtData$EnvData$ZoomXYval <- as.numeric(c(
+                                                        tclvalue(.cdtData$EnvData$zoom$xx1),
+                                                        tclvalue(.cdtData$EnvData$zoom$xx2),
+                                                        tclvalue(.cdtData$EnvData$zoom$yy1),
+                                                        tclvalue(.cdtData$EnvData$zoom$yy2)
+                                                    ))
+            # refreshPlot(W, img,
+            #             hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
+            #             vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
+            #             )
+        }
     })
 
     #########
@@ -373,10 +373,15 @@ displayMap4Extraction <- function(notebookTab){
             tkdelete(W, 'rect')
         }
 
-        # ##Pan image
-        # if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"){
-        #     tkconfigure(canvas, cursor = 'hand1')
-        # }
+        ##Pan image
+        if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"){
+            refreshPlot(W, img,
+                        hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
+                        vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
+                        )
+
+            tkconfigure(canvas, cursor = 'hand1')
+        }
 
         tcl('update')
     })
@@ -387,12 +392,12 @@ displayMap4Extraction <- function(notebookTab){
         tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
         tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
         tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-        # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+        tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
         tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
         tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
         tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+        tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
         tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
         stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% c('Multiple Points', 'Multiple Polygons')) "normal" else "disabled"

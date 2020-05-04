@@ -785,8 +785,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         .cdtData$EnvData$zoom$btZoomP <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$plus, relief = 'raised', bg = 'lightblue', state = 'normal')
         .cdtData$EnvData$zoom$btZoomM <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$moins, relief = 'raised', bg = 'lightblue', state = 'normal')
         .cdtData$EnvData$zoom$btZoomRect <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$rect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        # .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'disabled')
+        .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'normal')
         .cdtData$EnvData$zoom$btRedraw <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$redraw, relief = 'raised', bg = 'lightblue')
         .cdtData$EnvData$zoom$btReset <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$reset, relief = 'raised')
 
@@ -852,7 +851,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         helpWidget(.cdtData$EnvData$zoom$btZoomP, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
         helpWidget(.cdtData$EnvData$zoom$btZoomM, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
         helpWidget(.cdtData$EnvData$zoom$btZoomRect, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
-        # helpWidget(.cdtData$EnvData$zoom$btPanImg, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+        helpWidget(.cdtData$EnvData$zoom$btPanImg, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
         helpWidget(.cdtData$EnvData$zoom$btRedraw, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
         helpWidget(.cdtData$EnvData$zoom$btReset, lang.dlg[['tooltip']][['15']], lang.dlg[['status']][['15']])
 
@@ -866,12 +865,12 @@ qcTTOutlierCheckPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
         }
 
         activateButRedraw <- function(){
@@ -898,79 +897,79 @@ qcTTOutlierCheckPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
 
         tkbind(.cdtData$EnvData$zoom$btReset, "<Button-1>", function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
 
         tkbind(.cdtData$EnvData$zoom$btZoomP, "<Button-1>", function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 1
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'red', state = 'disabled')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
 
         tkbind(.cdtData$EnvData$zoom$btZoomM, "<Button-1>", function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 1
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'red', state = 'disabled')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
 
         tkbind(.cdtData$EnvData$zoom$btZoomRect, "<Button-1>", function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 1
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'red', state = 'disabled')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
 
-        # tkbind(.cdtData$EnvData$zoom$btPanImg, "<Button-1>", function(){
-        #     tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 1
+        tkbind(.cdtData$EnvData$zoom$btPanImg, "<Button-1>", function(){
+            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 1
 
-        #     tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'red', state = 'disabled')
-        # })
+            tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'red', state = 'disabled')
+        })
 
         ##########################################
 

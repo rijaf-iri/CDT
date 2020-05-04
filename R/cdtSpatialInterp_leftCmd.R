@@ -125,29 +125,6 @@ SpatialInterpPanelCmd <- function(){
         }
     }
 
-    set.hour.minute <- function(intstep, minhour){
-        if(intstep %in% c("minute", "hourly")){
-            minhourVAL <- switch(intstep,
-                                   "minute" = c(5, 10, 15, 30),
-                                   "hourly" = c(1, 3, 6, 12)
-                                 )
-            if(is.na(minhour)){
-                minhour <- minhourVAL[1]
-            }else{
-                if(!minhour %in% minhourVAL)
-                    minhour <- minhourVAL[1]
-            }
-
-            state <- "normal"
-        }else{
-            minhourVAL <- ""
-            minhour <- minhour
-            state <- "disabled"
-        }
-
-        list(cb = minhourVAL, val = minhour, state = state)
-    }
-
     format.dates.times <- function(intstep, yrs, mon, dpk, hrs, min){
         switch(intstep,
                "minute" = paste(yrs, mon, dpk, hrs, min, sep = '-'),

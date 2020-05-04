@@ -409,7 +409,6 @@ AggregateTS_GetInfo <- function(){
             state.shour <- "disabled"
         }
 
-
         tkconfigure(cb.mhI, values = CbminhourVAL0, state = state.mhI)
         tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
         tkconfigure(en.shour, state = state.shour)
@@ -823,7 +822,6 @@ AggregateTS_GetInfo <- function(){
     frameAggr <- ttklabelframe(frAGGRTS, text = lang.dlg[['label']][['11']], labelanchor = "nw", relief = "groove", borderwidth = 2)
 
     aggr.fun <- tclVar(.cdtData$GalParams$aggr.series$aggr.fun)
-    min.frac <- tclVar(.cdtData$GalParams$aggr.series$min.frac)
     opr.fun <- tclVar(.cdtData$GalParams$aggr.series$opr.fun)
     opr.thres <- tclVar(.cdtData$GalParams$aggr.series$opr.thres)
 
@@ -833,28 +831,33 @@ AggregateTS_GetInfo <- function(){
 
     txt.aggfun <- tklabel(frameAggr, text = lang.dlg[['label']][['12']], anchor = 'w', justify = 'left')
     cb.aggfun <- ttkcombobox(frameAggr, values = AGGRFUN, textvariable = aggr.fun, width = 6)
-    txt.minfrac <- tklabel(frameAggr, text = lang.dlg[['label']][['13']], anchor = 'w', justify = 'left')
-    en.minfrac <- tkentry(frameAggr, textvariable = min.frac, width = 6)
     txt.opfun <- tklabel(frameAggr, text = lang.dlg[['label']][['14']], anchor = 'w', justify = 'left')
-    cb.opfun <- ttkcombobox(frameAggr, values = c(">=", ">", "<=", "<"), textvariable = opr.fun, width = 6, state = stateCount)
+    cb.opfun <- ttkcombobox(frameAggr, values = c(">=", ">", "<=", "<"), textvariable = opr.fun, width = 4, state = stateCount)
     txt.opthres <- tklabel(frameAggr, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
-    en.opthres <- tkentry(frameAggr, textvariable = opr.thres, width = 6, width = 6, state = stateCount)
+    en.opthres <- tkentry(frameAggr, textvariable = opr.thres, width = 6, state = stateCount)
+    bt.minfrac <- ttkbutton(frameAggr, text = lang.dlg[['button']][['1']])
 
     tkgrid(txt.aggfun, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.aggfun, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.minfrac, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.minfrac, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.opfun, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.opfun, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.opthres, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.opthres, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.opfun, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.opfun, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.opthres, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.opthres, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.minfrac, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 3, pady = 3, ipadx = 1, ipady = 1)
 
     helpWidget(cb.aggfun, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
-    helpWidget(en.minfrac, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+    helpWidget(bt.minfrac, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
     helpWidget(cb.opfun, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
     helpWidget(en.opthres, lang.dlg[['tooltip']][['15']], lang.dlg[['status']][['15']])
 
     ##############
+
+    tkconfigure(bt.minfrac, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        .cdtData$GalParams$min.frac <- minimum_Fraction_Info(tt, .cdtData$GalParams$min.frac)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+    })
+
     tkbind(cb.aggfun, "<<ComboboxSelected>>", function(){
         stateCount <- if(tclvalue(aggr.fun) == "count") "normal" else "disabled"
         tkconfigure(cb.opfun, state = stateCount)
@@ -904,7 +907,7 @@ AggregateTS_GetInfo <- function(){
     ############################################
     tkgrid(frConvTS, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frDataType, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameAggr, row = 3, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameAggr, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frSave, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
@@ -918,9 +921,9 @@ AggregateTS_GetInfo <- function(){
 
     ####
     tkconfigure(bt.prm.OK, command = function(){
-        if(tclvalue(file.stnfl) == ""){
+        if(str_trim(tclvalue(file.stnfl)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
-        }else if(tclvalue(file.save) %in% c("", "NA")){
+        }else if(str_trim(tclvalue(file.save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingdone)){
@@ -949,7 +952,6 @@ AggregateTS_GetInfo <- function(){
             .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
 
             .cdtData$GalParams$aggr.series$aggr.fun <- str_trim(tclvalue(aggr.fun))
-            .cdtData$GalParams$aggr.series$min.frac <- as.numeric(str_trim(tclvalue(min.frac)))
             .cdtData$GalParams$aggr.series$opr.fun <- str_trim(tclvalue(opr.fun))
             .cdtData$GalParams$aggr.series$opr.thres <- as.numeric(str_trim(tclvalue(opr.thres)))
 
@@ -973,7 +975,7 @@ AggregateTS_GetInfo <- function(){
     tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
-    
+
     tkgrid(frMRG0, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frMRG1, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 

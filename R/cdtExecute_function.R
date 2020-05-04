@@ -69,8 +69,8 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == 'split.NetCDF'){
         ret <- try(split_3d.netcdf_writeNC(), silent = TRUE)
 
-        msg0 <- "Splitting NetCDF data finished successfully"
-        msg1 <- "Splitting NetCDF data failed"
+        msg0 <- .cdtData$GalParams[['message']][['5']]
+        msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -78,8 +78,8 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == 'blank.NetCDF'){
         ret <- try(blankNcdf_Execute(), silent = TRUE)
 
-        msg0 <- "Blanking NetCDF data finished successfully"
-        msg1 <- "Blanking NetCDF data failed"
+        msg0 <- .cdtData$GalParams[['message']][['8']]
+        msg1 <- .cdtData$GalParams[['message']][['9']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -125,6 +125,15 @@ Execute_Function <- function(){
 
         msg0 <- .cdtData$GalParams[['message']][['4']]
         msg1 <- .cdtData$GalParams[['message']][['5']]
+        Execute_end_msg(ret, msg0, msg1)
+    }
+
+    ## Time series aggregation - Rolling window
+    if(.cdtData$GalParams$action == "aggregate.rf"){
+        ret <- try(AggregateMWin_Execute(), silent = TRUE)
+
+        msg0 <- .cdtData$GalParams[['message']][['11']]
+        msg1 <- .cdtData$GalParams[['message']][['12']]
         Execute_end_msg(ret, msg0, msg1)
     }
 

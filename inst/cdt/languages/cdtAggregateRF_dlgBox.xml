@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Rolling Window Time Series - Aggregation </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Time step of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Input Data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing stations input data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Index file (*.rds) of the dataset </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Directory containing the NetCDF data </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Aggregation Function </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Function </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Rolling Window </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Minimum non-missing </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Alignment </text>
+        </label>
+        <label id="11">
+            <text lang="en"> File to save aggregated data </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Directory to save result </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the input data to aggregate </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the input data to aggregate </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the data to aggregate </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the data to aggregate </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> The function to be applied for each rolling window </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The function to be applied for each rolling window </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> The width of the rolling window </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The width of the rolling window </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Minimum number of non-missing data within the rolling window,\n must be less than or equal to the width of the rolling window </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of non-missing data within the rolling window,\n must be less than or equal to the width of the rolling window </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> The output time series should be left- or right-aligned or centered \n compared to the rolling window of observations </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The output time series should be left- or right-aligned or centered \n compared to the rolling window of observations </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Enter the full path of the file to save aggregated data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path of the file to save aggregated data </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Enter the full path to the directory to save results </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory to save results </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> No input file </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Browse the directory or enter the file to save results </text>
+        </content>
+        <content id="3">
+            <text lang="en"> You have to set the NetCDF files parameters </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Aggregating time series ... </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Time series aggregation finished </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Ambiguous date format </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Time step of the dataset is not </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Unable to locate NetCDF files </text>
+        </content>
+        <content id="10">
+            <text lang="en"> NetCDF data sample not found </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Data aggregation finished successfully </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Data aggregation failed </text>
+        </content>
+    </message>
+</dialog_box>

@@ -143,9 +143,9 @@ defSpatialPixels <- function(grd_Coords, projCRS = CRS(as.character(NA)), regrid
 ##############################################
 
 ## Get index of points at grid
-grid2pointINDEX <- function(pts_Coords, grd_Coords, projCRS = CRS(as.character(NA)))
+grid2pointINDEX <- function(pts_Coords, grd_Coords, projCRS = CRS(as.character(NA)), regrid = FALSE)
 {
-    newgrid <- defSpatialPixels(grd_Coords, projCRS)
+    newgrid <- defSpatialPixels(grd_Coords, projCRS, regrid)
     pts.loc <- data.frame(lon = pts_Coords$lon, lat = pts_Coords$lat)
     pts.loc <- SpatialPoints(pts.loc)
     ijGrd <- unname(over(pts.loc, geometry(newgrid)))
@@ -434,3 +434,27 @@ split_path <- function(path){
     return(c(basename(path), split_path(dirname(path))))
 }
 
+########################################
+
+set.hour.minute <- function(intstep, minhour){
+    if(intstep %in% c("minute", "hourly")){
+        minhourVAL <- switch(intstep,
+                               "minute" = c(5, 10, 15, 30),
+                               "hourly" = c(1, 3, 6, 12)
+                             )
+        if(is.na(minhour)){
+            minhour <- minhourVAL[1]
+        }else{
+            if(!minhour %in% minhourVAL)
+                minhour <- minhourVAL[1]
+        }
+
+        state <- "normal"
+    }else{
+        minhourVAL <- ""
+        minhour <- minhour
+        state <- "disabled"
+    }
+
+    list(cb = minhourVAL, val = minhour, state = state)
+}

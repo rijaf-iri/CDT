@@ -56,29 +56,6 @@ PlotMulitpleDataCmd <- function(){
 
     #######################################################################################################
 
-    set.hour.minute <- function(intstep, minhour){
-        if(intstep %in% c("minute", "hourly")){
-            minhourVAL <- switch(intstep,
-                                   "minute" = c(5, 10, 15, 30),
-                                   "hourly" = c(1, 3, 6, 12)
-                                 )
-            if(is.na(minhour)){
-                minhour <- minhourVAL[1]
-            }else{
-                if(!minhour %in% minhourVAL)
-                    minhour <- minhourVAL[1]
-            }
-
-            state <- "normal"
-        }else{
-            minhourVAL <- ""
-            minhour <- minhour
-            state <- "disabled"
-        }
-
-        list(cb = minhourVAL, val = minhour, state = state)
-    }
-
     date.time.selection <- function(intstep, frTS0){
         txtdek <- switch(intstep,
                          'dekadal' = lang.dlg[['label']][['8']],

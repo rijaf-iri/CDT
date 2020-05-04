@@ -83,29 +83,6 @@ ExtractDataPanelCmd <- function(){
 
     #######################################################################################################
 
-    set.hour.minute <- function(intstep, minhour){
-        if(intstep %in% c("minute", "hourly")){
-            minhourVAL <- switch(intstep,
-                                   "minute" = c(5, 10, 15, 30),
-                                   "hourly" = c(1, 3, 6, 12)
-                                 )
-            if(is.na(minhour)){
-                minhour <- minhourVAL[1]
-            }else{
-                if(!minhour %in% minhourVAL)
-                    minhour <- minhourVAL[1]
-            }
-
-            state <- "normal"
-        }else{
-            minhourVAL <- ""
-            minhour <- minhour
-            state <- "disabled"
-        }
-
-        list(cb = minhourVAL, val = minhour, state = state)
-    }
-
     set.data.type.vars <- function(data.type){
         if(data.type == 'cdtnetcdf'){
             txt <- lang.dlg[['label']][['3']]
@@ -408,8 +385,7 @@ ExtractDataPanelCmd <- function(){
         .cdtData$EnvData$zoom$btZoomP <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$plus, relief = 'raised', bg = 'lightblue', state = 'normal')
         .cdtData$EnvData$zoom$btZoomM <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$moins, relief = 'raised', bg = 'lightblue', state = 'normal')
         .cdtData$EnvData$zoom$btZoomRect <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$rect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        # .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'disabled')
+        .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'normal')
         .cdtData$EnvData$zoom$btRedraw <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$redraw, relief = 'raised', bg = 'lightblue')
         .cdtData$EnvData$zoom$btReset <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$reset, relief = 'raised')
 
@@ -430,7 +406,7 @@ ExtractDataPanelCmd <- function(){
         helpWidget(.cdtData$EnvData$zoom$btZoomP, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
         helpWidget(.cdtData$EnvData$zoom$btZoomM, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
         helpWidget(.cdtData$EnvData$zoom$btZoomRect, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-        # helpWidget(.cdtData$EnvData$zoom$btPanImg, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
+        helpWidget(.cdtData$EnvData$zoom$btPanImg, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
         helpWidget(.cdtData$EnvData$zoom$btRedraw, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
         helpWidget(.cdtData$EnvData$zoom$btReset, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
 
@@ -502,7 +478,7 @@ ExtractDataPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
@@ -510,7 +486,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
             stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
@@ -521,7 +497,7 @@ ExtractDataPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
@@ -529,7 +505,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
             stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
@@ -540,7 +516,7 @@ ExtractDataPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 1
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
@@ -548,7 +524,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'red', state = 'disabled')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
             stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
@@ -559,7 +535,7 @@ ExtractDataPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 1
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
@@ -567,7 +543,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'red', state = 'disabled')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
             stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
@@ -578,7 +554,7 @@ ExtractDataPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 1
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
@@ -586,31 +562,31 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'red', state = 'disabled')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
             stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
-        # tkbind(.cdtData$EnvData$zoom$btPanImg, "<Button-1>", function(){
-        #     tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 1
+        tkbind(.cdtData$EnvData$zoom$btPanImg, "<Button-1>", function(){
+            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 1
 
-        #     tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
+            tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
-        #     tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'red', state = 'disabled')
+            tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'red', state = 'disabled')
 
-        #     tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
-        #     tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
-        # })
+            tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
+            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
+        })
 
         ##########################################
 
@@ -756,7 +732,7 @@ ExtractDataPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 1
 
@@ -765,7 +741,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'red', state = 'disabled')
             stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"

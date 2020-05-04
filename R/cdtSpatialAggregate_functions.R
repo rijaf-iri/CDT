@@ -33,10 +33,10 @@ cdt.interp.surface.grid <- function(obj, grid.list, edge = TRUE)
 ##############################################
 
 ## Aggregate spatial data
-cdt.aggregate.grid <- function(obj, grid.list, FUN = mean, ...)
+cdt.aggregate.grid <- function(obj, grid.list, FUN = mean, ..., regrid = FALSE)
 {
-    old.grid <- defSpatialPixels(obj[c('lon', 'lat')])
-    new.grid <- defSpatialPixels(grid.list)
+    old.grid <- defSpatialPixels(obj[c('lon', 'lat')], regrid = regrid)
+    new.grid <- defSpatialPixels(grid.list, regrid = regrid)
 
     dim.grid <- new.grid@grid@cells.dim
     names(grid.list) <- c('x', 'y')
@@ -57,7 +57,7 @@ cdt.aggregate.grid <- function(obj, grid.list, FUN = mean, ...)
 nx_ny_as.image <- function(x) round(x / (0.0167323 * x^0.9602))
 
 ## copy of fields::as.image
-cdt.as.image <- function(pts.val, pts.xy, grid = NULL, nx = 64, ny = 64, weighted = FALSE)
+cdt.as.image <- function(pts.val, pts.xy, grid = NULL, nx = 64, ny = 64, weighted = FALSE, regrid = FALSE)
 {
     if(is.null(grid)){
         xlim <- range(pts.xy[, 1], na.rm = TRUE)
@@ -68,7 +68,7 @@ cdt.as.image <- function(pts.val, pts.xy, grid = NULL, nx = 64, ny = 64, weighte
                      lat = seq(ylim[1], ylim[2], length.out = ny))
     }
     xy <- do.call(expand.grid, grid)
-    ijGrd <- grid2pointINDEX(list(lon = pts.xy[, 1], lat = pts.xy[, 2]), grid)
+    ijGrd <- grid2pointINDEX(list(lon = pts.xy[, 1], lat = pts.xy[, 2]), grid, regrid = regrid)
     out <- list(x = grid$lon, y = grid$lat, z = matrix(NA, length(grid$lon), length(grid$lat)))
 
     ij <- !is.na(pts.val)

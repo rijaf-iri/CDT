@@ -449,11 +449,11 @@ image.foramtted.table <- function(X, rk, title = "", col.text = c("red", "orange
     y <- 1:nr
     centers <- expand.grid(y, x)
 
-    op <- par(mar = c(4.5, 7, 5, 2))
+    op <- par(mar = c(5.5, 5.0, 7.5, 3.0))
     plot(1, xlim = range(x) + c(-0.5, 0.5), ylim = c(max(y) + 0.5, min(y) - 0.5),
          xlab = "", ylab = "",type = "n", xaxt = 'n', yaxt = 'n', xaxs = "i", yaxs = "i")
 
-    title(title, line = 3.5)
+    title(title, line = 6.5)
 
     axis(side = 3, at = x, tcl = -0.2, labels = FALSE)
     text(x = x, y = par("usr")[4] - 0.6, srt = 45, adj = 0, labels = mc, cex = 1, xpd = TRUE)
@@ -501,9 +501,15 @@ multiValidation.plotRank <- function(){
     colnames(stats) <- .cdtData$EnvData$VALID.names
 
     rang <- abs(infos$perfect.score - stats)
-    rang <- t(apply(rang, 1, rank, ties.method = "average"))
+    rang <- t(apply(rang, 1, rank, ties.method = "min"))
     rang[is.na(stats)] <- NA
 
+    ##
+    pstats <- match(.cdtData$EnvData$VALID.stats, dimnames(stats)[[1]])
+    stats <- stats[pstats, , drop = FALSE]
+    rang <- rang[pstats, , drop = FALSE]
+
+    ### options
     col.text <- c("red", "orange", "black")
     col.fill <- rev(RColorBrewer::brewer.pal(9, "Blues"))
     titre <- switch(dataset,

@@ -56,7 +56,7 @@ selectCDTdata <- function(){
 
     idaty <- daty %in% daty1
     if(!any(idaty)){
-        Insert.Messages.Out(GalParams[['message']][['8']], format = TRUE)
+        Insert.Messages.Out(GalParams[['message']][['9']], format = TRUE)
         return(NULL)
     }
 

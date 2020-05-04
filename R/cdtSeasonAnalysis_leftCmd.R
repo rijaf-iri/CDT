@@ -1237,7 +1237,7 @@ SeasonAnalysisPanelCmd <- function(){
         }
 
         if(is.null(.cdtData$EnvData$ONI)){
-            ONI <- readRDS(file.path(.cdtDir$Root, 'data', 'ONI_50-2017.rds'))
+            ONI <- readRDS(file.path(.cdtDir$Root, 'data', 'ONI_1950-present.rds'))
             .cdtData$EnvData$ONI$date <- format(addMonths(as.Date(paste0(ONI$ts[, 1], "-15")), 1), "%Y%m")
             .cdtData$EnvData$ONI$data <- ONI$ts[, 3]
         }

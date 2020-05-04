@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Minimum Fraction of non-missing data </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Use unique minimum fraction </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Minimum Fraction Value </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Monthly Minimum Fractions </text>
+        </label>
+    </widget>
+</dialog_box>

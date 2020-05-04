@@ -28,38 +28,42 @@ rain_no_rain.mask <- function(locations.stn, newgrid, nmax)
 
 #######################
 
-create_grid_buffer <- function(locations.stn, newgrid, radius, spheric)
+create_grid_buffer <- function(locations.stn, newgrid, radius, fac = 4)
 {
     nx <- newgrid@grid@cells.dim[1]
     ny <- newgrid@grid@cells.dim[2]
-    rx <- as.integer(radius/newgrid@grid@cellsize[1])
-    ry <- as.integer(radius/newgrid@grid@cellsize[2])
-    ix <- seq(1, newgrid@grid@cells.dim[1], rx)
-    iy <- seq(1, newgrid@grid@cells.dim[2], ry)
+
+    rx <- as.integer(radius / (fac * newgrid@grid@cellsize[1]))
+    ry <- as.integer(radius / (fac * newgrid@grid@cellsize[2]))
+
+    ix <- seq(1, nx, rx)
+    iy <- seq(1, ny, ry)
     if(nx - ix[length(ix)] > rx/3) ix <- c(ix, nx)
     if(ny - iy[length(iy)] > ry/3) iy <- c(iy, ny)
     ixy <- expand.grid(ix, iy)
     ixy <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
-    coarsegrid <- as(newgrid[ixy, ], "SpatialPixels") 
-    if(spheric){
-        ctr <- rowSums(coarsegrid@bbox)/2
-        pts <- c(ctr[1] + radius * cos(pi/4), ctr[2] + radius * sin(pi/4))
-        radS <- distance.vector(pts, matrix(ctr, nrow = 1), spheric)
-    }else radS <- radius
+    coarsegrid <- as(newgrid[ixy, ], "SpatialPixels")
 
-    dst <- distance.matrix(locations.stn@coords, coarsegrid@coords, spheric)
-    dst <- rowSums(dst < 0.5 * radS) == 0
+    xgrd <- apply(coarsegrid@coords, 2, unique)
+    loc.stn <- cdt.as.image(locations.stn$stn, locations.stn@coords, xgrd, regrid = TRUE)
+    loc.stn <- cbind(do.call(expand.grid, loc.stn[c('x', 'y')]), z = c(loc.stn$z))
+    loc.stn <- loc.stn[!is.na(loc.stn$z), , drop = FALSE]
+    coordinates(loc.stn) <- c('x', 'y')
+
+    dst <- fields::rdist(locations.stn@coords, coarsegrid@coords)
+    dst <- colSums(dst < 0.5 * radius) == 0
     coarsegrid <- coarsegrid[dst, ]
 
-    buffer.out <- rgeos::gBuffer(locations.stn, width = 2 * radius)
+    buffer.out <- rgeos::gBuffer(loc.stn, width = 0.75 * radius)
     icoarse.out <- as.logical(over(coarsegrid, buffer.out))
     icoarse.out[is.na(icoarse.out)] <- FALSE
     coarsegrid <- coarsegrid[icoarse.out, ]
 
-    buffer.grid <- rgeos::gBuffer(locations.stn, width = radius)
+    buffer.grid <- rgeos::gBuffer(loc.stn, width = 0.75 * radius)
     igrid <- as.logical(over(newgrid, buffer.grid))
     igrid[is.na(igrid)] <- FALSE
     newdata0 <- newgrid[igrid, ]
+
     list(grid.buff = newdata0, ij = igrid, coarse = coarsegrid)
 }
 
@@ -86,8 +90,11 @@ merging.functions <- function(locations.stn, newgrid, params,
             bGrd <- createBlock(newgrid@grid@cellsize, 1, 5)
     }
 
+    nrun <- if(params$MRG$nrun > 1) params$MRG$nrun else 2
+    fac <- c(4, 3, rep(2, nrun - 2))
+
     for(pass in seq(params$MRG$nrun)){
-        xy.grid <- create_grid_buffer(locations.stn, newgrid, params$interp$maxdist[pass], spheric)
+        xy.grid <- create_grid_buffer(locations.stn, newgrid, params$interp$maxdist[pass], fac[pass])
         newdata0 <- xy.grid$grid.buff
 
         igrid <- xy.grid$ij

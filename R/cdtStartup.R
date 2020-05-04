@@ -385,6 +385,18 @@ startCDT <- function(wd = NA, lang = NA){
                 tkadd(menu.AggrData, "separator")
 
                 ##########
+                tkadd(menu.AggrData, "command", label = lang.menu[["data.preparation"]][["7-3"]],
+                      command = function()
+                {
+                    refreshCDT(staterun = "normal")
+                    initialize.parameters('aggregate.rf', 'daily')
+                    AggregateMWin_GetInfo()
+                })
+
+                ###########
+                tkadd(menu.AggrData, "separator")
+
+                ##########
                 tkadd(menu.AggrData, "command", label = lang.menu[["data.preparation"]][["7-2"]],
                       command = function()
                 {

@@ -1,10 +1,10 @@
 
 blankNcdf_Execute <- function(){
-    Insert.Messages.Out("Blank NetCDF data ... ", TRUE, "i")
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['1']], TRUE, "i")
 
     outputdir <- .cdtData$GalParams$output
     if(is.na(outputdir) | outputdir %in% c("", "NA")){
-        Insert.Messages.Out("Directory to save results is missing", TRUE, "e")
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['2']], TRUE, "e")
         return(NULL)
     }
     outputNC <- file.path(outputdir, "Blanked_NetCDF")
@@ -13,7 +13,7 @@ blankNcdf_Execute <- function(){
     if(.cdtData$GalParams$nbnc == "one"){
         ncDataInfo <- getNCDFSampleData(.cdtData$GalParams$dirnc)
         if(is.null(ncDataInfo)){
-            Insert.Messages.Out("Unable to read NetCDF file", TRUE, "e")
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['3']], TRUE, "e")
             return(NULL)
         }
     }
@@ -21,7 +21,7 @@ blankNcdf_Execute <- function(){
     if(.cdtData$GalParams$nbnc == "several"){
         ncDataInfo <- getNCDFSampleData(.cdtData$GalParams$sample)
         if(is.null(ncDataInfo)){
-            Insert.Messages.Out("Unable to read the sample NetCDF file", TRUE, "e")
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['4']], TRUE, "e")
             return(NULL)
         }
     }
@@ -38,13 +38,13 @@ blankNcdf_Execute <- function(){
     ###########################################
 
     if(.cdtData$GalParams$shpf == ""){
-        Insert.Messages.Out("No shapefiles provided ", TRUE, "e")
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], TRUE, "e")
         return(NULL)
     }
 
     shpd <- getShpOpenData(.cdtData$GalParams$shpf)[[2]]
     if(is.null(shpd)){
-        Insert.Messages.Out("Unable to open the shapefiles", TRUE, "e")
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['6']], TRUE, "e")
         return(NULL)
     }
     outMask <- create.mask.grid(shpd, xy.grid)
@@ -93,7 +93,7 @@ blankNcdf_Execute <- function(){
     if(.cdtData$GalParams$nbnc == "several"){
         allncfiles <- list.files(.cdtData$GalParams$dirnc, ".+\\.nc$", full.names = TRUE)
         if(length(allncfiles) == 0){
-            Insert.Messages.Out("No NetCDF files found", format = TRUE)
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], format = TRUE)
             return(NULL)
         }
 

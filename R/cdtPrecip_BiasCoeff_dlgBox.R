@@ -311,7 +311,7 @@ coefBiasGetInfoRain <- function(){
     tkconfigure(bt.prm.CA, command = function(){
         tkgrab.release(tt)
         tkdestroy(tt)
-            tkfocus(.cdtEnv$tcl$main$win)
+        tkfocus(.cdtEnv$tcl$main$win)
     })
 
     tkgrid(bt.prm.CA, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)

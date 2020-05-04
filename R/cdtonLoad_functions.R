@@ -156,6 +156,10 @@ local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Co
         loadNamespace("tcltk")
         attachNamespace("tcltk")
     }
+    if(!isNamespaceLoaded("tkrplot")){
+        loadNamespace("tkrplot")
+        attachNamespace("tkrplot")
+    }
 
     if(!is.null(Tktable.path)) addTclPath(path = Tktable.path)
     is.notkt <- tclRequire("Tktable")

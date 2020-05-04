@@ -435,8 +435,8 @@ cdtdataset.one.pixel <- function(cdtdataset, fileInfo, xloc, yloc, ...){
     cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
     don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, parllCond = cdtParallelCond, do.par = FALSE, ...)
     coords <- don$coords
-    don <- don$data[, 1]
-    daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
+    don <- don$data[cdtdataset$dateInfo$index, 1]
+    daty <- cdtdataset$dateInfo$date
 
     list(data = don, date = daty, coords = coords)
 }
@@ -475,7 +475,8 @@ cdtdataset.pad.pixel <- function(cdtdataset, fileInfo, xloc, yloc, padx, pady, .
     cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
     don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, parllCond = cdtParallelCond, do.par = FALSE, ...)
     don <- rowMeans(don$data, na.rm = TRUE)
-    daty <- cdtdataset$dateInfo$date[cdtdataset$dateInfo$index]
+    don <- don[cdtdataset$dateInfo$index]
+    daty <- cdtdataset$dateInfo$date
 
     list(data = don, date = daty)
 }

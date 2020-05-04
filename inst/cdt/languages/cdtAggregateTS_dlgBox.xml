@@ -5,6 +5,9 @@
         <text lang="fr"> Series Temporelles-Agrégation </text>
     </title>
     <widget>
+        <button id="1">
+            <text lang="en"> Minimum fraction of non-missing </text>
+        </button>
         <label id="1">
             <text lang="en"> Time Series Aggregation </text>
             <text lang="fr"> Agrégation Series Temporelles </text>
@@ -22,8 +25,8 @@
             <text lang="fr"> Longueur </text>
         </label>
         <label id="5">
-            <text lang="en"> Type of Data </text>
-            <text lang="fr"> Type de Données </text>
+            <text lang="en"> Input Data </text>
+            <text lang="fr"> Données d'entrées </text>
         </label>
         <label id="6">
             <text lang="en"> File containing stations input data </text>
@@ -260,7 +263,7 @@
             <text lang="fr"> Agrégation de données échouée </text>
         </content>
         <content id="6">
-            <text lang="en"> Aggregate time series ... </text>
+            <text lang="en"> Aggregating time series ... </text>
             <text lang="fr"> Agrégation des series temporelles ... </text>
         </content>
         <content id="7">
@@ -284,11 +287,11 @@
             <text lang="fr"> Impossible de localiser les fichiers netcdf </text>
         </content>
         <content id="12">
-            <text lang="en"> Netcdf data sample not found </text>
+            <text lang="en"> NetCDF data sample not found </text>
             <text lang="fr"> Exemple de données NetCDF non trouvé </text>
         </content>
         <content id="13">
-            <text lang="en"> Aggregating time series finished </text>
+            <text lang="en"> Time series aggregation finished </text>
             <text lang="fr"> Agrégation des series temporelles effectuée </text>
         </content>
         <content id="14">

@@ -9,7 +9,7 @@ execCrossValidRain <- function(){
         xfin <- format(daty$end, "%b%Y")
     }else{
         xdeb <- paste0(as.numeric(format(daty$start, "%d")), format(daty$start, "%b%Y"))
-        xfin <- paste0(as.numeric(format(daty$start, "%d")), format(daty$end, "%b%Y"))
+        xfin <- paste0(as.numeric(format(daty$end, "%d")), format(daty$end, "%b%Y"))
     }
 
     outdir <- file.path(.cdtData$GalParams$outdir,
@@ -84,11 +84,30 @@ execCrossValidRain <- function(){
     ncInfo$ncinfo <- rfeDataInfo
 
     ##################
+    ## options user provide list of station
 
     df <- as.data.frame(stnData[c("id", 'lon', 'lat')])
-    df$nb <- colSums(!is.na(stnData$data))
+    df$nb <- colSums(!is.na(stnData$data[stnData$dates %in% ncInfo$dates, , drop = FALSE]))
+
+    df <- df[df$nb > 0, , drop = FALSE]
+    if(nrow(df) == 0){
+        Insert.Messages.Out("No data on stations to use for cross-validation", TRUE, "e")
+        return(NULL)
+    }
+
+    ## at least 50%
+    df <- df[df$nb / length(ncInfo$dates) >= 0.5, , drop = FALSE]
+    if(nrow(df) == 0){
+        Insert.Messages.Out("Not enough data on stations to use for cross-validation", TRUE, "e")
+        return(NULL)
+    }
+
+    ## stn.valid <- as.character(df$id)
+
+    # stn.valid <- read.table('/Users/rijaf/Desktop/work/UNMA/PRECIP/Validation/valid_stations.csv', sep = ',', header = TRUE)
     stn.valid <- select.Station.Validation(df, perc = 20)
     stn.valid <- as.character(stn.valid$id)
+
     stn.valid <- which(stnData$id %in% stn.valid)
 
     ##################

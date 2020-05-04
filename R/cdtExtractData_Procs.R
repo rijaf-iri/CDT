@@ -314,13 +314,14 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
         ncInfo$yo <- order(lat)
         lat <- lat[ncInfo$yo]
     }else{
-        if(!file.exists(GeneralParameters$cdtdataset$index)){
-            msg <- paste(GeneralParameters$cdtdataset$index, lang.dlg[['message']][['15']])
+        inputdat <- GeneralParameters$cdtdataset
+        if(!file.exists(inputdat$index)){
+            msg <- paste(inputdat$index, lang.dlg[['message']][['15']])
             Insert.Messages.Out(msg, TRUE, "e", GUI)
             return(NULL)
         }
 
-        indexfile <- readRDS(GeneralParameters$cdtdataset$index)
+        indexfile <- readRDS(inputdat$index)
         varInfo <- indexfile$varInfo
         dateInfo <- indexfile$dateInfo
 
@@ -344,7 +345,7 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
         parsextr <- list(xminLon, xminLat, xmaxLon, xmaxLat, xpadLon, xpadLat,
                          GeneralParameters$Geom$namePoly, GeneralParameters$Geom$multiObj,
                          GeneralParameters$shp.file$shp, GeneralParameters$shp.file$attr,
-                         GeneralParameters$type.extract)
+                         GeneralParameters$type.extract, inputdat)
         extractGeom <- TRUE
         if(!is.null(.cdtData$EnvData$procs$parsextr))
             extractGeom <- if(!isTRUE(all.equal(.cdtData$EnvData$procs$parsextr, parsextr))) TRUE else FALSE

@@ -1,5 +1,5 @@
 Package: CDT
-Version: 6.0
+Version: 6.5
 Title: Climate Data Tools
 Description: Climate Data Tools (CDT) is a set of utility functions
     for meteorological data quality control, homogenization
@@ -55,4 +55,4 @@ Imports:
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

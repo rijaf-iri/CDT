@@ -101,7 +101,7 @@
         </content>
         <content id="5">
             <text lang="en"> Download failed </text>
-            <text lang="en"> Téléchargement échoué </text>
+            <text lang="fr"> Téléchargement échoué </text>
         </content>
     </message>
 </dialog_box>

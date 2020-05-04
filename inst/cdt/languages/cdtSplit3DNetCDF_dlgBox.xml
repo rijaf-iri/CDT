@@ -9,7 +9,7 @@
                 <text lang="en"> One NetCDF file </text>
             </option>
             <option id="2">
-                <text lang="en"> Several NetCDF files </text>
+                <text lang="en"> Multiple NetCDF files </text>
             </option>
         </combobox>
         <button id="1">
@@ -41,6 +41,12 @@
         </content>
         <content id="4">
             <text lang="en"> Splitting NetCDF data ... </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Splitting NetCDF data finished successfully </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Splitting NetCDF data failed </text>
         </content>
     </message>
 </dialog_box>

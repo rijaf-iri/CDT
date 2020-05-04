@@ -17,9 +17,14 @@
             <text lang="en"> File to save filtered data </text>
             <text lang="fr"> Fichier de sauvegarde des données filtrées </text>
         </label>
+        <label id="4">
+            <text lang="en"> Include the whole period in the data </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Time step </text>
+        </label>
         <button id="1">
-            <text lang="en"> Filter Data </text>
-            <text lang="fr"> Filter les données </text>
+            <text lang="en"> Set Date-Time Range </text>
         </button>
     </widget>
     <message>
@@ -40,8 +45,7 @@
             <text lang="fr"> Aucune donnée d'entrée CDT trouvée </text>
         </content>
         <content id="5">
-            <text lang="en"> The input data is not in a standard unambiguous CDT format </text>
-            <text lang="fr"> Les données d'entrée ne sont pas dans un format CDT standard non ambigu </text>
+            <text lang="en"> Station dates and input date range do not overlap </text>
         </content>
         <content id="6">
             <text lang="en"> No input CDT station data found </text>

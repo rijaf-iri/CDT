@@ -999,6 +999,32 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         tkgrid(cb.rank.sel, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.rank.next, row = 2, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
+        #############
+        ## select stats to plot
+
+        tmp.data <- matrix(1:10, ncol = 1)
+        Cont.Stats <- cdtValidation.Cont.Stats(tmp.data, tmp.data)
+        Categ.Stats <- cdtValidation.Categ.Stats(tmp.data, tmp.data)
+        Vol.Stats <- cdtVolumetricQuantileStats(tmp.data, tmp.data, thres = 1)
+
+        stats.var <- c(rownames(Cont.Stats$statistics), rownames(Categ.Stats$statistics))
+        stats.descrp <- c(Cont.Stats$description, Categ.Stats$description)
+        if(clim.var == "RR"){
+            stats.var <- c(stats.var, rownames(Vol.Stats$statistics))
+            stats.descrp <- c(stats.descrp, Vol.Stats$description)
+        }
+
+        ## button,  on click OK get selected
+        ## list of checkbox like climdex variable, by default select all
+        ## put selected stats in .cdtData$EnvData$VALID.stats
+
+        .cdtData$EnvData$VALID.stats <- stats.var
+        ## Temp
+        # .cdtData$EnvData$VALID.stats <- c("CORR", "BIAS", "ME", "MAE", "RMSE", "NSE")
+        ## Precip
+        # .cdtData$EnvData$VALID.stats <- c("CORR", "BR2", "BIAS", "PBIAS", "ME", "MAE", "RMSE", "NSE",
+                                          # "POD", "POFD", "FAR", "FBS", "CSI", "HSS")
+
         ##############
 
         .cdtData$EnvData$tab$Performap <- NULL

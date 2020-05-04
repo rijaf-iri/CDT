@@ -8,37 +8,51 @@ filterCDTdata <- function(){
 
     Insert.Messages.Out(GalParams[['message']][['1']], TRUE, "i")
 
-    donne <- getStnOpenData(GalParams$filein)
-    if(is.null(donne)) return(NULL)
     donneInfo <- getStnOpenDataInfo(GalParams$filein)
     if(is.null(donneInfo)) return(NULL)
+    donne <- getStnOpenData(GalParams$filein)
+    capt <- donne[1:4, 1]
+    if(is.null(donne)) return(NULL)
 
-    ix <- grepl('[[:digit:]]', donne[, 1])
-    seph <- rle(ix)
-    ipos <- which(!seph$values & seph$lengths >= 3 & seph$lengths <= 4)
-    if(length(ipos) == 0){
-        Insert.Messages.Out(GalParams[['message']][['5']], format = TRUE)
-        return(NULL)
+    if(GalParams$all.period){
+        donne <- splitCDTData0(donne)
+        if(is.null(donne)) return(NULL)
+    }else{
+        donne <- splitCDTData(donne, GalParams$tstep)
+        if(is.null(donne)) return(NULL)
+        dateRange <- get.range.date.time(GalParams$date.range, GalParams$tstep, GalParams$minhour)
+        dates <- get.date.time.cdt.station(donne$dates, GalParams$tstep)
+        idate <- dates >= dateRange$start & dates <= dateRange$end
+        idate[is.na(idate)] <- FALSE
+        if(!any(idate)){
+            Insert.Messages.Out(GalParams[['message']][['5']], format = TRUE)
+            return(NULL)
+        }
+        donne$dates <- donne$dates[idate]
+        donne$data <- donne$data[idate, , drop = FALSE]
     }
-    if(ipos[1] != 1){
-        Insert.Messages.Out(GalParams[['message']][['5']], format = TRUE)
-        return(NULL)
-    }
-    header <- as.matrix(donne[1:seph$lengths[ipos[1]], , drop = FALSE])
-    daty <- donne[ix, 1]
-    donne <- as.matrix(donne[ix, -1, drop = FALSE])
-    len <- nrow(donne)
-    pnadonne <- (len - colSums(is.na(donne)))/len
+
+    len <- length(donne$dates)
+    pnadonne <- colSums(!is.na(donne$data))/len
 
     opfilter <- get(GalParams$opfilter, mode = "function")
     istn <- as.logical(opfilter(pnadonne, GalParams$valfilter / 100))
 
-    donne <- donne[, istn, drop = FALSE]
-    header <- header[, c(TRUE, istn), drop = FALSE]
-    donne <- rbind(header, cbind(daty, donne))
-    donne[is.na(donne)] <- donneInfo[[3]]$miss.val
+    donne$id <- donne$id[istn]
+    donne$lon <- donne$lon[istn]
+    donne$lat <- donne$lat[istn]
+    if(!is.null(donne$elv)) donne$elv <- donne$elv[istn]
+    donne$data <- donne$data[, istn, drop = FALSE]
 
-    writeFiles(donne, GalParams$file2save)
+    if(is.null(donne$elv)) capt <- capt[1:3]
+    xhead <- do.call(rbind, donne[c('id', 'lon', 'lat', 'elv')])
+    xhead <- as.matrix(cbind(capt, xhead))
+
+    donne <- rbind(xhead, cbind(donne$dates, donne$data))
+    write.table(donne, GalParams$file2save,
+                sep = donneInfo[[3]]$sepr,
+                na = donneInfo[[3]]$miss.val,
+                col.names = FALSE, row.names = FALSE, quote = FALSE)
 
     return(0)
 }
