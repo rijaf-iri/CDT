@@ -1,19 +1,17 @@
 
-AggregateTS_GetInfo <- function(){
+AggregateTS_minmax_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 61
         largeur1 <- 58
-        largeur2 <- 48
         wtkcombo <- 25
     }else{
         largeur0 <- 40
         largeur1 <- 38
-        largeur2 <- 30
         wtkcombo <- 18
     }
 
-    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtAggregateTS_dlgBox.xml")
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtAggregateTS_minmax_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ###################
@@ -619,195 +617,31 @@ AggregateTS_GetInfo <- function(){
 
     frDataType <- ttklabelframe(frAGGRTS, text = lang.dlg[['label']][['5']], labelanchor = "nw", relief = "groove", borderwidth = 2)
 
-    DataType <- tclVar()
-    CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:3]
-    datatypeVAL <- c('cdtstation', 'cdtdataset', 'cdtnetcdf')
-    tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% .cdtData$GalParams$data.type]
+    file.stnfl <- tclVar(.cdtData$GalParams$cdtstation)
 
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        file.stnfl <- tclVar(.cdtData$GalParams$cdtstation)
-        txtFileDir <- lang.dlg[['label']][['6']]
-        stateSetData <- "disabled"
-    }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
-        file.stnfl <- tclVar(.cdtData$GalParams$cdtdataset)
-        txtFileDir <- lang.dlg[['label']][['7']]
-        stateSetData <- "disabled"
-    }else{
-        file.stnfl <- tclVar(.cdtData$GalParams$cdtnetcdf$dir)
-        txtFileDir <- lang.dlg[['label']][['8']]
-        stateSetData <- "normal"
-    }
-    fileINdir <- tclVar(txtFileDir)
-
-    ##############
-    cb.datatype <- ttkcombobox(frDataType, values = CbdatatypeVAL, textvariable = DataType, width = largeur2)
-    set.datatype <- ttkbutton(frDataType, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetData)
-
-    txt.stnfl <- tklabel(frDataType, text = tclvalue(fileINdir), textvariable = fileINdir, anchor = 'w', justify = 'left')
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        cb.stnfl <- ttkcombobox(frDataType, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
-    }else{
-        cb.stnfl <- tkentry(frDataType, textvariable = file.stnfl, width = largeur0)
-    }
+    txt.stnfl <- tklabel(frDataType, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
+    cb.stnfl <- ttkcombobox(frDataType, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
     bt.stnfl <- tkbutton(frDataType, text = "...")
 
-    ##############
-
-    settingdone <- .cdtData$GalParams$settingdone
-    tkconfigure(set.datatype, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        AggregateTS_ncdfData(tt, str_trim(tclvalue(file.stnfl)), tclvalue(OriginData))
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-        settingdone <<- 1
-    })
-
-    tkconfigure(bt.stnfl, command = function(){
-        if(.cdtData$GalParams$data.type == 'cdtstation'){
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            dat.opfiles <- getOpenFiles(tt)
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-            if(!is.null(dat.opfiles)){
-                update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-                tclvalue(file.stnfl) <- dat.opfiles[[1]]
-                tkconfigure(cb.stnfl, values = unlist(listOpenFiles))
-            }
-        }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            path.rds <- tclvalue(tkgetOpenFile(filetypes = .cdtEnv$tcl$data$filetypes6))
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-            tclvalue(file.stnfl) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
-        }else{
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            dirnc <- tk_choose.dir(getwd(), "")
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-            tclvalue(file.stnfl) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-        }
-    })
-
-    ##############
-    tkgrid(cb.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(set.datatype, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.stnfl, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.stnfl, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    ##############
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
-    }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-    }else{
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-    }
+    helpWidget(cb.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    helpWidget(bt.stnfl, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
 
-    ##############
+    ###################
 
-    tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
-        tkdestroy(cb.stnfl)
-        tclvalue(file.stnfl) <- ''
-
-        ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-            tclvalue(fileINdir) <- lang.dlg[['label']][['6']]
-            tclvalue(fileORdir) <- lang.dlg[['label']][['9']]
-
-            cb.stnfl <- ttkcombobox(frDataType, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
-
-            #######
-            tkconfigure(bt.stnfl, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                dat.opfiles <- getOpenFiles(tt)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                if(!is.null(dat.opfiles)){
-                    update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-                    tclvalue(file.stnfl) <- dat.opfiles[[1]]
-                    tkconfigure(cb.stnfl, values = unlist(listOpenFiles))
-                }
-            })
-            tkconfigure(bt.file.save, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                fileORdir2Save(file.save, isFile = TRUE)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-            })
-            tkconfigure(set.datatype, state = 'disabled')
-
-            #######
-            helpWidget(cb.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
-            helpWidget(bt.stnfl, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
-            helpWidget(en.file.save, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
+    tkconfigure(bt.stnfl, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        dat.opfiles <- getOpenFiles(tt)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(!is.null(dat.opfiles)){
+            update.OpenFiles('ascii', dat.opfiles)
+            listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+            tclvalue(file.stnfl) <- dat.opfiles[[1]]
+            tkconfigure(cb.stnfl, values = unlist(listOpenFiles))
         }
-
-        ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-            tclvalue(fileINdir) <- lang.dlg[['label']][['7']]
-            tclvalue(fileORdir) <- lang.dlg[['label']][['10']]
-
-            cb.stnfl <- tkentry(frDataType, textvariable = file.stnfl, width = largeur0)
-
-            #######
-            tkconfigure(bt.stnfl, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                path.rds <- tclvalue(tkgetOpenFile(filetypes = .cdtEnv$tcl$data$filetypes6))
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(file.stnfl) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
-            })
-
-            tkconfigure(bt.file.save, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                fileORdir2Save(file.save, isFile = FALSE)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-            })
-            tkconfigure(set.datatype, state = 'disabled')
-
-            #######
-            helpWidget(cb.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-            helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-            helpWidget(en.file.save, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
-        }
-
-        ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]){
-            tclvalue(fileINdir) <- lang.dlg[['label']][['8']]
-            tclvalue(fileORdir) <- lang.dlg[['label']][['10']]
-
-            cb.stnfl <- tkentry(frDataType, textvariable = file.stnfl, width = largeur0)
-
-            #######
-            tkconfigure(bt.stnfl, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                dirnc <- tk_choose.dir(getwd(), "")
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(file.stnfl) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-            })
-
-            tkconfigure(set.datatype, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                AggregateTS_ncdfData(tt, str_trim(tclvalue(file.stnfl)), tclvalue(OriginData))
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                settingdone <<- 1
-            })
-
-            tkconfigure(bt.file.save, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                fileORdir2Save(file.save, isFile = FALSE)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-            })
-            tkconfigure(set.datatype, state = 'normal')
-
-            #######
-            helpWidget(cb.stnfl, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
-            helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-            helpWidget(en.file.save, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
-        }
-
-        #######
-        tkgrid(cb.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkfocus(tt)
     })
 
     ############################################
@@ -816,7 +650,7 @@ AggregateTS_GetInfo <- function(){
 
     tkconfigure(bt.aggrPars, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[['aggr.series']] <- getInfo_AggregateFun(tt, .cdtData$GalParams[['aggr.series']])
+        .cdtData$GalParams[['aggr.series']] <- getInfo_AggregateFun(tt, .cdtData$GalParams[['aggr.series']], c("max", "min"))
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -825,40 +659,25 @@ AggregateTS_GetInfo <- function(){
 
     file.save <- tclVar(.cdtData$GalParams$output)
 
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        txtSaveDir <- lang.dlg[['label']][['9']]
-        isFile <- TRUE
-    }else{
-        txtSaveDir <- lang.dlg[['label']][['10']]
-        isFile <- FALSE
-    }
-    fileORdir <- tclVar(txtSaveDir)
-
-    txt.file.save <- tklabel(frSave, text = tclvalue(fileORdir), textvariable = fileORdir, anchor = 'w', justify = 'left')
+    txt.file.save <- tklabel(frSave, text = lang.dlg[['label']][['9']], anchor = 'w', justify = 'left')
     en.file.save <- tkentry(frSave, textvariable = file.save, width = largeur0)
     bt.file.save <- tkbutton(frSave, text = "...")
-
-    tkconfigure(bt.file.save, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        fileORdir2Save(file.save, isFile = isFile)
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-    })
 
     tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.file.save, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    ###################
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        txtStatus <- lang.dlg[['status']][['10']]
-        txtTooltip <- lang.dlg[['tooltip']][['10']]
-    }else{
-        txtStatus <- lang.dlg[['status']][['11']]
-        txtTooltip <- lang.dlg[['tooltip']][['11']]
-    }
-
-    helpWidget(en.file.save, txtTooltip, txtStatus)
+    helpWidget(en.file.save, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
     helpWidget(bt.file.save, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+
+    ###################
+
+    tkconfigure(bt.file.save, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        fileORdir2Save(file.save, isFile = TRUE)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+    })
+
 
     ############################################
     tkgrid(frConvTS, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -883,9 +702,6 @@ AggregateTS_GetInfo <- function(){
         }else if(str_trim(tclvalue(file.save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingdone)){
-            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
-            tkwait.window(tt)
         }else{
             .cdtData$GalParams$in.tstep <- period0VAL[Cbperiod0VAL %in% str_trim(tclvalue(OriginData))]
             .cdtData$GalParams$out.tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(ConvertData))]
@@ -897,18 +713,9 @@ AggregateTS_GetInfo <- function(){
             .cdtData$GalParams$Seasonal$start.mon <- which(MOIS %in% str_trim(tclvalue(start.mon)))
             .cdtData$GalParams$Seasonal$length.mon <- as.numeric(str_trim(tclvalue(length.mon)))
 
-            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                .cdtData$GalParams$cdtstation <- str_trim(tclvalue(file.stnfl))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                .cdtData$GalParams$cdtdataset <- str_trim(tclvalue(file.stnfl))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3])
-                .cdtData$GalParams$cdtnetcdf$dir <- str_trim(tclvalue(file.stnfl))
-
+            .cdtData$GalParams$cdtstation <- str_trim(tclvalue(file.stnfl))
             .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
 
-            .cdtData$GalParams$settingdone <- settingdone
             .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)

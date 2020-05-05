@@ -186,11 +186,21 @@ cdt.init.params <- function(action, tstep){
                            Date.Range = date.range,
                            Seasonal = list(start.mon = 1, length.mon = 3),
                            HourMin = list(int = 1, out = 1, obs.hour = 9),
-                           min.frac = list(unique = TRUE, all = 0.95, month = rep(0.95, 12)),
-                           aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 0)
+                           aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 0,
+                                              min.frac = list(unique = TRUE, all = 0.95,
+                                                              month = rep(0.95, 12)))
+                         )
+    }
 
-                           # aggr.series = list(aggr.fun = "sum", min.frac = 0.95,
-                           #                     opr.fun = ">=", opr.thres = 0)
+    ## Time series aggregation minimum and maximum with date
+    if(action == 'aggregate.minmax'){
+        ret.params <- list(action = action, in.tstep = tstep, out.tstep = "dekadal",
+                           cdtstation = "",  output = "",
+                           Seasonal = list(start.mon = 1, length.mon = 3),
+                           HourMin = list(int = 1, out = 1, obs.hour = 9),
+                           aggr.series = list(aggr.fun = "max", opr.fun = ">=", opr.thres = 0,
+                                              min.frac = list(unique = TRUE, all = 0.95,
+                                                              month = rep(0.95, 12)))
                          )
     }
 

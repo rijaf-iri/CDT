@@ -128,6 +128,15 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
+    ## Time series aggregation - Min and Max with Obs dates
+    if(.cdtData$GalParams$action == "aggregate.minmax"){
+        ret <- try(AggregateMinMax_Execute(), silent = TRUE)
+
+        msg0 <- .cdtData$GalParams[['message']][['4']]
+        msg1 <- .cdtData$GalParams[['message']][['5']]
+        Execute_end_msg(ret, msg0, msg1)
+    }
+
     ## Time series aggregation - Rolling window
     if(.cdtData$GalParams$action == "aggregate.rf"){
         ret <- try(AggregateMWin_Execute(), silent = TRUE)

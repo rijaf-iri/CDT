@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> Time Series - Aggregation </text>
-        <text lang="fr"> Series Temporelles-Agrégation </text>
+        <text lang="en"> Min and Max with Observation Dates </text>
+        <text lang="fr"> Min et Max avec Dates d'Observation </text>
     </title>
     <widget>
         <button id="1">
@@ -32,21 +32,9 @@
             <text lang="en"> File containing stations input data </text>
             <text lang="fr"> Fichier contenant les données des stations </text>
         </label>
-        <label id="7">
-            <text lang="en"> Index file (*.rds) of the dataset </text>
-            <text lang="fr"> Fichier Index (*.rds) des données </text>
-        </label>
-        <label id="8">
-            <text lang="en"> Directory containing the NetCDF data </text>
-            <text lang="fr"> Répertoire contenant les données netCDF </text>
-        </label>
         <label id="9">
             <text lang="en"> File to save aggregated data </text>
             <text lang="fr"> Fichier de sauvegarde des données agrégées </text>
-        </label>
-        <label id="10">
-            <text lang="en"> Directory to save result </text>
-            <text lang="fr"> Répertoire de sauvegarde </text>
         </label>
         <label id="11">
             <text lang="en"> Hour </text>
@@ -112,26 +100,6 @@
                 <text lang="fr"> Sélectionnez le fichier contenant les données à agréger </text>
             </tooltip>
         </content>
-        <content id="6">
-            <status>
-                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
-                <text lang="fr"> Entrez le chemin complet du fichier &lt;nom données&gt;.rds </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
-                <text lang="fr"> Entrez le chemin complet du fichier &lt;nom données&gt;.rds </text>
-            </tooltip>
-        </content>
-        <content id="7">
-            <status>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
-                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les données NetCDF </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
-                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les données NetCDF </text>
-            </tooltip>
-        </content>
         <content id="8">
             <status>
                 <text lang="en"> Browse file if not listed </text>
@@ -162,16 +130,6 @@
                 <text lang="fr"> Entrez le chemin complet du fichier pour sauver les données agrégées </text>
             </tooltip>
         </content>
-        <content id="11">
-            <status>
-                <text lang="en"> Enter the full path to the directory to save results </text>
-                <text lang="fr"> Entrez le chemin complet du répertoire pour sauver les résultats </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Enter the full path to the directory to save results </text>
-                <text lang="fr"> Entrez le chemin complet du répertoire pour sauver les résultats </text>
-            </tooltip>
-        </content>
         <content id="12">
             <status>
                 <text lang="en"> Enter the observation hour to compute the daily data \n For example: The cumulative rainfall recorded on 2018-07-30 at 9:00 \n is the rainfall for the day 2018-07-29 </text>
@@ -187,12 +145,8 @@
             <text lang="fr"> Aucun fichier d'entrée </text>
         </content>
         <content id="2">
-            <text lang="en"> Browse the directory or enter the file to save results </text>
+            <text lang="en"> Browse or enter the file to save results </text>
             <text lang="fr"> Parcourir le répertoire ou entrer le fichier pour sauver les résultats </text>
-        </content>
-        <content id="3">
-            <text lang="en"> You have to set the NetCDF files parameters </text>
-            <text lang="fr"> Vous devez définir les paramètres des fichiers NetCDF </text>
         </content>
         <content id="4">
             <text lang="en"> Data aggregation finished successfully </text>
@@ -205,22 +159,6 @@
         <content id="6">
             <text lang="en"> Aggregating time series ... </text>
             <text lang="fr"> Agrégation des series temporelles ... </text>
-        </content>
-        <content id="7">
-            <text lang="en"> Unable to read </text>
-            <text lang="fr"> Impossible de lire </text>
-        </content>
-        <content id="8">
-            <text lang="en"> Time step of the dataset is not </text>
-            <text lang="fr"> Pas de temps des données inexistant </text>
-        </content>
-        <content id="11">
-            <text lang="en"> Unable to locate netcdf files </text>
-            <text lang="fr"> Impossible de localiser les fichiers netcdf </text>
-        </content>
-        <content id="12">
-            <text lang="en"> NetCDF data sample not found </text>
-            <text lang="fr"> Exemple de données NetCDF non trouvé </text>
         </content>
         <content id="13">
             <text lang="en"> Time series aggregation finished </text>

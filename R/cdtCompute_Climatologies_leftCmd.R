@@ -22,7 +22,9 @@ climatologiesCalcPanelCmd <- function(){
                             cdtstation = list(file = ""),
                             cdtdataset = list(index = ""),
                             cdtnetcdf = list(dir = "", sample = "", format = "rfe_%s%s%s.nc"),
-                            aggr.series = list(aggr.fun = "sum", min.frac = 0.95, opr.fun = ">=", opr.thres = 1),
+                            # aggr.series = list(aggr.fun = "sum", min.frac = 0.95, opr.fun = ">=", opr.thres = 1),
+                            aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 1,
+                                              min.frac = list(unique = TRUE, all = 0.95, month = rep(0.95, 12))),
                             climato = list(allyears = TRUE, start = 1981, end = 2010, minyear = 20, window = 0),
                             out.dir = "")
 
@@ -385,10 +387,15 @@ climatologiesCalcPanelCmd <- function(){
         bt.AggrFun <- ttkbutton(subfr1, text = lang.dlg[['button']][['3']], state = stateAggr)
 
         tkconfigure(bt.AggrFun, command = function(){
-            instep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            GeneralParameters$aggr.series <<- getInfoAggregateFun(.cdtEnv$tcl$main$win,
-                                                                  GeneralParameters$aggr.series,
-                                                                  instep)
+            # instep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            # GeneralParameters$aggr.series <<- getInfoAggregateFun(.cdtEnv$tcl$main$win,
+            #                                                       GeneralParameters$aggr.series,
+            #                                                       instep)
+            AGGRFUN <- c("sum", "mean", "median", "max", "min", "count")
+            GeneralParameters$aggr.series <<- getInfo_AggregateFun(.cdtEnv$tcl$main$win,
+                                                                   GeneralParameters$aggr.series,
+                                                                   AGGRFUN
+                                                                  )
         })
 
         #######################

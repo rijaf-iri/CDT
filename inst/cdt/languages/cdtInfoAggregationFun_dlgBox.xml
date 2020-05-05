@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Aggregation Function </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Function </text>
+            <text lang="fr"> Fonction </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Operator </text>
+            <text lang="fr"> Opérateur </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Threshold </text>
+            <text lang="fr"> Seuil </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Use unique minimum fraction </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Minimum Fraction Value </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Monthly Minimum Fractions </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Function that have to be applied for aggregating from daily/dekadal/monthly into\n a higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean) </text>
+                <text lang="fr"> Fonction à appliquer pour l'agrégation à partir de jpurnalier/décadaire/mensuel \n à pas de temps plus long (ex, pour Précipitation FUN=sum et pour Température FUN=mean) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Function that have to be applied for aggregating from daily/dekadal/monthly into \n a higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean) </text>
+                <text lang="fr"> Fonction à appliquer pour l'agrégation à partir de jpurnalier/décadaire/mensuel \n à pas de temps plus long (ex, pour Précipitation FUN=sum et pour Température FUN=mean) </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the comparison operator to be used to match event </text>
+                <text lang="fr"> Sélectionnez l'opérateur de comparaison à utiliser pour faire correspondre l'événement </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the comparison operator to be used to match event </text>
+                <text lang="fr"> Sélectionnez l'opérateur de comparaison à utiliser pour faire correspondre l'événement </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> User defined threshold applied to count event </text>
+                <text lang="fr"> Seuil défini par l'utilisateur appliqué pour compter des événements </text>
+            </status>
+            <tooltip>
+                <text lang="en"> User defined threshold applied to count event </text>
+                <text lang="fr"> Seuil défini par l'utilisateur appliqué pour compter des événements </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Minimum fraction of available data that must be present within each output time step </text>
+                <text lang="fr"> Fraction minimale de données disponibles devant être présentes dans chaque pas de temps de sortie </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum fraction of available data that must be present within each output time step </text>
+                <text lang="fr"> Fraction minimale de données disponibles devant être présentes dans chaque pas de temps de sortie </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

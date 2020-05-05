@@ -111,6 +111,10 @@
             <text lang="en"> Aggregating Time Series - Moving window</text>
             <text lang="fr"> Agréger Series Temporelles - Fenêtre glissante</text>
         </submenu>
+        <submenu id="7-4">
+            <text lang="en"> Aggregating Time Series - Min and Max with Observation Dates </text>
+            <text lang="fr"> Agréger Series Temporelles - Min et Max avec Dates d'Observation </text>
+        </submenu>
         <submenu id="8">
             <text lang="en"> Filling missing dekadal temperature values </text>
             <text lang="fr"> Combler les températures décadaires manquantes </text>

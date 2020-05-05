@@ -15,6 +15,7 @@ AggregateTS_Execute <- function(){
     startMonth <- GalParams$Seasonal$start.mon
     seasonLength <- GalParams$Seasonal$length.mon
     datatype <- GalParams$data.type
+    aggr.pars <- GalParams$aggr.series
 
     if(datatype == 'cdtstation'){
         donne <- getStnOpenData(GalParams$cdtstation)
@@ -61,11 +62,11 @@ AggregateTS_Execute <- function(){
                                     minhr.in.step, minhr.out.step, obs.hour,
                                     seasonLength, startMonth)
 
-    if(GalParams$min.frac$unique){
-        ifull <- (agg.index$nba / agg.index$nb0) >= GalParams$min.frac$all
+    if(aggr.pars$min.frac$unique){
+        ifull <- (agg.index$nba / agg.index$nb0) >= aggr.pars$min.frac$all
     }else{
         ifull <- sapply(agg.index$nb.mon, function(x){
-            all(x$nba / x$nb0 >= GalParams$min.frac$month[x$mo])
+            all(x$nba / x$nb0 >= aggr.pars$min.frac$month[x$mo])
         })
     }
 
@@ -78,7 +79,7 @@ AggregateTS_Execute <- function(){
 
     #########################
     if(datatype == 'cdtstation'){
-        cdtdata <- cdt.data.aggregateTS(donne$data, agg.index, GalParams$aggr.series, GalParams$min.frac)
+        cdtdata <- cdt.data.aggregateTS(donne$data, agg.index, aggr.pars)
         cdtdata <- round(cdtdata, 5)
 
         headers <- do.call(rbind, donne[c('id', 'lon', 'lat', 'elv')])
@@ -91,14 +92,14 @@ AggregateTS_Execute <- function(){
         entete <- cbind(capition, headers)
         cdtdata <- rbind(entete, cbind(odaty, cdtdata))
         cdtdata[is.na(cdtdata)] <- miss.val
-        writeFiles(cdtdata, .cdtData$GalParams$output)
+        writeFiles(cdtdata, GalParams$output)
         rm(cdtdata)
     }
 
     #########################
     if(datatype == 'cdtdataset'){
-        dataset.name <- paste0("Aggregated_Data_", GalParams$aggr.series$aggr.fun)
-        outputDIR <- file.path(.cdtData$GalParams$output, dataset.name)
+        dataset.name <- paste0("Aggregated_Data_", aggr.pars$aggr.fun)
+        outputDIR <- file.path(GalParams$output, dataset.name)
         dataDIR <- file.path(outputDIR, "DATA")
         dir.create(dataDIR, showWarnings = FALSE, recursive = TRUE)
         file.index <- file.path(outputDIR, paste0(dataset.name, ".rds"))
@@ -127,7 +128,7 @@ AggregateTS_Execute <- function(){
         {
             don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GalParams$cdtdataset, cdtParallelCond, do.par = do.parChunk)
             don.data <- don.data[donne$dateInfo$index, , drop = FALSE]
-            cdtdata <- cdt.data.aggregateTS(don.data, agg.index, GalParams$aggr.series, GalParams$min.frac)
+            cdtdata <- cdt.data.aggregateTS(don.data, agg.index, aggr.pars)
             writeCdtDatasetChunk.sequence(cdtdata, chunkcalc[[jj]], index.agg, dataDIR, cdtParallelCond, do.par = do.parChunk)
             rm(don.data, cdtdata); gc()
             return(0)
@@ -136,7 +137,7 @@ AggregateTS_Execute <- function(){
 
     #########################
     if(datatype == 'cdtnetcdf'){
-        dataset.name <- paste0("Aggregated_Data_", GalParams$aggr.series$aggr.fun)
+        dataset.name <- paste0("Aggregated_Data_", aggr.pars$aggr.fun)
         outputDIR <- file.path(GalParams$output, dataset.name)
         dir.create(outputDIR, showWarnings = FALSE, recursive = TRUE)
 
@@ -183,20 +184,20 @@ AggregateTS_Execute <- function(){
             })
             ncdon <- do.call(rbind, ncdon)
             
-            if(GalParams$min.frac$unique){
-                miss <- (colSums(!is.na(ncdon)) / agg.index$nb0[jj]) < GalParams$min.frac$all
+            if(aggr.pars$min.frac$unique){
+                miss <- (colSums(!is.na(ncdon)) / agg.index$nb0[jj]) < aggr.pars$min.frac$all
             }else{
                 ix <- agg.index$nb.mon[[jj]]
                 ii <- split(seq_along(ix$tsmo), ix$tsmo)
                 miss <- lapply(seq_along(ii), function(i){
-                    colSums(!is.na(ncdon[ii[[i]], , drop = FALSE]))/ix$nb0[i] < GalParams$min.frac$month[ix$mo[i]]
+                    colSums(!is.na(ncdon[ii[[i]], , drop = FALSE]))/ix$nb0[i] < aggr.pars$min.frac$month[ix$mo[i]]
                 })
                 miss <- do.call(rbind, miss)
                 miss <- apply(miss, 2, any)
             }
             if(all(miss)) return(NULL)
 
-            out <- cdt.aggregate(ncdon, GalParams$aggr.series)
+            out <- cdt.aggregate(ncdon, aggr.pars)
             out[miss] <- NA
             out[is.nan(out) | is.infinite(out)] <- NA
             out[is.na(out)] <- missval0

@@ -37,7 +37,7 @@ cdt.aggregate <- function(MAT, pars){
                                                     rle.fun <- get(pars$rle.fun, mode = "function")
                                                     sum(rle.fun(x, pars$rle.thres))
                                                 }
-                                   )
+                                     )
                 res <- sapply(res, count.rle.fun)
             }
         }else{
@@ -45,12 +45,14 @@ cdt.aggregate <- function(MAT, pars){
         }
     }else{
         aggr.fun <- switch(pars$aggr.fun,
-                        "max" = matrixStats::colMaxs,
-                        "min" = matrixStats::colMins,
-                        "median" = matrixStats::colMedians,
-                        "mean" = colMeans,
-                        "sum" = colSums
-                    )
+                           "max" = matrixStats::colMaxs,
+                           "min" = matrixStats::colMins,
+                           "median" = matrixStats::colMedians,
+                           "var" = matrixStats::colVars,
+                           "sd" = matrixStats::colSds,
+                           "mean" = colMeans,
+                           "sum" = colSums
+                         )
         res <- aggr.fun(MAT, na.rm = TRUE)        
     }
 
@@ -83,7 +85,7 @@ cdt.data.aggregate <- function(MAT, index, pars)
 #############################################
 ## with multiple min.frac
 
-cdt.data.aggregateTS <- function(MAT, index, pars, min.frac)
+cdt.data.aggregateTS <- function(MAT, index, pars)
 {
     pars0 <- list(aggr.fun = "sum", opr.fun = ">",
                   opr.thres = 0, rle.fun = ">=", rle.thres = 6)
@@ -91,11 +93,11 @@ cdt.data.aggregateTS <- function(MAT, index, pars, min.frac)
     if(any(miss.args)) pars <- c(pars, pars0[miss.args])
     nc <- ncol(MAT)
 
-    if(min.frac$unique){
-        full <- (index$nba / index$nb0) >= min.frac$all
+    if(pars$min.frac$unique){
+        full <- (index$nba / index$nb0) >= pars$min.frac$all
     }else{
         full <- sapply(index$nb.mon, function(x){
-            all(x$nba / x$nb0 >= min.frac$month[x$mo])
+            all(x$nba / x$nb0 >= pars$min.frac$month[x$mo])
         })
     }
 
@@ -103,19 +105,19 @@ cdt.data.aggregateTS <- function(MAT, index, pars, min.frac)
         out <- rep(NA, nc)
         if(!full[j]) return(out)
         don <- MAT[index$index[[j]], , drop = FALSE]
-        if(min.frac$unique){
-            miss <- (colSums(!is.na(don)) / index$nb0[j]) < min.frac$all
+        if(pars$min.frac$unique){
+            miss <- (colSums(!is.na(don)) / index$nb0[j]) < pars$min.frac$all
         }else{
             ix <- index$nb.mon[[j]]
             ii <- split(seq_along(ix$tsmo), ix$tsmo)
             miss <- lapply(seq_along(ii), function(i){
-                colSums(!is.na(don[ii[[i]], , drop = FALSE]))/ix$nb0[i] < min.frac$month[ix$mo[i]]
+                colSums(!is.na(don[ii[[i]], , drop = FALSE]))/ix$nb0[i] < pars$min.frac$month[ix$mo[i]]
             })
             miss <- do.call(rbind, miss)
             miss <- apply(miss, 2, any)
         }
         if(all(miss)) return(out)
-        out[!miss] <- cdt.aggregate(don[, !miss, drop = FALSE], pars = pars)
+        out[!miss] <- cdt.aggregate(don[, !miss, drop = FALSE], pars)
         out
     })
 
@@ -183,6 +185,7 @@ cdt.data.aggregateTS <- function(MAT, index, pars, min.frac)
                   "median" = matrixStats::colMedians,
                   "max" = matrixStats::colMaxs,
                   "min" = matrixStats::colMins,
+                  "var" = matrixStats::colVars,
                   "sd" = matrixStats::colSds
                 )
 
@@ -227,8 +230,8 @@ cdt.roll.fun <- function(x, win, fun = "sum", na.rm = FALSE,
                         align = c("center", "left", "right")
                     )
 {
-    # vector, fun: sum, mean, median, sd, max, min, convolve
-    # matrix, fun: sum, mean, median, sd, max, min
+    # vector, fun: sum, mean, median, var, sd, max, min, convolve
+    # matrix, fun: sum, mean, median, var, sd, max, min
     if(is.matrix(x)) foo <- .rollfun.mat
     else if(is.vector(x)) foo <- .rollfun.vec
     else return(NULL)
