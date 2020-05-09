@@ -6,7 +6,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
     ##############
 
     if(!dir.exists(GeneralParameters$out.dir)){
-        Insert.Messages.Out(paste(GeneralParameters$out.dir, .cdtData$EnvData[['message']][['6']]), format = TRUE)
+        Insert.Messages.Out(paste(GeneralParameters$out.dir, .cdtData$EnvData[['message']][['6']]), TRUE, 'e')
         return(NULL)
     }
 
@@ -17,16 +17,16 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
     #############
 
-    allyears <- GeneralParameters$climato$allyears
-    year1 <- GeneralParameters$climato$start
-    year2 <- GeneralParameters$climato$end
-    minyear <- GeneralParameters$climato$minyear
+    allyears <- GeneralParameters$climato$all.years
+    year1 <- GeneralParameters$climato$start.year
+    year2 <- GeneralParameters$climato$end.year
+    minyear <- GeneralParameters$climato$min.year
+    xwin <- GeneralParameters$climato$window
     intstep <- GeneralParameters$intstep
     outstep <- GeneralParameters$outstep
-    xwin <- GeneralParameters$climato$window
 
     if(any(is.na(c(year1, year2, minyear)))){
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['7']], format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['7']], TRUE, 'e')
         return(NULL)
     }
 
@@ -54,11 +54,11 @@ climatologiesCalcProcs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtdataset"){
         don <- try(readRDS(GeneralParameters$cdtdataset$index), silent = TRUE)
         if(inherits(don, "try-error")){
-            Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['9']], GeneralParameters$cdtdataset$index), format = TRUE)
+            Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['9']], GeneralParameters$cdtdataset$index), TRUE, 'e')
             return(NULL)
         }
         if(intstep != don$TimeStep){
-            Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['10']], intstep), format = TRUE)
+            Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['10']], intstep), TRUE, 'e')
             return(NULL)
         }
 
@@ -68,15 +68,18 @@ climatologiesCalcProcs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtnetcdf"){
         sdon <- getNCDFSampleData(GeneralParameters$cdtnetcdf$sample)
         if(is.null(sdon)){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], TRUE, 'e')
             return(NULL)
         }
 
         donInfo <- ncInfo.no.date.range(GeneralParameters$cdtnetcdf, intstep)
         if(is.null(donInfo)){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['18']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['18']], TRUE, 'e')
             return(NULL)
         }
+        donInfo$dates <- donInfo$dates[donInfo$exist]
+        donInfo$ncfiles <- donInfo$ncfiles[donInfo$exist]
+        donInfo$exist <- donInfo$exist[donInfo$exist]
         donInfo$ncinfo <- list(xo = sdon$ilon, yo = sdon$ilat, varid = sdon$varid)
 
         ncINFO <- sdon[c('ilon', 'ilat', 'varid')]
@@ -91,33 +94,38 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
         startMonth <- GeneralParameters$seasonal$start.mon
         seasonLength <- GeneralParameters$seasonal$length.mon
-        min.frac <- GeneralParameters$aggr.series$min.frac
+        aggr.pars <- GeneralParameters$aggr.series
 
         agg.index <- cdt.index.aggregate(daty, intstep, outstep,
                                          seasonLength = seasonLength,
                                          startMonth = startMonth)
 
-        ifull <- (agg.index$nba / agg.index$nb0) >= min.frac
+        if(aggr.pars$min.frac$unique){
+            ifull <- (agg.index$nba / agg.index$nb0) >= aggr.pars$min.frac$all
+        }else{
+            ifull <- sapply(agg.index$nb.mon, function(x){
+                all(x$nba / x$nb0 >= aggr.pars$min.frac$month[x$mo])
+            })
+        }
+
         if(all(!ifull)){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['19']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['19']], TRUE, 'e')
             return(NULL)
         }
 
-        daty <- agg.index$date[ifull]
-        index <- agg.index$index[ifull]
-        nbd.in <- agg.index$nb0[ifull]
+        daty <- agg.index$date
 
         #########################
 
         if(GeneralParameters$data.type == 'cdtstation'){
-            don$data <- cdt.data.aggregate(don$data, index, pars = GeneralParameters$aggr.series)
+            don$data <- cdt.data.aggregateTS(don$data, agg.index, aggr.pars)
             don$dates <- daty
+            don$data <- round(don$data, 5)
 
+            headers <- do.call(rbind, don[c('id', 'lon', 'lat', 'elv')])
             if(is.null(don$elv)){
-                headers <- t(cbind(don$id, don$lon, don$lat))
                 capition <- c('Stations', 'LON', paste(toupper(outstep), 'LAT', sep = '/'))
             }else{
-                headers <- t(cbind(don$id, don$lon, don$lat, don$elv))
                 capition <- c('Stations', 'LON', 'LAT', paste(toupper(outstep), 'ELV', sep = '/'))
             }
 
@@ -125,16 +133,17 @@ climatologiesCalcProcs <- function(GeneralParameters){
             cdtdata <- rbind(entete, cbind(daty, don$data))
             cdtdata[is.na(cdtdata)] <- miss.val
 
-            out.cdt.aggregate <- file.path(datadir, paste0("Aggrgate_data_", outstep, ".csv"))
+            out.cdt.aggregate <- file.path(datadir, paste0("Aggregated_data_", outstep, ".csv"))
             writeFiles(cdtdata, out.cdt.aggregate)
             rm(cdtdata)
         }
 
         if(GeneralParameters$data.type == "cdtdataset"){
-            outputDIR <- file.path(outDIR, "Aggregated_Data")
+            dataset.name <- paste0("Aggregated_Data_", outstep)
+            outputDIR <- file.path(outDIR, dataset.name)
             dataDIR <- file.path(outputDIR, "DATA")
             dir.create(dataDIR, showWarnings = FALSE, recursive = TRUE)
-            file.index <- file.path(outputDIR, "Aggregated_Data.rds")
+            file.index <- file.path(outputDIR, paste0(dataset.name, ".rds"))
 
             index.agg <- don
             index.agg$TimeStep <- outstep
@@ -152,15 +161,15 @@ climatologiesCalcProcs <- function(GeneralParameters){
             chunkcalc <- split(chunkfile, ceiling(chunkfile / don$chunkfac))
      
             ##########
-
             do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
             do.parCALC <- if(do.parChunk) FALSE else TRUE
             parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
+
             ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI, progress, FUN = function(jj)
             {
                 don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, cdtParallelCond, do.par = do.parChunk)
                 don.data <- don.data[don$dateInfo$index, , drop = FALSE]
-                cdtdata <- cdt.data.aggregate(don.data, index, pars = GeneralParameters$aggr.series)
+                cdtdata <- cdt.data.aggregateTS(don.data, agg.index, aggr.pars)
                 writeCdtDatasetChunk.sequence(cdtdata, chunkcalc[[jj]], index.agg, dataDIR, cdtParallelCond, do.par = do.parChunk)
                 rm(don.data, cdtdata); gc()
                 return(0)
@@ -171,10 +180,15 @@ climatologiesCalcProcs <- function(GeneralParameters){
         }
 
         if(GeneralParameters$data.type == "cdtnetcdf"){
-            outputDIR <- file.path(outDIR, "Aggregated_Data")
+            dataset.name <- paste0("Aggregated_Data_", outstep)
+            outputDIR <- file.path(outDIR, dataset.name)
             dir.create(outputDIR, showWarnings = FALSE, recursive = TRUE)
 
-            nc <- nc_open(donInfo$ncfiles[donInfo$exist][1])
+            outnc <- paste0(strsplit(GeneralParameters$cdtnetcdf$format, "%")[[1]][1], daty, '.nc')
+            out.ncfiles <- file.path(outputDIR, outnc)
+
+            #######
+            nc <- nc_open(donInfo$ncfiles[1])
             varid0 <- ncINFO$varid
             xlon0 <- nc$var[[varid0]]$dim[[ncINFO$ilon]]$vals
             xlat0 <- nc$var[[varid0]]$dim[[ncINFO$ilat]]$vals
@@ -192,32 +206,18 @@ climatologiesCalcProcs <- function(GeneralParameters){
             xnlat0 <- length(xlat0)
 
             ########
-            outnc <- paste0(strsplit(GeneralParameters$cdtnetcdf$format, "%")[[1]][1], daty, '.nc')
-            out.ncfiles <- file.path(outputDIR, outnc)
-
-            #######
             dx <- ncdim_def("Lon", "degreeE", xlon0)
             dy <- ncdim_def("Lat", "degreeN", xlat0)
             grd.nc.out <- ncvar_def(varid0, units0, list(dx, dy), missval0,
                                     longname = longname0, prec = prec0, compression = 9)
 
             #######
-            parsL <- doparallel.cond(length(index) >= 20)
-            ret <- cdt.foreach(seq_along(index), parsL, GUI, progress, FUN = function(jj)
+            parsL <- doparallel.cond(length(agg.index$index) >= 20)
+            ret <- cdt.foreach(seq_along(agg.index$index), parsL, GUI, progress, FUN = function(jj)
             {
-                ix <- index[[jj]]
-                nc.files <- donInfo$ncfiles[ix]
-                nc.exist <- donInfo$exist[ix]
-                nc.files <- nc.files[nc.exist]
-                len.nc.files <- length(nc.files)
-
-                if((len.nc.files == 0) | ((len.nc.files / nbd.in[jj]) < min.frac)){
-                    out <- matrix(missval0, nrow = xnlon0, ncol = xnlat0)
-                    nc2 <- ncdf4::nc_create(out.ncfiles[jj], grd.nc.out)
-                    ncdf4::ncvar_put(nc2, grd.nc.out, out)
-                    ncdf4::nc_close(nc2)
-                    return(NULL)
-                }
+                if(!ifull[jj]) return(NULL)
+                ix <- agg.index$index[[jj]]
+                nc.files <- donInfo$ncfiles[agg.index$index[[jj]]]
 
                 ncdon <- lapply(seq_along(nc.files), function(j){
                     nc <- ncdf4::nc_open(nc.files[j])
@@ -226,47 +226,63 @@ climatologiesCalcProcs <- function(GeneralParameters){
                     don <- transposeNCDFData(don, ncINFO)
                     c(don)
                 })
-
                 ncdon <- do.call(rbind, ncdon)
-                miss <- (colSums(is.na(ncdon)) / nrow(ncdon)) >= min.frac
 
-                out <- cdt.aggregate(ncdon, pars = GeneralParameters$aggr.series)
+                if(aggr.pars$min.frac$unique){
+                    miss <- (colSums(!is.na(ncdon)) / agg.index$nb0[jj]) < aggr.pars$min.frac$all
+                }else{
+                    ix <- agg.index$nb.mon[[jj]]
+                    ii <- split(seq_along(ix$tsmo), ix$tsmo)
+                    miss <- lapply(seq_along(ii), function(i){
+                        colSums(!is.na(ncdon[ii[[i]], , drop = FALSE]))/ix$nb0[i] < aggr.pars$min.frac$month[ix$mo[i]]
+                    })
+                    miss <- do.call(rbind, miss)
+                    miss <- apply(miss, 2, any)
+                }
+                if(all(miss)) return(NULL)
 
-                out[miss] <- missval0
-                out[is.na(out) | is.nan(out) | is.infinite(out)] <- missval0
+                out <- cdt.aggregate(ncdon, aggr.pars)
+                out[miss] <- NA
+                out[is.nan(out) | is.infinite(out)] <- NA
+                out[is.na(out)] <- missval0
                 out <- matrix(out, nrow = xnlon0, ncol = xnlat0)
 
-                nc2 <- ncdf4::nc_create(out.ncfiles[jj], grd.nc.out)
-                ncdf4::ncvar_put(nc2, grd.nc.out, out)
-                ncdf4::nc_close(nc2)
+                nc <- ncdf4::nc_create(out.ncfiles[jj], grd.nc.out)
+                ncdf4::ncvar_put(nc, grd.nc.out, out)
+                ncdf4::nc_close(nc)
                 rm(out, ncdon); gc()
                 return(0)
             })
 
+            donInfo$exist <- file.exists(out.ncfiles)
+            donInfo$ncfiles <- out.ncfiles[donInfo$exist]
+            daty <- daty[donInfo$exist]
             donInfo$dates <- daty
-            donInfo$ncfiles <- out.ncfiles
-            donInfo$exist <- rep(TRUE, length(daty))
+            donInfo$exist <- donInfo$exist[donInfo$exist]
             ncINFO$ilon <- 1
             ncINFO$ilat <- 2
         }
  
         intstep <- outstep
-        # GeneralParameters$intstep <- outstep
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['21']], TRUE, "i")
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['21']], TRUE, "s")
     }
 
     #####################################################
 
+    Insert.Messages.Out(.cdtData$EnvData[['message']][['2']], TRUE, "i")
+
     year <- as.numeric(substr(daty, 1, 4))
-
-    if(length(unique(year)) < minyear){
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['8']], format = TRUE)
-        return(NULL)
-    }
-
-    ### Climato index
     iyear <- if(allyears) rep(TRUE, length(year)) else year >= year1 & year <= year2
     daty <- daty[iyear]
+    year <- year[iyear]
+
+    if(length(unique(year)) < minyear){
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['8']], TRUE, 'e')
+        return(NULL)
+    }
+    GeneralParameters$climato$start.year <- min(year)
+    GeneralParameters$climato$end.year <- max(year)
+
     index <- cdt.index.Climatologies(daty, intstep, xwin)
 
     #####################################################
@@ -274,8 +290,8 @@ climatologiesCalcProcs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtstation"){
         don$data <- don$data[iyear, , drop = FALSE]
         dat.clim <- .cdt.Climatologies(index, don$data, minyear, intstep, xwin)
-        dat.moy <- round(dat.clim$mean, 1)
-        dat.sds <- round(dat.clim$sd, 1)
+        dat.moy <- round(dat.clim$mean, 2)
+        dat.sds <- round(dat.clim$sd, 2)
 
         rm(dat.clim)
 
@@ -321,6 +337,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
         dat.sds <- rbind(infohead, cbind(index$id, dat.sds))
         writeFiles(dat.sds, out.cdt.clim.sds)
 
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['22']], TRUE, "s")
         rm(dat.moy, dat.sds, don)
     }
 
@@ -372,8 +389,8 @@ climatologiesCalcProcs <- function(GeneralParameters){
         do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
         do.parCALC <- if(do.parChunk) FALSE else TRUE
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
-        ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
-                           progress = TRUE, FUN = function(jj)
+        ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = GUI,
+                           progress = progress, FUN = function(jj)
         {
             don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], GeneralParameters$cdtdataset$index, cdtParallelCond, do.par = do.parChunk)
             don.data <- don.data[don$dateInfo$index, , drop = FALSE]
@@ -386,7 +403,11 @@ climatologiesCalcProcs <- function(GeneralParameters){
             rm(dat.clim, don.data); gc()
         })
 
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['22']], TRUE, "s")
+
         ##########################################
+
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['23']], TRUE, "i")
 
         x <- index.out$coords$mat$x
         y <- index.out$coords$mat$y
@@ -396,7 +417,11 @@ climatologiesCalcProcs <- function(GeneralParameters){
         nc.grd <- ncvar_def(index.out$varInfo$name, index.out$varInfo$units, xy.dim, -99, index.out$varInfo$longname, "float", compression = 9)
 
         ######################
-        ret <- lapply(index$id, function(id){
+
+        ret <- cdt.foreach(seq_along(index$id), doparallel.cond(FALSE),
+                           GUI = GUI, progress = progress, FUN = function(jj)
+        {
+            id <- index$id[jj]
             dat.moy <- readCdtDatasetChunk.multi.dates.order(file.index1, id, cdtParallelCond, onedate = TRUE)
             dat.moy <- dat.moy$z
             dat.moy[is.na(dat.moy)] <- -99
@@ -415,6 +440,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
             return(0)
         })
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['24']], TRUE, "s")
 
         rm(don, index, index.out)
     }
@@ -443,10 +469,6 @@ climatologiesCalcProcs <- function(GeneralParameters){
         close(out.dat.index)
 
         #####################################
-
-        donInfo$dates <- donInfo$dates[donInfo$exist]
-        donInfo$ncfiles <- donInfo$ncfiles[donInfo$exist]
-        donInfo$exist <- donInfo$exist[donInfo$exist]
 
         nc <- nc_open(donInfo$ncfiles[1])
         varid0 <- donInfo$ncinfo$varid
@@ -513,7 +535,9 @@ climatologiesCalcProcs <- function(GeneralParameters){
         div <- if(intstep == "daily") 2 * xwin + 1 else 1
         Tstep.miss <- (sapply(index$index, length) / div) < minyear
 
-        ret <- lapply(seq_along(index$index), function(jj){
+        ret <- cdt.foreach(seq_along(index$index), doparallel.cond(FALSE),
+                           GUI = GUI, progress = progress, FUN = function(jj)
+        {
             if(Tstep.miss[jj]){
                 dat.moy <- rep(NA, len.lon * len.lat)
                 dat.sds <- rep(NA, len.lon * len.lat)
@@ -521,7 +545,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
                 id2read <- index$index[[jj]]
                 dat.clim <- lapply(seq_along(id2read), function(j){
                     nc <- nc_open(donInfo$ncfiles[id2read[j]])
-                    vars <- ncvar_get(nc, varid = donInfo$ncinfo$varid)
+                    vars <- ncvar_get(nc, varid = varid0)
                     nc_close(nc)
                     vars <- transposeNCDFData(vars, ncINFO)
                     c(vars)
@@ -570,10 +594,15 @@ climatologiesCalcProcs <- function(GeneralParameters){
             return(0)
         })
 
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['22']], TRUE, "s")
+
         #########
+
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['23']], TRUE, "i")
+
         parsL <- doparallel.cond(length(col.idx) >= 20)
-        ret <- cdt.foreach(seq_along(col.idx), parsL, GUI = TRUE,
-                           progress = TRUE, FUN = function(j)
+        ret <- cdt.foreach(seq_along(col.idx), parsL, GUI = GUI,
+                           progress = progress, FUN = function(j)
         {
             tmp <- lapply(seq_along(index$index), function(jj){
                 file.tmp <- file.path(datadir1, paste0("clim_", j, ".", jj))
@@ -608,6 +637,8 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
             return(0)
         })
+
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['24']], TRUE, "s")
 
         con <- gzfile(file.index1, compression = 6)
         open(con, "wb")

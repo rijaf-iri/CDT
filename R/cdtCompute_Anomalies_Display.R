@@ -6,9 +6,9 @@ anomaliesCalc.plotAnomMaps <- function(){
     ## titre
     if(!anomMapOp$title$user){
         titre1 <- switch(.cdtData$EnvData$output$params$anomaly,
-                        "Difference" = "Anomaly:",
-                        "Percentage" = "Anomaly (% of Mean):",
-                        "Standardized" = "Standardized Anomaly:")
+                         "Difference" = "Anomaly:",
+                         "Percentage" = "Anomaly (% of Mean):",
+                         "Standardized" = "Standardized Anomaly:")
         .titre <- paste(titre1, str_trim(tclvalue(.cdtData$EnvData$anomDate)))
     }else .titre <- anomMapOp$title$title
 
@@ -20,10 +20,10 @@ anomaliesCalc.plotAnomMaps <- function(){
 
     opar <- par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = anomMapOp,
-                        data.type = .data.type,
-                        plot.type = .plot.type)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = anomMapOp,
+                         data.type = .data.type,
+                         plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -44,7 +44,7 @@ anomaliesCalc.plotAnomGraph <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out("Station not found", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['27']], TRUE, "e")
             return(NULL)
         }
         don <- .cdtData$EnvData$anomdata$data[, ixy]
@@ -66,29 +66,44 @@ anomaliesCalc.plotAnomGraph <- function(){
 
     #########
 
-    if(.cdtData$EnvData$output$params$intstep == "daily"){
+    if(.cdtData$EnvData$output$params$outstep == "daily"){
         titre1 <- "Daily"
         daty <- as.Date(daty, "%Y%m%d")
     }
-    if(.cdtData$EnvData$output$params$intstep == "pentad"){
+    if(.cdtData$EnvData$output$params$outstep == "pentad"){
         titre1 <- "Pentad"
         seqtime <- as.Date(daty, "%Y%m%d")
         daty <- as.Date(paste0(format(seqtime, "%Y-%m-"), c(1, 6, 11, 16, 21, 26)[as.numeric(format(seqtime, "%d"))]))
     }
-    if(.cdtData$EnvData$output$params$intstep == "dekadal"){
+    if(.cdtData$EnvData$output$params$outstep == "dekadal"){
         titre1 <- "Dekadal"
         seqtime <- as.Date(daty, "%Y%m%d")
         daty <- as.Date(paste0(format(seqtime, "%Y-%m-"), c(1, 11, 21)[as.numeric(format(seqtime, "%d"))]))
     }
-    if(.cdtData$EnvData$output$params$intstep == "monthly"){
+    if(.cdtData$EnvData$output$params$outstep == "monthly"){
         titre1 <- "Monthly"
         daty <- as.Date(paste0(daty, "01"), "%Y%m%d")
     }
+    if(.cdtData$EnvData$output$params$outstep == "seasonal"){
+        mois <- format(ISOdate(2014, 1:12, 1), "%b")
+        mon <- .cdtData$EnvData$output$params$seasonal$start.mon
+        len <- .cdtData$EnvData$output$params$seasonal$length.mon
+        mon1 <- (mon + len - 1) %% 12
+        mon1[mon1 == 0] <- 12
+        seasdef <- paste0(mois[mon], "->", mois[mon1])
+        titre1 <- paste(paste0("[", seasdef, "]"), "Seasonal")
+        daty <- do.call(c, lapply(strsplit(daty, "_"), '[[', 1))
+        daty <- as.Date(paste0(daty, '-01'))
+    }
+    if(.cdtData$EnvData$output$params$outstep == "annual"){
+        titre1 <- "Annual"
+        daty <- as.Date(paste0(daty, "0101"), "%Y%m%d")
+    }
 
     titre2 <- switch(.cdtData$EnvData$output$params$anomaly,
-                    "Difference" = "Anomaly",
-                    "Percentage" = "Anomaly (% of Mean)",
-                    "Standardized" = "Standardized Anomaly")
+                     "Difference" = "Anomaly",
+                     "Percentage" = "Anomaly (% of Mean)",
+                     "Standardized" = "Standardized Anomaly")
 
     titre <- paste(titre1, titre2, titre3)
 
@@ -104,14 +119,14 @@ anomaliesCalc.plotAnomGraph <- function(){
         x3 <- as.numeric(xx[3])
         if(.cdtData$EnvData$output$params$intstep == "pentad"){
             if(is.na(x3) | x3 < 1 | x3 > 6){
-                Insert.Messages.Out("xlim: pentad must be  between 1 and 6", format = TRUE)
+                Insert.Messages.Out(.cdtData$EnvData[['message']][['28']], TRUE, 'e')
                 return(NULL)
             }
             x3 <- c(1, 6, 11, 16, 21, 26)[x3]
         }
         if(.cdtData$EnvData$output$params$intstep == "dekadal"){
             if(is.na(x3) | x3 < 1 | x3 > 3){
-                Insert.Messages.Out("xlim: dekad must be 1, 2 or 3", format = TRUE)
+                Insert.Messages.Out(.cdtData$EnvData[['message']][['29']], TRUE, 'e')
                 return(NULL)
             }
             x3 <- c(1, 11, 21)[x3]
@@ -122,7 +137,7 @@ anomaliesCalc.plotAnomGraph <- function(){
         x3 <- str_pad(x3, 2, pad = "0")
         xx <- as.Date(paste0(x1, x2, x3), "%Y%m%d")
         if(is.na(xx)){
-            Insert.Messages.Out("xlim: invalid date", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['30']], TRUE, 'e')
             return(NULL)
         }
         xlim[1] <- xx
@@ -132,14 +147,14 @@ anomaliesCalc.plotAnomGraph <- function(){
         x3 <- as.numeric(xx[3])
         if(.cdtData$EnvData$output$params$intstep == "pentad"){
             if(is.na(x3) | x3 < 1 | x3 > 6){
-                Insert.Messages.Out("xlim: pentad must be  between 1 and 6", format = TRUE)
+                Insert.Messages.Out(.cdtData$EnvData[['message']][['28']], TRUE, 'e')
                 return(NULL)
             }
             x3 <- c(1, 6, 11, 16, 21, 26)[x3]
         }
         if(.cdtData$EnvData$output$params$intstep == "dekadal"){
             if(is.na(x3) | x3 < 1 | x3 > 3){
-                Insert.Messages.Out("xlim: dekad must be 1, 2 or 3", format = TRUE)
+                Insert.Messages.Out(.cdtData$EnvData[['message']][['29']], TRUE, 'e')
                 return(NULL)
             }
             x3 <- c(1, 11, 21)[x3]
@@ -150,7 +165,7 @@ anomaliesCalc.plotAnomGraph <- function(){
         x3 <- str_pad(x3, 2, pad = "0")
         xx <- as.Date(paste0(x1, x2, x3), "%Y%m%d")
         if(is.na(xx)){
-            Insert.Messages.Out("xlim: invalid date", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['30']], TRUE, 'e')
             return(NULL)
         }
         xlim[2] <- xx
@@ -177,19 +192,19 @@ anomaliesCalc.plotAnomGraph <- function(){
 
     if(GRAPHTYPE == "Line"){
         ret <- graphs.plot.line(daty, don, xlim = xlim, ylim = ylim,
-                        xlab = xlab, ylab = ylab, ylab.sub = NULL,
-                        title = titre, title.position = titre.pos, axis.font = 1,
-                        plotl = optsgph$plot, legends = NULL,
-                        location = .cdtData$EnvData$location)
+                                xlab = xlab, ylab = ylab, ylab.sub = NULL,
+                                title = titre, title.position = titre.pos, axis.font = 1,
+                                plotl = optsgph$plot, legends = NULL,
+                                location = .cdtData$EnvData$location)
     }
 
     if(GRAPHTYPE == "Bar"){
         loko <- c(optsgph$colors$negative, optsgph$colors$positive)
 
         ret <- graphs.plot.bar.Anomaly(daty, don, period = NULL, percent = FALSE,
-                                xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, ylab.sub = NULL,
-                                title = titre, title.position = titre.pos, axis.font = 1,
-                                barcol = loko, location = .cdtData$EnvData$location)
+                                       xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, ylab.sub = NULL,
+                                       title = titre, title.position = titre.pos, axis.font = 1,
+                                       barcol = loko, location = .cdtData$EnvData$location)
     }
     return(ret)
 }

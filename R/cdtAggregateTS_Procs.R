@@ -165,7 +165,8 @@ AggregateTS_Execute <- function(){
         #######
         dx <- ncdim_def("Lon", "degreeE", xlon0)
         dy <- ncdim_def("Lat", "degreeN", xlat0)
-        grd.nc.out <- ncvar_def(varid0, units0, list(dx, dy), missval0, longname = longname0, prec = prec0)
+        grd.nc.out <- ncvar_def(varid0, units0, list(dx, dy), missval0,
+                                longname = longname0, prec = prec0, compression = 9)
 
         #######
         parsL <- doparallel.cond(length(agg.index$index) >= 20)

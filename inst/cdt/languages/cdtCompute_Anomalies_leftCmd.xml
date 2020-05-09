@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input </text>
+            <text lang="fr"> Entrées </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Anomalies </text>
+            <text lang="fr"> Anomalies </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Maps </text>
+            <text lang="fr"> Cartes </text>
+        </tab>
+        <tab id="4">
+            <text lang="en"> Graphs </text>
+            <text lang="fr"> Graphiques </text>
+        </tab>
+        <tab id="5">
+            <text lang="en"> Boundaries </text>
+            <text lang="fr"> Contours </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Difference </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Percentage </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Standardized </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Aggregation Function </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Set Anomalies Date Range </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Set Base Period </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Calculate </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Update existing anomalies data </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Climatologies data already computed </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Anomalies data already computed </text>
+        </checkbutton>
+        <checkbutton id="4">
+            <text lang="en"> Add boundaries to Map </text>
+            <text lang="fr"> Ajouter des contours à la carte </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Input Data </text>
+            <text lang="fr"> Données d'entrée </text>
+        </label>
+        <label id="1a">
+            <text lang="en"> Output Anomaly </text>
+        </label>
+        <label id="1b">
+            <text lang="en"> Start Month </text>
+        </label>
+        <label id="1c">
+            <text lang="en"> Length </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Input Data </text>
+            <text lang="fr"> Données d'entrée </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing stations data </text>
+            <text lang="fr"> Fichier contenant les données de stations </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Index file (*.rds) of the dataset </text>
+            <text lang="fr"> Fichier Index (*.rds) du jeu de données </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Format </text>
+            <text lang="fr"> Format </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Directory to save the outputs </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Path to the file (Anomaly.rds) </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Climatology data </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Path to the file (Climatology.rds) </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Centered time window </text>
+            <text lang="fr"> Fenêtre temporelle centrée </text>
+        </label>
+        <label id="11">
+            <text lang="en"> days </text>
+            <text lang="fr"> jours </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Anomaly </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Anomalies data </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Anomaly Map </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Anomaly Graph </text>
+        </label>
+        <label id="17">
+            <text lang="en"> Station/Coordinates </text>
+            <text lang="fr"> Station/Coordonnées </text>
+        </label>
+        <label id="18">
+            <text lang="en"> Boundaries </text>
+            <text lang="fr"> Contours </text>
+        </label>
+        <label id="19">
+            <text lang="en"> Select station to plot </text>
+            <text lang="fr"> Sélectionnez une station à visualiser </text>
+        </label>
+        <label id="20">
+            <text lang="en"> Enter longitude and latitude to plot </text>
+            <text lang="fr"> Entrer la longitude et la latitude à visualiser </text>
+        </label>
+        <label id="21">
+            <text lang="en"> Longitude </text>
+            <text lang="fr"> Longitude </text>
+        </label>
+        <label id="22">
+            <text lang="en"> Latitude </text>
+            <text lang="fr"> Latitude </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+                <text lang="fr"> Sélectionnez le pas de temps des données </text>
+            </tooltip>
+        </content>
+        <content id="1a">
+            <status>
+                <text lang="en"> Select the time step of the output anomaly </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the output anomaly </text>
+            </tooltip>
+        </content>
+        <content id="1b">
+            <status>
+                <text lang="en"> Select the start month of the season </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the start month of the season </text>
+            </tooltip>
+        </content>
+        <content id="1c">
+            <status>
+                <text lang="en"> Select the length of the season (e.g., 3 for three-month season) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the length of the season (e.g., 3 for three-month season) </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+                <text lang="fr"> Sélectionnez le format des données d'entrée </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the file containing the input data </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les données d'entrée </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the input data </text>
+                <text lang="fr"> Sélectionnez le fichier contenant les données d'entrée </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+                <text lang="fr"> Entrez le chemin complet du fichier &lt;Nom des données&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si n'est pas listé </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si n'est pas listé </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Check this box to update an existing anomalies data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to update an existing anomalies data </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Enter the full path to the file Anomaly.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file Anomaly.rds </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Start and end date to calculate the anomalies </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start and end date to calculate the anomalies </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Start and end date to calculate the anomalies </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start and end date to calculate the anomalies </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Click on this button to set the base period for the climatology </text>
+                <text lang="fr"> Cliquez sur ce bouton pour définir la période de base pour la climatologie </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Click on this button to set the base period for the climatology </text>
+                <text lang="fr"> Cliquez sur ce bouton pour définir la période de base pour la climatologie </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> The daily climatology is calculated using a centered (2 x window + 1) time window </text>
+                <text lang="fr"> La climatologie journalière est calculée en utilisant un centré (2 x window + 1) fenêtre temporelle </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The daily climatology is calculated using a centered (2 x window + 1) time window </text>
+                <text lang="fr"> La climatologie journalière est calculée en utilisant un centré (2 x window + 1) fenêtre temporelle </text>
+            </tooltip>
+        </content>
+        <content id="14">
+            <status>
+                <text lang="en"> Select the method to calculate the anomalies </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the method to calculate the anomalies </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> You have to set the netcdf files parameters </text>
+            <text lang="fr"> Vous devez définir les paramètres des fichiers netcdf </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Computing anomalies ...... </text>
+            <text lang="fr"> Calcul des anomalies en cours ...... </text>
+        </content>
+        <content id="2a">
+            <text lang="en"> Computing Anomalies finished </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Anomalies calculation finished successfully </text>
+            <text lang="fr"> Calcul des anomalies terminé avec succès </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Anomaly calculation failed </text>
+            <text lang="fr"> Calcul des anomalies échouées </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Unable to load anomalies data </text>
+            <text lang="fr"> Impossible de charger les données des anomalies </text>
+        </content>
+        <content id="6">
+            <text lang="en"> not found </text>
+            <text lang="fr"> introuvable </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Unable to read </text>
+            <text lang="fr"> Lecture impossible </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Previous saved anomalies data are not </text>
+        </content>
+        <content id="9">
+            <text lang="en"> The climatologies data are not </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Invalid base period </text>
+            <text lang="fr"> Période de base invalide </text>
+        </content>
+        <content id="11">
+            <text lang="en"> The data time step is not </text>
+            <text lang="fr"> Le pas de temps des données n'est pas </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Number of stations from the input and the previous saved anomalies data do not match </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Order of stations from the input and the previous saved anomalies data do not match </text>
+        </content>
+        <content id="15">
+            <text lang="en"> Number of stations from data and the climatology do not match </text>
+        </content>
+        <content id="16">
+            <text lang="en"> Order of stations from data and the climatology do not match </text>
+        </content>
+        <content id="17">
+            <text lang="en"> The dataset and anomaly data have different resolution or bbox </text>
+        </content>
+        <content id="18">
+            <text lang="en"> The dataset and climatology have different resolution or bbox </text>
+        </content>
+        <content id="19">
+            <text lang="en"> Aggregate time series ... </text>
+            <text lang="fr"> Agrégation des series temporelles ... </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Aggregating time series finished </text>
+            <text lang="fr"> Agrégation des series temporelles effectuée </text>
+        </content>
+        <content id="21">
+            <text lang="en"> No aggregation, too much missing values </text>
+        </content>
+        <content id="22">
+            <text lang="en"> Computing climatology ...... </text>
+            <text lang="fr"> Calcul de la climatologie en cours ...... </text>
+        </content>
+        <content id="23">
+            <text lang="en"> No enough data to calculate climatologies </text>
+            <text lang="fr"> Données insuffisantes pour calculer les climatologies </text>
+        </content>
+        <content id="24">
+            <text lang="en"> Computing climatology finished </text>
+        </content>
+        <content id="25">
+            <text lang="en"> Writing NetCDF data to files ... </text>
+        </content>
+        <content id="26">
+            <text lang="en"> Writing NetCDF data finished </text>
+        </content>
+        <content id="27">
+            <text lang="en"> Station not found </text>
+        </content>
+        <content id="28">
+            <text lang="en"> xlim: pentad must be between 1 and 6 </text>
+            <text lang="fr"> xlim: pentade doit être compris entre 1 et 6 </text>
+        </content>
+        <content id="29">
+            <text lang="en"> xlim: dekad must be 1, 2 or 3 </text>
+            <text lang="fr"> xlim: décade doit être 1, 2 ou 3 </text>
+        </content>
+        <content id="30">
+            <text lang="en"> xlim: invalid date </text>
+            <text lang="fr"> xlim: date invalide </text>
+        </content>
+    </message>
+</panel_cmd>

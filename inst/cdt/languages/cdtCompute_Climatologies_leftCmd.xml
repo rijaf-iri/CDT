@@ -129,6 +129,9 @@
         <label id="24">
             <text lang="en"> Length </text>
         </label>
+        <label id="25">
+            <text lang="en"> Plot Type </text>
+        </label>
     </widget>
     <help>
         <content id="1">
@@ -262,7 +265,7 @@
             <text lang="fr"> Vous devez définir les paramètres des fichiers netcdf </text>
         </content>
         <content id="2">
-            <text lang="en"> Calculate climatology ...... </text>
+            <text lang="en"> Computing climatology ...... </text>
             <text lang="fr"> Calcul de la climatologie en cours ...... </text>
         </content>
         <content id="3">
@@ -331,7 +334,6 @@
         </content>
         <content id="19">
             <text lang="en"> No aggregation, too much missing values </text>
-            <text lang="fr"> No aggregation, too much missing values </text>
         </content>
         <content id="20">
             <text lang="en"> Aggregate time series ... </text>
@@ -340,6 +342,15 @@
         <content id="21">
             <text lang="en"> Aggregating time series finished </text>
             <text lang="fr"> Agrégation des series temporelles effectuée </text>
+        </content>
+        <content id="22">
+            <text lang="en"> Computing climatology finished </text>
+        </content>
+        <content id="23">
+            <text lang="en"> Writing NetCDF data to files ... </text>
+        </content>
+        <content id="24">
+            <text lang="en"> Writing NetCDF data finished </text>
         </content>
     </message>
 </panel_cmd>

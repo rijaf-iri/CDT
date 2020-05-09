@@ -848,16 +848,8 @@ AggregateTS_GetInfo <- function(){
     tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.file.save, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    ###################
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        txtStatus <- lang.dlg[['status']][['10']]
-        txtTooltip <- lang.dlg[['tooltip']][['10']]
-    }else{
-        txtStatus <- lang.dlg[['status']][['11']]
-        txtTooltip <- lang.dlg[['tooltip']][['11']]
-    }
-
-    helpWidget(en.file.save, txtTooltip, txtStatus)
+    ihlpSav <- if(.cdtData$GalParams$data.type == 'cdtstation') '10' else '11'
+    helpWidget(en.file.save, lang.dlg[['tooltip']][[ihlpSav]], lang.dlg[['status']][[ihlpSav]])
     helpWidget(bt.file.save, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
 
     ############################################

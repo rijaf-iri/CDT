@@ -308,16 +308,16 @@
             <text lang="fr"> Bilan Hydrique </text>
         </submenu>
         <submenu id="3">
+            <text lang="en"> Climatologies and Anomalies </text>
+            <text lang="fr"> Climatologies et Anomalies </text>
+        </submenu>
+        <submenu id="3-1">
             <text lang="en"> Compute Climatologies </text>
             <text lang="fr"> Calcul Climatologies </text>
         </submenu>
-        <submenu id="3-1">
-            <text lang="en"> Climatologies </text>
-            <text lang="fr"> Climatologies </text>
-        </submenu>
         <submenu id="3-2">
             <text lang="en"> Compute Anomalies </text>
-            <text lang="fr"> Compute Anomalies </text>
+            <text lang="fr"> Calcul Anomalies </text>
         </submenu>
         <submenu id="4">
             <text lang="en"> Spatial Analysis </text>

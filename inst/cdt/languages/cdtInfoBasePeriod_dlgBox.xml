@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Base Period Settings </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Use all years from the input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Start Year </text>
+        </label>
+        <label id="3">
+            <text lang="en"> End Year </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Minimum number of years </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Check this box to use all years from the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to use all years from the input data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Enter the start year of the period </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the start year of the period </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the end year of the period </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the end year of the period </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the minimum number of years without missing values required for computation </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the minimum number of years without missing values required for computation </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

@@ -6,8 +6,8 @@ climatologiesCalc.plotClimMaps <- function(){
     ## titre
     if(!climMapOp$title$user){
         titre2 <- if(.cdtData$EnvData$climdata$Var == "CDTMEAN") "mean" else "standard deviation"
-        year1 <- .cdtData$EnvData$output$params$climato$start
-        year2 <- .cdtData$EnvData$output$params$climato$end
+        year1 <- .cdtData$EnvData$output$params$climato$start.year
+        year2 <- .cdtData$EnvData$output$params$climato$end.year
         titre3 <- paste0("(", year1, "-", year2, ")")
 
         if(.cdtData$EnvData$output$params$outstep %in% c('annual', 'seasonal')){
@@ -20,13 +20,13 @@ climatologiesCalc.plotClimMaps <- function(){
                 titre4 <- ""
                 seqtime <- ""
         }else{
-            if(.cdtData$EnvData$output$params$intstep == "daily"){
+            if(.cdtData$EnvData$output$params$outstep == "daily"){
                 titre1 <- "Daily"
                 titre4 <- "for"
                 seqtime <- format(seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day'), "%B %d")
             }
-            if(.cdtData$EnvData$output$params$intstep == "pentad"){
-                titre1 <- "Pentad"
+            if(.cdtData$EnvData$output$params$outstep == "pentad"){
+                titre1 <- "Pentadal"
                 titre4 <- "for the"
                 seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
                 pen <- findInterval(as.numeric(format(seqtime, "%d")), c(1, 5, 10, 15, 20, 25, 31), rightmost.closed = TRUE, left.open = TRUE)
@@ -34,7 +34,7 @@ climatologiesCalc.plotClimMaps <- function(){
                 ordNum <- c('1st', '2nd', '3rd', '4th', '5th', '6th')
                 seqtime <- paste(ordNum[as.numeric(format(seqtime, "%d"))], "pentad of", format(seqtime, "%B"))
             }
-            if(.cdtData$EnvData$output$params$intstep == "dekadal"){
+            if(.cdtData$EnvData$output$params$outstep == "dekadal"){
                 titre1 <- "Dekadal"
                 titre4 <- "for the"
                 seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
@@ -43,7 +43,7 @@ climatologiesCalc.plotClimMaps <- function(){
                 ordNum <- c('1st', '2nd', '3rd')
                 seqtime <- paste(ordNum[as.numeric(format(seqtime, "%d"))], "dekad of", format(seqtime, "%B"))
             }
-            if(.cdtData$EnvData$output$params$intstep == "monthly"){
+            if(.cdtData$EnvData$output$params$outstep == "monthly"){
                 titre1 <- "Monthly"
                 titre4 <- "for"
                 seqtime <- format(seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'month'), "%B")
@@ -63,10 +63,10 @@ climatologiesCalc.plotClimMaps <- function(){
 
     opar <- par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = climMapOp,
-                        data.type = .data.type,
-                        plot.type = .plot.type)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = climMapOp,
+                         data.type = .data.type,
+                         plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -87,7 +87,7 @@ climatologiesCalc.plotClimGraph <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['12']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['12']], TRUE, 'e')
             return(NULL)
         }
         don <- .cdtData$EnvData$climdata$data[, ixy]
@@ -107,25 +107,25 @@ climatologiesCalc.plotClimGraph <- function(){
 
     #########
 
-    if(.cdtData$EnvData$output$params$intstep == "daily"){
+    if(.cdtData$EnvData$output$params$outstep == "daily"){
         titre1 <- "Daily"
         seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
     }
-    if(.cdtData$EnvData$output$params$intstep == "pentad"){
+    if(.cdtData$EnvData$output$params$outstep == "pentad"){
         titre1 <- "Pentad"
         seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
         pen <- findInterval(as.numeric(format(seqtime, "%d")), c(1, 5, 10, 15, 20, 26, 31), rightmost.closed = TRUE, left.open = TRUE)
         seqtime <- as.Date(names(split(seq_along(seqtime), paste0(format(seqtime, "%Y-%m-"), pen))))
         seqtime <- as.Date(paste0(format(seqtime, "%Y-%m-"), c(1, 6, 11, 16, 21, 26)[as.numeric(format(seqtime, "%d"))]))
     }
-    if(.cdtData$EnvData$output$params$intstep == "dekadal"){
+    if(.cdtData$EnvData$output$params$outstep == "dekadal"){
         titre1 <- "Dekadal"
         seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'day')
         dek <- findInterval(as.numeric(format(seqtime, "%d")), c(1, 10, 20, 31), rightmost.closed = TRUE, left.open = TRUE)
         seqtime <- as.Date(names(split(seq_along(seqtime), paste0(format(seqtime, "%Y-%m-"), dek))))
         seqtime <- as.Date(paste0(format(seqtime, "%Y-%m-"), c(1, 11, 21)[as.numeric(format(seqtime, "%d"))]))
     }
-    if(.cdtData$EnvData$output$params$intstep == "monthly"){
+    if(.cdtData$EnvData$output$params$outstep == "monthly"){
         titre1 <- "Monthly"
         seqtime <- seq(as.Date('2015-1-1'), as.Date('2015-12-31'), 'month')
     }
@@ -145,30 +145,30 @@ climatologiesCalc.plotClimGraph <- function(){
         xx <- strsplit(optsgph$xlim$min, "-")[[1]]
         x1 <- as.numeric(xx[1])
         if(is.na(x1) | x1 < 1 | x1 > 12){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['14']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['14']], TRUE, 'e')
             return(NULL)
         }
         x2 <- as.numeric(xx[2])
-        if(.cdtData$EnvData$output$params$intstep == "pentad"){
+        if(.cdtData$EnvData$output$params$outstep == "pentad"){
             if(is.na(x2) | x2 < 1 | x2 > 6){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['15']], format = TRUE)
+                Insert.Messages.Out(.cdtData$EnvData[['message']][['15']], TRUE, 'e')
                 return(NULL)
             }
             x2 <- c(1, 6, 11, 16, 21, 26)[x2]
         }
-        if(.cdtData$EnvData$output$params$intstep == "dekadal"){
+        if(.cdtData$EnvData$output$params$outstep == "dekadal"){
             if(is.na(x2) | x2 < 1 | x2 > 3){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['16']], format = TRUE)
+                Insert.Messages.Out(.cdtData$EnvData[['message']][['16']], TRUE, 'e')
                 return(NULL)
             }
             x2 <- c(1, 11, 21)[x2]
         }
-        if(.cdtData$EnvData$output$params$intstep == "monthly") x2 <- 1
+        if(.cdtData$EnvData$output$params$outstep == "monthly") x2 <- 1
         x1 <- str_pad(x1, 2, pad = "0")
         x2 <- str_pad(x2, 2, pad = "0")
         xx <- as.Date(paste0(2015, x1, x2), "%Y%m%d")
         if(is.na(xx)){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], TRUE, 'e')
             return(NULL)
         }
         xlim[1] <- xx
@@ -177,30 +177,30 @@ climatologiesCalc.plotClimGraph <- function(){
         xx <- strsplit(optsgph$xlim$max, "-")[[1]]
         x1 <- as.numeric(xx[1])
         if(is.na(x1) | x1 < 1 | x1 > 12){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['14']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['14']], TRUE, 'e')
             return(NULL)
         }
         x2 <- as.numeric(xx[2])
-        if(.cdtData$EnvData$output$params$intstep == "pentad"){
+        if(.cdtData$EnvData$output$params$outstep == "pentad"){
             if(is.na(x2) | x2 < 1 | x2 > 6){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['15']], format = TRUE)
+                Insert.Messages.Out(.cdtData$EnvData[['message']][['15']], TRUE, 'e')
                 return(NULL)
             }
             x2 <- c(1, 6, 11, 16, 21, 26)[x2]
         }
-        if(.cdtData$EnvData$output$params$intstep == "dekadal"){
+        if(.cdtData$EnvData$output$params$outstep == "dekadal"){
             if(is.na(x2) | x2 < 1 | x2 > 3){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['16']], format = TRUE)
+                Insert.Messages.Out(.cdtData$EnvData[['message']][['16']], TRUE, 'e')
                 return(NULL)
             }
             x2 <- c(1, 11, 21)[x2]
         }
-        if(.cdtData$EnvData$output$params$intstep == "monthly") x2 <- 1
+        if(.cdtData$EnvData$output$params$outstep == "monthly") x2 <- 1
         x1 <- str_pad(x1, 2, pad = "0")
         x2 <- str_pad(x2, 2, pad = "0")
         xx <- as.Date(paste0(2015, x1, x2), "%Y%m%d")
         if(is.na(xx)){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], TRUE, 'e')
             return(NULL)
         }
         xlim[2] <- xx
@@ -227,18 +227,18 @@ climatologiesCalc.plotClimGraph <- function(){
 
     if(GRAPHTYPE == "Line"){
         ret <- graphs.plot.line(daty, don, xlim = xlim, ylim = ylim,
-                        xlab = xlab, ylab = ylab, ylab.sub = NULL,
-                        title = titre, title.position = titre.pos, axis.font = 1,
-                        plotl = optsgph$plot, legends = NULL,
-                        location = .cdtData$EnvData$location)
+                                xlab = xlab, ylab = ylab, ylab.sub = NULL,
+                                title = titre, title.position = titre.pos, axis.font = 1,
+                                plotl = optsgph$plot, legends = NULL,
+                                location = .cdtData$EnvData$location)
     }
 
     if(GRAPHTYPE == "Barplot"){
         ret <- graphs.plot.bar(daty, don, xlim = xlim, ylim = ylim,
-                        xlab = xlab, ylab = ylab, ylab.sub = NULL,
-                        title = titre, title.position = titre.pos, axis.font = 1,
-                        barcol = optsgph$colors$col,
-                        location = .cdtData$EnvData$location)
+                               xlab = xlab, ylab = ylab, ylab.sub = NULL,
+                               title = titre, title.position = titre.pos, axis.font = 1,
+                               barcol = optsgph$colors$col,
+                               location = .cdtData$EnvData$location)
     }
 
     return(ret)

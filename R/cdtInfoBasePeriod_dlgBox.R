@@ -1,16 +1,14 @@
 
 getInfoBasePeriod <- function(parent.win, Parameters)
 {
-
     if(WindowsOS()){
         largeur0 <- 35
     }else{
         largeur0 <- 30
     }
-    ###################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoBasePeriod_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoBasePeriod_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ###################
 
@@ -32,12 +30,12 @@ getInfoBasePeriod <- function(parent.win, Parameters)
 
     state0 <- if(Parameters$all.years) "disable" else "normal"
 
-    chk.allYears <- tkcheckbutton(frBaseP, variable = allYears, text =  "Use all years from the input data", anchor = 'w', justify = 'left', width = largeur0)
-    txt.startYear <- tklabel(frBaseP, text = "Start Year", anchor = 'e', justify = 'right')
+    chk.allYears <- tkcheckbutton(frBaseP, variable = allYears, text =  lang.dlg[['label']][['1']], anchor = 'w', justify = 'left', width = largeur0)
+    txt.startYear <- tklabel(frBaseP, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
     en.startYear <- tkentry(frBaseP, textvariable = startYear, width = 6, state = state0)
-    txt.endYear <- tklabel(frBaseP, text = "End Year", anchor = 'e', justify = 'right')
+    txt.endYear <- tklabel(frBaseP, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
     en.endYear <- tkentry(frBaseP, textvariable = endYear, width = 6, state = state0)
-    txt.minYear <- tklabel(frBaseP, text = "Minimum number of years", anchor = 'e', justify = 'right')
+    txt.minYear <- tklabel(frBaseP, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
     en.minYear <- tkentry(frBaseP, textvariable = minYear, width = 6)
 
     tkgrid(chk.allYears, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -50,10 +48,10 @@ getInfoBasePeriod <- function(parent.win, Parameters)
 
     ###################
 
-    helpWidget(chk.allYears, "Check this box to use all years from the input data", "Check this box to use all years from the input data")
-    helpWidget(en.startYear, "Enter the start year of the period", "Enter the start year of the period")
-    helpWidget(en.endYear, "Enter the end year of the period", "Enter the end year of the period")
-    helpWidget(en.minYear, "Enter the minimum number of years without missing values required for computation", "Enter the minimum number of years without missing values required for computation")
+    helpWidget(chk.allYears, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(en.startYear, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+    helpWidget(en.endYear, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(en.minYear, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
     ###################
 
@@ -65,7 +63,6 @@ getInfoBasePeriod <- function(parent.win, Parameters)
 
     ###################
 
-    # tkgrid(frBaseP, row = 0, column = 0, sticky = 'ew', padx = 1, pady = 1)
     tkgrid(frBaseP, row = 0, column = 0, sticky = 'ewns', padx = 3, pady = 1, ipady = 5)
 
     ################################
@@ -105,7 +102,7 @@ getInfoBasePeriod <- function(parent.win, Parameters)
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, "Base Period Settings")
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 
