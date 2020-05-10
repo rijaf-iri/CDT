@@ -1668,14 +1668,19 @@ startCDT <- function(wd = NA, lang = NA){
         tkgrid(txtlab.auth)
 
         #######
-        # hauteur_sep <- if(WindowsOS()) 17 else 14
-        # largeur_sep <- if(WindowsOS()) 21 else 17
+        # hauteur_sep <- if(WindowsOS()) 15 else 13
+        # largeur_sep <- if(WindowsOS()) 27 else 18
+        # # hauteur_sep <- if(WindowsOS()) 8 else 13
+        # # largeur_sep <- if(WindowsOS()) 17 else 18
+        # hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(hauteur_sep)
+        # largeur_sep <- .cdtEnv$tcl$fun$w.widgets(largeur_sep)
 
-        hauteur_sep <- if(WindowsOS()) 8 else 14
-        largeur_sep <- if(WindowsOS()) 17 else 17
-
-        hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(hauteur_sep)
-        largeur_sep <- .cdtEnv$tcl$fun$w.widgets(largeur_sep)
+        acc_dim <- switch(tools::toTitleCase(Sys.info()["sysname"]),
+                          "Windows" = c(15, 27),
+                          "Darwin" = c(13, 18),
+                          "Linux" = c(13, 18))
+        hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(acc_dim[1])
+        largeur_sep <- .cdtEnv$tcl$fun$w.widgets(acc_dim[2])
 
         txtlab.tmp2 <- tklabel(cdtfr.tmp2, text = '', height = hauteur_sep)
         tkgrid(txtlab.tmp2)
@@ -1725,6 +1730,7 @@ startCDT <- function(wd = NA, lang = NA){
     try(.Tcl('ttk::style element create Fermer image [list img_close {active pressed !disabled} img_closepressed {active  !disabled} img_closeactive ] -border 4 -sticky e'), silent = TRUE)
 
     .Tcl('ttk::style layout TNotebook {TNotebook.client -sticky nswe}')
+    # .Tcl('ttk::style configure TNotebook -background blue')
 
     .Tcl("ttk::style layout TNotebook.Tab {
             TNotebook.tab -sticky nswe -children {

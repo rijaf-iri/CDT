@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Top </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Bottom </text>
+            </option>
+        </combobox>
+        <checkbutton id="1">
+            <text lang="en"> Percentage of mean </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Define climatology base period </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Anomaly </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Start Year </text>
+        </label>
+        <label id="3">
+            <text lang="en"> End Year </text>
+        </label>
+        <label id="4">
+            <text lang="en"> X axis ranges </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Y axis ranges </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Axis Labels </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Graph Title </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Title Position </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Colors </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Negative </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Positive </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Color Selection </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Check this box to calculate the anomaly as percentage of mean </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to calculate the anomaly as percentage of mean </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Check this box to define a base period to calculate climatology </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to define a base period to calculate climatology </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the start year to be used to calculate the climatology </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the start year to be used to calculate the climatology </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the end year to be used to calculate the climatology </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the end year to be used to calculate the climatology </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

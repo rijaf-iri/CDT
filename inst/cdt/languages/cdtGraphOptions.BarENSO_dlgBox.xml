@@ -28,43 +28,16 @@
             <text lang="en"> Title Position </text>
         </label>
         <label id="6">
-            <text lang="en"> Line Plot </text>
+            <text lang="en"> La Nina </text>
         </label>
         <label id="7">
-            <text lang="en"> Type </text>
+            <text lang="en"> Neutral </text>
         </label>
         <label id="8">
-            <text lang="en"> Line </text>
+            <text lang="en"> El Nino </text>
         </label>
         <label id="9">
-            <text lang="en"> Color </text>
-        </label>
-        <label id="10">
-            <text lang="en"> Width </text>
-        </label>
-        <label id="11">
-            <text lang="en"> Points </text>
-        </label>
-        <label id="12">
-            <text lang="en"> Size </text>
-        </label>
-        <label id="13">
             <text lang="en"> Color Selection </text>
-        </label>
-        <label id="14">
-            <text lang="en"> Add Mean/Trend/Terciles </text>
-        </label>
-        <label id="15">
-            <text lang="en"> Mean </text>
-        </label>
-        <label id="16">
-            <text lang="en"> Trend </text>
-        </label>
-        <label id="17">
-            <text lang="en"> Terciles </text>
-        </label>
-        <label id="18">
-            <text lang="en"> Text </text>
         </label>
     </widget>
 </dialog_box>

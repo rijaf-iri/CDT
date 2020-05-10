@@ -4,6 +4,14 @@
         <text lang="en"> Options </text>
     </title>
     <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Top </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Bottom </text>
+            </option>
+        </combobox>
         <label id="1">
             <text lang="en"> X axis ranges </text>
         </label>

@@ -12,6 +12,9 @@
                 <text lang="en"> Bottom </text>
             </option>
         </combobox>
+        <checkbutton id="1">
+            <text lang="en"> Plot theoretical CDF </text>
+        </checkbutton>
         <label id="1">
             <text lang="en"> X axis ranges </text>
         </label>
@@ -52,19 +55,7 @@
             <text lang="en"> Color Selection </text>
         </label>
         <label id="14">
-            <text lang="en"> Add Mean/Trend/Terciles </text>
-        </label>
-        <label id="15">
-            <text lang="en"> Mean </text>
-        </label>
-        <label id="16">
-            <text lang="en"> Trend </text>
-        </label>
-        <label id="17">
-            <text lang="en"> Terciles </text>
-        </label>
-        <label id="18">
-            <text lang="en"> Text </text>
+            <text lang="en"> Theoretical CDF </text>
         </label>
     </widget>
 </dialog_box>

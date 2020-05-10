@@ -207,7 +207,7 @@ AssessDataPanelCmd <- function(){
 
         chk.dataIdx <- tkcheckbutton(frameAssesDat, variable = .cdtData$EnvData$DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
         en.dataIdx <- tkentry(frameAssesDat, textvariable = file.Index, width = largeur2 + 5, state = stateAssesDat)
-        bt.dataIdx <- tkbutton(frameAssesDat, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateAssesDat)
+        bt.dataIdx <- ttkbutton(frameAssesDat, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateAssesDat)
 
         ###############
 

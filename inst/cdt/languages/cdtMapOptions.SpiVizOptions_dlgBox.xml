@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Custom </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Reverse </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> User customized colorkey </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> User customized levels </text>
+        </checkbutton>
+        <checkbutton id="4">
+            <text lang="en"> Equidistant colorkey breaks </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Colorkey </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Levels </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Map title </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Colorkey label </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Axis Labels </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Invalid Levels </text>
+        </content>
+    </message>
+</dialog_box>
