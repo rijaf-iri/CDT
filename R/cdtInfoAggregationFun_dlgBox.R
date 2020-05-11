@@ -5,7 +5,13 @@ getInfo_AggregateFun <- function(parent.win, Parameters,
 								 		 "max", "min", "count")
 								)
 {
-    largeur0 <- if(WindowsOS()) 20 else 20
+    if(WindowsOS()){
+        largeur0 <- 23
+        largeur1 <- 8
+    }else{
+        largeur0 <- 20
+        largeur1 <- 6
+    }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoAggregationFun_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
@@ -30,11 +36,11 @@ getInfo_AggregateFun <- function(parent.win, Parameters,
     stateCount <- if(str_trim(Parameters$aggr.fun) == "count") 'normal' else 'disabled'
 
     txt.aggfun <- tklabel(frameAggr, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-    cb.aggfun <- ttkcombobox(frameAggr, values = FUN, textvariable = aggr.fun, width = 6)
+    cb.aggfun <- ttkcombobox(frameAggr, values = FUN, textvariable = aggr.fun, width = largeur1)
     txt.opfun <- tklabel(frameAggr, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     cb.opfun <- ttkcombobox(frameAggr, values = c(">=", ">", "<=", "<"), textvariable = opr.fun, width = 4, state = stateCount)
     txt.opthres <- tklabel(frameAggr, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
-    en.opthres <- tkentry(frameAggr, textvariable = opr.thres, width = 6, state = stateCount)
+    en.opthres <- tkentry(frameAggr, textvariable = opr.thres, width = largeur1, state = stateCount)
 
     tkgrid(txt.aggfun, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.aggfun, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -67,7 +73,7 @@ getInfo_AggregateFun <- function(parent.win, Parameters,
     chk.OneMinFr <- tkcheckbutton(frMinFr, variable = uniqueMinFr, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
     txt.OneMinFr <- tklabel(frMinFr, text = "", justify = "right", anchor = 'e', width = largeur0)
     txt.allMinFr <- tklabel(frMinFr, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
-    en.allMinFr <- tkentry(frMinFr, textvariable = allMinFr, width = 6, state = stateMinFr0)
+    en.allMinFr <- tkentry(frMinFr, textvariable = allMinFr, width = largeur1, state = stateMinFr0)
 
     tkgrid(chk.OneMinFr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(txt.OneMinFr, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
@@ -103,7 +109,7 @@ getInfo_AggregateFun <- function(parent.win, Parameters,
 
     for(j in 1:12){
         txt.monMinFr[[j]] <- tklabel(frMinFrMon, text = MOIS[j], anchor = 'e', justify = 'right')
-        en.monMinFr[[j]] <- tkentry(frMinFrMon, textvariable = monthMinFr[[j]], width = 6, state = stateMinFr1)
+        en.monMinFr[[j]] <- tkentry(frMinFrMon, textvariable = monthMinFr[[j]], width = largeur1, state = stateMinFr1)
 
         j1 <- j %% 3
         j1[j1 == 0] <- 3

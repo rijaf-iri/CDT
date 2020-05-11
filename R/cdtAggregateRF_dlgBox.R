@@ -5,12 +5,14 @@ AggregateMWin_GetInfo <- function(){
         largeur0 <- 61
         largeur1 <- 58
         largeur2 <- 48
-        largeur3 <- 8
+        largeur3 <- 4
+        largeur4 <- 9
     }else{
         largeur0 <- 40
         largeur1 <- 39
         largeur2 <- 30
         largeur3 <- 8
+        largeur4 <- 6
     }
 
     ####################################
@@ -269,20 +271,20 @@ AggregateMWin_GetInfo <- function(){
     ALIGN <- c("center", "left", "right")
 
     txt.aggfun <- tklabel(frameAggr, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
-    cb.aggfun <- ttkcombobox(frameAggr, values = AGGRFUN, textvariable = aggr.fun, width = 6)
+    cb.aggfun <- ttkcombobox(frameAggr, values = AGGRFUN, textvariable = aggr.fun, width = largeur4)
     txt.twin <- tklabel(frameAggr, text = lang.dlg[['label']][['8']], anchor = 'e', justify = 'right')
-    en.twin <- tkentry(frameAggr, textvariable = time.win, width = 6)
+    en.twin <- tkentry(frameAggr, textvariable = time.win, width = 4)
     txt.mindat <- tklabel(frameAggr, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
-    en.mindat <- tkentry(frameAggr, textvariable = min.data, width = 6)
+    en.mindat <- tkentry(frameAggr, textvariable = min.data, width = 4)
     txt.align <- tklabel(frameAggr, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
-    cb.align <- ttkcombobox(frameAggr, values = ALIGN, textvariable = align.data, width = 6)
+    cb.align <- ttkcombobox(frameAggr, values = ALIGN, textvariable = align.data, width = largeur4)
 
     tkgrid(txt.aggfun, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.aggfun, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.twin, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.twin, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.twin, row = 0, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.mindat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.mindat, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.mindat, row = 1, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.align, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.align, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 

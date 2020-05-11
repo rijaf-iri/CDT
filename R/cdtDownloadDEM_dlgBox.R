@@ -1,7 +1,7 @@
 
 download_DEM <- function(){
     if(WindowsOS()){
-        largeur0 <- 48
+        largeur0 <- 49
         largeur1 <- 27
     }else{
         largeur0 <- 40

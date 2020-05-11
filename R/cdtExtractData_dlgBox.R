@@ -2,7 +2,7 @@
 extractTS.previewWin <- function(states, shpL, type){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(35)
+        largeur0 <- .cdtEnv$tcl$fun$w.widgets(36)
         largeur1 <- .cdtEnv$tcl$fun$w.widgets(40)
         wtext <- .cdtEnv$tcl$fun$w.widgets(29)
     }else{
