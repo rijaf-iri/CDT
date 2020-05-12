@@ -24,7 +24,7 @@
             <text lang="en"> Check Coordinates </text>
         </button>
         <button id="2">
-            <text lang="en"> View/Edit Results </text>
+            <text lang="en"> View and Edit Results </text>
         </button>
         <button id="3">
             <text lang="en"> Correct Coordinates </text>
@@ -33,7 +33,7 @@
             <text lang="en"> Display Stations Coordinates </text>
         </button>
         <button id="5">
-            <text lang="en"> Display on Google Maps </text>
+            <text lang="en"> Display on OpenStreetMap </text>
         </button>
         <checkbutton id="1">
             <text lang="en"> Stations coordinates already exist </text>

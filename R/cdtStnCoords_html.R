@@ -5,115 +5,156 @@ tmp <- '<!DOCTYPE html>
 
 <head>
     <title> Stations coordinates </title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" async defer></script> -->
     <style>
-    #map {
-        height: 100%;
-        width: 100%;
-    }
-    
     html,
     body {
         height: 100%;
-        margin: 0;
-        padding: 0;
+    }
+
+    #mapAWSCoords {
+        width: 100%;
+        height: 95%;
+        border: 1px solid #AAA;
     }
     </style>
 </head>
 
 <body>
-    <div id="map"></div>
+    <div>
+        <span>
+            <label>Change map style:</label>
+            <select name="maptype" id="maptype" class="maptype">
+                <option value="openstreetmap" selected>OpenStreetMap Standard</option>
+                <option value="mapboxsatellitestreets">Mapbox Satellite Streets</option>
+                <option value="mapboxsatellite">Mapbox Satellite</option>
+                <option value="mapboxstreets">Mapbox Streets</option>
+                <option value="mapboxoutdoors">Mapbox Outdoors</option>
+                <option value="mapboxlight">Mapbox Light</option>
+                <option value="googlemaps">Google Maps</option>
+            </select>
+        </span>
+    </div>
+    <div id="mapAWSCoords"></div>
     <script>
-    var map;
-    var infoWindow;
-
-    function initMap() {
-        var latlngcentre = new google.maps.LatLng(-18.5, 47);
-        var mapOptions = {
-            zoom: 12,
-            center: latlngcentre,
-            mapTypeId: google.maps.MapTypeId.HYBRID,
-            navigationControl: true,
-            scrollwheel: true
-        };
-        map = new google.maps.Map(document.getElementById("map"), mapOptions);
-        map.fitBounds(new google.maps.LatLngBounds(
-            new google.maps.LatLng(-26, 42),
-            new google.maps.LatLng(-11, 52)));
-        infoWindow = new google.maps.InfoWindow();
-        var script = document.createElement("script");
-        script.src = "http://127.0.0.1:25782/custom/CDT/station_coords.js";
-        document.getElementsByTagName("head")[0].appendChild(script);
-        var icon1 = {
-            url: "https://icons.iconarchive.com/icons/icons-land/vista-map-markers/48/Map-Marker-Push-Pin-1-Chartreuse-icon.png",
-            scaledSize: new google.maps.Size(30, 30),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(15, 30)
-        };
-        var marker1 = new google.maps.Marker({
-            map: map,
-            icon: icon1
+    var serverPath = "http://127.0.0.1:25782/custom/CDT/";
+    $(document).ready(function() {
+        var mymap = L.map("mapAWSCoords", {
+            center: [-2.01922938104402, 29.8377173354088],
+            minZoom: 2,
+            zoom: 8
         });
-        map.addListener("rightclick", function(e) {
-            marker1.setPosition(e.latLng);
-            infoWindow.setContent("Latitude : " + e.latLng.lat() +
-                "<br>" + "Longitude : " + e.latLng.lng());
-            infoWindow.open(map, marker1);
+        var mytile = "";
+        mytile = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            attribution: \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>\',
+            maxZoom: 19,
+            subdomains: ["a", "b", "c"]
+        }).addTo(mymap);
+        var iconshadow = serverPath + "marker-shadow.png";
+        var blueIcon = new L.Icon({
+            iconUrl: serverPath + "marker-icon-blue.png",
+            shadowUrl: iconshadow,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
         });
-    }
-    window.stncrds_callback = function(stn) {
-        var pinRED = new google.maps.MarkerImage(
-            "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FF0000",
-            null,
-            null,
-            null,
-            new google.maps.Size(21, 34)
-        );
-        var pinORNG = new google.maps.MarkerImage(
-            "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|FF9900",
-            null,
-            null,
-            null,
-            new google.maps.Size(21, 34)
-        );
-        var pinBLUE = new google.maps.MarkerImage(
-            "http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|0080FF",
-            null,
-            null,
-            null,
-            new google.maps.Size(21, 34)
-        );
+        var orangeIcon = new L.Icon({
+            iconUrl: serverPath + "marker-icon-orange.png",
+            shadowUrl: iconshadow,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        var redIcon = new L.Icon({
+            iconUrl: serverPath + "marker-icon-red.png",
+            shadowUrl: iconshadow,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
+        var greenIcon = new L.Icon({
+            iconUrl: serverPath + "marker-icon-green.png",
+            shadowUrl: iconshadow,
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        });
         var icons = {
             blue: {
-                icon: pinBLUE
+                icon: blueIcon
             },
             orange: {
-                icon: pinORNG
+                icon: orangeIcon
             },
             red: {
-                icon: pinRED
+                icon: redIcon
             }
         };
-        for (var i = 0; i < stn.stncoord.length; i++) {
-            var data = stn.stncoord[i];
-            var latLng = new google.maps.LatLng(data.LatX, data.LonX);
-            var titre = "ID : " + data.ID + "\\r" + "Name : " + data.Name + "\\r" + "District : " + data.district + "\\r" + "info : " + data.info;
-            var marker = new google.maps.Marker({
-                map: map,
-                position: latLng,
-                title: titre,
-                icon: icons[data.StatusX].icon
+        $.getJSON(serverPath + "station_coords.json", function(json) {
+            $.each(json, function() {
+                var contenu = "";
+                if (typeof this.LonX !== "undefined") {
+                    L.marker([this.LatX, this.LonX], { icon: icons[this.StatusX].icon }).bindPopup(contenu).addTo(mymap);
+                }
             });
-            (function(marker, data) {
-                google.maps.event.addListener(marker, "click", function(e) {
-                    var contenu = "ID : " + data.ID + "<br>" + "Name : " + data.Name + "<br>" + "District : " + data.district + "<br>" + "info : " + data.info;
-                    infoWindow.setContent(contenu);
-                    infoWindow.open(map, marker);
-                });
-            })(marker, data);
-        }
-    };
+        });
+        $("#maptype").on("change", function() {
+            mymap.removeLayer(mytile);
+            mymap.attributionControl.removeAttribution();
+            var maptype = $("#maptype option:selected").val();
+            if (maptype == "openstreetmap") {
+                mytile = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                    attribution: \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>\',
+                    maxZoom: 19,
+                    subdomains: ["a", "b", "c"]
+                }).addTo(mymap);
+            } else if (maptype == "googlemaps") {
+                mytile = L.tileLayer("http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}", {
+                    attribution: "&copy; Google Maps",
+                    maxZoom: 20,
+                    subdomains: ["mt0", "mt1", "mt2", "mt3"]
+                }).addTo(mymap);
+            } else {
+                var mapid = "";
+                if (maptype == "mapboxsatellite") {
+                    mapid = "satellite-v9";
+                } else if (maptype == "mapboxstreets") {
+                    mapid = "streets-v11";
+                } else if (maptype == "mapboxoutdoors") {
+                    mapid = "outdoors-v11";
+                } else if (maptype == "mapboxlight") {
+                    mapid = "light-v10";
+                } else {
+                    mapid = "satellite-streets-v11";
+                }
+                mytile = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+                    attribution: \'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery &copy; <a href="https://www.mapbox.com/">Mapbox</a>\',
+                    maxZoom: 23,
+                    id: mapid,
+                    accessToken: "pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA"
+                }).addTo(mymap);
+            }
+            window.mytile = mytile;
+        });
+        var marker1;
+        mymap.on("dblclick", function(e) {
+            if (!marker1) {
+                marker1 = L.marker(e.latlng, { icon: greenIcon }).addTo(mymap);
+            } else {
+                marker1.setLatLng(e.latlng);
+            }
+            var position = marker1.getLatLng();
+            marker1.bindPopup("<b>Latitude : </b>" + position.lat + "<br />" + "<b>Longitude : </b>" + position.lng).openPopup();
+        });
+    });
     </script>
-    <script src="https://maps.googleapis.com/maps/api/js?callback=initMap"></script>
 </body>
 
 </html>

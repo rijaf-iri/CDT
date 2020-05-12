@@ -5,10 +5,14 @@ StnChkCoordsPanelCmd <- function(){
         largeur0 <- .cdtEnv$tcl$fun$w.widgets(20)
         largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
         largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
+        largeur3 <- .cdtEnv$tcl$fun$w.widgets(28)
+        largeur4 <- .cdtEnv$tcl$fun$w.widgets(35.5)
     }else{
         largeur0 <- .cdtEnv$tcl$fun$w.widgets(15)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
+        largeur1 <- .cdtEnv$tcl$fun$w.widgets(23)
         largeur2 <- .cdtEnv$tcl$fun$w.widgets(23.5)
+        largeur3 <- .cdtEnv$tcl$fun$w.widgets(25)
+        largeur4 <- .cdtEnv$tcl$fun$w.widgets(25)
     }
 
     GeneralParameters <- list(data.type = 'cdtcoords', infile = "", shpfile = "", output = "", buffer = 1)
@@ -50,7 +54,7 @@ StnChkCoordsPanelCmd <- function(){
 
         ############################################
 
-        frameDataType <- tkframe(subfr1)
+        frameDataType <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
 
         CbdatatypeVAL <- lang.dlg[['combobox']][['1']]
         datatypeVAL <- c('cdtcoords', 'cdtstation')
@@ -72,7 +76,7 @@ StnChkCoordsPanelCmd <- function(){
 
         #######################
 
-        frameInData <- tkframe(subfr1)
+        frameInData <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
 
         input.file <- tclVar(GeneralParameters$infile)
         shp.file <- tclVar(GeneralParameters$shpfile)
@@ -134,7 +138,7 @@ StnChkCoordsPanelCmd <- function(){
 
         #######################
 
-        frameDirSav <- tkframe(subfr1)
+        frameDirSav <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
 
         outdir <- tclVar(GeneralParameters$output)
 
@@ -154,16 +158,7 @@ StnChkCoordsPanelCmd <- function(){
 
         #######################
 
-        frameChkCrd <- tkframe(subfr1)
-
-        stateChkCrds <- "normal"
-        stateEdit <- "normal"
-
-        bt.checkCoords <- ttkbutton(frameChkCrd, text = lang.dlg[['button']][['1']], state = stateChkCrds)
-        bt.editCoords <- ttkbutton(frameChkCrd, text = lang.dlg[['button']][['2']], state = stateEdit)
-        bt.correctCoords <- ttkbutton(frameChkCrd, text = lang.dlg[['button']][['3']], state = stateEdit)
-
-        #######################
+        bt.checkCoords <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
         tkconfigure(bt.checkCoords, command = function(){
             GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
@@ -208,51 +203,13 @@ StnChkCoordsPanelCmd <- function(){
             }else Insert.Messages.Out(msg1, TRUE, "e")
         })
 
-        .cdtData$EnvData$okCorrect <- FALSE
-        .cdtData$EnvData$tab$Table <- NULL
-        .cdtData$EnvData$Table.Disp0 <- NULL
-        tkconfigure(bt.editCoords, command = function(){
-            if(.cdtData$EnvData$okCorrect){
-                if(!is.null(.cdtData$EnvData$Table.Disp)){
-                    .cdtData$EnvData$Table.Disp0 <- .cdtData$EnvData$Table.Disp
-                    editstn.df <- .cdtData$EnvData$Table.Disp
-                    editstn.df[is.na(editstn.df)] <- ""
-                    .cdtData$EnvData$tab$Table <- tableNotebookTab_unik(editstn.df, .cdtData$EnvData$tab$Table,
-                                                                        "Edit-Coordinates", 10, 'chkcrds')
-                    defile.menu.OpenTable()
-                }else{
-                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "s")
-                    return(NULL)
-                }
-            }
-        })
-
-        tkconfigure(bt.correctCoords, command = function(){
-            if(.cdtData$EnvData$okCorrect){
-                ret <- try(StnChkCoordsCorrect(), silent = TRUE)
-                if(is.null(ret)) return(NULL)
-                if(inherits(ret, "try-error")){
-                    Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, "e")
-                    Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), format = TRUE)
-                }else{
-                    Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "s")
-                }
-            }
-        })
-
-        #######################
-
-        tkgrid(bt.checkCoords, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.editCoords, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 10, ipady = 1)
-        tkgrid(bt.correctCoords, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 10, ipady = 1)
-
         ############################################
 
         tkgrid(frameDataType, row = 0, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameInData, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(frameBuff, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameDirSav, row = 3, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameChkCrd, row = 4, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(frameDirSav, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.checkCoords, row = 4, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -269,12 +226,12 @@ StnChkCoordsPanelCmd <- function(){
         stateIndexDat <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
 
         chk.IdxDat <- tkcheckbutton(frameCrdData, variable = .cdtData$EnvData$DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-        en.IdxDat <- tkentry(frameCrdData, textvariable = file.Index, width = largeur2, state = stateIndexDat)
-        bt.IdxDat <- tkbutton(frameCrdData, text = "...", state = stateIndexDat)
+        en.IdxDat <- tkentry(frameCrdData, textvariable = file.Index, width = largeur4, state = stateIndexDat)
+        bt.IdxDat <- ttkbutton(frameCrdData, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateIndexDat)
 
-        tkgrid(chk.IdxDat, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.IdxDat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.IdxDat, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.IdxDat, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.IdxDat, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.IdxDat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ###############
 
@@ -320,9 +277,9 @@ StnChkCoordsPanelCmd <- function(){
             tkconfigure(en.IdxDat, state = stateIndexDat)
             tkconfigure(bt.IdxDat, state = stateIndexDat)
 
-            if(tclvalue(.cdtData$EnvData$DirExist) == '1'){
+            stateChkCrds <- 'disabled'
+            if(tclvalue(.cdtData$EnvData$DirExist) == '1')
                 stateChkCrds <- if(tclvalue(.cdtData$EnvData$DispCrd) == '0') 'normal' else 'disabled'
-            }else stateChkCrds <- 'disabled'
             tkconfigure(bt.checkCoords, state = stateChkCrds)
             tkconfigure(en.buffer, state = stateChkCrds)
             tkconfigure(en.outdir, state = stateChkCrds)
@@ -336,12 +293,10 @@ StnChkCoordsPanelCmd <- function(){
             tkconfigure(cb.datatype, state = stateChkCrds1)
             tkconfigure(cb.infile, state = stateChkCrds1)
             tkconfigure(bt.infile, state = stateChkCrds1)
-            tkconfigure(cb.blkshp, state = stateChkCrds1)
-            tkconfigure(bt.blkshp, state = stateChkCrds1)
 
-            if(tclvalue(.cdtData$EnvData$DirExist) == '1'){
+            stateEdit <- 'normal'
+            if(tclvalue(.cdtData$EnvData$DirExist) == '1')
                 stateEdit <- if(tclvalue(.cdtData$EnvData$DispCrd) == '0') 'normal' else 'disabled'
-            }else stateEdit <- 'normal'
             tkconfigure(bt.editCoords, state = stateEdit)
             tkconfigure(bt.correctCoords, state = stateEdit)
 
@@ -351,37 +306,62 @@ StnChkCoordsPanelCmd <- function(){
 
         ##############################################
 
-        frameCrdDisp <- tkframe(subfr2)
+        bt.editCoords <- ttkbutton(subfr2, text = lang.dlg[['button']][['2']])
 
-        .cdtData$EnvData$DispCrd <- tclVar(0)
+        .cdtData$EnvData$okCorrect <- FALSE
+        .cdtData$EnvData$tab$Table <- NULL
+        .cdtData$EnvData$Table.Disp0 <- NULL
 
-        chk.crdsdisp <- tkcheckbutton(frameCrdDisp, variable = .cdtData$EnvData$DispCrd, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
-
-        tkgrid(chk.crdsdisp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkbind(chk.crdsdisp, "<Button-1>", function(){
-            if(tclvalue(.cdtData$EnvData$DirExist) == '0'){
-                stateEdit <- if(tclvalue(.cdtData$EnvData$DispCrd) == '1') 'normal' else 'disabled'
-                tkconfigure(bt.checkCoords, state = stateEdit)
-                tkconfigure(bt.editCoords, state = stateEdit)
-                tkconfigure(bt.correctCoords, state = stateEdit)
-                tkconfigure(en.buffer, state = stateEdit)
-                tkconfigure(en.outdir, state = stateEdit)
-                tkconfigure(bt.outdir, state = stateEdit)
+        tkconfigure(bt.editCoords, command = function(){
+            if(.cdtData$EnvData$okCorrect){
+                if(!is.null(.cdtData$EnvData$Table.Disp)){
+                    .cdtData$EnvData$Table.Disp0 <- .cdtData$EnvData$Table.Disp
+                    editstn.df <- .cdtData$EnvData$Table.Disp
+                    editstn.df[is.na(editstn.df)] <- ""
+                    .cdtData$EnvData$tab$Table <- tableNotebookTab_unik(editstn.df, .cdtData$EnvData$tab$Table,
+                                                                        "Edit-Coordinates", 10, 'chkcrds')
+                    defile.menu.OpenTable()
+                }else{
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "s")
+                    return(NULL)
+                }
             }
         })
 
         ##############################################
 
-        frameDisplay <- tkframe(subfr2)
+        bt.correctCoords <- ttkbutton(subfr2, text = lang.dlg[['button']][['3']])
+
+        tkconfigure(bt.correctCoords, command = function(){
+            if(.cdtData$EnvData$okCorrect){
+                ret <- try(StnChkCoordsCorrect(), silent = TRUE)
+                if(is.null(ret)) return(NULL)
+                if(inherits(ret, "try-error")){
+                    Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, "e")
+                    Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), format = TRUE)
+                }else{
+                    Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "s")
+                }
+            }
+        })
+
+        ##############################################
+
+        frameDisplay <- tkframe(subfr2, relief = 'groove', borderwidth = 2)
+
+        .cdtData$EnvData$DispCrd <- tclVar(0)
 
         bt.dispCDT <- ttkbutton(frameDisplay, text = lang.dlg[['button']][['4']])
         bt.dispCDTOpt <- ttkbutton(frameDisplay, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+        bt.dispGoogle <- ttkbutton(frameDisplay, text = lang.dlg[['button']][['5']])
+        chk.crdsdisp <- tkcheckbutton(frameDisplay, variable = .cdtData$EnvData$DispCrd, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left', width = largeur3)
 
-        tkgrid(bt.dispCDT, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 10, ipady = 1)
+        tkgrid(bt.dispCDT, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.dispCDTOpt, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(bt.dispGoogle, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(chk.crdsdisp, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        ###############
+        ###########################
 
         tkconfigure(bt.dispCDTOpt, command = function(){
             .cdtData$EnvData$MapOp <- MapGraph.ChkCoordsOptions(.cdtData$EnvData$MapOp)
@@ -445,14 +425,6 @@ StnChkCoordsPanelCmd <- function(){
             }
         })
 
-        ##############################################
-
-        frameDisplay1 <- tkframe(subfr2)
-
-        bt.dispGoogle <- ttkbutton(frameDisplay1, text = lang.dlg[['button']][['5']])
-
-        tkgrid(bt.dispGoogle, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 10, ipady = 1)
-
         ###############
 
         tkconfigure(bt.dispGoogle, command = function(){
@@ -497,12 +469,26 @@ StnChkCoordsPanelCmd <- function(){
             }
         })
 
+        ###############
+
+        tkbind(chk.crdsdisp, "<Button-1>", function(){
+            if(tclvalue(.cdtData$EnvData$DirExist) == '0'){
+                stateEdit <- if(tclvalue(.cdtData$EnvData$DispCrd) == '1') 'normal' else 'disabled'
+                tkconfigure(bt.checkCoords, state = stateEdit)
+                tkconfigure(bt.editCoords, state = stateEdit)
+                tkconfigure(bt.correctCoords, state = stateEdit)
+                tkconfigure(en.buffer, state = stateEdit)
+                tkconfigure(en.outdir, state = stateEdit)
+                tkconfigure(bt.outdir, state = stateEdit)
+            }
+        })
+
         ##############################################
 
         tkgrid(frameCrdData, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameCrdDisp, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameDisplay, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameDisplay1, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(bt.editCoords, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(bt.correctCoords, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(frameDisplay, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
