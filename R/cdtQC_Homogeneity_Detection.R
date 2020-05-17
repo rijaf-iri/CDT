@@ -157,6 +157,9 @@ getTrend.cptSeg <- function(x, cpt){
 }
 
 AdjustM.byMean <- function(x, cpt, min.adj, SegAdj = 0){
+    message <- .cdtData$EnvData[['message']]
+
+    #####
     n <- length(x)
     ints <- c(1, cpt, n + 1)
     nt <- length(ints)
@@ -178,7 +181,7 @@ AdjustM.byMean <- function(x, cpt, min.adj, SegAdj = 0){
             msg <- NULL
         }else{
             res <- x
-            msg <- 'The length of segment is too short to adjust the series'
+            msg <- message[['21']]
         }
     }else if(SegAdj > 0 & SegAdj <= (nt - 1)){
         xlen <- x[st[SegAdj]:ed[SegAdj]]
@@ -192,16 +195,19 @@ AdjustM.byMean <- function(x, cpt, min.adj, SegAdj = 0){
             msg <- NULL
         }else{
             res <- x
-            msg <- 'The length of segment is too short to adjust the series'
+            msg <- message[['21']]
         }
     }else{
         res <- x
-        msg <- 'Check the segment you have selected, it does not exist'
+        msg <- message[['22']]
     }
     return(list(res = res, msg = msg))
 }
 
 AdjustT.byMean <- function(x, cpt, min.adj, SegAdj = 0){
+    message <- .cdtData$EnvData[['message']]
+
+    #####
     n <- length(x)
     xs <- sum(x * ((1:n) - ((n + 1)/2)), na.rm = TRUE)
     beta <- 12 * xs /(n * (n + 1) * (n - 1))
@@ -228,7 +234,7 @@ AdjustT.byMean <- function(x, cpt, min.adj, SegAdj = 0){
             msg <- NULL
         }else{
             res <- x
-            msg <- 'The length of segment is too short to adjust the series'
+            msg <- message[['21']]
         }
     }else if(SegAdj > 0 & SegAdj <= (nt - 1)){
         xlen <- x[st[SegAdj]:ed[SegAdj]]
@@ -242,16 +248,19 @@ AdjustT.byMean <- function(x, cpt, min.adj, SegAdj = 0){
             msg <- NULL
         }else{
             res <- x
-            msg <- 'The length of segment is too short to adjust the series'
+            msg <- message[['21']]
         }
     }else{
         res <- x
-        msg <- 'Check the segment you have selected, it does not exist'
+        msg <- message[['22']]
     }
     return(list(res = res, msg = msg))
 }
 
 AdjustM.byQM <- function(x, cpt, min.adj, SegAdj = 0){
+    message <- .cdtData$EnvData[['message']]
+
+    #####
     n <- length(x)
     ints <- c(1, cpt, n + 1)
     nt <- length(ints)
@@ -272,7 +281,7 @@ AdjustM.byQM <- function(x, cpt, min.adj, SegAdj = 0){
             msg <- NULL
         }else{
             res <- x
-            msg <- 'The length of segment is too short to adjust the series'
+            msg <- message[['21']]
         }
     }else if(SegAdj > 0 & SegAdj <= (nt - 1)){
         xlen <- x[st[SegAdj]:ed[SegAdj]]
@@ -287,16 +296,19 @@ AdjustM.byQM <- function(x, cpt, min.adj, SegAdj = 0){
             msg <- NULL
         }else{
             res <- x
-            msg <- 'The length of segment is too short to adjust the series'
+            msg <- message[['21']]
         }
     }else{
         res <- x
-        msg <- 'Check the segment you have selected, it does not exist'
+        msg <- message[['22']]
     }
     return(list(res = res, msg = msg))
 }
 
 AdjustT.byQM <- function(x, cpt, min.adj, SegAdj = 0){
+    message <- .cdtData$EnvData[['message']]
+
+    #####
     n <- length(x)
     ints <- c(1, cpt, n + 1)
     nt <- length(ints)
@@ -333,7 +345,7 @@ AdjustT.byQM <- function(x, cpt, min.adj, SegAdj = 0){
             msg <- NULL
         }else{
             res <- x
-            msg <- 'The length of segment is too short to adjust the series'
+            msg <- message[['21']]
         }
     }else if(SegAdj > 0 & SegAdj <= (nt - 1)){
         xlen <- x[st[SegAdj]:ed[SegAdj]]
@@ -349,11 +361,11 @@ AdjustT.byQM <- function(x, cpt, min.adj, SegAdj = 0){
             msg <- NULL
         }else{
             res <- x
-            msg <- 'The length of segment is too short to adjust the series'
+            msg <- message[['21']]
         }
     }else{
         res <- x
-        msg <- 'Check the segment you have selected, it does not exist'
+        msg <- message[['22']]
     }
     return(list(res = res, msg = msg))
 }

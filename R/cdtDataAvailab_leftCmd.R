@@ -4,9 +4,9 @@ AssessDataPanelCmd <- function(){
     if(WindowsOS()){
         largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
         largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- 19
+        largeur3 <- 20
         largeur4 <- 21
-        largeur5 <- 14
+        largeur5 <- 15
         largeur6 <- 26
     }else{
         largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
@@ -200,12 +200,12 @@ AssessDataPanelCmd <- function(){
 
         frameAssesDat <- ttklabelframe(subfr2, text = lang.dlg[['label']][['5']], relief = 'groove')
 
-        .cdtData$EnvData$DirExist <- tclVar(0)
+        availExist <- tclVar(0)
         file.Index <- tclVar()
 
-        stateAssesDat <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
+        stateAssesDat <- if(tclvalue(availExist) == "1") "normal" else "disabled"
 
-        chk.dataIdx <- tkcheckbutton(frameAssesDat, variable = .cdtData$EnvData$DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+        chk.dataIdx <- tkcheckbutton(frameAssesDat, variable = availExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
         en.dataIdx <- tkentry(frameAssesDat, textvariable = file.Index, width = largeur2 + 5, state = stateAssesDat)
         bt.dataIdx <- ttkbutton(frameAssesDat, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateAssesDat)
 
@@ -270,11 +270,11 @@ AssessDataPanelCmd <- function(){
         ###############
 
         tkbind(chk.dataIdx, "<Button-1>", function(){
-            stateAssesDat <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
+            stateAssesDat <- if(tclvalue(availExist) == '1') 'disabled' else 'normal'
             tkconfigure(en.dataIdx, state = stateAssesDat)
             tkconfigure(bt.dataIdx, state = stateAssesDat)
 
-            stateDataIn <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
+            stateDataIn <- if(tclvalue(availExist) == '1') 'normal' else 'disabled'
             tkconfigure(assesDataBut, state = stateDataIn)
             tkconfigure(cb.fperiod, state = stateDataIn)
             tkconfigure(cb.infile, state = stateDataIn)
@@ -344,9 +344,9 @@ AssessDataPanelCmd <- function(){
         ###############
 
         tkgrid(frMAPTS, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.year.Date.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.year.maps, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.year.Date.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.year.Date.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.year.maps, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.year.Date.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
 
         ###############
 
@@ -425,7 +425,7 @@ AssessDataPanelCmd <- function(){
 
         tkgrid(frameAssesDat, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameAvailab, row = 1, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameYearMap, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(frameYearMap, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(framePlotType, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################

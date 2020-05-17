@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Adjustment- Settings </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Min.Adj (in month) </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Segment to Adjust </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Dekad </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Pentad </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Day </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Minimum number of non-missing values to be used to adjust the series (in month) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of non-missing values to be used to adjust the series (in month) </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> The segment to which the series will be adjusted (0: last segment) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The segment to which the series will be adjusted (0: last segment) </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

@@ -3,7 +3,7 @@ getParams.QC.Elevation <- function(Parameters, parent.win = .cdtEnv$tcl$main$win
 {
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS())
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(32)
+        largeur1 <- .cdtEnv$tcl$fun$w.widgets(40)
     else
         largeur1 <- .cdtEnv$tcl$fun$w.widgets(29)
 

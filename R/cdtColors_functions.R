@@ -83,3 +83,18 @@ decile.colors <- function(n = 8){
     kolorFonction <- grDevices::colorRampPalette(kolor)
     kolorFonction(n)
 }
+
+## QC gray scale colors function
+## grDevices::gray.colors(n = 64, start = 0.1, end = 0.9, rev = TRUE)
+qc.gray.colors <- function(n = 64){
+    grDevices::gray(seq(0.9, 0.1, length = n))
+}
+
+## QC grid data colors function
+qcrr.grid.colors <- function(n = 100){
+    grDevices::colorRampPalette(grDevices::colors()[c(1:4, 8:12)])(n)
+}
+
+qctt.grid.colors <- function(n = 100){
+    grDevices::colorRampPalette(grDevices::colors()[c(113:109, 86, 142, 144, 147)])(n)
+}

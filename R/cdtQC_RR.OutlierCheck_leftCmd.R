@@ -7,44 +7,48 @@ qcRROutlierCheckPanelCmd <- function(){
         largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
         largeur3 <- 22
         largeur4 <- 28
-        largeur5 <- 13
+        largeur5 <- 15
         largeur6 <- 27
+        largeur7 <- 8
     }else{
         largeur0 <- .cdtEnv$tcl$fun$w.widgets(16)
         largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
         largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
         largeur3 <- 12
         largeur4 <- 19
-        largeur5 <- .cdtEnv$tcl$fun$w.widgets(8.5)
+        largeur5 <- 11
         largeur6 <- 19
+        largeur7 <- 7
     }
 
     ###################
 
     GeneralParameters <- list(intstep = "daily", infile = "", outdir = "",
-                            params = list(
-                                    precip.max = 300, sigma = 3,
-                                    voisin = list(min = 4, max = 15, dist = 30, elv = 800),
-                                    elv = list(use = FALSE, dem = TRUE, file = "")
-                                )
-                            )
+                              params = list(precip.max = 300, sigma = 3,
+                                            voisin = list(min = 4, max = 15, dist = 30, elv = 800),
+                                            elv = list(use = FALSE, dem = TRUE, file = "")
+                                           )
+                              )
 
     MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
 
     .cdtData$EnvData$tab$ylabMon <- "Precipitation [mm]"
 
     .cdtData$EnvData$STN$Opt <- list(
-                                    stn = list(col = "blue", bg = 'red', pch = 23, cex = 1.2, txt.col = 'red'),
-                                    vois = list(col = 'red', pch = 20, cex = 1.0, txt.col = 'blue'),
-                                    all = list(col = 'darkred', pch = 20, cex = 1.0, txt.col = 'blue'),
+                                    stn = list(col = "blue", pch = 23, cex = 1.2, txt.col = 'red', txt.cex = 1.0),
+                                    use = list(col = 'darkgreen', pch = 20, cex = 1.0, txt.col = 'blue', txt.cex = 0.9),
+                                    sel = list(col = 'orange', pch = 20, cex = 1.0, txt.col = 'blue', txt.cex = 0.85),
+                                    vois = list(col = 'red', pch = 20, cex = 1.0, txt.col = 'blue', txt.cex = 0.8),
+                                    all = list(col = 'darkred', pch = 20, cex = 1.0, txt.col = 'blue', txt.cex = 0.7),
                                     circle = list(draw = TRUE, lwd = 1.5, col = 'red')
                                 )
 
     .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
     .cdtData$EnvData$dem$Opt <- list(
-                                    user.colors = list(custom = TRUE, color = grDevices::gray(seq(0.9, 0.1, length = 64))),
-                                    user.levels = list(custom = TRUE, levels = NULL, equidist = TRUE)
+                                    user.colors = list(custom = FALSE, color = NULL),
+                                    user.levels = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                    preset.colors = list(color = 'qc.gray.colors', reverse = FALSE)
                                 )
 
     .cdtData$EnvData$sat$dir <- ""
@@ -53,8 +57,9 @@ qcRROutlierCheckPanelCmd <- function(){
     .cdtData$EnvData$sat$sat.data <- NULL
 
     .cdtData$EnvData$sat$Opt <- list(
-                                    user.colors = list(custom = TRUE, color = grDevices::colorRampPalette(grDevices::colors()[c(1:4, 8:12)])(100)),
-                                    user.levels = list(custom = TRUE, levels = NULL, equidist = TRUE)
+                                    user.colors = list(custom = FALSE, color = NULL),
+                                    user.levels = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                    preset.colors = list(color = 'qcrr.grid.colors', reverse = FALSE)
                                 )
 
     ###################
@@ -139,11 +144,7 @@ qcRROutlierCheckPanelCmd <- function(){
 
         #######################
 
-        frameParams <- tkframe(subfr1, relief = 'sunken', borderwidth = 2, padx = 3, pady = 3)
-
-        bt.params <- ttkbutton(frameParams, text = lang.dlg[['button']][['1']])
-
-        tkgrid(bt.params, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        bt.params <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
         helpWidget(bt.params, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
@@ -206,12 +207,9 @@ qcRROutlierCheckPanelCmd <- function(){
                 }
             )
 
-            msg0 <- lang.dlg[['message']][['2']]
-            msg1 <- lang.dlg[['message']][['3']]
-
             if(!is.null(ret)){
                 if(ret == 0){
-                    Insert.Messages.Out(msg0, TRUE, "s")
+                    Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
                     if(is.null(.cdtData$EnvData$outqc)){
                         Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "s")
@@ -226,15 +224,15 @@ qcRROutlierCheckPanelCmd <- function(){
                     ret <- try(set.date.outliers(), silent = TRUE)
                     if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
                     set.initialize.Zoom()
-                }else Insert.Messages.Out(msg1, format = TRUE)
-            }else Insert.Messages.Out(msg1, format = TRUE)
+                }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
+            }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
         })
 
         #########################################
 
         tkgrid(frameTimeS, row = 0, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameInData, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameParams, row = 2, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.params, row = 2, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
         tkgrid(frameDirSav, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.doQC, row = 4, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
@@ -250,14 +248,17 @@ qcRROutlierCheckPanelCmd <- function(){
         QCExist <- tclVar(0)
         file.dataIndex <- tclVar()
 
+        stateExistData <- if(tclvalue(QCExist) == '1') 'normal' else 'disabled'
+
         chk.dataIdx <- tkcheckbutton(frameOutQC, variable = QCExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-        en.dataIdx <- tkentry(frameOutQC, textvariable = file.dataIndex, width = largeur2, state = "disabled")
-        bt.dataIdx <- tkbutton(frameOutQC, text = "...", state = "disabled")
+        en.dataIdx <- tkentry(frameOutQC, textvariable = file.dataIndex, width = largeur2 + 5, state = stateExistData)
+        bt.dataIdx <- ttkbutton(frameOutQC, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
 
-        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.dataIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
+        ###############
         tkconfigure(bt.dataIdx, command = function(){
             path.dataIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
             if(path.dataIdx %in% c("", "NA") | is.na(path.dataIdx)) return(NULL)
@@ -331,8 +332,8 @@ qcRROutlierCheckPanelCmd <- function(){
 
         .cdtData$EnvData$STN$stnID <- tclVar()
 
-        bt.stnID.prev <- ttkbutton(frameStnId, text = "<<", width = 5)
-        bt.stnID.next <- ttkbutton(frameStnId, text = ">>", width = 5)
+        bt.stnID.prev <- ttkbutton(frameStnId, text = "<<", width = largeur7)
+        bt.stnID.next <- ttkbutton(frameStnId, text = ">>", width = largeur7)
         .cdtData$EnvData$STN$cb.stnID <- ttkcombobox(frameStnId, values = "", textvariable = .cdtData$EnvData$STN$stnID, width = largeur4, justify = 'center')
         bt.display.QC <- ttkbutton(frameStnId, text = lang.dlg[['button']][['3']])
 
@@ -388,8 +389,9 @@ qcRROutlierCheckPanelCmd <- function(){
             tab.title <- paste0(stnid, "-QC-Output")
 
             .cdtData$EnvData$tab$TableStat <- tableNotebookTab_unik(donQCstat, .cdtData$EnvData$tab$TableStat, tab.title, 12, 'outqc')
- 
+
             tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+            .cdtData$OpenTab$Data.Type[[tabid]] <- 'qc.outliers.data'
             table1 <- .cdtData$OpenTab$Data[[tabid]][[2]][[1]]
 
             .Tcl(paste(table1, 'tag', 'celltag', 'ttnreplace',
@@ -399,6 +401,8 @@ qcRROutlierCheckPanelCmd <- function(){
             .Tcl(paste(table1, 'tag', 'celltag', 'ttchgval',
                 paste(1:as.integer(tclvalue(tkindex(table1, 'end', 'row'))), 9, sep = ',', collapse = ' ')))
             tcl(table1, "tag", "configure", "ttchgval", bg = "darkolivegreen1", fg = "red", anchor = "c")
+
+            menuCopyPaste.OpenTable()
         })
 
         #######################
@@ -418,9 +422,9 @@ qcRROutlierCheckPanelCmd <- function(){
         tkgrid(cb.Mon, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         tkgrid(frTSMON, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.Mon.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.Mon, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.Mon.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Mon.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Mon, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Mon.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(frameStnMon, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 
@@ -473,7 +477,7 @@ qcRROutlierCheckPanelCmd <- function(){
 
         frQCSP <- tkframe(frameQCSP)
         .cdtData$EnvData$STN$cb.QCSP <- ttkcombobox(frQCSP, values = "", textvariable = .cdtData$EnvData$STN$dateSP, width = largeur6, justify = 'center')
-        bt.QCSP.opt <- ttkbutton(frQCSP, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7, state = "disabled", width = largeur5)
+        bt.QCSP.opt <- ttkbutton(frQCSP, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
 
         bt.QCSP.prev <- ttkbutton(frameQCSP, text = "<<", width = largeur5)
         bt.QCSP.plot <- ttkbutton(frameQCSP, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
@@ -484,11 +488,17 @@ qcRROutlierCheckPanelCmd <- function(){
         tkgrid(bt.QCSP.opt, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         tkgrid(frQCSP, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.QCSP.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.QCSP.plot, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.QCSP.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.QCSP.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.QCSP.plot, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.QCSP.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(frameQCSP, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+
+        ##########
+
+        tkconfigure(bt.QCSP.opt, command = function(){
+            .cdtData$EnvData$STN$Opt <- MapGraph.QCoutliersSP(.cdtData$EnvData$STN$Opt)
+        })
 
         ##########
 
@@ -596,17 +606,17 @@ qcRROutlierCheckPanelCmd <- function(){
 
         .cdtData$EnvData$MXD$STN$stnID <- tclVar()
 
-        bt.MxstnID.prev <- ttkbutton(frameStnId.MXD, text = "<<", width = 5)
-        bt.MxstnID.next <- ttkbutton(frameStnId.MXD, text = ">>", width = 5)
+        bt.MxstnID.prev <- ttkbutton(frameStnId.MXD, text = "<<", width = largeur7)
+        bt.MxstnID.next <- ttkbutton(frameStnId.MXD, text = ">>", width = largeur7)
         .cdtData$EnvData$MXD$STN$cb.stnID <- ttkcombobox(frameStnId.MXD, values = "", textvariable = .cdtData$EnvData$MXD$STN$stnID, width = largeur4, justify = 'center')
         bt.display.MXD <- ttkbutton(frameStnId.MXD, text = lang.dlg[['button']][['5']])
-        bt.plotTS.MXD <- ttkbutton(frameStnId.MXD, text = lang.dlg[['button']][['6']])
+        bt.replace.MXD <- ttkbutton(frameStnId.MXD, text = lang.dlg[['button']][['6']])
 
         tkgrid(bt.MxstnID.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(.cdtData$EnvData$MXD$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.MxstnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.display.MXD, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.plotTS.MXD, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.replace.MXD, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         #######################
 
@@ -630,6 +640,7 @@ qcRROutlierCheckPanelCmd <- function(){
             }
         })
 
+        #######################
         .cdtData$EnvData$tab$TableMXD <- NULL
 
         tkconfigure(bt.display.MXD, command = function(){
@@ -638,18 +649,56 @@ qcRROutlierCheckPanelCmd <- function(){
             donMXD <- .cdtData$EnvData$outqc$mixed$res[[stnid]]$tab
             tab.title <- paste0(stnid, "-Data-Mixed")
 
-            .cdtData$EnvData$tab$TableMXD <- tableNotebookTab_unik(donMXD, .cdtData$EnvData$tab$TableMXD, tab.title, 10)
+            .cdtData$EnvData$tab$TableMXD <- tableNotebookTab_unik(donMXD, .cdtData$EnvData$tab$TableMXD, tab.title, 10, 'outqc')
+
+            tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+            .cdtData$OpenTab$Data.Type[[tabid]] <- 'qc.mixed.data'
+            table1 <- .cdtData$OpenTab$Data[[tabid]][[2]][[1]]
+
+            .Tcl(paste(table1, 'tag', 'celltag', 'idxreplace1',
+                paste(1:as.integer(tclvalue(tkindex(table1, 'end', 'row'))), 4, sep = ',', collapse = ' ')))
+            tcl(table1, "tag", "configure", "idxreplace1", bg = "lightgoldenrod1", fg = "blue", anchor = "c")
+
+            .Tcl(paste(table1, 'tag', 'celltag', 'idxchgvalues1',
+                paste(1:as.integer(tclvalue(tkindex(table1, 'end', 'row'))), 5, sep = ',', collapse = ' ')))
+            tcl(table1, "tag", "configure", "idxchgvalues1", bg = "darkolivegreen1", fg = "red", anchor = "c")
+
+            menuCopyPaste.OpenTable()
         })
 
-        .cdtData$EnvData$tab$PlotMxTS <- NULL
-
-        tkconfigure(bt.plotTS.MXD, command = function(){
+        #####
+        tkconfigure(bt.replace.MXD, command = function(){
+            if(is.null(.cdtData$EnvData$outqc)) return(NULL)
             stnid <- str_trim(tclvalue(.cdtData$EnvData$MXD$STN$stnID))
             if(stnid == "") return(NULL)
-            tab.title <- paste0(stnid, "-Data")
+            tmpqc <- .cdtData$EnvData$outqc$mixed$res[[stnid]]$tab
 
-            imgContainer <- qcDislpay_Mixed.Temp(.cdtData$EnvData$tab$PlotMxTS, tab.title)
-            .cdtData$EnvData$tab$PlotMxTS <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$PlotMxTS)
+            istn <- which(.cdtData$EnvData$stn.data$id == stnid) + 1
+
+            is.elv <- if(is.null(.cdtData$EnvData$stn.data$elv)) 3 else 4
+            info <- .cdtData$EnvData$output$info[[3]]
+
+            file.stn <- file.path(.cdtData$EnvData$PathData, 'CDTSTATIONS', .cdtData$EnvData$output$info[[1]])
+            tmpstn <- read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
+
+            daty <- str_trim(as.character(tmpqc$DATE))
+            nonNA <- !is.na(daty) & daty != ""
+            tmpqc <- tmpqc[nonNA, , drop = FALSE]
+            daty <- daty[nonNA]
+            idaty <- which(.cdtData$EnvData$stn.data$dates %in% daty) + is.elv
+
+            stn.val <- as.numeric(as.character(tmpqc$STN.VAL))
+            not.replace <- as.numeric(as.character(tmpqc$NOT.REPLACE))
+            to.replace <- as.numeric(as.character(tmpqc$REPLACE.VAL))
+            ina <- is.na(not.replace)
+            stn.val[ina] <- info$miss.val
+            nna <- !is.na(to.replace)
+            stn.val[nna] <- to.replace[nna]
+            tmpstn[idaty, istn] <- stn.val
+
+            write.table(tmpstn, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
+            rm(tmpstn); gc()
+            Insert.Messages.Out(paste(stnid, ':',  lang.dlg[['message']][['10']]), TRUE, "s")
         })
 
         #########################################
@@ -658,16 +707,17 @@ qcRROutlierCheckPanelCmd <- function(){
 
         .cdtData$EnvData$SEQ$STN$stnID <- tclVar()
 
-        bt.SqstnID.prev <- ttkbutton(frameStnId.SEQ, text = "<<", width = 5)
-        bt.SqstnID.next <- ttkbutton(frameStnId.SEQ, text = ">>", width = 5)
+        bt.SqstnID.prev <- ttkbutton(frameStnId.SEQ, text = "<<", width = largeur7)
+        bt.SqstnID.next <- ttkbutton(frameStnId.SEQ, text = ">>", width = largeur7)
         .cdtData$EnvData$SEQ$STN$cb.stnID <- ttkcombobox(frameStnId.SEQ, values = "", textvariable = .cdtData$EnvData$SEQ$STN$stnID, width = largeur4, justify = 'center')
-
         bt.display.SEQ <- ttkbutton(frameStnId.SEQ, text = lang.dlg[['button']][['5']])
+        bt.replace.SEQ <- ttkbutton(frameStnId.SEQ, text = lang.dlg[['button']][['7']])
 
         tkgrid(bt.SqstnID.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(.cdtData$EnvData$SEQ$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.SqstnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.display.SEQ, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.replace.SEQ, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         #######################
 
@@ -691,6 +741,7 @@ qcRROutlierCheckPanelCmd <- function(){
             }
         })
 
+        #######################
         .cdtData$EnvData$tab$TableSEQ <- NULL
 
         tkconfigure(bt.display.SEQ, command = function(){
@@ -699,7 +750,56 @@ qcRROutlierCheckPanelCmd <- function(){
             donSEQ <- .cdtData$EnvData$outqc$sequence$res[[stnid]]$tab
             tab.title <- paste0(stnid, "-Data-Invalid")
 
-            .cdtData$EnvData$tab$TableSEQ <- tableNotebookTab_unik(donSEQ, .cdtData$EnvData$tab$TableSEQ, tab.title, 10)
+            .cdtData$EnvData$tab$TableSEQ <- tableNotebookTab_unik(donSEQ, .cdtData$EnvData$tab$TableSEQ, tab.title, 10, 'outqc')
+
+            tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+            .cdtData$OpenTab$Data.Type[[tabid]] <- 'qc.sequence.data'
+            table1 <- .cdtData$OpenTab$Data[[tabid]][[2]][[1]]
+
+            .Tcl(paste(table1, 'tag', 'celltag', 'idxreplace2',
+                paste(1:as.integer(tclvalue(tkindex(table1, 'end', 'row'))), 4, sep = ',', collapse = ' ')))
+            tcl(table1, "tag", "configure", "idxreplace2", bg = "lightgoldenrod1", fg = "blue", anchor = "c")
+
+            .Tcl(paste(table1, 'tag', 'celltag', 'idxchgvalues2',
+                paste(1:as.integer(tclvalue(tkindex(table1, 'end', 'row'))), 5, sep = ',', collapse = ' ')))
+            tcl(table1, "tag", "configure", "idxchgvalues2", bg = "darkolivegreen1", fg = "red", anchor = "c")
+
+            menuCopyPaste.OpenTable()
+        })
+
+        #####
+        tkconfigure(bt.replace.SEQ, command = function(){
+            if(is.null(.cdtData$EnvData$outqc)) return(NULL)
+            stnid <- str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
+            if(stnid == "") return(NULL)
+            tmpqc <- .cdtData$EnvData$outqc$sequence$res[[stnid]]$tab
+
+            istn <- which(.cdtData$EnvData$stn.data$id == stnid) + 1
+
+            is.elv <- if(is.null(.cdtData$EnvData$stn.data$elv)) 3 else 4
+            info <- .cdtData$EnvData$output$info[[3]]
+
+            file.stn <- file.path(.cdtData$EnvData$PathData, 'CDTSTATIONS', .cdtData$EnvData$output$info[[1]])
+            tmpstn <- read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
+
+            daty <- str_trim(as.character(tmpqc$DATE))
+            nonNA <- !is.na(daty) & daty != ""
+            tmpqc <- tmpqc[nonNA, , drop = FALSE]
+            daty <- daty[nonNA]
+            idaty <- which(.cdtData$EnvData$stn.data$dates %in% daty) + is.elv
+
+            stn.val <- as.numeric(as.character(tmpqc$STN.VAL))
+            not.replace <- as.numeric(as.character(tmpqc$NOT.REPLACE))
+            to.replace <- as.numeric(as.character(tmpqc$REPLACE.VAL))
+            ina <- is.na(not.replace)
+            stn.val[ina] <- info$miss.val
+            nna <- !is.na(to.replace)
+            stn.val[nna] <- to.replace[nna]
+            tmpstn[idaty, istn] <- stn.val
+
+            write.table(tmpstn, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
+            rm(tmpstn); gc()
+            Insert.Messages.Out(paste(stnid, ':',  lang.dlg[['message']][['10']]), TRUE, "s")
         })
 
         #########################################
@@ -952,7 +1052,7 @@ qcRROutlierCheckPanelCmd <- function(){
         tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
         tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
         tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
+        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
         ########
         tkconfigure(bt.addshp, command = function(){
@@ -1002,13 +1102,16 @@ qcRROutlierCheckPanelCmd <- function(){
         stateDEM <- "disabled"
 
         chk.adddem <- tkcheckbutton(frameDEM, variable = .cdtData$EnvData$dem$add.dem, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
+        bt.adddemOpt <- ttkbutton(frameDEM, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateDEM)
         cb.adddem <- ttkcombobox(frameDEM, values = unlist(listOpenFiles), textvariable = file.plotDem, width = largeur1, state = stateDEM)
         bt.adddem <- tkbutton(frameDEM, text = "...", state = stateDEM)
 
         ########
-        tkgrid(chk.adddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1)
-        tkgrid(cb.adddem, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1)
-        tkgrid(bt.adddem, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
+
+        tkgrid(chk.adddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.adddemOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.adddem, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.adddem, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
         ########
 
@@ -1033,6 +1136,20 @@ qcRROutlierCheckPanelCmd <- function(){
             }
         })
 
+        tkconfigure(bt.adddemOpt, command = function(){
+            if(!is.null(.cdtData$EnvData$dem$dem)){
+                atlevel <- pretty(.cdtData$EnvData$dem$dem$z, n = 10, min.n = 7)
+                if(is.null(.cdtData$EnvData$dem$Opt$user.levels$levels)){
+                    .cdtData$EnvData$dem$Opt$user.levels$levels <- atlevel
+                }else{
+                    if(!.cdtData$EnvData$dem$Opt$user.levels$custom)
+                        .cdtData$EnvData$dem$Opt$user.levels$levels <- atlevel
+                }
+            }
+
+            .cdtData$EnvData$dem$Opt <- MapGraph.QCgridData(.cdtData$EnvData$dem$Opt)
+        })
+
         ########
         tkbind(cb.adddem, "<<ComboboxSelected>>", function(){
             demInfo <- getNCDFSampleData(str_trim(tclvalue(file.plotDem)))
@@ -1050,6 +1167,7 @@ qcRROutlierCheckPanelCmd <- function(){
             stateDEM <- if(tclvalue(.cdtData$EnvData$dem$add.dem) == "1") "disabled" else "normal"
             tkconfigure(cb.adddem, state = stateDEM)
             tkconfigure(bt.adddem, state = stateDEM)
+            tkconfigure(bt.adddemOpt, state = stateDEM)
         })
 
         #######################
@@ -1061,15 +1179,19 @@ qcRROutlierCheckPanelCmd <- function(){
         stateSAT <- "disabled"
 
         chk.addSat <- tkcheckbutton(frameSAT, variable = .cdtData$EnvData$sat$add.sat, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left')
+        bt.addSatOpt <- ttkbutton(frameSAT, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSAT)
+        txt.addSat <- tklabel(frameSAT, text = lang.dlg[['label']][['13']], anchor = 'w', justify = 'left')
         bt.addSatSet <- ttkbutton(frameSAT, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSAT)
         en.addSat <- tkentry(frameSAT, textvariable = dir.plotSat, width = largeur2, state = stateSAT)
         bt.addSat <- tkbutton(frameSAT, text = "...", state = stateSAT)
 
         ########
         tkgrid(chk.addSat, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addSatSet, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(en.addSat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addSat, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
+        tkgrid(bt.addSatOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(txt.addSat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.addSatSet, row = 1, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(en.addSat, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.addSat, row = 2, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
 
@@ -1098,12 +1220,27 @@ qcRROutlierCheckPanelCmd <- function(){
             }else .cdtData$EnvData$sat$sat.data <- sdon
         })
 
+        tkconfigure(bt.addSatOpt, command = function(){
+            if(!is.null(.cdtData$EnvData$sat$don.sat)){
+                atlevel <- pretty(.cdtData$EnvData$sat$don.sat$z, n = 10, min.n = 7)
+                if(is.null(.cdtData$EnvData$sat$Opt$user.levels$levels)){
+                    .cdtData$EnvData$sat$Opt$user.levels$levels <- atlevel
+                }else{
+                    if(!.cdtData$EnvData$sat$Opt$user.levels$custom)
+                        .cdtData$EnvData$sat$Opt$user.levels$levels <- atlevel
+                }
+            }
+
+            .cdtData$EnvData$sat$Opt <- MapGraph.QCgridData(.cdtData$EnvData$sat$Opt)
+        })
+
         ########
         tkbind(chk.addSat, "<Button-1>", function(){
             stateSAT <- if(tclvalue(.cdtData$EnvData$sat$add.sat) == "1") "disabled" else "normal"
             tkconfigure(en.addSat, state = stateSAT)
             tkconfigure(bt.addSat, state = stateSAT)
             tkconfigure(bt.addSatSet, state = stateSAT)
+            tkconfigure(bt.addSatOpt, state = stateSAT)
         })
 
         #######################
@@ -1177,15 +1314,34 @@ qcRROutlierCheckPanelCmd <- function(){
 
     ##########
     .cdtData$EnvData$QC$SaveEdit <- function(dat2sav){
-        stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
         saved <- FALSE
         if(!is.null(dat2sav)){
             if(!is.null(dat2sav$REPLACE.VAL)){
-                .cdtData$EnvData$outqc$res[[stnid]]$outliers <- dat2sav
+                writeData <- TRUE
+                tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+                if(.cdtData$OpenTab$Data.Type[[tabid]] == 'qc.outliers.data'){
+                    stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+                    .cdtData$EnvData$outqc$res[[stnid]]$outliers <- dat2sav
+                }
+                else if(.cdtData$OpenTab$Data.Type[[tabid]] == 'qc.mixed.data'){
+                    stnid <- str_trim(tclvalue(.cdtData$EnvData$MXD$STN$stnID))
+                    .cdtData$EnvData$outqc$mixed$res[[stnid]]$tab <- dat2sav
+                }
+                else if(.cdtData$OpenTab$Data.Type[[tabid]] == 'qc.sequence.data'){
+                    stnid <- str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
+                    .cdtData$EnvData$outqc$sequence$res[[stnid]]$tab <- dat2sav
+                }
+                else if(.cdtData$OpenTab$Data.Type[[tabid]] == 'qc.equal.data'){
+                    stnid <- str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID))
+                    .cdtData$EnvData$outqc$equal$res[[stnid]]$tab <- dat2sav
+                }
+                else writeData <- FALSE
 
-                file.outqc <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', "QCResults.rds")
-                saveRDS(.cdtData$EnvData$outqc, file.outqc)
-                saved <- TRUE
+                if(writeData){
+                    file.outqc <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', "QCResults.rds")
+                    saveRDS(.cdtData$EnvData$outqc, file.outqc)
+                    saved <- TRUE
+                }
             }
         }
 

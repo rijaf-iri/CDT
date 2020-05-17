@@ -1,47 +1,71 @@
 
 homog.AggregateSeries <- function(don, intstep, aggr.pars)
 {
-    dek.index <- mon.index <- NULL
-    dek.dat <- mon.dat <- NULL
+    dek.index <- NULL
+    mon.index <- NULL
+    dek.dat <- NULL
+    mon.dat <- NULL
+
     if(intstep == "daily"){
         dek.index <- cdt.index.aggregate(don$dates, "daily", "dekadal")
-        dek.dat <- cdt.data.aggregate(don$data, dek.index$index, pars = aggr.pars)
-        dimnames(dek.dat) <- NULL
+        if(aggr.pars$min.frac$unique){
+            ifull <- (dek.index$nba / dek.index$nb0) >= aggr.pars$min.frac$all
+        }else{
+            ifull <- sapply(dek.index$nb.mon, function(x){
+                all(x$nba / x$nb0 >= aggr.pars$min.frac$month[x$mo])
+            })
+        }
+        if(all(!ifull)) return(NULL)
+        dek.dat <- cdt.data.aggregateTS(don$data, dek.index, aggr.pars)
+
         mon.index <- cdt.index.aggregate(don$dates, "daily", "monthly")
-        mon.dat <- cdt.data.aggregate(don$data, mon.index$index, pars = aggr.pars)
-        dimnames(mon.dat) <- NULL
+        mon.dat <- cdt.data.aggregateTS(don$data, mon.index, aggr.pars)
 
         aggrS <- list(don1 = list(tstep = "daily", date = don$dates, data = don$data),
-                    don2 = list(tstep = "dekadal", date = dek.index$date, data = dek.dat),
-                    don3 = list(tstep = "monthly", date = mon.index$date, data = mon.dat))
+                      don2 = list(tstep = "dekadal", date = dek.index$date, data = dek.dat),
+                      don3 = list(tstep = "monthly", date = mon.index$date, data = mon.dat))
     }
 
     if(intstep == "pentad"){
         dek.index <- cdt.index.aggregate(don$dates, "pentad", "dekadal")
-        dek.dat <- cdt.data.aggregate(don$data, dek.index$index, pars = aggr.pars)
-        dimnames(dek.dat) <- NULL
+        if(aggr.pars$min.frac$unique){
+            ifull <- (dek.index$nba / dek.index$nb0) >= aggr.pars$min.frac$all
+        }else{
+            ifull <- sapply(dek.index$nb.mon, function(x){
+                all(x$nba / x$nb0 >= aggr.pars$min.frac$month[x$mo])
+            })
+        }
+        if(all(!ifull)) return(NULL)
+        dek.dat <- cdt.data.aggregateTS(don$data, dek.index, aggr.pars)
+
         mon.index <- cdt.index.aggregate(don$dates, "pentad", "monthly")
-        mon.dat <- cdt.data.aggregate(don$data, mon.index$index, pars = aggr.pars)
-        dimnames(mon.dat) <- NULL
+        mon.dat <- cdt.data.aggregateTS(don$data, mon.index, aggr.pars)
 
         aggrS <- list(don1 = list(tstep = "pentad", date = don$dates, data = don$data),
-                    don2 = list(tstep = "dekadal", date = dek.index$date, data = dek.dat),
-                    don3 = list(tstep = "monthly", date = mon.index$date, data = mon.dat))
+                      don2 = list(tstep = "dekadal", date = dek.index$date, data = dek.dat),
+                      don3 = list(tstep = "monthly", date = mon.index$date, data = mon.dat))
     }
 
     if(intstep == "dekadal"){
         mon.index <- cdt.index.aggregate(don$dates, "dekadal", "monthly")
-        mon.dat <- cdt.data.aggregate(don$data, mon.index$index, pars = aggr.pars)
-        dimnames(mon.dat) <- NULL
+        if(aggr.pars$min.frac$unique){
+            ifull <- (mon.index$nba / mon.index$nb0) >= aggr.pars$min.frac$all
+        }else{
+            ifull <- sapply(mon.index$nb.mon, function(x){
+                all(x$nba / x$nb0 >= aggr.pars$min.frac$month[x$mo])
+            })
+        }
+        if(all(!ifull)) return(NULL)
+        mon.dat <- cdt.data.aggregateTS(don$data, mon.index, aggr.pars)
 
         aggrS <- list(don1 = NULL,
-                    don2 = list(tstep = "dekadal", date = don$dates, data = don$data),
-                    don3 = list(tstep = "monthly", date = mon.index$date, data = mon.dat))
+                      don2 = list(tstep = "dekadal", date = don$dates, data = don$data),
+                      don3 = list(tstep = "monthly", date = mon.index$date, data = mon.dat))
     }
 
     if(intstep == "monthly"){
         aggrS <- list(don1 = NULL, don2 = NULL,
-                    don3 = list(tstep = "monthly", date = don$dates, data = don$data))
+                      don3 = list(tstep = "monthly", date = don$dates, data = don$data))
     }
     rm(dek.index, dek.dat, mon.index, mon.dat)
 
@@ -85,13 +109,17 @@ homog.RefSeriesUser <- function(candS, refrS, parSeries)
         opr.fun <- if(parSeries$diff.ratio == 1) `-` else `/`
         res <- opr.fun(xcand[[j]], xrefs[[j]])
         res[is.nan(res)] <- 0
+        if(parSeries$diff.ratio == 3) res <- log(res)
         res[is.infinite(res)] <- NA
+
         out$data <- res
         out
     })
     names(ret) <- names(candS)
     return(ret)
 }
+
+###########
 
 homog.TestSeries.noRef <- function(x, pars, id = NULL)
 {
@@ -100,15 +128,19 @@ homog.TestSeries.noRef <- function(x, pars, id = NULL)
     X <- x$data[, id, drop = FALSE]
     if(pars$use.climato){
         anom <- cdt.Anomalies(X, x$date, x$tstep,
-                            FUN = "Standardized",
-                            pars.clim = list(all.years = TRUE,
-                                min.year = 5, daily.win = 5))
-        
+                              FUN = "Standardized",
+                              pars.clim = list(
+                                                all.years = TRUE,
+                                                min.year = 5,
+                                                daily.win = 5)
+                                              )
         x$data[, id] <- anom$data.anom$anomaly
     }else{
         moy <- colMeans(X, na.rm = TRUE)
-        x$data[, id] <- X - moy
+        sds <- matrixStats::colSds(X, na.rm = TRUE)
+        x$data[, id] <- sweep(sweep(X, 2, moy, FUN = "-"), 2, sds, FUN = "/")
     }
+
     return(x)
 }
 
@@ -138,7 +170,7 @@ homog.TestSeries.withRef <- function(x, pars, voisin, id = NULL){
     if(is.null(id)) id <- seq(ncol(x$data))
 
     if(pars$use.climato){
-        index.clim <- cdt.index.Climatologies(x$date, x$tstep, 5)
+        index.clim <- cdt.index.Climatologies(x$date, x$tstep, xwin = 5)
         index.anom <- cdt.index.Anomalies(x$date, index.clim, x$tstep)
         XdiffRatio <- homog.DiffRatioRef.Climato(x$data, index.clim, index.anom, pars$diff.ratio)
     }else{

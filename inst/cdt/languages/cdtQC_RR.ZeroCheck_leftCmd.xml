@@ -25,7 +25,7 @@
             <text lang="en"> Replace False Zeros </text>
         </button>
         <checkbutton id="1">
-            <text lang="en"> Load existing False-Zeros Check session </text>
+            <text lang="en"> False-Zeros Check already exist </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Station Data </text>

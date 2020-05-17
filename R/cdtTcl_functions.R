@@ -97,25 +97,39 @@ btn_releases <- function(x, y, W){
 
 ########################################################################
 
-## copy/paste/cut defile menu
+## tktext copy/paste/cut defile menu
 
 menuCopyPaste <- function(parent, scopy = 'normal', scut = 'disabled', spaste = 'disabled')
 {
     cpmenu <- tkmenu(parent, tearoff = FALSE)
 
-    tkadd(cpmenu, "command", label = "Copy <Ctrl-C>", state = scopy,
-        command = function(){
+    tkadd(cpmenu, "command", label = "Copy  ........ <Ctrl-C>", state = scopy,
+          command = function()
+        {
             .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(parent), "<<Copy>>")))
+
+            ########
+            if(parent$ID == .cdtEnv$tcl$main$out.text$ID){
+                if(!is.null(.cdtEnv$tcl$main$out.copy)){
+                    ret <- lapply(.cdtEnv$tcl$main$out.copy, function(x){
+                        ix <- as.numeric(x[1])
+                        tktag.add(parent, x[2], paste0(ix, '.0'), paste0(ix + 1, '.0'))
+                    })
+                    .cdtEnv$tcl$main$out.copy <- NULL
+                }
+            }
         })
     tkadd(cpmenu, "separator")
-    tkadd(cpmenu, "command", label = "Cut <Ctrl-X>", state = scut,
-        command = function(){
-          .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(parent), "<<Cut>>")))
+    tkadd(cpmenu, "command", label = "Cut    ........ <Ctrl-X>", state = scut,
+          command = function()
+        {
+            .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(parent), "<<Cut>>")))
         })
     tkadd(cpmenu, "separator")
-    tkadd(cpmenu, "command", label = "Paste <Ctrl-V>", state = spaste,
-        command = function(){
-          .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(parent), "<<Paste>>")))
+    tkadd(cpmenu, "command", label = "Paste ........ <Ctrl-V>", state = spaste,
+          command = function()
+        {
+            .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(parent), "<<Paste>>")))
         })
 
     tkbind(parent, "<Button-3>", function(x, y){
@@ -143,45 +157,165 @@ defile.menu.OpenFiles <- function(x, y){
 
 ########################################################################
 
-## table 1st column defile menu
-defile.menu.OpenTable <- function(){
+## table copy/paste/cut defile menu
+menuCopyPaste.OpenTable <- function(){
     tabid <- as.numeric(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+    table1 <- .cdtData$OpenTab$Data[[tabid]][[2]][[1]]
+    data.arr <- .cdtData$OpenTab$Data[[tabid]][[2]][[2]]
 
+    #########
+    popup.CXV <- tkmenu(table1, tearoff = FALSE)
+
+    tkadd(popup.CXV, "command", label = "Copy  ........ <Ctrl-C>",
+          command = function()
+        {
+            .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(table1), "<<Copy>>")))
+        })
+    tkadd(popup.CXV, "separator")
+    tkadd(popup.CXV, "command", label = "Cut    ........ <Ctrl-X>",
+          command = function()
+        {
+            .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(table1), "<<Cut>>")))
+        })
+    tkadd(popup.CXV, "separator")
+    tkadd(popup.CXV, "command", label = "Paste ........ <Ctrl-V>",
+        command = function()
+        {
+            .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(table1), "<<Paste>>")))
+        })
+
+    #########
+    tkbind(table1, "<Button-3>", function(x, y){
+        rootx <- as.integer(tkwinfo("rootx", table1))
+        rooty <- as.integer(tkwinfo("rooty", table1))
+        xTxt <- as.integer(x) + rootx
+        yTxt <- as.integer(y) + rooty
+        index.col <- tclvalue(tkindex(table1, paste0("@", x, ",", y), "col"))
+        index.row <- tclvalue(tkindex(table1, paste0("@", x, ",", y), "row"))
+        not.1st.col <- index.col != "0" & index.row %in% as.character(seq(0, data.arr$nrow, 1))
+        not.1st.row <- index.row != "0" & index.col %in% as.character(seq(0, data.arr$ncol, 1))
+        if(not.1st.col & not.1st.row)
+            .Tcl(paste("tk_popup", .Tcl.args(popup.CXV, xTxt, yTxt)))
+    })
+}
+
+########################################################################
+
+## table 1st column defile menu, insert and delete row
+menuInsertDeleteRow.OpenTable <- function(){
+    tabid <- as.numeric(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
     table1 <- .cdtData$OpenTab$Data[[tabid]][[2]][[1]]
     data.arr <- .cdtData$OpenTab$Data[[tabid]][[2]][[2]]
     nl <- data.arr$nrow
 
     #########
     popup.EditTable <- tkmenu(table1, tearoff = FALSE)
-    tkadd(popup.EditTable, "command", label = "Insert row above", command = function(){
-        nl <<- table.insertRowAbove(table1, data.arr, nl)
-    })
-    tkadd(popup.EditTable, "command", label = "Insert row below", command = function(){
-        nl <<- table.insertRowBelow(table1, data.arr, nl)
-    })
+
+    tkadd(popup.EditTable, "command", label = "Insert row above",
+          command = function()
+        {
+            nl <<- table.insertRowAbove(table1, data.arr, nl)
+        })
+    tkadd(popup.EditTable, "command", label = "Insert row below",
+        command = function()
+        {
+            nl <<- table.insertRowBelow(table1, data.arr, nl)
+        })
     tkadd(popup.EditTable, "separator")
-    tkadd(popup.EditTable, "command", label = "Delete selected row", command = function(){
-        nl <<- table.deleteSelRow(table1, data.arr, nl)
-    })
+    tkadd(popup.EditTable, "command", label = "Delete selected rows",
+        command = function()
+        {
+            nl <<- table.deleteSelRow(table1, data.arr, nl)
+        })
 
     #########
-    defile.popup <- function(x, y) {
+    tkbind(table1, "<Button-3>", function(x, y){
         rootx <- as.integer(tkwinfo("rootx", table1))
         rooty <- as.integer(tkwinfo("rooty", table1))
         xTxt <- as.integer(x) + rootx
         yTxt <- as.integer(y) + rooty
-        if(tclvalue(tkindex(table1, paste("@", x, ",", y, sep = ""), "col")) == "0"){
-            selrow <- tclvalue(tkindex(table1, paste("@", x, ",", y, sep = ""), "row"))
-            tkselection.set(table1, paste(selrow, 0, sep = ','), paste(selrow, data.arr$ncol, sep = ','))
+        index.col <- tclvalue(tkindex(table1, paste0("@", x, ",", y), "col"))
+        if(index.col == "0"){
+            selrow <- tclvalue(tkindex(table1, paste0("@", x, ",", y), "row"))
+            tkselection.set(table1, paste0(selrow, ',', 0), paste0(selrow, ',', data.arr$ncol))
             .Tcl(paste("tk_popup", .Tcl.args(popup.EditTable, xTxt, yTxt)))
         }
-    }
+    })
+}
+
+########################################################################
+
+menuRowHandleCopyPaste.OpenTable <- function(){
+    tabid <- as.numeric(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
+    table1 <- .cdtData$OpenTab$Data[[tabid]][[2]][[1]]
+    data.arr <- .cdtData$OpenTab$Data[[tabid]][[2]][[2]]
+    nl <- data.arr$nrow
+
+    #########
+    popup.EditTable <- tkmenu(table1, tearoff = FALSE)
+
+    tkadd(popup.EditTable, "command", label = "Insert row above",
+          command = function()
+        {
+            nl <<- table.insertRowAbove(table1, data.arr, nl)
+        })
+    tkadd(popup.EditTable, "command", label = "Insert row below",
+        command = function()
+        {
+            nl <<- table.insertRowBelow(table1, data.arr, nl)
+        })
+    tkadd(popup.EditTable, "separator")
+    tkadd(popup.EditTable, "command", label = "Delete selected rows",
+        command = function()
+        {
+            nl <<- table.deleteSelRow(table1, data.arr, nl)
+        })
+
+    #########
+    popup.CXV <- tkmenu(table1, tearoff = FALSE)
+
+    tkadd(popup.CXV, "command", label = "Copy  ........ <Ctrl-C>",
+          command = function()
+        {
+            .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(table1), "<<Copy>>")))
+        })
+    tkadd(popup.CXV, "separator")
+    tkadd(popup.CXV, "command", label = "Cut    ........ <Ctrl-X>",
+          command = function()
+        {
+            .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(table1), "<<Cut>>")))
+        })
+    tkadd(popup.CXV, "separator")
+    tkadd(popup.CXV, "command", label = "Paste ........ <Ctrl-V>",
+        command = function()
+        {
+            .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(table1), "<<Paste>>")))
+        })
 
     #########
     tkbind(table1, "<Button-3>", function(x, y){
-        defile.popup(x, y)
+        rootx <- as.integer(tkwinfo("rootx", table1))
+        rooty <- as.integer(tkwinfo("rooty", table1))
+        xTxt <- as.integer(x) + rootx
+        yTxt <- as.integer(y) + rooty
+
+        index.col <- tclvalue(tkindex(table1, paste0("@", x, ",", y), "col"))
+        index.row <- tclvalue(tkindex(table1, paste0("@", x, ",", y), "row"))
+
+        if(index.col == "0"){
+            col.start <- paste0(index.row, ',', 0)
+            tkselection.set(table1, col.start, paste0(index.row, ',', data.arr$ncol))
+            .Tcl(paste("tk_popup", .Tcl.args(popup.EditTable, xTxt, yTxt)))
+        }
+
+        not.1st.col <- index.col != "0" & index.row %in% as.character(seq(0, data.arr$nrow, 1))
+        not.1st.row <- index.row != "0" & index.col %in% as.character(seq(0, data.arr$ncol, 1))
+        if(not.1st.col & not.1st.row)
+            .Tcl(paste("tk_popup", .Tcl.args(popup.CXV, xTxt, yTxt)))
     })
 }
+
+########################################################################
 
 table.insertRowAbove <- function(parent, data.arr, nl){
     row.nb <- unlist(strsplit(tclvalue(tcl(parent, "curselection")), ','))[1]
@@ -251,13 +385,13 @@ tk_get_SaveFile <- function(initialdir = getwd(), initialfile = "", filetypes = 
 {
     if(WindowsOS()){
         f2save <- tclvalue(tkgetSaveFile(initialdir = initialdir,
-                                        initialfile = initialfile,
-                                        filetypes = filetypes,
-                                        defaultextension = TRUE))
+                                         initialfile = initialfile,
+                                         filetypes = filetypes,
+                                         defaultextension = TRUE))
     }else{
         f2save <- tclvalue(tkgetSaveFile(initialdir = initialdir,
-                                        initialfile = initialfile,
-                                        filetypes = filetypes))
+                                         initialfile = initialfile,
+                                         filetypes = filetypes))
     }
     return(f2save)
 }

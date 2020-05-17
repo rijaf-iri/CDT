@@ -320,7 +320,7 @@ StnChkCoordsPanelCmd <- function(){
                     editstn.df[is.na(editstn.df)] <- ""
                     .cdtData$EnvData$tab$Table <- tableNotebookTab_unik(editstn.df, .cdtData$EnvData$tab$Table,
                                                                         "Edit-Coordinates", 10, 'chkcrds')
-                    defile.menu.OpenTable()
+                    menuRowHandleCopyPaste.OpenTable()
                 }else{
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "s")
                     return(NULL)

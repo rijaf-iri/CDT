@@ -87,13 +87,13 @@ homPlot_AdjustedSeries <- function(){
 }
 
 homPlot_BreakPoints <- function(){
-    plotseries <- str_trim(tclvalue(.cdtData$EnvData$plot$plotseries))
+    plotseries <- .cdtData$EnvData$plot$plotseries
     stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
     STNID <- .cdtData$EnvData$output$data$id
     ids <- which(STNID == stnid)
 
     ############
-    if(plotseries == "Test Series"){
+    if(plotseries == "testSeries"){
         don <- lapply(.cdtData$EnvData$testS, function(x){
             if(is.null(x)) return(NULL)
             don <- x$data[, ids]
@@ -101,7 +101,7 @@ homPlot_BreakPoints <- function(){
             x
         })
     }
-    if(plotseries == "Base Series"){
+    if(plotseries == "BaseSeries"){
         don <- lapply(.cdtData$EnvData$candS, function(x){
             if(is.null(x)) return(NULL)
             don <- x$data[, ids]

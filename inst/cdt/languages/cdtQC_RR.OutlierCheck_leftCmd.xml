@@ -34,7 +34,10 @@
             <text lang="en"> Display Table </text>
         </button>
         <button id="6">
-            <text lang="en"> Plot Time Series </text>
+            <text lang="en"> Replace Mixed Data </text>
+        </button>
+        <button id="7">
+            <text lang="en"> Replace Invalid Data </text>
         </button>
         <checkbutton id="1">
             <text lang="en"> Load existing QC session </text>
@@ -83,6 +86,9 @@
         </label>
         <label id="12">
             <text lang="en"> Invalid rainfall data </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Directory of the NetCDF files </text>
         </label>
     </widget>
     <help>
@@ -249,6 +255,18 @@
         </content>
         <content id="14">
             <text lang="en"> Neighbor stations will be selected without considering elevation data </text>
+        </content>
+        <content id="15">
+            <text lang="en"> Start temporal check .... </text>
+        </content>
+        <content id="16">
+            <text lang="en"> Temporal check done </text>
+        </content>
+        <content id="17">
+            <text lang="en"> Start spatial check .... </text>
+        </content>
+        <content id="18">
+            <text lang="en"> Spatial check done </text>
         </content>
     </message>
 </panel_cmd>

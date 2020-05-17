@@ -31,15 +31,15 @@ Display_data.frame_Table <- function(data.df, title, colwidth = 8){
     onglet <- addNewTab(title)
     dtab <- try(tclArrayVar(data.df), silent = TRUE)
     if(inherits(dtab, "try-error")){
-        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['8']], format = TRUE)
-        Insert.Messages.Out(gsub('[\r\n]', '', dtab[1]), format = TRUE)
+        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['8']], TRUE, 'e')
+        Insert.Messages.Out(gsub('[\r\n]', '', dtab[1]), TRUE, 'e')
         return(list(onglet, list(NULL, NULL)))
     }
 
     table1 <- try(displayTable(onglet[[2]], tclArray = dtab, colwidth = colwidth), silent = TRUE)
     if(inherits(table1, "try-error")){
-        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['9']], format = TRUE)
-        Insert.Messages.Out(gsub('[\r\n]', '', table1[1]), format = TRUE)
+        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['9']], TRUE, 'e')
+        Insert.Messages.Out(gsub('[\r\n]', '', table1[1]), TRUE, 'e')
         table1 <- list(NULL, dtab)
     }
 
@@ -163,7 +163,7 @@ Save_Table_As <- function(){
     if(!is.na(tabid)){
         Objarray <- .cdtData$OpenTab$Data[[tabid]][[2]]
         if(!inherits(Objarray[[2]], "tclArrayVar")){
-            Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['6']], format = TRUE)
+            Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['6']], TRUE, 'e')
             return(NULL)
         }
         tryCatch(
@@ -192,14 +192,14 @@ Save_Table_As <- function(){
                 }else{
                     writeFiles(dat2sav, file.to.save, col.names = Objarray[[2]]$col.names)
                 }
-                Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['3']])
+                Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['3']], TRUE, 's')
             },
             warning = function(w){
-                Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], format = TRUE)
+                Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], TRUE, 'e')
                 warningFun(w)
             },
             error = function(e){
-                Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], format = TRUE)
+                Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], TRUE, 'e')
                 errorFun(e)
             }
         )
@@ -213,7 +213,7 @@ Save_Table_As <- function(){
 ## Save table type "arr"
 saveTable.arr.type <- function(dat2sav, tabid, rowcolnames){
     if(is.null(dat2sav)){
-        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['10']], format = TRUE)
+        Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['10']], TRUE, 'e')
         return(NULL)
     }
     if(length(.cdtData$OpenTab$Data[[tabid]]) == 2){
@@ -233,11 +233,11 @@ saveTable.arr.type <- function(dat2sav, tabid, rowcolnames){
 
         if(!is.null(file.spec)){
             writeFiles(dat2sav, filetosave, col.names = file.spec$header,
-                        na = file.spec$miss.val, sep = file.spec$sepr)
+                       na = file.spec$miss.val, sep = file.spec$sepr)
         }else{
             writeFiles(dat2sav, filetosave, 
-                        col.names = rowcolnames$col.names,
-                        row.names = rowcolnames$row.names)
+                       col.names = rowcolnames$col.names,
+                       row.names = rowcolnames$row.names)
         }
     }
 }
@@ -259,13 +259,13 @@ Save_Notebook_Tab_Array <- function(){
         dat2sav <- tclArray2dataframe(Objarray)
 
         switch(.cdtData$OpenTab$Type[[tabid]],
-                "arr" = saveTable.arr.type(dat2sav, tabid,
+               "arr" = saveTable.arr.type(dat2sav, tabid,
                             Objarray[[2]][c('row.names', 'col.names')]),
-                "chkcrds" = .cdtData$EnvData$StnChkCoords$SaveEdit(dat2sav),
-                "falsezero" = .cdtData$EnvData$qcRRZeroCheck$SaveEdit(dat2sav),
-                "outqc" = .cdtData$EnvData$QC$SaveEdit(dat2sav),
-                "outhom" = .cdtData$EnvData$HomTest$SaveEdit(dat2sav),
-                NULL)
+               "chkcrds" = .cdtData$EnvData$StnChkCoords$SaveEdit(dat2sav),
+               "falsezero" = .cdtData$EnvData$qcRRZeroCheck$SaveEdit(dat2sav),
+               "outqc" = .cdtData$EnvData$QC$SaveEdit(dat2sav),
+               "outhom" = .cdtData$EnvData$HomTest$SaveEdit(dat2sav),
+               NULL)
     }else return(NULL)
 
     return(0)

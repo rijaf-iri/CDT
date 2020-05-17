@@ -33,6 +33,12 @@
         <button id="5">
             <text lang="en"> Display Table </text>
         </button>
+        <button id="6">
+            <text lang="en"> Replace Suspicious Equal Data </text>
+        </button>
+        <button id="7">
+            <text lang="en"> Replace Invalid Data </text>
+        </button>
         <checkbutton id="1">
             <text lang="en"> Load existing QC session </text>
         </checkbutton>
@@ -86,6 +92,9 @@
         </label>
         <label id="12">
             <text lang="en"> Invalid temperature data </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Directory of the NetCDF files </text>
         </label>
     </widget>
     <help>
@@ -275,6 +284,18 @@
         </content>
         <content id="19">
             <text lang="en"> data not found </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Start temporal check .... </text>
+        </content>
+        <content id="21">
+            <text lang="en"> Temporal check done </text>
+        </content>
+        <content id="22">
+            <text lang="en"> Start spatial check .... </text>
+        </content>
+        <content id="23">
+            <text lang="en"> Spatial check done </text>
         </content>
     </message>
 </panel_cmd>

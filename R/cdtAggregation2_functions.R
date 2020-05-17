@@ -186,20 +186,20 @@ cdt.Climatologies <- function(data.mat, dates,
 
 ## to export
 cdt.Anomalies <- function(data.mat, dates,
-                            tstep = "dekadal",
-                            date.range = NULL,
-                            FUN = c("Difference", "Percentage", "Standardized"),
-                            climatology = FALSE,
-                            data.clim = list(mean = NULL, sd = NULL),
-                            pars.clim = list(
-                                    all.years = TRUE,
-                                    start.year = 1981,
-                                    end.year = 2010,
-                                    min.year = 15,
-                                    daily.win = 0)
+                          tstep = "dekadal",
+                          date.range = NULL,
+                          FUN = c("Difference", "Percentage", "Standardized"),
+                          climatology = FALSE,
+                          data.clim = list(mean = NULL, sd = NULL),
+                          pars.clim = list(
+                                            all.years = TRUE,
+                                            start.year = 1981,
+                                            end.year = 2010,
+                                            min.year = 15,
+                                            daily.win = 0
+                                          )
                         )
 {
-    # date.range = c(start = 2018011, end = 2018063)    
     FUN <- FUN[1]
     index.clim <- NULL
     if(climatology){

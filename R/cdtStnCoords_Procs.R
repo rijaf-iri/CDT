@@ -1,7 +1,8 @@
 
 StnChkCoordsProcs <- function(GeneralParameters){
+    message <- .cdtData$EnvData[['message']]
     if(!dir.exists(GeneralParameters$output)){
-        msg <- paste(GeneralParameters$output, .cdtData$EnvData[['message']][['9']])
+        msg <- paste(GeneralParameters$output, message[['9']])
         Insert.Messages.Out(msg, TRUE, 'e')
         return(NULL)
     }
@@ -52,15 +53,15 @@ StnChkCoordsProcs <- function(GeneralParameters){
 
     if(GeneralParameters$shpfile == "")
     {
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['10']], TRUE, "w")
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], TRUE, "w")
+        Insert.Messages.Out(message[['10']], TRUE, "w")
+        Insert.Messages.Out(message[['11']], TRUE, "w")
         shpd <- NULL
     }else{
         shpd <- getShpOpenData(GeneralParameters$shpfile)
         if(is.null(shpd)){
-            msg <- paste(.cdtData$EnvData[['message']][['12']], GeneralParameters$shpfile)
+            msg <- paste(message[['12']], GeneralParameters$shpfile)
             Insert.Messages.Out(msg, TRUE, "e")
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], TRUE, "w")
+            Insert.Messages.Out(message[['11']], TRUE, "w")
             shpd <- NULL
         }else{
             shpd <- as(shpd[[2]], "SpatialPolygons")
@@ -86,7 +87,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
     ## Missing coords
     imiss <- is.na(coords$lon) | is.na(coords$lat)
     if(any(imiss)){
-        don.table$miss <- data.frame(State = .cdtData$EnvData[['message']][['13']], don.disp[imiss, , drop = FALSE])
+        don.table$miss <- data.frame(State = message[['13']], don.disp[imiss, , drop = FALSE])
         don.disp <- don.disp[!imiss, , drop = FALSE]
         coords <- coords[!imiss, , drop = FALSE]
     }
@@ -94,7 +95,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
     ## Wrong coords
     iwrong <- coords$lon < -180 | coords$lon > 360 | coords$lat < -90 | coords$lat > 90
     if(any(iwrong)){
-        don.table$wrong <- data.frame(State = .cdtData$EnvData[['message']][['14']], don.disp[iwrong, , drop = FALSE])
+        don.table$wrong <- data.frame(State = message[['14']], don.disp[iwrong, , drop = FALSE])
         don.disp <- don.disp[!iwrong, , drop = FALSE]
         coords <- coords[!iwrong, , drop = FALSE]
     }
@@ -102,7 +103,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
     ## Duplicated ID
     iddup <- duplicated(coords$id) | duplicated(coords$id, fromLast = TRUE)
     if(any(iddup)){
-        don.table$iddup <- data.frame(State = .cdtData$EnvData[['message']][['15']], don.disp[iddup, , drop = FALSE])
+        don.table$iddup <- data.frame(State = message[['15']], don.disp[iddup, , drop = FALSE])
         don.table$iddup <- don.table$iddup[order(coords$id[iddup]), , drop = FALSE]
         don.disp$StatusX[iddup] <- "orange"
     }
@@ -111,7 +112,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
     crddup <- duplicated(coords[, c('lon', 'lat'), drop = FALSE]) |
             duplicated(coords[, c('lon', 'lat'), drop = FALSE], fromLast = TRUE)
     if(any(crddup)){
-        don.table$crddup <- data.frame(State = .cdtData$EnvData[['message']][['16']], don.disp[crddup, , drop = FALSE])
+        don.table$crddup <- data.frame(State = message[['16']], don.disp[crddup, , drop = FALSE])
         don.table$crddup <- don.table$crddup[order(paste0(coords$lon[crddup], coords$lat[crddup])), , drop = FALSE]
         don.disp$StatusX[crddup] <- "orange"
     }
@@ -122,7 +123,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
         coordinates(spcoords) <- ~lon+lat
         iout <- is.na(over(spcoords, geometry(shpd)))
         if(any(iout)){
-            don.table$out <- data.frame(State = .cdtData$EnvData[['message']][['17']], don.disp[iout, , drop = FALSE])
+            don.table$out <- data.frame(State = message[['17']], don.disp[iout, , drop = FALSE])
             don.table$out <- don.table$out[order(coords$id[iout]), , drop = FALSE]
             don.disp$StatusX[iout] <- "red"
         }
@@ -230,7 +231,7 @@ StnChkCoordsDataStn <- function(GeneralParameters){
 
 StnChkCoordsCorrect <- function(){
     if(is.null(.cdtData$EnvData$Table.Disp0)){
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], TRUE, "i")
+        Insert.Messages.Out(message[['17']], TRUE, "i")
         return(NULL)
     }
 

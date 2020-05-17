@@ -54,7 +54,7 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
     #####################
 
-    frameColkey <- ttklabelframe(frDialog, text = "Colorkey", relief = 'groove')
+    frameColkey <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1a']], relief = 'groove')
 
     preset.colkey <- c('tim.colors', 'rainbow', 'heat.colors', 'cm.colors', 'topo.colors',
                        'terrain.colors', 'spi.colors', 'precip.colors', 'decile.colors')
@@ -1232,4 +1232,682 @@ MapGraph.SpiVizOptions <- function(spiVizOpt, parent.win = .cdtEnv$tcl$main$win)
     })
     tkwait.window(tt)
     return(spiVizOpt)
+}
+
+#######################################################################################################
+
+MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
+    if(WindowsOS()){
+        width.col <- 4
+        width.spin <- 5
+    }else{
+        width.col <- 1
+        width.spin <- 3
+    }
+
+    #####################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtMapOptions.QCoutliers_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    #####################
+    tt <- tktoplevel()
+    tkgrab.set(tt)
+    tkfocus(tt)
+
+    #####################
+    frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
+    frButt <- tkframe(tt)
+
+    #####################
+
+    frameSTN <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+
+    #######
+    frameSTN1 <- ttklabelframe(frameSTN, text = lang.dlg[['label']][['7']], relief = 'groove')
+
+    stn.ptcol <- tclVar(qcOpt$stn$col)
+
+    txt.STN1C <- tklabel(frameSTN1, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.STN1C <- tkbutton(frameSTN1, bg = tclvalue(stn.ptcol), width = width.col)
+    txt.STN1T <- tklabel(frameSTN1, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+    spin.STN1T <- ttkspinbox(frameSTN1, from = 21, to = 25, increment = 1, justify = 'center', width = width.spin)
+    tkset(spin.STN1T, qcOpt$stn$pch)
+    txt.STN1S <- tklabel(frameSTN1, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.STN1S <- ttkspinbox(frameSTN1, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.STN1S, qcOpt$stn$cex)
+
+    tkgrid(txt.STN1C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.STN1C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.STN1T, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.STN1T, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.STN1S, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.STN1S, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.STN1C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(stn.ptcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.STN1C, bg = loko)
+            tclvalue(stn.ptcol) <- loko
+        }
+    })
+
+    #######
+    frameSTN2 <- ttklabelframe(frameSTN, text = lang.dlg[['label']][['8']], relief = 'groove')
+
+    stn.txtcol <- tclVar(qcOpt$stn$txt.col)
+
+    txt.STN2C <- tklabel(frameSTN2, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.STN2C <- tkbutton(frameSTN2, bg = tclvalue(stn.txtcol), width = width.col)
+    txt.STN2S <- tklabel(frameSTN2, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.STN2S <- ttkspinbox(frameSTN2, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.STN2S, qcOpt$stn$txt.cex)
+
+    tkgrid(txt.STN2C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.STN2C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.STN2S, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.STN2S, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.STN2C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(stn.txtcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.STN2C, bg = loko)
+            tclvalue(stn.txtcol) <- loko
+        }
+    })
+
+    #######
+    tkgrid(frameSTN1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameSTN2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+
+    frameUSE <- ttklabelframe(frDialog, text = lang.dlg[['label']][['3']], relief = 'groove')
+
+    #######
+    frameUSE1 <- ttklabelframe(frameUSE, text = lang.dlg[['label']][['7']], relief = 'groove')
+
+    use.ptcol <- tclVar(qcOpt$use$col)
+
+    txt.USE1C <- tklabel(frameUSE1, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.USE1C <- tkbutton(frameUSE1, bg = tclvalue(use.ptcol), width = width.col)
+    txt.USE1T <- tklabel(frameUSE1, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+    spin.USE1T <- ttkspinbox(frameUSE1, from = 15, to = 20, increment = 1, justify = 'center', width = width.spin)
+    tkset(spin.USE1T, qcOpt$use$pch)
+    txt.USE1S <- tklabel(frameUSE1, text = 'Size', anchor = 'e', justify = 'right')
+    spin.USE1S <- ttkspinbox(frameUSE1, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.USE1S, qcOpt$use$cex)
+
+    tkgrid(txt.USE1C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.USE1C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.USE1T, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.USE1T, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.USE1S, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.USE1S, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.USE1C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(use.ptcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.USE1C, bg = loko)
+            tclvalue(use.ptcol) <- loko
+        }
+    })
+
+    #######
+    frameUSE2 <- ttklabelframe(frameUSE, text = lang.dlg[['label']][['8']], relief = 'groove')
+
+    use.txtcol <- tclVar(qcOpt$use$txt.col)
+
+    txt.USE2C <- tklabel(frameUSE2, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.USE2C <- tkbutton(frameUSE2, bg = tclvalue(use.txtcol), width = width.col)
+    txt.USE2S <- tklabel(frameUSE2, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.USE2S <- ttkspinbox(frameUSE2, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.USE2S, qcOpt$use$txt.cex)
+
+    tkgrid(txt.USE2C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.USE2C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.USE2S, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.USE2S, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.USE2C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(use.txtcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.USE2C, bg = loko)
+            tclvalue(use.txtcol) <- loko
+        }
+    })
+
+    #######
+    tkgrid(frameUSE1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameUSE2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+
+    frameSEL <- ttklabelframe(frDialog, text = lang.dlg[['label']][['4']], relief = 'groove')
+
+    #######
+    frameSEL1 <- ttklabelframe(frameSEL, text = lang.dlg[['label']][['7']], relief = 'groove')
+
+    sel.ptcol <- tclVar(qcOpt$sel$col)
+
+    txt.SEL1C <- tklabel(frameSEL1, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.SEL1C <- tkbutton(frameSEL1, bg = tclvalue(sel.ptcol), width = width.col)
+    txt.SEL1T <- tklabel(frameSEL1, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+    spin.SEL1T <- ttkspinbox(frameSEL1, from = 15, to = 20, increment = 1, justify = 'center', width = width.spin)
+    tkset(spin.SEL1T, qcOpt$sel$pch)
+    txt.SEL1S <- tklabel(frameSEL1, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.SEL1S <- ttkspinbox(frameSEL1, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.SEL1S, qcOpt$sel$cex)
+
+    tkgrid(txt.SEL1C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.SEL1C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.SEL1T, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.SEL1T, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.SEL1S, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.SEL1S, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.SEL1C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(sel.ptcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.SEL1C, bg = loko)
+            tclvalue(sel.ptcol) <- loko
+        }
+    })
+
+    #######
+    frameSEL2 <- ttklabelframe(frameSEL, text = lang.dlg[['label']][['8']], relief = 'groove')
+
+    sel.txtcol <- tclVar(qcOpt$sel$txt.col)
+
+    txt.SEL2C <- tklabel(frameSEL2, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.SEL2C <- tkbutton(frameSEL2, bg = tclvalue(sel.txtcol), width = width.col)
+    txt.SEL2S <- tklabel(frameSEL2, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.SEL2S <- ttkspinbox(frameSEL2, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.SEL2S, qcOpt$sel$txt.cex)
+
+    tkgrid(txt.SEL2C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.SEL2C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.SEL2S, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.SEL2S, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.SEL2C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(sel.txtcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.SEL2C, bg = loko)
+            tclvalue(sel.txtcol) <- loko
+        }
+    })
+
+    #######
+    tkgrid(frameSEL1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameSEL2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+
+    frameVOIS <- ttklabelframe(frDialog, text = lang.dlg[['label']][['5']], relief = 'groove')
+
+    #######
+    frameVOIS1 <- ttklabelframe(frameVOIS, text = lang.dlg[['label']][['7']], relief = 'groove')
+
+    vois.ptcol <- tclVar(qcOpt$vois$col)
+
+    txt.VOIS1C <- tklabel(frameVOIS1, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.VOIS1C <- tkbutton(frameVOIS1, bg = tclvalue(vois.ptcol), width = width.col)
+    txt.VOIS1T <- tklabel(frameVOIS1, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+    spin.VOIS1T <- ttkspinbox(frameVOIS1, from = 15, to = 20, increment = 1, justify = 'center', width = width.spin)
+    tkset(spin.VOIS1T, qcOpt$vois$pch)
+    txt.VOIS1S <- tklabel(frameVOIS1, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.VOIS1S <- ttkspinbox(frameVOIS1, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.VOIS1S, qcOpt$vois$cex)
+
+    tkgrid(txt.VOIS1C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.VOIS1C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.VOIS1T, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.VOIS1T, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.VOIS1S, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.VOIS1S, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.VOIS1C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(vois.ptcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.VOIS1C, bg = loko)
+            tclvalue(vois.ptcol) <- loko
+        }
+    })
+
+    #######
+    frameVOIS2 <- ttklabelframe(frameVOIS, text = lang.dlg[['label']][['8']], relief = 'groove')
+
+    vois.txtcol <- tclVar(qcOpt$vois$txt.col)
+
+    txt.VOIS2C <- tklabel(frameVOIS2, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.VOIS2C <- tkbutton(frameVOIS2, bg = tclvalue(vois.txtcol), width = width.col)
+    txt.VOIS2S <- tklabel(frameVOIS2, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.VOIS2S <- ttkspinbox(frameVOIS2, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.VOIS2S, qcOpt$vois$txt.cex)
+
+    tkgrid(txt.VOIS2C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.VOIS2C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.VOIS2S, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.VOIS2S, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.VOIS2C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(vois.txtcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.VOIS2C, bg = loko)
+            tclvalue(vois.txtcol) <- loko
+        }
+    })
+
+    #######
+    tkgrid(frameVOIS1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameVOIS2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+    frameALL <- ttklabelframe(frDialog, text = lang.dlg[['label']][['6']], relief = 'groove')
+
+    #######
+    frameALL1 <- ttklabelframe(frameALL, text = lang.dlg[['label']][['7']], relief = 'groove')
+
+    all.ptcol <- tclVar(qcOpt$all$col)
+
+    txt.ALL1C <- tklabel(frameALL1, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.ALL1C <- tkbutton(frameALL1, bg = tclvalue(all.ptcol), width = width.col)
+    txt.ALL1T <- tklabel(frameALL1, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+    spin.ALL1T <- ttkspinbox(frameALL1, from = 15, to = 20, increment = 1, justify = 'center', width = width.spin)
+    tkset(spin.ALL1T, qcOpt$all$pch)
+    txt.ALL1S <- tklabel(frameALL1, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.ALL1S <- ttkspinbox(frameALL1, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.ALL1S, qcOpt$all$cex)
+
+    tkgrid(txt.ALL1C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.ALL1C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.ALL1T, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.ALL1T, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.ALL1S, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.ALL1S, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.ALL1C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(all.ptcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.ALL1C, bg = loko)
+            tclvalue(all.ptcol) <- loko
+        }
+    })
+
+    #######
+    frameALL2 <- ttklabelframe(frameALL, text = lang.dlg[['label']][['8']], relief = 'groove')
+
+    all.txtcol <- tclVar(qcOpt$all$txt.col)
+
+    txt.ALL2C <- tklabel(frameALL2, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.ALL2C <- tkbutton(frameALL2, bg = tclvalue(all.txtcol), width = width.col)
+    txt.ALL2S <- tklabel(frameALL2, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+    spin.ALL2S <- ttkspinbox(frameALL2, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.ALL2S, qcOpt$all$txt.cex)
+
+    tkgrid(txt.ALL2C, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.ALL2C, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.ALL2S, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.ALL2S, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.ALL2C, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(all.txtcol), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.ALL2C, bg = loko)
+            tclvalue(all.txtcol) <- loko
+        }
+    })
+
+    #######
+    tkgrid(frameALL1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameALL2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+
+    frameCircle <- tkframe(frDialog, relief = 'groove', borderwidth = 2)
+
+    draw.circle <- tclVar(qcOpt$circle$draw)
+    col.circle <- tclVar(qcOpt$circle$col)
+
+    stateCircle <- if(tclvalue(draw.circle) == '1') 'normal' else 'disabled'
+
+    chk.pltLine <- tkcheckbutton(frameCircle, variable = draw.circle, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+    txt.pltLineC <- tklabel(frameCircle, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+    bt.pltLineC <- tkbutton(frameCircle, bg = tclvalue(col.circle), width = width.col, state = stateCircle)
+    txt.pltLineW <- tklabel(frameCircle, text = lang.dlg[['label']][['12']], anchor = 'e', justify = 'right')
+    spin.pltLineW <- ttkspinbox(frameCircle, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin, state = stateCircle)
+    tkset(spin.pltLineW, qcOpt$circle$lwd)
+
+    tkgrid(chk.pltLine, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.pltLineC, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.pltLineC, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.pltLineW, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.pltLineW, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ######
+    tkconfigure(bt.pltLineC, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.circle), title = lang.dlg[['label']][['1']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.pltLineC, bg = loko)
+            tclvalue(col.circle) <- loko
+        }
+    })
+
+    tkbind(chk.pltLine, "<Button-1>", function(){
+        stateCircle <- if(tclvalue(draw.circle) == '1') 'disabled' else 'normal'
+        tkconfigure(bt.pltLineC, state = stateCircle)
+        tkconfigure(spin.pltLineW, state = stateCircle)
+    })
+
+    #####################
+
+    tkgrid(frameSTN, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameUSE, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frameSEL, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameVOIS, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frameALL, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameCircle, row = 5, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+    #####################
+
+    bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+    bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+
+    tkconfigure(bt.opt.OK, command = function(){
+        qcOpt$stn$col <<- tclvalue(stn.ptcol)
+        qcOpt$stn$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.STN1T))))
+        qcOpt$stn$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.STN1S))))
+        qcOpt$stn$txt.col <<- tclvalue(stn.txtcol)
+        qcOpt$stn$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.STN2S))))
+
+        qcOpt$use$col <<- tclvalue(use.ptcol)
+        qcOpt$use$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.USE1T))))
+        qcOpt$use$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.USE1S))))
+        qcOpt$use$txt.col <<- tclvalue(use.txtcol)
+        qcOpt$use$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.USE2S))))
+
+        qcOpt$sel$col <<- tclvalue(sel.ptcol)
+        qcOpt$sel$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.SEL1T))))
+        qcOpt$sel$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.SEL1S))))
+        qcOpt$sel$txt.col <<- tclvalue(sel.txtcol)
+        qcOpt$sel$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.SEL2S))))
+
+        qcOpt$vois$col <<- tclvalue(vois.ptcol)
+        qcOpt$vois$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.VOIS1T))))
+        qcOpt$vois$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.VOIS1S))))
+        qcOpt$vois$txt.col <<- tclvalue(vois.txtcol)
+        qcOpt$vois$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.VOIS2S))))
+
+        qcOpt$all$col <<- tclvalue(all.ptcol)
+        qcOpt$all$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.ALL1T))))
+        qcOpt$all$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.ALL1S))))
+        qcOpt$all$txt.col <<- tclvalue(all.txtcol)
+        qcOpt$all$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.ALL2S))))
+
+        qcOpt$circle$col <<- tclvalue(col.circle)
+        qcOpt$circle$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        qcOpt$circle$draw <<- switch(tclvalue(draw.circle), '0' = FALSE, '1' = TRUE)
+
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkconfigure(bt.opt.CA, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkgrid(bt.opt.OK, row = 0, column = 0, padx = 5, pady = 1, ipadx = 1, sticky = 'w')
+    tkgrid(bt.opt.CA, row = 0, column = 1, padx = 5, pady = 1, ipadx = 1, sticky = 'e')
+
+    ###############################################################
+
+    tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 5, pady = 5, ipadx = 5, ipady = 5)
+    tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkwm.withdraw(tt)
+    tcl('update')
+    tt.w <- as.integer(tkwinfo("reqwidth", tt))
+    tt.h <- as.integer(tkwinfo("reqheight", tt))
+    tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+    tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+    tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+    tkwm.transient(tt)
+    tkwm.title(tt, lang.dlg[['title']])
+    tkwm.deiconify(tt)
+    tcl('wm', 'attributes', tt, topmost = TRUE)
+
+    ##################################################################
+    tkfocus(tt)
+    tkbind(tt, "<Destroy>", function(){
+        tkgrab.release(tt)
+        tkfocus(parent.win)
+    })
+    tkwait.window(tt)
+    return(qcOpt)
+}
+
+#######################################################################################################
+
+MapGraph.QCgridData <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
+    if(WindowsOS()){
+        largeur2 <- 60
+        largeur3 <- .cdtEnv$tcl$fun$w.scale(30)
+    }else{
+        largeur2 <- 59
+        largeur3 <- .cdtEnv$tcl$fun$w.scale(29.6)
+    }
+
+    #####################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtMapOptions.QCgridData_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    #####################
+
+    preview.canvasf1 <- function(){
+        funkol <- get(mapOpt$preset.colors$color, mode = "function")
+        listCol <- funkol(64)
+        kolor <- getGradientColor(listCol, 0:largeur3)
+        tkdelete(canvas.preview, 'gradlines0')
+        for(i in 0:largeur3)
+            tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+    }
+
+    preview.canvasf2 <- function(cond){
+        if(cond){
+            kolor <- getGradientColor(mapOpt$user.colors$color, 0:largeur3)
+            tkdelete(canvas.preview, 'gradlines0')
+            for(i in 0:largeur3)
+                tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
+        }
+        else tkdelete(canvas.preview, 'gradlines0')
+    }
+
+    #####################
+
+    tt <- tktoplevel()
+    tkgrab.set(tt)
+    tkfocus(tt)
+
+    #####################
+    frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
+    frButt <- tkframe(tt)
+
+    #####################
+
+    frameColkey <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+
+    custom.color <- tclVar(mapOpt$user.colors$custom)
+
+    stateKol2 <- if(mapOpt$user.colors$custom) "normal" else "disabled"
+
+    chk.userKol <- tkcheckbutton(frameColkey, variable = custom.color, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+    bt.userKol <- ttkbutton(frameColkey, text = lang.dlg[['button']][['1']], state = stateKol2)
+    canvas.preview <- tkcanvas(frameColkey, width = largeur3, height = 20, bg = 'white')
+
+    ## Preview Color
+    if(tclvalue(custom.color) == "0"){
+        preview.canvasf1()
+    }else{
+        preview.canvasf2(!is.null(mapOpt$user.colors$color) &
+                         length(mapOpt$user.colors$color) > 0)
+    }
+
+    tkgrid(chk.userKol, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.userKol, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(canvas.preview, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #########
+
+    tkconfigure(bt.userKol, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        mapOpt$user.colors$color <<- createColorkey(.cdtEnv$tcl$main$win,
+                                                    mapOpt$user.colors$color)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        preview.canvasf2(!is.null(mapOpt$user.colors$color))
+    })
+
+    tkbind(chk.userKol, "<Button-1>", function(){
+        stateKol2 <- if(tclvalue(custom.color) == '0') 'normal' else 'disabled'
+        tkconfigure(bt.userKol, state = stateKol2)
+
+        if(tclvalue(custom.color) == '0'){
+            preview.canvasf2(!is.null(mapOpt$user.colors$color))
+        }else{
+            preview.canvasf1()
+        }
+    })
+
+    #####################
+
+    frameLevel <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+
+    equidist.level <- tclVar(mapOpt$user.levels$equidist)
+    custom.level <- tclVar(mapOpt$user.levels$custom)
+    stateEditLvl <- if(mapOpt$user.levels$custom) 'normal' else 'disabled'
+
+    chk.Level <- tkcheckbutton(frameLevel, variable = custom.level, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+    yscrLevel <- tkscrollbar(frameLevel, repeatinterval = 4, command = function(...) tkyview(textLevel, ...))
+    textLevel <- tktext(frameLevel, bg = "white", wrap = "word", height = 3, width = largeur2,
+                            yscrollcommand = function(...) tkset(yscrLevel, ...))
+    chk.Equidist <- tkcheckbutton(frameLevel, variable = equidist.level, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
+
+    tkgrid(chk.Level, sticky = "we")
+    tkgrid(textLevel, yscrLevel)
+    tkgrid.configure(yscrLevel, sticky = "ns")
+    tkgrid.configure(textLevel, sticky = 'nswe')
+    tkgrid(chk.Equidist, sticky = "we")
+
+    if(length(mapOpt$user.levels$levels) > 0)
+        for(j in seq_along(mapOpt$user.levels$levels))
+            tkinsert(textLevel, "end", paste0(mapOpt$user.levels$levels[j], ', '))
+    tkconfigure(textLevel, state = stateEditLvl)
+
+    #########
+
+    tkbind(chk.Level, "<Button-1>", function(){
+        stateEditLvl <- if(tclvalue(custom.level) == '0') 'normal' else 'disabled'
+        tkconfigure(textLevel, state = stateEditLvl)
+    })
+
+    #####################
+    tkgrid(frameColkey, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameLevel, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+    bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+    bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+
+    tkconfigure(bt.opt.OK, command = function(){
+        mapOpt$user.colors$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
+        mapOpt$user.levels$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
+        mapOpt$user.levels$equidist <<- switch(tclvalue(equidist.level), '0' = FALSE, '1' = TRUE)
+        if(mapOpt$user.levels$custom){
+            vlevel <- tclvalue(tkget(textLevel, "0.0", "end"))
+            vlevel <- gsub("[\t\r\n]", "", vlevel)
+            vlevel <- gsub('\\s+', '', vlevel)
+            vlevel <- strsplit(vlevel, ",")[[1]]
+            vlevel <- vlevel[!is.na(vlevel) | vlevel != '']
+            if(length(vlevel) < 2){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }
+            mapOpt$user.levels$levels <<- as.numeric(vlevel)
+        }
+
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkconfigure(bt.opt.CA, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkgrid(bt.opt.OK, row = 0, column = 0, padx = 5, pady = 1, ipadx = 1, sticky = 'w')
+    tkgrid(bt.opt.CA, row = 0, column = 1, padx = 5, pady = 1, ipadx = 1, sticky = 'e')
+
+    ###############################################################
+
+    tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkwm.withdraw(tt)
+    tcl('update')
+    tt.w <- as.integer(tkwinfo("reqwidth", tt))
+    tt.h <- as.integer(tkwinfo("reqheight", tt))
+    tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+    tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+    tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+    tkwm.transient(tt)
+    tkwm.title(tt, lang.dlg[['title']])
+    tkwm.deiconify(tt)
+    tcl('wm', 'attributes', tt, topmost = TRUE)
+
+    ##################################################################
+    tkfocus(tt)
+    tkbind(tt, "<Destroy>", function(){
+        tkgrab.release(tt)
+        tkfocus(parent.win)
+    })
+    tkwait.window(tt)
+    return(mapOpt)
 }

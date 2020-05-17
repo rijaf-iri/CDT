@@ -151,63 +151,49 @@ qcPlot_Spatial.Check <- function(){
     stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
     daty <- str_trim(tclvalue(.cdtData$EnvData$STN$dateSP))
     idaty <- which(.cdtData$EnvData$stn.data$dates == daty)
+    STNID <- .cdtData$EnvData$stn.data$id
 
     don <- as.numeric(.cdtData$EnvData$stn.data$data[idaty, ])
     don <- cbind(.cdtData$EnvData$stn.data$lon, .cdtData$EnvData$stn.data$lat, don)
 
-    istn <- .cdtData$EnvData$stn.data$id == stnid
-    stn0 <- as.numeric(don[istn, ])
-    stn0.x <- stn0[1]
-    stn0.y <- stn0[2]
-    stn0.z <- stn0[3]
+    #######
+    selvois <- .cdtData$EnvData$outqc$res[[stnid]]$stn
+    allvois <- .cdtData$EnvData$outqc$res[[stnid]]$vois
 
-    stn1.x <- NA
-    stn1.y <- NA
-    stn1.z <- NA
+    ix <- sapply(.cdtData$EnvData$outqc$spatial.vois, '[[', 'id') == stnid
+    useidx <- .cdtData$EnvData$outqc$spatial.vois[[which(ix)]]
+    ix <- which(useidx$it == daty)
+    usevois <- if(length(ix)) useidx$is[[ix]][-1] else ix
 
-    # vois <- .cdtData$EnvData$stn.data$id[.cdtData$EnvData$outqc$res[[stnid]]$stn]
-    # ivois <- .cdtData$EnvData$stn.data$id %in% vois
-    # if(any(ivois)){
-    #     stn1 <- don[ivois, , drop = FALSE]
-    #     stn1 <- stn1[!is.na(stn1[, 3]), , drop = FALSE]
-    #     if(nrow(stn1)){
-    #         stn1.x <- stn1[, 1]
-    #         stn1.y <- stn1[, 2]
-    #         stn1.z <- stn1[, 3]
-    #     }
-    #     don <- don[!(istn | ivois), ]
-    # }else don <- don[!istn, , drop = FALSE]
+    ix0 <- which(STNID == stnid)
+    ix1 <- usevois
+    ix2 <- selvois[!selvois %in% usevois]
+    ix3 <- allvois[!allvois %in% selvois]
+    ix4 <- seq_along(STNID)
+    ix4 <- ix4[!ix4 %in% c(ix0, allvois)]
 
-    ivois <- .cdtData$EnvData$outqc$res[[stnid]]$stn
-    if(length(ivois)){
-        stn1 <- don[ivois, , drop = FALSE]
-        stn1 <- stn1[!is.na(stn1[, 3]), , drop = FALSE]
-        if(nrow(stn1)){
-            stn1.x <- stn1[, 1]
-            stn1.y <- stn1[, 2]
-            stn1.z <- stn1[, 3]
+    stndon <- lapply(list(ix0, ix1, ix2, ix3, ix4), function(ix){
+        x <- y <- z <- NA
+        if(length(ix)){
+            tmp <- don[ix, , drop = FALSE]
+            tmp <- tmp[!is.na(tmp[, 3]), , drop = FALSE]
+            if(nrow(tmp)){
+                x <- tmp[, 1]
+                y <- tmp[, 2]
+                z <- tmp[, 3]
+            }
         }
-        don <- don[-c(which(istn), ivois), ]
-    }else don <- don[!istn, , drop = FALSE]
-
-    stn2.x <- NA
-    stn2.y <- NA
-    stn2.z <- NA
-    don <- don[!is.na(don[, 3]), , drop = FALSE]
-    if(nrow(don)){
-        stn2.x <- don[, 1]
-        stn2.y <- don[, 2]
-        stn2.z <- don[, 3]
-    }
+        list(x = x, y = y, z = z)
+    })
 
     #######
     if(ptsOp$circle$draw){
         dst <- .cdtData$EnvData$output$params$params$voisin$dist
-        radius <- km2deg(dst, stn0.y)
+        radius <- km2deg(dst, stndon[[1]]$y)
         theta <- seq(0, 2 * pi, length = 200)
 
-        xc <- stn0.x + radius * cos(theta)
-        yc <- stn0.y + radius * sin(theta)
+        xc <- stndon[[1]]$x + radius * cos(theta)
+        yc <- stndon[[1]]$y + radius * sin(theta)
     }
 
     #######
@@ -221,9 +207,7 @@ qcPlot_Spatial.Check <- function(){
     if(tclvalue(dem.data$add.dem) == "1"){
         if(!is.null(dem.data$dem)){
             don.dem <- dem.data$dem
-            don.dem$z[don.dem$z < 0] <- 0
             Opts <- dem.data$Opt
-            Opts$user.levels$levels <- pretty(don.dem$z, n = 10, min.n = 5)
         }
     }
 
@@ -251,8 +235,8 @@ qcPlot_Spatial.Check <- function(){
                 nc_close(nc)
                 don.sat <- transposeNCDFData(don.sat, ncinfo)
                 don.sat <- list(x = ncinfo$lon, y = ncinfo$lat, z = don.sat)
+                .cdtData$EnvData$sat$don.sat <- don.sat
                 Opts <- sat.data$Opt
-                Opts$user.levels$levels <- pretty(don.sat$z, n = 10, min.n = 5)
             }else{
                 Insert.Messages.Out(paste(ncfile, "does not exist"), format = TRUE)
             }
@@ -264,15 +248,15 @@ qcPlot_Spatial.Check <- function(){
 
     if(!is.null(don.dem) & !is.null(don.sat)){
         plot.grid <- TRUE
-        pars <- cdt.plotmap.args0(don.sat, user.levels = Opts$user.levels, user.colors = Opts$user.colors)
+        pars <- do.call(cdt.plotmap.args0, c(list(don = don.sat), Opts))
         mar <- pars$mar
     }else if(is.null(don.dem) & !is.null(don.sat)){
         plot.grid <- TRUE
-        pars <- cdt.plotmap.args0(don.sat, user.levels = Opts$user.levels, user.colors = Opts$user.colors)
+        pars <- do.call(cdt.plotmap.args0, c(list(don = don.sat), Opts))
         mar <- pars$mar
     }else if(!is.null(don.dem) & is.null(don.sat)){
         plot.grid <- TRUE
-        pars <- cdt.plotmap.args0(don.dem, user.levels = Opts$user.levels, user.colors = Opts$user.colors)
+        pars <- do.call(cdt.plotmap.args0, c(list(don = don.dem), Opts))
         mar <- pars$mar
     }else{
         mar <- c(4, 4, 2, 2)
@@ -286,19 +270,19 @@ qcPlot_Spatial.Check <- function(){
     ymax <- .cdtData$EnvData$ZoomXYval[4]
 
     if(is.na(xmin) | is.null(xmin) | is.infinite(xmin)){
-        Insert.Messages.Out('Longitude min not valid', format = TRUE)
+        Insert.Messages.Out('Longitude min not valid', TRUE, 'e')
         return(NULL)
     }
     if(is.na(xmax) | is.null(xmax) | is.infinite(xmax)){
-        Insert.Messages.Out('Longitude max not valid', format = TRUE)
+        Insert.Messages.Out('Longitude max not valid', TRUE, 'e')
         return(NULL)
     }
     if(is.na(ymin) | is.null(ymin) | is.infinite(ymin)){
-        Insert.Messages.Out('Latitude min not valid', format = TRUE)
+        Insert.Messages.Out('Latitude min not valid', TRUE, 'e')
         return(NULL)
     }
     if(is.na(ymax) | is.null(ymax) | is.infinite(ymax)){
-        Insert.Messages.Out('Latitude max not valid', format = TRUE)
+        Insert.Messages.Out('Latitude max not valid', TRUE, 'e')
         return(NULL)
     }
 
@@ -327,13 +311,19 @@ qcPlot_Spatial.Check <- function(){
     lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
 
     if(ptsOp$circle$draw) lines(xc, yc, lwd = ptsOp$circle$lwd, col = ptsOp$circle$col)
-    points(stn2.x, stn2.y, col = ptsOp$all$col, pch = ptsOp$all$pch, cex = ptsOp$all$cex)
-    points(stn1.x, stn1.y, col = ptsOp$vois$col, pch = ptsOp$vois$pch, cex = ptsOp$vois$cex)
-    points(stn0.x, stn0.y, col = ptsOp$stn$col, bg = ptsOp$stn$bg, pch = ptsOp$stn$pch, cex = ptsOp$stn$cex)
 
-    text(stn0.x, stn0.y, labels = stn0.z, pos = 1, cex = 1.0, col = ptsOp$stn$txt.col)
-    text(stn1.x, stn1.y, labels = stn1.z, pos = 1, cex = 1.0, col = ptsOp$vois$txt.col)
-    text(stn2.x, stn2.y, labels = stn2.z, pos = 1, cex = 1.0, col = ptsOp$all$txt.col)
+    points(stndon[[5]]$x, stndon[[5]]$y, col = ptsOp$all$col, pch = ptsOp$all$pch, cex = ptsOp$all$cex)
+    points(stndon[[4]]$x, stndon[[4]]$y, col = ptsOp$vois$col, pch = ptsOp$vois$pch, cex = ptsOp$vois$cex)
+    points(stndon[[3]]$x, stndon[[3]]$y, col = ptsOp$sel$col, pch = ptsOp$sel$pch, cex = ptsOp$sel$cex)
+    points(stndon[[2]]$x, stndon[[2]]$y, col = ptsOp$use$col, pch = ptsOp$use$pch, cex = ptsOp$use$cex)
+    points(stndon[[1]]$x, stndon[[1]]$y, col = ptsOp$stn$col, bg = ptsOp$stn$txt.col, pch = ptsOp$stn$pch, cex = ptsOp$stn$cex)
+
+    text(stndon[[5]]$x, stndon[[5]]$y, labels = stndon[[5]]$z, pos = 1, cex = ptsOp$all$txt.cex, col = ptsOp$all$txt.col)
+    text(stndon[[4]]$x, stndon[[4]]$y, labels = stndon[[4]]$z, pos = 1, cex = ptsOp$vois$txt.cex, col = ptsOp$vois$txt.col)
+    text(stndon[[3]]$x, stndon[[3]]$y, labels = stndon[[3]]$z, pos = 1, cex = ptsOp$sel$txt.cex, col = ptsOp$sel$txt.col)
+    text(stndon[[2]]$x, stndon[[2]]$y, labels = stndon[[2]]$z, pos = 1, cex = ptsOp$use$txt.cex, col = ptsOp$use$txt.col)
+    text(stndon[[1]]$x, stndon[[1]]$y, labels = stndon[[1]]$z, pos = 1, cex = ptsOp$stn$txt.cex, col = ptsOp$stn$txt.col)
+
 
     title(main = paste('STN:', stnid, '- Date:', daty), cex.main = 1, font.main = 1)
     box()
@@ -349,7 +339,7 @@ qcPlot_Spatial.Check <- function(){
 
 qcDislpay_Outliers.Mon <- function(notebookTab, tab.title){
     varplot <- c("parPlotSize1", "parPlotSize2", "parPlotSize3", "parPlotSize4",
-                "usrCoords1", "usrCoords2", "usrCoords3", "usrCoords4")
+                 "usrCoords1", "usrCoords2", "usrCoords3", "usrCoords4")
     parPltCrd <- stats::setNames(lapply(varplot, function(x) assign(x, tclVar(), envir = parent.frame())), varplot)
 
     daty <- NULL
@@ -397,53 +387,3 @@ qcDislpay_Outliers.Mon <- function(notebookTab, tab.title){
 }
 
 #################################################################
-
-qcDislpay_Mixed.Temp <- function(notebookTab, tab.title){
-    varplot <- c("parPlotSize1", "parPlotSize2", "parPlotSize3", "parPlotSize4",
-                 "usrCoords1", "usrCoords2", "usrCoords3", "usrCoords4")
-    parPltCrd <- stats::setNames(lapply(varplot, function(x) assign(x, tclVar(), envir = parent.frame())), varplot)
-
-    daty <- NULL
-    plotIt <- function(){
-        op <- par(bg = "white")
-        pltusr <- qcPlot_Mixed.Temp()
-        par(op)
-        for(j in seq_along(varplot)) tclvalue(parPltCrd[[varplot[j]]]) <- pltusr$par[j]
-        daty <<- pltusr$dates
-        return(0)
-    }
-
-    #########
-    onglet <- imageNotebookTab_open(notebookTab, tab.title)
-    hscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH)))
-    vscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
-
-    img <- DisplayPlot(onglet[[2]], fun = plotIt, hscale = hscale, vscale = vscale)
-    tkgrid(img)
-    tkgrid.rowconfigure(img, 0, weight = 1)
-    tkgrid.columnconfigure(img, 0, weight = 1)
-    tcl("update")
-
-    #########
-    # intstep <- .cdtData$EnvData$output$params$intstep
-    # format(daty[xyMouse$x], "%d-%b-%Y")
-
-    #########
-    tkbind(img, "<Motion>", function(W, x, y){
-        xyMouse <- mouseMouvment(W, x, y, parPltCrd)
-
-        xpos <- as.Date(xyMouse$x, origin = "1970-01-01")
-        xpos <- format(xpos, "%d-%b-%Y")
-
-        frxcoord <- if(xyMouse$inout) '' else xpos
-        frycoord <- if(xyMouse$inout) '' else round(xyMouse$y, 1)
-
-        tclvalue(.cdtEnv$tcl$status$xcrd) <- frxcoord
-        tclvalue(.cdtEnv$tcl$status$ycrd) <- frycoord
-    })
-
-    tkbind(img, "<Enter>", function() tkconfigure(img, cursor = 'crosshair'))
-    tkbind(img, "<Leave>", function() tkconfigure(img, cursor = ''))
-
-    return(list(onglet, img))
-}

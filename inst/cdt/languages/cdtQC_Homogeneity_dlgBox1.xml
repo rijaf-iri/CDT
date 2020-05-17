@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Statistics Test Parameters </text>
+    </title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Crop bounds </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Confidence level </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Max number breaks </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Min segment length </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Min number year </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Min non-missing frac </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Cropping the first and last [h x 100%] percent of the series </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Cropping the first and last [h x 100%] percent of the series </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Maximum number of change-points to be detected </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum number of change-points to be detected </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Minimum length segment (in months) to carry out the test </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum length segment (in months) to carry out the test </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Confidence level (%) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Confidence level (%) </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Minimum number of year to be considered,\nif the length of year (when the station is supposed to report data)\nis less than this threshold no test will be performed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of year to be considered,\nif the length of year (when the station is supposed to report data)\nis less than this threshold no test will be performed </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Minimum fraction of available data (non-missing) that must be present\nduring the operating period of the station </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum fraction of available data (non-missing) that must be present\nduring the operating period of the station </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

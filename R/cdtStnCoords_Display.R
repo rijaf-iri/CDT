@@ -19,20 +19,21 @@ StnChkCoordsPlotMap <- function(){
 	ymin <- .cdtData$EnvData$ZoomXYval[3]
 	ymax <- .cdtData$EnvData$ZoomXYval[4]
 
+	message <- .cdtData$EnvData[['message']]
 	if(is.na(xmin) | is.null(xmin) | is.infinite(xmin)){
-		Insert.Messages.Out(.cdtData$EnvData[['message']][['19']], format = TRUE)
+		Insert.Messages.Out(message[['19']], TRUE, 'e')
 		return(NULL)
 	}
 	if(is.na(xmax) | is.null(xmax) | is.infinite(xmax)){
-		Insert.Messages.Out(.cdtData$EnvData[['message']][['20']], format = TRUE)
+		Insert.Messages.Out(message[['20']], TRUE, 'e')
 		return(NULL)
 	}
 	if(is.na(ymin) | is.null(ymin) | is.infinite(ymin)){
-		Insert.Messages.Out(.cdtData$EnvData[['message']][['21']], format = TRUE)
+		Insert.Messages.Out(message[['21']], TRUE, 'e')
 		return(NULL)
 	}
 	if(is.na(ymax) | is.null(ymax) | is.infinite(ymax)){
-		Insert.Messages.Out(.cdtData$EnvData[['message']][['22']], format = TRUE)
+		Insert.Messages.Out(message[['22']], TRUE, 'e')
 		return(NULL)
 	}
 

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Reference series creation </text>
+    </title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Use Elevation to select neighbors </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Stations provided by User </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Use time step variable climatologies </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Test series constitution </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Weighting factors </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Neighborhood Selection </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Min number neighbors </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Max number neighbors </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Max search distance </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Elevation difference </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Minimum correlation </text>
+        </label>
+        <label id="9">
+            <text lang="en"> File containing stations references series </text>
+        </label>
+        <radiobutton id="1">
+            <radio id="1">
+                <text lang="en"> Difference </text>
+            </radio>
+            <radio id="2">
+                <text lang="en"> Ratio </text>
+            </radio>
+            <radio id="3">
+                <text lang="en"> LogRatio </text>
+            </radio>
+        </radiobutton>
+        <radiobutton id="2">
+            <radio id="1">
+                <text lang="en"> Correlation </text>
+            </radio>
+            <radio id="2">
+                <text lang="en"> Distance </text>
+            </radio>
+            <radio id="3">
+                <text lang="en"> Optimal </text>
+            </radio>
+        </radiobutton>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Constitution of relative comparison series: [Candidate - Reference] </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Constitution of relative comparison series: [Candidate - Reference] </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Constitution of relative comparison series: [Candidate / Reference] </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Constitution of relative comparison series: [Candidate / Reference] </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Constitution of relative comparison series: [log(Candidate / Reference)] </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Constitution of relative comparison series: [log(Candidate / Reference)] </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Use the square of the correlation coefficient as the weight factor </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Use the square of the correlation coefficient as the weight factor </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Use the square of the inverse of distance as the weight factor </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Use the square of the inverse of distance as the weight factor </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Optimal weighting using covariance matrix (ordinary kriging method) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Optimal weighting using covariance matrix (ordinary kriging method) </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Minimum number of neighbors stations to be selected </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of neighbors stations to be selected </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Maximum number of neighbors stations to be selected </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum number of neighbors stations to be selected </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Maximum search distance (in km) for neighbors stations </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum search distance (in km) for neighbors stations </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Maximum altitude difference (in m) for neighbors stations to be selected </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum altitude difference (in m) for neighbors stations to be selected </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Minimum correlation coefficient between candidate and neighbor series </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum correlation coefficient between candidate and neighbor series </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Check this box if you want to use elevation data when selecting neighbors stations </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if you want to use elevation data when selecting neighbors stations </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> Select the elevation data to be used </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the elevation data to be used </text>
+            </tooltip>
+        </content>
+        <content id="14">
+            <status>
+                <text lang="en"> The references series are preset by user,\nthe ID and order of the stations must be the same as the the candidates series </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The references series are preset by user,\nthe ID and order of the stations must be the same as the the candidates series </text>
+            </tooltip>
+        </content>
+        <content id="15">
+            <status>
+                <text lang="en"> Select the file containing the references series </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the references series </text>
+            </tooltip>
+        </content>
+        <content id="16">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="17">
+            <status>
+                <text lang="en"> If checked, a time step variable climatologies will be used \n (e.g.: for monthly data, a monthly climatologies will be computed),\n otherwise the average of the whole series will be used </text>
+            </status>
+            <tooltip>
+                <text lang="en"> If checked, a time step variable climatologies will be used \n (e.g.: for monthly data, a monthly climatologies will be computed),\n otherwise the average of the whole series will be used </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

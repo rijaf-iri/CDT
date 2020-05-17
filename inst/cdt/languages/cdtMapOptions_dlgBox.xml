@@ -10,6 +10,9 @@
         <label id="1">
             <text lang="en"> Reverse </text>
         </label>
+        <label id="1a">
+            <text lang="en"> Colorkey </text>
+        </label>
         <label id="2">
             <text lang="en"> User customized colorkey </text>
         </label>

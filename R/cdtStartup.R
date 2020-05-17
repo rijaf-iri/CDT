@@ -195,8 +195,8 @@ startCDT <- function(wd = NA, lang = NA){
                     if(!is.null(tab2sav))
                         Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['3']], TRUE, "s")
                 }else{
-                    Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', tab2sav[1]), format = TRUE)
+                    Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['2']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', tab2sav[1]), TRUE, 'e')
                 }
             })
 
@@ -1468,8 +1468,8 @@ startCDT <- function(wd = NA, lang = NA){
 
             tab2sav <- try(Save_Notebook_Tab_Array(), silent = TRUE)
             if(inherits(tab2sav, "try-error")){
-                Insert.Messages.Out(gsub('[\r\n]', '', tab2sav[1]), format = TRUE)
-                Insert.Messages.Out(lang.toolbar[['message']][['2']], format = TRUE)
+                Insert.Messages.Out(gsub('[\r\n]', '', tab2sav[1]), TRUE, 'e')
+                Insert.Messages.Out(lang.toolbar[['message']][['2']], TRUE, 'e')
             }else{
                 if(!is.null(tab2sav))
                     Insert.Messages.Out(lang.toolbar[['message']][['1']], TRUE, "s")
@@ -1769,8 +1769,33 @@ startCDT <- function(wd = NA, lang = NA){
 
         tktag.configure(.cdtEnv$tcl$main$out.text, "sel", foreground = "black", background = "yellow")
 
+        ###################
         menuCopyPaste(.cdtEnv$tcl$main$out.text, scopy = 'normal', scut = 'normal', spaste = 'disabled')
 
+        tkbind(.cdtEnv$tcl$main$out.text, "<B1-Motion>", function(W, x, y){
+            idx <- paste0('@', x, ',', y)
+            idx <- tclvalue(tcl(W, "index", idx))
+            tn <- tclvalue(tcl(W, "tag", "names", idx))
+            tn <- strsplit(tn, " ")[[1]]
+            ix <- as.numeric(strsplit(idx, "\\.")[[1]][1])
+            itag <- tn %in% c("errortag", "warningtag", "infotag", "successtag")
+            if(any(itag)){
+                tcl(W, "tag", "remove", tn[itag], paste0(ix, '.0'), paste0(ix + 1, '.0'))
+                .cdtEnv$tcl$main$out.copy <<- c(.cdtEnv$tcl$main$out.copy, list(c(ix, tn)))
+            }
+        })
+
+        ### re-format in menuCopyPaste, or click inside 
+        tkbind(.cdtEnv$tcl$main$out.text, "<Button-1>", function(W){
+            if(!is.null(.cdtEnv$tcl$main$out.copy)){
+                ret <- lapply(.cdtEnv$tcl$main$out.copy, function(x){
+                    ix <- as.numeric(x[1])
+                    tktag.add(W, x[2], paste0(ix, '.0'), paste0(ix + 1, '.0'))
+                    # tcl(W, 'tag', 'add', x[2], paste0(ix, '.0'), paste0(ix + 1, '.0'))
+                })
+                .cdtEnv$tcl$main$out.copy <- NULL
+            }
+        })
 
     #################################################################################
 

@@ -1,5 +1,6 @@
 
 qcRROutliersCheckProcs <- function(GeneralParameters){
+    message <- .cdtData$EnvData[['message']]
     don <- getStnOpenData(GeneralParameters$infile)
     if(is.null(don)) return(NULL)
     head <- don[1:4, 1]
@@ -35,13 +36,13 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
         {
             readDEM <- TRUE
             if(GeneralParameters$params$elv$file == ""){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['11']], TRUE, "e")
+                Insert.Messages.Out(message[['11']], TRUE, "e")
                 readDEM <- FALSE
             }
 
             demInfo <- getNCDFSampleData(GeneralParameters$params$elv$file)
             if(is.null(demInfo)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['12']], TRUE, "e")
+                Insert.Messages.Out(message[['12']], TRUE, "e")
                 readDEM <- FALSE
             }
 
@@ -56,13 +57,13 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             }
         }else{
             if(is.null(don$elv))
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['13']], TRUE, "e")
+                Insert.Messages.Out(message[['13']], TRUE, "e")
             else
                 elv.data <- don$elv
         }
 
         if(is.null(elv.data))
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['14']], TRUE, "w")
+            Insert.Messages.Out(message[['14']], TRUE, "w")
     }
 
     ###################
@@ -83,6 +84,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
         idst[istn == stn] <- FALSE
         istn <- istn[idst]
         dist <- dist[idst]
+        istn0 <- istn
         if(length(istn) < params$voisin$min) return(NULL)
         if(!is.null(elv.data)){
             if(!is.na(elv.data[stn])){
@@ -95,7 +97,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
                 }
             }
         }
-        list(id = don$id[stn], stn = c(stn, istn), dist = c(0, dist))
+        list(id = don$id[stn], stn = c(stn, istn), dist = c(0, dist), ivois = istn0)
     })
 
     inull <- sapply(voisin, is.null)
@@ -118,6 +120,8 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
                             'dekadal' = 30,
                             'monthly' = 10
                         )
+
+    Insert.Messages.Out(message[['15']], TRUE, "i")
 
     ###################
     # out bounds check
@@ -147,7 +151,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
         outqc.max$stn.val <- don.qc[imax]
         outqc.max$stats.tmp <- NA
         outqc.max$stats.sp <- NA
-        don.qc[imax] <- NA
+        # don.qc[imax] <- NA
 
         outqc.max <- data.frame(do.call(cbind, outqc.max), stringsAsFactors = FALSE)
     }
@@ -216,6 +220,8 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
         outqc.outlier <- data.frame(do.call(cbind, outqc.outlier), stringsAsFactors = FALSE)
     }
 
+    Insert.Messages.Out(message[['16']], TRUE, "s")
+
     ###################
     # spatial check
 
@@ -223,8 +229,9 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
                            isdobs = 1, isdq1 = 10, iqrf = 2.8)
 
     outqc.spatial <- NULL
+    spatial.vois <- NULL
     if(length(voisin) > 0){
-        Insert.Messages.Out("Start spatial check ....", TRUE, "i")
+        Insert.Messages.Out(message[['17']], TRUE, "i")
 
         STNid <- lapply(voisin, "[[", "id")
         STNsp <- lapply(voisin, "[[", "stn")
@@ -235,6 +242,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
         else
             tmp.date <- vector(mode = "list", length = length(STNid))
 
+        # parsL <- doparallel.cond(FALSE)
         parsL <- doparallel.cond(length(STNsp) >= 100)
         ret <- cdt.foreach(seq_along(STNsp), parsL, GUI = TRUE,
                            progress = TRUE, FUN = function(j)
@@ -247,19 +255,55 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             x <- x[ina, , drop = FALSE]
             idaty <- index.date[ina]
 
+            ## exclude variance less than 1
+            is <- which(matrixStats::rowVars(x, na.rm = TRUE) > 1)
+            if(length(is) == 0) return(NULL)
+            x <- x[is, , drop = FALSE]
+            idaty <- idaty[is]
+
             ## get minimum number of neighbors
-            ## todo: max number of neighbors (not fixed stations, variable selon non-missing)
             nonNA <- rowSums(!is.na(x[, -1, drop = FALSE]))
             idt <- which(nonNA >= params$voisin$min)
             if(length(idt) == 0) return(NULL)
             x <- x[idt, , drop = FALSE]
             idaty <- idaty[idt]
+            nonNA <- nonNA[idt]
 
-            ## exclude variance null
-            is <- which(matrixStats::rowVars(x, na.rm = TRUE) > 0)
+            ## get maximum number of neighbors to use
+            imx <- nonNA > params$voisin$max
+            nrw <- params$voisin$max + 1
+            im <- 1:nrw
+            v0 <- voisin[[j]]$stn
+            if(any(imx)){
+                xxm <- lapply(seq(nrow(x)), function(i){
+                    xm <- x[i, ]
+                    ina <- !is.na(xm)
+                    xm <- xm[ina]
+                    v1 <- v0[ina]
+                    if(imx[i]){
+                      xm <- xm[im]  
+                      v1 <- v0[im]
+                    }else{
+                        xm <- c(xm, rep(NA, params$voisin$max - nonNA[i]))
+                    }
+                    list(x = xm, v = v1)
+                })
+                x <- do.call(rbind, lapply(xxm, '[[', 'x'))
+                VOIS <- lapply(xxm, '[[', 'v')
+                rm(xxm)
+            }else{
+               VOIS <- lapply(seq(nrow(x)), function(i){
+                   ina <- !is.na(x[i, ])
+                   v0[ina]
+               })
+            }
+
+            ## exclude variance less than 1
+            is <- which(matrixStats::rowVars(x, na.rm = TRUE) > 1)
             if(length(is) == 0) return(NULL)
             x <- x[is, , drop = FALSE]
             idaty <- idaty[is]
+            VOIS <- VOIS[is]
 
             ## check less than 25% percentile and greater than 75% 
             iqr0 <- matrixStats::rowQuantiles(x, probs = c(0.25, 0.75), na.rm = TRUE, type = 8, drop = FALSE)
@@ -284,7 +328,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
                 }
                 sp.chk <- list(isolated.precip = NULL, isolated.dry = NULL,
                                largedev.above = NULL, largedev.below = NULL,
-                               spatial.ok = spatial.ok)
+                               spatial.ok = spatial.ok, spatial.vois = NULL)
                 return(sp.chk)
             }
 
@@ -292,6 +336,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             idaty <- idaty[iq]
             stat0 <- stat0[iq]
             tmp.chk <- tmp.chk[iq]
+            VOIS <- VOIS[iq]
 
             min.nbrs <- matrixStats::rowMins(x[, -1, drop = FALSE], na.rm = TRUE)
             max.nbrs <- matrixStats::rowMaxs(x[, -1, drop = FALSE], na.rm = TRUE)
@@ -360,9 +405,16 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
                 }
             }
 
+            spatial.vois <- NULL
+            ivois <- tmp.chk | isol.pre | isol.dry | large.above | large.below
+            if(any(ivois)){
+                spatial.vois$is <- VOIS[ivois]
+                spatial.vois$it <- idaty[ivois]
+            }
+            
             list(isolated.precip = isolated.precip, isolated.dry = isolated.dry,
-                largedev.above = largedev.above, largedev.below = largedev.below,
-                spatial.ok = spatial.ok)
+                 largedev.above = largedev.above, largedev.below = largedev.below,
+                 spatial.ok = spatial.ok, spatial.vois = spatial.vois)
         })
 
         inull <- sapply(ret, is.null)
@@ -381,9 +433,22 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             spatial.ok <- qcRR.format.spatial(spatial.ok, STNid, don$dates, "spatial.not.outliers")
 
             outqc.spatial <- rbind(isolated.precip, isolated.dry, largedev.above, largedev.below, spatial.ok)
+
+            spatial.vois <- lapply(ret, '[[', 'spatial.vois')
+            names(spatial.vois) <- STNid
+            inull <- sapply(spatial.vois, is.null)
+            spatial.vois <- spatial.vois[!inull]
+            if(length(spatial.vois)){
+                spatial.vois <- lapply(seq_along(spatial.vois), function(i){
+                    x <- spatial.vois[[i]]
+                    x$it <- don$dates[x$it]
+                    x$id <- names(spatial.vois[i])
+                    x
+                })
+            }else spatial.vois <- NULL
         }
 
-        Insert.Messages.Out("Spatial check done", TRUE, "s")
+        Insert.Messages.Out(message[['18']], TRUE, "s")
     }
 
     ###################
@@ -413,8 +478,13 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             if(nrow(dup)){
                 idx <- split(seq_along(dup$dates), dup$dates)
                 dup <- lapply(idx, function(jd){
-                    y <- dup[jd, ]
-                    y[1, is.na(y[1, ])] <- y[2, is.na(y[1, ])]
+                    y <- dup[jd, , drop = FALSE]
+                    if(nrow(y) == 3){
+                        y[1, is.na(y[1, ])] <- y[3, is.na(y[1, ])]
+                        y[1, 'stats.tmp'] <- y[2, 'stats.tmp']
+                    }else{
+                        y[1, is.na(y[1, ])] <- y[2, is.na(y[1, ])]
+                    }
                     y[1, , drop = FALSE]
                 })
                 dup <- do.call(rbind.data.frame, dup)
@@ -429,18 +499,23 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             names(x) <- nom
             res <- list(date = x$DATE, outliers = x,
                         stn = voisin.qc[[jj]]$stn[-1],
-                        dist = voisin.qc[[jj]]$dist[-1])
+                        dist = voisin.qc[[jj]]$dist[-1],
+                        vois = voisin.qc[[jj]]$ivois)
             return(res)
         })
         names(outqc) <- nom.stn
-        outqc <- list(res = outqc, stn = nom.stn)
+        outqc <- list(res = outqc, stn = nom.stn, spatial.vois = spatial.vois)
     }else outqc <- NULL
 
     ###################
     ## check if mixed with temperature data
 
+    ## minimum sequence to check
     min.seq <- 10
+    ## minimum temperature value
     min.temp <- 5
+    ## maximum threshold variance of diff
+    max.var.diff <- 1.5
 
     tmp <- don.qc
     itmp <- !is.na(tmp) & tmp >= min.temp
@@ -459,10 +534,10 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
         is <- is[x$values & x$lengths >= min.seq]
 
         vx <- sapply(seq_along(is), function(i) var(diff(tmp[is[i]:ie[i], j])))
-        ix <- vx < 1.5
+        ix <- vx < max.var.diff
         if(!any(ix)) return(NULL)
 
-        cbind(is[ix], ie[ix], vx[ix])
+        cbind(is[ix] - 2, ie[ix], vx[ix])
     })
 
     inull <- sapply(itmp, is.null)
@@ -479,7 +554,11 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             xx <- do.call(rbind, xx)
             id <- don$id[istn[j]]
             tab <- data.frame(id, xx)
-            names(tab) <- c("STN.ID", "DATE", "STN.VAL")
+            norep <- rep(NA, nrow(tab))
+            repval <- rep(NA, nrow(tab))
+            tab <- cbind.data.frame(tab, norep = norep, repval = repval)
+            names(tab) <- c("STN.ID", "DATE", "STN.VAL",
+                            "NOT.REPLACE", "REPLACE.VAL")
             list(tab = tab, index = ix)
         })
         names(xtmp) <- don$id[istn]
@@ -523,7 +602,11 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             xx <- do.call(rbind, xx)
             id <- don$id[istn[j]]
             tab <- data.frame(id, xx)
-            names(tab) <- c("STN.ID", "DATE", "STN.VAL")
+            norep <- rep(NA, nrow(tab))
+            repval <- rep(NA, nrow(tab))
+            tab <- cbind.data.frame(tab, norep = norep, repval = repval)
+            names(tab) <- c("STN.ID", "DATE", "STN.VAL",
+                            "NOT.REPLACE", "REPLACE.VAL")
             list(tab = tab, index = ix)
         })
         names(xtmp) <- don$id[istn]

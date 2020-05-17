@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Draw radius of influence </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Color Selection </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Target station to check </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Stations used for spatial check </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Selected stations that matched the criteria </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Stations inside the radius of influence </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Stations outside the radius of influence </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Points </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Text </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Color </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Symbol </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Size </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Width </text>
+        </label>
+    </widget>
+</dialog_box>

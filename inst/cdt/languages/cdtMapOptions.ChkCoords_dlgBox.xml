@@ -5,7 +5,7 @@
     </title>
     <widget>
         <label id="1">
-            <text lang="en"> Colors </text>
+            <text lang="en"> Color Selection </text>
         </label>
         <label id="2">
             <text lang="en"> Stations Coordinates </text>
