@@ -1,6 +1,7 @@
 
 execCrossValidTEMP <- function(){
-    Insert.Messages.Out('Start cross-validation ...', TRUE, "i")
+    message <- .cdtData$GalParams[['message']]
+    Insert.Messages.Out(message[['10']], TRUE, "i")
 
     daty <- get.range.date.time(.cdtData$GalParams$date.range,
                                 .cdtData$GalParams$period)
@@ -27,7 +28,7 @@ execCrossValidTEMP <- function(){
     ## Temp sample file
     tmpDataInfo <- getNCDFSampleData(.cdtData$GalParams$TEMP$sample)
     if(is.null(tmpDataInfo)){
-        Insert.Messages.Out("No temperature data sample found", format = TRUE)
+        Insert.Messages.Out(message[['12']], TRUE, 'e')
         return(NULL)
     }
 
@@ -42,7 +43,7 @@ execCrossValidTEMP <- function(){
     {
         demInfo <- getNCDFSampleData(.cdtData$GalParams$auxvar$demfile)
         if(is.null(demInfo)){
-            Insert.Messages.Out("No elevation data found", TRUE, "e")
+            Insert.Messages.Out(message[['13']], TRUE, "e")
             return(NULL)
         }
         jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$auxvar$demfile)
@@ -78,7 +79,7 @@ execCrossValidTEMP <- function(){
                                      .cdtData$GalParams$date.range,
                                      .cdtData$GalParams$period)
     if(is.null(ncInfo)){
-        Insert.Messages.Out("Temperature data not found", TRUE, "e")
+        Insert.Messages.Out(message[['14']], TRUE, "e")
         return(NULL)
     }
     ncInfo$ncinfo <- tmpDataInfo
@@ -90,13 +91,13 @@ execCrossValidTEMP <- function(){
 
     df <- df[df$nb > 0, , drop = FALSE]
     if(nrow(df) == 0){
-        Insert.Messages.Out("No data on stations to use for cross-validation", TRUE, "e")
+        Insert.Messages.Out(message[['15']], TRUE, "e")
         return(NULL)
     }
 
     df <- df[df$nb / length(ncInfo$dates) >= 0.5, , drop = FALSE]
     if(nrow(df) == 0){
-        Insert.Messages.Out("Not enough data on stations to use for cross-validation", TRUE, "e")
+        Insert.Messages.Out(message[['16']], TRUE, "e")
         return(NULL)
     }
 
@@ -118,11 +119,11 @@ execCrossValidTEMP <- function(){
 
     if(!is.null(ret)){
         if(ret != 0){
-          Insert.Messages.Out(paste('Unable to process some files, see',
-                              file.path(outdir, "log_file.txt"), 'for details'), TRUE, "w")  
+          Insert.Messages.Out(paste(message[['17']],
+                              file.path(outdir, "log_file.txt")), TRUE, "w")  
         }
     }else return(NULL)
 
-    Insert.Messages.Out('Cross-Validation done', TRUE, "s")
+    Insert.Messages.Out(message[['18']], TRUE, "s")
     return(0)
 }

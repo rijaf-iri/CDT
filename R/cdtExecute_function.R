@@ -266,16 +266,16 @@ Execute_Function <- function(){
     ## Merging
     if(.cdtData$GalParams$action == 'crossv.rain'){
         ret <- try(execCrossValidRain(), silent = TRUE)
-        msg0 <- "Rainfall merging cross-validation finished successfully"
-        msg1 <- "Rainfall merging cross-validation failed"
+        msg0 <- .cdtData$GalParams[['message']][['8']]
+        msg1 <- .cdtData$GalParams[['message']][['9']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
     ## Merge temp data
     if(.cdtData$GalParams$action == 'crossv.temp'){
         ret <- try(execCrossValidTEMP(), silent = TRUE)
-        msg0 <- "Temperature merging cross-validation finished successfully"
-        msg1 <- "Temperature merging cross-validation failed"
+        msg0 <- .cdtData$GalParams[['message']][['8']]
+        msg1 <- .cdtData$GalParams[['message']][['9']]
         Execute_end_msg(ret, msg0, msg1)
     }
 

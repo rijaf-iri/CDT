@@ -17,8 +17,8 @@ crossValidationInfoRain <- function(){
 
     ####################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPrecip_CrossValidation_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPrecip_CrossValidation_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ####################################
 
@@ -39,15 +39,15 @@ crossValidationInfoRain <- function(){
     tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$period]
 
     cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, width = largeur0)
-    bt.DateRange <- ttkbutton(frtimestep, text = "Set Date Range", width = largeur0)
+    bt.DateRange <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
     #######
 
     tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.DateRange, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.period, 'Select the time step of the data', 'Select the time step of the data')
-    helpWidget(bt.DateRange, 'Set the start and end date of data to merge', 'Set the start and end date of data to merge')
+    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.DateRange, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     ###########
 
@@ -65,10 +65,10 @@ crossValidationInfoRain <- function(){
     file.stnfl <- tclVar(.cdtData$GalParams$STN.file)
     dir.InNCDF <- tclVar(.cdtData$GalParams$RFE$dir)
 
-    txt.stnfl <- tklabel(frInputData, text = 'Station data file', anchor = 'w', justify = 'left')
+    txt.stnfl <- tklabel(frInputData, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     cb.stnfl <- ttkcombobox(frInputData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
     bt.stnfl <- tkbutton(frInputData, text = "...")
-    txt.InNCDF <- tklabel(frInputData, text = 'Directory containing RFE data', anchor = 'w', justify = 'left')
+    txt.InNCDF <- tklabel(frInputData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     set.InNCDF <- ttkbutton(frInputData, text = .cdtEnv$tcl$lang$global[['button']][['5']])
     en.InNCDF <- tkentry(frInputData, textvariable = dir.InNCDF, width = largeur2)
     bt.InNCDF <- tkbutton(frInputData, text = "...")
@@ -83,11 +83,11 @@ crossValidationInfoRain <- function(){
     tkgrid(en.InNCDF, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.InNCDF, row = 3, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.stnfl, 'Select the file from the list', 'Select the file containing the gauge data')
-    helpWidget(bt.stnfl, 'Browse file if not listed', 'Browse file if not listed')
-    helpWidget(en.InNCDF, 'Enter the full path to directory containing the RFE or Adjusted RFE files', 'Enter the full path to directory containing the RFE or Adjusted RFE files')
-    helpWidget(bt.InNCDF, 'Or browse here', 'Or browse here')
-    helpWidget(set.InNCDF, 'Setting NetCDF data options', 'Setting NetCDF data options')
+    helpWidget(cb.stnfl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(bt.stnfl, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    helpWidget(en.InNCDF, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    helpWidget(bt.InNCDF, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    helpWidget(set.InNCDF, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 
     ######
     tkconfigure(bt.stnfl, command = function(){
@@ -126,7 +126,7 @@ crossValidationInfoRain <- function(){
 
     dir2save <- tclVar(.cdtData$GalParams$outdir)
 
-    txt.dir2save <- tklabel(frSave, text = 'Directory to save result', anchor = 'w', justify = 'left')
+    txt.dir2save <- tklabel(frSave, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
     en.dir2save <- tkentry(frSave, textvariable = dir2save, width = largeur2)
     bt.dir2save <- tkbutton(frSave, text = "...")
 
@@ -136,8 +136,8 @@ crossValidationInfoRain <- function(){
     tkgrid(en.dir2save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.dir2save, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(en.dir2save, 'Enter the full path to directory to save result', 'Enter the full path to directory to save result')
-    helpWidget(bt.dir2save, 'or browse here', 'or browse here')
+    helpWidget(en.dir2save, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+    helpWidget(bt.dir2save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 
     #####
 
@@ -160,16 +160,16 @@ crossValidationInfoRain <- function(){
         auxiliary.variables <- function(mrgmethod){
             tkdestroy(frauxvar)
 
-            frauxvar <<- ttklabelframe(frMerge, text = 'Include auxiliary variables', relief = 'groove', borderwidth = 2)
+            frauxvar <<- ttklabelframe(frMerge, text = lang.dlg[['label']][['5']], relief = 'groove', borderwidth = 2)
 
             if(mrgmethod == "RK"){
                 frAUX <- tkframe(frauxvar)
 
-                dem.chk.auxvar <- tkcheckbutton(frAUX, variable = dem.auxvar, text = 'Elevation', anchor = 'w', justify = 'left')
-                slope.chk.auxvar <- tkcheckbutton(frAUX, variable = slope.auxvar, text = 'Slope', anchor = 'w', justify = 'left')
-                aspect.chk.auxvar <- tkcheckbutton(frAUX, variable = aspect.auxvar, text = 'Aspect', anchor = 'w', justify = 'left')
-                lon.chk.auxvar <- tkcheckbutton(frAUX, variable = lon.auxvar, text = 'Longitude', anchor = 'w', justify = 'left')
-                lat.chk.auxvar <- tkcheckbutton(frAUX, variable = lat.auxvar, text = 'Latitude', anchor = 'w', justify = 'left')
+                dem.chk.auxvar <- tkcheckbutton(frAUX, variable = dem.auxvar, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+                slope.chk.auxvar <- tkcheckbutton(frAUX, variable = slope.auxvar, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+                aspect.chk.auxvar <- tkcheckbutton(frAUX, variable = aspect.auxvar, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
+                lon.chk.auxvar <- tkcheckbutton(frAUX, variable = lon.auxvar, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left')
+                lat.chk.auxvar <- tkcheckbutton(frAUX, variable = lat.auxvar, text = lang.dlg[['checkbutton']][['5']], anchor = 'w', justify = 'left')
 
                 tkgrid(dem.chk.auxvar, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, ipady = 1)
                 tkgrid(slope.chk.auxvar, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, ipady = 1)
@@ -177,11 +177,11 @@ crossValidationInfoRain <- function(){
                 tkgrid(lon.chk.auxvar, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, ipady = 1)
                 tkgrid(lat.chk.auxvar, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, ipady = 1)
 
-                helpWidget(dem.chk.auxvar, 'Include elevation data as auxiliary variable', 'Include elevation data as auxiliary variable')
-                helpWidget(slope.chk.auxvar, 'Include slope data as auxiliary variable', 'Include slope data as auxiliary variable')
-                helpWidget(aspect.chk.auxvar, 'Include aspect data as auxiliary variable', 'Include aspect data as auxiliary variable')
-                helpWidget(lon.chk.auxvar, 'Include longitude as auxiliary variable', 'Include longitude as auxiliary variable')
-                helpWidget(lat.chk.auxvar, 'Include latitude as auxiliary variable', 'Include latitude as auxiliary variable')
+                helpWidget(dem.chk.auxvar, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
+                helpWidget(slope.chk.auxvar, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
+                helpWidget(aspect.chk.auxvar, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
+                helpWidget(lon.chk.auxvar, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+                helpWidget(lat.chk.auxvar, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
 
                 ###########
 
@@ -191,7 +191,7 @@ crossValidationInfoRain <- function(){
                                tclvalue(slope.auxvar) == "1" |
                                tclvalue(aspect.auxvar) == "1") "normal" else "disabled"
 
-                txt.grddem <- tklabel(frDEM, text = "Elevation data (NetCDF)",  anchor = 'w', justify = 'left')
+                txt.grddem <- tklabel(frDEM, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
                 cb.grddem <<- ttkcombobox(frDEM, values = unlist(listOpenFiles), textvariable = demfile.var, width = largeur1, state = statedem)
                 bt.grddem <- tkbutton(frDEM, text = "...", state = statedem)
 
@@ -199,8 +199,8 @@ crossValidationInfoRain <- function(){
                 tkgrid(cb.grddem, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, ipady = 1)
                 tkgrid(bt.grddem, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, ipady = 1)
 
-                helpWidget(cb.grddem, 'Select the file in the list', 'File containing the elevation data in NetCDF')
-                helpWidget(bt.grddem, 'Browse file if not listed', 'Browse file if not listed')
+                helpWidget(cb.grddem, lang.dlg[['tooltip']][['15']], lang.dlg[['status']][['15']])
+                helpWidget(bt.grddem, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
                 ###########
 
@@ -254,8 +254,7 @@ crossValidationInfoRain <- function(){
 
     frMerge <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2, pady = 3)
 
-    cb.mrgMthd <- c("Cressman Scheme", "Barnes Scheme",
-                     "Simple Bias Adjustment", "Regression Kriging")
+    cb.mrgMthd <- lang.dlg[['combobox']][['1']]
     val.mrgMthd <- c("CSc", "BSc", "SBA", "RK")
 
     merge.method <- tclVar()
@@ -271,16 +270,16 @@ crossValidationInfoRain <- function(){
     lat.auxvar <- tclVar(.cdtData$GalParams$auxvar$lat)
     demfile.var <- tclVar(.cdtData$GalParams$auxvar$demfile)
 
-    txt.mrg <- tklabel(frMerge, text = 'Merging method', anchor = 'e', justify = 'right')
+    txt.mrg <- tklabel(frMerge, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
     cb.mrg <- ttkcombobox(frMerge, values = cb.mrgMthd, textvariable = merge.method, width = largeur3)
     frMrgP <- tkframe(frMerge)
-    frauxvar <- ttklabelframe(frMerge, text = 'Include auxiliary variables', relief = 'groove', borderwidth = 2)
+    frauxvar <- ttklabelframe(frMerge, text = lang.dlg[['label']][['8']], relief = 'groove', borderwidth = 2)
 
     auxiliary.variables(.cdtData$GalParams$MRG$method)
 
-    txt.nrun <- tklabel(frMrgP, text = 'Number of nested run', anchor = 'w', justify = 'left')
+    txt.nrun <- tklabel(frMrgP, text = lang.dlg[['label']][['9']], anchor = 'w', justify = 'left')
     en.nrun <- tkentry(frMrgP, textvariable = nb.run, width = 3)
-    txt.pass <- tklabel(frMrgP, text = 'Pass ratio', anchor = 'w', justify = 'left')
+    txt.pass <- tklabel(frMrgP, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
     en.pass <- tkentry(frMrgP, textvariable = pass.ratio, width = largeur4)
 
     tkgrid(txt.nrun, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -292,10 +291,9 @@ crossValidationInfoRain <- function(){
     tkgrid(cb.mrg, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frMrgP, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.mrg, 'Method to be used to perform merging', 'Method to be used to perform merging')
-    helpWidget(en.nrun, 'Number of the nested run to be performed', 'Number of the nested run to be performed')
-    helpWidget(en.pass, 'Fraction of the radius of influence or number maximum of the neighborhood \n to be used for each run, separated by a comma and must be the same number \n of the number of run',
-                        'Fraction of the radius of influence or number maximum of the neighborhood \n to be used for each run, separated by a comma and must be the same number \n of the number of run') 
+    helpWidget(cb.mrg, lang.dlg[['tooltip']][['16']], lang.dlg[['status']][['16']])
+    helpWidget(en.nrun, lang.dlg[['tooltip']][['17']], lang.dlg[['status']][['17']])
+    helpWidget(en.pass, lang.dlg[['tooltip']][['18']], lang.dlg[['status']][['18']])
 
     ########
 
@@ -306,9 +304,9 @@ crossValidationInfoRain <- function(){
 
     ############################################
 
-    bt.mrg.interp <- ttkbutton(frMRG0, text = "Merging Interpolations Parameters")
+    bt.mrg.interp <- ttkbutton(frMRG0, text = lang.dlg[['button']][['2']])
 
-    helpWidget(bt.mrg.interp, 'Set the parameters to interpolate the data', 'Set the parameters to interpolate the data')
+    helpWidget(bt.mrg.interp, lang.dlg[['tooltip']][['19']], lang.dlg[['status']][['19']])
 
     tkconfigure(bt.mrg.interp, command = function(){
         mrgmethod <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
@@ -329,10 +327,10 @@ crossValidationInfoRain <- function(){
 
     stateRnoR <- if(.cdtData$GalParams$RnoR$use) 'normal' else 'disabled'
 
-    chk.rnor.mask <- tkcheckbutton(frRnoR, variable = rnor.mask, text = "Apply Rain-no-Rain Mask", anchor = 'w', justify = 'left')
-    txt.rnor.wet <- tklabel(frRnoR, text = 'Rainy day threshold', anchor = 'e', justify = 'right')
+    chk.rnor.mask <- tkcheckbutton(frRnoR, variable = rnor.mask, text = lang.dlg[['checkbutton']][['6']], anchor = 'w', justify = 'left')
+    txt.rnor.wet <- tklabel(frRnoR, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
     en.rnor.wet <- tkentry(frRnoR, textvariable = rnor.wet, width = 4, state = stateRnoR)
-    chk.rnor.smooth <- tkcheckbutton(frRnoR, variable = rnor.smooth, text = "Smooth Rain-no-Rain Mask", anchor = 'w', justify = 'left', state = stateRnoR)
+    chk.rnor.smooth <- tkcheckbutton(frRnoR, variable = rnor.smooth, text = lang.dlg[['checkbutton']][['7']], anchor = 'w', justify = 'left', state = stateRnoR)
 
     tkgrid(chk.rnor.mask, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.rnor.wet, row = 0, column = 3, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -363,16 +361,16 @@ crossValidationInfoRain <- function(){
 
     tkconfigure(bt.prm.OK, command = function(){
         if(str_trim(tclvalue(file.stnfl)) == ""){
-            cdt.tkmessageBox(tt, message = "Select the file containing the station data", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(dir.InNCDF)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Browse or enter the directory containing the RFE files", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Browse or enter the path to directory to save results", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(is.null(settingSNC)){
-            cdt.tkmessageBox(tt, message = "You have to set the NetCDF files parameters", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
@@ -386,7 +384,7 @@ crossValidationInfoRain <- function(){
              pass <- str_trim(strsplit(tclvalue(pass.ratio), ",")[[1]])
             .cdtData$GalParams$MRG$pass <- as.numeric(pass[pass != ""])
             if(.cdtData$GalParams$MRG$nrun != length(.cdtData$GalParams$MRG$pass)){
-                cdt.tkmessageBox(tt, message = "Number of run is not equal to the number of pass ration", icon = "warning", type = "ok")
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
 
@@ -404,7 +402,7 @@ crossValidationInfoRain <- function(){
                .cdtData$GalParams$auxvar$demfile == ""
               )
             {
-                cdt.tkmessageBox(tt, message = "You have to provide DEM data in NetCDF format", icon = "warning", type = "ok")
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['7']], icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
 
@@ -413,6 +411,7 @@ crossValidationInfoRain <- function(){
             .cdtData$GalParams$RnoR$wet <- as.numeric(str_trim(tclvalue(rnor.wet)))
 
             .cdtData$GalParams$settingSNC <- settingSNC
+            .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)
             tkdestroy(tt)
@@ -444,7 +443,7 @@ crossValidationInfoRain <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Cross-Validation - Settings')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

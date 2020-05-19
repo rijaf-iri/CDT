@@ -1,16 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> Merging data - Settings </text>
+        <text lang="en"> Cross-Validation - Settings </text>
     </title>
-    <tab_title>
-        <tab id="1">
-            <text lang="en"> Input Data </text>
-        </tab>
-        <tab id="2">
-            <text lang="en"> Merging Parameters </text>
-        </tab>
-    </tab_title>
     <widget>
         <combobox id="1">
             <option id="1">
@@ -32,9 +24,6 @@
         <button id="2">
             <text lang="en"> Merging Interpolations Parameters </text>
         </button>
-        <button id="3">
-            <text lang="en"> Create Grid for Interpolation </text>
-        </button>
         <checkbutton id="1">
             <text lang="en"> Elevation </text>
         </checkbutton>
@@ -50,9 +39,6 @@
         <checkbutton id="5">
             <text lang="en"> Latitude </text>
         </checkbutton>
-        <checkbutton id="6">
-            <text lang="en"> Blank merged data using ESRI shapefiles </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> Station data file </text>
         </label>
@@ -61,9 +47,6 @@
         </label>
         <label id="3">
             <text lang="en"> Directory to save result </text>
-        </label>
-        <label id="4">
-            <text lang="en"> Merged data filename format </text>
         </label>
         <label id="5">
             <text lang="en"> Include auxiliary variables </text>
@@ -149,14 +132,6 @@
                 <text lang="en"> Enter the full path to directory to save result </text>
             </tooltip>
         </content>
-        <content id="9">
-            <status>
-                <text lang="en"> Format of the merged filenames in NetCDF, example: tmax_mrg_1983011.nc </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Format of the merged filenames in NetCDF, example: tmax_mrg_1983011.nc </text>
-            </tooltip>
-        </content>
         <content id="10">
             <status>
                 <text lang="en"> Include elevation data as auxiliary variable </text>
@@ -237,22 +212,6 @@
                 <text lang="en"> Set the parameters to interpolate the data </text>
             </tooltip>
         </content>
-        <content id="20">
-            <status>
-                <text lang="en"> Create the grid to interpolate the data </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Create the grid to interpolate the data </text>
-            </tooltip>
-        </content>
-        <content id="21">
-            <status>
-                <text lang="en"> Select the file containing the ESRI shapefiles </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Select the file in the list </text>
-            </tooltip>
-        </content>
     </help>
     <message>
         <content id="1">
@@ -267,9 +226,6 @@
         <content id="4">
             <text lang="en"> You have to set the NetCDF files parameters </text>
         </content>
-        <content id="5">
-            <text lang="en"> No shapefile provided </text>
-        </content>
         <content id="6">
             <text lang="en"> Number of run is not equal to the number of pass ratio </text>
         </content>
@@ -277,16 +233,13 @@
             <text lang="en"> You have to provide DEM data in NetCDF format </text>
         </content>
         <content id="8">
-            <text lang="en"> Temperature merging finished successfully </text>
+            <text lang="en"> Temperature merging cross-validation finished successfully </text>
         </content>
         <content id="9">
-            <text lang="en"> Temperature merging failed </text>
+            <text lang="en"> Temperature merging cross-validation failed </text>
         </content>
         <content id="10">
-            <text lang="en"> Merging data ... </text>
-        </content>
-        <content id="11">
-            <text lang="en"> Data preparation ... </text>
+            <text lang="en"> Start cross-validation ... </text>
         </content>
         <content id="12">
             <text lang="en"> No temperature data sample found </text>
@@ -295,22 +248,19 @@
             <text lang="en"> No elevation data found </text>
         </content>
         <content id="14">
-            <text lang="en"> Unable to read the NetCDF file to use to extract the grid </text>
-        </content>
-        <content id="15">
             <text lang="en"> Temperature data not found </text>
         </content>
+        <content id="15">
+            <text lang="en"> No data on stations to use for cross-validation </text>
+        </content>
         <content id="16">
-            <text lang="en"> Data preparation done </text>
+            <text lang="en"> Not enough data on stations to use for cross-validation </text>
         </content>
         <content id="17">
-            <text lang="en"> Merge data ... </text>
+            <text lang="en"> Unable to process some files, for details see </text>
         </content>
         <content id="18">
-            <text lang="en"> Unable to merge some files, for details see </text>
-        </content>
-        <content id="19">
-            <text lang="en"> Merging data done </text>
+            <text lang="en"> Cross-Validation done </text>
         </content>
     </message>
 </dialog_box>
