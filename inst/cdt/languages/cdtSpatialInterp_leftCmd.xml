@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input Data </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Maps </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> one panel </text>
+            </option>
+            <option id="2">
+                <text lang="en"> a separate panels </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Set Date Range </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Interpolations Parameters </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Create Grid for Interpolation </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Interpolate </text>
+        </button>
+        <button id="5">
+            <text lang="en"> Distance - Correlation </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Change negative values to </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Blank grid outside the boundaries </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Interpolated data already exist </text>
+        </checkbutton>
+        <checkbutton id="4">
+            <text lang="en"> Add boundaries to maps </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Date or Index </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Year </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Dekad </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Pentad </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Day </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Hour </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Minute </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Station Data </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Time step </text>
+        </label>
+        <label id="11">
+            <text lang="en"> File containing CDT stations data format </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Directory to save the outputs </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Interpolation data </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Map </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Plot map on </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Points </text>
+        </label>
+        <label id="17">
+            <text lang="en"> Grid </text>
+        </label>
+        <label id="18">
+            <text lang="en"> Boundaries </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Start and end date of data to interpolate </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start and end date of data to interpolate </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Set the parameters to interpolate the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Set the parameters to interpolate the data </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Create the grid to interpolate the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Create the grid to interpolate the data </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to the directory to save the outputs </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory to save the outputs </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Pentad must be between 1 and 6 </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Dekad must be 1, 2 or 3 </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Invalid date </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Interpolating data ... </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Data interpolation finished successfully </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Unable to interpolate data for some dates </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Data interpolation failed </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Unable to load the interpolated data </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Invalid date or index </text>
+        </content>
+        <content id="10">
+            <text lang="en"> does not exist </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Station data do not overlap to the selected date range </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Unable to read the NetCDF file to create the interpolation grid </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Unable to read the elevation data </text>
+        </content>
+        <content id="14">
+            <text lang="en"> No shapefiles found </text>
+        </content>
+        <content id="15">
+            <text lang="en"> All elevation data at station location are missing </text>
+        </content>
+        <content id="16">
+            <text lang="en"> No data to interpolate </text>
+        </content>
+        <content id="17">
+            <text lang="en"> No enough data to compute variogram </text>
+        </content>
+        <content id="18">
+            <text lang="en"> Unable to compute variogram </text>
+        </content>
+    </message>
+</panel_cmd>

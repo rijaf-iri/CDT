@@ -13,8 +13,8 @@ Temp_coefDownGetInfo <- function(){
 
     ####################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_DownscalingCoef_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_DownscalingCoef_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ####################################
 
@@ -35,15 +35,15 @@ Temp_coefDownGetInfo <- function(){
     tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$period]
 
     cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, width = largeur0)
-    bt.BasePeriod <- ttkbutton(frtimestep, text = "Set Base Period", width = largeur0)
+    bt.BasePeriod <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
     #######
 
     tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.BasePeriod, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.period, 'Select the time step of the data', 'Select the time step of the data')
-    helpWidget(bt.BasePeriod, 'Base period to be used to compute regression parameters between station temperature and elevation', 'Base period to be used to compute regression parameters between station temperature and elevation')
+    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.BasePeriod, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     #######
 
@@ -60,10 +60,10 @@ Temp_coefDownGetInfo <- function(){
     file.stnfl <- tclVar(.cdtData$GalParams$IO.files$STN.file)
     file.grddem <- tclVar(.cdtData$GalParams$IO.files$DEM.file)
 
-    txt.stnfl <- tklabel(frINPUT, text = 'Station data file', anchor = 'w', justify = 'left')
+    txt.stnfl <- tklabel(frINPUT, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     cb.stnfl <- ttkcombobox(frINPUT, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
     bt.stnfl <- tkbutton(frINPUT, text = "...")
-    txt.grddem <- tklabel(frINPUT, text = "Elevation data (NetCDF)", anchor = 'w', justify = 'left')
+    txt.grddem <- tklabel(frINPUT, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     cb.grddem <- ttkcombobox(frINPUT, values = unlist(listOpenFiles), textvariable = file.grddem, width = largeur1)
     bt.grddem <- tkbutton(frINPUT, text = "...")
 
@@ -76,10 +76,10 @@ Temp_coefDownGetInfo <- function(){
     tkgrid(cb.grddem, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.grddem, row = 3, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.stnfl, 'Choose the file in the list', 'Choose the file containing the station data')
-    helpWidget(bt.stnfl, 'Browse file if not listed', 'Browse file if not listed')
-    helpWidget(cb.grddem, 'Select the file from the list', 'File containing the elevation data in NetCDF format')
-    helpWidget(bt.grddem, 'Browse file if not listed', 'Browse file if not listed')
+    helpWidget(cb.stnfl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(bt.stnfl, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    helpWidget(cb.grddem, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    helpWidget(bt.grddem, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
     ######
     tkconfigure(bt.stnfl, command = function(){
@@ -113,7 +113,7 @@ Temp_coefDownGetInfo <- function(){
 
     file.save1 <- tclVar(.cdtData$GalParams$IO.files$dir2save)
 
-    txt.file.save <- tklabel(frSave, text = 'Directory to save result', anchor = 'w', justify = 'left')
+    txt.file.save <- tklabel(frSave, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
     en.file.save <- tkentry(frSave, textvariable = file.save1, width = largeur2)
     bt.file.save <- tkbutton(frSave, text = "...")
 
@@ -123,8 +123,8 @@ Temp_coefDownGetInfo <- function(){
     tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.file.save, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    helpWidget(en.file.save, 'Enter the full path to directory to save result', 'Enter the full path to directory to save result')
-    helpWidget(bt.file.save, 'or browse here', 'or browse here')
+    helpWidget(en.file.save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    helpWidget(bt.file.save, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 
     #####
 
@@ -152,12 +152,12 @@ Temp_coefDownGetInfo <- function(){
 
     tkconfigure(bt.prm.OK, command = function(){
         if(str_trim(tclvalue(file.stnfl)) == ""){
-            cdt.tkmessageBox(tt, message = "Select the file containing the gauge data", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
         }else if(str_trim(tclvalue(file.grddem)) == "" ){
-            cdt.tkmessageBox(tt, message = "You have to choose DEM data in NetCDF format", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(file.save1)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Select or enter the path to directory to save results", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
@@ -166,7 +166,7 @@ Temp_coefDownGetInfo <- function(){
             .cdtData$GalParams$IO.files$DEM.file <- str_trim(tclvalue(file.grddem))
             .cdtData$GalParams$IO.files$dir2save <- str_trim(tclvalue(file.save1))
 
-            # .cdtData$GalParams$message <- lang.dlg[['message']]
+            .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)
             tkdestroy(tt)
@@ -197,7 +197,7 @@ Temp_coefDownGetInfo <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Coefficients Downscaling-Settings')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

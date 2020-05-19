@@ -82,7 +82,6 @@ multiplicative.bias.fun <- function(stn, grd, variable, min.length){
     return(bs)
 }
 
-
 outputTest <- function(X, months = 1:12){
     H0.test <- vector(mode = 'list', length = 12)
     H0.test[months] <- lapply(X[months], function(mon){
@@ -158,10 +157,16 @@ quantile.mapping.Gauss <- function(x, pars.stn, pars.reanal){
     return(res)
 }
 
+#############################################################################
+
 ComputeBiasCoefficients <- function(stnData, ncInfo, params,
                                     variable, outdir, GUI = TRUE)
 {
-    Insert.Messages.Out('Compute bias factors ...', TRUE, "i", GUI)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtBias_functions1.xml")
+    lang.msg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    lang.msg <- lang.msg[['message']]
+
+    Insert.Messages.Out(lang.msg[['1']], TRUE, "i", GUI)
 
     tstep <- params$period
     bias.method <- params$BIAS$method
@@ -169,7 +174,7 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
 
     ############### 
 
-    Insert.Messages.Out('Read and extract gridded data ...', TRUE, "i", GUI)
+    Insert.Messages.Out(lang.msg[['2']], TRUE, "i", GUI)
 
     if(bias.method %in% c("mbvar", "mbmon")){
         ptsData <- stnData[c('lon', 'lat')]
@@ -266,7 +271,7 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
                          grd = grdData$data,
                          diag = dg)
     }
-    Insert.Messages.Out('Reading gridded data finished', TRUE, "s", GUI)
+    Insert.Messages.Out(lang.msg[['3']], TRUE, "s", GUI)
 
     ############### 
 
@@ -290,7 +295,7 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
     }
 
     if(bias.method == "qmdist"){
-        Insert.Messages.Out('Fit distribution ...', TRUE, "i", GUI)
+        Insert.Messages.Out(lang.msg[['4']], TRUE, "i", GUI)
 
         perform.test <- switch(variable,
                               "rain" = params$BIAS$AD.test,
@@ -371,7 +376,7 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
         bias.pars <- list(method = "qmdist", bias = bias, fit = fits,
                           data = biasData, params = params)
 
-        Insert.Messages.Out('Fitting distribution done', TRUE, "s", GUI)
+        Insert.Messages.Out(lang.msg[['5']], TRUE, "s", GUI)
     }
 
     if(bias.method == "qmecdf"){
@@ -415,10 +420,12 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
 
     saveRDS(bias.pars, file = file.path(outdir, "BIAS_PARAMS.rds"))
 
-    Insert.Messages.Out('Computing bias factors finished', TRUE, "s", GUI)
+    Insert.Messages.Out(lang.msg[['6']], TRUE, "s", GUI)
 
     return(bias.pars)
 }
+
+#############################################################################
 
 biasInterpolation <- function(interp.method, locbs, interp.grid,
                               maxdist = Inf, nmax = Inf, nmin = 0,
@@ -461,7 +468,11 @@ biasInterpolation <- function(interp.method, locbs, interp.grid,
 InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
                                         outdir, demData, GUI = TRUE)
 {
-    Insert.Messages.Out('Interpolate bias factors ...', TRUE, "i", GUI)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtBias_functions2.xml")
+    lang.msg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    lang.msg <- lang.msg[['message']]
+
+    Insert.Messages.Out(lang.msg[['1']], TRUE, "i", GUI)
 
     bias.method <- bias.pars$params$BIAS$method
     pars.interp <- bias.pars$params$interp
@@ -845,12 +856,18 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
     }
 
     #####
-    Insert.Messages.Out('Interpolating bias factors finished', TRUE, "s", GUI)
+    Insert.Messages.Out(lang.msg[['2']], TRUE, "s", GUI)
     return(0)
 }
 
+#############################################################################
+
 readBiasFiles <- function(params, variable, GUI = TRUE){
-    Insert.Messages.Out('Read bias data ...', TRUE, "i", GUI)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtBias_functions3.xml")
+    lang.msg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    lang.msg <- lang.msg[['message']]
+
+    Insert.Messages.Out(lang.msg[['1']], TRUE, "i", GUI)
 
     if(params$BIAS$method %in% c("mbvar", "mbmon")){
         if(params$BIAS$method == "mbvar"){
@@ -869,12 +886,12 @@ readBiasFiles <- function(params, variable, GUI = TRUE){
         if(any(!bs.exist)){
             miss.bias <- biasFiles[!bs.exist]
             if(length(miss.bias) == nbias){
-                Insert.Messages.Out("No bias files found", TRUE, "e", GUI)
+                Insert.Messages.Out(lang.msg[['2']], TRUE, "e", GUI)
                 return(NULL)
             }else{
                 for(j in seq_along(miss.bias))
-                    Insert.Messages.Out(paste(miss.bias[j], "doesn't exist"), TRUE, "w", GUI)
-                Insert.Messages.Out("No correction will be made for the corresponding dates", TRUE, "w", GUI)
+                    Insert.Messages.Out(paste(miss.bias[j], lang.msg[['7']]), TRUE, "w", GUI)
+                Insert.Messages.Out(lang.msg[['3']], TRUE, "w", GUI)
             }
         }
 
@@ -906,20 +923,20 @@ readBiasFiles <- function(params, variable, GUI = TRUE){
             miss.stn <- stnfiles[!stn.exist]
             miss.grd <- grdfiles[!grd.exist]
             if(length(miss.stn) == 12){
-                Insert.Messages.Out("Stations distribution parameters files not found", TRUE, "e", GUI)
+                Insert.Messages.Out(lang.msg[['4']], TRUE, "e", GUI)
                 return(NULL)
             }else if(length(miss.grd) == 12){
-                Insert.Messages.Out("Gridded distribution parameters files not found", TRUE, "e", GUI)
+                Insert.Messages.Out(lang.msg[['5']], TRUE, "e", GUI)
                 return(NULL)
             }else if(all(!stn.exist | !grd.exist)){
-                Insert.Messages.Out("No distribution parameters files not found", TRUE, "e", GUI)
+                Insert.Messages.Out(lang.msg[['6']], TRUE, "e", GUI)
                 return(NULL)
             }else{
                 for(j in seq_along(miss.stn))
-                    Insert.Messages.Out(paste(miss.stn[j], "doesn't exist"), TRUE, "w", GUI)
+                    Insert.Messages.Out(paste(miss.stn[j], lang.msg[['7']]), TRUE, "w", GUI)
                 for(j in seq_along(miss.grd))
-                    Insert.Messages.Out(paste(miss.grd[j], "doesn't exist"), TRUE, "w", GUI)
-                Insert.Messages.Out("No correction will be made for the corresponding dates", TRUE, "w", GUI)
+                    Insert.Messages.Out(paste(miss.grd[j], lang.msg[['7']]), TRUE, "w", GUI)
+                Insert.Messages.Out(lang.msg[['8']], TRUE, "w", GUI)
             }
         }
 
@@ -956,12 +973,12 @@ readBiasFiles <- function(params, variable, GUI = TRUE){
     if(params$BIAS$method == "qmecdf"){
         biasfiles <- file.path(params$BIAS$dir, "BIAS_PARAMS.rds")
         if(!file.exists(biasfiles)){
-            Insert.Messages.Out("Bias data not found", TRUE, "e", GUI)
+            Insert.Messages.Out(lang.msg[['9']], TRUE, "e", GUI)
             return(NULL)
         }
         grdfiles <- file.path(params$BIAS$dir, "GRID_DATA.rds")
         if(!file.exists(grdfiles)){
-            Insert.Messages.Out("Grid data not found", TRUE, "e", GUI)
+            Insert.Messages.Out(lang.msg[['10']], TRUE, "e", GUI)
             return(NULL)
         }
 
@@ -970,12 +987,16 @@ readBiasFiles <- function(params, variable, GUI = TRUE){
         bias <- c(grd, biasD$bias)
     }
 
-    Insert.Messages.Out('Reading bias data finished', TRUE, "s", GUI)
+    Insert.Messages.Out(lang.msg[['11']], TRUE, "s", GUI)
     return(bias)
 }
 
 applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TRUE){
-    Insert.Messages.Out('Apply bias correction ...', TRUE, "i")
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtBias_functions4.xml")
+    lang.msg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    lang.msg <- lang.msg[['message']]
+
+    Insert.Messages.Out(lang.msg[['1']], TRUE, "i", GUI)
 
     varinfo <- ncInfo$ncinfo$varinfo
     dx <- ncdim_def("Lon", "degree_east", bias$lon)
@@ -1099,7 +1120,7 @@ applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TR
         return(0)
     })
 
-    Insert.Messages.Out('Bias Correction done', TRUE, "s")
+    Insert.Messages.Out(lang.msg[['2']], TRUE, "s", GUI)
 
     return(0)
 }

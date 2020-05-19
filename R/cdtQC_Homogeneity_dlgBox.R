@@ -263,12 +263,12 @@ getParams.HomoRefSeries <- function(Parameters, parent.win = .cdtEnv$tcl$main$wi
 {
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(41)
+        largeur1 <- 59
         largeur2 <- 6
         largeur3 <- 7
         largeur4 <- 41
     }else{
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(29)
+        largeur1 <- 42
         largeur2 <- 2
         largeur3 <- 5
         largeur4 <- 35

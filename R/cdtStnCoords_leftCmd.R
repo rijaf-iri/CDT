@@ -2,17 +2,17 @@
 StnChkCoordsPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(20)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(28)
-        largeur4 <- .cdtEnv$tcl$fun$w.widgets(35.5)
+        largeur0 <- 29
+        largeur1 <- 44
+        largeur2 <- 47
+        largeur3 <- 40
+        largeur4 <- 51
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(15)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23.5)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(25)
-        largeur4 <- .cdtEnv$tcl$fun$w.widgets(25)
+        largeur0 <- 21
+        largeur1 <- 33
+        largeur2 <- 34
+        largeur3 <- 36
+        largeur4 <- 36
     }
 
     GeneralParameters <- list(data.type = 'cdtcoords', infile = "", shpfile = "", output = "", buffer = 1)

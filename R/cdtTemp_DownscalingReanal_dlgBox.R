@@ -13,8 +13,8 @@ Temp_reanalDownGetInfo <- function(){
 
     ############################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_DownscalingReanal_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_DownscalingReanal_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ############################################
 
@@ -36,15 +36,15 @@ Temp_reanalDownGetInfo <- function(){
     tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$period]
 
     cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, width = largeur0)
-    bt.DateRange <- ttkbutton(frtimestep, text = "Set Date Range", width = largeur0)
+    bt.DateRange <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
     #######
 
     tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.DateRange, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.period, 'Select the time step of the data', 'Select the time step of the data')
-    helpWidget(bt.DateRange, 'Set the start and end date for downscaling reanalysis data', 'Set the start and end date for downscaling reanalysis data')
+    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.DateRange, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     #######
 
@@ -63,16 +63,16 @@ Temp_reanalDownGetInfo <- function(){
     dir.REANAL <- tclVar(.cdtData$GalParams$REANAL$dir)
     file.grddem <- tclVar(.cdtData$GalParams$DEM.file)
 
-    txt.coeffl <- tklabel(frameINPUT, text = 'Downscaling Coefficients file (*.rds)', anchor = 'w', justify = 'left')
+    txt.coeffl <- tklabel(frameINPUT, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     en.coeffl <- tkentry(frameINPUT, textvariable = file.coef, width = largeur2)
     bt.coeffl <- tkbutton(frameINPUT, text = "...")
 
-    txt.REANAL <- tklabel(frameINPUT, text = 'Directory of Reanalysis files', anchor = 'w', justify = 'left')
+    txt.REANAL <- tklabel(frameINPUT, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     set.REANAL <- ttkbutton(frameINPUT, text = .cdtEnv$tcl$lang$global[['button']][['5']])
     en.REANAL <- tkentry(frameINPUT, textvariable = dir.REANAL, width = largeur2)
     bt.REANAL <- tkbutton(frameINPUT, text = "...")
 
-    txt.grddem <- tklabel(frameINPUT, text = "Elevation data(NetCDF)", anchor = 'w', justify = 'left')
+    txt.grddem <- tklabel(frameINPUT, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
     cb.grddem <- ttkcombobox(frameINPUT, values = unlist(listOpenFiles), textvariable = file.grddem, width = largeur1)
     bt.grddem <- tkbutton(frameINPUT, text = "...")
 
@@ -89,13 +89,13 @@ Temp_reanalDownGetInfo <- function(){
     tkgrid(cb.grddem, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.grddem, row = 5, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    helpWidget(en.coeffl, 'Enter the full path of the file containing the downscaling coefficients STN_DEM_GLM_COEF.rds', 'Enter the full path of the file containing the downscaling coefficients STN_DEM_GLM_COEF.rds')
-    helpWidget(bt.coeffl, 'or browse here', 'or browse here')
-    helpWidget(en.REANAL, 'Enter the full path to directory containing the Reanalysis files', 'Enter the full path to directory containing the Reanalysis files')
-    helpWidget(bt.REANAL, 'Or browse here', 'Or browse here')
-    helpWidget(set.REANAL, 'Setting netcdf data options', 'Setting netcdf data options')
-    helpWidget(cb.grddem, 'Select the file from the list', 'File containing the elevation data in NetCDF')
-    helpWidget(bt.grddem, 'Browse file if not listed', 'Browse file if not listed')
+    helpWidget(en.coeffl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(bt.coeffl, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    helpWidget(en.REANAL, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    helpWidget(bt.REANAL, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    helpWidget(set.REANAL, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    helpWidget(cb.grddem, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+    helpWidget(bt.grddem, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
 
     #######
 
@@ -137,11 +137,11 @@ Temp_reanalDownGetInfo <- function(){
 
     ############################################
 
-    bt.down.interp <- ttkbutton(frMRG0, text = "Downscaling Interpolations Parameters")
-    bt.grid.interp <- ttkbutton(frMRG0, text = "Create Grid for Interpolation")
+    bt.down.interp <- ttkbutton(frMRG0, text = lang.dlg[['button']][['2']])
+    bt.grid.interp <- ttkbutton(frMRG0, text = lang.dlg[['button']][['3']])
 
-    helpWidget(bt.down.interp, 'Set the parameters to interpolate the downscaled data', 'Set the parameters to interpolate the downscaled data')
-    helpWidget(bt.grid.interp, 'Create the grid to interpolate the downscaled data', 'Create the grid to interpolate the downscaled data')
+    helpWidget(bt.down.interp, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+    helpWidget(bt.grid.interp, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
 
     #######
 
@@ -164,10 +164,10 @@ Temp_reanalDownGetInfo <- function(){
     dir2save <- tclVar(.cdtData$GalParams$output$dir)
     outdownff <- tclVar(.cdtData$GalParams$output$format)
 
-    txt.dir2save <- tklabel(frSave, text = 'Directory to save result', anchor = 'w', justify = 'left')
+    txt.dir2save <- tklabel(frSave, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
     en.dir2save <- tkentry(frSave, textvariable = dir2save, width = largeur2)
     bt.dir2save <- tkbutton(frSave, text = "...")
-    txt.outdownff <- tklabel(frSave, text = 'Downscaled data filename format', anchor = 'w', justify = 'left')
+    txt.outdownff <- tklabel(frSave, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
     en.outdownff <- tkentry(frSave, textvariable = outdownff, width = largeur2)
 
     #####
@@ -178,9 +178,9 @@ Temp_reanalDownGetInfo <- function(){
     tkgrid(txt.outdownff, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(en.outdownff, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    helpWidget(en.dir2save, 'Enter the full path to directory to save result', 'Enter the full path to directory to save result')
-    helpWidget(bt.dir2save, 'or browse here', 'or browse here')
-    helpWidget(en.outdownff, 'Format of the downscaled data files names in NetCDF, example: tmax_down_1981011.nc', 'Format of the downscaled data files names in NetCDF, example: tmax_down_1981011.nc')
+    helpWidget(en.dir2save, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
+    helpWidget(bt.dir2save, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    helpWidget(en.outdownff, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
 
     #####
 
@@ -211,19 +211,19 @@ Temp_reanalDownGetInfo <- function(){
 
     tkconfigure(bt.prm.OK, command = function(){
         if(str_trim(tclvalue(file.coef)) == ""){
-            cdt.tkmessageBox(tt, message = "Provide the file containing the coefficients to used for downscaling", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(dir.REANAL)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Select or enter the path to directory containing the Reanalysis files", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(file.grddem)) == ""){
-            cdt.tkmessageBox(tt, message = "You have to provide DEM data in NetCDF format", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Select or enter the path to directory to save results", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(is.null(settingSNC)){
-            cdt.tkmessageBox(tt, message = "You have to set the NetCDF files parameters", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$DownCoef.file <- str_trim(tclvalue(file.coef))
@@ -236,7 +236,7 @@ Temp_reanalDownGetInfo <- function(){
 
             .cdtData$GalParams$settingSNC <- settingSNC
 
-            # .cdtData$GalParams$message <- lang.dlg[['message']]
+            .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)
             tkdestroy(tt)
@@ -267,7 +267,7 @@ Temp_reanalDownGetInfo <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Reanalysis Downscaling - Settings')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

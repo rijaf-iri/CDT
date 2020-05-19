@@ -13,8 +13,8 @@ rmvBiasGetInfoRain <- function(){
 
     ####################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPrecip_BiasCorrect_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPrecip_BiasCorrect_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ####################################
 
@@ -35,15 +35,15 @@ rmvBiasGetInfoRain <- function(){
     tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$period]
 
     cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, width = largeur0)
-    bt.DateRange <- ttkbutton(frtimestep, text = "Set Date Range", width = largeur0)
+    bt.DateRange <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
     #######
 
     tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.DateRange, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.period, 'Select the time step of the data', 'Select the time step of the data')
-    helpWidget(bt.DateRange, 'Set the start and end date of data to correct', 'Set the start and end date of data to correct')
+    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.DateRange, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     ###########
 
@@ -58,18 +58,17 @@ rmvBiasGetInfoRain <- function(){
 
     frameBias <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
-    cb.biasMthd <- c("Multiplicative Bias Time Step Variable", "Multiplicative Bias for Each Month",
-                     "Quantile Mapping with Fitted Distribution", "Quantile Mapping with Empirical Distribution")
+    cb.biasMthd <- lang.dlg[['combobox']][['1']]
     val.biasMthd <- c("mbvar", "mbmon", "qmdist", "qmecdf")
 
     bias.method <- tclVar()
     tclvalue(bias.method) <- cb.biasMthd[val.biasMthd %in% .cdtData$GalParams$BIAS$method]
     bias.dir <- tclVar(.cdtData$GalParams$BIAS$dir)
 
-    txt.bias <- tklabel(frameBias, text = 'Bias method', anchor = 'e', justify = 'right')
+    txt.bias <- tklabel(frameBias, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
     cb.bias <- ttkcombobox(frameBias, values = cb.biasMthd, textvariable = bias.method, width = largeur2)
 
-    txt.bias.dir <- tklabel(frameBias, text = "Directory of bias files", anchor = 'w', justify = 'left')
+    txt.bias.dir <- tklabel(frameBias, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     en.bias.dir <- tkentry(frameBias, textvariable = bias.dir, width = largeur1)
     bt.bias.dir <- tkbutton(frameBias, text = "...")
 
@@ -82,8 +81,8 @@ rmvBiasGetInfoRain <- function(){
     tkgrid(en.bias.dir, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.bias.dir, row = 2, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.bias, 'Select the method used to calculate the Bias Factors or Parameters', 'Select the method used to calculate the Bias Factors or Parameters')
-    helpWidget(en.bias.dir, 'Enter the full path to directory containing the bias files', 'Enter the full path to directory containing the bias files')
+    helpWidget(cb.bias, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(en.bias.dir, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
     #######
 
@@ -100,7 +99,7 @@ rmvBiasGetInfoRain <- function(){
 
     dir.InNCDF <- tclVar(.cdtData$GalParams$RFE$dir)
 
-    txt.InNCDF <- tklabel(frameInNC, text = 'Directory containing RFE data', anchor = 'w', justify = 'left')
+    txt.InNCDF <- tklabel(frameInNC, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
     set.InNCDF <- ttkbutton(frameInNC, text = .cdtEnv$tcl$lang$global[['button']][['5']])
     en.InNCDF <- tkentry(frameInNC, textvariable = dir.InNCDF, width = largeur1)
     bt.InNCDF <- tkbutton(frameInNC, text = "...")
@@ -111,9 +110,9 @@ rmvBiasGetInfoRain <- function(){
     tkgrid(en.InNCDF, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.InNCDF, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    helpWidget(en.InNCDF, 'Enter the full path to the directory containing the RFE data', 'Enter the full path to the directory containing the RFE data')
-    helpWidget(bt.InNCDF, 'Or browse here', 'Or browse here')
-    helpWidget(set.InNCDF, 'Setting NetCDF data options', 'Setting NetCDF data options')
+    helpWidget(en.InNCDF, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    helpWidget(bt.InNCDF, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    helpWidget(set.InNCDF, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 
     ######
 
@@ -141,10 +140,10 @@ rmvBiasGetInfoRain <- function(){
     dir2save <- tclVar(.cdtData$GalParams$output$dir)
     outmrgff <- tclVar(.cdtData$GalParams$output$format)
 
-    txt.dir2save <- tklabel(frSave, text = 'Directory to save result', anchor = 'w', justify = 'left')
+    txt.dir2save <- tklabel(frSave, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
     en.dir2save <- tkentry(frSave, textvariable = dir2save, width = largeur1)
     bt.dir2save <- tkbutton(frSave, text = "...")
-    txt.outmrgff <- tklabel(frSave, text = 'Adjusted data filename format', anchor = 'w', justify = 'left')
+    txt.outmrgff <- tklabel(frSave, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
     en.outmrgff <- tkentry(frSave, textvariable = outmrgff, width = largeur1)
 
     #####
@@ -155,9 +154,9 @@ rmvBiasGetInfoRain <- function(){
     tkgrid(txt.outmrgff, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.outmrgff, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(en.dir2save, 'Enter the full path to directory to save result', 'Enter the full path to directory to save result')
-    helpWidget(bt.dir2save, 'or browse here', 'or browse here')
-    helpWidget(en.outmrgff, 'Format of the adjusted RFE filenames in NetCDF, example: rr_adj_1983011.nc', 'Format of the adjusted RFE filenames in NetCDF, example: rr_adj_1983011.nc')
+    helpWidget(en.dir2save, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+    helpWidget(bt.dir2save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    helpWidget(en.outmrgff, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
 
     #####
 
@@ -188,16 +187,16 @@ rmvBiasGetInfoRain <- function(){
 
     tkconfigure(bt.prm.OK, command = function(){
         if(str_trim(tclvalue(dir.InNCDF)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Select or enter the  directory containing the RFE files", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(bias.dir)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Enter the path to directory containing the Bias factors", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Browse or enter the path to directory to save results", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(is.null(settingSNC)){
-            cdt.tkmessageBox(tt, message = "You have to set the NetCDF files parameters", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
@@ -211,6 +210,7 @@ rmvBiasGetInfoRain <- function(){
             .cdtData$GalParams$output$format <- str_trim(tclvalue(outmrgff))
 
             .cdtData$GalParams$settingSNC <- settingSNC
+            .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)
             tkdestroy(tt)
@@ -242,7 +242,7 @@ rmvBiasGetInfoRain <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Bias Correction - Settings')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

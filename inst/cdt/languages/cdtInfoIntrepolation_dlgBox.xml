@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Interpolation parameters </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Inverse Distance Weighted </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Ordinary Kriging </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Nearest Neighbor </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Nearest Neighbor with elevation - 3D </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Bilinear interpolation </text>
+            </option>
+        </combobox>
+        <checkbutton id="1">
+            <text lang="en"> Use block mean values </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Variogram Model </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Minimum number of stations </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Radius of Influence </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Horizontal Radius of Influence </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Elevation data (NetCDF) </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Interpolation method </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Minimum number of neighbors to be used to interpolate data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of neighbors to be used to interpolate data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Maximum number of neighbors to be used to interpolate data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum number of neighbors to be used to interpolate data </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Maximum distance (in decimal degree) to be used to interpolate data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum distance (in decimal degree) to be used to interpolate data </text>
+            </tooltip>
+        </content>
+        <content id="3a">
+            <status>
+                <text lang="en"> Horizontal maximum distance (in decimal degree) to be used to interpolate data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Horizontal maximum distance (in decimal degree) to be used to interpolate data </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Compute averaged estimates over blocks </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Compute averaged estimates over blocks </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Candidate variogram models to be selected, the best fitting will be used for the interpolation,\nsee gstat package for list of available model </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Candidate variogram models to be selected, the best fitting will be used for the interpolation,\nsee gstat package for list of available model </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Minimum number of points used to fit variogram models </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of points used to fit variogram models </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> File containing the elevation data in NetCDF </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> You have to provide DEM data in NetCDF format </text>
+        </content>
+    </message>
+</dialog_box>

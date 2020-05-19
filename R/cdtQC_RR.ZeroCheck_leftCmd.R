@@ -2,15 +2,15 @@
 qcRRZeroCheckPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
+        largeur1 <- 44
+        largeur2 <- 47
         largeur3 <- 28
         largeur4 <- 15
         largeur5 <- 8
     }else{
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22.5)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(15)
+        largeur1 <- 32
+        largeur2 <- 33
+        largeur3 <- 21
         largeur4 <- 11
         largeur5 <- 6
     }

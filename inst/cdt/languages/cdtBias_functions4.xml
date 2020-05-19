@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<function_msg>
+    <message>
+        <content id="1">
+            <text lang="en"> Apply bias correction ... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Bias Correction done </text>
+        </content>
+    </message>
+</function_msg>

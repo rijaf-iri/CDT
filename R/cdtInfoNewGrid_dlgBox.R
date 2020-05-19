@@ -1,5 +1,10 @@
 
 getNewGridParams <- function(parent.win, Parameters){
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoNewGrid_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    ################################
+
     tt <- tktoplevel()
     tkgrab.set(tt)
     tkfocus(tt)
@@ -9,12 +14,7 @@ getNewGridParams <- function(parent.win, Parameters){
 
     ################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoNewGrid_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-
-    ################################
-
-    fr_grd <- ttklabelframe(frGrd0, text = "Create new grid", relief = "groove", borderwidth = 2)
+    fr_grd <- ttklabelframe(frGrd0, text = lang.dlg[['label']][['1']], relief = "groove", borderwidth = 2)
 
     minLon <- tclVar(Parameters$minlon)
     maxLon <- tclVar(Parameters$maxlon)
@@ -23,11 +23,11 @@ getNewGridParams <- function(parent.win, Parameters){
     maxLat <- tclVar(Parameters$maxlat)
     resLat <- tclVar(Parameters$reslat)
 
-    grd_llon <- tklabel(fr_grd, text = "Longitude", anchor = 'e', justify = 'right')
-    grd_llat <- tklabel(fr_grd, text = "Latitude", anchor = 'e', justify = 'right')
-    grd_lb1 <- tklabel(fr_grd, text = "Minimum")
-    grd_lb2 <- tklabel(fr_grd, text = "Maximum")
-    grd_lb3 <- tklabel(fr_grd, text = "Resolution")
+    grd_llon <- tklabel(fr_grd, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
+    grd_llat <- tklabel(fr_grd, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+    grd_lb1 <- tklabel(fr_grd, text = lang.dlg[['label']][['4']])
+    grd_lb2 <- tklabel(fr_grd, text = lang.dlg[['label']][['5']])
+    grd_lb3 <- tklabel(fr_grd, text = lang.dlg[['label']][['6']])
 
     grd_vlon1 <- tkentry(fr_grd, width = 6, justify = "center", textvariable = minLon)
     grd_vlon2 <- tkentry(fr_grd, width = 6, justify = "center", textvariable = maxLon)
@@ -50,12 +50,12 @@ getNewGridParams <- function(parent.win, Parameters){
     tkgrid(grd_vlat2, row = 2, column = 2, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(grd_vlat3, row = 2, column = 3, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(grd_vlon1, 'Minimum longitude in degree decimal', 'Minimum longitude in degree decimal')
-    helpWidget(grd_vlon2, 'Maximum longitude in degree decimal', 'Maximum longitude in degree decimal')
-    helpWidget(grd_vlon3, 'Resolution in degree decimal', 'Resolution in degree decimal')
-    helpWidget(grd_vlat1, 'Minimum latitude in degree decimal', 'Minimum latitude in degree decimal')
-    helpWidget(grd_vlat2, 'Maximum latitude in degree decimal', 'Maximum latitude in degree decimal')
-    helpWidget(grd_vlat3, 'Resolution in degree decimal', 'Resolution in degree decimal')
+    helpWidget(grd_vlon1, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(grd_vlon2, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+    helpWidget(grd_vlon3, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(grd_vlat1, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    helpWidget(grd_vlat2, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    helpWidget(grd_vlat3, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 
     ################################
 
@@ -102,7 +102,7 @@ getNewGridParams <- function(parent.win, Parameters){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Grid Parameters')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

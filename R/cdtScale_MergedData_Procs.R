@@ -1,12 +1,13 @@
 
 exec_ScalingUpData <- function(){
+    message <- .cdtData$GalParams[['message']]
     outdir <- file.path(.cdtData$GalParams$outdir, "Merged_ScaledData")
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     #################
     datMrgInfo <- getNCDFSampleData(.cdtData$GalParams$mrg.data$sample)
     if(is.null(datMrgInfo)){
-        Insert.Messages.Out("NetCDF data sample to be scaled up not found", format = TRUE)
+        Insert.Messages.Out(message[['6']], TRUE, 'e')
         return(NULL)
     }
 
@@ -16,7 +17,7 @@ exec_ScalingUpData <- function(){
                                         .cdtData$GalParams$date.range,
                                         .cdtData$GalParams$mrg.data$tstep)
     if(is.null(ncInfoMrg)){
-        Insert.Messages.Out("Data to be scaled up not found", TRUE, "e")
+        Insert.Messages.Out(message[['7']], TRUE, "e")
         return(NULL)
     }
     ncInfoMrg$ncinfo <- datMrgInfo
@@ -25,7 +26,7 @@ exec_ScalingUpData <- function(){
 
     rfeScaleInfo <- getNCDFSampleData(.cdtData$GalParams$scale.data$sample)
     if(is.null(rfeScaleInfo)){
-        Insert.Messages.Out("NetCDF data sample to be used to scale up not found", format = TRUE)
+        Insert.Messages.Out(message[['8']], TRUE, 'e')
         return(NULL)
     }
 
@@ -71,7 +72,7 @@ exec_ScalingUpData <- function(){
                                           .cdtData$GalParams$date.range,
                                           .cdtData$GalParams$scale.data$tstep)
     if(is.null(ncInfoScale)){
-        Insert.Messages.Out("Data to be used to scale up not found", TRUE, "e")
+        Insert.Messages.Out(message[['9']], TRUE, "e")
         return(NULL)
     }
     ncInfoScale$ncinfo <- rfeScaleInfo
@@ -86,7 +87,8 @@ exec_ScalingUpData <- function(){
 }
 
 merged_ScalingUpData <- function(ncInfoMrg, ncInfoScale, params, outdir, GUI = TRUE){
-    Insert.Messages.Out('Scale data ...', TRUE, "i")
+    message <- .cdtData$GalParams[['message']]
+    Insert.Messages.Out(message[['10']], TRUE, "i", GUI)
     ## indexing
     if(params$scale.data$tstep == "monthly"){
         ## daily, pentad and dekadal to monthly
@@ -165,7 +167,7 @@ merged_ScalingUpData <- function(ncInfoMrg, ncInfoScale, params, outdir, GUI = T
                                             defSpatialPixels(ncInfoScale$ncinfo),
                                             tol = 1e-07)
     if(is.diff.grid){
-        Insert.Messages.Out("Grid from the two datasets did not match", TRUE, "e")
+        Insert.Messages.Out(message[['11']], TRUE, "e", GUI)
         return(NULL)
     }
 
@@ -241,7 +243,7 @@ merged_ScalingUpData <- function(ncInfoMrg, ncInfoScale, params, outdir, GUI = T
         return(0)
     })
 
-    Insert.Messages.Out('Scaling data finished', TRUE, "s")
+    Insert.Messages.Out(message[['12']], TRUE, "s", GUI)
 
     return(0)
 }

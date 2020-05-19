@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Scale merged data - Settings </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Set Date Range </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Directory containing merged data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Directory of data to use for scaling </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Function to use for scaling </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Directory to save result </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the merged data to be scaled </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the merged data to be scaled </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Set the start and end date of the merged data to be scaled </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Set the start and end date of the merged data to be scaled </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the merged data to be scaled </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the merged data to be scaled </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Setting NetCDF data options </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Setting NetCDF data options </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the merged data to be used for scaling </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the merged data to be used for scaling </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Enter the full path to directory to save result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save result </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Browse or enter the directory containing the merged files to be scaled </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Brwose or enter the directory containing the NetCDF files to be used for scaling </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Browse or enter the path to directory to save results </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Scaling up merged data finished successfully </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Scaling up merged data failed </text>
+        </content>
+        <content id="6">
+            <text lang="en"> NetCDF data sample to be scaled up not found </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Data to be scaled up not found </text>
+        </content>
+        <content id="8">
+            <text lang="en"> NetCDF data sample to be used to scale up not found </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Data to be used to scale up not found </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Scale data ... </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Grid from the two datasets did not match </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Scaling data finished </text>
+        </content>
+    </message>
+</dialog_box>

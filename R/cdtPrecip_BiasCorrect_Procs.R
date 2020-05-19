@@ -1,6 +1,7 @@
 
 execAdjBiasRain <- function(){
-    Insert.Messages.Out('Adjusting Gauge-RFE bias ...', TRUE, "i")
+    message <- .cdtData$GalParams[['message']]
+    Insert.Messages.Out(message[['7']], TRUE, "i")
 
     daty <- get.range.date.time(.cdtData$GalParams$date.range,
                                 .cdtData$GalParams$period)
@@ -20,7 +21,7 @@ execAdjBiasRain <- function(){
     ## RFE sample file
     rfeDataInfo <- getNCDFSampleData(.cdtData$GalParams$RFE$sample)
     if(is.null(rfeDataInfo)){
-        Insert.Messages.Out("No RFE data sample found", format = TRUE)
+        Insert.Messages.Out(message[['8']], TRUE, 'e')
         return(NULL)
     }
 
@@ -30,7 +31,7 @@ execAdjBiasRain <- function(){
                                      .cdtData$GalParams$date.range,
                                      .cdtData$GalParams$period)
     if(is.null(ncInfo)){
-        Insert.Messages.Out("RFE data not found", TRUE, "e")
+        Insert.Messages.Out(message[['9']], TRUE, "e")
         return(NULL)
     }
     ncInfo$ncinfo <- rfeDataInfo
@@ -49,7 +50,7 @@ execAdjBiasRain <- function(){
     upy <- min(bbox1[2, 2], bbox2[2, 2])
 
     if(btx >= upx | bty >= upy){
-        Insert.Messages.Out("Bias and the precipitation data are in the different region", TRUE, "e")
+        Insert.Messages.Out(message[['10']], TRUE, "e")
         return(NULL)
     }
 
@@ -57,7 +58,7 @@ execAdjBiasRain <- function(){
                                          defSpatialPixels(rfeDataInfo[c("lon", "lat")]),
                                          tol = 1e-03)
     if(diff.grid){
-        Insert.Messages.Out("Bias and the precipitation data have different grid", TRUE, "e")
+        Insert.Messages.Out(message[['11']], TRUE, "e")
         return(NULL)
     }
 

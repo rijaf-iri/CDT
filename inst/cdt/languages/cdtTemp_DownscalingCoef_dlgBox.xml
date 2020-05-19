@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Coefficients Downscaling - Settings </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Set Base Period </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Station data file </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Elevation data (NetCDF) </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Directory to save result </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Base period to be used to compute regression parameters between station temperature and elevation </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Base period to be used to compute regression parameters between station temperature and elevation </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the file containing the station data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> File containing the elevation data in NetCDF format </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file from the list </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Enter the full path to directory to save result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save result </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Select the file containing the gauge data </text>
+        </content>
+        <content id="2">
+            <text lang="en"> You have to choose DEM data in NetCDF format </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Select or enter the path to directory to save results </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Computing regression parameters finished successfully </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Computing regression parameters failed </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Computing regression parameters ... </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Unable to read DEM data </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Compute downscaling coefficients ... </text>
+        </content>
+        <content id="9">
+            <text lang="en"> No enough data to calculate the coefficients </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Computing downscaling coefficients finished </text>
+        </content>
+    </message>
+</dialog_box>

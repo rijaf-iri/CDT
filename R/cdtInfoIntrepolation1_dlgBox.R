@@ -11,8 +11,8 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
 
     ################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoIntrepolation1_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoIntrepolation1_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ################################
 
@@ -32,25 +32,25 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
 
         ######
         if(intmthd == "idw"){
-            chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = "Use block mean values", anchor = 'w', justify = 'left')
+            chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
 
             tkgrid(chk.block, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             
-            helpWidget(chk.block, "Compute averaged estimates over blocks", "Compute averaged estimates over blocks")
+            helpWidget(chk.block, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
         }
 
         if(intmthd == "okr"){
-            chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = "Use block mean values", anchor = 'w', justify = 'left')
+            chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
 
             fr.vgm <- tkframe(frInterpP)
-            txt.vgm <- tklabel(fr.vgm, text = "Variogram Model", anchor = 'e', justify = 'right')
+            txt.vgm <- tklabel(fr.vgm, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
             en.vgm <- tkentry(fr.vgm, textvariable = vgm.model.var, justify = 'left', width = largeur1)
 
             tkgrid(txt.vgm, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(en.vgm, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
             fr.minstn <- tkframe(frInterpP)
-            txt.minstn <- tklabel(fr.minstn, text = "Minimum number of stations", anchor = 'e', justify = 'right')
+            txt.minstn <- tklabel(fr.minstn, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
             en.minstn <- tkentry(fr.minstn, width = 3, textvariable = minstn.var)
 
             tkgrid(txt.minstn, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -60,9 +60,9 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
             tkgrid(fr.vgm, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(fr.minstn, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-            helpWidget(chk.block, "Compute averaged estimates over blocks", "Compute averaged estimates over blocks")
-            helpWidget(en.vgm, 'Candidate variogram models to be selected, the best fitting will be used for the interpolation,\nsee gstat package for list of available model', 'Candidate variogram models to be selected, the best fitting will be used for the interpolation,\nsee gstat package for list of available model')
-            helpWidget(en.minstn, 'Minimum number of points used to fit variogram models', 'Minimum number of points used to fit variogram models')
+            helpWidget(chk.block, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+            helpWidget(en.vgm, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+            helpWidget(en.minstn, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
         }
 
         if(intmthd %in% c("shepard", "sphere")){
@@ -77,8 +77,7 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
 
     frInterpMthd <- tkframe(frGrd0, relief = 'sunken', borderwidth = 2)
 
-    cb.interpMthd <- c('Inverse Distance Weighted', 'Ordinary Kriging',
-                       'Modified Shepard interpolation', 'Spheremap interpolation method')
+    cb.interpMthd <- lang.dlg[['combobox']][['1']]
     val.interpMthd <- c("idw", "okr", "shepard", "sphere")
 
     interp.method <- tclVar()
@@ -91,9 +90,9 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
 
     statemdst <- if(Parameters$vargrd) "disabled" else "normal"
 
-    txt.mthd <- tklabel(frInterpMthd, text = 'Interpolation method', anchor = 'e', justify = 'right')
+    txt.mthd <- tklabel(frInterpMthd, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
     cb.mthd <- ttkcombobox(frInterpMthd, values = cb.interpMthd, textvariable = interp.method, width = largeur0, state = stateMethod)
-    chk.GRDVar <- tkcheckbutton(frInterpMthd, variable = grid.var, text = "Use variable radius of influence for each grid", anchor = 'w', justify = 'left')
+    chk.GRDVar <- tkcheckbutton(frInterpMthd, variable = grid.var, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
 
     frNeigh <- tkframe(frInterpMthd, relief = 'groove', borderwidth = 2)
 
@@ -116,12 +115,9 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
     tkgrid(frNeigh, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
     tkgrid(chk.GRDVar, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(en.nmin, 'Minimum number of neighbors to be used to interpolate data,\n this value is the value for pass ratio 1,\n it will decrease depending on the fraction of the pass ratio',
-        'Minimum number of neighbors to be used to interpolate data,\n this value is the value for pass ratio 1,\n it will decrease depending on the fraction of the pass ratio')
-    helpWidget(en.nmax, 'Maximum number of neighbors to be used to interpolate data,\n this value is the value for pass ratio 1,\n it will decrease depending on the fraction of the pass ratio',
-        'Maximum number of neighbors to be used to interpolate data,\n this value is the value for pass ratio 1,\n it will decrease depending on the fraction of the pass ratio')
-    helpWidget(en.mdst, 'Maximum distance (in decimal degree) to be used to interpolate data,\n this value is the value for pass ratio 1,\n it will decrease depending on the fraction of the pass ratio',
-        'Maximum distance (in decimal degree) to be used to interpolate data,\n this value is the value for pass ratio 1,\n it will decrease depending on the fraction of the pass ratio')
+    helpWidget(en.nmin, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(en.nmax, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+    helpWidget(en.mdst, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
     ########
 
@@ -183,8 +179,8 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
         tkfocus(parent.win)
     })
 
-    tkgrid(bt.prm.CA, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.prm.OK, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ################################
 
@@ -200,7 +196,7 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Interpolation parameters')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

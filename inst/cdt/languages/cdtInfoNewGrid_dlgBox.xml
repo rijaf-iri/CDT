@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Grid Parameters </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Create new grid </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Latitude </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Minimum </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Maximum </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Resolution </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Minimum longitude in degree decimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum longitude in degree decimal </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Maximum longitude in degree decimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum longitude in degree decimal </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Resolution in degree decimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Resolution in degree decimal </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Minimum latitude in degree decimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum latitude in degree decimal </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Maximum latitude in degree decimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum latitude in degree decimal </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Resolution in degree decimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Resolution in degree decimal </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

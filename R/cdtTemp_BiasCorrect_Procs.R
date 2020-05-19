@@ -1,6 +1,7 @@
 
 execAjdBiasDownTemp <- function(){
-    Insert.Messages.Out('Adjustment of downscaled data ...', TRUE, "i")
+    message <- .cdtData$GalParams[['message']]
+    Insert.Messages.Out(message[['7']], TRUE, "i")
 
     daty <- get.range.date.time(.cdtData$GalParams$date.range,
                                 .cdtData$GalParams$period)
@@ -20,7 +21,7 @@ execAjdBiasDownTemp <- function(){
     ## TEMP sample file
     tmpDataInfo <- getNCDFSampleData(.cdtData$GalParams$TEMP$sample)
     if(is.null(tmpDataInfo)){
-        Insert.Messages.Out("No downscaled data sample found", format = TRUE)
+        Insert.Messages.Out(message[['8']], TRUE, 'e')
         return(NULL)
     }
 
@@ -30,7 +31,7 @@ execAjdBiasDownTemp <- function(){
                                      .cdtData$GalParams$date.range,
                                      .cdtData$GalParams$period)
     if(is.null(ncInfo)){
-        Insert.Messages.Out("Downscaled data not found", TRUE, "e")
+        Insert.Messages.Out(message[['9']], TRUE, "e")
         return(NULL)
     }
     ncInfo$ncinfo <- tmpDataInfo
@@ -49,7 +50,7 @@ execAjdBiasDownTemp <- function(){
     upy <- min(bbox1[2, 2], bbox2[2, 2])
 
     if(btx >= upx | bty >= upy){
-        Insert.Messages.Out("Bias and the temperature data are in the different region", TRUE, "e")
+        Insert.Messages.Out(message[['11']], TRUE, "e")
         return(NULL)
     }
 
@@ -57,7 +58,7 @@ execAjdBiasDownTemp <- function(){
                                          defSpatialPixels(tmpDataInfo[c("lon", "lat")]),
                                          tol = 1e-03)
     if(diff.grid){
-        Insert.Messages.Out("Bias and the temperature data have different grid", TRUE, "e")
+        Insert.Messages.Out(message[['11']], TRUE, "e")
         return(NULL)
     }
 

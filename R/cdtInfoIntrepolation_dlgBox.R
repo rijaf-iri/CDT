@@ -13,8 +13,8 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
 
     ################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoIntrepolation_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoIntrepolation_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ################################
 
@@ -27,8 +27,7 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
 
     ################################
 
-    cb.interpMthd <- c('Inverse Distance Weighted', 'Ordinary Kriging', 'Nearest Neighbor',
-                       'Nearest Neighbor with elevation - 3D', 'Bilinear interpolation')
+    cb.interpMthd <- lang.dlg[['combobox']][['1']]
     val.interpMthd <- c("idw", "okr", "nns", "nn3d", "blin")
 
     if(group == 0) idx <- 1:2
@@ -51,7 +50,7 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
             en.nmin <- tkentry(frInterpP, width = 5, textvariable = nmin.var, justify = 'right')
             en.nmax <- tkentry(frInterpP, width = 5, textvariable = nmax.var, justify = 'right')
             en.mdst <- tkentry(frInterpP, width = 5, textvariable = maxdist.var, justify = 'right')
-            chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = "Use block mean values", anchor = 'w', justify = 'left')
+            chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
 
             tkgrid(txt.nmin, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(en.nmin, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -61,10 +60,10 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
             tkgrid(en.mdst, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(chk.block, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-            helpWidget(en.nmin, 'Minimum number of neighbors to be used to interpolate data', 'Minimum number of neighbors to be used to interpolate data')
-            helpWidget(en.nmax, 'Maximum number of neighbors to be used to interpolate data', 'Maximum number of neighbors to be used to interpolate data')
-            helpWidget(en.mdst, 'Maximum distance (in decimal degree) to be used to interpolate data', 'Maximum distance (in decimal degree) to be used to interpolate data')
-            helpWidget(chk.block, "Compute averaged estimates over blocks", "Compute averaged estimates over blocks")
+            helpWidget(en.nmin, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+            helpWidget(en.nmax, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+            helpWidget(en.mdst, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+            helpWidget(chk.block, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
         }
 
         if(intmthd == "okr"){
@@ -74,17 +73,17 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
             en.nmin <- tkentry(frInterpP, width = 5, textvariable = nmin.var, justify = 'right')
             en.nmax <- tkentry(frInterpP, width = 5, textvariable = nmax.var, justify = 'right')
             en.mdst <- tkentry(frInterpP, width = 5, textvariable = maxdist.var, justify = 'right')
-            chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = "Use block mean values", anchor = 'w', justify = 'left')
+            chk.block <- tkcheckbutton(frInterpP, variable = use.block.var, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
 
             fr.vgm <- tkframe(frInterpP)
-            txt.vgm <- tklabel(fr.vgm, text = "Variogram Model", anchor = 'e', justify = 'right')
+            txt.vgm <- tklabel(fr.vgm, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
             en.vgm <- tkentry(fr.vgm, textvariable = vgm.model.var, justify = 'left', width = largeur2)
 
             tkgrid(txt.vgm, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(en.vgm, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
             fr.minstn <- tkframe(frInterpP)
-            txt.minstn <- tklabel(fr.minstn, text = "Minimum number of stations", anchor = 'e', justify = 'right')
+            txt.minstn <- tklabel(fr.minstn, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
             en.minstn <- tkentry(fr.minstn, width = 3, textvariable = minstn.var)
 
             tkgrid(txt.minstn, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -100,37 +99,37 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
             tkgrid(fr.vgm, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(fr.minstn, row = 3, column = 0, sticky = 'e', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-            helpWidget(en.nmin, 'Minimum number of neighbors to be used to interpolate data', 'Minimum number of neighbors to be used to interpolate data')
-            helpWidget(en.nmax, 'Maximum number of neighbors to be used to interpolate data', 'Maximum number of neighbors to be used to interpolate data')
-            helpWidget(en.mdst, 'Maximum distance (in decimal degree) to be used to interpolate data', 'Maximum distance (in decimal degree) to be used to interpolate data')
-            helpWidget(chk.block, "Compute averaged estimates over blocks", "Compute averaged estimates over blocks")
-            helpWidget(en.vgm, 'Candidate variogram models to be selected, the best fitting will be used for the interpolation,\nsee gstat package for list of available model', 'Candidate variogram models to be selected, the best fitting will be used for the interpolation,\nsee gstat package for list of available model')
-            helpWidget(en.minstn, 'Minimum number of points used to fit variogram models', 'Minimum number of points used to fit variogram models')
+            helpWidget(en.nmin, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+            helpWidget(en.nmax, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+            helpWidget(en.mdst, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+            helpWidget(chk.block, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+            helpWidget(en.vgm, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+            helpWidget(en.minstn, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
         }
 
         if(intmthd == "nns"){
-            txt.mdst <- tklabel(frInterpP, text = "Radius of Influence", anchor = 'e', justify = 'right')
+            txt.mdst <- tklabel(frInterpP, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
             en.mdst <- tkentry(frInterpP, width = 5, textvariable = maxdist.var, justify = 'right')
 
             tkgrid(txt.mdst, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
             tkgrid(en.mdst, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
-            helpWidget(en.mdst, 'Maximum distance (in decimal degree) to be used to interpolate data', 'Maximum distance (in decimal degree) to be used to interpolate data')
+            helpWidget(en.mdst, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
         }
 
         if(intmthd == "nn3d"){
             frMDST <- tkframe(frInterpP)
-            txt.mdst <- tklabel(frMDST, text = "Horizontal Radius of Influence", anchor = 'e', justify = 'right')
+            txt.mdst <- tklabel(frMDST, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
             en.mdst <- tkentry(frMDST, width = 5, textvariable = maxdist.var, justify = 'right')
 
             tkgrid(txt.mdst, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(en.mdst, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-            helpWidget(en.mdst, 'Horizontal maximum distance (in decimal degree) to be used to interpolate data', 'Horizontal maximum distance (in decimal degree) to be used to interpolate data')
+            helpWidget(en.mdst, lang.dlg[['tooltip']][['3a']], lang.dlg[['status']][['3a']])
             ######
 
             frDEM <- tkframe(frInterpP, relief = 'sunken', borderwidth = 2)
-            txt.grddem <- tklabel(frDEM, text = "Elevation data (NetCDF)",  anchor = 'w', justify = 'left')
+            txt.grddem <- tklabel(frDEM, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
             cb.grddem <- ttkcombobox(frDEM, values = unlist(listOpenFiles), textvariable = demfile.var, width = largeur1)
             bt.grddem <- tkbutton(frDEM, text = "...")
 
@@ -138,8 +137,8 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
             tkgrid(cb.grddem, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(bt.grddem, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-            helpWidget(cb.grddem, 'Select the file in the list', 'File containing the elevation data in NetCDF')
-            helpWidget(bt.grddem, 'Browse file if not listed', 'Browse file if not listed')
+            helpWidget(cb.grddem, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+            helpWidget(bt.grddem, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
 
             ######
 
@@ -178,7 +177,7 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
     interp.method <- tclVar()
     tclvalue(interp.method) <- cb.interpMthd[val.interpMthd %in% Parameters$method]
 
-    txt.mthd <- tklabel(frInterpMthd, text = 'Interpolation method', anchor = 'e', justify = 'right')
+    txt.mthd <- tklabel(frInterpMthd, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
     cb.mthd <- ttkcombobox(frInterpMthd, values = cb.interpMthd, textvariable = interp.method, width = largeur0)
 
     tkgrid(txt.mthd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -232,7 +231,7 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
         if((Parameters$method == "nn3d") &
            (Parameters$demfile %in% c("", "NA")))
         {
-            cdt.tkmessageBox(tt, message = "You have to provide DEM data in NetCDF format", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }
 
@@ -247,8 +246,8 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
         tkfocus(parent.win)
     })
 
-    tkgrid(bt.prm.CA, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.prm.OK, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ################################
 
@@ -264,7 +263,7 @@ getInterpolationPars <- function(parent.win, Parameters, group = 0){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Interpolation parameters')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

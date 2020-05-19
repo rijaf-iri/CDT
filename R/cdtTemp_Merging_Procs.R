@@ -1,6 +1,7 @@
 
 execMergeTemp <- function(){
-    Insert.Messages.Out('Merging data ...', TRUE, "i")
+    message <- .cdtData$GalParams[['message']]
+    Insert.Messages.Out(message[['10']], TRUE, "i")
 
     daty <- get.range.date.time(.cdtData$GalParams$date.range,
                                 .cdtData$GalParams$period)
@@ -18,7 +19,7 @@ execMergeTemp <- function(){
 
     ##################
 
-    Insert.Messages.Out('Data preparation ...', TRUE, "i")
+    Insert.Messages.Out(message[['11']], TRUE, "i")
 
     #######get data
     stnData <- getStnOpenData(.cdtData$GalParams$STN.file)
@@ -30,7 +31,7 @@ execMergeTemp <- function(){
     ## Temp sample file
     tmpDataInfo <- getNCDFSampleData(.cdtData$GalParams$TEMP$sample)
     if(is.null(tmpDataInfo)){
-        Insert.Messages.Out("No temperature data sample found", format = TRUE)
+        Insert.Messages.Out(message[['12']], TRUE, 'e')
         return(NULL)
     }
 
@@ -45,7 +46,7 @@ execMergeTemp <- function(){
     {
         demInfo <- getNCDFSampleData(.cdtData$GalParams$auxvar$demfile)
         if(is.null(demInfo)){
-            Insert.Messages.Out("No elevation data found", TRUE, "e")
+            Insert.Messages.Out(message[['13']], TRUE, "e")
             return(NULL)
         }
         jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$auxvar$demfile)
@@ -69,7 +70,7 @@ execMergeTemp <- function(){
     if(.cdtData$GalParams$grid$from == "ncdf"){
         grdInfo <- getNCDFSampleData(.cdtData$GalParams$grid$ncfile)
         if(is.null(grdInfo)){
-            Insert.Messages.Out("Unable to read the NetCDF file to use to extract the grid", TRUE, "e")
+            Insert.Messages.Out(message[['14']], TRUE, "e")
             return(NULL)
         }
         grd.lon <- grdInfo$lon
@@ -100,7 +101,7 @@ execMergeTemp <- function(){
                                      .cdtData$GalParams$date.range,
                                      .cdtData$GalParams$period)
     if(is.null(ncInfo)){
-        Insert.Messages.Out("Temperature data not found", TRUE, "e")
+        Insert.Messages.Out(message[['15']], TRUE, "e")
         return(NULL)
     }
     ncInfo$ncinfo <- tmpDataInfo
@@ -114,11 +115,11 @@ execMergeTemp <- function(){
         outMask <- create.mask.grid(shpd, xy.grid)
     }
 
-    Insert.Messages.Out('Data preparation done', TRUE, "s")
+    Insert.Messages.Out(message[['16']], TRUE, "s")
 
     ##################
 
-    Insert.Messages.Out('Merge data ...', TRUE, "i")
+    Insert.Messages.Out(message[['17']], TRUE, "i")
 
     .cdtData$GalParams$RnoR <- list(use = FALSE, wet = 1.0, smooth = FALSE)
 
@@ -127,11 +128,11 @@ execMergeTemp <- function(){
 
     if(!is.null(ret)){
         if(ret != 0){
-          Insert.Messages.Out(paste('Unable to merge some files, see',
-                              file.path(outdir, "log_file.txt"), 'for details'), TRUE, "w")  
+          Insert.Messages.Out(paste(message[['18']],
+                              file.path(outdir, "log_file.txt")), TRUE, "w")  
         }
     }else return(NULL)
 
-    Insert.Messages.Out('Merging data done', TRUE, "s")
+    Insert.Messages.Out(message[['19']], TRUE, "s")
     return(0)
 }

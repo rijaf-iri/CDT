@@ -189,8 +189,8 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == 'coefbias.rain'){
         ret <- try(execBiasRain(), silent = TRUE)
 
-        msg0 <- "Computing Gauge-RFE bias finished successfully"
-        msg1 <- "Computing Gauge-RFE bias failed"
+        msg0 <- .cdtData$GalParams[['message']][['5']]
+        msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -198,16 +198,16 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == 'rmbias.rain'){
         ret <- try(execAdjBiasRain(), silent = TRUE)
 
-        msg0 <- "Adjusting Gauge-RFE bias finished successfully"
-        msg1 <- "Adjusting Gauge-RFE bias failed"
+        msg0 <- .cdtData$GalParams[['message']][['5']]
+        msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
     ## Merging
     if(.cdtData$GalParams$action == 'merge.rain'){
         ret <- try(execMergeRain(), silent = TRUE)
-        msg0 <- "Rainfall merging finished successfully"
-        msg1 <- "Rainfall merging failed"
+        msg0 <- .cdtData$GalParams[['message']][['8']]
+        msg1 <- .cdtData$GalParams[['message']][['9']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -215,8 +215,8 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == 'coefdown.temp'){
         ret <- try(Temp_execCoefDown(), silent = TRUE)
 
-        msg0 <- "Computing regression parameters finished successfully"
-        msg1 <- "Computing regression parameters failed"
+        msg0 <- .cdtData$GalParams[['message']][['4']]
+        msg1 <- .cdtData$GalParams[['message']][['5']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -224,8 +224,8 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == 'down.temp'){
         ret <- try(Temp_execDownscaling(), silent = TRUE)
 
-        msg0 <- "Downscaling finished successfully"
-        msg1 <- "Downscaling failed"
+        msg0 <- .cdtData$GalParams[['message']][['6']]
+        msg1 <- .cdtData$GalParams[['message']][['7']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -233,8 +233,8 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == 'coefbias.temp'){
         ret <- try(execBiasTemp(), silent = TRUE)
 
-        msg0 <- "Computing bias coefficients finished successfully"
-        msg1 <- "Computing bias coefficients failed"
+        msg0 <- .cdtData$GalParams[['message']][['5']]
+        msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -242,35 +242,26 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == 'adjust.temp'){
         ret <- try(execAjdBiasDownTemp(), silent = TRUE)
 
-        msg0 <- "Adjustment of downscaled data finished successfully"
-        msg1 <- "Adjustment of downscaled data failed"
+        msg0 <- .cdtData$GalParams[['message']][['5']]
+        msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
     ## Merge temp data
     if(.cdtData$GalParams$action == 'merge.temp'){
         ret <- try(execMergeTemp(), silent = TRUE)
-        msg0 <- "Temperature merging finished successfully"
-        msg1 <- "Temperature merging failed"
+        msg0 <- .cdtData$GalParams[['message']][['8']]
+        msg1 <- .cdtData$GalParams[['message']][['9']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
     ## Scaling merged data
     if(.cdtData$GalParams$action == 'scale.merged'){
         ret <- try(exec_ScalingUpData(), silent = TRUE)
-        msg0 <- "Scaling up merged data finished successfully"
-        msg1 <- "Scaling up merged data failed"
+        msg0 <- .cdtData$GalParams[['message']][['4']]
+        msg1 <- .cdtData$GalParams[['message']][['5']]
         Execute_end_msg(ret, msg0, msg1)
     }
-
-    # ## Merging 1 dekad
-    # if(.cdtData$GalParams$action == 'merge.dekrain'){
-    #     ret <- try(mergeOneDekadRain(), silent = TRUE)
-
-    #     msg0 <- "Rainfall merging finished successfully"
-    #     msg1 <- "Rainfall merging failed"
-    #     Execute_end_msg(ret, msg0, msg1)
-    # }
 
     ## Merging
     if(.cdtData$GalParams$action == 'crossv.rain'){

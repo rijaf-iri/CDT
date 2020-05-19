@@ -1,5 +1,6 @@
 
 Temp_execDownscaling <- function(){
+    message <- .cdtData$GalParams[['message']]
     daty <- get.range.date.time(.cdtData$GalParams$date.range,
                                 .cdtData$GalParams$period)
     if(.cdtData$GalParams$period == 'monthly'){
@@ -15,18 +16,18 @@ Temp_execDownscaling <- function(){
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
     output.dir$dir <- outdir
 
-    Insert.Messages.Out('Start Downscaling ...', TRUE, "i")
+    Insert.Messages.Out(message[['8']], TRUE, "i")
 
     ################
     CoefFile <- str_trim(.cdtData$GalParams$DownCoef.file)
     if(!file.exists(CoefFile)){
-        Insert.Messages.Out(paste(CoefFile, "not found"), format = TRUE)
+        Insert.Messages.Out(paste(CoefFile, message[['9']]), TRUE, 'e')
         return(NULL)
     }
 
     downCoef <- try(readRDS(CoefFile), silent = TRUE)
     if(inherits(downCoef, "try-error")){
-        Insert.Messages.Out('Error reading downscaling coefficients', format = TRUE)
+        Insert.Messages.Out(message[['10']], TRUE, 'e')
         return(NULL)
     }
 
@@ -39,7 +40,7 @@ Temp_execDownscaling <- function(){
     ## get elevation data
     demInfo <- getNCDFSampleData(.cdtData$GalParams$DEM.file)
     if(is.null(demInfo)){
-        Insert.Messages.Out("Unable to read DEM file", format = TRUE)
+        Insert.Messages.Out(message[['11']], TRUE, 'e')
         return(NULL)
     }
 
@@ -57,7 +58,7 @@ Temp_execDownscaling <- function(){
         }else{
             grdInfo <- getNCDFSampleData(.cdtData$GalParams$grid$ncfile)
             if(is.null(grdInfo)){
-                Insert.Messages.Out("Unable to read the NetCDF file to use to extract the grid", format = TRUE)
+                Insert.Messages.Out(message[['12']], TRUE, 'e')
                 return(NULL)
             }
             grd.lon <- grdInfo$lon
@@ -96,7 +97,7 @@ Temp_execDownscaling <- function(){
                                      .cdtData$GalParams$date.range,
                                      .cdtData$GalParams$period)
     if(is.null(ncInfo)){
-        Insert.Messages.Out("Reanalysis data not found", TRUE, "e")
+        Insert.Messages.Out(message[['13']], TRUE, "e")
         return(NULL)
     }
     ncInfo$ncinfo <- reanalInfo
@@ -211,7 +212,7 @@ Temp_ReanalysisDownscaling <- function(){
 
     ###############
 
-    Insert.Messages.Out("Downscale Reanalysis ...", TRUE, "i")
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['14']], TRUE, "i")
 
     parsL <- doparallel.cond(length(which(ncInfos$exist)) >= 30)
     ret <- cdt.foreach(seq_along(ncInfos$ncfiles), parsL, GUI = TRUE,
@@ -274,7 +275,7 @@ Temp_ReanalysisDownscaling <- function(){
         rm(residInterp, downTT, resid, reanlTT)
     })
 
-    Insert.Messages.Out('Downscaling Reanalysis finished', TRUE, "s")
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['15']], TRUE, "s")
     rm(demGrid, interp.grid)
     gc()
     return(0)

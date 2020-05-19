@@ -2,18 +2,18 @@
 qcRROutlierCheckPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(20)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
+        largeur0 <- 29
+        largeur1 <- 44
+        largeur2 <- 47
         largeur3 <- 22
         largeur4 <- 28
         largeur5 <- 15
         largeur6 <- 27
         largeur7 <- 8
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(16)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
+        largeur0 <- 23
+        largeur1 <- 31
+        largeur2 <- 33
         largeur3 <- 12
         largeur4 <- 19
         largeur5 <- 11

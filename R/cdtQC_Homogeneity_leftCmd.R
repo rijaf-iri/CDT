@@ -2,11 +2,11 @@
 testHomogeneityPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(20)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(24)
-        largeur4 <- .cdtEnv$tcl$fun$w.widgets(19.5)
+        largeur0 <- 29
+        largeur1 <- 44
+        largeur2 <- 47
+        largeur3 <- 34
+        largeur4 <- 28
         largeur5 <- 28
         largeur6 <- 30
         largeur7 <- 8
@@ -14,11 +14,11 @@ testHomogeneityPanelCmd <- function(){
         largeur9 <- 29
         largeur10 <- 24
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(16)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(18)
-        largeur4 <- .cdtEnv$tcl$fun$w.widgets(17.5)
+        largeur0 <- 23
+        largeur1 <- 31
+        largeur2 <- 33
+        largeur3 <- 26
+        largeur4 <- 25
         largeur5 <- 19
         largeur6 <- 23
         largeur7 <- 7

@@ -1,10 +1,11 @@
 
 execBiasTemp <- function(){
+    message <- .cdtData$GalParams[['message']]
     outdir <- file.path(.cdtData$GalParams$output$dir, paste0('BIAS_Data_',
                         tools::file_path_sans_ext(.cdtData$GalParams$STN.file)))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
-    Insert.Messages.Out('Computing bias coefficients ...', TRUE, "i")
+    Insert.Messages.Out(message[['7']], TRUE, "i")
 
     #######get data
     stnData <- getStnOpenData(.cdtData$GalParams$STN.file)
@@ -16,7 +17,7 @@ execBiasTemp <- function(){
     ## TEMP sample file
     tmpDataInfo <- getNCDFSampleData(.cdtData$GalParams$TEMP$sample)
     if(is.null(tmpDataInfo)){
-        Insert.Messages.Out("No downscaled data sample found", format = TRUE)
+        Insert.Messages.Out(message[['8']], TRUE, 'e')
         return(NULL)
     }
 
@@ -26,7 +27,7 @@ execBiasTemp <- function(){
     if(.cdtData$GalParams$interp$method == "nn3d"){
         demInfo <- getNCDFSampleData(.cdtData$GalParams$interp$demfile)
         if(is.null(demInfo)){
-            Insert.Messages.Out("No elevation data found", TRUE, "e")
+            Insert.Messages.Out(message[['9']], TRUE, "e")
             return(NULL)
         }
         jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$interp$demfile)
@@ -51,7 +52,7 @@ execBiasTemp <- function(){
     if(.cdtData$GalParams$grid$from == "ncdf"){
         grdInfo <- getNCDFSampleData(.cdtData$GalParams$grid$ncfile)
         if(is.null(grdInfo)){
-            Insert.Messages.Out("Unable to read the NetCDF file to use to extract the grid", TRUE, "e")
+            Insert.Messages.Out(message[['10']], TRUE, "e")
             return(NULL)
         }
         grd.lon <- grdInfo$lon
@@ -80,7 +81,7 @@ execBiasTemp <- function(){
     ncInfoBias <- ncInfo.no.date.range(.cdtData$GalParams$TEMP,
                                        .cdtData$GalParams$period)
     if(is.null(ncInfoBias)){
-        Insert.Messages.Out("Downscaled data not found", TRUE, "e")
+        Insert.Messages.Out(message[['11']], TRUE, "e")
         return(NULL)
     }
     ncInfoBias$ncinfo <- tmpDataInfo
@@ -97,7 +98,7 @@ execBiasTemp <- function(){
     years <- intersect(years.stn, years.rfe)
 
     if(length(unique(years)) < minyear){
-        Insert.Messages.Out("No enough data to calculate the coefficients", format = TRUE)
+        Insert.Messages.Out(message[['12']], TRUE, 'e')
         return(NULL)
     }
 

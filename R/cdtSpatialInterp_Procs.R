@@ -43,6 +43,7 @@ readStnDataInterp <- function(GeneralParameters){
 ######################
 
 interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
+    message <- .cdtData$EnvData[['message']]
     intstep <- GeneralParameters$intstep
     minhour <- GeneralParameters$minhour
     date.range <- GeneralParameters$date.range
@@ -80,7 +81,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
 
         idaty <- dates >= rdates[1] & dates <= rdates[2]
         if(!any(idaty)){
-            Insert.Messages.Out("Station data do not overlap to the selected date range", TRUE, "e")
+            Insert.Messages.Out(message[['11']], TRUE, "e")
             return(NULL)
         }
 
@@ -108,7 +109,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     if(GeneralParameters$grid$from == "ncdf"){
         grdInfo <- getNCDFSampleData(GeneralParameters$grid$ncfile)
         if(is.null(grdInfo)){
-            Insert.Messages.Out("Unable to read the NetCDF file to create the interpolation grid", TRUE, "e")
+            Insert.Messages.Out(message[['12']], TRUE, "e")
             return(NULL)
         }
         grd.lon <- grdInfo$lon
@@ -156,7 +157,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     if(interp$method %in% c("ukr", "nn3d")){
         demData <- getNcdfOpenData(interp$demfile)
         if(is.null(demData)){
-            Insert.Messages.Out("Unable to read the elevation data", TRUE, "e")
+            Insert.Messages.Out(message[['13']], TRUE, "e")
             return(NULL)
         }
 
@@ -170,7 +171,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     if(blankGrid$blank){
         shpdata <- getShpOpenData(blankGrid$shpf)[[2]]
         if(is.null(shpdata)){
-            Insert.Messages.Out("No shapefiles found", TRUE, "e")
+            Insert.Messages.Out(message[['14']], TRUE, "e")
             return(NULL)
         }
         maskGrid <- create.mask.grid(shpdata, xy.grid)
@@ -202,7 +203,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
         locations.stn <- data.frame(coordinates(locations.stn), elv = demData$z[ijs])
         locations.stn <- locations.stn[!is.na(locations.stn$elv), , drop = FALSE]
         if(nrow(locations.stn) == 0){
-            Insert.Messages.Out("All elevation data at station location are missing", TRUE, "e")
+            Insert.Messages.Out(message[['15']], TRUE, "e")
             return(NULL)
         }
 
@@ -230,7 +231,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
         locations.stn <- locations.stn[!is.na(locations.stn$stn), ]
         nstn <- length(locations.stn)
         if(nstn == 0){
-            msg <- list(msg = "No data to interpolate", status = NULL)
+            msg <- list(msg = message[['16']], status = NULL)
             return(msg)
         }
 
@@ -241,7 +242,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
             locations.stn <- locations.stn[nna, ]
             nstn <- length(locations.stn)
             if(nstn == 0){
-                msg <- list(msg = "No data to interpolate", status = NULL)
+                msg <- list(msg = message[['16']], status = NULL)
                 return(msg)
             }
         }
@@ -249,18 +250,18 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
         ######
         if(interp$method == "okr"){
             if(nstn < interp$minstn){
-                msg <- list(msg = "No enough data to compute variogram", status = NULL)
+                msg <- list(msg = message[['17']], status = NULL)
                 return(msg)
             }
             if(var(locations.stn$stn) < 1e-15){
-                msg <- list(msg = "Unable to compute variogram: variance null", status = NULL)
+                msg <- list(msg = paste(message[['18']], ':', 'variance null'), status = NULL)
                 return(msg)
             }
 
             exp.var <- gstat::variogram(stn~1, locations = locations.stn, cressie = TRUE)
             vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
             if(inherits(vgm, "try-error")){
-                msg <- paste("Unable to compute variogram:", gsub('[\r\n]', '', as.character(vgm)))
+                msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
                 msg <- list(msg = msg, status = NULL)
                 return(msg)
             }
@@ -268,20 +269,20 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
 
         if(interp$method == "ukr"){
             if(nstn < interp$minstn){
-                msg <- list(msg = "No enough data to compute variogram", status = NULL)
+                msg <- list(msg = message[['17']], status = NULL)
                 return(msg)
             }
 
             vars <- matrixStats::colVars(as.matrix(locations.stn@data))
             if(all(vars < 1e-15)){
-                msg <- list(msg = "Unable to compute variogram: variance null", status = NULL)
+                msg <- list(msg = paste(message[['18']], ':', 'variance null'), status = NULL)
                 return(msg)
             }
 
             exp.var <- gstat::variogram(formuleUK, locations = locations.stn, cressie = TRUE)
             vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
             if(inherits(vgm, "try-error")){
-                msg <- paste("Unable to compute variogram:", gsub('[\r\n]', '', as.character(vgm)))
+                msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
                 msg <- list(msg = msg, status = NULL)
                 return(msg)
             }

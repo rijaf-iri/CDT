@@ -11,8 +11,8 @@ Merging_ScaleDataInfo <- function(){
 
     ####################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtScale_MergedData_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtScale_MergedData_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ####################################
 
@@ -22,7 +22,6 @@ Merging_ScaleDataInfo <- function(){
 
     frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2, padx = 3, pady = 3)
     frMRG1 <- tkframe(tt)
-    # frOUT <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
 
     ############################################
 
@@ -34,15 +33,13 @@ Merging_ScaleDataInfo <- function(){
     tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$mrg.data$tstep]
 
     cb.period <- ttkcombobox(frDate, values = CbperiodVAL, textvariable = file.period, width = largeur1)
-    bt.DateRange <- ttkbutton(frDate, text = "Set Date Range", width = largeur1)
+    bt.DateRange <- ttkbutton(frDate, text = lang.dlg[['button']][['1']], width = largeur1)
 
     tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.DateRange, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    infobulle(cb.period, 'Select the time step of the merged data to be scaled')
-    status.bar.display(cb.period, 'Select the time step of the merged data to be scaled')
-    infobulle(bt.DateRange, 'Set the start and end date of the merged data to be scaled')
-    status.bar.display(bt.DateRange, 'Set the start and end date of the merged data to be scaled')
+    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.DateRange, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     tkconfigure(bt.DateRange, command = function(){
         tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
@@ -51,14 +48,13 @@ Merging_ScaleDataInfo <- function(){
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
-
     ############################################
 
     frmrgData <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2, padx = 3, pady = 3)
 
     dir.mrgData <- tclVar(.cdtData$GalParams$mrg.data$dir)
 
-    txt.mrgData <- tklabel(frmrgData, text = 'Directory containing merged data', anchor = 'w', justify = 'left')
+    txt.mrgData <- tklabel(frmrgData, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     set.mrgData <- ttkbutton(frmrgData, text = .cdtEnv$tcl$lang$global[['button']][['5']])
     en.mrgData <- tkentry(frmrgData, textvariable = dir.mrgData, width = largeur2)
     bt.mrgData <- tkbutton(frmrgData, text = "...")
@@ -68,12 +64,9 @@ Merging_ScaleDataInfo <- function(){
     tkgrid(en.mrgData, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.mrgData, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    infobulle(en.mrgData, 'Enter the full path to the directory containing the merged data to be scaled')
-    status.bar.display(en.mrgData, 'Enter the full path to the directory containing the merged data to be scaled')
-    infobulle(bt.mrgData, 'Or browse here')
-    status.bar.display(bt.mrgData, 'Or browse here')
-    infobulle(set.mrgData, 'Setting netcdf data options')
-    status.bar.display(set.mrgData, 'Setting netcdf data options')
+    helpWidget(en.mrgData, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(bt.mrgData, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    helpWidget(set.mrgData, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
     tkconfigure(set.mrgData, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
@@ -96,7 +89,7 @@ Merging_ScaleDataInfo <- function(){
 
     scale.dir <- tclVar(.cdtData$GalParams$scale.data$dir)
 
-    txt.scaledata <- tklabel(frScaleData, text = 'Directory of data to use for scaling', anchor = 'w', justify = 'left')
+    txt.scaledata <- tklabel(frScaleData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     set.scaledata <- ttkbutton(frScaleData, text = .cdtEnv$tcl$lang$global[['button']][['5']])
     en.scaledata <- tkentry(frScaleData, textvariable = scale.dir, width = largeur2)
     bt.scaledata <- tkbutton(frScaleData, text = "...")
@@ -106,12 +99,9 @@ Merging_ScaleDataInfo <- function(){
     tkgrid(en.scaledata, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.scaledata, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    infobulle(en.scaledata, 'Enter the full path to the directory containing the merged data to be used for scaling')
-    status.bar.display(en.scaledata, 'Enter the full path to the directory containing the merged data to be used for scaling')
-    infobulle(bt.scaledata, 'Or browse here')
-    status.bar.display(bt.scaledata, 'Or browse here')
-    infobulle(set.scaledata, 'Setting netcdf data options')
-    status.bar.display(set.scaledata, 'Setting netcdf data options')
+    helpWidget(en.scaledata, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    helpWidget(bt.scaledata, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    helpWidget(set.scaledata, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
     tkconfigure(set.scaledata, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
@@ -134,7 +124,7 @@ Merging_ScaleDataInfo <- function(){
 
     scale.fun <- tclVar(.cdtData$GalParams$scale.data$fun)
 
-    txt.scalefun <- tklabel(frScaleFun, text = 'Function to use for scaling', anchor = 'w', justify = 'left')
+    txt.scalefun <- tklabel(frScaleFun, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
     cb.scalefun <- ttkcombobox(frScaleFun, values = c("sum", "mean"), textvariable = scale.fun, width = 8)
 
     tkgrid(txt.scalefun, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -146,7 +136,7 @@ Merging_ScaleDataInfo <- function(){
 
     dir2save <- tclVar(.cdtData$GalParams$outdir)
 
-    txt.dir2save <- tklabel(frSave, text = 'Directory to save result', anchor = 'w', justify = 'left')
+    txt.dir2save <- tklabel(frSave, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
     en.dir2save <- tkentry(frSave, textvariable = dir2save, width = largeur2)
     bt.dir2save <- tkbutton(frSave, text = "...")
 
@@ -156,10 +146,8 @@ Merging_ScaleDataInfo <- function(){
     tkgrid(en.dir2save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.dir2save, row = 1, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    infobulle(en.dir2save, 'Enter the full path to directory to save result')
-    status.bar.display(en.dir2save, 'Enter the full path to directory to save result')
-    infobulle(bt.dir2save, 'or browse here')
-    status.bar.display(bt.dir2save, 'or browse here')
+    helpWidget(en.dir2save, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+    helpWidget(bt.dir2save, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
     #####
 
@@ -188,13 +176,13 @@ Merging_ScaleDataInfo <- function(){
 
     tkconfigure(bt.prm.OK, command = function(){
         if(str_trim(tclvalue(dir.mrgData)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Choose or enter the  directory containing the merged files to be scaled", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(scale.dir)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Choose or enter the  directory containing the netcdf files to be used for scaling", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Choose or enter the path to directory to save results", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$mrg.data$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
@@ -203,6 +191,8 @@ Merging_ScaleDataInfo <- function(){
             .cdtData$GalParams$scale.data$dir <- str_trim(tclvalue(scale.dir))
             .cdtData$GalParams$scale.data$fun <- str_trim(tclvalue(scale.fun))
             .cdtData$GalParams$outdir <- str_trim(tclvalue(dir2save))
+
+            .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)
             tkdestroy(tt)
@@ -234,7 +224,7 @@ Merging_ScaleDataInfo <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Scale merged data - Settings')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

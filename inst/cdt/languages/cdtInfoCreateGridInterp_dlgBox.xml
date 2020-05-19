@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Interpolation Grid Creation </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> The input NetCDF data </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Other NetCDF data </text>
+            </option>
+            <option id="3">
+                <text lang="en"> User defined grid </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Create </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Create grid for interpolation </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Grid From </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Extract grid from </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Set the new grid </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Set the new grid </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the source of grid to be used for the interpolation </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the source of grid to be used for the interpolation </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> NetCDF file containing the grid to be used </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file in the list </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Provide a NetCDF file to be used </text>
+        </content>
+    </message>
+</dialog_box>

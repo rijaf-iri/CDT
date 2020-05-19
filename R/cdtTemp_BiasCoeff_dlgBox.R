@@ -15,8 +15,8 @@ biasGetInfoTempDown <- function(){
 
     ####################################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_BiasCoeff_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_BiasCoeff_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ####################################
 
@@ -34,10 +34,10 @@ biasGetInfoTempDown <- function(){
         fr.biasOpts <<- tkframe(frameBias)
 
         if(biasmthd == "qmecdf"){
-            txt.boxrg <- tklabel(fr.biasOpts, text = "Box dimension: ")
-            txt.boxlo <- tklabel(fr.biasOpts, text = "Longitude")
+            txt.boxrg <- tklabel(fr.biasOpts, text = paste(lang.dlg[['label']][['1']], ":"))
+            txt.boxlo <- tklabel(fr.biasOpts, text = lang.dlg[['label']][['2']])
             en.boxlo <- tkentry(fr.biasOpts, textvariable = box.lon, width = 4)
-            txt.boxla <- tklabel(fr.biasOpts, text = "Latitude")
+            txt.boxla <- tklabel(fr.biasOpts, text = lang.dlg[['label']][['3']])
             en.boxla <- tkentry(fr.biasOpts, textvariable = box.lat, width = 4)
 
             tkgrid(txt.boxrg, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -46,17 +46,15 @@ biasGetInfoTempDown <- function(){
             tkgrid(txt.boxla, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(en.boxla, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-            txts <- "Nonparametric cumulative distribution functions of the gridded and \n observations data are estimated at every rectangular box region (in decimal degree)"
-            helpWidget(en.boxlo, txts, txts)
-            helpWidget(en.boxla, txts, txts)
+            helpWidget(en.boxlo, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+            helpWidget(en.boxla, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
         }
         if(biasmthd == "qmdist"){
-            chk.normtest <- tkcheckbutton(fr.biasOpts, variable = SWnorm.test, text = "Use Shapiro-Wilk Normality Test", anchor = 'w', justify = 'left')
+            chk.normtest <- tkcheckbutton(fr.biasOpts, variable = SWnorm.test, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
 
             tkgrid(chk.normtest, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-            txts <- "Use Shapiro-Wilk normality test to test if the data are compatible with a normal distribution"
-            helpWidget(chk.normtest, txts, txts)
+            helpWidget(chk.normtest, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
         }
 
         if(biasmthd %in% c("qmecdf", "qmdist"))
@@ -73,15 +71,15 @@ biasGetInfoTempDown <- function(){
     tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$period]
 
     cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, width = largeur0)
-    bt.baseBias <- ttkbutton(frtimestep, text = "Set Bias Base Period", width = largeur0)
+    bt.baseBias <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
     #######
 
     tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.baseBias, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.period, 'Select the time step of the data', 'Select the time step of the data')
-    helpWidget(bt.baseBias, 'Set the base period to be used to compute bias factors', 'Set the base period to be used to compute bias factors')
+    helpWidget(cb.period, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+    helpWidget(bt.baseBias, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
     #######
 
@@ -98,10 +96,10 @@ biasGetInfoTempDown <- function(){
     file.stnfl <- tclVar(.cdtData$GalParams$STN.file)
     dir.InNCDF <- tclVar(.cdtData$GalParams$TEMP$dir)
 
-    txt.stnfl <- tklabel(frInputData, text = 'Station data file', anchor = 'w', justify = 'left')
+    txt.stnfl <- tklabel(frInputData, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
     cb.stnfl <- ttkcombobox(frInputData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
     bt.stnfl <- tkbutton(frInputData, text = "...")
-    txt.InNCDF <- tklabel(frInputData, text = 'Directory containing the downscaled data', anchor = 'w', justify = 'left')
+    txt.InNCDF <- tklabel(frInputData, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
     set.InNCDF <- ttkbutton(frInputData, text = .cdtEnv$tcl$lang$global[['button']][['5']])
     en.InNCDF <- tkentry(frInputData, textvariable = dir.InNCDF, width = largeur2)
     bt.InNCDF <- tkbutton(frInputData, text = "...")
@@ -116,11 +114,11 @@ biasGetInfoTempDown <- function(){
     tkgrid(en.InNCDF, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.InNCDF, row = 3, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.stnfl, 'Select the file from the list', 'Select the file containing the gauge data')
-    helpWidget(bt.stnfl, 'Browse file if not listed', 'Browse file if not listed')
-    helpWidget(en.InNCDF, 'Enter the full path to the directory containing the downscaled data', 'Enter the full path to the directory containing the downscaled data')
-    helpWidget(bt.InNCDF, 'Or browse here', 'Or browse here')
-    helpWidget(set.InNCDF, 'Setting NetCDF data options', 'Setting NetCDF data options')
+    helpWidget(cb.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    helpWidget(bt.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    helpWidget(en.InNCDF, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+    helpWidget(bt.InNCDF, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+    helpWidget(set.InNCDF, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
 
     ######
     tkconfigure(bt.stnfl, command = function(){
@@ -158,7 +156,7 @@ biasGetInfoTempDown <- function(){
 
     dir2save <- tclVar(.cdtData$GalParams$output$dir)
 
-    txt.dir2save <- tklabel(frSave, text = 'Directory to save result', anchor = 'w', justify = 'left')
+    txt.dir2save <- tklabel(frSave, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
     en.dir2save <- tkentry(frSave, textvariable = dir2save, width = largeur2)
     bt.dir2save <- tkbutton(frSave, text = "...")
 
@@ -168,8 +166,8 @@ biasGetInfoTempDown <- function(){
     tkgrid(en.dir2save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.dir2save, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(en.dir2save, 'Enter the full path to directory to save result', 'Enter the full path to directory to save result')
-    helpWidget(bt.dir2save, 'or browse here', 'or browse here')
+    helpWidget(en.dir2save, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
+    helpWidget(bt.dir2save, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
 
     #####
 
@@ -189,8 +187,7 @@ biasGetInfoTempDown <- function(){
 
     frameBias <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2, pady = 3)
 
-    cb.biasMthd <- c("Multiplicative Bias Time Step Variable", "Multiplicative Bias for Each Month",
-                     "Quantile Mapping with Fitted Distribution", "Quantile Mapping with Empirical Distribution")
+    cb.biasMthd <- lang.dlg[['combobox']][['1']]
     val.biasMthd <- c("mbvar", "mbmon", "qmdist", "qmecdf")
 
     bias.method <- tclVar()
@@ -201,11 +198,11 @@ biasGetInfoTempDown <- function(){
     box.lat <- tclVar(.cdtData$GalParams$BIAS$blat)
     SWnorm.test <- tclVar(.cdtData$GalParams$BIAS$SWnorm.test)
 
-    txt.bias <- tklabel(frameBias, text = 'Bias method', anchor = 'e', justify = 'right')
+    txt.bias <- tklabel(frameBias, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
     cb.bias <- ttkcombobox(frameBias, values = cb.biasMthd, textvariable = bias.method, width = largeur3)
 
     fr.minstn <- tkframe(frameBias)
-    txt.minstn <- tklabel(fr.minstn, text = 'Minimum length of data', anchor = 'e', justify = 'right')
+    txt.minstn <- tklabel(fr.minstn, text = lang.dlg[['label']][['8']], anchor = 'e', justify = 'right')
     en.minstn <- tkentry(fr.minstn, textvariable = min.length, width = 4)
 
     ########
@@ -223,8 +220,8 @@ biasGetInfoTempDown <- function(){
     tkgrid(fr.minstn, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(fr.biasOpts, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.bias, 'Select the method to be used to calculate the Bias Factors or distribution Parameters', 'Select the method to be used to calculate the Bias Factors or distribution Parameters')
-    helpWidget(en.minstn, 'Minimum length of non missing values to be used to calculate the factor or to fit the distribution', 'Minimum length of non missing values to be used to calculate the factor or to fit the distribution')
+    helpWidget(cb.bias, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
+    helpWidget(en.minstn, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
 
     ########
 
@@ -241,11 +238,11 @@ biasGetInfoTempDown <- function(){
 
     stateInterp <- if(.cdtData$GalParams$BIAS$method == "qmecdf") "disabled" else "normal"
 
-    bt.bias.interp <- ttkbutton(frMRG0, text = "Bias Interpolations Parameters", state = stateInterp)
-    bt.grid.interp <- ttkbutton(frMRG0, text = "Create Grid for Interpolation")
+    bt.bias.interp <- ttkbutton(frMRG0, text = lang.dlg[['button']][['2']], state = stateInterp)
+    bt.grid.interp <- ttkbutton(frMRG0, text = lang.dlg[['button']][['3']])
 
-    helpWidget(bt.bias.interp, 'Set the parameters to interpolate the bias factor', 'Set the parameters to interpolate the bias factor')
-    helpWidget(bt.grid.interp, 'Create the grid to interpolate the bias factor or distribution parameters', 'Create the grid to interpolate the bias factor or distribution parameters')
+    helpWidget(bt.bias.interp, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+    helpWidget(bt.grid.interp, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
 
     tkconfigure(bt.bias.interp, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
@@ -277,16 +274,16 @@ biasGetInfoTempDown <- function(){
 
     tkconfigure(bt.prm.OK, command = function(){
         if(str_trim(tclvalue(file.stnfl)) == ""){
-            cdt.tkmessageBox(tt, message = "Select the file containing the station data", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(dir.InNCDF)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Browse or enter the directory containing the downscaled files", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(is.null(settingSNC)){
-            cdt.tkmessageBox(tt, message = "You have to set the NetCDF files parameters", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Browse or enter the path to directory to save results", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
@@ -301,6 +298,7 @@ biasGetInfoTempDown <- function(){
             .cdtData$GalParams$BIAS$SWnorm.test <- switch(tclvalue(SWnorm.test), '0' = FALSE, '1' = TRUE)
 
             .cdtData$GalParams$settingSNC <- settingSNC
+            .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)
             tkdestroy(tt)
@@ -314,8 +312,8 @@ biasGetInfoTempDown <- function(){
             tkfocus(.cdtEnv$tcl$main$win)
     })
 
-    tkgrid(bt.prm.CA, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.prm.OK, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
     
@@ -332,7 +330,7 @@ biasGetInfoTempDown <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Bias computation - Settings')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

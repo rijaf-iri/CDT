@@ -2,21 +2,23 @@
 SpatialInterpPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(16)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(30)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
+        largeur0 <- 30
+        largeur1 <- 44
+        largeur2 <- 47
         largeur3 <- 20
         largeur4 <- 26
-        largeur5 <- 14
-        largeur6 <- .cdtEnv$tcl$fun$w.widgets(26)
+        largeur5 <- 15
+        largeur6 <- 37
+        largeur7 <- 51
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(14)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
+        largeur0 <- 23
+        largeur1 <- 32
+        largeur2 <- 33
         largeur3 <- 14
         largeur4 <- 20
-        largeur5 <- 10
-        largeur6 <- .cdtEnv$tcl$fun$w.widgets(21)
+        largeur5 <- 11
+        largeur6 <- 30
+        largeur7 <- 38
     }
 
     ###################
@@ -57,9 +59,9 @@ SpatialInterpPanelCmd <- function(){
 
     ###################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtSpatialInterp_leftCmd.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-    # .cdtData$EnvData$message <- lang.dlg[['message']]
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtSpatialInterp_leftCmd.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    .cdtData$EnvData$message <- lang.dlg[['message']]
 
     ###################
 
@@ -67,8 +69,8 @@ SpatialInterpPanelCmd <- function(){
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
 
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = "Input Data")
-    cmd.tab2 <- bwAddTab(tknote.cmd, text = "Maps")
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
@@ -82,27 +84,27 @@ SpatialInterpPanelCmd <- function(){
 
     date.time.selection <- function(intstep, frTS1){
         if(intstep == 'others'){
-            txt.other <- tklabel(frTS1, text = "Date or Index")
+            txt.other <- tklabel(frTS1, text = lang.dlg[['label']][['1']])
             cb.other <<- ttkcombobox(frTS1, values = "", textvariable = date.other, width = largeur6)
 
             tkgrid(txt.other, row = 0, column = 0, sticky = 'we', pady = 1, padx = 1)
             tkgrid(cb.other, row = 1, column = 0, sticky = 'we', pady = 1, padx = 1)
         }else{
             txtdek <- switch(intstep,
-                             'dekadal' = "Dekad",
-                             'pentad'  = "Pentad",
-                                         "Day")
+                             'dekadal' = lang.dlg[['label']][['4']],
+                             'pentad'  = lang.dlg[['label']][['5']],
+                                         lang.dlg[['label']][['6']])
             day.txtVar <- tclVar(txtdek)
 
             stateday <- if(intstep == 'monthly') 'disabled' else 'normal'
             statehour <- if(intstep %in% c('minute', 'hourly')) 'normal' else 'disabled'
             statemin <- if(intstep == 'minute') 'normal' else 'disabled'
 
-            txt.yrs <- tklabel(frTS1, text = "Year")
-            txt.mon <- tklabel(frTS1, text = "Month")
+            txt.yrs <- tklabel(frTS1, text = lang.dlg[['label']][['2']])
+            txt.mon <- tklabel(frTS1, text = lang.dlg[['label']][['3']])
             txt.day <- tklabel(frTS1, text = tclvalue(day.txtVar), textvariable = day.txtVar)
-            txt.hrs <- tklabel(frTS1, text = "Hour")
-            txt.min <- tklabel(frTS1, text = "Minute")
+            txt.hrs <- tklabel(frTS1, text = lang.dlg[['label']][['7']])
+            txt.min <- tklabel(frTS1, text = lang.dlg[['label']][['8']])
 
             en.yrs <- tkentry(frTS1, width = 5, textvariable = date.year, justify = "center")
             en.mon <- tkentry(frTS1, width = 5, textvariable = date.mon, justify = "center")
@@ -132,7 +134,7 @@ SpatialInterpPanelCmd <- function(){
                "daily" = paste(yrs, mon, dpk, sep = '-'),
                "pentad" = local({
                                 if(is.na(dpk) | dpk < 1 | dpk > 6){
-                                    msg <- "Pentad must be between 1 and 6"
+                                    msg <- lang.dlg[['message']][['1']]
                                     Insert.Messages.Out(msg, TRUE, "e")
                                     return(NULL)
                                 }
@@ -140,7 +142,7 @@ SpatialInterpPanelCmd <- function(){
                             }),
                "dekadal" = local({
                                 if(is.na(dpk) | dpk < 1 | dpk > 3){
-                                    msg <- "Dekad must be 1, 2 or 3"
+                                    msg <- lang.dlg[['message']][['2']]
                                     Insert.Messages.Out(msg, TRUE, "e")
                                     return(NULL)
                                 }
@@ -167,7 +169,7 @@ SpatialInterpPanelCmd <- function(){
                     ), silent = TRUE)
 
         if(inherits(daty, "try-error") | is.na(daty)){
-            msg <- paste("Invalid date", todaty)
+            msg <- paste(lang.dlg[['message']][['3']], todaty)
             Insert.Messages.Out(msg, TRUE, "e")
             return(NULL)
         }
@@ -192,7 +194,7 @@ SpatialInterpPanelCmd <- function(){
 
         #######################
 
-        frameCDTdata <- ttklabelframe(subfr1, text = "Station Data", relief = 'groove')
+        frameCDTdata <- ttklabelframe(subfr1, text = lang.dlg[['label']][['9']], relief = 'groove')
 
         timeSteps <- tclVar()
         CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][c(1:6, 10)]
@@ -203,11 +205,11 @@ SpatialInterpPanelCmd <- function(){
         retminhr <- set.hour.minute(GeneralParameters$intstep, GeneralParameters$minhour)
         minhour.tclVar <- tclVar(retminhr$val)
 
-        txt.cdtdata1 <- tklabel(frameCDTdata, text = "Time step", anchor = 'w', justify = 'left')
+        txt.cdtdata1 <- tklabel(frameCDTdata, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
         cb.cdtdata1 <- ttkcombobox(frameCDTdata, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
         cb.minhour <- ttkcombobox(frameCDTdata, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
 
-        txt.cdtdata2 <- tklabel(frameCDTdata, text = "File containing CDT stations data format", anchor = 'w', justify = 'left')
+        txt.cdtdata2 <- tklabel(frameCDTdata, text = lang.dlg[['label']][['11']], anchor = 'w', justify = 'left')
         cb.cdtdata2 <- ttkcombobox(frameCDTdata, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
         bt.cdtdata <- tkbutton(frameCDTdata, text = "...")
 
@@ -215,11 +217,11 @@ SpatialInterpPanelCmd <- function(){
 
         tkgrid(txt.cdtdata1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.cdtdata1, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.minhour, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.minhour, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-        tkgrid(txt.cdtdata2, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.cdtdata2, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.cdtdata, row = 2, column = 8, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.cdtdata2, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.cdtdata2, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.cdtdata, row = 2, column = 9, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
         ############
 
@@ -260,13 +262,13 @@ SpatialInterpPanelCmd <- function(){
 
         statedate <- if(GeneralParameters$intstep == "others") "disabled" else "normal"
 
-        btDateRange <- ttkbutton(subfr1, text = "Set Date Range", state = statedate)
-        btInterpMthd <- ttkbutton(subfr1, text = "Interpolations Parameters")
-        btGridInterp <- ttkbutton(subfr1, text = "Create Grid for Interpolation")
+        btDateRange <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']], state = statedate)
+        btInterpMthd <- ttkbutton(subfr1, text = lang.dlg[['button']][['2']])
+        btGridInterp <- ttkbutton(subfr1, text = lang.dlg[['button']][['3']])
 
-        helpWidget(btDateRange, 'Start and end date of data to interpolate', 'Start and end date of data to interpolate')
-        helpWidget(btInterpMthd, 'Set the parameters to interpolate the data', 'Set the parameters to interpolate the data')
-        helpWidget(btGridInterp, 'Create the grid to interpolate the data', 'Create the grid to interpolate the data')
+        helpWidget(btDateRange, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+        helpWidget(btInterpMthd, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+        helpWidget(btGridInterp, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
         ############
 
@@ -297,7 +299,7 @@ SpatialInterpPanelCmd <- function(){
 
         statenegval <- if(GeneralParameters$negative$set) "normal" else "disabled"
 
-        chk.negval <- tkcheckbutton(frameNegVal, variable = set.neg.value, text = "Change negative values to", anchor = 'w', justify = 'left')
+        chk.negval <- tkcheckbutton(frameNegVal, variable = set.neg.value, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
         en.negval <- tkentry(frameNegVal, textvariable = val.neg.value, width = 4, state = statenegval)
 
         tkgrid(chk.negval, row = 0, column = 0, sticky = 'we',  pady = 1, ipadx = 1, ipady = 1)
@@ -318,7 +320,7 @@ SpatialInterpPanelCmd <- function(){
         file.blankShp <- tclVar(GeneralParameters$blank$shpf)
         stateSHP <- if(GeneralParameters$blank$blank) "normal" else "disabled"
 
-        chk.blankgrid <- tkcheckbutton(frameBlank, variable = blankGrid, text = "Blank grid outside the boundaries", anchor = 'w', justify = 'left')
+        chk.blankgrid <- tkcheckbutton(frameBlank, variable = blankGrid, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
         cb.blankgrid <- ttkcombobox(frameBlank, values = unlist(listOpenFiles), textvariable = file.blankShp, width = largeur1, state = stateSHP)
         bt.blankgrid <- tkbutton(frameBlank, text = "...", state = stateSHP)
 
@@ -353,7 +355,7 @@ SpatialInterpPanelCmd <- function(){
 
         dir.save <- tclVar(GeneralParameters$outdir)
 
-        txt.dir.save <- tklabel(frameDirSav, text = "Directory to save the outputs", anchor = 'w', justify = 'left')
+        txt.dir.save <- tklabel(frameDirSav, text = lang.dlg[['label']][['12']], anchor = 'w', justify = 'left')
         en.dir.save <- tkentry(frameDirSav, textvariable = dir.save, width = largeur2)
         bt.dir.save <- tkbutton(frameDirSav, text = "...")
 
@@ -367,12 +369,12 @@ SpatialInterpPanelCmd <- function(){
         tkgrid(en.dir.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(bt.dir.save, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-        helpWidget(en.dir.save, "Enter the full path to the directory to save the outputs", "Enter the full path to the directory to save the outputs")
-        helpWidget(bt.dir.save, "or browse here", "or browse here")
+        helpWidget(en.dir.save, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        helpWidget(bt.dir.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
         ##############################################
 
-        btInterpolate <- ttkbutton(subfr1, text = "Interpolate")
+        btInterpolate <- ttkbutton(subfr1, text = lang.dlg[['button']][['4']])
 
         tkconfigure(btInterpolate, command = function(){
             GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
@@ -385,7 +387,7 @@ SpatialInterpPanelCmd <- function(){
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
-            Insert.Messages.Out("Interpolating data ...", TRUE, "i")
+            Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
@@ -403,7 +405,7 @@ SpatialInterpPanelCmd <- function(){
 
             if(!is.null(ret)){
                 if(ret == 0){
-                    Insert.Messages.Out("Data interpolation finished successfully", TRUE, "s")
+                    Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "s")
 
                     if(GeneralParameters$intstep == "others"){
                         tkconfigure(cb.other, values = .cdtData$EnvData$stnData$dates)
@@ -417,9 +419,9 @@ SpatialInterpPanelCmd <- function(){
                         tclvalue(date.min) <- as.numeric(format(daty, '%M'))
                     }
                 }else if(ret == 1){
-                    Insert.Messages.Out("Unable to interpolate data for some dates", TRUE, "w")
-                }else Insert.Messages.Out("Data interpolation failed", TRUE, "e")
-            }else Insert.Messages.Out("Data interpolation failed", TRUE, "e")
+                    Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, "w")
+                }else Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
+            }else Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
         })
 
         ##############################################
@@ -440,16 +442,16 @@ SpatialInterpPanelCmd <- function(){
 
         ##############################################
 
-        frameINTRP <- ttklabelframe(subfr2, text = "Interpolation data", relief = 'groove')
+        frameINTRP <- ttklabelframe(subfr2, text = lang.dlg[['label']][['13']], relief = 'groove')
 
         interpData <- tclVar(0)
         file.interpData <- tclVar()
 
         stateIntD <- if(tclvalue(interpData) == "1") "normal" else "disabled"
 
-        chk.IntD <- tkcheckbutton(frameINTRP, variable = interpData, text = "Interpolated data already exist", anchor = 'w', justify = 'left')
-        en.IntD <- tkentry(frameINTRP, textvariable = file.interpData, width = largeur2, state = stateIntD)
-        bt.IntD <- tkbutton(frameINTRP, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateIntD)
+        chk.IntD <- tkcheckbutton(frameINTRP, variable = interpData, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
+        en.IntD <- tkentry(frameINTRP, textvariable = file.interpData, width = largeur7, state = stateIntD)
+        bt.IntD <- ttkbutton(frameINTRP, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateIntD)
 
         tkgrid(chk.IntD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.IntD, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -466,8 +468,8 @@ SpatialInterpPanelCmd <- function(){
             if(file.exists(path.Interp)){
                 interp.data <- try(readRDS(path.Interp), silent = TRUE)
                 if(inherits(interp.data, "try-error")){
-                    Insert.Messages.Out('Unable to load the interpolated data', format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', interp.data[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['8']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', interp.data[1]), TRUE, 'e')
                     return(NULL)
                 }
 
@@ -534,7 +536,7 @@ SpatialInterpPanelCmd <- function(){
 
         ##############
 
-        frameMap <- ttklabelframe(subfr2, text = "Map", relief = 'groove')
+        frameMap <- ttklabelframe(subfr2, text = lang.dlg[['label']][['14']], relief = 'groove')
 
         date.year <- tclVar(GeneralParameters$date$year)
         date.mon <- tclVar(GeneralParameters$date$mon)
@@ -562,11 +564,11 @@ SpatialInterpPanelCmd <- function(){
 
         .cdtData$EnvData$map$panelMap <- 'two'
         panelMapVar <- tclVar()
-        panelMaps <- c("one panel", "a separate panels")
+        panelMaps <- lang.dlg[['combobox']][['1']]
         panelNumber <- c('one', 'two')
         tclvalue(panelMapVar) <- panelMaps[panelNumber %in% .cdtData$EnvData$map$panelMap]
 
-        txt.Map.panel <- tklabel(frPLOTpanel, text = "Plot map on", anchor = 'w', justify = 'left')
+        txt.Map.panel <- tklabel(frPLOTpanel, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
         cb.Map.panel <- ttkcombobox(frPLOTpanel, values = panelMaps, textvariable = panelMapVar, width = largeur0)
 
         tkgrid(txt.Map.panel, row = 0, column = 0, sticky = 'e', padx = 0, pady = 1, columnspan = 1)
@@ -595,10 +597,10 @@ SpatialInterpPanelCmd <- function(){
         typeMapPLOT2 <- c("Pixels", "FilledContour")
         typeMap2Var <- tclVar(.cdtData$EnvData$map$typeMap2)
 
-        txt.Map.type1 <- tklabel(frOPTS0, text = "Points", anchor = 'w', justify = 'left')
+        txt.Map.type1 <- tklabel(frOPTS0, text = lang.dlg[['label']][['16']], anchor = 'w', justify = 'left')
         cb.Map.type1 <- ttkcombobox(frOPTS0, values = typeMapPLOT1, textvariable = typeMap1Var, width = largeur3, state = statetypeMapPLOT1)
 
-        txt.Map.type2 <- tklabel(frOPTS0, text = "Grid", anchor = 'w', justify = 'left')
+        txt.Map.type2 <- tklabel(frOPTS0, text = lang.dlg[['label']][['17']], anchor = 'w', justify = 'left')
         cb.Map.type2 <- ttkcombobox(frOPTS0, values = typeMapPLOT2, textvariable = typeMap2Var, width = largeur3)
 
         ##############
@@ -630,7 +632,7 @@ SpatialInterpPanelCmd <- function(){
 
         tkgrid(frTS0, row = 0, column = 0, sticky = '', padx = 1, pady = 1, columnspan = 3)
         tkgrid(bt.date.prev, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(bt.Map.plot, row = 1, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+        tkgrid(bt.Map.plot, row = 1, column = 1, sticky = 'we', padx = 5, pady = 1, columnspan = 1)
         tkgrid(bt.date.next, row = 1, column = 2, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
         tkgrid(frPLOTpanel, row = 2, column = 0, sticky = '', padx = 1, pady = 5, columnspan = 3)
         tkgrid(frOPTS0, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 2)
@@ -735,13 +737,13 @@ SpatialInterpPanelCmd <- function(){
 
         ############################################
 
-        frameSHP <- ttklabelframe(subfr2, text = "Boundaries", relief = 'groove')
+        frameSHP <- ttklabelframe(subfr2, text = lang.dlg[['label']][['18']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
         file.plotShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to maps", anchor = 'w', justify = 'left')
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left')
         bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
@@ -795,7 +797,7 @@ SpatialInterpPanelCmd <- function(){
         ############################################
 
         tkgrid(frameINTRP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameMap, row = 1, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameSHP, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #######################################################################################################
@@ -849,7 +851,7 @@ SpatialInterpPanelCmd <- function(){
         if(length(idaty) == 0){
             .cdtData$EnvData$mapdata$mapstn <- NULL
             .cdtData$EnvData$mapdata$mapncdf <- NULL
-            Insert.Messages.Out('Invalid date or index', TRUE, "e")
+            Insert.Messages.Out(lang.dlg[['message']][['9']], TRUE, "e")
             return(NULL)
         }else{
             formatSpData <- TRUE
@@ -898,7 +900,7 @@ SpatialInterpPanelCmd <- function(){
                     ncdf4::nc_close(nc)
                 }else{
                     .cdtData$EnvData$mapdata$mapncdf <- NULL
-                    Insert.Messages.Out(paste(ncpath, "does not exist"), TRUE, "e")
+                    Insert.Messages.Out(paste(ncpath, lang.dlg[['message']][['10']]), TRUE, "e")
                 }
 
                 .cdtData$EnvData$mapdata$readnc <- ncpath

@@ -4,7 +4,7 @@ Temp_execCoefDown <- function(){
                         tools::file_path_sans_ext(.cdtData$GalParams$IO.files$STN.file)))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
-    Insert.Messages.Out('Computing regression parameters ...', TRUE, "i")
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['6']], TRUE, "i")
 
     ## get data
     stnData <- getStnOpenData(.cdtData$GalParams$IO.files$STN.file)
@@ -16,7 +16,7 @@ Temp_execCoefDown <- function(){
     ## get elevation data
     demInfo <- getNCDFSampleData(.cdtData$GalParams$IO.files$DEM.file)
     if(is.null(demInfo)){
-        Insert.Messages.Out("Unable to read DEM data", format = TRUE)
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], TRUE, 'e')
         return(NULL)
     }
 
@@ -39,7 +39,7 @@ Temp_execCoefDown <- function(){
 #######################################################################################
 
 Temp_CoefDownscaling <- function(){
-    Insert.Messages.Out('Compute downscaling coefficients ...', TRUE, "i")
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['8']], TRUE, "i")
 
     paramsGlmCoef <- .cdtData$GalParams$paramsGlmCoef
     stnData <- paramsGlmCoef$stnData
@@ -56,7 +56,7 @@ Temp_CoefDownscaling <- function(){
     years <- as.numeric(substr(stnData$dates, 1, 4))
 
     if(length(unique(years)) < minyear){
-        Insert.Messages.Out("No enough data to calculate the coefficients", format = TRUE)
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['9']], TRUE, 'e')
         return(NULL)
     }
 
@@ -73,7 +73,7 @@ Temp_CoefDownscaling <- function(){
     outfile.rds <- file.path(paramsGlmCoef$outdir, 'STN_DEM_GLM_COEF.rds')
     saveRDS(coef, file = outfile.rds)
 
-    Insert.Messages.Out('Computing downscaling coefficients finished', TRUE, "s")
+    Insert.Messages.Out(.cdtData$GalParams[['message']][['10']], TRUE, "s")
     rm(stnData, demData)
     gc()
     return(0)

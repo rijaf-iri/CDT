@@ -1,6 +1,7 @@
 
 execMergeRain <- function(){
-    Insert.Messages.Out('Merging data ...', TRUE, "i")
+    message <- .cdtData$GalParams[['message']]
+    Insert.Messages.Out(message[['10']], TRUE, "i")
 
     daty <- get.range.date.time(.cdtData$GalParams$date.range,
                                 .cdtData$GalParams$period)
@@ -13,12 +14,12 @@ execMergeRain <- function(){
     }
 
     outdir <- file.path(.cdtData$GalParams$output$dir,
-                         paste('Merged_Precip_Data', xdeb, xfin, sep = '_'))
+                        paste('Merged_Precip_Data', xdeb, xfin, sep = '_'))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     ##################
 
-    Insert.Messages.Out('Data preparation ...', TRUE, "i")
+    Insert.Messages.Out(message[['11']], TRUE, "i")
 
     #######get data
     stnData <- getStnOpenData(.cdtData$GalParams$STN.file)
@@ -30,7 +31,7 @@ execMergeRain <- function(){
     ## RFE sample file
     rfeDataInfo <- getNCDFSampleData(.cdtData$GalParams$RFE$sample)
     if(is.null(rfeDataInfo)){
-        Insert.Messages.Out("No RFE data sample found", format = TRUE)
+        Insert.Messages.Out(message[['12']], TRUE, 'e')
         return(NULL)
     }
 
@@ -45,7 +46,7 @@ execMergeRain <- function(){
     {
         demInfo <- getNCDFSampleData(.cdtData$GalParams$auxvar$demfile)
         if(is.null(demInfo)){
-            Insert.Messages.Out("No elevation data found", TRUE, "e")
+            Insert.Messages.Out(message[['13']], TRUE, "e")
             return(NULL)
         }
         jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$auxvar$demfile)
@@ -69,7 +70,7 @@ execMergeRain <- function(){
     if(.cdtData$GalParams$grid$from == "ncdf"){
         grdInfo <- getNCDFSampleData(.cdtData$GalParams$grid$ncfile)
         if(is.null(grdInfo)){
-            Insert.Messages.Out("Unable to read the NetCDF file to use to extract the grid", TRUE, "e")
+            Insert.Messages.Out(message[['14']], TRUE, "e")
             return(NULL)
         }
         grd.lon <- grdInfo$lon
@@ -100,7 +101,7 @@ execMergeRain <- function(){
                                      .cdtData$GalParams$date.range,
                                      .cdtData$GalParams$period)
     if(is.null(ncInfo)){
-        Insert.Messages.Out("RFE data not found", TRUE, "e")
+        Insert.Messages.Out(message[['15']], TRUE, "e")
         return(NULL)
     }
     ncInfo$ncinfo <- rfeDataInfo
@@ -114,22 +115,22 @@ execMergeRain <- function(){
         outMask <- create.mask.grid(shpd, xy.grid)
     }
 
-    Insert.Messages.Out('Data preparation done', TRUE, "s")
+    Insert.Messages.Out(message[['16']], TRUE, "s")
 
     ##################
 
-    Insert.Messages.Out('Merge data ...', TRUE, "i")
+    Insert.Messages.Out(message[['17']], TRUE, "i")
 
     ret <- cdtMerging(stnData = stnData, ncInfo = ncInfo, xy.grid = xy.grid, params = .cdtData$GalParams,
                       variable = "rain", demData = demData, outdir = outdir, mask = outMask)
 
     if(!is.null(ret)){
         if(ret != 0){
-          Insert.Messages.Out(paste('Unable to merge some files, see',
-                              file.path(outdir, "log_file.txt"), 'for details'), TRUE, "w")  
+          Insert.Messages.Out(paste(message[['18']],
+                              file.path(outdir, "log_file.txt")), TRUE, "w")  
         }
     }else return(NULL)
 
-    Insert.Messages.Out('Merging data done', TRUE, "s")
+    Insert.Messages.Out(message[['19']], TRUE, "s")
     return(0)
 }
