@@ -7,12 +7,14 @@ crossValidationInfoRain <- function(){
         largeur2 <- 60
         largeur3 <- 44
         largeur4 <- 27
+        largeur5 <- 37
     }else{
         largeur0 <- 22
         largeur1 <- 41
         largeur2 <- 42
         largeur3 <- 32
         largeur4 <- 17
+        largeur5 <- 27
     }
 
     ####################################
@@ -98,8 +100,7 @@ crossValidationInfoRain <- function(){
             update.OpenFiles('ascii', dat.opfiles)
             listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
             tclvalue(file.stnfl) <- dat.opfiles[[1]]
-            # lapply(list(cb.stnfl, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
-            lapply(list(cb.stnfl), tkconfigure, values = unlist(listOpenFiles))
+            lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
         }
     })
 
@@ -154,8 +155,6 @@ crossValidationInfoRain <- function(){
     })
 
     ############################################
-
-        cb.grddem <- NULL
 
         auxiliary.variables <- function(mrgmethod){
             tkdestroy(frauxvar)
@@ -217,7 +216,7 @@ crossValidationInfoRain <- function(){
                         update.OpenFiles('netcdf', nc.opfiles)
                         listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                         tclvalue(demfile.var) <- nc.opfiles[[1]]
-                        lapply(list(cb.stnfl, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
+                        lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
@@ -246,7 +245,7 @@ crossValidationInfoRain <- function(){
                 })
 
                 ######
-                tkgrid(frauxvar, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+                tkgrid(frauxvar, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2)
             }
         }
 
@@ -275,6 +274,7 @@ crossValidationInfoRain <- function(){
     frMrgP <- tkframe(frMerge)
     frauxvar <- ttklabelframe(frMerge, text = lang.dlg[['label']][['8']], relief = 'groove', borderwidth = 2)
 
+    cb.grddem <- ttkcombobox(frMrgP, values = "")
     auxiliary.variables(.cdtData$GalParams$MRG$method)
 
     txt.nrun <- tklabel(frMrgP, text = lang.dlg[['label']][['9']], anchor = 'w', justify = 'left')
@@ -345,12 +345,115 @@ crossValidationInfoRain <- function(){
 
     ############################################
 
+        crossvalid.stations <- function(selstn){
+            tkdestroy(frstnPar)
+            frstnPar <<- tkframe(frSTN, relief = 'groove', borderwidth = 2)
+
+            if(selstn == "file"){
+                fr.datatype <- tkframe(frstnPar)
+
+                txt.datatype <- tklabel(fr.datatype, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
+                cb.datatype <- ttkcombobox(fr.datatype, values = CbdatatypeVAL, textvariable = selstn.filetype, width = largeur5)
+
+                tkgrid(txt.datatype, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1)
+                tkgrid(cb.datatype, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
+
+                tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
+                    if(str_trim(tclvalue(selstn.filetype)) == CbdatatypeVAL[1])
+                        tclvalue(txt.INData.var) <- lang.dlg[['label']][['14']]
+                    if(str_trim(tclvalue(selstn.filetype)) == CbdatatypeVAL[2])
+                        tclvalue(txt.INData.var) <- lang.dlg[['label']][['15']]
+                })
+
+                ###########
+                fr.datastn <- tkframe(frstnPar)
+
+                txt.INData <- switch(.cdtData$GalParams$selstn$file.type,
+                                     'cdtcoords' = lang.dlg[['label']][['14']],
+                                     'cdtstation' = lang.dlg[['label']][['15']]
+                                    )
+                txt.INData.var <- tclVar(txt.INData)
+
+                txt.infile <- tklabel(fr.datastn, text = tclvalue(txt.INData.var), textvariable = txt.INData.var, anchor = 'w', justify = 'left')
+                cb.infile <<- ttkcombobox(fr.datastn, values = unlist(listOpenFiles), textvariable = selstn.filestn, width = largeur1 - 1)
+                bt.infile <- tkbutton(fr.datastn, text = "...")
+
+                tkgrid(txt.infile, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+                tkgrid(cb.infile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+                tkgrid(bt.infile, row = 1, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+                tkconfigure(bt.infile, command = function(){
+                    tcl('wm', 'attributes', tt, topmost = FALSE)
+                    dat.opfiles <- getOpenFiles(tt)
+                    tcl('wm', 'attributes', tt, topmost = TRUE)
+                    if(!is.null(dat.opfiles)){
+                        update.OpenFiles('ascii', dat.opfiles)
+                        listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+                        tclvalue(selstn.filestn) <- dat.opfiles[[1]]
+                        lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
+                    }
+                })
+
+                ###########
+                tkgrid(fr.datatype, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, pady = 3)
+                tkgrid(fr.datastn, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1)
+            }
+
+            if(selstn == "cdt"){
+                txt.minperc <- tklabel(frstnPar, text = lang.dlg[['label']][['16']], anchor = 'w', justify = 'left')
+                en.minperc <- tkentry(frstnPar, textvariable = selstn.minperc, width = 4)
+
+                tkgrid(txt.minperc, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+                tkgrid(en.minperc, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            }
+
+            if(selstn %in% c("file", "cdt"))
+                tkgrid(frstnPar, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, pady = 3, ipady = 3)
+        }
+
+    ############################################
+
+    frSTN <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
+
+    cb.selectSTN <- lang.dlg[['combobox']][['2']]
+    val.selectSTN <- c("all", "file", "cdt")
+    select.station <- tclVar()
+    tclvalue(select.station) <- cb.selectSTN[val.selectSTN %in% .cdtData$GalParams$selstn$from]
+
+    CbdatatypeVAL <- lang.dlg[['combobox']][['3']]
+    datatypeVAL <- c('cdtcoords', 'cdtstation')
+    selstn.filetype <- tclVar()
+    tclvalue(selstn.filetype) <- CbdatatypeVAL[datatypeVAL %in% .cdtData$GalParams$selstn$file.type]
+
+    selstn.filestn <- tclVar(.cdtData$GalParams$selstn$file.stn)
+    selstn.minperc <- tclVar(.cdtData$GalParams$selstn$min.perc)
+
+    txt.selstn <- tklabel(frSTN, text = lang.dlg[['label']][['12']], anchor = 'e', justify = 'right')
+    cb.selstn <- ttkcombobox(frSTN, values = cb.selectSTN, textvariable = select.station, width = largeur5)
+    frstnPar <- tkframe(frSTN)
+
+    cb.infile <- ttkcombobox(frSTN, values = "")
+    crossvalid.stations(.cdtData$GalParams$selstn$from)
+
+    tkgrid(txt.selstn, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.selstn, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ########
+
+    tkbind(cb.selstn, "<<ComboboxSelected>>", function(){
+        selstn <- val.selectSTN[cb.selectSTN %in% str_trim(tclvalue(select.station))]
+        crossvalid.stations(selstn)
+    })
+
+    ############################################
+
     tkgrid(frtimestep, row = 0, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frInputData, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frSave, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frMerge, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.mrg.interp, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frRnoR, row = 5, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frSTN, row = 6, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     ############################################
 
@@ -409,6 +512,18 @@ crossValidationInfoRain <- function(){
             .cdtData$GalParams$RnoR$use <- switch(tclvalue(rnor.mask), '0' = FALSE, '1' = TRUE)
             .cdtData$GalParams$RnoR$smooth <- switch(tclvalue(rnor.smooth), '0' = FALSE, '1' = TRUE)
             .cdtData$GalParams$RnoR$wet <- as.numeric(str_trim(tclvalue(rnor.wet)))
+
+            .cdtData$GalParams$selstn$from <- val.selectSTN[cb.selectSTN %in% str_trim(tclvalue(select.station))]
+            .cdtData$GalParams$selstn$file.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(selstn.filetype))]
+            .cdtData$GalParams$selstn$file.stn <- str_trim(tclvalue(selstn.filestn))
+            .cdtData$GalParams$selstn$min.perc <- as.numeric(str_trim(tclvalue(selstn.minperc)))
+
+            if(.cdtData$GalParams$selstn$from == "file" &
+               .cdtData$GalParams$selstn$file.stn == "")
+            {
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['19']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }
 
             .cdtData$GalParams$settingSNC <- settingSNC
             .cdtData$GalParams$message <- lang.dlg[['message']]

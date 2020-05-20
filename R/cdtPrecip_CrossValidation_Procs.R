@@ -85,29 +85,67 @@ execCrossValidRain <- function(){
     ncInfo$ncinfo <- rfeDataInfo
 
     ##################
-    ## options user provide list of station
+    ## select station for cross-validation
 
-    df <- as.data.frame(stnData[c("id", 'lon', 'lat')])
-    df$nb <- colSums(!is.na(stnData$data[stnData$dates %in% ncInfo$dates, , drop = FALSE]))
+    nbNA <- colSums(!is.na(stnData$data[stnData$dates %in% ncInfo$dates, , drop = FALSE]))
 
-    df <- df[df$nb > 0, , drop = FALSE]
-    if(nrow(df) == 0){
+    if(!any(nbNA > 0)){
         Insert.Messages.Out(message[['15']], TRUE, "e")
         return(NULL)
     }
 
-    ## at least 50%
-    df <- df[df$nb / length(ncInfo$dates) >= 0.5, , drop = FALSE]
-    if(nrow(df) == 0){
-        Insert.Messages.Out(message[['16']], TRUE, "e")
-        return(NULL)
+    if(.cdtData$GalParams$selstn$from == "file"){
+        df <- getStnOpenData(.cdtData$GalParams$selstn$file.stn)
+        if(is.null(df)) return(NULL)
+
+        if(.cdtData$GalParams$selstn$file.type == 'cdtstation'){
+            df <- splitCDTData0(df)
+            if(is.null(df)) return(NULL)
+            df <- as.data.frame(df[c("id", 'lon', 'lat')])
+        }
+
+        istn <- as.character(df[, 1]) %in% stnData$id
+        if(!any(istn)){
+            Insert.Messages.Out(message[['20']], TRUE, "e")
+            return(NULL)
+        }
+
+        if(any(!istn)){
+            outlist <- list(message[['21']], df[!istn, , drop = FALSE])
+            containertab <- Display_Output_Console_Tab(outlist, title = .cdtData$GalParams$selstn$file.stn)
+            ntab <- update.OpenTabs('ctxt', containertab)
+            tkselect(.cdtEnv$tcl$main$tknotes, ntab)
+        }
+
+        stn.valid <- as.character(df[istn, 1])
+        ix <- match(stn.valid, stnData$id)
+        stn.valid <- stn.valid[nbNA[ix] > 0]
+        if(length(stn.valid) == 0){
+            Insert.Messages.Out(message[['15']], TRUE, "e")
+            return(NULL)
+        }
     }
 
-    ## stn.valid <- as.character(df$id)
+    if(.cdtData$GalParams$selstn$from == "cdt"){
+        istn <- nbNA / length(ncInfo$dates) >= (.cdtData$GalParams$selstn$min.perc / 100)
+        if(!any(istn)){
+            Insert.Messages.Out(message[['16']], TRUE, "e")
+            return(NULL)
+        }
+        df <- as.data.frame(stnData[c("id", 'lon', 'lat')])
+        df <- df[istn, , drop = FALSE]
 
-    # stn.valid <- read.table('/Users/rijaf/Desktop/work/UNMA/PRECIP/Validation/valid_stations.csv', sep = ',', header = TRUE)
-    stn.valid <- select.Station.Validation(df, perc = 20)
-    stn.valid <- as.character(stn.valid$id)
+        stn.valid <- select.Station.Validation(df, perc = 80)
+        stn.valid <- as.character(stn.valid$id)
+    }
+
+    if(.cdtData$GalParams$selstn$from == "all"){
+        stn.valid <- stnData$id[nbNA > 0]
+        if(length(stn.valid) == 0){
+            Insert.Messages.Out(message[['15']], TRUE, "e")
+            return(NULL)
+        }
+    }
 
     stn.valid <- which(stnData$id %in% stn.valid)
 

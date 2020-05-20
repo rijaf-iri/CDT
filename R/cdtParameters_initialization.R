@@ -323,7 +323,8 @@ cdt.init.params <- function(action, tstep){
                                          vgm.model = c("Sph", "Exp", "Gau", "Pen")),
                            auxvar = list(dem = FALSE, slope = FALSE, aspect = FALSE,
                                          lon = FALSE, lat = FALSE, demfile = ""),
-                           RnoR = list(use = FALSE, wet = 1.0, smooth = FALSE)
+                           RnoR = list(use = FALSE, wet = 1.0, smooth = FALSE),
+                           selstn = list(from = 'all', min.perc = 40, file.type = 'cdtstation', file.stn = '')
                           )
     }
 
@@ -405,7 +406,8 @@ cdt.init.params <- function(action, tstep){
                                          maxdist = 3.5, minstn = 10, use.block = TRUE,
                                          vgm.model = c("Sph", "Exp", "Gau", "Pen")),
                            auxvar = list(dem = FALSE, slope = FALSE, aspect = FALSE,
-                                         lon = FALSE, lat = FALSE, demfile = "")
+                                         lon = FALSE, lat = FALSE, demfile = ""),
+                           selstn = list(from = 'all', min.perc = 40, file.type = 'cdtstation', file.stn = '')
                           )
     }
 

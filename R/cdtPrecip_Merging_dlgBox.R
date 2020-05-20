@@ -112,8 +112,7 @@ mergeGetInfoRain <- function(){
                 update.OpenFiles('ascii', dat.opfiles)
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(file.stnfl) <- dat.opfiles[[1]]
-                # lapply(list(cb.stnfl, cb.blank, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
-                lapply(list(cb.stnfl, cb.blank), tkconfigure, values = unlist(listOpenFiles))
+                lapply(list(cb.stnfl, cb.blank, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -417,8 +416,7 @@ mergeGetInfoRain <- function(){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(blank.shpf) <- shp.opfiles[[1]]
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                # lapply(list(cb.stnfl, cb.blank, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
-                lapply(list(cb.stnfl, cb.blank), tkconfigure, values = unlist(listOpenFiles))
+                lapply(list(cb.stnfl, cb.blank, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -529,6 +527,7 @@ mergeGetInfoRain <- function(){
 
     ############################################
 
+    ## set maximum height of tab
     auxiliary.variables("RK")
 
     tcl('update')
@@ -536,6 +535,8 @@ mergeGetInfoRain <- function(){
     tkgrid.columnconfigure(bwnote, 0, weight = 1)
     tcl("update", "idletasks")
 
+    ## update the form
+    cb.grddem <- ttkcombobox(frMrgP, values = "")
     auxiliary.variables(.cdtData$GalParams$MRG$method)
 
     ############################################
