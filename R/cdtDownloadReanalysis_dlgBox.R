@@ -106,13 +106,13 @@ reanal.under.construction <- function(parent, prod, src){
 
 download_Reanalysis <- function(){
     if(WindowsOS()){
-        largeur0 <- 81
+        largeur0 <- 64
         largeur1 <- 27
-        largeur2 <- 48
-        largeur3 <- 25
-        largeur5 <- 35
-        largeur6 <- 35
-        largeur7 <- 22
+        largeur2 <- 40
+        largeur3 <- 15
+        largeur5 <- 30
+        largeur6 <- 25
+        largeur7 <- 15
     }else{
         largeur0 <- 61
         largeur1 <- 27

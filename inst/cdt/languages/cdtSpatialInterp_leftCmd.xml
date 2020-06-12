@@ -7,6 +7,9 @@
         <tab id="2">
             <text lang="en"> Maps </text>
         </tab>
+        <tab id="3">
+            <text lang="en"> Layers </text>
+        </tab>
     </tab_title>
     <widget>
         <combobox id="1">
@@ -36,13 +39,13 @@
             <text lang="en"> Change negative values to </text>
         </checkbutton>
         <checkbutton id="2">
-            <text lang="en"> Blank grid outside the boundaries </text>
+            <text lang="en"> Blank grid outside the Shapefile </text>
         </checkbutton>
         <checkbutton id="3">
-            <text lang="en"> Interpolated data already exist </text>
+            <text lang="en"> Data already computed </text>
         </checkbutton>
         <checkbutton id="4">
-            <text lang="en"> Add boundaries to maps </text>
+            <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Date or Index </text>
@@ -81,7 +84,7 @@
             <text lang="en"> Directory to save the outputs </text>
         </label>
         <label id="13">
-            <text lang="en"> Interpolation data </text>
+            <text lang="en"> Interpolation Data </text>
         </label>
         <label id="14">
             <text lang="en"> Map </text>
@@ -96,7 +99,7 @@
             <text lang="en"> Grid </text>
         </label>
         <label id="18">
-            <text lang="en"> Boundaries </text>
+            <text lang="en"> Shapefile </text>
         </label>
     </widget>
     <help>

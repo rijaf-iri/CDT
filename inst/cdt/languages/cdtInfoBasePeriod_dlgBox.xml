@@ -4,16 +4,16 @@
         <text lang="en"> Base Period Settings </text>
     </title>
     <widget>
-        <label id="1">
+        <checkbutton id="1">
             <text lang="en"> Use all years from the input data </text>
-        </label>
-        <label id="2">
+        </checkbutton>
+        <label id="1">
             <text lang="en"> Start Year </text>
         </label>
-        <label id="3">
+        <label id="2">
             <text lang="en"> End Year </text>
         </label>
-        <label id="4">
+        <label id="3">
             <text lang="en"> Minimum number of years </text>
         </label>
     </widget>

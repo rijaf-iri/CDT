@@ -284,14 +284,14 @@ rfe.need.usrpwd <- function(src){
 
 download_RFE <- function(){
     if(WindowsOS()){
-        largeur0 <- 63
+        largeur0 <- 54
         largeur1 <- 27
-        largeur2 <- 24
-        largeur3 <- 35
-        largeur4 <- 25
-        largeur5 <- 19
+        largeur2 <- 18
+        largeur3 <- 33
+        largeur4 <- 22
+        largeur5 <- 15
     }else{
-        largeur0 <- 50
+        largeur0 <- 52
         largeur1 <- 27
         largeur2 <- 18
         largeur3 <- 33

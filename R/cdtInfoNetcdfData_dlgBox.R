@@ -1,10 +1,10 @@
 
 getInfoNetcdfData <- function(parent.win, Parameters, ncDIR,
-                            tstep = .cdtEnv$tcl$lang$global[['combobox']][['1']][5],
-                            scale = FALSE)
+                              tstep = .cdtEnv$tcl$lang$global[['combobox']][['1']][5],
+                              scale = FALSE)
 {
     listOpenFiles <- openFile_ttkcomboList()
-    largeur1 <- if(WindowsOS()) 52 else 40
+    largeur1 <- if(WindowsOS()) 42 else 40
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoNetcdfData_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)

@@ -2,7 +2,7 @@
 CPT.getInfoNetcdfData <- function(parent.win, Parameters, ncDIR){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 51
+        largeur1 <- 38
         largeur2 <- 28
     }else{
         largeur1 <- 34
@@ -32,7 +32,7 @@ CPT.getInfoNetcdfData <- function(parent.win, Parameters, ncDIR){
     cb.ncsample <- ttkcombobox(frFF, values = unlist(listOpenFiles), textvariable = rfesample, width = largeur1)
     bt.ncsample <- tkbutton(frFF, text = "...")
     txt.inrfeff <- tklabel(frFF, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-    en.inrfeff <- tkentry(frFF, textvariable = inrfeff, width = largeur1)
+    en.inrfeff <- tkentry(frFF, textvariable = inrfeff)
 
     ###################
 

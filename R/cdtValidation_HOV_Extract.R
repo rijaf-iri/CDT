@@ -1,10 +1,14 @@
 
 HOV_DataExtraction <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
+
     if(GeneralParameters$outdir %in% c("", "NA")){
-        Insert.Messages.Out("Directory to save results doesn't exist", TRUE, "e")
+        Insert.Messages.Out(message[['6']], TRUE, "e")
         return(NULL)
     }
 
+    # outValidation <- file.path(GeneralParameters$outdir, paste0('VALIDATION_',
+    #                            basename(GeneralParameters$ncdf.file$dir)))
     outValidation <- file.path(GeneralParameters$outdir, paste0('VALIDATION_',
                                tools::file_path_sans_ext(GeneralParameters$STN.file)))
     dir.create(outValidation, showWarnings = FALSE, recursive = TRUE)
@@ -50,7 +54,7 @@ HOV_DataExtraction <- function(GeneralParameters){
         }
 
         if(!any(ixy)){
-            Insert.Messages.Out('The selection did not contain any stations', format = TRUE)
+            Insert.Messages.Out(message[['18']], TRUE, 'e')
             return(NULL)
         }
     }else ixy <- rep(TRUE, length(.cdtData$EnvData$stnData$lon))
@@ -59,7 +63,7 @@ HOV_DataExtraction <- function(GeneralParameters){
     ## ncdf data sample file
     ncDataInfo <- getNCDFSampleData(GeneralParameters$ncdf.file$sample)
     if(is.null(ncDataInfo)){
-        Insert.Messages.Out("No NetCDF data sample found", format = TRUE)
+        Insert.Messages.Out(message[['19']], TRUE, 'e')
         return(NULL)
     }
 
@@ -70,14 +74,14 @@ HOV_DataExtraction <- function(GeneralParameters){
                                      GeneralParameters$Extract.Date,
                                      GeneralParameters$Tstep)
     if(is.null(ncInfo)){
-        Insert.Messages.Out("NetCDF data not found", TRUE, "e")
+        Insert.Messages.Out(message[['20']], TRUE, "e")
         return(NULL)
     }
 
     ##################
 
     if(length(intersect(.cdtData$EnvData$stnData$dates, ncInfo$dates[ncInfo$exist])) == 0){
-        Insert.Messages.Out("Station and NetCDF dates did not overlap", format = TRUE)
+        Insert.Messages.Out(message[['21']], TRUE, 'e')
         return(NULL)
     }
 
@@ -112,7 +116,7 @@ HOV_DataExtraction <- function(GeneralParameters){
     }else readNcdfData <- TRUE
 
     if(readNcdfData){
-        Insert.Messages.Out('Read and extract NetCDF data ...', TRUE, "i")
+        Insert.Messages.Out(message[['22']], TRUE, "i")
 
         parsL <- doparallel.cond(length(ncPATH) >= 180)
         ncData <- cdt.foreach(seq_along(ncPATH), parsL, GUI = TRUE,
@@ -125,7 +129,7 @@ HOV_DataExtraction <- function(GeneralParameters){
             vars[ijx]
         })
  
-        Insert.Messages.Out('Reading NetCDF data finished', TRUE, "s")
+        Insert.Messages.Out(message[['23']], TRUE, "s")
 
         ncData <- do.call(rbind, ncData)
 
@@ -181,6 +185,6 @@ HOV_DataExtraction <- function(GeneralParameters){
     hovd.data <- .cdtData$EnvData[c('GeneralParameters', 'cdtData', 'stnData', 'ncdfData')]
     saveRDS(hovd.data, file = fileValidOut)
 
-    Insert.Messages.Out('Data extraction finished', TRUE, 's')
+    Insert.Messages.Out(message[['24']], TRUE, 's')
     return(0)
 }

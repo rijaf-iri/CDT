@@ -1,5 +1,6 @@
 
 computeSPEIProcs <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
     freqData <- GeneralParameters$intstep
     input.PREC <- if(GeneralParameters$data.type == 'cdtstation') GeneralParameters$cdtstation$prec else GeneralParameters$cdtdataset$prec
     input.ETP <- if(GeneralParameters$data.type == 'cdtstation') GeneralParameters$cdtstation$etp else GeneralParameters$cdtdataset$etp
@@ -7,19 +8,19 @@ computeSPEIProcs <- function(GeneralParameters){
     cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
     if(input.PREC %in% c("", "NA")){
-        Insert.Messages.Out('No input  precipitation data found', format = TRUE)
+        Insert.Messages.Out(message[['12']], TRUE, 'e')
         return(NULL)
     }
 
     if(input.ETP %in% c("", "NA")){
-        Insert.Messages.Out('No input potential evapotranspiration data found', format = TRUE)
+        Insert.Messages.Out(message[['13']], TRUE, 'e')
         return(NULL)
     }
 
     if(GeneralParameters$monitoring){
         outDIR <- dirname(GeneralParameters$outdir)
         if(!dir.exists(outDIR) | !file.exists(GeneralParameters$outdir)){
-            Insert.Messages.Out('No SPEI data found', format = TRUE)
+            Insert.Messages.Out(message[['14']], TRUE, 'e')
             return(NULL)
         }
         dataCDTdir <- file.path(outDIR, 'CDTDATASET')
@@ -28,8 +29,8 @@ computeSPEIProcs <- function(GeneralParameters){
         out.spi.index <- GeneralParameters$outdir
     }else{
         if(!dir.exists(GeneralParameters$outdir)){
-            Insert.Messages.Out('Directory to save results not found', format = TRUE)
-            Insert.Messages.Out(paste('The outputs will be put in', getwd()))
+            Insert.Messages.Out(message[['15']], TRUE, 'e')
+            Insert.Messages.Out(paste(message[['16']], getwd()))
             GeneralParameters$outdir <- getwd()
         }
         outDIR <- file.path(GeneralParameters$outdir, "SPEI_data")
@@ -59,11 +60,11 @@ computeSPEIProcs <- function(GeneralParameters){
 
     if(GeneralParameters$monitoring){
         if(!file.exists(file.aggr.prec)){
-            Insert.Messages.Out(paste(file.aggr.prec, "not found"), format = TRUE)
+            Insert.Messages.Out(paste(file.aggr.prec, message[['17']]), TRUE, 'e')
             return(NULL)
         }
         if(!file.exists(file.aggr.etp)){
-            Insert.Messages.Out(paste(file.aggr.etp, "not found"), format = TRUE)
+            Insert.Messages.Out(paste(file.aggr.etp, message[['17']]), TRUE, 'e')
             return(NULL)
         }
     }else{
@@ -88,11 +89,11 @@ computeSPEIProcs <- function(GeneralParameters){
         if(is.null(etp)) return(NULL)
 
         if(!any(prec$id %in% etp$id)){
-            Insert.Messages.Out("Precip & PET stations do not match", format = TRUE)
+            Insert.Messages.Out(message[['18']], TRUE, 'e')
             return(NULL)
         }
         if(!any(prec$dates %in% etp$dates)){
-            Insert.Messages.Out("Precip & PET dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['19']], TRUE, 'e')
             return(NULL)
         }
 
@@ -124,7 +125,7 @@ computeSPEIProcs <- function(GeneralParameters){
             SP2 <- readRDS(out.spi.index)
             SP2 <- SP2$data
             if(!isTRUE(all.equal(SP1, SP2))){
-                Insert.Messages.Out("Data have different stations or coordinates", format = TRUE)
+                Insert.Messages.Out(message[['20']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
@@ -134,22 +135,22 @@ computeSPEIProcs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtdataset"){
         prec <- try(readRDS(GeneralParameters$cdtdataset$prec), silent = TRUE)
         if(inherits(prec, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset$prec), format = TRUE)
+            Insert.Messages.Out(paste(message[['21']], GeneralParameters$cdtdataset$prec), TRUE, 'e')
             return(NULL)
         }
 
         if(freqData != prec$TimeStep){
-            Insert.Messages.Out(paste("Precip dataset is not a", freqData, "data"), format = TRUE)
+            Insert.Messages.Out(paste(message[['22']], freqData), TRUE, 'e')
             return(NULL)
         }
 
         etp <- try(readRDS(GeneralParameters$cdtdataset$etp), silent = TRUE)
         if(inherits(etp, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset$etp), format = TRUE)
+            Insert.Messages.Out(paste(message[['21']], GeneralParameters$cdtdataset$etp), TRUE, 'e')
             return(NULL)
         }
         if(freqData != etp$TimeStep){
-            Insert.Messages.Out(paste("PET dataset is not a", freqData, "data"), format = TRUE)
+            Insert.Messages.Out(paste(message[['23']], freqData), TRUE, 'e')
             return(NULL)
         }
 
@@ -157,20 +158,20 @@ computeSPEIProcs <- function(GeneralParameters){
         SP1 <- defSpatialPixels(list(lon = prec$coords$mat$x, lat = prec$coords$mat$y))
         SP2 <- defSpatialPixels(list(lon = etp$coords$mat$x, lat = etp$coords$mat$y))
         if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-            Insert.Messages.Out("Precip & PET have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['24']], TRUE, 'e')
             return(NULL)
         }
         rm(SP1, SP2)
 
         ##################
         if(prec$chunksize != etp$chunksize){
-            Insert.Messages.Out("Precip & PET have different chunk size", format = TRUE)
+            Insert.Messages.Out(message[['25']], TRUE, 'e')
             return(NULL)
         }
 
         ##################
         if(!any(prec$dateInfo$date %in% etp$dateInfo$date)){
-            Insert.Messages.Out("Precip & PET dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['26']], TRUE, 'e')
             return(NULL)
         }
 
@@ -191,7 +192,7 @@ computeSPEIProcs <- function(GeneralParameters){
             SP2 <- readRDS(out.spi.index)
             SP2 <- defSpatialPixels(list(lon = SP2$data$x, lat = SP2$data$y))
             if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                Insert.Messages.Out("Data have different resolution or bbox", format = TRUE)
+                Insert.Messages.Out(message[['27']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
@@ -238,7 +239,7 @@ computeSPEIProcs <- function(GeneralParameters){
         daty0 <- as.Date(daty0, "%Y%m%d")
         idaty0 <- daty0 >= start.moni & daty0 <= end.moni
         if(!any(idaty0)){
-            Insert.Messages.Out("Date out of range", format = TRUE)
+            Insert.Messages.Out(message[['28']], TRUE, 'e')
             return(NULL)
         }
         daty <- daty[idaty0]
@@ -262,7 +263,7 @@ computeSPEIProcs <- function(GeneralParameters){
 
     if(aggregatData){
         txtAggr <- if(GeneralParameters$outfreq == "dekad") "dekadal" else "monthly"
-        Insert.Messages.Out(paste("Aggregate to", txtAggr, "data ......"), TRUE, "i")
+        Insert.Messages.Out(paste(message[['29']], txtAggr, " ......"), TRUE, "i")
 
         outfreq <- switch(GeneralParameters$outfreq, "dekad" = "dekadal", "month" = "monthly")
         agg.index <- cdt.index.aggregate(daty, freqData, outfreq)
@@ -328,11 +329,11 @@ computeSPEIProcs <- function(GeneralParameters){
         }
 
         .cdtData$EnvData$toAggr <- toAggr
-        Insert.Messages.Out(paste("Aggregating", txtAggr, "data done!"), TRUE, "s")
-        Insert.Messages.Out("Computing SPEI ......", TRUE, "i")
+        Insert.Messages.Out(paste(txtAggr, message[['30']]), TRUE, "s")
+        Insert.Messages.Out(message[['31']], TRUE, "i")
     }else{
         if((GeneralParameters$outfreq == "dekad" & freqData != 'dekadal') |
-            (GeneralParameters$outfreq == "month" & freqData != 'monthly'))
+           (GeneralParameters$outfreq == "month" & freqData != 'monthly'))
         {
             prec <- readRDS(file.aggr.prec)
             etp <- readRDS(file.aggr.etp)
@@ -467,7 +468,7 @@ computeSPEIProcs <- function(GeneralParameters){
         if(GeneralParameters$monitoring){
             file.PARS.rds <- file.path(dataPARSdir, paste0("SPEI_", spi.out.suffix, ".rds"))
             if(!file.exists(file.PARS.rds)){
-                Insert.Messages.Out(paste('Distribution parameters not found:', file.PARS.rds), format = TRUE)
+                Insert.Messages.Out(paste(message[['32']], ':', file.PARS.rds), TRUE, 'e')
                 return(NULL)
             }
             spi.params <- readRDS(file.PARS.rds)
@@ -556,7 +557,7 @@ computeSPEIProcs <- function(GeneralParameters){
             }
 
             if(!file.exists(file.PARS.index)){
-                Insert.Messages.Out(paste('Distribution parameters not found:', file.PARS.index), format = TRUE)
+                Insert.Messages.Out(paste(message[['32']], ':', file.PARS.index), TRUE, 'e')
                 return(NULL)
             }
 

@@ -35,10 +35,10 @@ SPICalc.Plot.Map <- function(){
 
     opar <- par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = dataMapOp,
-                        data.type = .data.type,
-                        plot.type = .plot.type)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = dataMapOp,
+                         data.type = .data.type,
+                         plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -57,7 +57,7 @@ SPICalc.Plot.Graph <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out("Station not found", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, 'e')
             return(NULL)
         }
         varid <- if(.cdtData$EnvData$output$params$Indices == "Decile") 'decile' else 'spi'
@@ -79,7 +79,7 @@ SPICalc.Plot.Graph <- function(){
     daty <- .cdtData$EnvData$varData$ts$dates
     if(.cdtData$EnvData$varData$ts$step == "Dekad"){
         seqtime <- as.Date(daty, "%Y%m%d")
-        daty <- as.Date(paste0(format(seqtime, "%Y-%m-"), c(1, 11, 21)[as.numeric(format(seqtime, "%d"))]))
+        daty <- as.Date(paste0(format(seqtime, "%Y-%m-"), c(5, 15, 25)[as.numeric(format(seqtime, "%d"))]))
     }
     if(.cdtData$EnvData$varData$ts$step == "Month")
         daty <- as.Date(paste0(daty, "01"), "%Y%m%d")
@@ -91,51 +91,24 @@ SPICalc.Plot.Graph <- function(){
     #########
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
-    GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
-    # if(GRAPHTYPE == "Bar-Line") optsgph <- TSGraphOp$bar.line
-    # if(GRAPHTYPE == "Polygon") optsgph <- TSGraphOp$polygon
+    GRAPHTYPE <- .cdtData$EnvData$plot.maps$typeTSp
     optsgph <- TSGraphOp$bar.line
 
     xlim <- range(daty, na.rm = TRUE)
     if(optsgph$xlim$is.min){
-        xx <- strsplit(optsgph$xlim$min, "-")[[1]]
+        xx <- as.Date(optsgph$xlim$min)
 
-        if(.cdtData$EnvData$varData$ts$step == "Dekad"){
-            x3 <- as.numeric(xx[3])
-            if(is.na(x3) | x3 < 1 | x3 > 3){
-                Insert.Messages.Out("xlim: dekad must be 1, 2 or 3", format = TRUE)
-                return(NULL)
-            }
-            x3 <- c(1, 11, 21)[x3]
-        }
-        if(.cdtData$EnvData$varData$ts$step == "Month") x3 <- 1
-        x1 <- as.numeric(xx[1])
-        x2 <- str_pad(as.numeric(xx[2]), 2, pad = "0")
-        x3 <- str_pad(x3, 2, pad = "0")
-        xx <- as.Date(paste0(x1, x2, x3), "%Y%m%d")
-        if(is.na(xx)){
-            Insert.Messages.Out("xlim: invalid date", format = TRUE)
+        if(inherits(xx, "try-error") | is.na(xx)){
+            Insert.Messages.Out(.cdtData$EnvData$message[['10']], TRUE, 'e')
             return(NULL)
         }
         xlim[1] <- xx
     }
     if(optsgph$xlim$is.max){
-        xx <- strsplit(optsgph$xlim$max, "-")[[1]]
-        if(.cdtData$EnvData$varData$ts$step == "Dekad"){
-            x3 <- as.numeric(xx[3])
-            if(is.na(x3) | x3 < 1 | x3 > 3){
-                Insert.Messages.Out("xlim: dekad must be 1, 2 or 3", format = TRUE)
-                return(NULL)
-            }
-            x3 <- c(1, 11, 21)[x3]
-        }
-        if(.cdtData$EnvData$varData$ts$step == "Month") x3 <- 1
-        x1 <- as.numeric(xx[1])
-        x2 <- str_pad(as.numeric(xx[2]), 2, pad = "0")
-        x3 <- str_pad(x3, 2, pad = "0")
-        xx <- as.Date(paste0(x1, x2, x3), "%Y%m%d")
-        if(is.na(xx)){
-            Insert.Messages.Out("xlim: invalid date", format = TRUE)
+        xx <- as.Date(optsgph$xlim$max)
+
+        if(inherits(xx, "try-error") | is.na(xx)){
+            Insert.Messages.Out(.cdtData$EnvData$message[['11']], TRUE, 'e')
             return(NULL)
         }
         xlim[2] <- xx
@@ -163,14 +136,14 @@ SPICalc.Plot.Graph <- function(){
 
     #########
 
-    if(GRAPHTYPE == "Bar-Line"){
+    if(GRAPHTYPE == "bar"){
         ret <- graphs.plot.bar.line(daty, don, y0 = optsgph$colors$y0, yticks = yticks,
                         xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, ylab.sub = NULL,
                         title = titre, title.position = titre.pos, axis.font = 1,
                         barcol = loko, plot.line = optsgph$line, location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "Polygon"){
+    if(GRAPHTYPE == "poly"){
         ret <- graphs.plot.polygon(daty, don, y0 = optsgph$colors$y0, yticks = yticks,
                         xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, ylab.sub = NULL,
                         title = titre, title.position = titre.pos, axis.font = 1,
@@ -197,7 +170,7 @@ SPICalc.Plot.VizTS <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out("Station not found", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, 'e')
             return(NULL)
         }
 
@@ -233,7 +206,7 @@ SPICalc.Plot.VizTS <- function(){
         ila <- icla + (2 * ilat > xlat[icla] + xlat[icla + 1])
 
         if(is.na(ilo) | is.na(ila)){
-            Insert.Messages.Out("Coordinates outside of data range", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData$message[['9']], TRUE, 'e')
             return(NULL)
         }
         ixy <- ilo + length(xlon) * (ila - 1)
@@ -335,7 +308,7 @@ SPICalc.Plot.VizTS <- function(){
     mar <- c(4, 4, 2.5, 5.5)
     legend.width <- 0.9
     line <- if(max(nchar(as.character(breaks))) > 4) 3 else 2
-    legend.args <- if(!is.null(legend.texta)) list(text = legend.texta, cex = 0.8, side = 4, line = line) else NULL
+    legend.args <- if(!is.null(legend.texta)) list(text = legend.texta, cex = 0.9, side = 4, line = line) else NULL
 
     #################
 
@@ -356,22 +329,22 @@ SPICalc.Plot.VizTS <- function(){
         yminor <- yminor[!yminor %in% yTck]
     }else yminor <- NULL
 
-    axis.Date(1, at = xTck, cex.axis = 0.8)
+    axis.Date(1, at = xTck, cex.axis = 1.0)
     if(length(xminor) > 0) axis.Date(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
-    axis(2, at = yTck, las = 1, cex.axis = 0.8)
+    axis(2, at = yTck, las = 1, cex.axis = 1.0)
     if(length(yminor) > 0) axis(2, at = yminor, labels = NA, tcl = par("tcl") * 0.5)
 
     mtext(xlab, side = 1, line = 2.1)
     mtext(ylab, side = 2, line = 2.1)
-    mtext(.cdtData$EnvData$location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.6)
-    title(main = titre, cex.main = 1, font.main = 2)
+    mtext(.cdtData$EnvData$location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1.0)
+    title(main = titre, cex.main = 1.5, font.main = 2)
 
     # image(daty, tscales, spi.mat, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
     .filled.contour(daty, tscales, spi.mat, levels = breaks, col = kolor)
     fields::image.plot(zlim = zlim, breaks = breaks2, col = kolor, horizontal = horizontal,
-                legend.only = TRUE, legend.mar = legend.mar, legend.width = legend.width,
-                legend.args = legend.args, axis.args = list(at = breaks1, labels = legendLabel,
-                cex.axis = 0.7, font = 2, tcl = -0.3, mgp = c(0, 0.5, 0)), legend.shrink = 0.8)
+                       legend.only = TRUE, legend.mar = legend.mar, legend.width = legend.width,
+                       legend.args = legend.args, axis.args = list(at = breaks1, labels = legendLabel,
+                       cex.axis = 0.9, font = 2, tcl = -0.3, mgp = c(0, 0.5, 0)), legend.shrink = 0.8)
 
     abline(h = yTck, v = xTck, col = "lightgray", lty = 3)
     box()

@@ -2,9 +2,9 @@
 fill_Miss_DekTemp <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 71
-        largeur1 <- 68
-        largeur2 <- 30
+        largeur0 <- 56
+        largeur1 <- 53
+        largeur2 <- 20
     }else{
         largeur0 <- 54
         largeur1 <- 53

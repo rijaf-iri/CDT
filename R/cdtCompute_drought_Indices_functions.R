@@ -1,5 +1,5 @@
 
-SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = 'Gamma')
+SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = 'gamma')
 {
     min.non.na <- 5
     nl <- nrow(data.mat)
@@ -16,9 +16,9 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
     }
 
     estime.pars.fun <- switch(distribution,
-                        "Gamma" = list(lmomco::pargam, lmomco::cdfgam),
-                        "Pearson Type III" = list(lmomco::parpe3, lmomco::cdfpe3),
-                        "log-Logistic" = list(lmomco::parglo, lmomco::cdfglo))
+                        "gamma" = list(lmomco::pargam, lmomco::cdfgam),
+                        "peasron3" = list(lmomco::parpe3, lmomco::cdfpe3),
+                        "llogistic" = list(lmomco::parglo, lmomco::cdfglo))
 
     estime.pars <- function(x){
         x <- x[!is.na(x)]
@@ -41,11 +41,11 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
         if(!any(icol1)) return(spi.out)
         don.mon <- don.mon[, icol1, drop = FALSE]
 
-        if(distribution %in% c("Gamma", "Pearson Type III", "log-Logistic")){
+        if(distribution %in% c("gamma", "peasron3", "llogistic")){
             don.mon1 <- don.mon
             SPI <- don.mon * NA
 
-            if(distribution %in% c("Gamma", "Pearson Type III")){
+            if(distribution %in% c("gamma", "peasron3")){
                 pzero <- colSums(!is.na(don.mon) & don.mon == 0) / colSums(!is.na(don.mon))
                 don.mon[don.mon <= 0] <- NA
             }
@@ -69,13 +69,13 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
             })
             spi <- do.call(cbind, spi)
 
-            if(distribution %in% c("Gamma", "Pearson Type III")){
+            if(distribution %in% c("gamma", "peasron3")){
                 pzero <- matrix(pzero[!inull], nrow(spi), ncol(spi), byrow = TRUE)
                 SPI[, !inull] <- qnorm(pzero + (1 - pzero) * pnorm(spi))
             }else SPI[, !inull] <- spi
         }
 
-        if(distribution == 'Z-Score'){
+        if(distribution == 'zscore'){
             don.sd <- matrixStats::colSds(don.mon, na.rm = TRUE)
             don.mean <- colMeans(don.mon, na.rm = TRUE)
             SPI <- sweep(sweep(don.mon, 2, don.mean, FUN = "-"), 2, don.sd, FUN = "/")
@@ -108,7 +108,7 @@ SPEI_Aggregate_data <- function(data.mat, tscale = 1)
 
 #########################################################################
 
-SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distribution = 'Gamma')
+SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distribution = 'gamma')
 {
     min.non.na <- 5
     nl <- nrow(data.mat)
@@ -118,9 +118,9 @@ SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distributi
     data.mat <- data.mat[, icol, drop = FALSE]
 
     estime.pars.fun <- switch(distribution,
-                            "Gamma" = lmomco::pargam,
-                            "Pearson Type III" = lmomco::parpe3,
-                            "log-Logistic" = lmomco::parglo)
+                            "gamma" = lmomco::pargam,
+                            "peasron3" = lmomco::parpe3,
+                            "llogistic" = lmomco::parglo)
 
     estime.pars <- function(x){
         x <- x[!is.na(x)]
@@ -143,8 +143,8 @@ SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distributi
         if(!any(icol1)) return(pars.out)
         don.mon <- don.mon[, icol1, drop = FALSE]
 
-        if(distribution %in% c("Gamma", "Pearson Type III", "log-Logistic")){
-            if(distribution %in% c("Gamma", "Pearson Type III")){
+        if(distribution %in% c("gamma", "peasron3", "llogistic")){
+            if(distribution %in% c("gamma", "peasron3")){
                 pzero <- colSums(!is.na(don.mon) & don.mon == 0) / colSums(!is.na(don.mon))
                 don.mon[don.mon <= 0] <- NA
             }
@@ -152,11 +152,11 @@ SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distributi
             PARS <- lapply(seq(ncol(don.mon)), function(j){
                 prs <- estime.pars(don.mon[, j])
                 if(is.null(prs)) return(list(NA))
-                if(distribution == "log-Logistic") prs else c(prs, list(pzero = pzero[j]))
+                if(distribution == "llogistic") prs else c(prs, list(pzero = pzero[j]))
             })
         }
 
-        if(distribution == 'Z-Score'){
+        if(distribution == 'zscore'){
             don.sd <- matrixStats::colSds(don.mon, na.rm = TRUE)
             don.mean <- colMeans(don.mon, na.rm = TRUE)
             PARS <- lapply(seq_along(don.mean), function(j) list(mean = don.mean[j], sd = don.sd[j]))
@@ -172,21 +172,21 @@ SPEI_Compute_params <- function(data.mat, tscale = 1, frequency = 12, distributi
 
 #########################################################################
 
-SPEI_computation <- function(data.mat, params, tscale = 1, frequency = 12, distribution = 'Gamma')
+SPEI_computation <- function(data.mat, params, tscale = 1, frequency = 12, distribution = 'gamma')
 {
     nl <- nrow(data.mat)
     nc <- ncol(data.mat)
     don.tmp0 <- data.mat * NA
 
     cdf.fun <- switch(distribution,
-                    "Gamma" = lmomco::cdfgam,
-                    "Pearson Type III" = lmomco::cdfpe3,
-                    "log-Logistic" = lmomco::cdfglo)
+                    "gamma" = lmomco::cdfgam,
+                    "peasron3" = lmomco::cdfpe3,
+                    "llogistic" = lmomco::cdfglo)
 
     spi.out <- lapply(1:frequency, function(k){
         iseq <- seq(k + tscale - 1, nl, frequency)
         don.tmp <- data.mat[iseq, , drop = FALSE]
-        if(distribution %in% c("Gamma", "Pearson Type III", "log-Logistic")){
+        if(distribution %in% c("gamma", "peasron3", "llogistic")){
             spi <- lapply(seq(nc), function(j){
                 pars <- params[k, j][[1]]
                 ina <- !is.na(don.tmp[, j])
@@ -199,7 +199,7 @@ SPEI_computation <- function(data.mat, params, tscale = 1, frequency = 12, distr
             })
             spi <- do.call(cbind, spi)
 
-            if(distribution %in% c("Gamma", "Pearson Type III")){
+            if(distribution %in% c("gamma", "peasron3")){
                 pzero <- sapply(params[k, ], function(x){
                     pz <- if(is.list(x)) x$pzero else NULL
                     if(is.null(pz)) pz <- NA
@@ -210,7 +210,7 @@ SPEI_computation <- function(data.mat, params, tscale = 1, frequency = 12, distr
             }
         }
 
-        if(distribution == 'Z-Score'){
+        if(distribution == 'zscore'){
             don.sd <- sapply(params[k, ], '[[', 'sd')
             don.mean <- sapply(params[k, ], '[[', 'mean')
             spi <- sweep(sweep(don.tmp, 2, don.mean, FUN = "-"), 2, don.sd, FUN = "/")

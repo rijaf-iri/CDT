@@ -1,6 +1,7 @@
 
 STAT_ValidationDataExec <- function(GeneralParameters){
-    freqData <- GeneralParameters$Tstep
+    message <- .cdtData$EnvData$message
+    Tstep <- GeneralParameters$Tstep
     inputInfo <- GeneralParameters[c('Tstep', 'clim.var', 'STN.file1', 'STN.file2')]
     readstnData <- TRUE
     if(!is.null(.cdtData$EnvData$inputInfo))
@@ -9,6 +10,7 @@ STAT_ValidationDataExec <- function(GeneralParameters){
 
     if(readstnData){
         stnInfo1 <- getStnOpenDataInfo(GeneralParameters$STN.file1)
+        if(is.null(stnInfo1)) return(NULL)
         if(!is.null(.cdtData$EnvData$stnData1)){
             if(!isTRUE(all.equal(.cdtData$EnvData$stnData1$stnInfo, stnInfo1))){
                 readstnData1 <- TRUE
@@ -18,7 +20,8 @@ STAT_ValidationDataExec <- function(GeneralParameters){
 
         if(readstnData1){
             cdtTmpVar <- getStnOpenData(GeneralParameters$STN.file1)
-            cdtTmpVar <- getCDTdataAndDisplayMsg(cdtTmpVar, freqData, GeneralParameters$STN.file1)
+            if(is.null(cdtTmpVar)) return(NULL)
+            cdtTmpVar <- getCDTdataAndDisplayMsg(cdtTmpVar, Tstep, GeneralParameters$STN.file1)
             if(is.null(cdtTmpVar)) return(NULL)
             cdtTmpVar <- cdtTmpVar[c('id', 'lon', 'lat', 'dates', 'data')]
             cdtTmpVar$index <- seq_along(cdtTmpVar$dates)
@@ -27,6 +30,7 @@ STAT_ValidationDataExec <- function(GeneralParameters){
         }
 
         stnInfo2 <- getStnOpenDataInfo(GeneralParameters$STN.file2)
+        if(is.null(stnInfo2)) return(NULL)
         if(!is.null(.cdtData$EnvData$stnData2)){
             if(!isTRUE(all.equal(.cdtData$EnvData$stnData2$stnInfo, stnInfo2))){
                 readstnData2 <- TRUE
@@ -36,7 +40,8 @@ STAT_ValidationDataExec <- function(GeneralParameters){
 
         if(readstnData2){
             cdtTmpVar <- getStnOpenData(GeneralParameters$STN.file2)
-            cdtTmpVar <- getCDTdataAndDisplayMsg(cdtTmpVar, freqData, GeneralParameters$STN.file2)
+            if(is.null(cdtTmpVar)) return(NULL)
+            cdtTmpVar <- getCDTdataAndDisplayMsg(cdtTmpVar, Tstep, GeneralParameters$STN.file2)
             if(is.null(cdtTmpVar)) return(NULL)
             cdtTmpVar <- cdtTmpVar[c('id', 'lon', 'lat', 'dates', 'data')]
             cdtTmpVar$index <- seq_along(cdtTmpVar$dates)
@@ -46,16 +51,16 @@ STAT_ValidationDataExec <- function(GeneralParameters){
 
         if(readstnData1 | readstnData2){
             if(GeneralParameters$outdir %in% c("", "NA")){
-                Insert.Messages.Out("Directory to save results doesn't exist", format = TRUE)
+                Insert.Messages.Out(message[['6']], TRUE, 'e')
                 return(NULL)
             }
 
             if(!any(.cdtData$EnvData$stnData1$id %in% .cdtData$EnvData$stnData2$id)){
-                Insert.Messages.Out("IDs of the two stations data do not match", format = TRUE)
+                Insert.Messages.Out(message[['7']], TRUE, 'e')
                 return(NULL)
             }
             if(!any(.cdtData$EnvData$stnData1$dates %in% .cdtData$EnvData$stnData2$dates)){
-                Insert.Messages.Out("The dates of the two stations data do not match", format = TRUE)
+                Insert.Messages.Out(message[['8']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -80,7 +85,7 @@ STAT_ValidationDataExec <- function(GeneralParameters){
 
             ##################
             outValidation <- file.path(GeneralParameters$outdir, paste0('VALIDATION_',
-                                       tools::file_path_sans_ext(GeneralParameters$STN.file1)))
+                                       tools::file_path_sans_ext(GeneralParameters$STN.file2)))
             dir.create(outValidation, showWarnings = FALSE, recursive = TRUE)
 
             xhead <- do.call(rbind, .cdtData$EnvData$cdtData$info[c('id', 'lon', 'lat')])

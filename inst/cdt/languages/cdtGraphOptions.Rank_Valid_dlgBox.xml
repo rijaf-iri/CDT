@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Custom </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Select statistics to display </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> User customized colorkey </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Change datasets name </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Colorkey </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Statistics text color </text>
+        </label>
+        <label id="3">
+            <text lang="en"> First rank </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Second rank </text>
+        </label>
+        <label id="5">
+            <text lang="en"> All </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Color Selection </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Title </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Colorkey title and label </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Low </text>
+        </label>
+        <label id="10">
+            <text lang="en"> High </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Enter here the name of the datasets separated by a comma \n should be the same number as the number of the datasets to compare </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter here the name of the datasets separated by a comma \n should be the same number as the number of the datasets to compare </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

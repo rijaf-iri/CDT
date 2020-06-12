@@ -6,19 +6,19 @@ plotMap4Validation <- function(){
     ymax <- .cdtData$EnvData$ZoomXYval[4]
 
     if(is.na(xmin) | is.null(xmin) | is.infinite(xmin)){
-        Insert.Messages.Out('Longitude min not valid', format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['0m1']], TRUE, 'e')
         return(NULL)
     }
     if(is.na(xmax) | is.null(xmax) | is.infinite(xmax)){
-        Insert.Messages.Out('Longitude max not valid', format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['0m2']], TRUE, 'e')
         return(NULL)
     }
     if(is.na(ymin) | is.null(ymin) | is.infinite(ymin)){
-        Insert.Messages.Out('Latitude min not valid', format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['0m3']], TRUE, 'e')
         return(NULL)
     }
     if(is.na(ymax) | is.null(ymax) | is.infinite(ymax)){
-        Insert.Messages.Out('Latitude max not valid', format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['0m4']], TRUE, 'e')
         return(NULL)
     }
 
@@ -70,7 +70,7 @@ displayMap4Validation <- function(notebookTab){
 
     ###################################################################
 
-    onglet <- imageNotebookTab_open(notebookTab, 'Validation Map')
+    onglet <- imageNotebookTab_open(notebookTab, 'Extraction Map')
     hscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH)))
     vscale <- as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
 
@@ -94,8 +94,8 @@ displayMap4Validation <- function(notebookTab){
             tkconfigure(canvas, cursor = 'sizing')
         else if(tclvalue(.cdtData$EnvData$zoom$pressButRect) == "1")
             tkconfigure(canvas, cursor = 'sizing')
-        # else if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1")
-        #     tkconfigure(canvas, cursor = 'hand1')
+        else if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1")
+            tkconfigure(canvas, cursor = 'hand1')
         else if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1")
             tkconfigure(canvas, cursor = 'draped_box')
         else
@@ -120,7 +120,7 @@ displayMap4Validation <- function(notebookTab){
 
     ##Pan Image
     panZoomInit <- c(0, 0, 0, 0, 0, 0)
-    factPan <- 0.2
+    factPan <- 0.7
 
     ##########
 
@@ -132,14 +132,14 @@ displayMap4Validation <- function(notebookTab){
         if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1" & !ret$oin){
             .cdtData$EnvData$selectedPolygon <- NULL
 
-            if(str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Rectangle"){
+            if(.cdtData$EnvData$type.select == "rect"){
                 pPressRect(W, x, y, width = 1, outline = "red")
                 tclvalue(.cdtData$EnvData$minlonRect) <- round(ret$xc, 4)
                 tclvalue(.cdtData$EnvData$minlatRect) <- round(ret$yc, 4)
             }
 
             ##
-            if(str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Polygons"){
+            if(.cdtData$EnvData$type.select == "poly"){
                 xypts <- data.frame(x = ret$xc, y = ret$yc)
                 coordinates(xypts) <- ~x + y
                 admin_name <- over(xypts, shpf)
@@ -198,12 +198,12 @@ displayMap4Validation <- function(notebookTab){
                 tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
                 tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
                 tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-                # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+                tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
                 tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
                 tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
                 tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-                # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+                tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
                 tkconfigure(W, cursor = 'crosshair')
             }else{
@@ -228,29 +228,29 @@ displayMap4Validation <- function(notebookTab){
             rectZoomInit[3] <<- ret$yc
         }
 
-        # ##Pan image
-        # if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"  & !ret$oin){
-        #     panZoomInit[1] <<- ret$xc
-        #     panZoomInit[2] <<- ret$yc
+        ##Pan image
+        if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"  & !ret$oin){
+            panZoomInit[1] <<- ret$xc
+            panZoomInit[2] <<- ret$yc
 
-        #     panZoomInit[3] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$xx1))
-        #     panZoomInit[4] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$xx2))
-        #     panZoomInit[5] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$yy1))
-        #     panZoomInit[6] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$yy2))
+            panZoomInit[3] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$xx1))
+            panZoomInit[4] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$xx2))
+            panZoomInit[5] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$yy1))
+            panZoomInit[6] <<- as.numeric(tclvalue(.cdtData$EnvData$zoom$yy2))
 
-        #     tkconfigure(canvas, cursor = 'hand2')
-        # }
+            tkconfigure(canvas, cursor = 'hand2')
+        }
     })
 
     ##########
     tkbind(canvas, "<Motion>", function(W, x, y){
-        if(str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Polygons" & !is.null(shpf)){
+        if(.cdtData$EnvData$type.select == "poly" & !is.null(shpf)){
             displayCursorPosition3Var(W, x, y, parPltCrd, getAdminLabel, shp = shpf,
                                         idField = .cdtData$EnvData$cb.shpAttr)
         }else{
             stn.coords <- list(lon = as.numeric(.cdtData$EnvData$donne[2, ]),
-                            lat = as.numeric(.cdtData$EnvData$donne[3, ]),
-                            id = as.character(.cdtData$EnvData$donne[1, ]))
+                               lat = as.numeric(.cdtData$EnvData$donne[3, ]),
+                               id = as.character(.cdtData$EnvData$donne[1, ]))
             
             displayCursorPosition3Var(W, x, y, parPltCrd, getStnIDLabel, stn.coords = stn.coords)
         }
@@ -262,7 +262,7 @@ displayMap4Validation <- function(notebookTab){
 
         ##get coordinates rect
         if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1" &
-            str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Rectangle")
+            .cdtData$EnvData$type.select == "rect")
         {
             pMoveRect(W, x, y)
             tclvalue(.cdtData$EnvData$maxlonRect) <- round(ret$xc, 4)
@@ -274,27 +274,27 @@ displayMap4Validation <- function(notebookTab){
             pMoveRect(W, x, y)
         }
 
-        # ##Pan image
-        # if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"){
-        #     transX <- ret$xc - panZoomInit[1]
-        #     transY <- ret$yc - panZoomInit[2]
+        ##Pan image
+        if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"){
+            transX <- ret$xc - panZoomInit[1]
+            transY <- ret$yc - panZoomInit[2]
 
-        #     tclvalue(.cdtData$EnvData$zoom$xx1) <- round(panZoomInit[3] + factPan * transX, 4)
-        #     tclvalue(.cdtData$EnvData$zoom$xx2) <- round(panZoomInit[4] + factPan * transX, 4)
-        #     tclvalue(.cdtData$EnvData$zoom$yy1) <- round(panZoomInit[5] + factPan * transY, 4)
-        #     tclvalue(.cdtData$EnvData$zoom$yy2) <- round(panZoomInit[6] + factPan * transY, 4)
+            tclvalue(.cdtData$EnvData$zoom$xx1) <- round(panZoomInit[3] + factPan * transX, 4)
+            tclvalue(.cdtData$EnvData$zoom$xx2) <- round(panZoomInit[4] + factPan * transX, 4)
+            tclvalue(.cdtData$EnvData$zoom$yy1) <- round(panZoomInit[5] + factPan * transY, 4)
+            tclvalue(.cdtData$EnvData$zoom$yy2) <- round(panZoomInit[6] + factPan * transY, 4)
 
-        #     .cdtData$EnvData$ZoomXYval <- as.numeric(c(
-        #                                                 tclvalue(.cdtData$EnvData$zoom$xx1),
-        #                                                 tclvalue(.cdtData$EnvData$zoom$xx2),
-        #                                                 tclvalue(.cdtData$EnvData$zoom$yy1),
-        #                                                 tclvalue(.cdtData$EnvData$zoom$yy2)
-        #                                             ))
-        #     refreshPlot(W, img,
-        #                 hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
-        #                 vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
-        #                 )
-        # }
+            .cdtData$EnvData$ZoomXYval <- as.numeric(c(
+                                                        tclvalue(.cdtData$EnvData$zoom$xx1),
+                                                        tclvalue(.cdtData$EnvData$zoom$xx2),
+                                                        tclvalue(.cdtData$EnvData$zoom$yy1),
+                                                        tclvalue(.cdtData$EnvData$zoom$yy2)
+                                                    ))
+            # refreshPlot(W, img,
+            #             hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
+            #             vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
+            #             )
+        }
     })
 
     #########
@@ -304,7 +304,7 @@ displayMap4Validation <- function(notebookTab){
         ##get coordinates rect
         if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1")
         {
-            if(str_trim(tclvalue(.cdtData$EnvData$type.select)) == "Rectangle")
+            if(.cdtData$EnvData$type.select == "rect")
             {
                 xpr <- c(as.numeric(tclvalue(.cdtData$EnvData$minlonRect)), round(ret$xc, 4),
                         as.numeric(tclvalue(.cdtData$EnvData$minlatRect)), round(ret$yc, 4))
@@ -343,10 +343,15 @@ displayMap4Validation <- function(notebookTab){
             tkdelete(W, 'rect')
         }
 
-        # ##Pan image
-        # if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"){
-        #     tkconfigure(canvas, cursor = 'hand1')
-        # }
+        ##Pan image
+        if(tclvalue(.cdtData$EnvData$zoom$pressButDrag) == "1"){
+            refreshPlot(W, img,
+                        hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
+                        vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV)))
+                        )
+
+            tkconfigure(canvas, cursor = 'hand1')
+        }
 
         tcl('update')
     })
@@ -357,12 +362,12 @@ displayMap4Validation <- function(notebookTab){
         tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
         tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
         tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-        # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+        tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
         tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
         tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
         tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+        tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
         tkconfigure(canvas, cursor = 'crosshair')
 

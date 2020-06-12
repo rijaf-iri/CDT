@@ -58,8 +58,8 @@ getOpenFiles <- function(parent, filetype = 'txt', initialdir = getwd()){
 
 ## Write files (data.frame)
 writeFiles <- function(data2save, file2save,
-                    row.names = FALSE, col.names = FALSE,
-                    quote = FALSE, append = FALSE, sep = " ", ...)
+                       row.names = FALSE, col.names = FALSE,
+                       quote = FALSE, append = FALSE, sep = " ", ...)
 {
     extFl <- tolower(str_trim(tools::file_ext(basename(file2save))))
     sep <- if(extFl == "csv") ',' else sep

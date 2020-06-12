@@ -1,24 +1,26 @@
 
 compute_SeasonLength_Procs <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
+
     if(!dir.exists(GeneralParameters$output)){
-        Insert.Messages.Out(paste(GeneralParameters$output, "did not find"), format = TRUE)
+        Insert.Messages.Out(paste(GeneralParameters$output, message[['5']]), TRUE, 'e')
         return(NULL)
     }
 
     onset <- try(readRDS(GeneralParameters$onset), silent = TRUE)
     if(inherits(onset, "try-error")){
-        Insert.Messages.Out(paste("Unable to read", GeneralParameters$onset), format = TRUE)
+        Insert.Messages.Out(paste(message[['6']], GeneralParameters$onset), TRUE, 'e')
         return(NULL)
     }
 
     cessation <- try(readRDS(GeneralParameters$cessation), silent = TRUE)
     if(inherits(cessation, "try-error")){
-        Insert.Messages.Out(paste("Unable to read", GeneralParameters$cessation), format = TRUE)
+        Insert.Messages.Out(paste(message[['6']], GeneralParameters$cessation), TRUE, 'e')
         return(NULL)
     }
 
     if(onset$params$data.type != cessation$params$data.type){
-        Insert.Messages.Out("Onset and Cessation data are of different types", format = TRUE)
+        Insert.Messages.Out(message[['7']], TRUE, 'e')
         return(NULL)
     }
 
@@ -31,13 +33,13 @@ compute_SeasonLength_Procs <- function(GeneralParameters){
     idx.ons <- seq(nrow(index$range.date))
     idx.cess <- sapply(idx.ons, function(j){
         pos <- which(as.Date(index$range.date[j, 1], "%Y%m%d") <= cessation$start.date &
-                    as.Date(index$range.date[j, 2], "%Y%m%d") >= cessation$start.date)
+                     as.Date(index$range.date[j, 2], "%Y%m%d") >= cessation$start.date)
         if(length(pos) == 0) pos <- NA
         pos
     })
 
     if(all(is.na(idx.cess))){
-        Insert.Messages.Out("Onset and Cessation do not overlap", format = TRUE)
+        Insert.Messages.Out(message[['8']], TRUE, 'e')
         return(NULL)
     }
 
@@ -49,7 +51,7 @@ compute_SeasonLength_Procs <- function(GeneralParameters){
 
     if(onset$params$data.type == "cdtstation"){
         if(!any(onset$data$id %in% cessation$data$id)){
-            Insert.Messages.Out("Onset & Cessation stations do not match", format = TRUE)
+            Insert.Messages.Out(message[['9']], TRUE, 'e')
             return(NULL)
         }
 
@@ -140,13 +142,13 @@ compute_SeasonLength_Procs <- function(GeneralParameters){
 
         onset.index <- try(readRDS(onset.file), silent = TRUE)
         if(inherits(onset.index, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", onset.file), format = TRUE)
+            Insert.Messages.Out(paste(message[['6']], onset.file), TRUE, 'e')
             return(NULL)
         }
 
         cessa.index <- try(readRDS(cessa.file), silent = TRUE)
         if(inherits(cessa.index, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", cessa.file), format = TRUE)
+            Insert.Messages.Out(paste(message[['6']], cessa.file), TRUE, 'e')
             return(NULL)
         }
 
@@ -154,13 +156,13 @@ compute_SeasonLength_Procs <- function(GeneralParameters){
         SP1 <- defSpatialPixels(list(lon = onset.index$coords$mat$x, lat = onset.index$coords$mat$y))
         SP2 <- defSpatialPixels(list(lon = cessa.index$coords$mat$x, lat = cessa.index$coords$mat$y))
         if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-            Insert.Messages.Out("Onset & Cessation have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['10']], TRUE, 'e')
             return(NULL)
         }
         rm(SP1, SP2)
 
         if(onset.index$chunksize != cessa.index$chunksize){
-            Insert.Messages.Out("Onset & Cessation have different chunk size", format = TRUE)
+            Insert.Messages.Out(message[['11']], TRUE, 'e')
             return(NULL)
         }
 

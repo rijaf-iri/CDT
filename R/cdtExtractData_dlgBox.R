@@ -2,13 +2,13 @@
 extractTS.previewWin <- function(states, shpL, type){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(36)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(40)
-        wtext <- .cdtEnv$tcl$fun$w.widgets(29)
+        largeur0 <- 40
+        largeur1 <- 45
+        wtext <- 39
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(27)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        wtext <- .cdtEnv$tcl$fun$w.widgets(35)
+        largeur0 <- 39
+        largeur1 <- 45
+        wtext <- 39
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtExtractData_dlgBox.xml")

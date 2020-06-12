@@ -12,24 +12,24 @@ dailyRainAnalysis.plotMapVarStats <- function(){
         infos <- varstats[[this.var]][[this.stat]]
 
         titre1 <- switch(this.var,
-                        "TOTALRAIN" = 'Total Rainfall',
-                        "RAININT" = 'Rainfall Intensity',
-                        "WETDAY" = 'Number of Wet Days',
-                        "DRYDAY" = 'Number of Dry Days',
-                        "WETSPELL" = 'Number of Wet Spells',
-                        "DRYSPELL" = 'Number of Dry Spells')
+                         "TOTALRAIN" = 'Total Rainfall',
+                         "RAININT" = 'Rainfall Intensity',
+                         "WETDAY" = 'Number of Wet Days',
+                         "DRYDAY" = 'Number of Dry Days',
+                         "WETSPELL" = 'Number of Wet Spells',
+                         "DRYSPELL" = 'Number of Dry Spells')
 
         var.def <- switch(this.var, "TOTALRAIN" = '', "RAININT" = '',
-                        "WETDAY" = paste0('(RR >= ', infos$pars[1], ' mm)'),
-                        "DRYDAY" = paste0('(RR < ', infos$pars[1], ' mm)'),
-                        "WETSPELL" = paste0('(spell: ', infos$pars[2], ' days)'),
-                        "DRYSPELL" = paste0('(spell: ', infos$pars[2], ' days)'))
+                          "WETDAY" = paste0('(RR >= ', infos$pars[1], ' mm)'),
+                          "DRYDAY" = paste0('(RR < ', infos$pars[1], ' mm)'),
+                          "WETSPELL" = paste0('(spell: ', infos$pars[2], ' days)'),
+                          "DRYSPELL" = paste0('(spell: ', infos$pars[2], ' days)'))
 
         titre2 <- switch(this.stat,
-                        'mean' = 'Mean',
-                        'stdev' = 'Standard deviation',
-                        'coefvar' = 'Coefficient of variation',
-                        'proba' = 'Probability of exceeding')
+                         'mean' = 'Mean',
+                         'stdev' = 'Standard deviation',
+                         'coefvar' = 'Coefficient of variation',
+                         'proba' = 'Probability of exceeding')
 
         units <- switch(this.var, "TOTALRAIN" = 'mm', "RAININT" = 'mm/day', "WETDAY" = 'days',
                         "DRYDAY" = 'days', "WETSPELL" = 'spells', "DRYSPELL" = 'spells')
@@ -38,7 +38,7 @@ dailyRainAnalysis.plotMapVarStats <- function(){
                             'proba' = paste0('(', infos$pars[3], " ", units, ')'))
 
         period.def <- paste0(infos$year[1, 1], '_', infos$year[2, 2], '/', 
-                    paste0(format(as.Date(paste0("2000-", strsplit(infos$season, "_")[[1]])), "%b-%d"), collapse = "_"))
+                      paste0(format(as.Date(paste0("2000-", strsplit(infos$season, "_")[[1]])), "%b-%d"), collapse = "_"))
         period.def <- paste0("[", period.def, "]")
 
         .titre <- paste(titre1, var.def, ";", titre2, proba.def, period.def)
@@ -52,10 +52,10 @@ dailyRainAnalysis.plotMapVarStats <- function(){
 
     opar <- par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = dataMapOp,
-                        data.type = .data.type,
-                        plot.type = .plot.type)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = dataMapOp,
+                         data.type = .data.type,
+                         plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -84,18 +84,18 @@ dailyRainAnalysis.plotMapVarTS <- function(){
         infos <- varstats[[this.var]][[this.stat]]
 
         titre1 <- switch(this.var,
-                        "TOTALRAIN" = 'Total Rainfall',
-                        "RAININT" = 'Rainfall Intensity',
-                        "WETDAY" = 'Number of Wet Days',
-                        "DRYDAY" = 'Number of Dry Days',
-                        "WETSPELL" = 'Number of Wet Spells',
-                        "DRYSPELL" = 'Number of Dry Spells')
+                         "TOTALRAIN" = 'Total Rainfall',
+                         "RAININT" = 'Rainfall Intensity',
+                         "WETDAY" = 'Number of Wet Days',
+                         "DRYDAY" = 'Number of Dry Days',
+                         "WETSPELL" = 'Number of Wet Spells',
+                         "DRYSPELL" = 'Number of Dry Spells')
 
         var.def <- switch(this.var, "TOTALRAIN" = '', "RAININT" = '',
-                        "WETDAY" = paste0('(RR >= ', infos$pars[1], ' mm)'),
-                        "DRYDAY" = paste0('(RR < ', infos$pars[1], ' mm)'),
-                        "WETSPELL" = paste0('(spell: ', infos$pars[2], ' days)'),
-                        "DRYSPELL" = paste0('(spell: ', infos$pars[2], ' days)'))
+                          "WETDAY" = paste0('(RR >= ', infos$pars[1], ' mm)'),
+                          "DRYDAY" = paste0('(RR < ', infos$pars[1], ' mm)'),
+                          "WETSPELL" = paste0('(spell: ', infos$pars[2], ' days)'),
+                          "DRYSPELL" = paste0('(spell: ', infos$pars[2], ' days)'))
 
         .titre <- paste(titre1, var.def, paste0("[", this.daty, "]"))
     }else .titre <- dataMapOp$title$title
@@ -108,10 +108,10 @@ dailyRainAnalysis.plotMapVarTS <- function(){
 
     opar <- par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = dataMapOp,
-                        data.type = .data.type,
-                        plot.type = .plot.type)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = dataMapOp,
+                         data.type = .data.type,
+                         plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -136,7 +136,7 @@ dailyRainAnalysis.plotVarGraph <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out("Station not found", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData$message[['14']], TRUE, 'e')
             return(NULL)
         }
         don <- as.numeric(.cdtData$EnvData$tsData$data[, ixy])
@@ -156,18 +156,18 @@ dailyRainAnalysis.plotVarGraph <- function(){
     ########
 
     titre1 <- switch(this.var,
-                    "TOTALRAIN" = 'Total Rainfall',
-                    "RAININT" = 'Rainfall Intensity',
-                    "WETDAY" = 'Number of Wet Days',
-                    "DRYDAY" = 'Number of Dry Days',
-                    "WETSPELL" = 'Number of Wet Spells',
-                    "DRYSPELL" = 'Number of Dry Spells')
+                     "TOTALRAIN" = 'Total Rainfall',
+                     "RAININT" = 'Rainfall Intensity',
+                     "WETDAY" = 'Number of Wet Days',
+                     "DRYDAY" = 'Number of Dry Days',
+                     "WETSPELL" = 'Number of Wet Spells',
+                     "DRYSPELL" = 'Number of Dry Spells')
 
     var.def <- switch(this.var, "TOTALRAIN" = '', "RAININT" = '',
-                    "WETDAY" = paste0('(RR >= ', infos$pars[1], ' mm)'),
-                    "DRYDAY" = paste0('(RR < ', infos$pars[1], ' mm)'),
-                    "WETSPELL" = paste0('(spell: ', infos$pars[2], ' days)'),
-                    "DRYSPELL" = paste0('(spell: ', infos$pars[2], ' days)'))
+                      "WETDAY" = paste0('(RR >= ', infos$pars[1], ' mm)'),
+                      "DRYDAY" = paste0('(RR < ', infos$pars[1], ' mm)'),
+                      "WETSPELL" = paste0('(spell: ', infos$pars[2], ' days)'),
+                      "DRYSPELL" = paste0('(spell: ', infos$pars[2], ' days)'))
 
     titre <- paste(titre1, var.def)
 
@@ -178,15 +178,15 @@ dailyRainAnalysis.plotVarGraph <- function(){
 
     #########
 
-    GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+    GRAPHTYPE <- .cdtData$EnvData$plot.maps$typeTSp
     optsgph <- switch(GRAPHTYPE,
-                "Line" = TSGraphOp$line,
-                "Barplot" = TSGraphOp$bar,
-                "Probability" = TSGraphOp$proba,
-                "Anomaly" = TSGraphOp$anomaly)
+                      "line" = TSGraphOp$line,
+                      "bar" = TSGraphOp$bar,
+                      "proba" = TSGraphOp$proba,
+                      "anom" = TSGraphOp$anomaly)
 
     ## xlim, ylim, xlab, ylab
-    if(GRAPHTYPE == "Probability"){
+    if(GRAPHTYPE == "proba"){
         xlim <- range(don, na.rm = TRUE)
         if(optsgph$xlim$is.min) xlim[1] <- as.numeric(optsgph$xlim$min)
         if(optsgph$xlim$is.max) xlim[2] <- as.numeric(optsgph$xlim$max)
@@ -200,7 +200,7 @@ dailyRainAnalysis.plotVarGraph <- function(){
         daty <- daty[idt]
         don <- don[idt]
         ylim <- range(pretty(don))
-        if(GRAPHTYPE == "Anomaly")
+        if(GRAPHTYPE == "anom")
             if(optsgph$anom$perc.anom) ylab0 <- "Anomaly (% of Mean)"
     }
 
@@ -214,13 +214,13 @@ dailyRainAnalysis.plotVarGraph <- function(){
         titre <- optsgph$title$title
         titre.pos <- optsgph$title$position
     }else{
-        titre <- if(GRAPHTYPE == "Anomaly") paste("Anomaly:", titre) else titre
+        titre <- if(GRAPHTYPE == "anom") paste("Anomaly:", titre) else titre
         titre.pos <- "top"
     }
 
     #########
 
-    if(GRAPHTYPE == "Line"){
+    if(GRAPHTYPE == "line"){
         legends <- NULL
         if(optsgph$legend$is$mean){
             legends$add$mean <- optsgph$legend$add$mean
@@ -256,7 +256,7 @@ dailyRainAnalysis.plotVarGraph <- function(){
                         location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "Barplot"){
+    if(GRAPHTYPE == "bar"){
         ret <- graphs.plot.bar(daty, don, xlim = xlim, ylim = ylim,
                         xlab = xlab, ylab = ylab, ylab.sub = NULL,
                         title = titre, title.position = titre.pos, axis.font = 1,
@@ -264,7 +264,7 @@ dailyRainAnalysis.plotVarGraph <- function(){
                         location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "Probability"){
+    if(GRAPHTYPE == "proba"){
         ret <- graphs.plot.proba(don, xlim = xlim, ylim = ylim,
                         xlab = xlab, xlab.sub = NULL, ylab = ylab,
                         title = titre, title.position = titre.pos, axis.font = 1,
@@ -273,7 +273,7 @@ dailyRainAnalysis.plotVarGraph <- function(){
                         location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "Anomaly"){
+    if(GRAPHTYPE == "anom"){
         if(!optsgph$ylim$is.min & !optsgph$ylim$is.max) ylim <- NULL
         loko <- c(optsgph$colors$negative, optsgph$colors$positive)
 

@@ -1,15 +1,17 @@
 
 climdexCalc.RR <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
+
     if(!dir.exists(GeneralParameters$output))
     {
-        Insert.Messages.Out(paste(GeneralParameters$output, "did not find"), format = TRUE)
+        Insert.Messages.Out(paste(GeneralParameters$output, message[['6']]), TRUE, 'e')
         return(NULL)
     }
 
     if(!GeneralParameters$baseYear$all.years &
         any(is.na(GeneralParameters$baseYear[c('start.year', 'end.year')])))
     {
-        Insert.Messages.Out("Invalid year range", format = TRUE)
+        Insert.Messages.Out(message[['7']], TRUE, 'e')
         return(NULL)
     }
 
@@ -33,7 +35,7 @@ climdexCalc.RR <- function(GeneralParameters){
 
     if(!any(is.indxlst))
     {
-        Insert.Messages.Out('No indices selected.', format = TRUE)
+        Insert.Messages.Out(message[['8']], TRUE, 'e')
         return(0)
     }
 
@@ -53,11 +55,11 @@ climdexCalc.RR <- function(GeneralParameters){
     {
         don <- try(readRDS(GeneralParameters$cdtdataset), silent = TRUE)
         if(inherits(don, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset), format = TRUE)
+            Insert.Messages.Out(paste(message[['9']], GeneralParameters$cdtdataset), TRUE, 'e')
             return(NULL)
         }
         if(don$TimeStep != "daily"){
-            Insert.Messages.Out(paste("The dataset is not a daily data"), format = TRUE)
+            Insert.Messages.Out(message[['10']], TRUE, 'e')
             return(NULL)
         }
 
@@ -213,7 +215,7 @@ climdexCalc.RR <- function(GeneralParameters){
             pTOT <- TRUE
             if(nrow(precentiles) == 0){
                 pTOT <- FALSE
-                Insert.Messages.Out("No enough data, R95pTOT and R99pTOT will not be computed", format = TRUE)
+                Insert.Messages.Out(message[['11']], TRUE, 'e')
             }
         }
 

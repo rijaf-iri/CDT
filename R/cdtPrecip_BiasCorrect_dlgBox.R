@@ -2,9 +2,9 @@
 rmvBiasGetInfoRain <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 29
-        largeur1 <- 60
-        largeur2 <- 45
+        largeur0 <- 22
+        largeur1 <- 46
+        largeur2 <- 35
     }else{
         largeur0 <- 22
         largeur1 <- 42

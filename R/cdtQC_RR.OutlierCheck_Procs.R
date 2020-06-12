@@ -281,8 +281,8 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
                     xm <- xm[ina]
                     v1 <- v0[ina]
                     if(imx[i]){
-                      xm <- xm[im]  
-                      v1 <- v0[im]
+                      xm <- xm[im]
+                      v1 <- v1[im]
                     }else{
                         xm <- c(xm, rep(NA, params$voisin$max - nonNA[i]))
                     }

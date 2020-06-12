@@ -36,7 +36,7 @@
             <text lang="en"> Display on OpenStreetMap </text>
         </button>
         <checkbutton id="1">
-            <text lang="en"> Stations coordinates already exist </text>
+            <text lang="en"> Data already computed </text>
         </checkbutton>
         <checkbutton id="2">
             <text lang="en"> Display non checked coordinates </text>
@@ -60,7 +60,7 @@
             <text lang="en"> Directory to save the outputs </text>
         </label>
         <label id="7">
-            <text lang="en"> Stations coordinates data </text>
+            <text lang="en"> Stations Coordinates Data </text>
         </label>
         <label id="8">
             <text lang="en"> Zoom </text>

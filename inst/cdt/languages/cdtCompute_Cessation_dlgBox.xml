@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Water Balance Setting </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Set </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Compute each year separately </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Multiple WB </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Multiple SWHC </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Start Water Balance from </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Day </text>
+        </label>
+        <label id="4">
+            <text lang="en"> First Day Water Balance </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Soil Water Holding Capacity </text>
+        </label>
+    </widget>
+</dialog_box>

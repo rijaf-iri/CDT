@@ -4,7 +4,7 @@ getInfoBasePeriod <- function(parent.win, Parameters)
     if(WindowsOS()){
         largeur0 <- 35
     }else{
-        largeur0 <- 30
+        largeur0 <- 35
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoBasePeriod_dlgBox.xml")
@@ -30,12 +30,12 @@ getInfoBasePeriod <- function(parent.win, Parameters)
 
     state0 <- if(Parameters$all.years) "disable" else "normal"
 
-    chk.allYears <- tkcheckbutton(frBaseP, variable = allYears, text =  lang.dlg[['label']][['1']], anchor = 'w', justify = 'left', width = largeur0)
-    txt.startYear <- tklabel(frBaseP, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
+    chk.allYears <- tkcheckbutton(frBaseP, variable = allYears, text =  lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left', width = largeur0)
+    txt.startYear <- tklabel(frBaseP, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
     en.startYear <- tkentry(frBaseP, textvariable = startYear, width = 6, state = state0)
-    txt.endYear <- tklabel(frBaseP, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+    txt.endYear <- tklabel(frBaseP, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
     en.endYear <- tkentry(frBaseP, textvariable = endYear, width = 6, state = state0)
-    txt.minYear <- tklabel(frBaseP, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
+    txt.minYear <- tklabel(frBaseP, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
     en.minYear <- tkentry(frBaseP, textvariable = minYear, width = 6)
 
     tkgrid(chk.allYears, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)

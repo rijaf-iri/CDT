@@ -1,11 +1,11 @@
 filterCDTData_getParams <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 63
-        largeur2 <- 60
-        largeur3 <- 33
+        largeur1 <- 47
+        largeur2 <- 45
+        largeur3 <- 21
     }else{
-        largeur1 <- 41
+        largeur1 <- 42
         largeur2 <- 40
         largeur3 <- 21
     }
@@ -152,7 +152,7 @@ filterCDTData_getParams <- function(){
     tkgrid(frInput, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frPeriod, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frPercent, row = 2, column = 0, sticky = 'e', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frOutput, row = 3, column = 0, sticky = 'ws', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frOutput, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
 

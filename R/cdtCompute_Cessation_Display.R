@@ -13,17 +13,17 @@ CessationCalc.plotCessationMaps <- function(){
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
     .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp,
-                                label.fun = legendLabel.plotOnsetMaps,
-                                donDate = str_trim(tclvalue(.cdtData$EnvData$donDate)),
-                                start.date = .cdtData$EnvData$output$start.date
+                                 label.fun = legendLabel.plotOnsetMaps,
+                                 donDate = str_trim(tclvalue(.cdtData$EnvData$donDate)),
+                                 start.date = .cdtData$EnvData$output$start.date
                             )
 
     opar <- par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = dataMapOp,
-                        data.type = .data.type,
-                        plot.type = .plot.type)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = dataMapOp,
+                         data.type = .data.type,
+                         plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -44,7 +44,7 @@ CessationCalc.plotCessationGraph <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['13']], format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['13']], TRUE, 'e')
             return(NULL)
         }
         don <- .cdtData$EnvData$varData$data[, ixy]

@@ -2,15 +2,15 @@
 rasterData.convert_getParams <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 27
-        largeur1 <- 71
-        largeur2 <- 60
-        largeur3 <- 15
-        largeur4 <- 12
+        largeur0 <- 21
+        largeur1 <- 56
+        largeur2 <- 47
+        largeur3 <- 10
+        largeur4 <- 8
     }else{
         largeur0 <- 21
-        largeur1 <- 50
-        largeur2 <- 43
+        largeur1 <- 51
+        largeur2 <- 44
         largeur3 <- 10
         largeur4 <- 8
     }

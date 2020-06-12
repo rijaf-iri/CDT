@@ -2,21 +2,21 @@
 PlotMulitpleDataCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(32)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(20)
-        largeur4 <- 14
-        data.w <- .cdtEnv$tcl$fun$w.scale(25)
-        data.h <- .cdtEnv$tcl$fun$h.scale(40)
-    }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(15)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(21)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(14)
+        largeur0 <- 21
+        largeur1 <- 30
+        largeur2 <- 31
+        largeur3 <- 20
         largeur4 <- 10
-        data.w <- .cdtEnv$tcl$fun$w.scale(25)
-        data.h <- .cdtEnv$tcl$fun$h.scale(40)
+        data.w <- 360
+        data.h <- 351
+    }else{
+        largeur0 <- 21
+        largeur1 <- 30
+        largeur2 <- 31
+        largeur3 <- 20
+        largeur4 <- 10
+        data.w <- 360
+        data.h <- 351
     }
 
     ###################
@@ -455,10 +455,7 @@ PlotMulitpleDataCmd <- function(){
         ############
 
         tkconfigure(bt.Save, command = function(){
-            if(WindowsOS())
-                filename <- tclvalue(tkgetSaveFile(initialfile = "", filetypes = .cdtEnv$tcl$data$filetypes6, defaultextension = TRUE))
-            else
-                filename <- tclvalue(tkgetSaveFile(initialfile = "", filetypes = .cdtEnv$tcl$data$filetypes6))
+            filename <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes6)
 
             if(filename == "" | filename == 'NA' | is.na(filename)){
                 Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")

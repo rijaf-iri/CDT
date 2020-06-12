@@ -143,31 +143,10 @@ climatologiesCalc.plotClimGraph <- function(){
     xlim <- range(daty, na.rm = TRUE)
     if(optsgph$xlim$is.min){
         xx <- strsplit(optsgph$xlim$min, "-")[[1]]
-        x1 <- as.numeric(xx[1])
-        if(is.na(x1) | x1 < 1 | x1 > 12){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['14']], TRUE, 'e')
-            return(NULL)
-        }
-        x2 <- as.numeric(xx[2])
-        if(.cdtData$EnvData$output$params$outstep == "pentad"){
-            if(is.na(x2) | x2 < 1 | x2 > 6){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['15']], TRUE, 'e')
-                return(NULL)
-            }
-            x2 <- c(1, 6, 11, 16, 21, 26)[x2]
-        }
-        if(.cdtData$EnvData$output$params$outstep == "dekadal"){
-            if(is.na(x2) | x2 < 1 | x2 > 3){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['16']], TRUE, 'e')
-                return(NULL)
-            }
-            x2 <- c(1, 11, 21)[x2]
-        }
-        if(.cdtData$EnvData$output$params$outstep == "monthly") x2 <- 1
-        x1 <- str_pad(x1, 2, pad = "0")
-        x2 <- str_pad(x2, 2, pad = "0")
-        xx <- as.Date(paste0(2015, x1, x2), "%Y%m%d")
-        if(is.na(xx)){
+        if(length(xx) == 1) xx[2] <- 1
+        xx <- try(as.Date(paste(2015, xx[1], xx[2], sep = '-')), silent = TRUE)
+
+        if(inherits(xx, "try-error") | is.na(xx)){
             Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], TRUE, 'e')
             return(NULL)
         }
@@ -175,31 +154,10 @@ climatologiesCalc.plotClimGraph <- function(){
     }
     if(optsgph$xlim$is.max){
         xx <- strsplit(optsgph$xlim$max, "-")[[1]]
-        x1 <- as.numeric(xx[1])
-        if(is.na(x1) | x1 < 1 | x1 > 12){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['14']], TRUE, 'e')
-            return(NULL)
-        }
-        x2 <- as.numeric(xx[2])
-        if(.cdtData$EnvData$output$params$outstep == "pentad"){
-            if(is.na(x2) | x2 < 1 | x2 > 6){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['15']], TRUE, 'e')
-                return(NULL)
-            }
-            x2 <- c(1, 6, 11, 16, 21, 26)[x2]
-        }
-        if(.cdtData$EnvData$output$params$outstep == "dekadal"){
-            if(is.na(x2) | x2 < 1 | x2 > 3){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['16']], TRUE, 'e')
-                return(NULL)
-            }
-            x2 <- c(1, 11, 21)[x2]
-        }
-        if(.cdtData$EnvData$output$params$outstep == "monthly") x2 <- 1
-        x1 <- str_pad(x1, 2, pad = "0")
-        x2 <- str_pad(x2, 2, pad = "0")
-        xx <- as.Date(paste0(2015, x1, x2), "%Y%m%d")
-        if(is.na(xx)){
+        if(length(xx) == 1) xx[2] <- 1
+        xx <- try(as.Date(paste(2015, xx[1], xx[2], sep = '-')), silent = TRUE)
+
+        if(inherits(xx, "try-error") | is.na(xx)){
             Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], TRUE, 'e')
             return(NULL)
         }

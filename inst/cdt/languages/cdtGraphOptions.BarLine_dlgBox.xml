@@ -55,6 +55,16 @@
             <text lang="en"> Color Selection </text>
         </label>
     </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> X axis range in daily date format (YYYY-MM-DD) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> X axis range in daily date format (YYYY-MM-DD) </text>
+            </tooltip>
+        </content>
+    </help>
     <message>
         <content id="1">
             <text lang="en"> Invalid grid lines </text>

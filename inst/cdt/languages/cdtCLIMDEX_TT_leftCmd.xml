@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Indices </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Maps </text>
+        </tab>
+        <tab id="4">
+            <text lang="en"> Graphs </text>
+        </tab>
+        <tab id="5">
+            <text lang="en"> Layers </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> TXn: Monthly minimum value of TX </text>
+            </option>
+            <option id="2">
+                <text lang="en"> TXx: Monthly maximum value of TX </text>
+            </option>
+            <option id="3">
+                <text lang="en"> TX10p: Percentage of days when TX &lt; 10th percentile </text>
+            </option>
+            <option id="4">
+                <text lang="en"> TX90p: Percentage of days when TX &gt; 90th percentile </text>
+            </option>
+            <option id="5">
+                <text lang="en"> WSDI: Warm spell duration index </text>
+            </option>
+            <option id="6">
+                <text lang="en"> ID: Number of icing days when TX &lt; 0C (or user defined threshold) </text>
+            </option>
+            <option id="7">
+                <text lang="en"> SU: Number of summer days when TX &gt; 25C (or user defined threshold) </text>
+            </option>
+            <option id="8">
+                <text lang="en"> TNn: Monthly minimum value of TN </text>
+            </option>
+            <option id="9">
+                <text lang="en"> TNx: Monthly maximum value of TN </text>
+            </option>
+            <option id="10">
+                <text lang="en"> TN10p: Percentage of days when TN &lt; 10th percentile </text>
+            </option>
+            <option id="11">
+                <text lang="en"> TN90p: Percentage of days when TN &gt; 90th percentile </text>
+            </option>
+            <option id="12">
+                <text lang="en"> CSDI: Cold spell duration index </text>
+            </option>
+            <option id="13">
+                <text lang="en"> FD: Number of frost days when TN &lt; 0C (or user defined threshold) </text>
+            </option>
+            <option id="14">
+                <text lang="en"> TR: Number of tropical nights when TN &gt; 20C (or user defined threshold) </text>
+            </option>
+            <option id="15">
+                <text lang="en"> DTR: Daily temperature range </text>
+            </option>
+            <option id="16">
+                <text lang="en"> GSL: Growing season length </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Slope - Estimate </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Slope - Standard Error </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Slope t-value </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Slope p-value Pr(&gt;t) </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Intercept - Estimate </text>
+            </option>
+            <option id="6">
+                <text lang="en"> Intercept - Standard Error </text>
+            </option>
+            <option id="7">
+                <text lang="en"> Intercept t-value </text>
+            </option>
+            <option id="8">
+                <text lang="en"> Intercept p-value Pr(&gt;t) </text>
+            </option>
+            <option id="9">
+                <text lang="en"> Multiple R-squared </text>
+            </option>
+            <option id="10">
+                <text lang="en"> Residual Standard Error </text>
+            </option>
+        </combobox>
+        <combobox id="3">
+            <option id="1">
+                <text lang="en"> Line Plot </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Bar Plot </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Set Base Period </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Calculate Indices </text>
+        </button>
+        <checkbutton id="1-a">
+            <text lang="en"> Southern Hemisphere: year starting on July </text>
+        </checkbutton>
+        <checkbutton id="1-b">
+            <text lang="en"> Use bootstrap resampling </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Data already computed </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Add Shapefile to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Input Data </text>
+        </label>
+        <label id="2-a">
+            <text lang="en"> File containing stations daily Tmax data </text>
+        </label>
+        <label id="2-b">
+            <text lang="en"> File containing stations daily Tmin data </text>
+        </label>
+        <label id="3-a">
+            <text lang="en"> Index file (*.rds) for daily Tmax data </text>
+        </label>
+        <label id="3-b">
+            <text lang="en"> Index file (*.rds) for daily Tmin data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Format </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Directory to save indices </text>
+        </label>
+        <label id="6-a">
+            <text lang="en"> User defined lower threshold of TX </text>
+        </label>
+        <label id="6-b">
+            <text lang="en"> User defined upper threshold of TX </text>
+        </label>
+        <label id="6-c">
+            <text lang="en"> User defined lower threshold of TN </text>
+        </label>
+        <label id="6-d">
+            <text lang="en"> User defined upper threshold of TN </text>
+        </label>
+        <label id="6-e">
+            <text lang="en"> GSL mean temperature threshold </text>
+        </label>
+        <label id="6-f">
+            <text lang="en"> GSL consecutive days </text>
+        </label>
+        <label id="7">
+            <text lang="en"> CLIMDEX Data </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Statistics Maps </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Yearly Maps </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="11">
+            <text lang="en"> CLIMDEX Graph </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Station/Coordinates </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Shapefile </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Select a station to plot </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Enter longitude and latitude to plot </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Latitude </text>
+        </label>
+        <label id="17">
+            <text lang="en"> Centred time window </text>
+        </label>
+        <label id="18">
+            <text lang="en"> days </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the type of input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the type of input data </text>
+            </tooltip>
+        </content>
+        <content id="2-a">
+            <status>
+                <text lang="en"> Select the file containing the daily maximum temperature data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the daily maximum temperature data </text>
+            </tooltip>
+        </content>
+        <content id="2-b">
+            <status>
+                <text lang="en"> Select the file containing the daily minimum temperature data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the daily minimum temperature data </text>
+            </tooltip>
+        </content>
+        <content id="3-a">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;daily maximum temperature dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;daily maximum temperature dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="3-b">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;daily minimum temperature dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;daily minimum temperature dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Enter the full path to directory to save the calculated indices </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save the calculated indices </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Check desired indices to calculate </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check desired indices to calculate </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> The daily percentiles will be calculated using a centered (2 x window + 1) time window </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The daily percentiles will be calculated using a centered (2 x window + 1) time window </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Use a bootstrap procedure for the calculation of the base period </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Use a bootstrap procedure for the calculation of the base period </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Calculating Indices (this may take some time) ....... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Indices calculation finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Indices calculation failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Unable to load CLIMDEX data </text>
+        </content>
+        <content id="5">
+            <text lang="en"> No Indices data found </text>
+        </content>
+        <content id="6">
+            <text lang="en"> not found </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Invalid year range </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No daily maximum temperature data found </text>
+        </content>
+        <content id="9">
+            <text lang="en"> will not be calculated </text>
+        </content>
+        <content id="10">
+            <text lang="en"> No daily minimum temperature data found </text>
+        </content>
+        <content id="11">
+            <text lang="en"> No indices selected </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Tmin and Tmax stations do not match </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Tmin and Tmax dates do not overlap </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="15">
+            <text lang="en"> Tmin dataset is not a daily data </text>
+        </content>
+        <content id="16">
+            <text lang="en"> Tmax dataset is not a daily data </text>
+        </content>
+        <content id="17">
+            <text lang="en"> Tmin and Tmax have different resolution or bbox </text>
+        </content>
+        <content id="18">
+            <text lang="en"> Tmin and Tmax have different chunk size </text>
+        </content>
+        <content id="19">
+            <text lang="en"> Tmin and Tmax dates do not match </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Station not found </text>
+        </content>
+    </message>
+</panel_cmd>

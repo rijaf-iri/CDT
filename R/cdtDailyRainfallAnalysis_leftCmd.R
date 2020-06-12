@@ -2,53 +2,132 @@
 dailyRainAnalysisPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- 30
-        largeur4 <- 29
-        largeur5 <- 22
-        largeur6 <- 22
-    }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(20)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(21)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
+        largeur0 <- 29
+        largeur1 <- 33
+        largeur2 <- 35
         largeur3 <- 24
-        largeur4 <- 22
+        largeur4 <- 26
         largeur5 <- 14
-        largeur6 <- 14
+        largeur6 <- 9
+        largeur7 <- 7
+        largeur8 <- 18
+        largeur9 <- 20
+        largeur10 <- 30
+        largeur11 <- 10
+    }else{
+        largeur0 <- 30
+        largeur1 <- 32
+        largeur2 <- 33
+        largeur3 <- 24
+        largeur4 <- 26
+        largeur5 <- 14
+        largeur6 <- 11
+        largeur7 <- 7
+        largeur8 <- 18
+        largeur9 <- 19
+        largeur10 <- 30
+        largeur11 <- 10
     }
 
     MOIS <- format(ISOdate(2014, 1:12, 1), "%b")
     varsname <- list(name = c("TOTALRAIN", "RAININT", "WETDAY", "DRYDAY", "WETSPELL", "DRYSPELL"),
-                    longname = c('Total Rainfall', 'Rainfall Intensity', 'Number of Wet Days',
-                    'Number of Dry Days', 'Number of Wet Spells', 'Number of Dry Spells'))
+                     longname = c('Total Rainfall', 'Rainfall Intensity', 'Number of Wet Days',
+                                  'Number of Dry Days', 'Number of Wet Spells', 'Number of Dry Spells'))
     statsname <- list(name = c('mean', 'stdev', 'coefvar', 'proba'),
-                    longname = c('Mean', 'Standard deviation', 'Coefficient of variation',
-                                'Probability of exceeding'))
+                      longname = c('Mean', 'Standard deviation', 'Coefficient of variation',
+                                   'Probability of exceeding'))
 
     GeneralParameters <- list(data.type = "cdtstation", cdtstation = "", cdtdataset = "",
-                            seas = list(all.years = TRUE,
-                                        startYear = 1981, startMon = 9, startDay = 1,
-                                        endYear = 2017, endMon = 12, endDay = 31),
-                            stats = list(daily = 'tot.rain', yearly = 'mean'),
-                            def = list(drywet.day = 0.85, drywet.spell = 7, proba.thres = 400),
-                            min.frac = 0.95, output = "")
+                              seas = list(all.years = TRUE,
+                                          startYear = 1981, startMon = 9, startDay = 1,
+                                          endYear = 2017, endMon = 12, endDay = 31,
+                                          min.frac = 0.95),
+                              stats = list(daily = 'tot.rain', yearly = 'mean'),
+                              def = list(drywet.day = 0.85, drywet.spell = 7, proba.thres = 400),
+                              output = "")
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtSpatialAnalysis_leftCmd.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-    # .cdtData$EnvData$message <- lang.dlg[['message']]
+    GeneralParameters$plot <- list(typeTSp = "line")
+
+    .cdtData$EnvData$tab$pointSize.MapStat <- NULL
+    .cdtData$EnvData$varstatMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
+                                          userCol = list(custom = FALSE, color = NULL),
+                                          userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                          title = list(user = FALSE, title = ''),
+                                          colkeyLab = list(user = FALSE, label = ''),
+                                          scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                          pointSize = .cdtData$EnvData$tab$pointSize.MapStat)
+
+    .cdtData$EnvData$tab$pointSize.MapTS <- NULL
+    .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
+                                       userCol = list(custom = FALSE, color = NULL),
+                                       userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                       title = list(user = FALSE, title = ''),
+                                       colkeyLab = list(user = FALSE, label = ''),
+                                       scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                       pointSize = .cdtData$EnvData$tab$pointSize.MapTS)
+
+
+    .cdtData$EnvData$TSGraphOp <- list(
+                        anomaly = list(
+                                anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1981, endYr.anom = 2010),
+                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                ylim = list(is.min = FALSE, min = -100, is.max = FALSE, max = 100),
+                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                colors = list(negative = "blue", positive = "red")
+                            ),
+                        bar = list(
+                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                            ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                            title = list(is.title = FALSE, title = '', position = 'top'),
+                            colors = list(col = "darkblue")
+                        ),
+                        line = list(
+                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                            ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                            title = list(is.title = FALSE, title = '', position = 'top'),
+                            plot = list(type = 'both',
+                                col = list(line = "red", points = "blue"),
+                                lwd = 2, cex = 1.4),
+                            legend = list(
+                                is = list(mean = FALSE, tercile = FALSE, linear = FALSE),
+                                add = list(mean = FALSE, tercile = FALSE, linear = FALSE),
+                                col = list(mean = "black", tercile1 = "green", tercile2 = "blue", linear = "purple3"),
+                                text = list(mean = "Average", tercile1 = "Tercile 0.33333", tercile2 = "Tercile 0.66666", linear = "Trend line"),
+                                lwd = list(mean = 2, tercile = 2, linear = 2))
+                        ),
+                        proba = list(
+                            xlim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                            ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                            title = list(is.title = FALSE, title = '', position = 'top'),
+                            plot = list(type = 'both',
+                                col = list(line = "red", points = "blue"),
+                                lwd = 2, cex = 0.8),
+                            proba = list(theoretical = FALSE, col = 'black', lwd = 2)
+                        )
+                    )
+
+    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+
+    ###################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtDailyRainfallAnalysis_leftCmd.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    .cdtData$EnvData$message <- lang.dlg[['message']]
 
     ###################
 
     .cdtEnv$tcl$main$cmd.frame <- tkframe(.cdtEnv$tcl$main$panel.left)
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = "Input")
-    cmd.tab2 <- bwAddTab(tknote.cmd, text = "Analysis")
-    cmd.tab3 <- bwAddTab(tknote.cmd, text = "Maps")
-    cmd.tab4 <- bwAddTab(tknote.cmd, text = "Graphs")
-    cmd.tab5 <- bwAddTab(tknote.cmd, text = "Boundaries")
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
+    cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
+    cmd.tab5 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['5']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
@@ -71,7 +150,7 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ############################################
 
-        frameInData <- ttklabelframe(subfr1, text = "Input Data", relief = 'groove')
+        frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         DataType <- tclVar()
         CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
@@ -80,14 +159,14 @@ dailyRainAnalysisPanelCmd <- function(){
 
         if(GeneralParameters$data.type == 'cdtstation'){
             input.Prec <- tclVar(GeneralParameters$cdtstation)
-            txt.INPrec <- 'File containing stations daily Precip data'
+            txt.INPrec <- lang.dlg[['label']][['2']]
         }else{
             input.Prec <- tclVar(GeneralParameters$cdtdataset)
-            txt.INPrec <- 'Index file (*.rds) for daily Precip data'
+            txt.INPrec <- lang.dlg[['label']][['3']]
         }
         txt.INPrec.var <- tclVar(txt.INPrec)
 
-        txt.datatype <- tklabel(frameInData, text = "Format", anchor = 'w', justify = 'left')
+        txt.datatype <- tklabel(frameInData, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
         cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
 
         txt.INPrec <- tklabel(frameInData, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
@@ -97,6 +176,25 @@ dailyRainAnalysisPanelCmd <- function(){
             cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
         }
         bt.INPrec <- tkbutton(frameInData, text = "...")
+
+        ############
+        tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.INPrec, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.en.INPrec, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.INPrec, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        ############
+
+        helpWidget(cb.datatype, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+
+        if(GeneralParameters$data.type == 'cdtstation'){
+            helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+            helpWidget(bt.INPrec, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        }else{
+            helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+            helpWidget(bt.INPrec, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+        }
 
         ############
 
@@ -116,31 +214,6 @@ dailyRainAnalysisPanelCmd <- function(){
         })
 
         ############
-        tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.INPrec, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.en.INPrec, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.INPrec, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-        ############
-        infobulle(cb.datatype, 'Select the format of the input data')
-        status.bar.display(cb.datatype, 'Select the format of the input data')
-
-        if(GeneralParameters$data.type == 'cdtstation'){
-            infobulle(cb.en.INPrec, 'Select the file containing the daily precipitation')
-            status.bar.display(cb.en.INPrec, 'Select the file containing the daily precipitation')
-
-            infobulle(bt.INPrec, 'Browse file if not listed')
-            status.bar.display(bt.INPrec, 'Browse file if not listed')
-        }else{
-            infobulle(cb.en.INPrec, 'Enter the full path to the file <daily precipitation dataset name>.rds')
-            status.bar.display(cb.en.INPrec, 'Enter the full path to the file <daily precipitation dataset name>.rds')
-
-            infobulle(bt.INPrec, 'or browse here')
-            status.bar.display(bt.INPrec, 'or browse here')
-        }
-
-        ############
 
         tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
             tkdestroy(cb.en.INPrec)
@@ -148,7 +221,7 @@ dailyRainAnalysisPanelCmd <- function(){
 
             ###
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-                tclvalue(txt.INPrec.var) <- 'File containing stations daily Precip data'
+                tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['2']]
 
                 cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
 
@@ -164,16 +237,13 @@ dailyRainAnalysisPanelCmd <- function(){
                 })
 
                 ######
-                infobulle(cb.en.INPrec, 'Select the file containing the daily precipitation')
-                status.bar.display(cb.en.INPrec, 'Select the file containing the daily precipitation')
-
-                infobulle(bt.INPrec, 'Browse file if not listed')
-                status.bar.display(bt.INPrec, 'Browse file if not listed')
+                helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+                helpWidget(bt.INPrec, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
             }
 
             ###
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-                tclvalue(txt.INPrec.var) <- 'Index file (*.rds) for daily Precip data'
+                tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['3']]
 
                 cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
 
@@ -184,11 +254,8 @@ dailyRainAnalysisPanelCmd <- function(){
                 })
 
                 ######
-                infobulle(cb.en.INPrec, 'Enter the full path to the file <daily precipitation dataset name>.rds')
-                status.bar.display(cb.en.INPrec, 'Enter the full path to the file <daily precipitation dataset name>.rds')
-
-                infobulle(bt.INPrec, 'or browse here')
-                status.bar.display(bt.INPrec, 'or browse here')
+                helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+                helpWidget(bt.INPrec, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
             }
 
             #######
@@ -197,60 +264,11 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ############################################
 
-        frameSeas <- ttklabelframe(subfr1, text = "Season", relief = 'groove')
+        bt.defineSeas <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
-        allYears <- tclVar(GeneralParameters$seas$all.years)
-        startYear <- tclVar(GeneralParameters$seas$startYear)
-        endYear <- tclVar(GeneralParameters$seas$endYear)
-
-        mon1 <- as.numeric(str_trim(GeneralParameters$seas$startMon))
-        startMon <- tclVar(MOIS[mon1])
-        mon2 <- as.numeric(str_trim(GeneralParameters$seas$endMon))
-        endMon <- tclVar(MOIS[mon2])
-
-        min.frac <- tclVar(GeneralParameters$min.frac)
-
-        stateYear <- if(GeneralParameters$seas$all.years) 'disabled' else 'normal'
-
-        chk.allYears <- tkcheckbutton(frameSeas, variable = allYears, text = "Use all years from the input data", anchor = 'w', justify = 'left')
-        txt.startYear <- tklabel(frameSeas, text = "Start Year", anchor = 'e', justify = 'right')
-        en.startYear <- tkentry(frameSeas, textvariable = startYear, width = 6, state = stateYear)
-        txt.endYear <- tklabel(frameSeas, text = "End Year", anchor = 'e', justify = 'right')
-        en.endYear <- tkentry(frameSeas, textvariable = endYear, width = 6, state = stateYear)
-
-        frMonDay <- tkframe(frameSeas)
-        txt.startMon <- tklabel(frMonDay, text = "From")
-        cb.startMon <- ttkcombobox(frMonDay, values = MOIS, textvariable = startMon, width = 6)
-        spin.startDay <- ttkspinbox(frMonDay, from = 1, to = 31, increment = 1, justify = 'center', width = 2)
-        tkset(spin.startDay, GeneralParameters$seas$startDay)
-
-        txt.endMon <- tklabel(frMonDay, text = "to")
-        cb.endMon <- ttkcombobox(frMonDay, values = MOIS, textvariable = endMon, width = 6)
-        spin.endDay <- ttkspinbox(frMonDay, from = 1, to = 31, increment = 1, justify = 'center', width = 2)
-        tkset(spin.endDay, GeneralParameters$seas$endDay)
-
-        tkgrid(txt.startMon, cb.startMon, spin.startDay, txt.endMon, cb.endMon, spin.endDay)
-        tkgrid.configure(txt.endMon, sticky = "we", padx = 3)
-
-        frMinFrac <- tkframe(frameSeas)
-        txt.minfrac <- tklabel(frMinFrac, text = "Minimum fraction of available data", anchor = 'w', justify = 'left')
-        en.minfrac <- tkentry(frMinFrac, textvariable = min.frac, width = 5)
-
-        tkgrid(txt.minfrac, en.minfrac)
-
-        tkgrid(chk.allYears, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.startYear, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.startYear, row = 1, column = 2, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.endYear, row = 1, column = 3, sticky = 'e', rowspan = 1, columnspan = 3, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.endYear, row = 1, column = 6, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frMonDay, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frMinFrac, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-
-        ############
-        tkbind(chk.allYears, "<Button-1>", function(){
-            stateYear <- if(tclvalue(allYears) == '1') 'normal' else 'disabled'
-            tkconfigure(en.startYear, state = stateYear)
-            tkconfigure(en.endYear, state = stateYear)
+        tkconfigure(bt.defineSeas, command = function(){
+            GeneralParameters$seas <<- getInfoDaily2Season(.cdtEnv$tcl$main$win,
+                                                           GeneralParameters$seas)
         })
 
         ############################################
@@ -259,27 +277,25 @@ dailyRainAnalysisPanelCmd <- function(){
 
         dir.save <- tclVar(GeneralParameters$output)
 
-        txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results", anchor = 'w', justify = 'left')
+        txt.dir.save <- tklabel(frameDirSav, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
         en.dir.save <- tkentry(frameDirSav, textvariable = dir.save, width = largeur2)
         bt.dir.save <- tkbutton(frameDirSav, text = "...")
-
-        ######
-        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir.save, isFile = FALSE))
 
         ######
         tkgrid(txt.dir.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(en.dir.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(bt.dir.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-        infobulle(en.dir.save, 'Enter the full path to directory to save outputs')
-        status.bar.display(en.dir.save, 'Enter the full path to directory to save outputs')
-        infobulle(bt.dir.save, 'or browse here')
-        status.bar.display(bt.dir.save, 'or browse here')
+        helpWidget(en.dir.save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+        helpWidget(bt.dir.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+
+        ######
+        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir.save, isFile = FALSE))
 
         ############################################
 
         tkgrid(frameInData, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameSeas, row = 1, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(bt.defineSeas, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(frameDirSav, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
@@ -289,53 +305,55 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameStats <- ttklabelframe(subfr2, text = "Statistics", relief = 'groove')
+        frameStats <- ttklabelframe(subfr2, text = lang.dlg[['label']][['6']], relief = 'groove')
 
         daily.Stats <- tclVar()
-        CbDailyStatsVAL <- c('Total Rainfall', 'Rainfall Intensity', 'Number of Wet Days',
-                            'Number of Dry Days', 'Number of Wet Spells', 'Number of Dry Spells')
+        CbDailyStatsVAL <- lang.dlg[['combobox']][['1']]
         DailyStatsVAL <- c('tot.rain', 'rain.int', 'nb.wet.day', 'nb.dry.day', 'nb.wet.spell', 'nb.dry.spell')
         tclvalue(daily.Stats) <- CbDailyStatsVAL[DailyStatsVAL %in% GeneralParameters$stats$daily]
 
         yearly.Stats <- tclVar()
-        CbYearlyStatsVAL <- c('Mean', 'Standard deviation', 'Coefficient of variation', 'Probability of exceeding')
+        CbYearlyStatsVAL <- lang.dlg[['combobox']][['2']]
         YearlyStatsVAL <- c('mean', 'stdev', 'coefvar', 'proba')
         tclvalue(yearly.Stats) <- CbYearlyStatsVAL[YearlyStatsVAL %in% GeneralParameters$stats$yearly]
 
-        txt.StatDay <- tklabel(frameStats, text = 'Seasonal daily statistics', anchor = 'w', justify = 'left')
-        cb.StatDay <- ttkcombobox(frameStats, values = CbDailyStatsVAL, textvariable = daily.Stats, width = largeur3)
+        txt.StatDay <- tklabel(frameStats, text = lang.dlg[['label']][['7']], anchor = 'w', justify = 'left')
+        cb.StatDay <- ttkcombobox(frameStats, values = CbDailyStatsVAL, textvariable = daily.Stats, justify = 'center', width = largeur3)
 
-        txt.StatYear <- tklabel(frameStats, text = 'Yearly seasonal statistics', anchor = 'w', justify = 'left')
-        cb.StatYear <- ttkcombobox(frameStats, values = CbYearlyStatsVAL, textvariable = yearly.Stats, width = largeur3)
+        txt.StatYear <- tklabel(frameStats, text = lang.dlg[['label']][['8']], anchor = 'w', justify = 'left')
+        cb.StatYear <- ttkcombobox(frameStats, values = CbYearlyStatsVAL, textvariable = yearly.Stats, justify = 'center', width = largeur3)
 
         ########
-        tkgrid(txt.StatDay, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.StatDay, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.StatYear, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(tklabel(frameStats, width = 5), row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.StatYear, row = 3, column = 3, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        sepLabStat <- tklabel(frameStats, width = largeur6)
+
+        tkgrid(txt.StatDay, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.StatDay, row = 1, column = 3, sticky = 'e', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.StatYear, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(sepLabStat, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.StatYear, row = 3, column = 3, sticky = 'e', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ##############################################
 
-        frameDryDay <- ttklabelframe(subfr2, text = "Wet/Dry Day definition", relief = 'groove')
+        frameDryDay <- ttklabelframe(subfr2, text = lang.dlg[['label']][['9']], relief = 'groove')
 
         drywet.day <- tclVar(GeneralParameters$def$drywet.day)
 
-        txt.DryDay1 <- tklabel(frameDryDay, text = 'Rainfall amount above/below', anchor = 'w', justify = 'left')
-        en.DryDay <- tkentry(frameDryDay, textvariable = drywet.day, width = 5)
-        txt.DryDay2 <- tklabel(frameDryDay, text = 'mm/day', anchor = 'w', justify = 'left')
+        txt.DryDay1 <- tklabel(frameDryDay, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+        en.DryDay <- tkentry(frameDryDay, textvariable = drywet.day, width = 5, justify = 'center')
+        txt.DryDay2 <- tklabel(frameDryDay, text = lang.dlg[['label']][['11']], anchor = 'w', justify = 'left')
 
         tkgrid(txt.DryDay1, en.DryDay, txt.DryDay2)
 
         ##############################################
 
-        frameDrySpell <- ttklabelframe(subfr2, text = "Wet/Dry Spell definition", relief = 'groove')
+        frameDrySpell <- ttklabelframe(subfr2, text = lang.dlg[['label']][['12']], relief = 'groove')
 
         drywet.spell <- tclVar(GeneralParameters$def$drywet.spell)
 
-        txt.DrySpell1 <- tklabel(frameDrySpell, text = 'Defined as', anchor = 'w', justify = 'left')
-        en.DrySpell <- tkentry(frameDrySpell, textvariable = drywet.spell, width = 2)
-        txt.DrySpell2 <- tklabel(frameDrySpell, text = 'continuous wet/dry days', anchor = 'w', justify = 'left')
+        txt.DrySpell1 <- tklabel(frameDrySpell, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
+        en.DrySpell <- tkentry(frameDrySpell, textvariable = drywet.spell, width = 3, justify = 'center')
+        txt.DrySpell2 <- tklabel(frameDrySpell, text = lang.dlg[['label']][['14']], anchor = 'w', justify = 'left')
 
         tkgrid(txt.DrySpell1, en.DrySpell, txt.DrySpell2)
 
@@ -344,7 +362,7 @@ dailyRainAnalysisPanelCmd <- function(){
         frameProba <- tkframe(subfr2)
 
         INITIAL.VAL <- c(400, 10, 30, 30, 5, 5)
-        UNIT.TXT <- c('mm', 'mm/day', 'days', 'days', 'spells', 'spells')
+        UNIT.TXT <- lang.dlg[['combobox']][['3']]
 
         txt.units.thres <- UNIT.TXT[DailyStatsVAL %in% GeneralParameters$stats$daily]
 
@@ -352,8 +370,8 @@ dailyRainAnalysisPanelCmd <- function(){
         units.thres <- tclVar(txt.units.thres)
         stateProba <- if(GeneralParameters$stats$yearly == 'proba') 'normal' else 'disabled'
 
-        txt.Proba1 <- tklabel(frameProba, text = 'Probability of exceeding', anchor = 'w', justify = 'left')
-        en.Proba <- tkentry(frameProba, textvariable = proba.thres, width = 4, state = stateProba)
+        txt.Proba1 <- tklabel(frameProba, text = lang.dlg[['label']][['15']], anchor = 'e', justify = 'right')
+        en.Proba <- tkentry(frameProba, textvariable = proba.thres, width = 5, state = stateProba, justify = 'center')
         txt.Proba2 <- tklabel(frameProba, text = tclvalue(units.thres), textvariable = units.thres, anchor = 'w', justify = 'left')
 
         tkgrid(txt.Proba1, en.Proba, txt.Proba2)
@@ -379,13 +397,7 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        # frameCalc <- tkframe(subfr2)
-
-        # if(!is.null(.cdtData$EnvData$DirExist)){
-        #     stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
-        # }else stateCaclBut <- "normal"
-
-        bt.CalcDaily <- ttkbutton(subfr2, text = 'Calculate')
+        bt.CalcDaily <- ttkbutton(subfr2, text = lang.dlg[['button']][['2']])
 
         tkconfigure(bt.CalcDaily, command = function(){
             GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
@@ -396,16 +408,7 @@ dailyRainAnalysisPanelCmd <- function(){
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
                 GeneralParameters$cdtdataset <- str_trim(tclvalue(input.Prec))
 
-            GeneralParameters$min.frac <- as.numeric(str_trim(tclvalue(min.frac)))
             GeneralParameters$output <- str_trim(tclvalue(dir.save))
-
-            GeneralParameters$seas$all.years <- switch(tclvalue(allYears), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$seas$startYear <- as.numeric(str_trim(tclvalue(startYear)))
-            GeneralParameters$seas$endYear <- as.numeric(str_trim(tclvalue(endYear)))
-            GeneralParameters$seas$startMon <- which(MOIS %in% str_trim(tclvalue(startMon)))
-            GeneralParameters$seas$startDay <- as.numeric(str_trim(tclvalue(tkget(spin.startDay))))
-            GeneralParameters$seas$endMon <- which(MOIS %in% str_trim(tclvalue(endMon)))
-            GeneralParameters$seas$endDay <- as.numeric(str_trim(tclvalue(tkget(spin.endDay))))
 
             GeneralParameters$stats$daily <- DailyStatsVAL[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
             GeneralParameters$stats$yearly <- YearlyStatsVAL[CbYearlyStatsVAL %in% str_trim(tclvalue(yearly.Stats))]
@@ -414,10 +417,11 @@ dailyRainAnalysisPanelCmd <- function(){
             GeneralParameters$def$drywet.spell <- as.numeric(str_trim(tclvalue(drywet.spell)))
             GeneralParameters$def$proba.thres <- as.numeric(str_trim(tclvalue(proba.thres)))
 
+            ##########
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
             analysis.method <- paste(str_trim(tclvalue(daily.Stats)), ":", str_trim(tclvalue(yearly.Stats)))
-            Insert.Messages.Out(paste("Calculating", analysis.method, "......."), TRUE, "i")
+            Insert.Messages.Out(paste(lang.dlg[['message']][['1']], analysis.method, "......."), TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
@@ -433,8 +437,8 @@ dailyRainAnalysisPanelCmd <- function(){
                 }
             )
 
-            msg0 <- paste(analysis.method, "calculation finished successfully")
-            msg1 <- paste(analysis.method, "calculation failed")
+            msg0 <- paste(analysis.method, lang.dlg[['message']][['2']])
+            msg1 <- paste(analysis.method, lang.dlg[['message']][['3']])
 
             if(!is.null(ret)){
                 if(ret == 0){
@@ -450,20 +454,16 @@ dailyRainAnalysisPanelCmd <- function(){
                     if(inherits(res1, "try-error") | is.null(res1)) return(NULL)
                     res2 <- try(read.Data.MapVarTS(), silent = TRUE)
                     if(inherits(res2, "try-error") | is.null(res2)) return(NULL)
-                }else Insert.Messages.Out(msg1, format = TRUE)
-            }else Insert.Messages.Out(msg1, format = TRUE)
+                }else Insert.Messages.Out(msg1, TRUE, 'e')
+            }else Insert.Messages.Out(msg1, TRUE, 'e')
         })
-
-        ####################
-
-        # tkgrid(bt.CalcDaily, row = 0, column = 0, sticky = 'we', pady = 1)
 
         ############################################
 
         tkgrid(frameStats, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameDryDay, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 2)
         tkgrid(frameDrySpell, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 2)
-        tkgrid(frameProba, row = 3, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 2)
+        tkgrid(frameProba, row = 3, column = 0, sticky = 'e', padx = 1, pady = 3, ipadx = 1, ipady = 2)
         tkgrid(bt.CalcDaily, row = 4, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
@@ -473,16 +473,22 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameDataExist <- ttklabelframe(subfr3, text = "Analysis data", relief = 'groove')
+        frameDataExist <- ttklabelframe(subfr3, text = lang.dlg[['label']][['16']], relief = 'groove')
 
-        .cdtData$EnvData$DirExist <- tclVar(0)
+        DirExist <- tclVar(0)
         file.dataIndex <- tclVar()
 
-        stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
+        stateExistData <- if(tclvalue(DirExist) == "1") "normal" else "disabled"
 
-        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = .cdtData$EnvData$DirExist, text = "Analysis data already computed", anchor = 'w', justify = 'left')
-        en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2, state = stateExistData)
-        bt.dataIdx <- tkbutton(frameDataExist, text = "...", state = stateExistData)
+        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+        en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2 + 5, state = stateExistData)
+        bt.dataIdx <- tkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
+
+        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ###############
 
         tkconfigure(bt.dataIdx, command = function(){
             path.dataIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -492,8 +498,8 @@ dailyRainAnalysisPanelCmd <- function(){
             if(file.exists(str_trim(tclvalue(file.dataIndex)))){
                 OutIndexdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutIndexdata, "try-error")){
-                    Insert.Messages.Out('Unable to load daily rainfall analysis data', format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), TRUE, 'e')
 
                     tkconfigure(cb.varstat.var, values = "")
                     tclvalue(.cdtData$EnvData$anaVars) <- ""
@@ -519,41 +525,36 @@ dailyRainAnalysisPanelCmd <- function(){
             }
         })
 
-        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.dataIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
         ###############
+
         tkbind(chk.dataIdx, "<Button-1>", function(){
-            stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
+            stateExistData <- if(tclvalue(DirExist) == '1') 'disabled' else 'normal'
             tkconfigure(en.dataIdx, state = stateExistData)
             tkconfigure(bt.dataIdx, state = stateExistData)
-            stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
-            tkconfigure(bt.CalcDaily, state = stateCaclBut)
+
+            stateCaclBut <- if(tclvalue(DirExist) == '1') 'normal' else 'disabled'
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateCaclBut)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab2$IDtab, state = stateCaclBut)
         })
 
         ##############################################
 
-        frameDataStatMap <- ttklabelframe(subfr3, text = "Statistics Maps", relief = 'groove')
+        frameDataStatMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['17']], relief = 'groove')
 
         .cdtData$EnvData$anaVars <- tclVar()
         .cdtData$EnvData$anaStat <- tclVar()
 
-        cb.varstat.var <- ttkcombobox(frameDataStatMap, values = "", textvariable = .cdtData$EnvData$anaVars, width = largeur4)
-        bt.varstat.maps <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['3']])
-        cb.varstat.stat <- ttkcombobox(frameDataStatMap, values = "", textvariable = .cdtData$EnvData$anaStat, width = largeur4)
-        bt.varstat.MapOpt <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+        cb.varstat.var <- ttkcombobox(frameDataStatMap, values = "", textvariable = .cdtData$EnvData$anaVars, justify = 'center', width = largeur4)
+        bt.varstat.maps <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur8)
+        bt.varstat.MapOpt <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur8)
+        cb.varstat.stat <- ttkcombobox(frameDataStatMap, values = "", textvariable = .cdtData$EnvData$anaStat, justify = 'center', width = largeur4)
+
+        tkgrid(cb.varstat.var, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.varstat.MapOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.varstat.maps, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(cb.varstat.stat, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ###################
-
-        .cdtData$EnvData$tab$pointSize.MapStat <- NULL
-        .cdtData$EnvData$varstatMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-                                            userCol = list(custom = FALSE, color = NULL),
-                                            userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                            title = list(user = FALSE, title = ''),
-                                            colkeyLab = list(user = FALSE, label = ''),
-                                            scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                            pointSize = .cdtData$EnvData$tab$pointSize.MapStat)
 
         tkconfigure(bt.varstat.MapOpt, command = function(){
             if(!is.null(.cdtData$EnvData$varData$map)){
@@ -587,13 +588,6 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ###################
 
-        tkgrid(cb.varstat.var, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.varstat.maps, row = 0, column = 4, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.varstat.stat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.varstat.MapOpt, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ###################
-
         tkbind(cb.varstat.var, "<<ComboboxSelected>>", function(){
             vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
             if(vars == "") return(NULL)
@@ -607,31 +601,48 @@ dailyRainAnalysisPanelCmd <- function(){
 
             tkconfigure(cb.data.Index, values = statsval$date)
             tclvalue(.cdtData$EnvData$donDate) <- statsval$date[length(statsval$date)]
+
+            ##############
+            vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
+            this.vars <- varsname$name[which(varsname$longname == vars)]
+            .cdtData$EnvData$now$this.vars <- this.vars
+
+            stats <- str_trim(tclvalue(.cdtData$EnvData$anaStat))
+            this.stats <- statsname$name[which(statsname$longname == stats)]
+            .cdtData$EnvData$now$this.stats <- this.stats
+
             return(0)
+        })
+
+        tkbind(cb.varstat.stat, "<<ComboboxSelected>>", function(){
+            vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
+            this.vars <- varsname$name[which(varsname$longname == vars)]
+            .cdtData$EnvData$now$this.vars <- this.vars
+
+            stats <- str_trim(tclvalue(.cdtData$EnvData$anaStat))
+            this.stats <- statsname$name[which(statsname$longname == stats)]
+            .cdtData$EnvData$now$this.stats <- this.stats
         })
 
         ##############################################
 
-        frameDataMap <- ttklabelframe(subfr3, text = "Seasonal Maps", relief = 'groove')
+        frameDataMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['18']], relief = 'groove')
 
         .cdtData$EnvData$donDate <- tclVar()
 
-        cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = .cdtData$EnvData$donDate, width = largeur5)
-        bt.data.Index.prev <- ttkbutton(frameDataMap, text = "<<", width = 3)
-        bt.data.Index.next <- ttkbutton(frameDataMap, text = ">>", width = 3)
-        bt.data.maps <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        bt.data.MapOpt <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
+        cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = .cdtData$EnvData$donDate, justify = 'center', width = largeur9)
+        bt.data.Index.prev <- ttkbutton(frameDataMap, text = "<<", width = largeur7)
+        bt.data.Index.next <- ttkbutton(frameDataMap, text = ">>", width = largeur7)
+        bt.data.maps <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur8)
+        bt.data.MapOpt <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur8)
+
+        tkgrid(bt.data.Index.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.data.Index, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.Index.next, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.MapOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.maps, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
 
         ###############
-
-        .cdtData$EnvData$tab$pointSize.MapTS <- NULL
-        .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-                                        userCol = list(custom = FALSE, color = NULL),
-                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                        title = list(user = FALSE, title = ''),
-                                        colkeyLab = list(user = FALSE, label = ''),
-                                        scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                        pointSize = .cdtData$EnvData$tab$pointSize.MapTS)
 
         tkconfigure(bt.data.MapOpt, command = function(){
             if(!is.null(.cdtData$EnvData$varData$map)){
@@ -654,9 +665,12 @@ dailyRainAnalysisPanelCmd <- function(){
         .cdtData$EnvData$tab$dataMapTS <- NULL
 
         tkconfigure(bt.data.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != "" &
-                !is.null(.cdtData$EnvData$tsData))
-                    dailyRainAnalysis.Display.MapVarTS()
+            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
+                ret <- try(read.Data.MapVarTS(), silent = TRUE)
+                if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+
+                dailyRainAnalysis.Display.MapVarTS()
+            }
         })
 
         tkconfigure(bt.data.Index.prev, command = function(){
@@ -695,14 +709,6 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ###############
 
-        tkgrid(bt.data.Index.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.data.Index, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.Index.next, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.maps, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.MapOpt, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ###############
-
         tkbind(cb.data.Index, "<<ComboboxSelected>>", function(){
             if(!is.null(.cdtData$EnvData$tsData)){
                 ret <- try(read.Data.MapVarTS(), silent = TRUE)
@@ -716,8 +722,8 @@ dailyRainAnalysisPanelCmd <- function(){
 
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
-        txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur5)
+        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['19']], anchor = 'e', justify = 'right')
+        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur5)
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -753,77 +759,47 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameDataTS <- ttklabelframe(subfr4, text = "Analysis Graph", relief = 'groove')
+        frameDataTS <- ttklabelframe(subfr4, text = lang.dlg[['label']][['20']], relief = 'groove')
 
-        typeTSPLOT <- c("Line", "Barplot", "Probability", "Anomaly")
-        .cdtData$EnvData$plot.maps$typeTSp <- tclVar("Line")
+        CbtypeTSPLOTVAL <- lang.dlg[['combobox']][['4']]
+        typeTSPLOTVAL <- c('line', 'bar', 'proba', 'anom')
+        typeTSp <- tclVar()
+        tclvalue(typeTSp) <- CbtypeTSPLOTVAL[typeTSPLOTVAL %in% GeneralParameters$plot$typeTSp]
+
+        .cdtData$EnvData$plot.maps$typeTSp <- GeneralParameters$plot$typeTSp
+
         .cdtData$EnvData$plot.maps$averageTSp <- tclVar(FALSE)
         .cdtData$EnvData$plot.maps$tercileTSp <- tclVar(FALSE)
         .cdtData$EnvData$plot.maps$trendTSp <- tclVar(FALSE)
 
-        stateType <- if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Line") "normal" else "disabled"
+        stateType <- if(GeneralParameters$plot$typeTSp == 'line') "normal" else "disabled"
 
-        cb.typeTSp <- ttkcombobox(frameDataTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur5)
-        bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
+        cb.typeTSp <- ttkcombobox(frameDataTS, values = CbtypeTSPLOTVAL, textvariable = typeTSp, justify = 'center', width = largeur10)
+        bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur8)
+        bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur8)
 
         frTS1 <- tkframe(frameDataTS)
-        chk.meanTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$averageTSp, text = "Add Mean", anchor = 'w', justify = 'left', state = stateType)
-        chk.tercTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$tercileTSp, text = "Add Terciles", anchor = 'w', justify = 'left', state = stateType)
-        chk.trendTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$trendTSp, text = "Add Trend", anchor = 'w', justify = 'left', state = stateType)
+        chk.meanTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$averageTSp, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left', state = stateType)
+        chk.tercTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$tercileTSp, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left', state = stateType)
+        chk.trendTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$trendTSp, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left', state = stateType)
         tkgrid(chk.meanTSp, chk.tercTSp, chk.trendTSp)
 
         #################
 
-        .cdtData$EnvData$TSGraphOp <- list(
-                            anomaly = list(
-                                    anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1981, endYr.anom = 2010),
-                                    xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                    ylim = list(is.min = FALSE, min = -100, is.max = FALSE, max = 100),
-                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                    title = list(is.title = FALSE, title = '', position = 'top'),
-                                    colors = list(negative = "blue", positive = "red")
-                                ),
-                            bar = list(
-                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                title = list(is.title = FALSE, title = '', position = 'top'),
-                                colors = list(col = "darkblue")
-                            ),
-                            line = list(
-                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                title = list(is.title = FALSE, title = '', position = 'top'),
-                                plot = list(type = 'both',
-                                    col = list(line = "red", points = "blue"),
-                                    lwd = 2, cex = 1.4),
-                                legend = list(
-                                    is = list(mean = FALSE, tercile = FALSE, linear = FALSE),
-                                    add = list(mean = FALSE, tercile = FALSE, linear = FALSE),
-                                    col = list(mean = "black", tercile1 = "green", tercile2 = "blue", linear = "purple3"),
-                                    text = list(mean = "Average", tercile1 = "Tercile 0.33333", tercile2 = "Tercile 0.66666", linear = "Trend line"),
-                                    lwd = list(mean = 2, tercile = 2, linear = 2))
-                            ),
-                            proba = list(
-                                xlim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                title = list(is.title = FALSE, title = '', position = 'top'),
-                                plot = list(type = 'both',
-                                    col = list(line = "red", points = "blue"),
-                                    lwd = 2, cex = 0.8),
-                                proba = list(theoretical = FALSE, col = 'black', lwd = 2)
-                            )
-                        )
+        tkgrid(cb.typeTSp, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TSGraphOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsGraph.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frTS1, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            suffix.fun <- switch(tclvalue(.cdtData$EnvData$plot.maps$typeTSp),
-                                    "Anomaly" = "Anomaly",
-                                    "Barplot" = "Bar",
-                                    "Line" = "Line",
-                                    "Probability" = "Proba")
+            vtypeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            suffix.fun <- switch(vtypeTSp,
+                                 "anom" = "Anomaly",
+                                 "bar" = "Bar",
+                                 "line" = "Line",
+                                 "proba" = "Proba")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
         })
@@ -833,6 +809,8 @@ dailyRainAnalysisPanelCmd <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+
             if(!is.null(.cdtData$EnvData$tsData)){
                 imgContainer <- CDT.Display.Graph(dailyRainAnalysis.plotVarGraph, .cdtData$EnvData$tab$dataGraph, 'Analysis-Graph')
                 .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
@@ -841,15 +819,10 @@ dailyRainAnalysisPanelCmd <- function(){
 
         #################
 
-        tkgrid(cb.typeTSp, row = 0, column = 0, sticky = 'we', pady = 3, columnspan = 1)
-        tkgrid(bt.TSGraphOpt, row = 0, column = 1, sticky = 'we', padx = 4, pady = 1, columnspan = 1)
-        tkgrid(bt.TsGraph.plot, row = 0, column = 2, sticky = 'we', pady = 3, columnspan = 1)
-        tkgrid(frTS1, row = 1, column = 0, sticky = 'we', pady = 3, columnspan = 3)
-
-        #################
-
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
-            stateType <- if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Line") "normal" else "disabled"
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+
+            stateType <- if(.cdtData$EnvData$plot.maps$typeTSp == "line") "normal" else "disabled"
             tkconfigure(chk.meanTSp, state = stateType)
             tkconfigure(chk.tercTSp, state = stateType)
             tkconfigure(chk.trendTSp, state = stateType)
@@ -878,7 +851,7 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameSTNCrds <- ttklabelframe(subfr4, text = "Station/Coordinates", relief = 'groove')
+        frameSTNCrds <- ttklabelframe(subfr4, text = lang.dlg[['label']][['21']], relief = 'groove')
 
         frTS2 <- tkframe(frameSTNCrds)
         .cdtData$EnvData$plot.maps$lonLOC <- tclVar()
@@ -899,16 +872,22 @@ dailyRainAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr5, text = "Boundaries", relief = 'groove')
+        frameSHP <- ttklabelframe(subfr5, text = lang.dlg[['label']][['22']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
         file.plotShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['5']], anchor = 'w', justify = 'left')
         bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
+
+        ########
+        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
         tkconfigure(bt.addshp, command = function(){
@@ -928,17 +907,10 @@ dailyRainAnalysisPanelCmd <- function(){
         })
 
         ########
-        .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
         tkconfigure(bt.addshpOpt, command = function(){
             .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
         })
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         #################
         tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
@@ -968,13 +940,20 @@ dailyRainAnalysisPanelCmd <- function(){
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
-            txt.stnSel <- tklabel(frTS2, text = "Select a station to plot")
-            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = 6)
-            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = 6)
-            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur6)
+            txt.stnSel <- tklabel(frTS2, text = lang.dlg[['label']][['23']])
+            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = largeur7)
+            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = largeur7)
+            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, justify = 'center', width = largeur9)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
+            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
             tkconfigure(bt.stnID.prev, command = function(){
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+
                 if(!is.null(.cdtData$EnvData$tsData)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
@@ -987,6 +966,8 @@ dailyRainAnalysisPanelCmd <- function(){
             })
 
             tkconfigure(bt.stnID.next, command = function(){
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+
                 if(!is.null(.cdtData$EnvData$tsData)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
@@ -997,17 +978,12 @@ dailyRainAnalysisPanelCmd <- function(){
                     .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
                 }
             })
-
-            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         }else{
-            txt.crdSel <- tklabel(frTS2, text = "Enter longitude and latitude to plot", anchor = 'w', justify = 'left')
-            txt.lonLoc <- tklabel(frTS2, text = "Longitude", anchor = 'e', justify = 'right')
-            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
-            txt.latLoc <- tklabel(frTS2, text = "Latitude", anchor = 'e', justify = 'right')
-            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+            txt.crdSel <- tklabel(frTS2, text = lang.dlg[['label']][['24']], anchor = 'w', justify = 'left')
+            txt.lonLoc <- tklabel(frTS2, text = lang.dlg[['label']][['25']], anchor = 'e', justify = 'right')
+            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = largeur11)
+            txt.latLoc <- tklabel(frTS2, text = lang.dlg[['label']][['26']], anchor = 'e', justify = 'right')
+            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = largeur11)
             stnIDTSPLOT <- ""
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
 
@@ -1030,8 +1006,8 @@ dailyRainAnalysisPanelCmd <- function(){
             plot.type <- c("Pixels", "Points")
             .cdtData$EnvData$plot.maps$.data.type <- "Points"
 
-            .cdtData$EnvData$varstatMapOp$pointSize <- 0.7
-            .cdtData$EnvData$dataMapOp$pointSize <- 0.7
+            .cdtData$EnvData$varstatMapOp$pointSize <- 1.0
+            .cdtData$EnvData$dataMapOp$pointSize <- 1.0
         }else{
             plot.type <- c("Pixels", "FilledContour")
             .cdtData$EnvData$plot.maps$.data.type <- "Grid"
@@ -1084,7 +1060,7 @@ dailyRainAnalysisPanelCmd <- function(){
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             filePathData <- file.path(.cdtData$EnvData$PathData, "CDTDATASET", paste0(this.vars, "_", this.stats, ".rds"))
             if(!file.exists(filePathData)){
-                Insert.Messages.Out(paste(filePathData, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filePathData, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 
@@ -1126,7 +1102,7 @@ dailyRainAnalysisPanelCmd <- function(){
         }else{
             filePathData <- file.path(.cdtData$EnvData$PathData, "DATA_NetCDF_STATS", paste0(this.vars, "_", this.stats, ".nc"))
             if(!file.exists(filePathData)){
-                Insert.Messages.Out(paste(filePathData, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filePathData, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 
@@ -1170,7 +1146,7 @@ dailyRainAnalysisPanelCmd <- function(){
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             filePathData <- file.path(.cdtData$EnvData$PathData, this.vars, paste0(this.vars, ".rds"))
             if(!file.exists(filePathData)){
-                Insert.Messages.Out(paste(filePathData, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filePathData, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 
@@ -1225,7 +1201,7 @@ dailyRainAnalysisPanelCmd <- function(){
         }else{
             filePathData <- file.path(.cdtData$EnvData$PathData, this.vars, "DATA_NetCDF", paste0("Seas_", this.daty, ".nc"))
             if(!file.exists(filePathData)){
-                Insert.Messages.Out(paste(filePathData, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filePathData, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 
@@ -1258,6 +1234,12 @@ dailyRainAnalysisPanelCmd <- function(){
                 .cdtData$EnvData$file.CDT.Idx <- file.CDT.Idx
             }
         }
+
+        stats <- str_trim(tclvalue(.cdtData$EnvData$anaStat))
+        this.stats <- statsname$name[which(statsname$longname == stats)]
+
+        .cdtData$EnvData$now$this.vars <- this.vars
+        .cdtData$EnvData$now$this.stats <- this.stats
 
         return(0)
     }

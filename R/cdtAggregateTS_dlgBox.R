@@ -2,13 +2,13 @@
 AggregateTS_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 61
-        largeur1 <- 58
-        largeur2 <- 48
-        wtkcombo <- 25
+        largeur0 <- 44
+        largeur1 <- 42
+        largeur2 <- 30
+        wtkcombo <- 18
     }else{
         largeur0 <- 40
-        largeur1 <- 38
+        largeur1 <- 39
         largeur2 <- 30
         wtkcombo <- 18
     }
@@ -74,12 +74,12 @@ AggregateTS_GetInfo <- function(){
     cb.outstep <- ttkcombobox(frameTS, values = Cbperiod1VAL, textvariable = ConvertData, width = wtkcombo)
     txt.convTs <- tklabel(frameTS, text = paste("-", lang.dlg[['label']][['2']], "-"))
 
-    helpWidget(cb.intstep, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
-    helpWidget(cb.outstep, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
-
     tkgrid(cb.intstep, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1)
     tkgrid(txt.convTs, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
     tkgrid(cb.outstep, row = 0, column = 9, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1)
+
+    helpWidget(cb.intstep, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(cb.outstep, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     ####################
 
@@ -653,7 +653,27 @@ AggregateTS_GetInfo <- function(){
 
     ##############
 
+    tkgrid(cb.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(set.datatype, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.stnfl, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.stnfl, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+    if(.cdtData$GalParams$data.type == 'cdtstation'){
+        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+    }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
+        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+    }else{
+        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+    }
+
+    ##############
+
     settingdone <- .cdtData$GalParams$settingdone
+
     tkconfigure(set.datatype, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         AggregateTS_ncdfData(tt, str_trim(tclvalue(file.stnfl)), tclvalue(OriginData))
@@ -684,25 +704,6 @@ AggregateTS_GetInfo <- function(){
             tclvalue(file.stnfl) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
         }
     })
-
-    ##############
-    tkgrid(cb.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(set.datatype, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.stnfl, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.stnfl, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-    ##############
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
-    }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-    }else{
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-    }
 
     ##############
 
@@ -821,6 +822,7 @@ AggregateTS_GetInfo <- function(){
     })
 
     ############################################
+
     frSave <- tkframe(frAGGRTS, relief = 'groove', borderwidth = 2)
 
     file.save <- tclVar(.cdtData$GalParams$output)
@@ -838,11 +840,7 @@ AggregateTS_GetInfo <- function(){
     en.file.save <- tkentry(frSave, textvariable = file.save, width = largeur0)
     bt.file.save <- tkbutton(frSave, text = "...")
 
-    tkconfigure(bt.file.save, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        fileORdir2Save(file.save, isFile = isFile)
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-    })
+    #########
 
     tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
@@ -851,6 +849,14 @@ AggregateTS_GetInfo <- function(){
     ihlpSav <- if(.cdtData$GalParams$data.type == 'cdtstation') '10' else '11'
     helpWidget(en.file.save, lang.dlg[['tooltip']][[ihlpSav]], lang.dlg[['status']][[ihlpSav]])
     helpWidget(bt.file.save, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+
+    #########
+
+    tkconfigure(bt.file.save, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        fileORdir2Save(file.save, isFile = isFile)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+    })
 
     ############################################
     tkgrid(frConvTS, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)

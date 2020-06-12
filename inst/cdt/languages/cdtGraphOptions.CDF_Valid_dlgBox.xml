@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Top </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Bottom </text>
+            </option>
+        </combobox>
+        <checkbutton id="1">
+            <text lang="en"> Add legend to plot </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> X axis ranges </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Y axis ranges </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Axis Labels </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Graph Title </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Title Position </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Type </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Line </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Points </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Color </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Width </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Symbol </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Size </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Color Selection </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Observation </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Estimation </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Legend </text>
+        </label>
+    </widget>
+</dialog_box>

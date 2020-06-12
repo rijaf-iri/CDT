@@ -1,13 +1,13 @@
 CPT.convert_getParams <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 60
-        largeur1 <- 57
-        largeur2 <- 18
-        largeur3 <- 43
+        largeur0 <- 40
+        largeur1 <- 38
+        largeur2 <- 10
+        largeur3 <- 32
     }else{
-        largeur0 <- 36
-        largeur1 <- 35
+        largeur0 <- 38
+        largeur1 <- 37
         largeur2 <- 10
         largeur3 <- 30
     }

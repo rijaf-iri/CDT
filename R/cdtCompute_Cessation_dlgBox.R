@@ -1,9 +1,17 @@
 
 computeWB_Cessation <- function(Parameters, data.type){
+    if(WindowsOS()){
+        largeur0 <- 7
+        largeur1 <- 2
+    }else{
+        largeur0 <- 7
+        largeur1 <- 2
+    }
+
     MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Cessation_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Cessation_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ############################################
 
@@ -18,67 +26,83 @@ computeWB_Cessation <- function(Parameters, data.type){
 
     frWBalance <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
+    ###############
+
+    frameDate <- tkframe(frWBalance)
+
     imon <- as.numeric(str_trim(Parameters$hdate$start.month))
     start.month <- tclVar(MOIS[imon])
     start.day <- tclVar(Parameters$hdate$start.day)
     separate.year <- tclVar(Parameters$hdate$separate.year)
+
+    chk.sep.year <- tkcheckbutton(frameDate, variable = separate.year, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+    txt.1stdate0 <- tklabel(frameDate, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
+    txt.1stdate1 <- tklabel(frameDate, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
+    cb.1stdate1 <- ttkcombobox(frameDate, values = MOIS, textvariable = start.month, width = 11)
+    txt.1stdate2 <- tklabel(frameDate, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+    cb.1stdate2 <- ttkcombobox(frameDate, values = 1:31, textvariable = start.day, width = 3)
+
+    txt.1stdatesep <- tklabel(frameDate, text = "", width = largeur0)
+
+    ###############
+
+    tkgrid(chk.sep.year, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(txt.1stdatesep, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.1stdate0, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.1stdate1, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.1stdate1, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.1stdate2, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.1stdate2, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ###############
+
+    frameParWB <- tkframe(frWBalance, relief = 'groove', borderwidth = 2)
+
     start.wb <- tclVar(Parameters$wb$wb1)
     capacity.max <- tclVar(Parameters$swhc$cap.max)
-
     use.multi.wb <- tclVar(Parameters$wb$multi)
     use.multi.swhc <- tclVar(Parameters$swhc$multi)
 
     stateMWB <- if(Parameters$wb$multi) "normal" else "disabled"
     stateMSWHC <- if(Parameters$swhc$multi) "normal" else "disabled"
 
-    chk.sep.year <- tkcheckbutton(frWBalance, variable = separate.year, text = 'Compute each year separately', anchor = 'w', justify = 'left')
+    txt.wb.1stday <- tklabel(frameParWB, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
+    en.wb.1stday <- tkentry(frameParWB, textvariable = start.wb, width = 4)
+    chk.wb.1stday <- tkcheckbutton(frameParWB, variable = use.multi.wb, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+    bt.wb.1stday <- ttkbutton(frameParWB, text = lang.dlg[['button']][['1']], state = stateMWB)
+    txt.wb.swhc <- tklabel(frameParWB, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
+    en.wb.swhc <- tkentry(frameParWB, textvariable = capacity.max, width = 4)
+    chk.wb.swhc <- tkcheckbutton(frameParWB, variable = use.multi.swhc, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
+    bt.wb.swhc <- ttkbutton(frameParWB, text = lang.dlg[['button']][['1']], state = stateMSWHC)
 
-    txt.1stdate0 <- tklabel(frWBalance, text = "Start Water Balance from", anchor = 'e', justify = 'right')
-    txt.1stdate1 <- tklabel(frWBalance, text = "Month", anchor = 'e', justify = 'right')
-    cb.1stdate1 <- ttkcombobox(frWBalance, values = MOIS, textvariable = start.month, width = 9)
-    txt.1stdate2 <- tklabel(frWBalance, text = "Day", anchor = 'e', justify = 'right')
-    cb.1stdate2 <- ttkcombobox(frWBalance, values = 1:31, textvariable = start.day, width = 2)
+    txt.1stdaysep <- tklabel(frameParWB, text = "", width = largeur1)
 
-    txt.wb.1stday <- tklabel(frWBalance, text = "First Day Water Balance", anchor = 'w', justify = 'left')
-    en.wb.1stday <- tkentry(frWBalance, textvariable = start.wb, width = 4)
+    ###############
 
-    chk.wb.1stday <- tkcheckbutton(frWBalance, variable = use.multi.wb, text = "Multiple WB", anchor = 'w', justify = 'left')
-    bt.wb.1stday <- tkbutton(frWBalance, text = "Set", state = stateMWB)
+    tkgrid(txt.wb.1stday, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.wb.1stday, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.1stdaysep, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(chk.wb.1stday, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.wb.1stday, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    txt.wb.swhc <- tklabel(frWBalance, text = "Soil Water Holding Capacity", anchor = 'w', justify = 'left')
-    en.wb.swhc <- tkentry(frWBalance, textvariable = capacity.max, width = 4)
-
-    chk.wb.swhc <- tkcheckbutton(frWBalance, variable = use.multi.swhc, text = "Multiple SWHC", anchor = 'w', justify = 'left')
-    bt.wb.swhc <- tkbutton(frWBalance, text = "Set", state = stateMSWHC)
+    tkgrid(txt.wb.swhc, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.wb.swhc, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(chk.wb.swhc, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.wb.swhc, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ###############
     tkconfigure(bt.wb.1stday, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
         Parameters$wb[["file"]] <<- computeWB_get.WB.SWHC(tt, Parameters$wb[["file"]], data.type, "WB")
+        tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
     tkconfigure(bt.wb.swhc, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
         Parameters$swhc[["file"]] <<- computeWB_get.WB.SWHC(tt, Parameters$swhc[["file"]], data.type, "SWHC")
+        tcl('wm', 'attributes', tt, topmost = TRUE)
     })
-
-    ###############
-
-    tkgrid(chk.sep.year, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    tkgrid(txt.1stdate0, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.1stdate1, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.1stdate1, row = 1, column = 6, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.1stdate2, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.1stdate2, row = 1, column = 8, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    tkgrid(txt.wb.1stday, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.wb.1stday, row = 2, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(chk.wb.1stday, row = 2, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.wb.1stday, row = 2, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    tkgrid(txt.wb.swhc, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.wb.swhc, row = 3, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(chk.wb.swhc, row = 3, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.wb.swhc, row = 3, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ###############
 
@@ -91,6 +115,11 @@ computeWB_Cessation <- function(Parameters, data.type){
         stateMSWHC <- if(tclvalue(use.multi.swhc) == '0') 'normal' else 'disabled'
         tkconfigure(bt.wb.swhc, state = stateMSWHC)
     })
+
+    ############################################
+
+    tkgrid(frameDate, row = 0, column = 0, sticky = 'we', pady = 3)
+    tkgrid(frameParWB, row = 1, column = 0, sticky = 'we')
 
     ############################################
     tkgrid(frWBalance, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
@@ -139,7 +168,7 @@ computeWB_Cessation <- function(Parameters, data.type){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Water Balance Setting')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

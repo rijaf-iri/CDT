@@ -16,6 +16,9 @@
         <checkbutton id="3">
             <text lang="en"> Equidistant colorkey breaks </text>
         </checkbutton>
+        <checkbutton id="4">
+            <text lang="en"> Add hill shade layer </text>
+        </checkbutton>
         <label id="1">
             <text lang="en"> Colorkey </text>
         </label>

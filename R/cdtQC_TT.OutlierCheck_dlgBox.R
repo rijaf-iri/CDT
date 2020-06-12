@@ -2,13 +2,13 @@
 getParams.TT.OutlierCheck <- function(Parameters)
 {
     if(WindowsOS()){
-        largeur0 <- 3
-        largeur1 <- 9
-        largeur2 <- 18
+        largeur0 <- 2
+        largeur1 <- 11
+        largeur2 <- 13
     }else{
         largeur0 <- 3
-        largeur1 <- 10
-        largeur2 <- 15
+        largeur1 <- 12
+        largeur2 <- 14
     }
 
     ###################
@@ -104,12 +104,12 @@ getParams.TT.OutlierCheck <- function(Parameters)
     txt.max.dt <- tklabel(frameVois, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
     en.max.dt <- tkentry(frameVois, width = 3, textvariable = max.dst, justify = 'left')
     txt.elv.dif <- tklabel(frameVois, text = lang.dlg[['label']][['8']], anchor = 'e', justify = 'right')
-    en.elv.dif <- tkentry(frameVois, width = 3, textvariable = elv.diff, justify = 'left')
+    en.elv.dif <- tkentry(frameVois, width = 4, textvariable = elv.diff, justify = 'left')
 
     tkgrid(txt.min.nb, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.min.nb, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.max.nb, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.max.nb, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.max.nb, row = 0, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.max.dt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.max.dt, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.elv.dif, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

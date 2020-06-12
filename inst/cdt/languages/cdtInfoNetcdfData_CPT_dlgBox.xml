@@ -6,12 +6,12 @@
     </title>
     <widget>
         <label id="1">
-            <text lang="en"> Netcdf data sample file </text>
-            <text lang="fr"> Fichier exemple de données Netcdf </text>
+            <text lang="en"> NetCDF data sample file </text>
+            <text lang="fr"> Fichier exemple de données NetCDF </text>
         </label>
         <label id="2">
-            <text lang="en"> Netcdf data filenames format </text>
-            <text lang="fr"> Format des fichiers de données Netcdf </text>
+            <text lang="en"> NetCDF data filenames format </text>
+            <text lang="fr"> Format des fichiers de données NetCDF </text>
         </label>
         <label id="3">
             <text lang="en"> Replace the year, month, dekad, pentad or day by\n </text>
@@ -29,8 +29,8 @@
     <help>
         <content id="1">
             <status>
-                <text lang="en"> File containing a sample of the netcdf data </text>
-                <text lang="fr"> Fichier contenant un exemple de données netcdf </text>
+                <text lang="en"> File containing a sample of the NetCDF data </text>
+                <text lang="fr"> Fichier contenant un exemple de données NetCDF </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
@@ -39,12 +39,12 @@
         </content>
         <content id="2">
             <status>
-                <text lang="en"> Enter the filename format of netcdf data (see below) </text>
-                <text lang="fr"> Entrez le format de nom de fichier des données netcdf (voir ci-dessous) </text>
+                <text lang="en"> Enter the filename format of NetCDF data (see below) </text>
+                <text lang="fr"> Entrez le format de nom de fichier des données NetCDF (voir ci-dessous) </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of netcdf data (see below) </text>
-                <text lang="fr"> Entrez le format de nom de fichier des données netcdf (voir ci-dessous) </text>
+                <text lang="en"> Enter the filename format of NetCDF data (see below) </text>
+                <text lang="fr"> Entrez le format de nom de fichier des données NetCDF (voir ci-dessous) </text>
             </tooltip>
         </content>
     </help>

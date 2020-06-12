@@ -90,7 +90,7 @@ cdt.plotmap.args <- function(don, MapOp, shpf,
         legend.mar <- 6.2
         mar <- mar.v
         legend.width <- 0.9
-        line <- if(max(nchar(as.character(breaks))) > 4) 3 else 2
+        line <- if(max(nchar(as.character(legendLabel))) > 4) 3 else 2
         legend.args <- if(!is.null(legend.texta)) list(text = legend.texta, cex = 1.0, side = 4, line = line) else NULL
     }
 
@@ -138,7 +138,7 @@ cdt.plotmap.fun <- function(don, horizontal, kolor,
     axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
     axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 1.0)
     axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
-    title(main = titre, cex.main = 1.5, font.main = 2)
+    title(main = titre, cex.main = 1.3, font.main = 2)
 
     if(plot.type %in% c("Pixels", "FilledContour")){
         if(plot.type == "Pixels")

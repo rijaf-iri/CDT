@@ -2,9 +2,9 @@
 getInterpolationPars <- function(parent.win, Parameters, group = 0){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 35
-        largeur1 <- 50
-        largeur2 <- 35
+        largeur0 <- 28
+        largeur1 <- 40
+        largeur2 <- 25
     }else{
         largeur0 <- 28
         largeur1 <- 38

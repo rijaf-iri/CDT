@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Validation </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Plot </text>
+        </tab>
+        <tab id="4">
+            <text lang="en"> Layers </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> All Data </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Spatial Average </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Each Station </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Correlation </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Coefficient of determination (R2) multiplied by the regression slope </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Bias </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Percent Bias </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Mean Error </text>
+            </option>
+            <option id="6">
+                <text lang="en"> Mean Absolute Error </text>
+            </option>
+            <option id="7">
+                <text lang="en"> Root Mean Square Error </text>
+            </option>
+            <option id="8">
+                <text lang="en"> Nash-Sutcliffe Efficiency </text>
+            </option>
+            <option id="9">
+                <text lang="en"> Modified Nash-Sutcliffe efficiency </text>
+            </option>
+            <option id="10">
+                <text lang="en"> Relative Nash-Sutcliffe efficiency </text>
+            </option>
+            <option id="11">
+                <text lang="en"> Index of Agreement </text>
+            </option>
+            <option id="12">
+                <text lang="en"> Modified index of agreement </text>
+            </option>
+            <option id="13">
+                <text lang="en"> Relative Index of Agreement </text>
+            </option>
+            <option id="14">
+                <text lang="en"> Probability Of Detection </text>
+            </option>
+            <option id="15">
+                <text lang="en"> Probability Of False Detection </text>
+            </option>
+            <option id="16">
+                <text lang="en"> False Alarm Ratio </text>
+            </option>
+            <option id="17">
+                <text lang="en"> Frequency Bias (Bias score) </text>
+            </option>
+            <option id="18">
+                <text lang="en"> Critical Success Index </text>
+            </option>
+            <option id="19">
+                <text lang="en"> Heidke Skill Score </text>
+            </option>
+            <option id="20">
+                <text lang="en"> Mean Quantile Bias </text>
+            </option>
+            <option id="21">
+                <text lang="en"> Mean Quantile Error </text>
+            </option>
+            <option id="22">
+                <text lang="en"> Volumetric Hit Index </text>
+            </option>
+            <option id="23">
+                <text lang="en"> Quantile Probability of Detection </text>
+            </option>
+            <option id="24">
+                <text lang="en"> Volumetric False Alarm Ratio </text>
+            </option>
+            <option id="25">
+                <text lang="en"> Quantile False Alarm Ratio </text>
+            </option>
+            <option id="26">
+                <text lang="en"> Volumetric Miss Index </text>
+            </option>
+            <option id="27">
+                <text lang="en"> Quantile Miss Index </text>
+            </option>
+            <option id="28">
+                <text lang="en"> Volumetric Critical Success Index </text>
+            </option>
+            <option id="29">
+                <text lang="en"> Quantile Critical Success Index </text>
+            </option>
+        </combobox>
+        <combobox id="3">
+            <option id="1">
+                <text lang="en"> Scatter Plot </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Cumulative Distribution Function </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Line chart </text>
+            </option>
+        </combobox>
+        <button id="0a">
+            <text lang="en"> Add Data to validate </text>
+        </button>
+        <button id="0b">
+            <text lang="en"> Remove </text>
+        </button>
+        <button id="1">
+            <text lang="en"> Aggregation Function Parameters </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Categorical Statistics Parameters </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Volumetric Statistics Parameters </text>
+        </button>
+        <button id="4">
+            <text lang="en"> Calculate Statistics </text>
+        </button>
+        <button id="5">
+            <text lang="en"> Display Table </text>
+        </button>
+        <button id="6">
+            <text lang="en"> Display Rank </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Validation already performed </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Aggregate data before validation </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Add Shapefile to Map </text>
+        </checkbutton>
+        <checkbutton id="4">
+            <text lang="en"> Add elevation to Map </text>
+        </checkbutton>
+        <label id="0">
+            <text lang="en"> NAME </text>
+        </label>
+        <label id="1">
+            <text lang="en"> Input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Time step </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Station data used to validate </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Data to be validated </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Directory to save result </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Validation Data </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Period and Season </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Season </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Years </text>
+        </label>
+        <label id="10">
+            <text lang="en"> to </text>
+            <text lang="fr"> à </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Time series aggregation </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Compute Statistics using </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Display Statistics Table </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Statistics Maps </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Graphs </text>
+        </label>
+        <label id="17">
+            <text lang="en"> Shapefile </text>
+        </label>
+        <label id="18">
+            <text lang="en"> Elevation </text>
+        </label>
+        <label id="19">
+            <text lang="en"> Performance Map </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the station data used to validate in CDT format </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the station data from the list </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Select the file containing the data to be validated in CDT format </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the station data from the list </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Enter the full path to the directory to save result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory to save result </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Browse here the full path to the directory to save result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse here the full path to the directory to save result </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Start year of the period to calculate the statistics </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start year of the period to calculate the statistics </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> End year of the period to calculate the statistics </text>
+            </status>
+            <tooltip>
+                <text lang="en"> End year of the period to calculate the statistics </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Start month to calculate the statistics </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Start month to calculate the statistics </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> End month to calculate the statistics </text>
+            </status>
+            <tooltip>
+                <text lang="en"> End month to calculate the statistics </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Use all data or a spatial average or station by station to calculate the statistics </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Use all data or a spatial average or station by station to calculate the statistics </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Validation ................. </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Statistics calculation finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Validation failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Unable to load Validation data </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="5a">
+            <text lang="en"> Unable to parse </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Directory to save results does not exist </text>
+        </content>
+        <content id="7">
+            <text lang="en"> IDs of the stations data do not match </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Dates do not overlap </text>
+        </content>
+        <content id="9">
+            <text lang="en"> No data found </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Aggregate data ... </text>
+        </content>
+        <content id="11">
+            <text lang="en"> No aggregation, too much missing values </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Aggregating data finished </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Calculate statistics ... </text>
+        </content>
+        <content id="14">
+            <text lang="en"> No threshold file found for volumetric statistics </text>
+        </content>
+        <content id="15">
+            <text lang="en"> IDs of the provided threshold do not match </text>
+        </content>
+        <content id="16">
+            <text lang="en"> No enough data to compute the percentile </text>
+        </content>
+        <content id="17">
+            <text lang="en"> Statistics calculation done </text>
+        </content>
+        <content id="18">
+            <text lang="en"> Invalid xlim minimum value </text>
+        </content>
+        <content id="19">
+            <text lang="en"> Invalid xlim maximum value </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Invalid ylim minimum value </text>
+        </content>
+        <content id="21">
+            <text lang="en"> Invalid ylim maximum value </text>
+        </content>
+        <content id="22">
+            <text lang="en"> Validation data and the provided names are of different length </text>
+        </content>
+        <content id="23">
+            <text lang="en"> No validation data names found </text>
+        </content>
+        <content id="24">
+            <text lang="en"> No selected statistics to plot </text>
+        </content>
+    </message>
+</panel_cmd>

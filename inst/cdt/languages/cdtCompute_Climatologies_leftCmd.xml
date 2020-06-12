@@ -14,8 +14,8 @@
             <text lang="fr"> Graphiques </text>
         </tab>
         <tab id="4">
-            <text lang="en"> Boundaries </text>
-            <text lang="fr"> Contours </text>
+            <text lang="en"> Layers </text>
+            <text lang="fr"> Couches </text>
         </tab>
     </tab_title>
     <widget>
@@ -41,12 +41,12 @@
             <text lang="en"> Aggregation Function </text>
         </button>
         <checkbutton id="1">
-            <text lang="en"> Climatologies already computed </text>
-            <text lang="fr"> Climatologies déjà calculées </text>
+            <text lang="en"> Data already computed </text>
+            <text lang="fr"> Données déjà calculées </text>
         </checkbutton>
         <checkbutton id="2">
-            <text lang="en"> Add boundaries to Map </text>
-            <text lang="fr"> Ajouter des contours à la carte </text>
+            <text lang="en"> Add Shapefile to Map </text>
+            <text lang="fr"> Ajouter Shapefile à la carte </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Input Data </text>
@@ -61,11 +61,11 @@
         </label>
         <label id="3">
             <text lang="en"> File containing stations data </text>
-            <text lang="fr"> Fichier contenant les données de stations </text>
+            <text lang="fr"> Fichier contenant données stations </text>
         </label>
         <label id="4">
             <text lang="en"> Index file (*.rds) of the dataset </text>
-            <text lang="fr"> Fichier Index (*.rds) du jeu de données </text>
+            <text lang="fr"> Fichier Index (*.rds) des données </text>
         </label>
         <label id="5">
             <text lang="en"> Directory of the NetCDF files </text>
@@ -88,8 +88,8 @@
             <text lang="fr"> Répertoire de sauvegarde des résultats </text>
         </label>
         <label id="14">
-            <text lang="en"> Climatologies data </text>
-            <text lang="fr"> Données de climatologies </text>
+            <text lang="en"> Climatologies Data </text>
+            <text lang="fr"> Données Climatologies </text>
         </label>
         <label id="15">
             <text lang="en"> Climatology Map </text>
@@ -104,8 +104,8 @@
             <text lang="fr"> Station/Coordonnées </text>
         </label>
         <label id="18">
-            <text lang="en"> Boundaries </text>
-            <text lang="fr"> Contours </text>
+            <text lang="en"> Shapefile </text>
+            <text lang="fr"> Shapefile </text>
         </label>
         <label id="19">
             <text lang="en"> Select station to plot </text>
@@ -311,18 +311,6 @@
         <content id="13">
             <text lang="en"> Coordinates outside of data range </text>
             <text lang="fr"> Coordonnées hors de la plage de données </text>
-        </content>
-        <content id="14">
-            <text lang="en"> xlim: month must be between 1 and 12 </text>
-            <text lang="fr"> xlim: mois doit être compris entre 1 et 12 </text>
-        </content>
-        <content id="15">
-            <text lang="en"> xlim: pentad must be between 1 and 6 </text>
-            <text lang="fr"> xlim: pentade doit être compris entre 1 et 6 </text>
-        </content>
-        <content id="16">
-            <text lang="en"> xlim: dekad must be 1, 2 or 3 </text>
-            <text lang="fr"> xlim: décade doit être 1, 2 ou 3 </text>
         </content>
         <content id="17">
             <text lang="en"> xlim: invalid date </text>

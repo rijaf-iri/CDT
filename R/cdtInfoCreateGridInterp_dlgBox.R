@@ -2,8 +2,8 @@
 createGridInterpolation <- function(parent.win, Parameters, group = 1){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 26
-        largeur1 <- 56
+        largeur0 <- 25
+        largeur1 <- 44
     }else{
         largeur0 <- 26
         largeur1 <- 41

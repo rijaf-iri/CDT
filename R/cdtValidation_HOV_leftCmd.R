@@ -2,21 +2,35 @@
 Validation.HOV.PanelCmd <- function(clim.var){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(30)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur2 <- 30
-        largeur3 <- 30
-        largeur4 <- .cdtEnv$tcl$fun$w.widgets(31)
-    }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(26)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur2 <- 22
+        largeur0 <- 33
+        largeur1 <- 35
+        largeur2 <- 37
         largeur3 <- 20
-        largeur4 <- .cdtEnv$tcl$fun$w.widgets(22)
+        largeur4 <- 16
+        largeur5 <- 3
+        largeur6 <- 33
+        largeur7 <- 7
+        largeur8 <- 8
+        largeur9 <- 18
+    }else{
+        largeur0 <- 32
+        largeur1 <- 33
+        largeur2 <- 36
+        largeur3 <- 18
+        largeur4 <- 16
+        largeur5 <- 3
+        largeur6 <- 36
+        largeur7 <- 7
+        largeur8 <- 8
+        largeur9 <- 17
     }
 
     ###################
 
+    aggFun <- switch(clim.var, "RR" = "sum", "TT" = "mean")
+    trhesVal <- switch(clim.var, "RR" = 1, "TT" = 20)
+    graphMin <- switch(clim.var, "RR" = 0, "TT" = 5)
+    graphMax <- switch(clim.var, "RR" = 80, "TT" = 35)
 
     date.range <- list(start.year = 1981, start.mon = 1, start.dek = 1,
                        start.pen = 1, start.day = 1,
@@ -26,13 +40,22 @@ Validation.HOV.PanelCmd <- function(clim.var){
                        end.hour = 23, end.min = 55)
 
     GeneralParameters <- list(Tstep = "dekadal", STN.file = "", Extract.Date = date.range,
-                              ncdf.file = list(dir = "", sample = "", format = "rr_adj_%s%s%s.nc"),
-                              type.select = "all", shp.file = list(shp = "", attr = ""),
+                              ncdf.file = list(dir = "", sample = "", format = "rr_mrg_%s%s%s.nc"),
+                              type.select = "all",
+                              shp.file = list(shp = "", attr = ""),
                               date.range = list(start.year = 1981, start.month = 1, end.year = 2018, end.month = 12),
-                              aggr.series = list(aggr.data = FALSE, aggr.fun = "sum", min.frac = 0.95, opr.fun = ">=", opr.thres = 0),
-                              dicho.fcst = list(opr.fun = ">=", opr.thres = 1), stat.data = "all", 
+                              aggr.series = list(aggr.data = FALSE, aggr.fun = aggFun, opr.fun = ">=", opr.thres = 0,
+                                                 min.frac = list(unique = TRUE, all = 0.95,
+                                                                 month = rep(0.95, 12))),
+                              stat.data = "all",
+                              dicho.fcst = list(fun = ">=", thres = trhesVal),
+                              volume.stat = list(user = TRUE, one.thres = TRUE,
+                                                 user.val = 80, user.file = '', from = 'obs', perc = 75,
+                                                 period = list(all.years = TRUE, start.year = 1981,
+                                                               end.year = 2010, min.year = 5)
+                                                ),
                               add.to.plot = list(add.shp = FALSE, shp.file = "", add.dem = FALSE, dem.file = ""),
-                              outdir = "", clim.var = clim.var
+                              outdir = "", clim.var = clim.var, statsVar = 'CORR', type.graph = "Scatter"
                             )
 
     pointSizeI <- 1.0
@@ -42,36 +65,57 @@ Validation.HOV.PanelCmd <- function(clim.var){
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
                                        scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                       pointSize = pointSizeI)
+                                       pointSize = pointSizeI
+                                      )
+
+    .cdtData$EnvData$GraphOp <- list(
+                            scatter = list(
+                                    xlim = list(is.min = FALSE, min = graphMin, is.max = FALSE, max = graphMax),
+                                    ylim = list(is.min = FALSE, min = graphMin, is.max = FALSE, max = graphMax),
+                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                    title = list(is.title = FALSE, title = '', position = 'top'),
+                                    point = list(pch = 20, cex = 0.9, col = 'grey10'),
+                                    line = list(draw = TRUE, lwd = 2, col = 'red')
+                                ),
+                            cdf = list(
+                                    xlim = list(is.min = FALSE, min = graphMin, is.max = FALSE, max = graphMax),
+                                    ylim = list(is.min = FALSE, min = 0.05, is.max = FALSE, max = 1),
+                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                    legend = list(add = TRUE, obs = 'Station', est = 'Estimate'),
+                                    title = list(is.title = FALSE, title = '', position = 'top'),
+                                    plot = list(obs = list(type = 'line', line = "blue", points = "cyan", lwd = 2, pch = 21, cex = 1),
+                                                est = list(type = 'line', line = "red", points = "pink", lwd = 2, pch = 21, cex = 1))
+                                ),
+                            line = list(
+                                    xlim = list(is.min = FALSE, min = "1981-01-01", is.max = FALSE, max = "2017-12-31"),
+                                    ylim = list(is.min = FALSE, min = graphMin, is.max = FALSE, max = graphMax),
+                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                    legend = list(add = TRUE, obs = 'Station', est = 'Estimate'),
+                                    title = list(is.title = FALSE, title = '', position = 'top'),
+                                    plot = list(obs = list(type = 'line', line = "blue", points = "cyan", lwd = 2, pch = 21, cex = 1),
+                                                est = list(type = 'line', line = "red", points = "pink", lwd = 2, pch = 21, cex = 1))
+                                )
+                            )
+
+    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+
+    .cdtData$EnvData$dem$Opt <- list(
+                                    user.colors = list(custom = FALSE, color = NULL),
+                                    user.levels = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                    preset.colors = list(color = 'gray.colors', reverse = FALSE),
+                                    add.hill = FALSE 
+                                )
 
     MOIS <- format(ISOdate(2014, 1:12, 1), "%b")
 
     ###################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtValidation_HOV_leftCmd.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-    # .cdtData$EnvData$message <- lang.dlg[['message']]
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtValidation_HOV_leftCmd.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    .cdtData$EnvData$message <- lang.dlg[['message']]
 
     ###################
 
-    CHXSTATS0 <- c('Correlation', 'Coefficient of determination (R2) multiplied by the regression slope',
-                   'Bias', 'Percent Bias', 'Mean Error', 'Mean Absolute Error', 'Root Mean Square Error',
-                   'Nash-Sutcliffe Efficiency', 'Modified Nash-Sutcliffe efficiency', 'Relative Nash-Sutcliffe efficiency',
-                   'Index of Agreement', 'Modified index of agreement', 'Relative Index of Agreement')
-    CHXSTATS1 <- c('Probability Of Detection', 'Probability Of False Detection',
-                   'False Alarm Ratio', 'Frequency Bias (Bias score)',
-                   'Critical Success Index', 'Heidke Skill Score')
-
-    CHXSTATS2 <- c("Mean Quantile Bias", "Mean Quantile Error",
-                   "Volumetric Hit Index", "Quantile Probability of Detection",
-                   "Volumetric False Alarm Ratio", "Quantile False Alarm Ratio",
-                   "Volumetric Miss Index", "Quantile Miss Index",
-                   "Volumetric Critical Success Index", "Quantile Critical Success Index")
-
-    if(clim.var == "RR") CHXSTATS <- c(CHXSTATS0, CHXSTATS1, CHXSTATS2)
-    if(clim.var == "TT") CHXSTATS <- c(CHXSTATS0, CHXSTATS1)
-
-    ##############
     .cdtData$EnvData$zoom$xx1 <- tclVar()
     .cdtData$EnvData$zoom$xx2 <- tclVar()
     .cdtData$EnvData$zoom$yy1 <- tclVar()
@@ -92,11 +136,11 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
 
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = "Input")
-    cmd.tab2 <- bwAddTab(tknote.cmd, text = "Extraction")
-    cmd.tab3 <- bwAddTab(tknote.cmd, text = "Validation")
-    cmd.tab4 <- bwAddTab(tknote.cmd, text = "Plot")
-    cmd.tab5 <- bwAddTab(tknote.cmd, text = "Add layers")
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
+    cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
+    cmd.tab5 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['5']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
@@ -119,7 +163,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
     ##############################################
 
-        frInputData <- ttklabelframe(subfr1, text = "Input data", relief = 'groove')
+        frInputData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         file.period <- tclVar()
         CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
@@ -129,36 +173,40 @@ Validation.HOV.PanelCmd <- function(clim.var){
         file.stnfl <- tclVar(GeneralParameters$STN.file)
         dirNetCDF <- tclVar(GeneralParameters$ncdf.file$dir)
 
+        txt.tstep <- tklabel(frInputData, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
         cb.tstep <- ttkcombobox(frInputData, values = CbperiodVAL, textvariable = file.period)
-        txt.stnfl <- tklabel(frInputData, text = 'Station data file', anchor = 'w', justify = 'left')
-        cb.stnfl <- ttkcombobox(frInputData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur4)
+
+        txt.stnfl <- tklabel(frInputData, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
+        cb.stnfl <- ttkcombobox(frInputData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur0)
         bt.stnfl <- tkbutton(frInputData, text = "...")
 
-        txt.dir.ncdf <- tklabel(frInputData, text = "Directory of NetCDF files", anchor = 'w', justify = 'left')
+        txt.dir.ncdf <- tklabel(frInputData, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
         set.dir.ncdf <- ttkbutton(frInputData, text = .cdtEnv$tcl$lang$global[['button']][['5']])
         en.dir.ncdf <- tkentry(frInputData, textvariable = dirNetCDF, width = largeur1)
         bt.dir.ncdf <- tkbutton(frInputData, text = "...")
 
         #######################
 
-        tkgrid(cb.tstep, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 5, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(txt.stnfl, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(cb.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(bt.stnfl, row = 2, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(txt.tstep, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(cb.tstep, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
 
-        tkgrid(txt.dir.ncdf, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(set.dir.ncdf, row = 3, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(en.dir.ncdf, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(bt.dir.ncdf, row = 4, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(txt.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stnfl, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnfl, row = 3, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-        helpWidget(cb.tstep, 'Select the time step of the data', 'Select the time step of the data')
-        helpWidget(cb.stnfl, 'Select the station data from the list', 'Select the file containing the station data in CDT format')
-        helpWidget(bt.stnfl, 'Browse file if not listed', 'Browse file if not listed')
-        helpWidget(en.dir.ncdf, 'Enter the full path to the directory containing the NetCDF files', 'Enter the full path to the directory containing the NetCDF files')
-        helpWidget(bt.dir.ncdf, 'Or browse here', 'Or browse here')
-        helpWidget(set.dir.ncdf, 'Setting netcdf data options', 'Setting netcdf data options')
+        tkgrid(txt.dir.ncdf, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(set.dir.ncdf, row = 4, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.dir.ncdf, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.dir.ncdf, row = 5, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-        #######################
+        helpWidget(cb.tstep, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+        helpWidget(en.dir.ncdf, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        helpWidget(bt.dir.ncdf, lang.dlg[['tooltip']][['3a']], lang.dlg[['status']][['3a']])
+        helpWidget(set.dir.ncdf, lang.dlg[['tooltip']][['2a']], lang.dlg[['status']][['2a']])
+
+        ######################
 
         tkconfigure(bt.stnfl, command = function(){
             dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
@@ -171,8 +219,10 @@ Validation.HOV.PanelCmd <- function(clim.var){
         })
 
         tkconfigure(set.dir.ncdf, command = function(){
-            GeneralParameters[["ncdf.file"]] <<- getInfoNetcdfData(.cdtEnv$tcl$main$win, GeneralParameters[["ncdf.file"]],
-                                                                    str_trim(tclvalue(dirNetCDF)), str_trim(tclvalue(file.period)))
+            GeneralParameters[["ncdf.file"]] <<- getInfoNetcdfData(.cdtEnv$tcl$main$win,
+                                                                   GeneralParameters[["ncdf.file"]],
+                                                                   str_trim(tclvalue(dirNetCDF)),
+                                                                   str_trim(tclvalue(file.period)))
         })
 
         tkconfigure(bt.dir.ncdf, command = function(){
@@ -180,49 +230,22 @@ Validation.HOV.PanelCmd <- function(clim.var){
             tclvalue(dirNetCDF) <- if(!is.na(dirnc)) dirnc else ""
         })
 
-        #######################
-
-        tkbind(cb.tstep, "<<ComboboxSelected>>", function(){
-
-            AGGREGFUN <- c("mean", "sum", "count")
-            if(tclvalue(aggr.data) == "0"){
-                stateo0a <- "disabled"
-                stateo0b <- "disabled"
-                stateo1 <- "disabled"
-                stateo2 <- "disabled"
-            }else{
-                if(str_trim(tclvalue(file.period)) != CbperiodVAL[1]){
-                    AGGREGFUN <- AGGREGFUN[-3]
-                    tclvalue(aggr.fun) <- if(tclvalue(aggr.fun) == "count") "sum" else tclvalue(aggr.fun)
-                }
-                stateo0a <- "readonly"
-                stateo0b <- "normal"
-                stateo1 <- if(tclvalue(aggr.fun) == "count") "readonly" else "disabled"
-                stateo2 <- if(tclvalue(aggr.fun) == "count") "normal" else "disabled"
-            }
-
-            tkconfigure(cb.aggfun, values = AGGREGFUN, state = stateo0a)
-            # tkconfigure(en.minfrac, state = stateo0b)
-            tkconfigure(cb.opfun, state = stateo1)
-            tkconfigure(en.opthres, state = stateo2)
-            tkconfigure(cb.stats.maps, values = CHXSTATS)
-        })
-
         ##############################################
 
-        btDateRange <- ttkbutton(subfr1, text = "Extraction Date Range")
+        btDateRange <- ttkbutton(subfr1, text = lang.dlg[['button']][['0a']])
 
         tkconfigure(btDateRange, command = function(){
             tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
             GeneralParameters[["Extract.Date"]] <<- getInfoDateRange(.cdtEnv$tcl$main$win,
-                                                            GeneralParameters[["Extract.Date"]], tstep)
+                                                                     GeneralParameters[["Extract.Date"]],
+                                                                     tstep)
         })
 
-        helpWidget(btDateRange, 'Start and end date to perform the merging', 'Start and end date to perform the merging')
+        helpWidget(btDateRange, lang.dlg[['tooltip']][['4a']], lang.dlg[['status']][['4a']])
 
         ##############################################
 
-        frameDirSav <- ttklabelframe(subfr1, text = "Directory to save result", relief = 'groove')
+        frameDirSav <- ttklabelframe(subfr1, text = lang.dlg[['label']][['5']], relief = 'groove')
 
         file.save1 <- tclVar(GeneralParameters$outdir)
 
@@ -232,8 +255,8 @@ Validation.HOV.PanelCmd <- function(clim.var){
         tkgrid(en.dir.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.dir.save, row = 0, column = 5, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        helpWidget(en.dir.save, 'Enter the full path to the directory  to save result', 'Enter the full path to the directory to save result')
-        helpWidget(bt.dir.save, 'Browse here the full path to the directory to save result', 'Browse here the full path to the directory to save result')
+        helpWidget(en.dir.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+        helpWidget(bt.dir.save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 
         #######################
 
@@ -251,32 +274,38 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
     ##############################################
 
-        frameSelect <- ttklabelframe(subfr2, text = "Selection Type", relief = 'groove')
+        frameSelect <- ttklabelframe(subfr2, text = lang.dlg[['label']][['19a']], relief = 'groove')
 
-        .cdtData$EnvData$type.select <- tclVar()
-        SELECTALL <- c('All Stations', 'Rectangle', 'Polygons')
+        type.select <- tclVar()
+        SELECTALL <- lang.dlg[['combobox']][['4']]
         TypeSelect <- c('all', 'rect', 'poly')
-        tclvalue(.cdtData$EnvData$type.select) <- SELECTALL[TypeSelect %in% GeneralParameters$type.select]
+        tclvalue(type.select) <- SELECTALL[TypeSelect %in% GeneralParameters$type.select]
 
-        cb.type.select <- ttkcombobox(frameSelect, values = SELECTALL, textvariable = .cdtData$EnvData$type.select)
+        txt.type.select <- tklabel(frameSelect, text = lang.dlg[['label']][['19b']], anchor = 'e', justify = 'right')
+        cb.type.select <- ttkcombobox(frameSelect, values = SELECTALL, textvariable = type.select)
 
-        tkgrid(cb.type.select, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+        tkgrid(txt.type.select, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+        tkgrid(cb.type.select, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
-        ######
+        #######################
+
+        .cdtData$EnvData$type.select <- GeneralParameters$type.select
+
         tkbind(cb.type.select, "<<ComboboxSelected>>", function(){
             .cdtData$EnvData$selectedPolygon <- NULL
+            .cdtData$EnvData$type.select <- TypeSelect[SELECTALL %in% str_trim(tclvalue(type.select))]
 
-            if(tclvalue(.cdtData$EnvData$type.select) == SELECTALL[1]){
+            if(.cdtData$EnvData$type.select == 'all'){
                 statelonlat <- 'disabled'
                 statepolygon <- 'disabled'
             }
 
-            if(tclvalue(.cdtData$EnvData$type.select) == SELECTALL[2]){
+            if(.cdtData$EnvData$type.select == 'rect'){
                 statelonlat <- 'normal'
                 statepolygon <- 'disabled'
             }
 
-            if(tclvalue(.cdtData$EnvData$type.select) == SELECTALL[3]){
+            if(.cdtData$EnvData$type.select == 'poly'){
                 statelonlat <- 'disabled'
                 statepolygon <- 'normal'
 
@@ -323,25 +352,26 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
         ##############################################
 
-        frameShp <- ttklabelframe(subfr2, text = "Boundaries Shapefiles", relief = 'groove')
+        frameShp <- ttklabelframe(subfr2, text = lang.dlg[['label']][['20']], relief = 'groove')
 
         file.dispShp <- tclVar(GeneralParameters$shp.file$shp)
         shpAttr <- tclVar(GeneralParameters$shp.file$attr)
         .cdtData$EnvData$namePoly <- tclVar()
 
-        cb.shpF <- ttkcombobox(frameShp, values = unlist(listOpenFiles), textvariable = file.dispShp, width = largeur4)
+        cb.shpF <- ttkcombobox(frameShp, values = unlist(listOpenFiles), textvariable = file.dispShp, width = largeur0)
         bt.shpF <- tkbutton(frameShp, text = "...")
-        txt.attr.shpF <- tklabel(frameShp, text = "Attribute field to be used and displayed", anchor = 'w', justify = 'left')
-        .cdtData$EnvData$cb.shpAttr <- ttkcombobox(frameShp, values='', textvariable = shpAttr, width = largeur0, state = 'disabled')
-        cb.Polygon <- ttkcombobox(frameShp, values = '', textvariable = .cdtData$EnvData$namePoly, width = largeur0, state = 'disabled')
+        txt.attr.shpF <- tklabel(frameShp, text = lang.dlg[['label']][['21']], anchor = 'w', justify = 'left')
+        .cdtData$EnvData$cb.shpAttr <- ttkcombobox(frameShp, values='', textvariable = shpAttr, state = 'disabled')
+        cb.Polygon <- ttkcombobox(frameShp, values = '', textvariable = .cdtData$EnvData$namePoly, state = 'disabled')
 
         tkgrid(cb.shpF, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.shpF, row = 0, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
+        tkgrid(bt.shpF, row = 0, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
         tkgrid(txt.attr.shpF, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1)
         tkgrid(.cdtData$EnvData$cb.shpAttr, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 2)
         tkgrid(cb.Polygon, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 2)
 
         #######################
+
         tkconfigure(bt.shpF, command = function(){
             shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
             if(!is.null(shp.opfiles)){
@@ -356,7 +386,6 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 AttrTable <- names(dat)
                 tclvalue(shpAttr) <- AttrTable[1]
 
-                # adminN <- as.character(dat[, as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1])
                 adminN <- as.character(dat[, 1])
                 name.poly <- levels(as.factor(adminN))
                 if(length(name.poly) < 2) name.poly <- c(name.poly, "")
@@ -368,13 +397,16 @@ Validation.HOV.PanelCmd <- function(clim.var){
         })
 
         #######################
+
         tkbind(cb.shpF, "<<ComboboxSelected>>", function(){
             shpf <- getShpOpenData(file.dispShp)
             if(!is.null(shpf)){
                 dat <- shpf[[2]]@data
                 AttrTable <- names(dat)
                 tclvalue(shpAttr) <- AttrTable[1]
-                adminN <- as.character(dat[, as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1])
+
+                ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
+                adminN <- as.character(dat[, ids])
                 name.poly <- levels(as.factor(adminN))
                 if(length(name.poly) < 2) name.poly <- c(name.poly, "")
             }else{
@@ -383,26 +415,31 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 name.poly <- ''
                 tclvalue(.cdtData$EnvData$namePoly) <- ''
             }
+
             tkconfigure(.cdtData$EnvData$cb.shpAttr, values = AttrTable)
             tkconfigure(cb.Polygon, values = name.poly)
         })
 
         ########################
+
         tkbind(.cdtData$EnvData$cb.shpAttr, "<<ComboboxSelected>>", function(){
             shpf <- getShpOpenData(file.dispShp)
             if(!is.null(shpf)){
                 dat <- shpf[[2]]@data
-                adminN <- as.character(dat[, as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1])
+                ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
+                adminN <- as.character(dat[, ids])
                 name.poly <- levels(as.factor(adminN))
                 if(length(name.poly) < 2) name.poly <- c(name.poly, "")
             }else{
                 name.poly <- ''
             }
+
             tclvalue(.cdtData$EnvData$namePoly) <- name.poly[1]
             tkconfigure(cb.Polygon, values = name.poly)
         })
 
         ########################
+
         tkbind(cb.Polygon, "<<ComboboxSelected>>", function(){
             .cdtData$EnvData$selectedPolygon <- NULL
             if(tclvalue(.cdtData$EnvData$namePoly) != ''){
@@ -410,7 +447,8 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 if(!is.null(shpfopen)){
                     shpf <- shpfopen[[2]]
                     ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
-                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
+                    spoly <- shpf@data[, ids] == tclvalue(.cdtData$EnvData$namePoly)
+                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[spoly, ])
                 }
             }
 
@@ -432,55 +470,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
         ##############################################
 
-        frameIMgMan <- tkframe(subfr2)
-
-        #######################
-
-        frameZoom <- ttklabelframe(frameIMgMan, text = "ZOOM", relief = 'groove')
-
-        .cdtData$EnvData$zoom$btZoomP <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$plus, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btZoomM <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$moins, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btZoomRect <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$rect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'disabled')
-        # .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btRedraw <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$redraw, relief = 'raised', state = 'disabled')
-        .cdtData$EnvData$zoom$btReset <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$reset, relief = 'raised')
-
-        #######################
-        tkgrid(.cdtData$EnvData$zoom$btZoomP, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btZoomM, row = 0, column = 1, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btZoomRect, row = 0, column = 2, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btReset, row = 1, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btRedraw, row = 1, column = 1, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btPanImg, row = 1, column = 2, sticky = 'nswe', rowspan = 1, columnspan = 1)
-
-        helpWidget(.cdtData$EnvData$zoom$btZoomP, 'Zoom In', 'Zoom In')
-        helpWidget(.cdtData$EnvData$zoom$btZoomM, 'Zoom Out', 'Zoom Out')
-        helpWidget(.cdtData$EnvData$zoom$btZoomRect, 'Zoom Area', 'Zoom Area')
-        helpWidget(.cdtData$EnvData$zoom$btPanImg, 'Pan Tool', 'Pan Tool')
-        helpWidget(.cdtData$EnvData$zoom$btRedraw, 'Redraw Map', 'Redraw Map')
-        helpWidget(.cdtData$EnvData$zoom$btReset,' Zoom Reset', 'Zoom Reset')
-
-        ##############################################
-
-        frameDisp <- tkframe(frameIMgMan)
-
-        .cdtData$EnvData$minlonRect <- tclVar()
-        .cdtData$EnvData$maxlonRect <- tclVar()
-        .cdtData$EnvData$minlatRect <- tclVar()
-        .cdtData$EnvData$maxlatRect <- tclVar()
-
-        bt.dispMap <- tkbutton(frameDisp, text = "Display Map")
-        .cdtData$EnvData$bt.select <- tkbutton(frameDisp, text = "Select", relief = 'raised', bg = 'lightblue')
-
-        txt.minLab <- tklabel(frameDisp, text = 'Min')
-        txt.maxLab <- tklabel(frameDisp, text = 'Max')
-        txt.lonLab <- tklabel(frameDisp, text = 'Lon', anchor = 'e', justify = 'right')
-        txt.latLab <- tklabel(frameDisp, text = 'Lat', anchor = 'e', justify = 'right')
-        en.minlon <- tkentry(frameDisp, width = 4, textvariable = .cdtData$EnvData$minlonRect, justify = "left", state = 'disabled')
-        en.maxlon <- tkentry(frameDisp, width = 4, textvariable = .cdtData$EnvData$maxlonRect, justify = "left", state = 'disabled')
-        en.minlat <- tkentry(frameDisp, width = 4, textvariable = .cdtData$EnvData$minlatRect, justify = "left", state = 'disabled')
-        en.maxlat <- tkentry(frameDisp, width = 4, textvariable = .cdtData$EnvData$maxlatRect, justify = "left", state = 'disabled')
+        bt.dispMap <- ttkbutton(subfr2, text = lang.dlg[['button']][['0b']])
 
         #######################
 
@@ -489,6 +479,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
         tkconfigure(bt.dispMap, command = function(){
             donne <- getStnOpenData(file.stnfl)
             shpofile <- getShpOpenData(file.dispShp)
+
             if(!is.null(donne)){
                 .cdtData$EnvData$donne <- donne[1:3, -1]
                 lonStn <- as.numeric(.cdtData$EnvData$donne[2, ])
@@ -503,10 +494,11 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 .cdtData$EnvData$shpf <- shpf
             }else{
                 plotOK <- FALSE
-                Insert.Messages.Out('No station data found', format = TRUE)
+                Insert.Messages.Out(lang.dlg[['message']][['0a']], TRUE, 'e')
             }
 
-            if(tclvalue(.cdtData$EnvData$type.select) == SELECTALL[3] & plotOK){
+            ########
+            if(.cdtData$EnvData$type.select == 'poly' & plotOK){
                 if(!is.null(shpofile)){
                     shpf <- shpofile[[2]]
                     .cdtData$EnvData$ocrds <- getBoundaries(shpf)
@@ -519,10 +511,11 @@ Validation.HOV.PanelCmd <- function(clim.var){
                     plotOK <- TRUE
                 }else{
                     plotOK <- FALSE
-                    Insert.Messages.Out('No ESRI shapfile for administrative boundaries found', format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['0b']], TRUE, 'e')
                 }
             }
 
+            ########
             if(plotOK){
                 ZoomXYval0 <<- c(lo1, lo2, la1, la2)
                 tclvalue(.cdtData$EnvData$zoom$xx1) <- lo1
@@ -536,30 +529,77 @@ Validation.HOV.PanelCmd <- function(clim.var){
             }
         })
 
-        #######################
+        ##############################################
 
-        tkgrid(bt.dispMap, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2)
-        tkgrid(.cdtData$EnvData$bt.select, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(txt.minLab, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(txt.maxLab, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(txt.lonLab, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(txt.latLab, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(en.minlon, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(en.maxlon, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(en.minlat, row = 3, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(en.maxlat, row = 3, column = 2, sticky = 'we', rowspan = 1, columnspan = 1)
+        frameIMgMan <- tkframe(subfr2)
 
         #######################
-        tkgrid(frameZoom, row = 0, column = 0, sticky = 'ns', columnspan = 2, ipady = 5)
-        tkgrid(frameDisp, row = 0, column = 2, sticky = 'we', columnspan = 4)
+
+        frameZoom <- ttklabelframe(frameIMgMan, text = "ZOOM", relief = 'groove')
+
+        .cdtData$EnvData$zoom$btZoomP <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$plus, relief = 'raised', bg = 'lightblue', state = 'normal')
+        .cdtData$EnvData$zoom$btZoomM <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$moins, relief = 'raised', bg = 'lightblue', state = 'normal')
+        .cdtData$EnvData$zoom$btZoomRect <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$rect, relief = 'raised', bg = 'lightblue', state = 'normal')
+        .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'normal')
+        .cdtData$EnvData$zoom$btRedraw <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$redraw, relief = 'raised', state = 'disabled')
+        .cdtData$EnvData$zoom$btReset <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$reset, relief = 'raised')
+
+        #######################
+
+        tkgrid(.cdtData$EnvData$zoom$btZoomP, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 1)
+        tkgrid(.cdtData$EnvData$zoom$btZoomM, row = 0, column = 1, sticky = 'nswe', rowspan = 1, columnspan = 1)
+        tkgrid(.cdtData$EnvData$zoom$btZoomRect, row = 0, column = 2, sticky = 'nswe', rowspan = 1, columnspan = 1)
+        tkgrid(.cdtData$EnvData$zoom$btReset, row = 1, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 1)
+        tkgrid(.cdtData$EnvData$zoom$btRedraw, row = 1, column = 1, sticky = 'nswe', rowspan = 1, columnspan = 1)
+        tkgrid(.cdtData$EnvData$zoom$btPanImg, row = 1, column = 2, sticky = 'nswe', rowspan = 1, columnspan = 1)
+
+        helpWidget(.cdtData$EnvData$zoom$btZoomP, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
+        helpWidget(.cdtData$EnvData$zoom$btZoomM, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+        helpWidget(.cdtData$EnvData$zoom$btZoomRect, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
+        helpWidget(.cdtData$EnvData$zoom$btPanImg, lang.dlg[['tooltip']][['15']], lang.dlg[['status']][['15']])
+        helpWidget(.cdtData$EnvData$zoom$btRedraw, lang.dlg[['tooltip']][['16']], lang.dlg[['status']][['16']])
+        helpWidget(.cdtData$EnvData$zoom$btReset, lang.dlg[['tooltip']][['17']], lang.dlg[['status']][['17']])
 
         ##############################################
 
-        if(!is.null(.cdtData$EnvData$hovd)){
-            stateBTEx <- if(tclvalue(.cdtData$EnvData$hovd) == "1") "normal" else "disabled"
-        }else stateBTEx <- "normal"
+        frameCoord <- tkframe(frameIMgMan, relief = 'groove', borderwidth = 2)
 
-        bt.extract.station <- ttkbutton(subfr2, text = "Extract Data for Validation", state = stateBTEx)
+        .cdtData$EnvData$minlonRect <- tclVar()
+        .cdtData$EnvData$maxlonRect <- tclVar()
+        .cdtData$EnvData$minlatRect <- tclVar()
+        .cdtData$EnvData$maxlatRect <- tclVar()
+
+        txt.minLab <- tklabel(frameCoord, text = lang.dlg[['label']][['22']])
+        txt.maxLab <- tklabel(frameCoord, text = lang.dlg[['label']][['23']])
+        txt.lonLab <- tklabel(frameCoord, text = lang.dlg[['label']][['24']], anchor = 'e', justify = 'right')
+        txt.latLab <- tklabel(frameCoord, text = lang.dlg[['label']][['25']], anchor = 'e', justify = 'right')
+        en.minlon <- tkentry(frameCoord, width = 7, textvariable = .cdtData$EnvData$minlonRect, justify = "left", state = 'disabled')
+        en.maxlon <- tkentry(frameCoord, width = 7, textvariable = .cdtData$EnvData$maxlonRect, justify = "left", state = 'disabled')
+        en.minlat <- tkentry(frameCoord, width = 7, textvariable = .cdtData$EnvData$minlatRect, justify = "left", state = 'disabled')
+        en.maxlat <- tkentry(frameCoord, width = 7, textvariable = .cdtData$EnvData$maxlatRect, justify = "left", state = 'disabled')
+
+        tkgrid(txt.minLab, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
+        tkgrid(txt.maxLab, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1)
+        tkgrid(txt.lonLab, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 1)
+        tkgrid(txt.latLab, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 1)
+        tkgrid(en.minlon, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
+        tkgrid(en.maxlon, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1)
+        tkgrid(en.minlat, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
+        tkgrid(en.maxlat, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 1)
+
+        ##############################################
+
+        .cdtData$EnvData$bt.select <- tkbutton(frameIMgMan, text = lang.dlg[['button']][['0c']], relief = 'raised', bg = 'lightblue')
+
+        ##############################################
+
+        tkgrid(frameZoom, row = 0, column = 0, sticky = 'news', rowspan = 2, padx = 1, ipady = 5)
+        tkgrid(frameCoord, row = 0, column = 1, sticky = 'we', rowspan = 1)
+        tkgrid(.cdtData$EnvData$bt.select, row = 1, column = 1, sticky = 'we', rowspan = 1)
+
+        ##############################################
+
+        bt.extract.station <- ttkbutton(subfr2, text = lang.dlg[['button']][['0d']])
 
         tkconfigure(bt.extract.station, command = function(){
             GeneralParameters$clim.var <- clim.var
@@ -571,7 +611,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
             GeneralParameters$shp.file$shp <- str_trim(tclvalue(file.dispShp))
             GeneralParameters$shp.file$attr <- str_trim(tclvalue(shpAttr))
 
-            GeneralParameters$type.select <- TypeSelect[SELECTALL %in% str_trim(tclvalue(.cdtData$EnvData$type.select))]
+            GeneralParameters$type.select <- TypeSelect[SELECTALL %in% str_trim(tclvalue(type.select))]
 
             GeneralParameters$Geom <- NULL
             GeneralParameters$Geom$minlon <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$minlonRect)))
@@ -582,7 +622,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
-            Insert.Messages.Out("Extract data .................", TRUE, "i")
+            Insert.Messages.Out(lang.dlg[['message']][['0c']], TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
@@ -598,21 +638,20 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 }
             )
 
-            msg0 <- "Data extraction finished successfully"
-            msg1 <- "Data extraction failed"
             if(!is.null(ret)){
                 if(ret == 0){
-                    Insert.Messages.Out(msg0, TRUE, "s")
-                }else Insert.Messages.Out(msg1, TRUE, "e")
-            }else Insert.Messages.Out(msg1, TRUE, "e")
+                    Insert.Messages.Out(lang.dlg[['message']][['0d']], TRUE, "s")
+                }else Insert.Messages.Out(lang.dlg[['message']][['0e']], TRUE, "e")
+            }else Insert.Messages.Out(lang.dlg[['message']][['0e']], TRUE, "e")
         })
 
-        #######################
+        ##############################################
 
         tkgrid(frameSelect, row = 0, column = 0, sticky = '')
         tkgrid(frameShp, row = 1, column = 0, sticky = 'we', pady = 3)
-        tkgrid(frameIMgMan, row = 2, column = 0, sticky = 'we', pady = 3)
-        tkgrid(bt.extract.station, row = 3, column = 0, sticky = 'we', pady = 3)
+        tkgrid(bt.dispMap, row = 2, column = 0, sticky = 'we', pady = 3)
+        tkgrid(frameIMgMan, row = 3, column = 0, sticky = 'we', pady = 3)
+        tkgrid(bt.extract.station, row = 4, column = 0, sticky = 'we', pady = 3)
 
         ##############################################
 
@@ -644,14 +683,14 @@ Validation.HOV.PanelCmd <- function(clim.var){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.select, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
@@ -660,14 +699,14 @@ Validation.HOV.PanelCmd <- function(clim.var){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 1
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'red', state = 'disabled')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.select, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
@@ -676,14 +715,14 @@ Validation.HOV.PanelCmd <- function(clim.var){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 1
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'red', state = 'disabled')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.select, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
@@ -692,46 +731,46 @@ Validation.HOV.PanelCmd <- function(clim.var){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 1
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'red', state = 'disabled')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.select, relief = 'raised', bg = 'lightblue', state = 'normal')
         })
 
-        # tkbind(.cdtData$EnvData$zoom$btPanImg, "<Button-1>", function(){
-        #     tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-        #     tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 1
+        tkbind(.cdtData$EnvData$zoom$btPanImg, "<Button-1>", function(){
+            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 1
 
-        #     tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
+            tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        #     tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'red', state = 'disabled')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'red', state = 'disabled')
 
-        #     tkconfigure(.cdtData$EnvData$bt.select, relief = 'raised', bg = 'lightblue', state = 'normal')
-        # })
+            tkconfigure(.cdtData$EnvData$bt.select, relief = 'raised', bg = 'lightblue', state = 'normal')
+        })
 
         tkbind(.cdtData$EnvData$bt.select, "<Button-1>", function(){
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
             tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
             tclvalue(.cdtData$EnvData$pressGetCoords) <- 1
 
             tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
             tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.select, relief = 'raised', bg = 'red', state = 'disabled')
         })
@@ -743,20 +782,20 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
     ##############################################
 
-        frameHOV <- ttklabelframe(subfr3, text = "Validation data", relief = 'groove')
+        frameHOV <- ttklabelframe(subfr3, text = lang.dlg[['label']][['6']], relief = 'groove')
 
-        .cdtData$EnvData$hovd <- tclVar(0)
+        validExist <- tclVar(0)
         file.hovd <- tclVar()
 
-        stateHOVd <- if(tclvalue(.cdtData$EnvData$hovd) == "1") "normal" else "disabled"
+        stateHOVd <- if(tclvalue(validExist) == "1") "normal" else "disabled"
 
-        chk.hovd <- tkcheckbutton(frameHOV, variable = .cdtData$EnvData$hovd, text = "Validation already performed", anchor = 'w', justify = 'left')
-        en.hovd <- tkentry(frameHOV, textvariable = file.hovd, width = largeur1, state = stateHOVd)
-        bt.hovd <- tkbutton(frameHOV, text = "...", state = stateHOVd)
+        chk.hovd <- tkcheckbutton(frameHOV, variable = validExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+        en.hovd <- tkentry(frameHOV, textvariable = file.hovd, width = largeur1 + 5, state = stateHOVd)
+        bt.hovd <- ttkbutton(frameHOV, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateHOVd)
 
-        tkgrid(chk.hovd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.hovd, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.hovd, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.hovd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.hovd, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.hovd, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ###############
 
@@ -768,8 +807,8 @@ Validation.HOV.PanelCmd <- function(clim.var){
             if(file.exists(str_trim(tclvalue(file.hovd)))){
                 hovd.data <- try(readRDS(str_trim(tclvalue(file.hovd))), silent = TRUE)
                 if(inherits(hovd.data, "try-error")){
-                    Insert.Messages.Out('Unable to load Validation data', format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', hovd.data[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', hovd.data[1]), TRUE, 'e')
                     return(NULL)
                 }
                 .cdtData$EnvData$file.hovd <- str_trim(tclvalue(file.hovd))
@@ -785,17 +824,6 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
                 ###
                 tclvalue(file.period) <- CbperiodVAL[periodVAL %in% hovd.data$GeneralParameters$Tstep]
-
-                ##
-                AGGREGFUN <- c("mean", "sum", "count")
-                if(tclvalue(aggr.data) == "1"){
-                    if(tclvalue(file.period) != CbperiodVAL[1]){
-                        AGGREGFUN <- AGGREGFUN[-3]
-                        tclvalue(aggr.fun) <- if(tclvalue(aggr.fun) == "count") "sum" else tclvalue(aggr.fun)
-                    }
-                    stateo0a <- "readonly"
-                }else stateo0a <- "disabled"
-                tkconfigure(cb.aggfun, values = AGGREGFUN, state = stateo0a)
 
                 if(!is.null(.cdtData$EnvData$opDATA$id)){
                     statsdata <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
@@ -818,13 +846,14 @@ Validation.HOV.PanelCmd <- function(clim.var){
                     tkconfigure(bt.stn.graph.prev, state = stateStnID)
                     tkconfigure(bt.stn.graph.next, state = stateStnID)
 
-                    TYPEGRAPH <- c("Scatter", "CDF", "Lines")
+                    itype <- if(statsdata == 'all') 1:2 else 1:3
+                    CbTypeGRAPH <- typeGraphCombo[itype]
+
                     if(statsdata == 'all'){
-                        TYPEGRAPH <- c("Scatter", "CDF")
-                        if(tclvalue(.cdtData$EnvData$type.graph) == "Lines")
-                            tclvalue(.cdtData$EnvData$type.graph) <- "Scatter"
+                        if(str_trim(tclvalue(type.graph)) == typeGraphCombo[3])
+                            tclvalue(type.graph) <- typeGraphCombo[1]
                     }
-                    tkconfigure(cb.stats.graph, values = TYPEGRAPH)
+                    tkconfigure(cb.stats.graph, values = CbTypeGRAPH)
                 }
             }
         })
@@ -832,139 +861,104 @@ Validation.HOV.PanelCmd <- function(clim.var){
         ###############
 
         tkbind(chk.hovd, "<Button-1>", function(){
-            stateHOVd <- if(tclvalue(.cdtData$EnvData$hovd) == '1') 'disabled' else 'normal'
+            stateHOVd <- if(tclvalue(validExist) == '1') 'disabled' else 'normal'
             tkconfigure(en.hovd, state = stateHOVd)
             tkconfigure(bt.hovd, state = stateHOVd)
-            stateBTEx <- if(tclvalue(.cdtData$EnvData$hovd) == '1') 'normal' else 'disabled'
-            tkconfigure(bt.extract.station, state = stateBTEx)
+
+            stateBTEx <- if(tclvalue(validExist) == '1') 'normal' else 'disabled'
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateBTEx)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab2$IDtab, state = stateBTEx)
         })
 
         ##############################################
 
-        frameSeason <- ttklabelframe(subfr3, text = "Years & Season", relief = 'groove')
+        frameSeason <- ttklabelframe(subfr3, text = lang.dlg[['label']][['7']], relief = 'groove')
 
-        mon1 <- as.numeric(str_trim(GeneralParameters$date.range$start.month))
-        mon2 <- as.numeric(str_trim(GeneralParameters$date.range$end.month))
-        start.mois <- tclVar(MOIS[mon1])
-        end.mois <- tclVar(MOIS[mon2])
+        ##############
+        fr.year <- ttklabelframe(frameSeason, text = lang.dlg[['label']][['9']], relief = 'sunken', labelanchor = "n", borderwidth = 2)
+
         start.year <- tclVar(GeneralParameters$date.range$start.year)
         end.year <- tclVar(GeneralParameters$date.range$end.year)
 
-        fr.seas <- ttklabelframe(frameSeason, text = 'Season', relief = 'sunken', labelanchor = "n", borderwidth = 2)
-        fr.year <- ttklabelframe(frameSeason, text = 'Years', relief = 'sunken', labelanchor = "n", borderwidth = 2)
-
-        txt.to1 <- tklabel(fr.year, text = '-to-')
+        txt.to1 <- tklabel(fr.year, text = paste0('-', lang.dlg[['label']][['10']], '-'))
         en.years1 <- tkentry(fr.year, width = 5, textvariable = start.year, justify = 'right')
         en.years2 <- tkentry(fr.year, width = 5, textvariable = end.year, justify = 'right')
-
-        txt.to2 <- tklabel(fr.seas, text = '-to-')
-        cb.month1 <- ttkcombobox(fr.seas, values = MOIS, textvariable = start.mois, width = 4)
-        cb.month2 <- ttkcombobox(fr.seas, values = MOIS, textvariable = end.mois, width = 4)
 
         tkgrid(en.years1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
         tkgrid(txt.to1, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
         tkgrid(en.years2, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
+        helpWidget(en.years1, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+        helpWidget(en.years2, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+
+        ##############
+        fr.seas <- ttklabelframe(frameSeason, text = lang.dlg[['label']][['8']], relief = 'sunken', labelanchor = "n", borderwidth = 2)
+
+        mon1 <- as.numeric(str_trim(GeneralParameters$date.range$start.month))
+        mon2 <- as.numeric(str_trim(GeneralParameters$date.range$end.month))
+        start.mois <- tclVar(MOIS[mon1])
+        end.mois <- tclVar(MOIS[mon2])
+
+        txt.to2 <- tklabel(fr.seas, text = paste0('-', lang.dlg[['label']][['10']], '-'))
+        cb.month1 <- ttkcombobox(fr.seas, values = MOIS, textvariable = start.mois, width = 5)
+        cb.month2 <- ttkcombobox(fr.seas, values = MOIS, textvariable = end.mois, width = 5)
+
         tkgrid(cb.month1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
         tkgrid(txt.to2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
         tkgrid(cb.month2, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
-        tkgrid(fr.seas, row = 0, column = 0, sticky = 'ns', rowspan = 1, columnspan = 1, padx = 3, pady = 1)
-        tkgrid(fr.year, row = 0, column = 1, sticky = 'ns', rowspan = 1, columnspan = 1, padx = 3, pady = 1)
+        helpWidget(cb.month1, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+        helpWidget(cb.month2, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
 
-        helpWidget(en.years1, 'Start year of the period to calculate the statistics', 'Start year of the period to calculate the statistics')
-        helpWidget(en.years2, 'End year of the period to calculate the statistics', 'End year of the period to calculate the statistics')
-        helpWidget(cb.month1, 'Start month of the period to calculate the statistics', 'Start month of the period to calculate the statistics')
-        helpWidget(cb.month2, 'End month of the season to calculate the statistics', 'End month of the season to calculate the statistics')
+        ##############
+
+        sepSeason <- tklabel(frameSeason, text = "", width = largeur5)
+
+        tkgrid(fr.seas, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+        tkgrid(sepSeason, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+        tkgrid(fr.year, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
         ##############################################
 
-        frameAggr <- ttklabelframe(subfr3, text = "Data aggregation", relief = 'groove')
+        frameAggr <- ttklabelframe(subfr3, text = lang.dlg[['label']][['11']], relief = 'groove')
 
         aggr.data <- tclVar(GeneralParameters$aggr.series$aggr.data)
-        aggr.fun <- tclVar(GeneralParameters$aggr.series$aggr.fun)
-        # min.frac <- tclVar(GeneralParameters$aggr.series$min.frac)
-        opr.fun <- tclVar(GeneralParameters$aggr.series$opr.fun)
-        opr.thres <- tclVar(GeneralParameters$aggr.series$opr.thres)
 
-        AGGREGFUN <- c("mean", "sum", "count")
-        if(GeneralParameters$Tstep != 'daily' & !GeneralParameters$aggr.series$aggr.data) AGGREGFUN <- AGGREGFUN[-3]
-        if(!GeneralParameters$aggr.series$aggr.data){
-            stateo0a <- 'disabled'
-            stateo0b <- 'disabled'
-            stateo1 <- 'disabled'
-            stateo2 <- 'disabled'
-        }else{
-            stateo0a <- 'readonly'
-            stateo0b <- 'normal'
-            stateo1 <- if(str_trim(GeneralParameters$aggr.series$aggr.fun) == "count") 'readonly' else 'disabled'
-            stateo2 <- if(str_trim(GeneralParameters$aggr.series$aggr.fun) == "count") 'normal' else 'disabled'
-        }
+        stateAggr <- if(GeneralParameters$aggr.series$aggr.data) "normal" else "disabled"
 
-        chk.aggrdata <- tkcheckbutton(frameAggr, variable = aggr.data, text = "Aggregate data", anchor = 'w', justify = 'left')
-        txt.aggfun <- tklabel(frameAggr, text = 'Function', anchor = 'w', justify = 'left')
-        cb.aggfun <- ttkcombobox(frameAggr, values = AGGREGFUN, textvariable = aggr.fun, width = 6, state = stateo0a)
-        # txt.minfrac <- tklabel(frameAggr, text = 'Min.Frac', anchor = 'w', justify = 'left')
-        # en.minfrac <- tkentry(frameAggr, textvariable = min.frac, width = 6, state = stateo0b)
-        txt.opfun <- tklabel(frameAggr, text = 'Operator', anchor = 'w', justify = 'left')
-        cb.opfun <- ttkcombobox(frameAggr, values = c(">=", ">", "<=", "<"), textvariable = opr.fun, width = 6, state = stateo1)
-        txt.opthres <- tklabel(frameAggr, text = 'Threshold', anchor = 'w', justify = 'left')
-        en.opthres <- tkentry(frameAggr, textvariable = opr.thres, width = 6, state = stateo2)
+        chk.aggrdata <- tkcheckbutton(frameAggr, variable = aggr.data, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left', width = largeur6)
+        bt.aggrPars <- ttkbutton(frameAggr, text = lang.dlg[['button']][['1']], state = stateAggr)
 
-        tkgrid(chk.aggrdata, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.aggfun, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.aggfun, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        # tkgrid(txt.minfrac, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        # tkgrid(en.minfrac, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.opfun, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.opfun, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.opthres, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.opthres, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.aggrdata, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.aggrPars, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        helpWidget(cb.aggfun, 'Function that have to be applied for aggregating from daily/dekadal/monthly into\na higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean)',
-                              'Function that have to be applied for aggregating from daily/dekadal/monthly into\na higher time step (e.g., for precipitation FUN=sum and for temperature FUN=mean)')
-        # helpWidget(en.minfrac, 'Minimum fraction of available data that must be present within each output time step', 'Minimum fraction of available data that must be present within each output time step')
-        helpWidget(cb.opfun, 'Select the comparison operator to be used to match event', 'Select the comparison operator to be used to match event')
-        helpWidget(en.opthres, 'User defined threshold applied to count event', 'User defined threshold applied to count event')
-
-        #################
-        tkbind(cb.aggfun, "<<ComboboxSelected>>", function(){
-            stateo1 <- if(tclvalue(aggr.fun) == "count") "readonly" else "disabled"
-            stateo2 <- if(tclvalue(aggr.fun) == "count") "normal" else "disabled"
-            tkconfigure(cb.opfun, state = stateo1)
-            tkconfigure(en.opthres, state = stateo2)
+        ########
+        tkconfigure(bt.aggrPars, command = function(){
+            GeneralParameters[['aggr.series']] <<- getInfo_AggregateFun(.cdtEnv$tcl$main$win,
+                                                                        GeneralParameters[['aggr.series']])
         })
 
         tkbind(chk.aggrdata, "<Button-1>", function(){
-            if(tclvalue(aggr.data) == "1"){
-                stateo0a <- 'disabled'
-                stateo0b <- 'disabled'
-                stateo1 <- 'disabled'
-                stateo2 <- 'disabled'
-            }else{
-                stateo0a <- 'readonly'
-                stateo0b <- 'normal'
-                stateo1 <- if(tclvalue(aggr.fun) == "count") 'readonly' else 'disabled'
-                stateo2 <- if(tclvalue(aggr.fun) == "count") 'normal' else 'disabled'
-            }
-
-            tkconfigure(cb.aggfun, state = stateo0a)
-            # tkconfigure(en.minfrac, state = stateo0b)
-            tkconfigure(cb.opfun, state = stateo1)
-            tkconfigure(en.opthres, state = stateo2)
-            tkconfigure(cb.stats.maps, values = CHXSTATS)
+            stateAggr <- if(tclvalue(aggr.data) == '1') 'disabled' else 'normal'
+            tkconfigure(bt.aggrPars, state = stateAggr)
         })
 
-        #############################
+        ##############################################
 
-        STATDATATYPE <- c('All Data', 'Spatial Average', 'Per station')
+        frameStatData <- tkframe(subfr3, relief = 'groove', borderwidth = 2)
+
+        STATDATATYPE <- lang.dlg[['combobox']][['1']]
         StatDataT <- c('all', 'avg', 'stn')
         stat.data <- tclVar()
         tclvalue(stat.data) <- STATDATATYPE[StatDataT %in% GeneralParameters$stat.data]
 
-        cb.stat.data <- ttkcombobox(subfr3, values = STATDATATYPE, textvariable = stat.data, width = largeur0)
+        txt.stat.data <- tklabel(frameStatData, text = lang.dlg[['label']][['12']], anchor = 'e', justify = 'right')
+        cb.stat.data <- ttkcombobox(frameStatData, values = STATDATATYPE, textvariable = stat.data, justify = 'center', width = largeur4)
 
-        helpWidget(cb.stat.data, 'Use all data or a spatial average or station by station to calculate the statistics', 'Use all data or a spatial average or station by station to calculate the statistics')
+        tkgrid(txt.stat.data, row = 0, column = 0, sticky = 'e', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stat.data, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        helpWidget(cb.stat.data, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
 
         #################
         tkbind(cb.stat.data, "<<ComboboxSelected>>", function(){
@@ -986,38 +980,39 @@ Validation.HOV.PanelCmd <- function(clim.var){
             tkconfigure(bt.stn.graph.prev, state = stateStnID)
             tkconfigure(bt.stn.graph.next, state = stateStnID)
 
-            TYPEGRAPH <- c("Scatter", "CDF", "Lines")
+
+            itype <- if(statsdata == 'all') 1:2 else 1:3
+            CbTypeGRAPH <- typeGraphCombo[itype]
+
             if(statsdata == 'all'){
-                TYPEGRAPH <- c("Scatter", "CDF")
-                if(tclvalue(.cdtData$EnvData$type.graph) == "Lines")
-                    tclvalue(.cdtData$EnvData$type.graph) <- "Scatter"
+                if(str_trim(tclvalue(type.graph)) == typeGraphCombo[3])
+                    tclvalue(type.graph) <- typeGraphCombo[1]
             }
-            tkconfigure(cb.stats.graph, values = TYPEGRAPH)
+            tkconfigure(cb.stats.graph, values = CbTypeGRAPH)
         })
 
         ##############################################
 
-        frameDicho <- ttklabelframe(subfr3, text = "Dichotomous validation", relief = 'groove')
+        bt.categStats <- ttkbutton(subfr3, text = lang.dlg[['button']][['2']])
 
-        if(clim.var == 'RR') trhesVal <- 1
-        if(clim.var == 'TT') trhesVal <- 20
-        dicho.thres <- tclVar(trhesVal)
-        # dicho.thres <- tclVar(GeneralParameters$dicho.fcst$opr.thres)
-        dicho.opr <- tclVar(GeneralParameters$dicho.fcst$opr.fun)
-
-        txt.dicho <- tklabel(frameDicho, text = 'Threshold', anchor = 'w', justify = 'left')
-        cb.dicho <- ttkcombobox(frameDicho, values = c(">=", ">", "<=", "<"), textvariable = dicho.opr, width = 4, state = 'readonly')
-        en.dicho <- tkentry(frameDicho, textvariable = dicho.thres, width = 6)
-
-        tkgrid(txt.dicho, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.dicho, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.dicho, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        helpWidget(en.dicho, 'Threshold to be specified to separate "yes" and "no" events', 'Threshold to be specified to separate "yes" and "no" events')
+        tkconfigure(bt.categStats, command = function(){
+            GeneralParameters[['dicho.fcst']] <<- getInfo_categoricalValid(.cdtEnv$tcl$main$win,
+                                                                           GeneralParameters[['dicho.fcst']])
+        })
 
         ##############################################
 
-        bt.calc.stat <- ttkbutton(subfr3, text = "Calculate Statistics")
+        bt.volumeStats <- ttkbutton(subfr3, text = lang.dlg[['button']][['3']])
+
+        tkconfigure(bt.volumeStats, command = function(){
+            statsdata <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
+            GeneralParameters[['volume.stat']] <<- getInfo_volumetricValid(.cdtEnv$tcl$main$win, statsdata,
+                                                                           GeneralParameters[['volume.stat']])
+        })
+
+        ##############################################
+
+        bt.calc.stat <- ttkbutton(subfr3, text = lang.dlg[['button']][['4']])
 
         tkconfigure(bt.calc.stat, command = function(){
             GeneralParameters$date.range$start.month <- which(MOIS %in% str_trim(tclvalue(start.mois)))
@@ -1026,23 +1021,17 @@ Validation.HOV.PanelCmd <- function(clim.var){
             GeneralParameters$date.range$end.year <- as.numeric(str_trim(tclvalue(end.year)))
 
             GeneralParameters$aggr.series$aggr.data <- switch(tclvalue(aggr.data), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$aggr.series$aggr.fun <- str_trim(tclvalue(aggr.fun))
-            # GeneralParameters$aggr.series$min.frac <- as.numeric(str_trim(tclvalue(min.frac)))
-            GeneralParameters$aggr.series$opr.fun <- str_trim(tclvalue(opr.fun))
-            GeneralParameters$aggr.series$opr.thres <- as.numeric(str_trim(tclvalue(opr.thres)))
-
             GeneralParameters$stat.data <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
 
-            GeneralParameters$dicho.fcst$opr.thres <- as.numeric(str_trim(tclvalue(dicho.thres)))
-            GeneralParameters$dicho.fcst$opr.fun <- str_trim(tclvalue(dicho.opr))
-
             #####
+            # GeneralParameters$STN.file <- basename(str_trim(tclvalue(dirNetCDF)))
             GeneralParameters$STN.file <- str_trim(tclvalue(file.stnfl))
             GeneralParameters$outdir <- str_trim(tclvalue(file.save1))
+            GeneralParameters$validExist <- switch(tclvalue(validExist), '0' = FALSE, '1' = TRUE)
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
-            Insert.Messages.Out("Validation .................", TRUE, "i")
+            Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
@@ -1058,11 +1047,9 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 }
             )
 
-            msg0 <- "Statistics calculation finished successfully"
-            msg1 <- "Validation failed"
             if(!is.null(ret)){
                 if(ret == 0){
-                    Insert.Messages.Out(msg0, TRUE, "s")
+                    Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
                     if(GeneralParameters$stat.data == 'stn'){
                         tkconfigure(cb.stat.sel, values = .cdtData$EnvData$opDATA$id)
@@ -1071,17 +1058,20 @@ Validation.HOV.PanelCmd <- function(clim.var){
                         tkconfigure(cb.stn.graph, values = .cdtData$EnvData$opDATA$id, state = 'normal')
                         tclvalue(.cdtData$EnvData$stnIDGraph) <- .cdtData$EnvData$opDATA$id[1]
                     }
-                }else Insert.Messages.Out(msg1, TRUE, "e")
-            }else Insert.Messages.Out(msg1, TRUE, "e")
+                }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
+            }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
         })
 
-        #############################
+        ##############################################
+
         tkgrid(frameHOV, row = 0, column = 0, sticky = 'we')
         tkgrid(frameSeason, row = 1, column = 0, sticky = 'we', pady = 1)
         tkgrid(frameAggr, row = 2, column = 0, sticky = 'we', pady = 1)
-        tkgrid(cb.stat.data, row = 3, column = 0, sticky = 'we', pady = 3)
-        tkgrid(frameDicho, row = 4, column = 0, sticky = '', pady = 3)
-        tkgrid(bt.calc.stat, row = 5, column = 0, sticky = 'we', pady = 3)
+        tkgrid(frameStatData, row = 3, column = 0, sticky = 'we', pady = 3)
+        tkgrid(bt.categStats, row = 4, column = 0, sticky = 'we', pady = 3)
+        if(clim.var == 'RR')
+            tkgrid(bt.volumeStats, row = 5, column = 0, sticky = 'we', pady = 3)
+        tkgrid(bt.calc.stat, row = 6, column = 0, sticky = 'we', pady = 3)
 
     #######################################################################################################
 
@@ -1090,43 +1080,48 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
     ##############################################
 
-        frameStatTab <- ttklabelframe(subfr4, text = "Display Statistics Table", relief = 'groove')
+        frameStatTab <- ttklabelframe(subfr4, text = lang.dlg[['label']][['13']], relief = 'groove')
 
         STATIONIDS <- ''
         stn.stat.tab <- tclVar()
         stateDispSTN <- if(GeneralParameters$stat.data == 'stn') 'normal' else 'disabled'
 
-        bt.stat.disp <- ttkbutton(frameStatTab, text = "Display Table")
-        bt.stat.prev <- ttkbutton(frameStatTab, text = "<<", state = stateDispSTN, width = 4)
-        bt.stat.next <- ttkbutton(frameStatTab, text = ">>", state = stateDispSTN, width = 4)
+        bt.stat.prev <- ttkbutton(frameStatTab, text = "<<", state = stateDispSTN, width = largeur7)
+        bt.stat.next <- ttkbutton(frameStatTab, text = ">>", state = stateDispSTN, width = largeur7)
         cb.stat.sel <- ttkcombobox(frameStatTab, values = STATIONIDS, textvariable = stn.stat.tab, width = largeur3, state = stateDispSTN,  justify = 'center')
+        bt.stat.disp <- ttkbutton(frameStatTab, text = lang.dlg[['button']][['5']])
 
-        tkgrid(bt.stat.disp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.stat.prev, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.stat.sel, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.stat.next, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stat.prev, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stat.sel, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stat.next, row = 0, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stat.disp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ################
         .cdtData$EnvData$tab$validStat <- NULL
 
         tkconfigure(bt.stat.disp, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                if(str_trim(tclvalue(stat.data)) == STATDATATYPE[1]){
+                statsdata <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
+
+                if(statsdata == 'all'){
                     don <- .cdtData$EnvData$Statistics$ALL
-                    dat2disp <- data.frame(Name = rownames(don$statistics), Statistics = don$statistics, Description = don$description)
+                    dat2disp <- data.frame(don$statNames, don$statistics, don$description, don$perfect.score)
                     titleTab <- 'All-Data Statistics'
                 }
-                if(str_trim(tclvalue(stat.data)) == STATDATATYPE[2]){
+                if(statsdata == 'avg'){
                     don <- .cdtData$EnvData$Statistics$AVG
-                    dat2disp <- data.frame(Name = rownames(don$statistics), Statistics = don$statistics, Description = don$description)
+                    dat2disp <- data.frame(don$statNames, don$statistics, don$description, don$perfect.score)
                     titleTab <- 'Spatial-Average Statistics'
                 }
-                if(str_trim(tclvalue(stat.data)) == STATDATATYPE[3]){
+                if(statsdata == 'stn'){
                     don <- .cdtData$EnvData$Statistics$STN
                     istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(stn.stat.tab)))
-                    dat2disp <- data.frame(Name = rownames(don$statistics), Statistics = don$statistics[, istn], Description = don$description)
+                    dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
                     titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
                 }
+
+                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
+                rownames(dat2disp) <- NULL
 
                 .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
             }
@@ -1140,7 +1135,10 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
                 tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
 
-                dat2disp <- data.frame(Name = rownames(don$statistics), Statistics = don$statistics[, istn], Description = don$description)
+                dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
+                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
+                rownames(dat2disp) <- NULL
+
                 titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
 
                 .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
@@ -1155,7 +1153,10 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
                 tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
 
-                dat2disp <- data.frame(Name = rownames(don$statistics), Statistics = don$statistics[, istn], Description = don$description)
+                dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
+                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
+                rownames(dat2disp) <- NULL
+
                 titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
 
                 .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
@@ -1164,32 +1165,58 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
         ##############################################
 
-        frameMap <- ttklabelframe(subfr4, text = "Statistics Maps", relief = 'groove')
+        frameMap <- ttklabelframe(subfr4, text = lang.dlg[['label']][['14']], relief = 'groove')
 
-        .cdtData$EnvData$statistics <- tclVar('Correlation')
-        typeMapPLOT <- c("Points", "Pixels")
-        .cdtData$EnvData$typeMap <- tclVar("Points")
+        statsCON <- c('CORR', 'BR2', 'BIAS', 'PBIAS', 'ME', 'MAE', 'RMSE', 'NSE', 'MNSE', 'RNSE', 'IOA', 'MIOA', 'RIOA')
+        statsCAT <- c('POD', 'POFD', 'FAR', 'FBS', 'CSI', 'HSS')
+        statsVOL <- c('MQB', 'MQE', 'VHI', 'QPOD', 'VFAR', 'QFAR', 'VMI', 'QMISS', 'VCSI', 'QCSI')
+
+        ValStatNAMES0 <- c(statsCON, statsCAT, statsVOL)
+        CbStatNAMES0 <- lang.dlg[['combobox']][['2']]
+        ivarL <- switch(clim.var, "RR" = 1:29, "TT" = 1:19)
+
+        statsVAR <- tclVar()
+        CbStatNAMES <- CbStatNAMES0[ivarL]
+        ValStatNAMES <- ValStatNAMES0[ivarL]
+        tclvalue(statsVAR) <- CbStatNAMES[ValStatNAMES %in% GeneralParameters$statsVar]
 
         stateMaps <- if(GeneralParameters$stat.data == 'stn') 'normal' else 'disabled'
 
-        cb.stats.maps <- ttkcombobox(frameMap, values = CHXSTATS, textvariable = .cdtData$EnvData$statistics, width = largeur2, state = stateMaps)
-        bt.stats.maps <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], state = stateMaps)
-        bt.stats.Opt <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateMaps)
-        txt.plot.type <- tklabel(frameMap, text = "Plot Type", anchor = "e", justify = "right")
-        cb.plot.type <- ttkcombobox(frameMap, values = typeMapPLOT, textvariable = .cdtData$EnvData$typeMap, width = 5, state = stateMaps)
+        cb.stats.maps <- ttkcombobox(frameMap, values = CbStatNAMES, textvariable = statsVAR, width = largeur2, state = stateMaps)
 
-        tkgrid(cb.stats.maps, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stats.maps, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(txt.plot.type, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(cb.plot.type, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stats.Opt, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        ##########
+        frMapBt <- tkframe(frameMap)
+
+        bt.stats.maps <- ttkbutton(frMapBt, text = .cdtEnv$tcl$lang$global[['button']][['3']], state = stateMaps, width = largeur9)
+        bt.stats.Opt <- ttkbutton(frMapBt, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateMaps, width = largeur9)
+
+        tkgrid(bt.stats.Opt, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stats.maps, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        
+        ##########
+        frPlotT <- tkframe(frameMap)
+
+        typeMapPLOT <- c("Points", "Pixels")
+        .cdtData$EnvData$typeMap <- tclVar("Points")
+
+        txt.plot.type <- tklabel(frPlotT, text = lang.dlg[['label']][['15']], anchor = "e", justify = "right")
+        cb.plot.type <- ttkcombobox(frPlotT, values = typeMapPLOT, textvariable = .cdtData$EnvData$typeMap, width = largeur8, state = stateMaps)
+
+        tkgrid(txt.plot.type, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.plot.type, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ##########
+        tkgrid(cb.stats.maps, row = 0, column = 0, sticky = 'we')
+        tkgrid(frMapBt, row = 1, column = 0, sticky = 'we')
+        tkgrid(frPlotT, row = 2, column = 0, sticky = '')
 
         ##############
 
         tkconfigure(bt.stats.Opt, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                mapstat <- str_trim(tclvalue(.cdtData$EnvData$statistics))
-                istat <- which(.cdtData$EnvData$Statistics$STN$description == mapstat)
+                mapstat <- ValStatNAMES[CbStatNAMES %in% str_trim(tclvalue(statsVAR))]
+                istat <- which(.cdtData$EnvData$Statistics$STN$statNames == mapstat)
+
                 don <- .cdtData$EnvData$Statistics$STN$statistics[istat, ]
                 atlevel <- pretty(don, n = 10, min.n = 7)
                 if(is.null(.cdtData$EnvData$statMapOp$userLvl$levels)){
@@ -1211,8 +1238,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stats.maps, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                .cdtData$EnvData$xlim.maps <- range(.cdtData$EnvData$opDATA$lon, na.rm = TRUE)
-                .cdtData$EnvData$ylim.maps <- range(.cdtData$EnvData$opDATA$lat, na.rm = TRUE)
+                .cdtData$EnvData$statVAR <- ValStatNAMES[CbStatNAMES %in% str_trim(tclvalue(statsVAR))]
                 .cdtData$EnvData$plot.maps$data.type <- "cdtstation"
                 .cdtData$EnvData$plot.maps$lon <- .cdtData$EnvData$opDATA$lon
                 .cdtData$EnvData$plot.maps$lat <- .cdtData$EnvData$opDATA$lat
@@ -1224,40 +1250,61 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
         ##############################################
 
-        frameGraph <- ttklabelframe(subfr4, text = "Graphs", relief = 'groove')
+        frameGraph <- ttklabelframe(subfr4, text = lang.dlg[['label']][['16']], relief = 'groove')
 
-        TYPEGRAPH <- c("Scatter", "CDF", 'Lines')
-        if(GeneralParameters$stat.data == 'all') TYPEGRAPH <- c("Scatter", "CDF")
+        ############
+        frameGrP <- tkframe(frameGraph)
 
-        .cdtData$EnvData$type.graph <- tclVar("Scatter")
+        typeGraphCombo <- lang.dlg[['combobox']][['3']]
+        valGraphCombo <- c("Scatter", "CDF", "Lines")
+        itype <- if(GeneralParameters$stat.data == 'all') 1:2 else 1:3
+
+        type.graph <- tclVar()
+        CbTypeGRAPH <- typeGraphCombo[itype]
+        ValTypeGRAPH <- valGraphCombo[itype]
+        tclvalue(type.graph) <- CbTypeGRAPH[ValTypeGRAPH %in% GeneralParameters$type.graph]
+
+        cb.stats.graph <- ttkcombobox(frameGrP, values = CbTypeGRAPH, textvariable = type.graph, width = largeur2)
+        bt.stats.graph <- ttkbutton(frameGrP, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur9)
+        bt.Opt.graph <- ttkbutton(frameGrP, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur9)
+
+        tkgrid(cb.stats.graph, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Opt.graph, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stats.graph, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+
+        ############
+        frameGrS <- tkframe(frameGraph)
+
         STNIDGRAPH <- ""
         .cdtData$EnvData$stnIDGraph <- tclVar()
         stateStnID <- "disabled"
 
-        cb.stats.graph <- ttkcombobox(frameGraph, values = TYPEGRAPH, textvariable = .cdtData$EnvData$type.graph, width = largeur2)
-        bt.stats.graph <- ttkbutton(frameGraph, text = .cdtEnv$tcl$lang$global[['button']][['3']])
-        cb.stn.graph <- ttkcombobox(frameGraph, values = STNIDGRAPH, textvariable = .cdtData$EnvData$stnIDGraph, width = largeur3, state = stateStnID, justify = 'center')
-        bt.stn.graph.prev <- ttkbutton(frameGraph, text = "<<", state = stateStnID, width = 4)
-        bt.stn.graph.next <- ttkbutton(frameGraph, text = ">>", state = stateStnID, width = 4)
+        cb.stn.graph <- ttkcombobox(frameGrS, values = STNIDGRAPH, textvariable = .cdtData$EnvData$stnIDGraph, width = largeur3, state = stateStnID, justify = 'center')
+        bt.stn.graph.prev <- ttkbutton(frameGrS, text = "<<", state = stateStnID, width = largeur7)
+        bt.stn.graph.next <- ttkbutton(frameGrS, text = ">>", state = stateStnID, width = largeur7)
 
-        tkgrid(cb.stats.graph, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 12, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stats.graph, row = 0, column = 12, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stn.graph.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(cb.stn.graph, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 12, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stn.graph.next, row = 1, column = 15, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stn.graph.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(cb.stn.graph, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stn.graph.next, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+
+        ##############
+        tkgrid(frameGrP, row = 0, column = 0, sticky = 'we')
+        tkgrid(frameGrS, row = 1, column = 0, sticky = 'we')
 
         ##############
         .cdtData$EnvData$tab$Graph <- NULL
 
         tkconfigure(bt.stats.graph, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
+            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% str_trim(tclvalue(type.graph))]
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 imgContainer <- CDT.Display.Graph(Validation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
                 .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
             }
         })
 
         tkconfigure(bt.stn.graph.prev, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
+            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% str_trim(tclvalue(type.graph))]
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDGraph)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
@@ -1269,7 +1316,8 @@ Validation.HOV.PanelCmd <- function(clim.var){
         })
 
         tkconfigure(bt.stn.graph.next, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
+            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% str_trim(tclvalue(type.graph))]
+            if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDGraph)))
                 istn <- istn + 1
                 if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
@@ -1278,6 +1326,13 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 imgContainer <- CDT.Display.Graph(Validation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
                 .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
             }
+        })
+
+        ##############
+        tkconfigure(bt.Opt.graph, command = function(){
+            typeGraph <- valGraphCombo[typeGraphCombo %in% str_trim(tclvalue(type.graph))]
+            plot.fun <- get(paste0("Validation.GraphOptions.", typeGraph), mode = "function")
+            .cdtData$EnvData$GraphOp <- plot.fun(.cdtData$EnvData$GraphOp)
         })
 
         #############################
@@ -1292,70 +1347,79 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
     ##############################################
 
-        frameSHP <- ttklabelframe(subfr5, text = "Boundaries", relief = 'groove')
+        frameSHP <- ttklabelframe(subfr5, text = lang.dlg[['label']][['17']], relief = 'groove')
 
-        .cdtData$EnvData$add.shp <- tclVar(GeneralParameters$add.to.plot$add.shp)
+        .cdtData$EnvData$shp$add.shp <- tclVar(GeneralParameters$add.to.plot$add.shp)
         file.plotShp <- tclVar(GeneralParameters$add.to.plot$shp.file)
 
         stateSHP <- if(GeneralParameters$add.to.plot$add.shp) "normal" else "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur4, state = stateSHP)
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
+        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
+        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur0, state = stateSHP)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
 
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.addshp, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
-        ########
+        #################
         tkconfigure(bt.addshp, command = function(){
             shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
             if(!is.null(shp.opfiles)){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(file.plotShp) <- shp.opfiles[[1]]
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-
-                lapply(list(cb.stnfl, cb.shpF, cb.adddem, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+                listOpenFiles <- openFile_ttkcomboList()
+                lapply(list(cb.stnfl, cb.valid, cb.adddem, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
                 shpofile <- getShpOpenData(file.plotShp)
                 if(is.null(shpofile))
-                    .cdtData$EnvData$shp <- NULL
+                    .cdtData$EnvData$shp$ocrds <- NULL
                 else
-                    .cdtData$EnvData$shp <- getBoundaries(shpofile[[2]])
+                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
             }
+        })
+
+        tkconfigure(bt.addshpOpt, command = function(){
+            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
         })
 
         #################
         tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
             shpofile <- getShpOpenData(file.plotShp)
             if(is.null(shpofile))
-                .cdtData$EnvData$shp <- NULL
+                .cdtData$EnvData$shp$ocrds <- NULL
             else
-                .cdtData$EnvData$shp <- getBoundaries(shpofile[[2]])
+                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
         })
 
         tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$add.shp) == "1") "disabled" else "normal"
+            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
             tkconfigure(cb.addshp, state = stateSHP)
             tkconfigure(bt.addshp, state = stateSHP)
+            tkconfigure(bt.addshpOpt, state = stateSHP)
         })
 
         ##############################################
 
-        frameDEM <- ttklabelframe(subfr5, text = "DEM", relief = 'groove')
+        frameDEM <- ttklabelframe(subfr5, text = lang.dlg[['label']][['18']], relief = 'groove')
 
-        .cdtData$EnvData$add.dem <- tclVar(GeneralParameters$add.to.plot$add.dem)
+        .cdtData$EnvData$dem$add.dem <- tclVar(GeneralParameters$add.to.plot$add.dem)
         file.grddem <- tclVar(GeneralParameters$add.to.plot$dem.file)
 
         stateDEM <- if(GeneralParameters$add.to.plot$add.dem) "normal" else "disabled"
 
-        chk.adddem <- tkcheckbutton(frameDEM, variable = .cdtData$EnvData$add.dem, text = "Add DEM  to the Map", anchor = 'w', justify = 'left')
-        cb.adddem <- ttkcombobox(frameDEM, values = unlist(listOpenFiles), textvariable = file.grddem, width = largeur4, state = stateDEM)
+        chk.adddem <- tkcheckbutton(frameDEM, variable = .cdtData$EnvData$dem$add.dem, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left')
+        bt.adddemOpt <- ttkbutton(frameDEM, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateDEM)
+        cb.adddem <- ttkcombobox(frameDEM, values = unlist(listOpenFiles), textvariable = file.grddem, width = largeur0, state = stateDEM)
         bt.adddem <- tkbutton(frameDEM, text = "...", state = stateDEM)
 
-        tkgrid(chk.adddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.adddem, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.adddem, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.adddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.adddemOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.adddem, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.adddem, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
         #################
 
@@ -1365,8 +1429,8 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 update.OpenFiles('netcdf', nc.opfiles)
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                 tclvalue(file.grddem) <- nc.opfiles[[1]]
-
-                lapply(list(cb.stnfl, cb.shpF, cb.adddem, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+                listOpenFiles <- openFile_ttkcomboList()
+                lapply(list(cb.stnfl, cb.valid, cb.adddem, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
                 demData <- getNCDFSampleData(str_trim(tclvalue(file.grddem)))
                 if(!is.null(demData)){
@@ -1378,13 +1442,31 @@ Validation.HOV.PanelCmd <- function(clim.var){
                     slope <- raster::terrain(demr, opt = 'slope')
                     aspect <- raster::terrain(demr, opt = 'aspect')
                     hill <- raster::hillShade(slope, aspect, angle = 40, direction = 270)
-                    hill <- t(as.matrix(hill))
+                    hill <- matrix(hill@data@values, hill@ncols, hill@nrows)
                     hill <- hill[, rev(seq(ncol(hill)))]
                     .cdtData$EnvData$dem$hill <- list(x = demData$x, y = demData$y, z = hill)
 
                     rm(demData, demr, slope, aspect, hill)
-                }else .cdtData$EnvData$dem <- NULL
+                }else{
+                    Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "e")
+                    tclvalue(file.grddem) <- ""
+                    .cdtData$EnvData$dem <- NULL
+                }
             }
+        })
+
+        tkconfigure(bt.adddemOpt, command = function(){
+            if(!is.null(.cdtData$EnvData$dem$elv)){
+                atlevel <- pretty(.cdtData$EnvData$dem$elv$z, n = 10, min.n = 7)
+                if(is.null(.cdtData$EnvData$dem$Opt$user.levels$levels)){
+                    .cdtData$EnvData$dem$Opt$user.levels$levels <- atlevel
+                }else{
+                    if(!.cdtData$EnvData$dem$Opt$user.levels$custom)
+                        .cdtData$EnvData$dem$Opt$user.levels$levels <- atlevel
+                }
+            }
+
+            .cdtData$EnvData$dem$Opt <- MapGraph.gridDataLayer(.cdtData$EnvData$dem$Opt)
         })
 
         #################
@@ -1399,23 +1481,28 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 slope <- raster::terrain(demr, opt = 'slope')
                 aspect <- raster::terrain(demr, opt = 'aspect')
                 hill <- raster::hillShade(slope, aspect, angle = 40, direction = 270)
-                hill <- t(as.matrix(hill))
+                hill <- matrix(hill@data@values, hill@ncols, hill@nrows)
                 hill <- hill[, rev(seq(ncol(hill)))]
                 .cdtData$EnvData$dem$hill <- list(x = demData$x, y = demData$y, z = hill)
 
                 rm(demData, demr, slope, aspect, hill)
-            }else .cdtData$EnvData$dem <- NULL
+            }else{
+                Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "e")
+                tclvalue(file.grddem) <- ""
+                .cdtData$EnvData$dem <- NULL
+            }
         })
 
         tkbind(chk.adddem, "<Button-1>", function(){
-            stateDEM <- if(tclvalue(.cdtData$EnvData$add.dem) == "1") "disabled" else "normal"
+            stateDEM <- if(tclvalue(.cdtData$EnvData$dem$add.dem) == "1") "disabled" else "normal"
             tkconfigure(cb.adddem, state = stateDEM)
             tkconfigure(bt.adddem, state = stateDEM)
+            tkconfigure(bt.adddemOpt, state = stateDEM)
         })
 
         #############################
-        tkgrid(frameSHP, row = 3, column = 0, sticky = 'we', pady = 1)
-        tkgrid(frameDEM, row = 4, column = 0, sticky = 'we', pady = 1)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
+        tkgrid(frameDEM, row = 1, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
 

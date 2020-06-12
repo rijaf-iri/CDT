@@ -2,13 +2,13 @@
 ## Preview data.frame
 preview.data <- function(parent.win, fileopen){
     if(WindowsOS()){
-        txta.w <- 32
-        txta.h <- 7
-        labprvw <- 54
+        txta.w <- 38
+        txta.h <- 8
+        labprvw <- 50
     }else{
-        txta.w <- 43
+        txta.w <- 45
         txta.h <- 9
-        labprvw <- 51
+        labprvw <- 56
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPreview_data.frame_dlgBox.xml")

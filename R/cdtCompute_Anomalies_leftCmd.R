@@ -2,25 +2,31 @@
 anomaliesCalcPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <-.cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
+        largeur0 <- 29
+        largeur1 <- 33
+        largeur2 <- 35
         largeur3 <- 25
-        largeur4 <- 23
-        largeur5 <- 25
+        largeur4 <- 19
+        largeur5 <- 15
         largeur6 <- 18
-        largeur7 <- 18
-
+        largeur7 <- 7
+        largeur8 <- 14
+        largeur9 <- 10
+        largeur10 <- 1
+        largeur11 <- 20
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(24)
-        largeur3 <- 20
-        largeur4 <- 20
-        largeur5 <- 17
+        largeur0 <- 30
+        largeur1 <- 32
+        largeur2 <- 33
+        largeur3 <- 25
+        largeur4 <- 19
+        largeur5 <- 16
         largeur6 <- 18
-        largeur7 <- 18
-
+        largeur7 <- 7
+        largeur8 <- 14
+        largeur9 <- 10
+        largeur10 <- 4
+        largeur11 <- 20
     }
 
     date.range <- list(start.year = 1981, start.mon = 1, start.dek = 1,
@@ -214,25 +220,28 @@ anomaliesCalcPanelCmd <- function(){
         len <- as.numeric(str_trim(GeneralParameters$seasonal$length.mon))
         mon1 <- (mon + len - 1) %% 12
         mon1[mon1 == 0] <- 12
-        seasdef <- paste(mois[mon], "->", mois[mon1])
+
+        ##############
+
+        frDefSeas <- tkframe(frameSeas)
 
         start.mon <- tclVar(MOIS[mon])
         length.mon <- tclVar(len)
-        season.def <- tclVar(seasdef)
 
         stateSeas <- if(GeneralParameters$outstep == 'seasonal') "normal" else "disabled"
 
-        txt.seasS <- tklabel(frameSeas, text = lang.dlg[['label']][['1b']], anchor = 'e', justify = 'right')
-        cb.seasS <- ttkcombobox(frameSeas, values = MOIS, textvariable = start.mon, width = 9, state = stateSeas)
-        txt.seasL <- tklabel(frameSeas, text = lang.dlg[['label']][['1c']])
-        cb.seasL <- ttkcombobox(frameSeas, values = 2:12, textvariable = length.mon, width = 2, state = stateSeas)
-        txt.SeasD <- tklabel(frameSeas, text = tclvalue(season.def), textvariable = season.def)
+        txt.seasS <- tklabel(frDefSeas, text = lang.dlg[['label']][['1b']], anchor = 'e', justify = 'right')
+        cb.seasS <- ttkcombobox(frDefSeas, values = MOIS, textvariable = start.mon, width = 11, state = stateSeas)
+        txt.seasL <- tklabel(frDefSeas, text = lang.dlg[['label']][['1c']])
+        cb.seasL <- ttkcombobox(frDefSeas, values = 2:12, textvariable = length.mon, width = 3, state = stateSeas)
+
+        sepL.seasS <- tklabel(frDefSeas, text = '', width = largeur10)
 
         tkgrid(txt.seasS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
         tkgrid(cb.seasS, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-        tkgrid(txt.seasL, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-        tkgrid(cb.seasL, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-        tkgrid(txt.SeasD, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+        tkgrid(sepL.seasS, row = 0, column = 2)
+        tkgrid(txt.seasL, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+        tkgrid(cb.seasL, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
         helpWidget(cb.seasS, lang.dlg[['tooltip']][['1b']], lang.dlg[['status']][['1b']])
         helpWidget(cb.seasL, lang.dlg[['tooltip']][['1c']], lang.dlg[['status']][['1c']])
@@ -246,7 +255,7 @@ anomaliesCalcPanelCmd <- function(){
                 len <- as.numeric(str_trim(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
-                seasdef <- paste(mois[mon], "->", mois[mon1])
+                seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
             }
             tclvalue(season.def) <- seasdef
         })
@@ -260,10 +269,26 @@ anomaliesCalcPanelCmd <- function(){
                 len <- as.numeric(str_trim(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
-                seasdef <- paste(mois[mon], "->", mois[mon1])
+                seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
             }
             tclvalue(season.def) <- seasdef
         })
+
+        ##############
+
+        frDispSeas <- tkframe(frameSeas)
+
+        seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
+        season.def <- tclVar(seasdef)
+
+        txt.SeasD <- tklabel(frDispSeas, text = tclvalue(season.def), textvariable = season.def)
+
+        tkgrid(txt.SeasD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+
+        ##############
+
+        tkgrid(frDefSeas, row = 0, column = 0, sticky = 'we')
+        tkgrid(frDispSeas, row = 1, column = 0)
 
         #######################
 
@@ -502,13 +527,13 @@ anomaliesCalcPanelCmd <- function(){
 
         chk.climIdx <- tkcheckbutton(frameClim, variable = climDataExist, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left', state = stateClim.Ex)
         txt.climIdx <- tklabel(frameClim, text = lang.dlg[['label']][['9']], anchor = 'w', justify = 'left')
-        en.climIdx <- tkentry(frameClim, textvariable = file.ClimIndex, width = largeur2, state = stateClim)
-        bt.climIdx <- tkbutton(frameClim, text = "...", state = stateClim)
+        en.climIdx <- tkentry(frameClim, textvariable = file.ClimIndex, width = largeur2 + 5, state = stateClim)
+        bt.climIdx <- ttkbutton(frameClim, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateClim)
 
         tkgrid(chk.climIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.climIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.climIdx, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.climIdx, row = 2, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.climIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.climIdx, row = 1, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.climIdx, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(en.climIdx, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
         helpWidget(bt.climIdx, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
@@ -595,7 +620,7 @@ anomaliesCalcPanelCmd <- function(){
         stateAnomC <- if(!GeneralParameters$outdir$update) 'normal' else 'disabled'
 
         txt.anomaly <- tklabel(frameAnom, text = lang.dlg[['label']][['12']], anchor = 'e', justify = 'right')
-        cb.anomaly <- ttkcombobox(frameAnom, values = CbAnomType, textvariable = anomaly, width = largeur3, state = stateAnomC)
+        cb.anomaly <- ttkcombobox(frameAnom, values = CbAnomType, textvariable = anomaly, width = largeur3, state = stateAnomC, justify = 'center')
 
         tkgrid(txt.anomaly, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.anomaly, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -698,7 +723,7 @@ anomaliesCalcPanelCmd <- function(){
         stateAnomDat <- if(tclvalue(anomDataExist) == "1") "normal" else "disabled"
 
         chk.anomIdx <- tkcheckbutton(frameAnomalyDat, variable = anomDataExist, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
-        en.anomIdx <- tkentry(frameAnomalyDat, textvariable = file.AnomIndex, width = largeur2, state = stateAnomDat)
+        en.anomIdx <- tkentry(frameAnomalyDat, textvariable = file.AnomIndex, width = largeur2 + 5, state = stateAnomDat)
         bt.anomIdx <- ttkbutton(frameAnomalyDat, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateAnomDat)
 
         tkgrid(chk.anomIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -743,50 +768,8 @@ anomaliesCalcPanelCmd <- function(){
             tkconfigure(bt.anomIdx, state = stateAnomDat)
 
             stateCaclBut <- if(tclvalue(anomDataExist) == '1') 'normal' else 'disabled'
-            tkconfigure(calculateBut, state = stateCaclBut)
-            tkconfigure(cb.fperiod, state = stateCaclBut)
-            tkconfigure(cb.outclim, state = stateCaclBut)
-            tkconfigure(cb.datatype, state = stateCaclBut)
-            tkconfigure(cb.en.infile, state = stateCaclBut)
-            tkconfigure(bt.infile, state = stateCaclBut)
-            tkconfigure(chk.outAnom, state = stateCaclBut)
-            tkconfigure(en.outAnom, state = stateCaclBut)
-            tkconfigure(bt.outAnom, state = stateCaclBut)
-            tkconfigure(btDateRange, state = stateCaclBut)
-
-            stateSeas <- 'disabled'
-            if(tclvalue(anomDataExist) == '1')
-                stateSeas <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[6]) "normal" else "disabled"
-            tkconfigure(cb.seasS, state = stateSeas)
-            tkconfigure(cb.seasL, state = stateSeas)
-
-            stateAggr <- 'disabled'
-            if(tclvalue(anomDataExist) == '1')
-                stateAggr <- if(str_trim(tclvalue(timeSteps)) == str_trim(tclvalue(outSteps))) "disabled" else "normal"
-            tkconfigure(bt.AggrFun, state = stateAggr)
-
-            stateClim.Ex <- 'disabled'
-            stateClim <- 'disabled'
-            stateBaseP <- 'disabled'
-            statedayW <- 'disabled'
-            stateAnomC <- 'disabled'
-            if(tclvalue(anomDataExist) == '1'){
-                if(tclvalue(updateAnom) == '0'){
-                    stateClim.Ex <- 'normal'
-                    stateClim <- if(tclvalue(climDataExist) == '1') 'normal' else 'disabled'
-                    stateBaseP <- if(tclvalue(climDataExist) == '1') 'disabled' else 'normal'
-                    statedayW <- if(str_trim(tclvalue(outSteps)) == CbperiodVAL[1] & 
-                                    tclvalue(climDataExist) == '0') "normal" else "disabled"
-                    stateAnomC <- 'normal'
-                }
-            }
-
-            tkconfigure(chk.climIdx, state = stateClim.Ex)
-            tkconfigure(en.climIdx, state = stateClim)
-            tkconfigure(bt.climIdx, state = stateClim)
-            tkconfigure(bt.BasePeriod, state = stateBaseP)
-            tkconfigure(en.daywin, state = statedayW)
-            tkconfigure(cb.anomaly, state = stateAnomC)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateCaclBut)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab2$IDtab, state = stateCaclBut)
         })
 
         ##############################################
@@ -797,8 +780,8 @@ anomaliesCalcPanelCmd <- function(){
 
         frameNav <- tkframe(frameAnomalyMap)
         cb.anom.Date <- ttkcombobox(frameNav, values = "", textvariable = .cdtData$EnvData$anomDate, width = largeur4, justify = 'center')
-        bt.anom.Date.prev <- ttkbutton(frameNav, text = "<<", width = 7)
-        bt.anom.Date.next <- ttkbutton(frameNav, text = ">>", width = 7)
+        bt.anom.Date.prev <- ttkbutton(frameNav, text = "<<", width = largeur7)
+        bt.anom.Date.next <- ttkbutton(frameNav, text = ">>", width = largeur7)
 
         bt.anom.maps <- ttkbutton(frameAnomalyMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur6)
         bt.anom.MapOpt <- ttkbutton(frameAnomalyMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur6)
@@ -889,7 +872,7 @@ anomaliesCalcPanelCmd <- function(){
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
         txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['15']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur4)
+        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur8)
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -921,11 +904,11 @@ anomaliesCalcPanelCmd <- function(){
         typeTSPLOT <- c("Bar", "Line")
         .cdtData$EnvData$plot.maps$typeTSp <- tclVar("Bar")
 
-        cb.typeTSp <- ttkcombobox(frameAnomalyTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur4)
-        bt.TsGraph.plot <- ttkbutton(frameAnomalyTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur7)
-        bt.TSGraphOpt <- ttkbutton(frameAnomalyTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur7)
+        cb.typeTSp <- ttkcombobox(frameAnomalyTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, justify = 'center', width = largeur11)
+        bt.TsGraph.plot <- ttkbutton(frameAnomalyTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur6)
+        bt.TSGraphOpt <- ttkbutton(frameAnomalyTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur6)
 
-        tkgrid(cb.typeTSp, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
+        tkgrid(cb.typeTSp, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 5, ipadx = 1, ipady = 1)
         tkgrid(bt.TSGraphOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.TsGraph.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
@@ -1039,11 +1022,18 @@ anomaliesCalcPanelCmd <- function(){
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
             txt.stnSel <- tklabel(frTS2, text = lang.dlg[['label']][['19']])
-            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = 6)
-            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = 6)
-            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur4)
+            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = largeur7)
+            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = largeur7)
+            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, justify = 'center', width = largeur4)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
+            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+            ########
             tkconfigure(bt.stnID.prev, command = function(){
                 if(!is.null(.cdtData$EnvData$anomdata)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
@@ -1067,18 +1057,12 @@ anomaliesCalcPanelCmd <- function(){
                     .cdtData$EnvData$tab$AnomGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$AnomGraph)
                 }
             })
-
-            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         }else{
             txt.crdSel <- tklabel(frTS2, text = lang.dlg[['label']][['20']], anchor = 'w', justify = 'left')
             txt.lonLoc <- tklabel(frTS2, text = lang.dlg[['label']][['21']], anchor = 'e', justify = 'right')
-            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
+            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = largeur9)
             txt.latLoc <- tklabel(frTS2, text = lang.dlg[['label']][['22']], anchor = 'e', justify = 'right')
-            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = largeur9)
             stnIDTSPLOT <- ""
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
 

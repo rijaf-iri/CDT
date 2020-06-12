@@ -1,16 +1,17 @@
 
 computeDecileProcs <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
     freqData <- GeneralParameters$intstep
     input.file <- if(GeneralParameters$data.type == 'cdtstation') GeneralParameters$cdtstation else GeneralParameters$cdtdataset
     if(input.file %in% c("", "NA")){
-        Insert.Messages.Out('No input data found', format = TRUE)
+        Insert.Messages.Out(message[['12']], TRUE, 'e')
         return(NULL)
     }
 
     if(GeneralParameters$monitoring){
         outDIR <- dirname(GeneralParameters$outdir)
         if(!dir.exists(outDIR) | !file.exists(GeneralParameters$outdir)){
-            Insert.Messages.Out('No Decile data found', format = TRUE)
+            Insert.Messages.Out(message[['13']], TRUE, 'e')
             return(NULL)
         }
         dataCDTdir <- file.path(outDIR, 'CDTDATASET')
@@ -19,8 +20,8 @@ computeDecileProcs <- function(GeneralParameters){
         out.decile.index <- GeneralParameters$outdir
     }else{
         if(!dir.exists(GeneralParameters$outdir)){
-            Insert.Messages.Out('Directory to save results not found', format = TRUE)
-            Insert.Messages.Out(paste('The outputs will be put in', getwd()))
+            Insert.Messages.Out(message[['14']], TRUE, 'e')
+            Insert.Messages.Out(paste(message[['15']], getwd()))
             GeneralParameters$outdir <- getwd()
         }
         outDIR <- file.path(GeneralParameters$outdir, "DECILE_data")
@@ -45,7 +46,7 @@ computeDecileProcs <- function(GeneralParameters){
 
     if(GeneralParameters$monitoring){
         if(!file.exists(file.aggr)){
-            Insert.Messages.Out(paste(file.aggr, "not found"), format = TRUE)
+            Insert.Messages.Out(paste(file.aggr, message[['6']]), TRUE, 'e')
             return(NULL)
         }
     }else{
@@ -68,7 +69,7 @@ computeDecileProcs <- function(GeneralParameters){
             SP2 <- readRDS(out.decile.index)
             SP2 <- SP2$data
             if(!isTRUE(all.equal(SP1, SP2))){
-                Insert.Messages.Out("Data have different stations or coordinates", format = TRUE)
+                Insert.Messages.Out(message[['16']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
@@ -78,7 +79,7 @@ computeDecileProcs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtdataset"){
         don <- try(readRDS(GeneralParameters$cdtdataset), silent = TRUE)
         if(inherits(don, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset), format = TRUE)
+            Insert.Messages.Out(paste(message[['17']], GeneralParameters$cdtdataset), TRUE, 'e')
             return(NULL)
         }
 
@@ -89,7 +90,7 @@ computeDecileProcs <- function(GeneralParameters){
             SP2 <- readRDS(out.decile.index)
             SP2 <- defSpatialPixels(list(lon = SP2$data$x, lat = SP2$data$y))
             if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                Insert.Messages.Out("Data have different resolution or bbox", format = TRUE)
+                Insert.Messages.Out(message[['18']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
@@ -137,7 +138,7 @@ computeDecileProcs <- function(GeneralParameters){
         daty0 <- as.Date(daty0, "%Y%m%d")
         idaty0 <- daty0 >= start.moni & daty0 <= end.moni
         if(!any(idaty0)){
-            Insert.Messages.Out("Date out of range", format = TRUE)
+            Insert.Messages.Out(message[['19']], TRUE, 'e')
             return(NULL)
         }
         daty <- daty[idaty0]
@@ -164,7 +165,7 @@ computeDecileProcs <- function(GeneralParameters){
 
     if(aggregatData){
         txtAggr <- if(GeneralParameters$outfreq == "dekad") "dekadal" else "monthly"
-        Insert.Messages.Out(paste("Aggregate to", txtAggr, "data ......"), TRUE, "i")
+        Insert.Messages.Out(paste(message[['20']], txtAggr, "......"), TRUE, "i")
 
         outfreq <- switch(GeneralParameters$outfreq, "dekad" = "dekadal", "month" = "monthly")
         agg.index <- cdt.index.aggregate(daty, freqData, outfreq)
@@ -211,8 +212,8 @@ computeDecileProcs <- function(GeneralParameters){
         }
 
         .cdtData$EnvData$toAggr <- toAggr
-        Insert.Messages.Out(paste("Aggregating", txtAggr, "data done!"), TRUE, "s")
-        Insert.Messages.Out("Computing Deciles ......", TRUE, "i")
+        Insert.Messages.Out(paste(txtAggr, message[['21']]), TRUE, "s")
+        Insert.Messages.Out(message[['22']], TRUE, "i")
     }else{
         if((GeneralParameters$outfreq == "dekad" & freqData != 'dekadal') |
             (GeneralParameters$outfreq == "month" & freqData != 'monthly'))
@@ -341,7 +342,7 @@ computeDecileProcs <- function(GeneralParameters){
         if(GeneralParameters$monitoring){
             file.PARS.rds <- file.path(dataPARSdir, paste0("Decile_", decile.out.suffix, ".rds"))
             if(!file.exists(file.PARS.rds)){
-                Insert.Messages.Out(paste('Deciles parameters not found:', file.PARS.rds), format = TRUE)
+                Insert.Messages.Out(paste(message[['23']], ':', file.PARS.rds), TRUE, 'e')
                 return(NULL)
             }
             decile.params <- readRDS(file.PARS.rds)
@@ -430,7 +431,7 @@ computeDecileProcs <- function(GeneralParameters){
             }
 
             if(!file.exists(file.PARS.index)){
-                Insert.Messages.Out(paste('Deciles parameters not found:', file.PARS.index), format = TRUE)
+                Insert.Messages.Out(paste(message[['23']], ':', file.PARS.index), TRUE, 'e')
                 return(NULL)
             }
 

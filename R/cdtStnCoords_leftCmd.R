@@ -2,17 +2,17 @@
 StnChkCoordsPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 29
-        largeur1 <- 44
-        largeur2 <- 47
-        largeur3 <- 40
-        largeur4 <- 51
+        largeur0 <- 21
+        largeur1 <- 34
+        largeur2 <- 36
+        largeur3 <- 32
+        largeur4 <- 39
     }else{
         largeur0 <- 21
         largeur1 <- 33
         largeur2 <- 34
-        largeur3 <- 36
-        largeur4 <- 36
+        largeur3 <- 37
+        largeur4 <- 39
     }
 
     GeneralParameters <- list(data.type = 'cdtcoords', infile = "", shpfile = "", output = "", buffer = 1)
@@ -356,8 +356,8 @@ StnChkCoordsPanelCmd <- function(){
         bt.dispGoogle <- ttkbutton(frameDisplay, text = lang.dlg[['button']][['5']])
         chk.crdsdisp <- tkcheckbutton(frameDisplay, variable = .cdtData$EnvData$DispCrd, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left', width = largeur3)
 
-        tkgrid(bt.dispCDT, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.dispCDTOpt, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(bt.dispCDT, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dispCDTOpt, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(bt.dispGoogle, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(chk.crdsdisp, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
@@ -488,7 +488,7 @@ StnChkCoordsPanelCmd <- function(){
         tkgrid(frameCrdData, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.editCoords, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(bt.correctCoords, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameDisplay, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameDisplay, row = 3, column = 0, sticky = 'we', padx = 0, pady = 1, ipadx = 0, ipady = 1)
 
     #######################################################################################################
 

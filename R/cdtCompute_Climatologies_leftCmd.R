@@ -2,25 +2,35 @@
 climatologiesCalcPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <-.cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- 32
-        largeur4 <- 24
-        largeur5 <- 25
+        largeur0 <- 29
+        largeur1 <- 33
+        largeur2 <- 35
+        largeur3 <- 25
+        largeur4 <- 19
+        largeur5 <- 15
         largeur6 <- 11
         largeur7 <- 10
         largeur8 <- 18
+        largeur9 <- 14
+        largeur10 <- 7
+        largeur11 <- 10
+        largeur12 <- 1
+        largeur13 <- 20
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(24)
+        largeur0 <- 30
+        largeur1 <- 32
+        largeur2 <- 33
         largeur3 <- 24
-        largeur4 <- 16
-        largeur5 <- 17
+        largeur4 <- 19
+        largeur5 <- 16
         largeur6 <- 11
         largeur7 <- 10
         largeur8 <- 18
+        largeur9 <- 14
+        largeur10 <- 7
+        largeur11 <- 10
+        largeur12 <- 4
+        largeur13 <- 20
     }
 
     GeneralParameters <- list(intstep = "dekadal", outstep = "dekadal", data.type = "cdtstation", 
@@ -45,14 +55,14 @@ climatologiesCalcPanelCmd <- function(){
 
     .cdtData$EnvData$TSGraphOp <- list(
                                         bar = list(
-                                                xlim = list(is.min = FALSE, min = "1-1", is.max = FALSE, max = "12-3"),
+                                                xlim = list(is.min = FALSE, min = "1-1", is.max = FALSE, max = "12-31"),
                                                 ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                                 axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                                 title = list(is.title = FALSE, title = '', position = 'top'),
                                                 colors = list(col = "darkblue")
                                                ),
                                         line = list(
-                                                xlim = list(is.min = FALSE, min = "1-1", is.max = FALSE, max = "12-3"),
+                                                xlim = list(is.min = FALSE, min = "1-1", is.max = FALSE, max = "12-31"),
                                                 ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                                 axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                                 title = list(is.title = FALSE, title = '', position = 'top'),
@@ -212,25 +222,28 @@ climatologiesCalcPanelCmd <- function(){
         len <- as.numeric(str_trim(GeneralParameters$seasonal$length.mon))
         mon1 <- (mon + len - 1) %% 12
         mon1[mon1 == 0] <- 12
-        seasdef <- paste(mois[mon], "->", mois[mon1])
+
+        ##############
+
+        frDefSeas <- tkframe(frameSeas)
 
         start.mon <- tclVar(MOIS[mon])
         length.mon <- tclVar(len)
-        season.def <- tclVar(seasdef)
 
         stateSeas <- if(GeneralParameters$outstep == 'seasonal') "normal" else "disabled"
 
-        txt.seasS <- tklabel(frameSeas, text = lang.dlg[['label']][['23']], anchor = 'e', justify = 'right')
-        cb.seasS <- ttkcombobox(frameSeas, values = MOIS, textvariable = start.mon, width = 9, state = stateSeas)
-        txt.seasL <- tklabel(frameSeas, text = lang.dlg[['label']][['24']])
-        cb.seasL <- ttkcombobox(frameSeas, values = 2:12, textvariable = length.mon, width = 2, state = stateSeas)
-        txt.SeasD <- tklabel(frameSeas, text = tclvalue(season.def), textvariable = season.def)
+        txt.seasS <- tklabel(frDefSeas, text = lang.dlg[['label']][['23']], anchor = 'e', justify = 'right')
+        cb.seasS <- ttkcombobox(frDefSeas, values = MOIS, textvariable = start.mon, width = 11, state = stateSeas)
+        txt.seasL <- tklabel(frDefSeas, text = lang.dlg[['label']][['24']])
+        cb.seasL <- ttkcombobox(frDefSeas, values = 2:12, textvariable = length.mon, width = 3, state = stateSeas)
+
+        sepL.seasS <- tklabel(frDefSeas, text = '', width = largeur12)
 
         tkgrid(txt.seasS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
         tkgrid(cb.seasS, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-        tkgrid(txt.seasL, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-        tkgrid(cb.seasL, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-        tkgrid(txt.SeasD, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+        tkgrid(sepL.seasS, row = 0, column = 2)
+        tkgrid(txt.seasL, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+        tkgrid(cb.seasL, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
 
         helpWidget(cb.seasS, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
         helpWidget(cb.seasL, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
@@ -244,7 +257,7 @@ climatologiesCalcPanelCmd <- function(){
                 len <- as.numeric(str_trim(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
-                seasdef <- paste(mois[mon], "->", mois[mon1])
+                seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
             }
             tclvalue(season.def) <- seasdef
         })
@@ -258,10 +271,26 @@ climatologiesCalcPanelCmd <- function(){
                 len <- as.numeric(str_trim(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
-                seasdef <- paste(mois[mon], "->", mois[mon1])
+                seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
             }
             tclvalue(season.def) <- seasdef
         })
+
+        ##############
+
+        frDispSeas <- tkframe(frameSeas)
+
+        seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
+        season.def <- tclVar(seasdef)
+
+        txt.SeasD <- tklabel(frDispSeas, text = tclvalue(season.def), textvariable = season.def)
+
+        tkgrid(txt.SeasD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+
+        ##############
+
+        tkgrid(frDefSeas, row = 0, column = 0, sticky = 'we')
+        tkgrid(frDispSeas, row = 1, column = 0)
 
         #######################
 
@@ -290,7 +319,7 @@ climatologiesCalcPanelCmd <- function(){
         txt.datatype <- tklabel(frameInData, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
         cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
         txt.infile <- tklabel(frameInData, text = tclvalue(txt.INData.var), textvariable = txt.INData.var, anchor = 'w', justify = 'left')
-        set.infile <- tkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], width = 8, state = stateSetNC)
+        set.infile <- ttkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
         if(GeneralParameters$data.type == 'cdtstation'){
             cb.en.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
         }else{
@@ -323,7 +352,7 @@ climatologiesCalcPanelCmd <- function(){
         settingINData <- NULL
         tkconfigure(set.infile, command = function(){
             GeneralParameters$cdtnetcdf <<- getInfoNetcdfData(.cdtEnv$tcl$main$win, GeneralParameters$cdtnetcdf,
-                                                            str_trim(tclvalue(input.file)), tclvalue(timeSteps))
+                                                              str_trim(tclvalue(input.file)), tclvalue(timeSteps))
             settingINData <<- 1
         })
 
@@ -540,8 +569,8 @@ climatologiesCalcPanelCmd <- function(){
 
         ############################################
 
-        tkgrid(frameTimeS, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameOutS, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameTimeS, row = 0, column = 0, sticky = 'we', padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameOutS, row = 0, column = 1, sticky = 'we', padx = 2, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameSeas, row = 1, column = 0, sticky = '', columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(frameInData, row = 2, column = 0, sticky = 'we', columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
@@ -549,7 +578,7 @@ climatologiesCalcPanelCmd <- function(){
         tkgrid(bt.BasePeriod, row = 4, column = 0, sticky = 'we', columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         tkgrid(frameBaseP, row = 5, column = 0, sticky = '', columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameDirSav, row = 6, column = 0, sticky = '', columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameDirSav, row = 6, column = 0, sticky = 'we', columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(calculateBut, row = 7, column = 0, sticky = 'we', columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
@@ -567,7 +596,7 @@ climatologiesCalcPanelCmd <- function(){
         stateClimatoDat <- if(tclvalue(climDataExist) == "1") "normal" else "disabled"
 
         chk.climIdx <- tkcheckbutton(frameClimatoDat, variable = climDataExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-        en.climIdx <- tkentry(frameClimatoDat, textvariable = file.ClimIndex, width = largeur2, state = stateClimatoDat)
+        en.climIdx <- tkentry(frameClimatoDat, textvariable = file.ClimIndex, width = largeur2 + 5, state = stateClimatoDat)
         bt.climIdx <- ttkbutton(frameClimatoDat, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateClimatoDat)
 
         tkgrid(chk.climIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -623,35 +652,7 @@ climatologiesCalcPanelCmd <- function(){
             tkconfigure(bt.climIdx, state = stateClimatoDat)
 
             stateCaclBut <- if(tclvalue(climDataExist) == '1') 'normal' else 'disabled'
-            tkconfigure(calculateBut, state = stateCaclBut)
-            tkconfigure(cb.fperiod, state = stateCaclBut)
-            tkconfigure(cb.outclim, state = stateCaclBut)
-            tkconfigure(cb.datatype, state = stateCaclBut)
-            tkconfigure(cb.en.infile, state = stateCaclBut)
-            tkconfigure(bt.infile, state = stateCaclBut)
-            tkconfigure(bt.BasePeriod, state = stateCaclBut)
-            tkconfigure(en.dir.save, state = stateCaclBut)
-            tkconfigure(bt.dir.save, state = stateCaclBut)
-
-            stateSeas <- 'disabled'
-            if(tclvalue(climDataExist) == '1')
-                stateSeas <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[6]) "normal" else "disabled"
-            tkconfigure(cb.seasS, state = stateSeas)
-            tkconfigure(cb.seasL, state = stateSeas)
-
-            stateAggr <- 'disabled'
-            if(tclvalue(climDataExist) == '1')
-                stateAggr <- if(str_trim(tclvalue(timeSteps)) == str_trim(tclvalue(outSteps))) "disabled" else "normal"
-            tkconfigure(bt.AggrFun, state = stateAggr)
-
-            stateSetNC <- 'disabled'
-            statedayW <- 'disabled'
-            if(tclvalue(climDataExist) == '1'){
-                stateSetNC <- if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]) "normal" else "disabled"
-                statedayW <- if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[1]) "normal" else "disabled"
-            }
-            tkconfigure(set.infile, state = stateSetNC)
-            tkconfigure(en.daywin, state = statedayW)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateCaclBut)
         })
 
         ##############################################
@@ -664,7 +665,7 @@ climatologiesCalcPanelCmd <- function(){
 
         stateMaps <- if(GeneralParameters$outstep %in% c('annual', 'seasonal')) 'disabled' else 'normal'
 
-        cb.clim.Var <- ttkcombobox(frameClimatoMap, values = .cdtData$EnvData$CbClimSTAT, textvariable = .cdtData$EnvData$climVar, width = largeur3)
+        cb.clim.Var <- ttkcombobox(frameClimatoMap, values = .cdtData$EnvData$CbClimSTAT, textvariable = .cdtData$EnvData$climVar, justify = 'center', width = largeur3)
         bt.clim.maps <- ttkbutton(frameClimatoMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur6)
         cb.clim.Date <- ttkcombobox(frameClimatoMap, values = "", textvariable = .cdtData$EnvData$climDate, justify = 'center', width = largeur7, state = stateMaps)
         bt.clim.Date.prev <- ttkbutton(frameClimatoMap, text = "<<", width = 4, state = stateMaps)
@@ -757,7 +758,7 @@ climatologiesCalcPanelCmd <- function(){
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
         txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['25']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur3)
+        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur9)
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -791,11 +792,11 @@ climatologiesCalcPanelCmd <- function(){
 
         stateGraphs <- if(GeneralParameters$outstep %in% c('annual', 'seasonal')) 'disabled' else 'normal'
 
-        cb.typeTSp <- ttkcombobox(frameClimatoTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur4, state = stateGraphs)
+        cb.typeTSp <- ttkcombobox(frameClimatoTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, justify = 'center', width = largeur13, state = stateGraphs)
         bt.TsGraph.plot <- ttkbutton(frameClimatoTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur8, state = stateGraphs)
         bt.TSGraphOpt <- ttkbutton(frameClimatoTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur8, state = stateGraphs)
 
-        tkgrid(cb.typeTSp, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
+        tkgrid(cb.typeTSp, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.TSGraphOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.TsGraph.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
@@ -909,9 +910,9 @@ climatologiesCalcPanelCmd <- function(){
         if(.cdtData$EnvData$plot.maps$data.type == "cdtstation"){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
             txt.stnSel <- tklabel(frTS2, text = lang.dlg[['label']][['19']])
-            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = 6)
-            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = 6)
-            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur4)
+            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = largeur10)
+            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = largeur10)
+            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, justify = 'center', width = largeur4)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
             tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -945,17 +946,20 @@ climatologiesCalcPanelCmd <- function(){
         }else{
             txt.crdSel <- tklabel(frTS2, text = lang.dlg[['label']][['20']], anchor = 'w', justify = 'left')
             txt.lonLoc <- tklabel(frTS2, text = lang.dlg[['label']][['21']], anchor = 'e', justify = 'right')
-            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
+            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = largeur11)
             txt.latLoc <- tklabel(frTS2, text = lang.dlg[['label']][['22']], anchor = 'e', justify = 'right')
-            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = largeur11)
             stnIDTSPLOT <- ""
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
+
+            sep.lab <- tklabel(frTS2, text = '', width = 1)
 
             tkgrid(txt.crdSel, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(txt.lonLoc, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(en.lonLoc, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(txt.latLoc, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(en.latLoc, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(sep.lab, row = 1, column = 2)
+            tkgrid(txt.latLoc, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(en.latLoc, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         }
 
         tkgrid(frTS2, row = 0, column = 0, sticky = 'e', pady = 1)

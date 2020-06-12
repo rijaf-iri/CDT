@@ -45,7 +45,7 @@ SummaryData.Plot.Graph <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out("Station not found", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData$message[['10']], TRUE, 'e')
             return(NULL)
         }
         stn <- .cdtData$EnvData$output$data$id[ixy]
@@ -68,25 +68,51 @@ SummaryData.Plot.Graph <- function(){
     index <- .cdtData$EnvData$output$index
     mois <- format(ISOdate(2014, 1:12, 1), "%b")
 
-    if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plotType)) == "Boxplot"){
+    if(.cdtData$EnvData$plot.maps$plotType == "boxplot"){
         mdon <- lapply(seq_along(index), function(j){
             data.frame(mois[as.numeric(names(index[j]))], don[index[[j]]], stringsAsFactors = FALSE)
         })
+
         ylim <- range(pretty(don))
         mdon <- do.call(rbind, mdon)
         names(mdon) <- c("group", "value")
+
         don <- data.frame(group = "ALL", value = don, stringsAsFactors = FALSE)
         don <- rbind(mdon, don)
         don$group <- factor(don$group, levels = c(mois, "ALL"))
 
+        #########
+        optsgph <- .cdtData$EnvData$GraphOp$boxplot
+        xlab <- if(optsgph$axislabs$is.xlab) optsgph$axislabs$xlab else ''
+        ylab <- if(optsgph$axislabs$is.ylab) optsgph$axislabs$ylab else ''
+        titre <- if(optsgph$title$is.title) optsgph$title$title else ''
+
+        kol <- optsgph$col
+        if(!optsgph$col$diff){
+            kol <- optsgph$col
+            kol$outbg <- kol$col
+            kol$whiskcol <- kol$boxcol
+            kol$staplecol <- kol$boxcol
+            kol$outcol <- kol$boxcol
+        }
+
         ret <- graphs.boxplot(value ~ group, data.df = don, xlim = c(1, 13), ylim = ylim,
-                        location = .cdtData$EnvData$location)
+                              xlab = xlab, ylab = ylab, title = titre, col = kol,
+                              location = .cdtData$EnvData$location)
     }else{
-        plotMois <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plotMois))
-        if(plotMois != "ALL")
+        plotMois <- .cdtData$EnvData$plot.maps$plotMois
+        if(plotMois != "all")
             don <- don[index[[which(mois == plotMois)]]]
 
-        ret <- graphs.histogram(don, ylab = 'Density', location = .cdtData$EnvData$location)
+        #########
+        optsgph <- .cdtData$EnvData$GraphOp$histogram
+        xlab <- if(optsgph$axislabs$is.xlab) optsgph$axislabs$xlab else ''
+        ylab <- if(optsgph$axislabs$is.ylab) optsgph$axislabs$ylab else 'Density'
+        titre <- if(optsgph$title$is.title) optsgph$title$title else ''
+
+        ret <- graphs.histogram(don, xlab = xlab, ylab = ylab, title = titre,
+                                bw.pars = optsgph$bw, hist.pars = optsgph$hist,
+                                location = .cdtData$EnvData$location)
     }
     return(ret)
 }
@@ -126,7 +152,7 @@ SummaryData.Get.Table <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out("Station not found", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData$message[['10']], TRUE, 'e')
             return(NULL)
         }
         stn <- .cdtData$EnvData$output$data$id[ixy]
@@ -158,6 +184,7 @@ SummaryData.Get.Table <- function(){
             else if(length(adon) == 6) c(adon, NA)
             else c(rep(NA, 5), adon)
     mdon <- cbind(mdon, adon)
+    mdon <- round(mdon, 4)
 
     std <- sapply(index, function(ix) sd(don[ix], na.rm = TRUE))
     std <- c(std, sd(don, na.rm = TRUE))
@@ -166,7 +193,7 @@ SummaryData.Get.Table <- function(){
     mdon <- rbind(mdon[1:6, ], std, mdon[7, ])
     mdon <- rbind(mdon, c(stn, "Longitude", pts[1], "Latitude", pts[2], rep(NA, 8)))
     stats <- c("Minimum", "1st Quartile", "Median", "Mean", "3rd Quartile", "Maximum",
-                "Standard Deviation", "Missing", "Station")
+               "Standard Deviation", "Missing", "Station")
     mdon <- data.frame(stats, mdon, stringsAsFactors = FALSE)
     names(mdon) <- c("Statistics", format(ISOdate(2014, 1:12, 1), "%b"), "ALL")
     return(mdon)

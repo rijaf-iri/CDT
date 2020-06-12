@@ -115,57 +115,17 @@ anomaliesCalc.plotAnomGraph <- function(){
 
     xlim <- range(daty, na.rm = TRUE)
     if(optsgph$xlim$is.min){
-        xx <- strsplit(optsgph$xlim$min, "-")[[1]]
-        x3 <- as.numeric(xx[3])
-        if(.cdtData$EnvData$output$params$intstep == "pentad"){
-            if(is.na(x3) | x3 < 1 | x3 > 6){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['28']], TRUE, 'e')
-                return(NULL)
-            }
-            x3 <- c(1, 6, 11, 16, 21, 26)[x3]
-        }
-        if(.cdtData$EnvData$output$params$intstep == "dekadal"){
-            if(is.na(x3) | x3 < 1 | x3 > 3){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['29']], TRUE, 'e')
-                return(NULL)
-            }
-            x3 <- c(1, 11, 21)[x3]
-        }
-        if(.cdtData$EnvData$output$params$intstep == "monthly") x3 <- 1
-        x1 <- as.numeric(xx[1])
-        x2 <- str_pad(as.numeric(xx[2]), 2, pad = "0")
-        x3 <- str_pad(x3, 2, pad = "0")
-        xx <- as.Date(paste0(x1, x2, x3), "%Y%m%d")
-        if(is.na(xx)){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['30']], TRUE, 'e')
+        xx <- try(as.Date(optsgph$xlim$min), silent = TRUE)
+        if(inherits(xx, "try-error") | is.na(xx)){
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['28']], TRUE, 'e')
             return(NULL)
         }
         xlim[1] <- xx
     }
     if(optsgph$xlim$is.max){
-        xx <- strsplit(optsgph$xlim$max, "-")[[1]]
-        x3 <- as.numeric(xx[3])
-        if(.cdtData$EnvData$output$params$intstep == "pentad"){
-            if(is.na(x3) | x3 < 1 | x3 > 6){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['28']], TRUE, 'e')
-                return(NULL)
-            }
-            x3 <- c(1, 6, 11, 16, 21, 26)[x3]
-        }
-        if(.cdtData$EnvData$output$params$intstep == "dekadal"){
-            if(is.na(x3) | x3 < 1 | x3 > 3){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['29']], TRUE, 'e')
-                return(NULL)
-            }
-            x3 <- c(1, 11, 21)[x3]
-        }
-        if(.cdtData$EnvData$output$params$intstep == "monthly") x3 <- 1
-        x1 <- as.numeric(xx[1])
-        x2 <- str_pad(as.numeric(xx[2]), 2, pad = "0")
-        x3 <- str_pad(x3, 2, pad = "0")
-        xx <- as.Date(paste0(x1, x2, x3), "%Y%m%d")
-        if(is.na(xx)){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['30']], TRUE, 'e')
+        xx <- try(as.Date(optsgph$xlim$max), silent = TRUE)
+        if(inherits(xx, "try-error") | is.na(xx)){
+            Insert.Messages.Out(.cdtData$EnvData[['message']][['28']], TRUE, 'e')
             return(NULL)
         }
         xlim[2] <- xx

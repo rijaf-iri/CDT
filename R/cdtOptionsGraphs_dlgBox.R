@@ -1,8 +1,8 @@
 
 MapGraph.GraphOptions.Assess <- function(assessOp, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 72
-        largeur2 <- 76
+        largeur1 <- 48
+        largeur2 <- 52
         width.col <- 7
     }else{
         largeur1 <- 47
@@ -168,12 +168,12 @@ MapGraph.GraphOptions.Assess <- function(assessOp, parent.win = .cdtEnv$tcl$main
 
 MapGraph.GraphOptions.LineSHP <- function(shpLineOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        width.col <- 7
-        width.spin <- 5
-        largeur0 <- 35
+        width.col <- 3
+        width.spin <- 4
+        largeur0 <- 30
     }else{
         width.col <- 1
-        width.spin <- 3
+        width.spin <- 4
         largeur0 <- 30
     }
 
@@ -277,11 +277,11 @@ MapGraph.GraphOptions.LineSHP <- function(shpLineOpt, parent.win = .cdtEnv$tcl$m
 
 MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 72
-        largeur2 <- 76
+        largeur1 <- 60
+        largeur2 <- 64
         width.col <- 7
     }else{
-        largeur1 <- 61
+        largeur1 <- 60
         largeur2 <- 64
         width.col <- 5
     }
@@ -301,7 +301,11 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
 
     #####################
 
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ########
+
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['1']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$bar$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$bar$xlim$is.max)
@@ -312,9 +316,9 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
     stateMaxXlim <- if(climGraphOpt$bar$xlim$is.max) 'normal' else 'disabled'
 
     chk.min.Xlim <- tkcheckbutton(frameGraphXlim, variable = is.min.xlim, text = "Min", anchor = 'w', justify = 'left')
-    en.min.Xlim <- tkentry(frameGraphXlim, textvariable = min.xlim, width = 14, state = stateMinXlim)
+    en.min.Xlim <- tkentry(frameGraphXlim, textvariable = min.xlim, width = 11, state = stateMinXlim)
     chk.max.Xlim <- tkcheckbutton(frameGraphXlim, variable = is.max.xlim, text = "Max", anchor = 'w', justify = 'left')
-    en.max.Xlim <- tkentry(frameGraphXlim, textvariable = max.xlim, width = 14, state = stateMaxXlim)
+    en.max.Xlim <- tkentry(frameGraphXlim, textvariable = max.xlim, width = 11, state = stateMaxXlim)
 
     tkgrid(chk.min.Xlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.min.Xlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -335,7 +339,7 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['2']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$bar$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$bar$ylim$is.max)
@@ -346,9 +350,9 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
     stateMaxYlim <- if(climGraphOpt$bar$ylim$is.max) 'normal' else 'disabled'
 
     chk.min.Ylim <- tkcheckbutton(frameGraphYlim, variable = is.min.ylim, text = "Min", anchor = 'w', justify = 'left')
-    en.min.Ylim <- tkentry(frameGraphYlim, textvariable = min.ylim, width = 4, state = stateMinYlim)
+    en.min.Ylim <- tkentry(frameGraphYlim, textvariable = min.ylim, width = 5, state = stateMinYlim)
     chk.max.Ylim <- tkcheckbutton(frameGraphYlim, variable = is.max.ylim, text = "Max", anchor = 'w', justify = 'left')
-    en.max.Ylim <- tkentry(frameGraphYlim, textvariable = max.ylim, width = 4, state = stateMaxYlim)
+    en.max.Ylim <- tkentry(frameGraphYlim, textvariable = max.ylim, width = 5, state = stateMaxYlim)
 
     tkgrid(chk.min.Ylim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.min.Ylim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -366,6 +370,14 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 2)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -457,11 +469,11 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
     })
 
     #####################
-    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameBarCol, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(frameGraphXYlim, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameBarCol, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -534,12 +546,14 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
 
 MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 72
-        largeur2 <- 76
+        largeur1 <- 60
+        largeur2 <- 64
+        largeur3 <- 6
         width.col <- 7
     }else{
-        largeur1 <- 61
+        largeur1 <- 60
         largeur2 <- 64
+        largeur3 <- 7
         width.col <- 5
     }
 
@@ -606,13 +620,20 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
         helpWidget(en.endYrAnom, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
         #########
+        sepAnom <- tklabel(frameAnomaly, text = "", width = largeur3)
+
         tkgrid(frameAnomCHK, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameAnomEN, row = 0, column = 1, sticky = 'we', rowspan = 2, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(sepAnom, row = 0, column = 1, sticky = 'we')
+        tkgrid(frameAnomEN, row = 0, column = 2, sticky = 'we', rowspan = 2, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     }
 
     #####################
 
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['4']], relief = 'groove')
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ###########
+
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['4']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$anomaly$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$anomaly$xlim$is.max)
@@ -623,9 +644,9 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
     stateMaxXlim <- if(climGraphOpt$anomaly$xlim$is.max) 'normal' else 'disabled'
 
     chk.min.Xlim <- tkcheckbutton(frameGraphXlim, variable = is.min.xlim, text = "Min", anchor = 'w', justify = 'left')
-    en.min.Xlim <- tkentry(frameGraphXlim, textvariable = min.xlim, width = 14, state = stateMinXlim)
+    en.min.Xlim <- tkentry(frameGraphXlim, textvariable = min.xlim, width = 11, state = stateMinXlim)
     chk.max.Xlim <- tkcheckbutton(frameGraphXlim, variable = is.max.xlim, text = "Max", anchor = 'w', justify = 'left')
-    en.max.Xlim <- tkentry(frameGraphXlim, textvariable = max.xlim, width = 14, state = stateMaxXlim)
+    en.max.Xlim <- tkentry(frameGraphXlim, textvariable = max.xlim, width = 11, state = stateMaxXlim)
 
     tkgrid(chk.min.Xlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.min.Xlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -646,7 +667,7 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['5']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['5']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$anomaly$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$anomaly$ylim$is.max)
@@ -657,9 +678,9 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
     stateMaxYlim <- if(climGraphOpt$anomaly$ylim$is.max) 'normal' else 'disabled'
 
     chk.min.Ylim <- tkcheckbutton(frameGraphYlim, variable = is.min.ylim, text = "Min", anchor = 'w', justify = 'left')
-    en.min.Ylim <- tkentry(frameGraphYlim, textvariable = min.ylim, width = 4, state = stateMinYlim)
+    en.min.Ylim <- tkentry(frameGraphYlim, textvariable = min.ylim, width = 5, state = stateMinYlim)
     chk.max.Ylim <- tkcheckbutton(frameGraphYlim, variable = is.max.ylim, text = "Max", anchor = 'w', justify = 'left')
-    en.max.Ylim <- tkentry(frameGraphYlim, textvariable = max.ylim, width = 4, state = stateMaxYlim)
+    en.max.Ylim <- tkentry(frameGraphYlim, textvariable = max.ylim, width = 5, state = stateMaxYlim)
 
     tkgrid(chk.min.Ylim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.min.Ylim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -677,6 +698,14 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 2)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -785,12 +814,12 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
     #####################
 
     if(!is.null(climGraphOpt$anomaly$anom))
-        tkgrid(frameAnomaly, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphXlim, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameBarCol, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameAnomaly, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(frameGraphXYlim, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameBarCol, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -871,17 +900,17 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
 MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 72
-        largeur2 <- 76
-        largeur3 <- 45
+        largeur1 <- 60
+        largeur2 <- 64
+        largeur3 <- 37
         width.col <- 3
         width.spin <- 4
     }else{
-        largeur1 <- 61
+        largeur1 <- 60
         largeur2 <- 64
-        largeur3 <- 40
+        largeur3 <- 37
         width.col <- 1
-        width.spin <- 3
+        width.spin <- 4
     }
 
     #####################
@@ -898,7 +927,12 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
     frButt <- tkframe(tt)
 
     #####################
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ########
+
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['1']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$line$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$line$xlim$is.max)
@@ -909,9 +943,9 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
     stateMaxXlim <- if(climGraphOpt$line$xlim$is.max) 'normal' else 'disabled'
 
     chk.min.Xlim <- tkcheckbutton(frameGraphXlim, variable = is.min.xlim, text = "Min", anchor = 'w', justify = 'left')
-    en.min.Xlim <- tkentry(frameGraphXlim, textvariable = min.xlim, width = 14, state = stateMinXlim)
+    en.min.Xlim <- tkentry(frameGraphXlim, textvariable = min.xlim, width = 11, state = stateMinXlim)
     chk.max.Xlim <- tkcheckbutton(frameGraphXlim, variable = is.max.xlim, text = "Max", anchor = 'w', justify = 'left')
-    en.max.Xlim <- tkentry(frameGraphXlim, textvariable = max.xlim, width = 14, state = stateMaxXlim)
+    en.max.Xlim <- tkentry(frameGraphXlim, textvariable = max.xlim, width = 11, state = stateMaxXlim)
 
     tkgrid(chk.min.Xlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.min.Xlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -932,7 +966,7 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['2']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$line$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$line$ylim$is.max)
@@ -943,9 +977,9 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
     stateMaxYlim <- if(climGraphOpt$line$ylim$is.max) 'normal' else 'disabled'
 
     chk.min.Ylim <- tkcheckbutton(frameGraphYlim, variable = is.min.ylim, text = "Min", anchor = 'w', justify = 'left')
-    en.min.Ylim <- tkentry(frameGraphYlim, textvariable = min.ylim, width = 4, state = stateMinYlim)
+    en.min.Ylim <- tkentry(frameGraphYlim, textvariable = min.ylim, width = 5, state = stateMinYlim)
     chk.max.Ylim <- tkcheckbutton(frameGraphYlim, variable = is.max.ylim, text = "Max", anchor = 'w', justify = 'left')
-    en.max.Ylim <- tkentry(frameGraphYlim, textvariable = max.ylim, width = 4, state = stateMaxYlim)
+    en.max.Ylim <- tkentry(frameGraphYlim, textvariable = max.ylim, width = 5, state = stateMaxYlim)
 
     tkgrid(chk.min.Ylim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.min.Ylim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -963,6 +997,14 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 2)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -1242,13 +1284,13 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
     }
 
     #####################
-    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(frameGraphXYlim, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     if(!is.null(climGraphOpt$line$legend))
-        tkgrid(frameGraphLegend, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameGraphLegend, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -1344,15 +1386,15 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
 
 MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 55
-        largeur2 <- 59
+        largeur1 <- 48
+        largeur2 <- 52
         width.col <- 3
         width.spin <- 4
     }else{
-        largeur1 <- 44
-        largeur2 <- 47
+        largeur1 <- 48
+        largeur2 <- 52
         width.col <- 1
-        width.spin <- 3
+        width.spin <- 4
     }
 
     #####################
@@ -1370,7 +1412,11 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
 
     #####################
 
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ########
+
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['1']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$proba$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$proba$xlim$is.max)
@@ -1404,7 +1450,7 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['2']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$proba$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$proba$ylim$is.max)
@@ -1435,6 +1481,14 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 4)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -1595,12 +1649,11 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
     })
 
     #####################
-    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphProba, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphXYlim, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphProba, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -1680,23 +1733,23 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
 
 MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 72
-        largeur2 <- 76
-        largeur3 <- 46
-        width.xlim <- 13
-        width.ylim <- 6
+        largeur1 <- 65
+        largeur2 <- 69
+        largeur3 <- 42
+        width.xlim <- 11
+        width.ylim <- 5
         width.col <- 3
         width.col1 <- 4
         width.spin <- 4
     }else{
-        largeur1 <- 59
-        largeur2 <- 62
-        largeur3 <- 38
-        width.xlim <- 12
+        largeur1 <- 64
+        largeur2 <- 68
+        largeur3 <- 41
+        width.xlim <- 11
         width.ylim <- 5
         width.col <- 1
         width.col1 <- 2
-        width.spin <- 3
+        width.spin <- 4
     }
 
     #####################
@@ -1713,7 +1766,12 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
     frButt <- tkframe(tt)
 
     #####################
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ########
+
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['1']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$line.enso$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$line.enso$xlim$is.max)
@@ -1747,7 +1805,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['2']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$line.enso$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$line.enso$ylim$is.max)
@@ -1778,6 +1836,14 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 6)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -2054,12 +2120,11 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
     tkgrid(frameLezTer, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
-    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphLegend, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphXYlim, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphLegend, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -2151,15 +2216,15 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
 MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 72
-        largeur2 <- 76
-        width.xlim <- 13
-        width.ylim <- 6
+        largeur1 <- 60
+        largeur2 <- 64
+        width.xlim <- 11
+        width.ylim <- 5
         width.col <- 3
     }else{
-        largeur1 <- 59
-        largeur2 <- 62
-        width.xlim <- 12
+        largeur1 <- 60
+        largeur2 <- 64
+        width.xlim <- 11
         width.ylim <- 5
         width.col <- 1
     }
@@ -2179,7 +2244,11 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
     #####################
 
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ########
+
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['1']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$bar.enso$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$bar.enso$xlim$is.max)
@@ -2213,7 +2282,7 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['2']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$bar.enso$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$bar.enso$ylim$is.max)
@@ -2244,6 +2313,14 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 2)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -2354,11 +2431,11 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
     })
 
     #####################
-    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameBarCol, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(frameGraphXYlim, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameBarCol, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -2430,19 +2507,19 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
 MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 72
-        largeur2 <- 76
-        width.xlim <- 13
-        width.ylim <- 6
+        largeur1 <- 58
+        largeur2 <- 62
+        width.xlim <- 11
+        width.ylim <- 5
         width.col <- 3
         width.spin <- 4
     }else{
-        largeur1 <- 59
+        largeur1 <- 58
         largeur2 <- 62
-        width.xlim <- 12
+        width.xlim <- 11
         width.ylim <- 5
         width.col <- 1
-        width.spin <- 3
+        width.spin <- 4
     }
 
     #####################
@@ -2460,7 +2537,11 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
 
     #####################
 
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ########
+
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['1']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$proba.enso$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$proba.enso$xlim$is.max)
@@ -2494,7 +2575,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['2']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$proba.enso$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$proba.enso$ylim$is.max)
@@ -2525,6 +2606,14 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 0)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -2742,11 +2831,11 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     tkgrid(framepltPoints, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
-    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(frameGraphXYlim, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -2829,21 +2918,21 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
 
 MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 72
-        largeur2 <- 76
-        largeur3 <- 59
-        width.xlim <- 13
-        width.ylim <- 6
+        largeur1 <- 60
+        largeur2 <- 64
+        largeur3 <- 58
+        width.xlim <- 11
+        width.ylim <- 5
         width.col <- 4
         width.spin <- 4
     }else{
-        largeur1 <- 59
-        largeur2 <- 62
-        largeur3 <- 72
-        width.xlim <- 12
+        largeur1 <- 60
+        largeur2 <- 64
+        largeur3 <- 58
+        width.xlim <- 11
         width.ylim <- 5
         width.col <- 2
-        width.spin <- 3
+        width.spin <- 4
     }
 
     #####################
@@ -2861,7 +2950,11 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####################
 
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ########
+
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['1']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$bar.line$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$bar.line$xlim$is.max)
@@ -2881,6 +2974,9 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
     tkgrid(chk.max.Xlim, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.max.Xlim, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
+    helpWidget(en.min.Xlim, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(en.max.Xlim, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+
     #########
 
     tkbind(chk.min.Xlim, "<Button-1>", function(){
@@ -2895,7 +2991,7 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['2']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$bar.line$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$bar.line$ylim$is.max)
@@ -2926,6 +3022,14 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 2)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -3024,7 +3128,11 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####################
 
-    frameBarCol <- ttklabelframe(frDialog, text = lang.dlg[['label']][['7']], relief = 'groove')
+    frameColG <- tkframe(frDialog)
+
+    #########
+
+    frameBarCol <- ttklabelframe(frameColG, text = lang.dlg[['label']][['7']], relief = 'groove')
 
     color.Y0 <- tclVar(climGraphOpt$bar.line$colors$y0)
     color.moins <- tclVar(climGraphOpt$bar.line$colors$negative)
@@ -3063,7 +3171,7 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####################
 
-    framePlotLine <- ttklabelframe(frDialog, text = lang.dlg[['label']][['10']], relief = 'groove')
+    framePlotLine <- ttklabelframe(frameColG, text = lang.dlg[['label']][['10']], relief = 'groove')
 
     is.plotline <- tclVar(climGraphOpt$bar.line$line$plot)
     col.plotline <- tclVar(climGraphOpt$bar.line$line$col)
@@ -3095,13 +3203,19 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####################
 
-    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameLevel, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameBarCol, row = 4, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(framePlotLine, row = 4, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    sepColG <- tklabel(frameColG, text = "", width = 4)
+
+    tkgrid(frameBarCol, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepColG, row = 0, column = 1, sticky = 'we')
+    tkgrid(framePlotLine, row = 0, column = 2, sticky = 'e')
+
+    #####################
+
+    tkgrid(frameGraphXYlim, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameLevel, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameColG, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -3193,21 +3307,21 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
 MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 65
-        largeur2 <- 69
-        largeur3 <- 31
-        width.xlim <- 10
-        width.ylim <- 6
+        largeur1 <- 52
+        largeur2 <- 56
+        largeur3 <- 23
+        width.xlim <- 5
+        width.ylim <- 5
         width.col <- 3
         width.spin <- 4
     }else{
-        largeur1 <- 51
-        largeur2 <- 54
+        largeur1 <- 54
+        largeur2 <- 58
         largeur3 <- 23
-        width.xlim <- 8
+        width.xlim <- 5
         width.ylim <- 5
         width.col <- 1
-        width.spin <- 3
+        width.spin <- 4
     }
 
     #####################
@@ -3224,7 +3338,10 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
     frButt <- tkframe(tt)
 
     #####################
-    frameGraphXlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1']], relief = 'groove')
+    frameGraphXYlim <- tkframe(frDialog)
+
+    ########
+    frameGraphXlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['1']], relief = 'groove')
 
     is.min.xlim <- tclVar(climGraphOpt$line$xlim$is.min)
     is.max.xlim <- tclVar(climGraphOpt$line$xlim$is.max)
@@ -3258,7 +3375,7 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
 
     #####################
 
-    frameGraphYlim <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+    frameGraphYlim <- ttklabelframe(frameGraphXYlim, text = lang.dlg[['label']][['2']], relief = 'groove')
 
     is.min.ylim <- tclVar(climGraphOpt$line$ylim$is.min)
     is.max.ylim <- tclVar(climGraphOpt$line$ylim$is.max)
@@ -3289,6 +3406,14 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
         stateMaxYlim <- if(tclvalue(is.max.ylim) == '0') 'normal' else 'disabled'
         tkconfigure(en.max.Ylim, state = stateMaxYlim)
     })
+
+    #####################
+
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 8)
+
+    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
+    tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
+    tkgrid(frameGraphYlim, row = 0, column = 2, sticky = 'e')
 
     #####################
 
@@ -3493,12 +3618,12 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
     tkgrid(frameLezLowess, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
-    tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphYlim, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphLegend, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(frameGraphXYlim, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphPlot, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGraphLegend, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])

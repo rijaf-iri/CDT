@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Water Balance </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Set </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Compute each year separately </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Multiple WB </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Multiple SWHC </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Format of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> File containing stations daily PET data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing stations daily Precip data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Index file (*.rds) for daily PET data </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Index file (*.rds) for daily Precip data </text>
+        </label>
+        <label id="6">
+            <text lang="en"> File to save the output </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Directory to save the output </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Start Water Balance from </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Month </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Day </text>
+        </label>
+        <label id="11">
+            <text lang="en"> First Day Water Balance </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Soil Water Holding Capacity </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the daily pontetial evapotranspiration </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the file containing the daily precipitation </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the daily precipitation </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;daily pontetial evapotranspiration dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Enter the full path to the file to save the result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file to save the result </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Enter the full path to the directory to save the result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory to save the result </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> No input for daily potential evapotranspiration </text>
+        </content>
+        <content id="2">
+            <text lang="en"> No input for daily precipitation </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Browse or enter the directory or file to save results </text>
+        </content>
+        <content id="4">
+            <text lang="en"> water balance computation finished successfully </text>
+        </content>
+        <content id="5">
+            <text lang="en"> water balance computation failed </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Compute daily water balance ...... </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Precip and PET stations do not match </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Precip and PET dates do not match </text>
+        </content>
+        <content id="9">
+            <text lang="en"> SWHC, Precip and PET stations do not match </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Initial water balance, Precip and PET stations do not match </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Precip dataset is not </text>
+        </content>
+        <content id="13">
+            <text lang="en"> PET dataset is not </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Precip and PET have different resolution or bbox </text>
+        </content>
+        <content id="15">
+            <text lang="en"> Precip and PET have different chunk size </text>
+        </content>
+        <content id="16">
+            <text lang="en"> No SWHC data found </text>
+        </content>
+        <content id="17">
+            <text lang="en"> SWHC, Precip and PET have different resolution or bbox </text>
+        </content>
+        <content id="18">
+            <text lang="en"> No initial water balance data found </text>
+        </content>
+        <content id="19">
+            <text lang="en"> Initial water balance, Precip and PET have different resolution or bbox </text>
+        </content>
+    </message>
+</dialog_box>

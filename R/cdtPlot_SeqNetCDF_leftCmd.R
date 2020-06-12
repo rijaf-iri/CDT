@@ -2,15 +2,15 @@
 PlotSeqNetCDFFilesCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(24)
-        largeur3 <- 27
-        largeur4 <- 13
+        largeur0 <- 33
+        largeur1 <- 31
+        largeur2 <- 20
+        largeur3 <- 21
+        largeur4 <- 10
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(14)
+        largeur0 <- 33
+        largeur1 <- 31
+        largeur2 <- 20
         largeur3 <- 21
         largeur4 <- 10
     }

@@ -6,17 +6,17 @@ spatialAnalysis.plotStatMaps <- function(){
     ## titre
     if(!climMapOp$title$user){
         params <- .cdtData$EnvData$statpars$params
-        titre1 <- stringr::str_to_title(params$time.series$out.series)
+        titre1 <- stringr::str_to_title(params$out.series$tstep)
         titre2 <- tclvalue(.cdtData$EnvData$climStat)
-        titre3 <- switch(params$analysis.method$mth.fun,
-                        "percentile" = paste0("(", params$analysis.method$mth.perc, "th", ")"),
-                        "frequency" = paste0("(", params$analysis.method$low.thres, " < X < ",
-                                                params$analysis.method$up.thres, ")"),
-                        "trend" = {
-                            if(params$analysis.method$trend.unit == 1) "per year"
-                            if(params$analysis.method$trend.unit == 2) "over"
-                            if(params$analysis.method$trend.unit == 3) "/ average (in %)"
-                        },
+        titre3 <- switch(params$analysis$method,
+                         "percentile" = paste0("(", params$analysis$percentile, "th", ")"),
+                         "frequency" = paste0("(", params$analysis$frequency$low, " < X < ",
+                                                   params$analysis$frequency$up, ")"),
+                          "trend" = {
+                                if(params$analysis$trend$unit == 1) "per year"
+                                if(params$analysis$trend$unit == 2) "over"
+                                if(params$analysis$trend$unit == 3) "/ average (in %)"
+                          },
                         NULL)
         titre4 <- tclvalue(.cdtData$EnvData$climDate)
         .titre <- paste(titre1, titre2, titre3, titre4)
@@ -30,10 +30,10 @@ spatialAnalysis.plotStatMaps <- function(){
 
     opar <- par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = climMapOp,
-                        data.type = .data.type,
-                        plot.type = .plot.type)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = climMapOp,
+                         data.type = .data.type,
+                         plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -44,7 +44,7 @@ spatialAnalysis.plotStatMaps <- function(){
             ipvl <- !is.na(don$p.value) & don$p.value < 0.05
             if(any(ipvl)){
                 # points(don$x0[ipvl], don$y0[ipvl], col = adjustcolor('gray40', alpha.f = 0.8))
-                points(don$x0[ipvl], don$y0[ipvl], pch = 19, cex = 0.5)
+                points(don$x0[ipvl], don$y0[ipvl], pch = 'x', cex = 0.8)
             }
         }else{
             ipvl <- c(don$pval)
@@ -98,8 +98,12 @@ spatialAnalysis.plotTSMaps <- function(){
     if(!TSMapOp$title$user){
         if(str_trim(tclvalue(.cdtData$EnvData$TSData)) == "Data"){
             params <- .cdtData$EnvData$statpars$params
-            titre1 <- stringr::str_to_title(params$time.series$out.series)
-            titre2 <- switch(params$aggr.series$aggr.fun, "sum" = "total", "mean" = "average", "count" = "number")
+            titre1 <- stringr::str_to_title(params$out.series$tstep)
+            # c("sum", "mean", "median", "max", "min", "count")
+            titre2 <- switch(params$aggr.series$aggr.fun,
+                             "sum" = "total", "mean" = "average",
+                             "median" = "median", "max" = "maximum",
+                             "min" = "minimum", "count" = "number")
             titre3 <- if(params$aggr.series$aggr.fun == "count")
                             paste("(", params$aggr.series$opr.fun, params$aggr.series$opr.thres, ")") else NULL
             titre4 <- tclvalue(.cdtData$EnvData$TSDate)
@@ -108,9 +112,9 @@ spatialAnalysis.plotTSMaps <- function(){
 
         if(str_trim(tclvalue(.cdtData$EnvData$TSData)) == "Anomaly"){
             params <- don$params
-            titre1 <- stringr::str_to_title(params$time.series$out.series)
+            titre1 <- stringr::str_to_title(params$out.series$tstep)
             titre2 <- "anomaly"
-            titre3 <- if(params$analysis.method$perc.anom) "% of mean" else NULL
+            titre3 <- if(params$analysis$anomaly$perc) "% of mean" else NULL
             titre4 <- tclvalue(.cdtData$EnvData$TSDate)
             .titre <- paste(titre1, titre2, titre3, titre4)
         }
@@ -124,10 +128,10 @@ spatialAnalysis.plotTSMaps <- function(){
 
     opar <- par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = TSMapOp,
-                        data.type = .data.type,
-                        plot.type = .plot.type)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = TSMapOp,
+                         data.type = .data.type,
+                         plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -148,7 +152,7 @@ spatialAnalysis.plotTSGraph <- function(){
     if(.cdtData$EnvData$statpars$params$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$tsdata$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
-            Insert.Messages.Out("Station not found", format = TRUE)
+            Insert.Messages.Out(.cdtData$EnvData$message[['18']], TRUE, 'e')
             return(NULL)
         }
         don <- .cdtData$EnvData$tsdata$data[, ixy]
@@ -185,10 +189,10 @@ spatialAnalysis.plotTSGraph <- function(){
     }
 
     #########
-    GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+    GRAPHTYPE <- .cdtData$EnvData$plot.maps$typeTSp
 
     #### ENSO
-    if(GRAPHTYPE %in% c("ENSO-Line", "ENSO-Barplot", "ENSO-Proba")){
+    if(GRAPHTYPE %in% c('eline', 'ebar', 'eproba')){
         if(nchar(dates[1]) == 4){
             start.mon <- paste0(dates, "0115")
             end.mon <- paste0(dates, "1215")
@@ -218,16 +222,16 @@ spatialAnalysis.plotTSGraph <- function(){
     #########
 
     optsgph <- switch(GRAPHTYPE,
-                "Line" = TSGraphOp$line,
-                "Barplot" = TSGraphOp$bar,
-                "ENSO-Line" = TSGraphOp$line.enso,
-                "ENSO-Barplot" = TSGraphOp$bar.enso,
-                "Anomaly" = TSGraphOp$anomaly,
-                "Probability" = TSGraphOp$proba,
-                "ENSO-Proba" = TSGraphOp$proba.enso)
+                    'line' = TSGraphOp$line,
+                    'bar' = TSGraphOp$bar,
+                    'eline' = TSGraphOp$line.enso,
+                    'ebar' = TSGraphOp$bar.enso,
+                    'anom' = TSGraphOp$anomaly,
+                    'proba' = TSGraphOp$proba,
+                    'eproba' = TSGraphOp$proba.enso)
 
     ## xlim, ylim, xlab, ylab
-    if(GRAPHTYPE %in% c("Probability", "ENSO-Proba")){
+    if(GRAPHTYPE %in% c('proba', 'eproba')){
         xlim <- range(don, na.rm = TRUE)
         if(optsgph$xlim$is.min) xlim[1] <- as.numeric(optsgph$xlim$min)
         if(optsgph$xlim$is.max) xlim[2] <- as.numeric(optsgph$xlim$max)
@@ -241,7 +245,7 @@ spatialAnalysis.plotTSGraph <- function(){
         daty <- daty[idt]
         don <- don[idt]
         ylim <- range(pretty(don))
-        if(GRAPHTYPE == "Anomaly")
+        if(GRAPHTYPE == 'anom')
             if(optsgph$anom$perc.anom) ylab0 <- "Anomaly (% of Mean)"
     }
 
@@ -261,7 +265,7 @@ spatialAnalysis.plotTSGraph <- function(){
 
     #########
 
-    if(GRAPHTYPE == "Line"){
+    if(GRAPHTYPE == 'line'){
         legends <- NULL
         if(optsgph$legend$is$mean){
             legends$add$mean <- optsgph$legend$add$mean
@@ -297,7 +301,7 @@ spatialAnalysis.plotTSGraph <- function(){
                         location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "Barplot"){
+    if(GRAPHTYPE == 'bar'){
         ret <- graphs.plot.bar(daty, don, xlim = xlim, ylim = ylim,
                         xlab = xlab, ylab = ylab, ylab.sub = NULL,
                         title = titre, title.position = titre.pos, axis.font = 1,
@@ -305,7 +309,7 @@ spatialAnalysis.plotTSGraph <- function(){
                         location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "ENSO-Line"){
+    if(GRAPHTYPE == 'eline'){
         oni <- oni[idt]
 
         legends <- NULL
@@ -343,7 +347,7 @@ spatialAnalysis.plotTSGraph <- function(){
                             location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "ENSO-Barplot"){
+    if(GRAPHTYPE == 'ebar'){
         oni <- oni[idt]
         ret <- graphs.plot.bar.ENSO(daty, don, oni, xlim = xlim, ylim = ylim,
                             xlab = xlab, ylab = ylab, ylab.sub = NULL,
@@ -351,7 +355,7 @@ spatialAnalysis.plotTSGraph <- function(){
                             barcol = optsgph$colors$col, location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "Anomaly"){
+    if(GRAPHTYPE == 'anom'){
         if(!optsgph$ylim$is.min & !optsgph$ylim$is.max) ylim <- NULL
         loko <- c(optsgph$colors$negative, optsgph$colors$positive)
 
@@ -368,7 +372,7 @@ spatialAnalysis.plotTSGraph <- function(){
                                 barcol = loko, location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "Probability"){
+    if(GRAPHTYPE == 'proba'){
         ret <- graphs.plot.proba(don, xlim = xlim, ylim = ylim,
                         xlab = xlab, xlab.sub = NULL, ylab = ylab,
                         title = titre, title.position = titre.pos, axis.font = 1,
@@ -377,7 +381,7 @@ spatialAnalysis.plotTSGraph <- function(){
                         location = .cdtData$EnvData$location)
     }
 
-    if(GRAPHTYPE == "ENSO-Proba"){
+    if(GRAPHTYPE == 'eproba'){
         ret <- graphs.plot.proba.ENSO(don, oni, xlim = xlim, ylim = ylim,
                             xlab = xlab, xlab.sub = NULL, ylab = ylab,
                             title = titre, title.position = titre.pos, axis.font = 1,

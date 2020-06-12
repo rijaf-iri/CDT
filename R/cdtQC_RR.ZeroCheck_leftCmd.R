@@ -2,17 +2,17 @@
 qcRRZeroCheckPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 44
-        largeur2 <- 47
-        largeur3 <- 28
-        largeur4 <- 15
-        largeur5 <- 8
-    }else{
-        largeur1 <- 32
+        largeur1 <- 31
         largeur2 <- 33
         largeur3 <- 21
         largeur4 <- 11
-        largeur5 <- 6
+        largeur5 <- 5
+    }else{
+        largeur1 <- 32
+        largeur2 <- 33
+        largeur3 <- 22
+        largeur4 <- 11
+        largeur5 <- 5
     }
 
     ###################
@@ -250,12 +250,7 @@ qcRRZeroCheckPanelCmd <- function(){
             tkconfigure(bt.dataIdx, state = stateExistData)
 
             stateZero <- if(tclvalue(zeroExist) == '1') 'normal' else 'disabled'
-            tkconfigure(cb.infile, state = stateZero)
-            tkconfigure(bt.infile, state = stateZero)
-            tkconfigure(bt.params, state = stateZero)
-            tkconfigure(en.dir.save, state = stateZero)
-            tkconfigure(bt.dir.save, state = stateZero)
-            tkconfigure(bt.checkZeros, state = stateZero)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateZero)
         })
 
         #######################
@@ -270,9 +265,9 @@ qcRRZeroCheckPanelCmd <- function(){
         bt.display.FZ <- ttkbutton(frameStnId, text = lang.dlg[['button']][['3']])
 
         tkgrid(bt.stnID.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(.cdtData$EnvData$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.display.FZ, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(.cdtData$EnvData$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 3, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.display.FZ, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 2, ipadx = 1, ipady = 1)
 
         #######
 
@@ -427,7 +422,7 @@ qcRRZeroCheckPanelCmd <- function(){
 
         tkgrid(frameZeros, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameStnId, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameStnFZ, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameStnFZ, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 0, ipady = 1)
         tkgrid(bt.replace.FZ, row = 4, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
     #######################################################################################################

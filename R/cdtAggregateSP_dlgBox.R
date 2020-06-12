@@ -2,10 +2,10 @@
 AggregateNcdf_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 52
-        largeur1 <- 55
-        largeur2 <- 17
-        largeur3 <- 29
+        largeur0 <- 40
+        largeur1 <- 38
+        largeur2 <- 11
+        largeur3 <- 30
     }else{
         largeur0 <- 32
         largeur1 <- 34

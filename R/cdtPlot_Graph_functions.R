@@ -123,7 +123,7 @@ graphs.plot.line <- function(x, y, xlim = NULL, ylim = NULL, origindate = NULL,
     }
     else mtext(ylab, side = 2, line = line.ylab)
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
 
     abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1)
     abline(v = xTck, col = "lightgray", lty = "solid", lwd = 1)
@@ -298,7 +298,7 @@ graphs.plot.bar <- function(x, y, xlim = NULL, ylim = NULL, origindate = NULL,
     box(bty = 'l', col = 'black')
     box(bty = '7', col = 'black')
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     op <- par(mar = par.title)
@@ -326,8 +326,16 @@ graphs.boxplot <- function(formula, data.df, xlim = NULL, ylim = NULL,
     plot(1, xlim = xlim + c(-0.5, 0.5), ylim = ylim,
          type = 'n', xaxt = 'n', las = 2,
          xlab = xlab, ylab = ylab, main = title)
+
+    yax <- axTicks(2)
+    yminTck <- yax[-length(yax)] + diff(yax) / 2
+    yminTck <- c(min(yax) - diff(yminTck)[1] / 2, yminTck, max(yax) + diff(yminTck)[1] / 2)
+
     abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
-    abline(v = axTicks(1), col = "lightgray", lty = "dotted", lwd = 1.3)
+    abline(h = yminTck, col = "lightgray", lty = "dotted")
+    abline(v = axTicks(1), col = "lightgray", lty = "solid", lwd = 1.0)
+
+    axis(2, at = yminTck, labels = NA, tcl = par("tcl") * 0.6)
 
     formule <- as.formula(formula)
     graphics::boxplot(formule, data = data.df, add = TRUE, notch = FALSE,
@@ -337,7 +345,8 @@ graphs.boxplot <- function(formula, data.df, xlim = NULL, ylim = NULL,
                       outcex = 0.7, outpch = 21,
                       yaxt = 'n', range = round(ylim[2] * 0.25))
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
+
     return(0)
 }
 
@@ -345,7 +354,8 @@ graphs.boxplot <- function(formula, data.df, xlim = NULL, ylim = NULL,
 
 graphs.histogram <- function(x, xlab = '', ylab = '', title = '',
                              bw.pars = list(add = FALSE, bw = 1.0, col = "red", lwd = 1.5),
-                             hist.pars = list(col = "lightblue", border = "blue"),
+                             hist.pars = list(user.break = FALSE, breaks = NULL,
+                                              col = "lightblue", border = "blue"),
                              location = NULL)
 {
     if(is.null(bw.pars$add)) bw.pars$add <- FALSE
@@ -354,16 +364,20 @@ graphs.histogram <- function(x, xlab = '', ylab = '', title = '',
     if(is.null(bw.pars$lwd)) bw.pars$lwd <- 1.5
     if(is.null(hist.pars$col)) hist.pars$col <- "lightblue"
     if(is.null(hist.pars$border)) hist.pars$border <- "blue"
+    if(is.null(hist.pars$breaks)) hist.pars$breaks <- "Sturges"
 
-    hst <- graphics::hist(x, plot = FALSE)
+    breaks <- if(hist.pars$user.break) hist.pars$breaks else "Sturges"
+    hst <- graphics::hist(x, breaks = breaks, plot = FALSE)
     xhst <- range(pretty(hst$breaks))
     yhst <- range(pretty(hst$density))
 
+    ##########
     if(bw.pars$add){
         dst <- stats::density(x, bw = bw.pars$bw, na.rm = TRUE)
         xdst <- range(dst$x)
         ydst <- range(dst$y)
-        xlim <- c(min(xhst[1], xdst[1]), max(xhst[2], xdst[2]))
+        # xlim <- c(min(xhst[1], xdst[1]), max(xhst[2], xdst[2]))
+        xlim <- xhst
         ylim <- c(min(yhst[1], ydst[1]), max(yhst[2], ydst[2]))
     }else{
         xlim <- xhst
@@ -372,38 +386,49 @@ graphs.histogram <- function(x, xlab = '', ylab = '', title = '',
     ylim[1] <- 0
     ylim[2] <- ylim[2] * 1.04
 
-    op <- par(mar = c(4.0, 5.5, 2.5, 2.1))
+    ##########
+    op <- par(mar = c(4.5, 5.5, 3.0, 2.1))
     plot(1, xlim = xlim, ylim = ylim, type = 'n', xaxt = 'n', yaxt = 'n',
-         yaxs = 'i', xlab = xlab, ylab = '', main = title)
-    abline(v = axTicks(1), col = "lightgray", lty = "dotted", lwd = 1.3)
+         yaxs = 'i', xlab = '', ylab = '')
+
+    yax <- axTicks(2)
+    yminTck <- yax[-length(yax)] + diff(yax) / 2
+    yminTck <- c(min(yax) - diff(yminTck)[1] / 2, yminTck, max(yax) + diff(yminTck)[1] / 2)
+
     abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
-    xTck <- axTicks(1)
-    xminor <- hst$breaks
-    # xminor <- xminor[!xminor %in% xTck]
-    axis(1, at = xminor, tcl = par("tcl") * 0.5, cex.axis = 1.0)
-    # axis(1, at = axTicks(1))
-    # axis(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
+    abline(h = yminTck, col = "lightgray", lty = "dotted")
+    abline(v = hst$breaks, col = "lightgray", lty = "dotted", lwd = 1.3)
+
+    axis(1, at = hst$breaks, tcl = par("tcl") * 0.8, cex.axis = 1.0)
+    mtext(xlab, side = 1, line = 2.5, cex = 1.0)
+
     axis(2, at = axTicks(2), las = 2, cex.axis = 1.0)
-    mtext(ylab, side = 2, line = 4, cex = 1.2)
-    graphics::hist(x, freq = FALSE, add = TRUE, xlab = '', ylab = '', main = '',
+    axis(2, at = yminTck, labels = NA, tcl = par("tcl") * 0.6)
+    mtext(ylab, side = 2, line = 4, cex = 1.0)
+
+    title(main = list(title, cex = 1.5))
+
+    graphics::hist(x, breaks = breaks, freq = FALSE, add = TRUE, xlab = '', ylab = '', main = '',
                    axes = FALSE, col = hist.pars$col, border = hist.pars$border)
     if(bw.pars$add) lines(dst, col = bw.pars$col, lwd = bw.pars$lwd)
     box()
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
+
     return(0)
 }
 
 ####################################################################################################
-
 
 graphs.plot.bar.Anomaly <- function(x, y, period = c(1981, 2010), percent = TRUE,
                                     xlim = NULL, ylim = NULL, xlab = '', ylab = '', ylab.sub = NULL,
                                     title = '', title.position = 'top', axis.font = 1,
                                     barcol = c("blue", "red"), location = NULL)
 {
-    if(length(y[!is.na(y)]) < 10){
+    if((length(y[!is.na(y)]) < 1) |
+       (length(y[!is.na(y)]) < 5) & !is.null(period))
+    {
         x0 <- seq_along(x)
         if(length(x0) == 0) x <- x0
         y <- rep(0, length(x0))
@@ -502,10 +527,11 @@ graphs.plot.bar.Anomaly <- function(x, y, period = c(1981, 2010), percent = TRUE
         mtext(ylab.sub, side = 2, line = line, font = 3, cex = 0.8)
     }else mtext(ylab, side = 2, line = line)
 
-    box(bty = 'l')
-    box(bty = '7', col = 'gray')
+    box()
+    # box(bty = 'l')
+    # box(bty = '7', col = 'gray')
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     op <- par(mar = par.title)
@@ -592,7 +618,7 @@ graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
     plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
     xminTck <- axTicks(1)
     xminTck <- xminTck[-length(xminTck)] + diff(xminTck) / 2
-    xminTck <- c(min(axTicks(2)) - diff(xminTck)[1] / 2, xminTck, max(axTicks(2)) + diff(xminTck)[1] / 2)
+    xminTck <- c(min(axTicks(1)) - diff(xminTck)[1] / 2, xminTck, max(axTicks(1)) + diff(xminTck)[1] / 2)
     yminTck <- axTicks(2)
     yminTck <- yminTck[-length(yminTck)] + diff(yminTck) / 2
     yminTck <- c(min(axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(axTicks(2)) + diff(yminTck)[1] / 2)
@@ -644,11 +670,11 @@ graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
             legend("topright", 
                 c(paste0("distr: ", selected.distr), sapply(seq_along(selected.pars),
                         function(j) paste0(names(selected.pars)[j], ": ", round(selected.pars[[j]], 5)))),
-                box.lwd = 0, box.col = "gray97", bg = "gray98", cex = 0.9)
+                box.lwd = 0, box.col = "gray97", bg = "gray98", cex = 1.2)
         }
     }
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     box()
     par(op)
 
@@ -787,8 +813,10 @@ graphs.plot.line.ENSO <- function(x, y, oni, xlim = NULL, ylim = NULL, origindat
         mtext(ylab, side = 2, line = line + 1)
         mtext(ylab.sub, side = 2, line = line, font = 3, cex = 0.8)
     }else mtext(ylab, side = 2, line = line)
+
+    box()
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     nino <- c('La Nina', 'Neutral', 'El Nino')
@@ -901,10 +929,11 @@ graphs.plot.bar.ENSO <- function(x, y, oni, xlim = NULL, ylim = NULL, origindate
         mtext(ylab.sub, side = 2, line = line, font = 3, cex = 0.8)
     }else mtext(ylab, side = 2, line = line)
 
-    box(bty = 'l')
-    box(bty = '7', col = 'gray')
+    box()
+    # box(bty = 'l')
+    # box(bty = '7', col = 'black')
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     op <- par(mar = par.legend)
@@ -998,7 +1027,7 @@ graphs.plot.proba.ENSO <- function(dat, oni, xlim = NULL, ylim = NULL, origindat
     plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
     xminTck <- axTicks(1)
     xminTck <- xminTck[-length(xminTck)] + diff(xminTck) / 2
-    xminTck <- c(min(axTicks(2)) - diff(xminTck)[1] / 2, xminTck, max(axTicks(2)) + diff(xminTck)[1] / 2)
+    xminTck <- c(min(axTicks(1)) - diff(xminTck)[1] / 2, xminTck, max(axTicks(1)) + diff(xminTck)[1] / 2)
     yminTck <- axTicks(2)
     yminTck <- yminTck[-length(yminTck)] + diff(yminTck) / 2
     yminTck <- c(min(axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(axTicks(2)) + diff(yminTck)[1] / 2)
@@ -1048,8 +1077,9 @@ graphs.plot.proba.ENSO <- function(dat, oni, xlim = NULL, ylim = NULL, origindat
         lines(x3, y3, type = 'l', col = plotl$nino$line, lwd = plotl$lwd)
     }
 
+    box()
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     op <- par(mar = par.legend)
@@ -1200,7 +1230,7 @@ graphs.plot.bar.line <- function(x, y, y0 = 0, yticks = NULL,
     box(bty = 'l')
     box(bty = '7', col = 'black')
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     op <- par(mar = par.title)
@@ -1208,7 +1238,7 @@ graphs.plot.bar.line <- function(x, y, y0 = 0, yticks = NULL,
         plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlab = '', ylab = '')
         bbx <- par("usr")
         rect(bbx[1], bbx[3], bbx[2], bbx[4], col = "ghostwhite")
-        text(1, 1, title, cex = 0.9, font = 2)
+        text(1, 1, title, cex = 1.5, font = 2)
     }else plot.new()
     par(op)
 
@@ -1332,7 +1362,7 @@ graphs.plot.polygon <- function(x, y, y0 = 0, yticks = NULL,
     box(bty = 'l')
     box(bty = '7', col = 'black')
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     op <- par(mar = par.title)
@@ -1340,7 +1370,7 @@ graphs.plot.polygon <- function(x, y, y0 = 0, yticks = NULL,
         plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlab = '', ylab = '')
         bbx <- par("usr")
         rect(bbx[1], bbx[3], bbx[2], bbx[4], col = "ghostwhite")
-        text(1, 1, title, cex = 0.9, font = 2)
+        text(1, 1, title, cex = 1.5, font = 2)
     }else plot.new()
     par(op)
 
@@ -1393,7 +1423,7 @@ picsa.plot.daily <- function(dates, prec, location, thres.rain = 1, axis.font = 
     points(dfplot$yy[!rnor], dfplot$day[!rnor], pch = 15, col = "khaki", cex = 0.7)
     points(dfplot$yy[rnor], dfplot$day[rnor], pch = 20, col = "blue", cex = 0.6)
 
-    mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+    mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
 
     legend(x = 'topright', legend = c("Rain", "Dry", 'NA'), bty = "n",
             fill = c("blue", "khaki", NA), horiz = TRUE, cex = 1.0, inset = -0.01)
@@ -1432,7 +1462,7 @@ picsa.plot.TxTn <- function(x, tmax, tmin, location, axis.font = 1)
 
     abline(lm(tmax~x), lwd = 2)
     abline(lm(tmin~x), lwd = 2)
-    mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.6)
+    mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     op <- par(mar = c(0, 4, 0, 2))
@@ -1466,7 +1496,7 @@ climdex.plot.bar <- function(x, y, trend, xlim = NULL, ylim = NULL,
     if(xlim[2] - xlim[1] == 1) xlim <- xlim + c(-0.5, 0.5)
 
     nylab <- max(nchar(as.character(pretty(y))), na.rm = TRUE)
-    line.ylab <- if(nylab < 2) 2 else nylab
+    line.ylab <- if(nylab < 2) 2 else nylab + 1
 
     subtitre <- paste("R2=", round(100 * trend[9], 1), " p-value=", round(trend[4], 3),
                 " Slope estimate=", round(trend[1], 3), " Slope error=", round(trend[2], 3))
@@ -1485,18 +1515,18 @@ climdex.plot.bar <- function(x, y, trend, xlim = NULL, ylim = NULL,
         if(title.position == 'bottom'){
             plot.position <- matrix(1:2, ncol = 1)
             plot.heights <- c(0.9, ttl.h)
-            par.plot <- c(4.1, par.mar.2, 2.1, 2.1)
+            par.plot <- c(5.5, par.mar.2, 2.1, 2.1)
             par.title <- c(1, par.mar.2, 0, 2.1)
         }else{
             plot.position <- matrix(c(2, 1), ncol = 1)
             plot.heights <- c(ttl.h, 0.9)
-            par.plot <- c(4.1, par.mar.2, 1.5, 2.1)
+            par.plot <- c(5.5, par.mar.2, 1.5, 2.1)
             par.title <- c(0, par.mar.2, 1, 2.1)
         }
     }else{
         plot.position <- matrix(1:2, ncol = 1)
         plot.heights <- c(0.9, 0.01)
-        par.plot <- c(4.1, par.mar.2, 2.1, 2.1)
+        par.plot <- c(5.5, par.mar.2, 2.1, 2.1)
         par.title <- c(0, par.mar.2, 0, 2.1)
     }
 
@@ -1504,9 +1534,11 @@ climdex.plot.bar <- function(x, y, trend, xlim = NULL, ylim = NULL,
 
     op <- par(mar = par.plot)
     plot(x, y, type = 'n', xlab = '', ylab = '', axes = FALSE, xlim = xlim, ylim = ylim)
+
     minTck <- axTicks(2)
     minTck <- minTck[-length(minTck)] + diff(minTck) / 2
     minTck <- c(min(axTicks(2)) - diff(minTck)[1] / 2, minTck, max(axTicks(2)) + diff(minTck)[1] / 2)
+
     abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
     abline(h = minTck, col = "lightgray", lty = "dotted", lwd = 1.3)
 
@@ -1524,15 +1556,15 @@ climdex.plot.bar <- function(x, y, trend, xlim = NULL, ylim = NULL,
     axis(1, at = xTck, font = axis.font)
     if(length(xminor) > 0) axis(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
     axis(2, at = axTicks(2), font = axis.font, las = 1, cex.axis = 1.1)
+    axis(2, at = minTck, labels = NA, tcl = par("tcl") * 0.6)
 
-    mtext(xlab, side = 1, line = 2)
-    mtext(subtitre, side = 1, line = 2.8, cex = 1.0)
+    mtext(xlab, side = 1, line = 2.5)
+    mtext(subtitre, side = 1, line = 3.8, cex = 1.0)
     mtext(ylab, side = 2, line = line.ylab, cex = 1.3)
 
-    box(bty = 'l')
-    box(bty = '7', col = 'gray')
+    box()
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
     par(op)
 
     op <- par(mar = par.title)
@@ -1585,10 +1617,12 @@ climdex.plot.line <- function(x, y, trend, xlim = NULL, ylim = NULL,
     if(xlim[2] - xlim[1] == 1) xlim <- xlim + c(-0.5, 0.5)
 
     nylab <- max(nchar(as.character(pretty(y))), na.rm = TRUE)
-    line.ylab <- if(nylab < 2) 2 else nylab + 0.5
+    line.ylab <- if(nylab < 2) 2 else nylab + 1
 
-    subtitre <- paste("R2=", round(100 * trend[9], 1), " p-value=", round(trend[4], 3),
-                " Slope estimate=", round(trend[1], 3), " Slope error=", round(trend[2], 3))
+    subtitre <- paste("R2=", round(100 * trend[9], 1),
+                      " p-value=", round(trend[4], 3),
+                      " Slope estimate=", round(trend[1], 3),
+                      " Slope error=", round(trend[2], 3))
     ina <- !is.na(x) & !is.na(y)
     lowess.fun <- stats::lowess(x[ina], y[ina])
 
@@ -1607,20 +1641,20 @@ climdex.plot.line <- function(x, y, trend, xlim = NULL, ylim = NULL,
         if(title.position == 'bottom'){
             plot.position <- matrix(1:3, ncol = 1)
             plot.heights <- c(0.9, 0.12, ttl.h)
-            par.plot <- c(4.1, par.mar.2, 2.1, 2.1)
+            par.plot <- c(5.5, par.mar.2, 2.1, 2.1)
             par.legend <- c(0, par.mar.2, 0, 2.1)
             par.title <- c(1, par.mar.2, 0, 2.1)
         }else{
             plot.position <- matrix(c(3, 1, 2), ncol = 1)
             plot.heights <- c(ttl.h, 0.9, 0.12)
-            par.plot <- c(4.1, par.mar.2, 1.5, 2.1)
+            par.plot <- c(5.5, par.mar.2, 1.5, 2.1)
             par.legend <- c(1, par.mar.2, 0, 2.1)
             par.title <- c(0, par.mar.2, 1, 2.1)
         }
     }else{
         plot.position <- matrix(1:3, ncol = 1)
         plot.heights <- c(0.9, 0.12, 0.01)
-        par.plot <- c(4.1, par.mar.2, 2.1, 2.1)
+        par.plot <- c(5.5, par.mar.2, 2.1, 2.1)
         par.legend <- c(0, par.mar.2, 0, 2.1)
         par.title <- c(0, par.mar.2, 0, 2.1)
     }
@@ -1637,18 +1671,27 @@ climdex.plot.line <- function(x, y, trend, xlim = NULL, ylim = NULL,
         xminor <- xminor[!xminor %in% xTck]
     }else xminor <- NULL
 
-    axis(1, at = xTck, font = axis.font, cex.axis = 1.5)
-    if(length(xminor) > 0) axis(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
-    axis(2, at = axTicks(2), font = axis.font, las = 1, cex.axis = 1.5)
+    yminTck <- axTicks(2)
+    yminTck <- yminTck[-length(yminTck)] + diff(yminTck) / 2
+    yminTck <- c(min(axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(axTicks(2)) + diff(yminTck)[1] / 2)
 
-    mtext(xlab, side = 1, line = 2)
-    mtext(subtitre, side = 1, line = 3, cex = 1.0)
+    abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
+    abline(h = yminTck, col = "lightgray", lty = "dotted")
+    abline(v = axTicks(1), col = "lightgray", lty = "solid", lwd = 0.8)
+    if(length(xminor) > 0)
+        abline(v = xminor, col = "lightgray", lty = "dotted")
+
+    axis(1, at = xTck, font = axis.font, cex.axis = 1.5)
+    if(length(xminor) > 0)
+        axis(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
+    axis(2, at = axTicks(2), font = axis.font, las = 1, cex.axis = 1.5)
+    axis(2, at = yminTck, labels = NA, tcl = par("tcl") * 0.6)
+
+    mtext(xlab, side = 1, line = 2.8)
+    mtext(subtitre, side = 1, line = 4.7, cex = 1.0)
     mtext(ylab, side = 2, line = line.ylab, cex = 1.3)
     if(!is.null(location))
-        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.9)
-
-    abline(h = axTicks(2), col = "lightgray", lty = "dotted", lwd = 1.3)
-    abline(v = xTck, col = "lightgray", lty = "dotted", lwd = 1.3)
+        mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1)
 
     if(plotl$type == 'both') lines(x, y, type = 'o', col = plotl$col$line, lwd = plotl$lwd,
                                     pch = 21, bg = plotl$col$points, cex = plotl$cex)
@@ -1656,6 +1699,7 @@ climdex.plot.line <- function(x, y, trend, xlim = NULL, ylim = NULL,
 
     abline(a = trend[5], b = trend[1], col = legends$col$linear, lwd = legends$lwd$linear, lty = legends$lty$linear)
     lines(lowess.fun, col = legends$col$lowess, lwd = legends$lwd$lowess, lty = legends$lty$lowess)
+    box()
     par(op)
 
     op <- par(mar = par.legend)

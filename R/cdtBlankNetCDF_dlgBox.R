@@ -2,9 +2,9 @@
 blankNcdf_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 52
-        largeur1 <- 55
-        largeur2 <- 29
+        largeur0 <- 44
+        largeur1 <- 46
+        largeur2 <- 23
     }else{
         largeur0 <- 44
         largeur1 <- 45

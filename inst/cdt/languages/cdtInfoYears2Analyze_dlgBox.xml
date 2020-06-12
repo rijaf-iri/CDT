@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Years to analyze </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Custom </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Use all years from the input data </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Customized Years </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Start Year </text>
+        </label>
+        <label id="2">
+            <text lang="en"> End Year </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Check this box to use all years from the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to use all years from the input data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Enter the start year of the period to analyze </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the start year of the period to analyze </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the end year of the period to analyze </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the end year of the period to analyze </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Check this box if the years to analyze are not continuous </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if the years to analyze are not continuous </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Edit the years to analyze </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Edit the years to analyze </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

@@ -2,20 +2,62 @@
 SeasonLengthCalcPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- 22
-    }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(21)
+        largeur0 <- 35
+        largeur1 <- 33
         largeur2 <- 14
+        largeur3 <- 19
+        largeur4 <- 7
+        largeur5 <- 18
+        largeur6 <- 20
+        largeur7 <- 10
+    }else{
+        largeur0 <- 33
+        largeur1 <- 32
+        largeur2 <- 14
+        largeur3 <- 19
+        largeur4 <- 7
+        largeur5 <- 18
+        largeur6 <- 20
+        largeur7 <- 10
     }
 
     GeneralParameters <- list(onset = "", cessation = "", output = "")
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_SeasonLength_leftCmd.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-    # .cdtData$EnvData$message <- lang.dlg[['message']]
+    .cdtData$EnvData$tab$pointSize <- NULL
+    .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
+                                       userCol = list(custom = FALSE, color = NULL),
+                                       userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                       title = list(user = FALSE, title = ''),
+                                       colkeyLab = list(user = FALSE, label = ''),
+                                       scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                       pointSize = .cdtData$EnvData$tab$pointSize)
+
+    .cdtData$EnvData$TSGraphOp <- list(
+                                    bar = list(
+                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                            ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                            title = list(is.title = FALSE, title = '', position = 'top'),
+                                            colors = list(col = "darkblue")
+                                        ),
+                                    line = list(
+                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                            ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                            title = list(is.title = FALSE, title = '', position = 'top'),
+                                            plot = list(type = 'both',
+                                                        col = list(line = "red", points = "blue"),
+                                                        lwd = 2, cex = 1.4),
+                                            legend = NULL)
+                                    )
+
+    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+
+    ###################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_SeasonLength_leftCmd.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    .cdtData$EnvData$message <- lang.dlg[['message']]
 
     ###################
 
@@ -23,10 +65,10 @@ SeasonLengthCalcPanelCmd <- function(){
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
 
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = "Season Length")
-    cmd.tab2 <- bwAddTab(tknote.cmd, text = "Maps")
-    cmd.tab3 <- bwAddTab(tknote.cmd, text = "Graphs")
-    cmd.tab4 <- bwAddTab(tknote.cmd, text = "Boundaries")
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
+    cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
@@ -47,18 +89,31 @@ SeasonLengthCalcPanelCmd <- function(){
 
         ############################################
 
-        frameInData <- ttklabelframe(subfr1, text = "Onset & Cessation", relief = 'groove')
+        frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         input.Onset <- tclVar(GeneralParameters$onset)
         input.Cessation <- tclVar(GeneralParameters$cessation)
 
-        txt.Ons <- tklabel(frameInData, text = 'Path to the onset data <Onset.rds>', anchor = 'w', justify = 'left')
+        txt.Ons <- tklabel(frameInData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
         en.Ons <- tkentry(frameInData, textvariable = input.Onset, width = largeur0)
         bt.Ons <- tkbutton(frameInData, text = "...")
-
-        txt.Ces <- tklabel(frameInData, text = 'Path to the cessation data <Cessation.rds>', anchor = 'w', justify = 'left')
+        txt.Ces <- tklabel(frameInData, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
         en.Ces <- tkentry(frameInData, textvariable = input.Cessation, width = largeur0)
         bt.Ces <- tkbutton(frameInData, text = "...")
+
+        tkgrid(txt.Ons, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.Ons, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Ons, row = 1, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.Ces, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.Ces, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Ces, row = 3, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        helpWidget(en.Ons, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+        helpWidget(en.Ces, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+        helpWidget(bt.Ons, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+        helpWidget(bt.Ces, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+
+        ############
 
         tkconfigure(bt.Ons, command = function(){
             path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -70,50 +125,30 @@ SeasonLengthCalcPanelCmd <- function(){
             tclvalue(input.Cessation) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
         })
 
-        tkgrid(txt.Ons, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.Ons, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.Ons, row = 1, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.Ces, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.Ces, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.Ces, row = 3, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-        ############
-        infobulle(en.Ons, 'Enter the full path to the file <Onset.rds>')
-        status.bar.display(en.Ons, 'Enter the full path to the file <Onset.rds>')
-        infobulle(en.Ces, 'Enter the full path to the file <Cessation.rds>')
-        status.bar.display(en.Ces, 'Enter the full path to the file <Cessation.rds>')
-
-        infobulle(bt.Ons, 'or browse here')
-        status.bar.display(bt.Ons, 'or browse here')
-        infobulle(bt.Ces, 'or browse here')
-        status.bar.display(bt.Ces, 'or browse here')
-
         ############################################
 
         frameDirSav <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
 
         dir.save <- tclVar(GeneralParameters$output)
 
-        txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results", anchor = 'w', justify = 'left')
+        txt.dir.save <- tklabel(frameDirSav, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
         en.dir.save <- tkentry(frameDirSav, textvariable = dir.save, width = largeur0)
         bt.dir.save <- tkbutton(frameDirSav, text = "...")
-
-        ######
-        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir.save, isFile = FALSE))
 
         ######
         tkgrid(txt.dir.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(en.dir.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(bt.dir.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-        infobulle(en.dir.save, 'Enter the full path to directory to save outputs')
-        status.bar.display(en.dir.save, 'Enter the full path to directory to save outputs')
-        infobulle(bt.dir.save, 'or browse here')
-        status.bar.display(bt.dir.save, 'or browse here')
+        helpWidget(en.dir.save, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        helpWidget(bt.dir.save, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+
+        ######
+        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir.save, isFile = FALSE))
 
         ############################################
 
-        bt.CalcOnset <- ttkbutton(subfr1, text = 'Calculate Season Length')
+        bt.CalcOnset <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
         tkconfigure(bt.CalcOnset, command = function(){
             GeneralParameters$onset <- str_trim(tclvalue(input.Onset))
@@ -122,28 +157,23 @@ SeasonLengthCalcPanelCmd <- function(){
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
-            Insert.Messages.Out("Calculate Length of the season ......", TRUE, "i")
+            Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch(
-                {
-                    compute_SeasonLength_Procs(GeneralParameters)
-                },
-                warning = function(w) warningFun(w),
-                error = function(e) errorFun(e),
-                finally = {
-                    tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
-                    tcl('update')
-                }
-            )
-
-            msg0 <- "Season Length calculation finished successfully"
-            msg1 <- "Season Length calculation failed"
+            ret <- tryCatch({
+                                compute_SeasonLength_Procs(GeneralParameters)
+                            },
+                            warning = function(w) warningFun(w),
+                            error = function(e) errorFun(e),
+                            finally = {
+                                tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+                                tcl('update')
+                            })
 
             if(!is.null(ret)){
                 if(ret == 0){
-                    Insert.Messages.Out(msg0, TRUE, "s")
+                    Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
                     .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                     .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
@@ -153,8 +183,8 @@ SeasonLengthCalcPanelCmd <- function(){
                     set.plot.type()
                     res <- try(read.Data.Map(), silent = TRUE)
                     if(inherits(res, "try-error") | is.null(res)) return(NULL)
-                }else Insert.Messages.Out(msg1, format = TRUE)
-            }else Insert.Messages.Out(msg1, format = TRUE)
+                }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
+            }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
         })
 
         ############################################
@@ -170,16 +200,22 @@ SeasonLengthCalcPanelCmd <- function(){
 
         ##############################################
 
-        frameDataExist <- ttklabelframe(subfr2, text = "Season Length data", relief = 'groove')
+        frameDataExist <- ttklabelframe(subfr2, text = lang.dlg[['label']][['5']], relief = 'groove')
 
-        .cdtData$EnvData$DirExist <- tclVar(0)
+        DirExist <- tclVar(0)
         file.dataIndex <- tclVar()
 
-        stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
+        stateExistData <- if(tclvalue(DirExist) == "1") "normal" else "disabled"
 
-        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = .cdtData$EnvData$DirExist, text = "Season length data already computed", anchor = 'w', justify = 'left')
-        en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur0, state = stateExistData)
-        bt.dataIdx <- tkbutton(frameDataExist, text = "...", state = stateExistData)
+        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+        en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur0 + 5, state = stateExistData)
+        bt.dataIdx <- ttkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
+
+        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #############
 
         tkconfigure(bt.dataIdx, command = function(){
             path.dataIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -189,8 +225,8 @@ SeasonLengthCalcPanelCmd <- function(){
             if(file.exists(str_trim(tclvalue(file.dataIndex)))){
                 OutIndexdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutIndexdata, "try-error")){
-                    Insert.Messages.Out('Unable to load season length data', format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), TRUE, 'e')
                     tkconfigure(cb.data.Index, values = "")
                     tclvalue(.cdtData$EnvData$donDate) <- ""
                     return(NULL)
@@ -209,41 +245,37 @@ SeasonLengthCalcPanelCmd <- function(){
             }
         })
 
-        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.dataIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
         ###############
         tkbind(chk.dataIdx, "<Button-1>", function(){
-            stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
+            stateExistData <- if(tclvalue(DirExist) == '1') 'disabled' else 'normal'
             tkconfigure(en.dataIdx, state = stateExistData)
             tkconfigure(bt.dataIdx, state = stateExistData)
-            stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
-            tkconfigure(bt.CalcOnset, state = stateCaclBut)
+
+            stateCaclBut <- if(tclvalue(DirExist) == '1') 'normal' else 'disabled'
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateCaclBut)
         })
 
         ##############################################
 
-        frameDataMap <- ttklabelframe(subfr2, text = "Season Length Map", relief = 'groove')
+        frameDataMap <- ttklabelframe(subfr2, text = lang.dlg[['label']][['6']], relief = 'groove')
 
         .cdtData$EnvData$donDate <- tclVar()
 
-        cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = .cdtData$EnvData$donDate, width = largeur2, justify = 'center')
-        bt.data.Index.prev <- ttkbutton(frameDataMap, text = "<<", width = 3)
-        bt.data.Index.next <- ttkbutton(frameDataMap, text = ">>", width = 3)
-        bt.data.maps <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        bt.data.MapOpt <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
+        cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = .cdtData$EnvData$donDate, width = largeur3, justify = 'center')
+        bt.data.Index.prev <- ttkbutton(frameDataMap, text = "<<", width = largeur4)
+        bt.data.Index.next <- ttkbutton(frameDataMap, text = ">>", width = largeur4)
+        bt.data.maps <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
+        bt.data.MapOpt <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
 
         ###############
 
-        .cdtData$EnvData$tab$pointSize <- NULL
-        .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-                                            userCol = list(custom = FALSE, color = NULL),
-                                            userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                            title = list(user = FALSE, title = ''),
-                                            colkeyLab = list(user = FALSE, label = ''),
-                                            scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                            pointSize = .cdtData$EnvData$tab$pointSize)
+        tkgrid(bt.data.Index.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.data.Index, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.Index.next, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.MapOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.maps, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+
+        ###############
 
         tkconfigure(bt.data.MapOpt, command = function(){
             if(!is.null(.cdtData$EnvData$varData$map)){
@@ -302,14 +334,6 @@ SeasonLengthCalcPanelCmd <- function(){
 
         ###############
 
-        tkgrid(bt.data.Index.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.data.Index, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.Index.next, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.maps, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.MapOpt, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ###############
-
         tkbind(cb.data.Index, "<<ComboboxSelected>>", function(){
             if(!is.null(.cdtData$EnvData$varData)){
                 ret <- try(read.Data.Map(), silent = TRUE)
@@ -323,8 +347,8 @@ SeasonLengthCalcPanelCmd <- function(){
 
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
-        txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur2)
+        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
+        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur2)
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -351,35 +375,22 @@ SeasonLengthCalcPanelCmd <- function(){
 
         ##############################################
 
-        frameDataTS <- ttklabelframe(subfr3, text = "Season Length Graph", relief = 'groove')
+        frameDataTS <- ttklabelframe(subfr3, text = lang.dlg[['label']][['8']], relief = 'groove')
 
         typeTSPLOT <- c("Line", "Barplot")
         .cdtData$EnvData$plot.maps$typeTSp <- tclVar("Line")
 
-        cb.typeTSp <- ttkcombobox(frameDataTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur2)
-        bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
+        cb.typeTSp <- ttkcombobox(frameDataTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, justify = 'center', width = largeur6)
+        bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
+        bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
 
         #################
 
-        .cdtData$EnvData$TSGraphOp <- list(
-                                        bar = list(
-                                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                                title = list(is.title = FALSE, title = '', position = 'top'),
-                                                colors = list(col = "darkblue")
-                                            ),
-                                        line = list(
-                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                            ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                            title = list(is.title = FALSE, title = '', position = 'top'),
-                                            plot = list(type = 'both',
-                                                col = list(line = "red", points = "blue"),
-                                                lwd = 2, cex = 1.4),
-                                            legend = NULL)
-                                        )
+        tkgrid(cb.typeTSp, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TSGraphOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsGraph.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
             suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
@@ -399,15 +410,9 @@ SeasonLengthCalcPanelCmd <- function(){
             }
         })
 
-        #################
-
-        tkgrid(cb.typeTSp, row = 0, column = 0, sticky = 'we', pady = 1, columnspan = 1)
-        tkgrid(bt.TSGraphOpt, row = 0, column = 1, sticky = 'we', padx = 4, pady = 1, columnspan = 1)
-        tkgrid(bt.TsGraph.plot, row = 0, column = 2, sticky = 'we', pady = 1, columnspan = 1)
-
         ##############################################
 
-        frameSTNCrds <- ttklabelframe(subfr3, text = "Station/Coordinates", relief = 'groove')
+        frameSTNCrds <- ttklabelframe(subfr3, text = lang.dlg[['label']][['9']], relief = 'groove')
 
         frTS2 <- tkframe(frameSTNCrds)
         .cdtData$EnvData$plot.maps$lonLOC <- tclVar()
@@ -428,16 +433,22 @@ SeasonLengthCalcPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr4, text = "Boundaries", relief = 'groove')
+        frameSHP <- ttklabelframe(subfr4, text = lang.dlg[['label']][['10']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
         file.plotShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
         bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
+
+        ########
+        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
         tkconfigure(bt.addshp, command = function(){
@@ -457,17 +468,10 @@ SeasonLengthCalcPanelCmd <- function(){
         })
 
         ########
-        .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
         tkconfigure(bt.addshpOpt, command = function(){
             .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
         })
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         #################
         tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
@@ -497,12 +501,18 @@ SeasonLengthCalcPanelCmd <- function(){
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
-            txt.stnSel <- tklabel(frTS2, text = "Select a station to plot")
-            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = 6)
-            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = 6)
-            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur2)
+            txt.stnSel <- tklabel(frTS2, text = lang.dlg[['label']][['11']])
+            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = largeur4)
+            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = largeur4)
+            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, justify = 'center', width = largeur3)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
+            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+            ######
             tkconfigure(bt.stnID.prev, command = function(){
                 if(!is.null(.cdtData$EnvData$varData)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
@@ -526,17 +536,12 @@ SeasonLengthCalcPanelCmd <- function(){
                     .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
                 }
             })
-
-            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         }else{
-            txt.crdSel <- tklabel(frTS2, text = "Enter longitude and latitude to plot", anchor = 'w', justify = 'left')
-            txt.lonLoc <- tklabel(frTS2, text = "Longitude", anchor = 'e', justify = 'right')
-            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
-            txt.latLoc <- tklabel(frTS2, text = "Latitude", anchor = 'e', justify = 'right')
-            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+            txt.crdSel <- tklabel(frTS2, text = lang.dlg[['label']][['12']], anchor = 'w', justify = 'left')
+            txt.lonLoc <- tklabel(frTS2, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
+            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = largeur7)
+            txt.latLoc <- tklabel(frTS2, text = lang.dlg[['label']][['14']], anchor = 'e', justify = 'right')
+            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = largeur7)
             stnIDTSPLOT <- ""
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
 
@@ -559,7 +564,7 @@ SeasonLengthCalcPanelCmd <- function(){
             plot.type <- c("Pixels", "Points")
             .cdtData$EnvData$plot.maps$.data.type <- "Points"
 
-            .cdtData$EnvData$dataMapOp$pointSize <- 0.7
+            .cdtData$EnvData$dataMapOp$pointSize <- 1.0
         }else{
             plot.type <- c("Pixels", "FilledContour")
             .cdtData$EnvData$plot.maps$.data.type <- "Grid"
@@ -592,7 +597,7 @@ SeasonLengthCalcPanelCmd <- function(){
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             filePathData <- file.path(.cdtData$EnvData$PathData, "CDTDATASET/SEASONLENGTH.rds")
             if(!file.exists(filePathData)){
-                Insert.Messages.Out(paste(filePathData, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filePathData, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 
@@ -647,7 +652,7 @@ SeasonLengthCalcPanelCmd <- function(){
             filePathData <- file.path(.cdtData$EnvData$PathData, "DATA_NetCDF",
                             paste0("seasLen_", format(.cdtData$EnvData$output$start.date[idt], "%Y%m%d"), ".nc"))
             if(!file.exists(filePathData)){
-                Insert.Messages.Out(paste(filePathData, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filePathData, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 

@@ -1,6 +1,7 @@
 
 computePETProcs <- function(){
-    Insert.Messages.Out(paste("Compute", .cdtData$GalParams$Tstep, "PET ......"), TRUE, "i")
+    message <- .cdtData$GalParams$message
+    Insert.Messages.Out(paste(message[['10']], .cdtData$GalParams$Tstep, "......"), TRUE, "i")
 
     if(.cdtData$GalParams$data.type == "cdtstation"){
         tmin <- getStnOpenData(.cdtData$GalParams$cdtstation$tmin)
@@ -14,11 +15,11 @@ computePETProcs <- function(){
         if(is.null(tmax)) return(NULL)
 
         if(!any(tmin$id %in% tmax$id)){
-            Insert.Messages.Out("Tmin & Tmax stations do not match", format = TRUE)
+            Insert.Messages.Out(message[['11']], TRUE, 'e')
             return(NULL)
         }
         if(!any(tmin$dates %in% tmax$dates)){
-            Insert.Messages.Out("Tmin & Tmax dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['12']], TRUE, 'e')
             return(NULL)
         }
 
@@ -29,11 +30,11 @@ computePETProcs <- function(){
             if(is.null(prec)) return(NULL)
 
             if(length(Reduce(intersect, list(tmin$id, tmax$id, prec$id))) == 0){
-                Insert.Messages.Out("Tmin, Tmax & Precip stations do not match", format = TRUE)
+                Insert.Messages.Out(message[['13']], TRUE, 'e')
                 return(NULL)
             }
             if(length(Reduce(intersect, list(tmin$dates, tmax$dates, prec$dates))) == 0){
-                Insert.Messages.Out("Tmin, Tmax & Precip dates do not match", format = TRUE)
+                Insert.Messages.Out(message[['14']], TRUE, 'e')
                 return(NULL)
             }
         }
@@ -112,19 +113,19 @@ computePETProcs <- function(){
     if(.cdtData$GalParams$data.type == "cdtnetcdf"){
         tnDataInfo <- getNCDFSampleData(.cdtData$GalParams$cdtnetcdf$tmin$sample)
         if(is.null(tnDataInfo)){
-            Insert.Messages.Out("No Tmin data sample found", format = TRUE)
+            Insert.Messages.Out(message[['15']], TRUE, 'e')
             return(NULL)
         }
         txDataInfo <- getNCDFSampleData(.cdtData$GalParams$cdtnetcdf$tmax$sample)
         if(is.null(txDataInfo)){
-            Insert.Messages.Out("No Tmax data sample found", format = TRUE)
+            Insert.Messages.Out(message[['16']], TRUE, 'e')
             return(NULL)
         }
 
         if(.cdtData$GalParams$method == "MHAR"){
             rrDataInfo <- getNCDFSampleData(.cdtData$GalParams$cdtnetcdf$prec$sample)
             if(is.null(rrDataInfo)){
-                Insert.Messages.Out("No Precip data sample found", format = TRUE)
+                Insert.Messages.Out(message[['17']], TRUE, 'e')
                 return(NULL)
             }
         }
@@ -133,13 +134,13 @@ computePETProcs <- function(){
         SP1 <- defSpatialPixels(tnDataInfo[c('lon', 'lat')])
         SP2 <- defSpatialPixels(txDataInfo[c('lon', 'lat')])
         if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-            Insert.Messages.Out("Tmin & Tmax have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['18']], TRUE, 'e')
             return(NULL)
         }
         if(.cdtData$GalParams$method == "MHAR"){
             SP3 <- defSpatialPixels(rrDataInfo[c('lon', 'lat')])
             if(is.diffSpatialPixelsObj(SP1, SP3, tol = 1e-04)){
-                Insert.Messages.Out("Precip, Tmin & Tmax have different resolution or bbox", format = TRUE)
+                Insert.Messages.Out(message[['19']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP3)
@@ -154,7 +155,7 @@ computePETProcs <- function(){
 
         tmin.DIR <- .cdtData$GalParams$cdtnetcdf$tmin$dir
         tmin.Format <- .cdtData$GalParams$cdtnetcdf$tmin$format
-        tmin.errmsg <- "Tmin data not found"
+        tmin.errmsg <- message[['20']]
         tminInfo <- ncFilesInfo(tstep, start.date, end.date, months, tmin.DIR, tmin.Format, tmin.errmsg)
         if(is.null(tminInfo)) return(NULL)
         tminInfo$ncinfo <- list(xo = tnDataInfo$ilon, yo = tnDataInfo$ilat, varid = tnDataInfo$varid)
@@ -165,7 +166,7 @@ computePETProcs <- function(){
 
         tmax.DIR <- .cdtData$GalParams$cdtnetcdf$tmax$dir
         tmax.Format <- .cdtData$GalParams$cdtnetcdf$tmax$format
-        tmax.errmsg <- "Tmax data not found"
+        tmax.errmsg <- message[['21']]
         tmaxInfo <- ncFilesInfo(tstep, start.date, end.date, months, tmax.DIR, tmax.Format, tmax.errmsg)
         if(is.null(tmaxInfo)) return(NULL)
         tmaxInfo$ncinfo <- list(xo = txDataInfo$ilon, yo = txDataInfo$ilat, varid = txDataInfo$varid)
@@ -177,7 +178,7 @@ computePETProcs <- function(){
         if(.cdtData$GalParams$method == "MHAR"){
             prec.DIR <- .cdtData$GalParams$cdtnetcdf$prec$dir
             prec.Format <- .cdtData$GalParams$cdtnetcdf$prec$format
-            prec.errmsg <- "Precip data not found"
+            prec.errmsg <- message[['22']]
             precInfo <- ncFilesInfo(tstep, start.date, end.date, months, prec.DIR, prec.Format, prec.errmsg)
             if(is.null(tmaxInfo)) return(NULL)
             precInfo$ncinfo <- list(xo = rrDataInfo$ilon, yo = rrDataInfo$ilat, varid = rrDataInfo$varid)
@@ -193,13 +194,13 @@ computePETProcs <- function(){
         ##################
 
         if(!any(tminInfo$dates %in% tmaxInfo$dates)){
-            Insert.Messages.Out("Tmin & Tmax dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['12']], TRUE, 'e')
             return(NULL)
         }
 
         if(.cdtData$GalParams$method == "MHAR"){
             if(length(Reduce(intersect, list(tminInfo$dates, tmaxInfo$dates, precInfo$dates))) == 0){
-                Insert.Messages.Out("Tmin, Tmax & Precip dates do not match", format = TRUE)
+                Insert.Messages.Out(message[['14']], TRUE, 'e')
                 return(NULL)
             }
         }
@@ -346,32 +347,32 @@ computePETProcs <- function(){
     if(.cdtData$GalParams$data.type == "cdtdataset"){
         tmin <- try(readRDS(.cdtData$GalParams$cdtdataset$tmin), silent = TRUE)
         if(inherits(tmin, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", .cdtData$GalParams$cdtdataset$tmin), format = TRUE)
+            Insert.Messages.Out(paste(message[['23']], .cdtData$GalParams$cdtdataset$tmin), TRUE, 'e')
             return(NULL)
         }
         if(.cdtData$GalParams$Tstep != tmin$TimeStep){
-            Insert.Messages.Out(paste("Tmin dataset is not a", .cdtData$GalParams$Tstep, "data"), format = TRUE)
+            Insert.Messages.Out(paste(message[['24']], .cdtData$GalParams$Tstep), TRUE, 'e')
             return(NULL)
         }
 
         tmax <- try(readRDS(.cdtData$GalParams$cdtdataset$tmax), silent = TRUE)
         if(inherits(tmax, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", .cdtData$GalParams$cdtdataset$tmax), format = TRUE)
+            Insert.Messages.Out(paste(message[['23']], .cdtData$GalParams$cdtdataset$tmax), TRUE, 'e')
             return(NULL)
         }
         if(.cdtData$GalParams$Tstep != tmax$TimeStep){
-            Insert.Messages.Out(paste("Tmax dataset is not a", .cdtData$GalParams$Tstep, "data"), format = TRUE)
+            Insert.Messages.Out(paste(message[['25']], .cdtData$GalParams$Tstep), TRUE, 'e')
             return(NULL)
         }
 
         if(.cdtData$GalParams$method == "MHAR"){
             prec <- try(readRDS(.cdtData$GalParams$cdtdataset$prec), silent = TRUE)
             if(inherits(prec, "try-error")){
-                Insert.Messages.Out(paste("Unable to read", .cdtData$GalParams$cdtdataset$prec), format = TRUE)
+                Insert.Messages.Out(paste(message[['23']], .cdtData$GalParams$cdtdataset$prec), TRUE, 'e')
                 return(NULL)
             }
             if(.cdtData$GalParams$Tstep != prec$TimeStep){
-                Insert.Messages.Out(paste("Precip dataset is not a", .cdtData$GalParams$Tstep, "data"), format = TRUE)
+                Insert.Messages.Out(paste(message[['26']], .cdtData$GalParams$Tstep), TRUE, 'e')
                 return(NULL)
             }
         }
@@ -380,14 +381,14 @@ computePETProcs <- function(){
         SP1 <- defSpatialPixels(list(lon = tmin$coords$mat$x, lat = tmin$coords$mat$y))
         SP2 <- defSpatialPixels(list(lon = tmax$coords$mat$x, lat = tmax$coords$mat$y))
         if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-            Insert.Messages.Out("Tmin & Tmax have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['18']], TRUE, 'e')
             return(NULL)
         }
 
         if(.cdtData$GalParams$method == "MHAR"){
             SP3 <- defSpatialPixels(list(lon = prec$coords$mat$x, lat = prec$coords$mat$y))
             if(is.diffSpatialPixelsObj(SP1, SP3, tol = 1e-04)){
-                Insert.Messages.Out("Precip, Tmin & Tmax have different resolution or bbox", format = TRUE)
+                Insert.Messages.Out(message[['19']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP3)
@@ -396,26 +397,26 @@ computePETProcs <- function(){
 
         ##################
         if(tmin$chunksize != tmax$chunksize){
-            Insert.Messages.Out("Tmin & Tmax have different chunk size", format = TRUE)
+            Insert.Messages.Out(message[['27']], TRUE, 'e')
             return(NULL)
         }
 
         if(.cdtData$GalParams$method == "MHAR"){
             if(tmin$chunksize != prec$chunksize){
-                Insert.Messages.Out("Precip, Tmin & Tmax have different chunk size", format = TRUE)
+                Insert.Messages.Out(message[['28']], TRUE, 'e')
                 return(NULL)
             }
         }
 
         ##################
         if(!any(tmin$dateInfo$date %in% tmax$dateInfo$date)){
-            Insert.Messages.Out("Tmin & Tmax dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['12']], TRUE, 'e')
             return(NULL)
         }
 
         if(.cdtData$GalParams$method == "MHAR"){
             if(length(Reduce(intersect, list(tmin$dateInfo$date, tmax$dateInfo$date, prec$dateInfo$date))) == 0){
-                Insert.Messages.Out("Tmin, Tmax & Precip dates do not match", format = TRUE)
+                Insert.Messages.Out(message[['14']], TRUE, 'e')
                 return(NULL)
             }
         }

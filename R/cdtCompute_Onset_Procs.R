@@ -1,7 +1,9 @@
 
 compute_SeasonOnset_Procs <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
+
     if(!dir.exists(GeneralParameters$output)){
-        Insert.Messages.Out(paste(GeneralParameters$output, .cdtData$EnvData[['message']][['16']]), format = TRUE)
+        Insert.Messages.Out(paste(GeneralParameters$output, message[['16']]), TRUE, 'e')
         return(NULL)
     }
 
@@ -11,7 +13,7 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
         if(GeneralParameters$onset.reg$subdiv == "Shapefile"){
             shpf <- getShpOpenData(GeneralParameters$onset.reg$shp$file)[[2]]
             if(is.null(shpf)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['19']], format = TRUE)
+                Insert.Messages.Out(message[['19']], TRUE, 'e')
                 return(NULL)
             }
             shpattr <- GeneralParameters$onset.reg$shp$attr
@@ -34,11 +36,11 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
             if(is.null(etp)) return(NULL)
 
             if(!any(prec$id %in% etp$id)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], format = TRUE)
+                Insert.Messages.Out(message[['17']], TRUE, 'e')
                 return(NULL)
             }
             if(!any(prec$dates %in% etp$dates)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['18']], format = TRUE)
+                Insert.Messages.Out(message[['18']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -160,11 +162,11 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtdataset"){
         prec <- try(readRDS(GeneralParameters$cdtdataset$prec), silent = TRUE)
         if(inherits(prec, "try-error")){
-            Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['20']], GeneralParameters$cdtdataset$prec), format = TRUE)
+            Insert.Messages.Out(paste(message[['20']], GeneralParameters$cdtdataset$prec), TRUE, 'e')
             return(NULL)
         }
         if(prec$TimeStep != "daily"){
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['21']], format = TRUE)
+            Insert.Messages.Out(message[['21']], TRUE, 'e')
             return(NULL)
         }
 
@@ -172,11 +174,11 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
         if(any(omethods == 2)){
             etp <- try(readRDS(GeneralParameters$cdtdataset$etp), silent = TRUE)
             if(inherits(etp, "try-error")){
-                Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['20']], GeneralParameters$cdtdataset$etp), format = TRUE)
+                Insert.Messages.Out(paste(message[['20']], GeneralParameters$cdtdataset$etp), TRUE, 'e')
                 return(NULL)
             }
             if(etp$TimeStep != "daily"){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['22']], format = TRUE)
+                Insert.Messages.Out(message[['22']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -184,20 +186,20 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
             SP1 <- defSpatialPixels(list(lon = prec$coords$mat$x, lat = prec$coords$mat$y))
             SP2 <- defSpatialPixels(list(lon = etp$coords$mat$x, lat = etp$coords$mat$y))
             if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['23']], format = TRUE)
+                Insert.Messages.Out(message[['23']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
 
             ##################
             if(prec$chunksize != etp$chunksize){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['24']], format = TRUE)
+                Insert.Messages.Out(message[['24']], TRUE, 'e')
                 return(NULL)
             }
 
             ##################
             if(!any(prec$dateInfo$date %in% etp$dateInfo$date)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['25']], format = TRUE)
+                Insert.Messages.Out(message[['25']], TRUE, 'e')
                 return(NULL)
             }
 

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input Data </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Table and Graph </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Layers </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Boxplot </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Histogram </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Summarize </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Plot map to select a pixel or station </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Display Summary Table </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Data already computed </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Add Shapefile to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Time step of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Input Data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Format </text>
+        </label>
+        <label id="4">
+            <text lang="en"> File containing stations data </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Index file (*.rds) of the dataset </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Directory to save the outputs </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Summaries Data </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Summary Graph </text>
+        </label>
+        <label id="9">
+            <text lang="en"> All Data </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Shapefile </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Select a station to plot </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Enter longitude and latitude to plot </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Latitude </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the file containing the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the input data </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Summarizing data ...... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Summarizing finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Summarizing failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Unable to load Summary data </text>
+        </content>
+        <content id="5">
+            <text lang="en"> No input data found </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Directory to save results not found </text>
+        </content>
+        <content id="7">
+            <text lang="en"> The outputs will be saved in </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="9">
+            <text lang="en"> The dataset is not a </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Station not found </text>
+        </content>
+    </message>
+</panel_cmd>

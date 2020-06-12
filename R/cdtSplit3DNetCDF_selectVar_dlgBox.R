@@ -1,10 +1,10 @@
 
 split_3d.netcdf_selectVariable <- function(parent.win, ncfile){
     if(WindowsOS()){
-        txta.w <- 38
+        txta.w <- 36
         txta.h <- 7
-        largeur0 <- 43
-        largeur1 <- 17
+        largeur0 <- 28
+        largeur1 <- 13
     }else{
         txta.w <- 40
         txta.h <- 9

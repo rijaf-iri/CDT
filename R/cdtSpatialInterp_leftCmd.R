@@ -2,14 +2,14 @@
 SpatialInterpPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 30
-        largeur1 <- 44
-        largeur2 <- 47
-        largeur3 <- 20
-        largeur4 <- 26
-        largeur5 <- 15
-        largeur6 <- 37
-        largeur7 <- 51
+        largeur0 <- 20
+        largeur1 <- 32
+        largeur2 <- 34
+        largeur3 <- 14
+        largeur4 <- 20
+        largeur5 <- 11
+        largeur6 <- 30
+        largeur7 <- 38
     }else{
         largeur0 <- 23
         largeur1 <- 32
@@ -71,14 +71,17 @@ SpatialInterpPanelCmd <- function(){
 
     cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
     cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
 
     tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab3, 0, weight = 1)
 
     #######################################################################################################
 
@@ -503,35 +506,7 @@ SpatialInterpPanelCmd <- function(){
             tkconfigure(en.IntD, state = stateIntD)
 
             stateDataIn <- if(tclvalue(interpData) == '1') 'normal' else 'disabled'
-            tkconfigure(cb.cdtdata1, state = stateDataIn)
-            tkconfigure(cb.cdtdata2, state = stateDataIn)
-            tkconfigure(bt.cdtdata, state = stateDataIn)
-            tkconfigure(btInterpMthd, state = stateDataIn)
-            tkconfigure(btGridInterp, state = stateDataIn)
-            tkconfigure(chk.negval, state = stateDataIn)
-            tkconfigure(chk.blankgrid, state = stateDataIn)
-            tkconfigure(en.dir.save, state = stateDataIn)
-            tkconfigure(bt.dir.save, state = stateDataIn)
-            tkconfigure(btInterpolate, state = stateDataIn)
-
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-
-            stateminhr <- if((intstep %in% c('minute', 'hourly')) & tclvalue(interpData) == '1') "normal" else "disabled"
-            tkconfigure(cb.minhour, state = stateminhr)
-            statedate <- if(intstep != "others" & tclvalue(interpData) == '1') "normal" else "disabled"
-            tkconfigure(btDateRange, state = statedate)
-            
-            if(tclvalue(interpData) == '1'){
-                statenegval <- if(tclvalue(set.neg.value) == "1") "normal" else "disabled"
-                stateSHP <- if(tclvalue(blankGrid) == "1") "normal" else "disabled"
-            }else{
-                statenegval <- "disabled"
-                stateSHP <- "disabled"
-            }
-
-            tkconfigure(en.negval, state = statenegval)
-            tkconfigure(cb.blankgrid, state = stateSHP)
-            tkconfigure(bt.blankgrid, state = stateSHP)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateDataIn)
         })
 
         ##############
@@ -737,7 +712,17 @@ SpatialInterpPanelCmd <- function(){
 
         ############################################
 
-        frameSHP <- ttklabelframe(subfr2, text = lang.dlg[['label']][['18']], relief = 'groove')
+        tkgrid(frameINTRP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #######################################################################################################
+
+    #Tab3
+    subfr3 <- bwTabScrollableFrame(cmd.tab3)
+
+        ##############################################
+
+        frameSHP <- ttklabelframe(subfr3, text = lang.dlg[['label']][['18']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
         file.plotShp <- tclVar()
@@ -794,11 +779,9 @@ SpatialInterpPanelCmd <- function(){
             tkconfigure(bt.addshpOpt, state = stateSHP)
         })
 
-        ############################################
+        ##############################################
 
-        tkgrid(frameINTRP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameSHP, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
 

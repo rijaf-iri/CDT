@@ -2,8 +2,8 @@
 selectCDTData_getParams <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 61
-        largeur2 <- 60
+        largeur1 <- 47
+        largeur2 <- 45
     }else{
         largeur1 <- 41
         largeur2 <- 40

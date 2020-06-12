@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Indices </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Maps </text>
+        </tab>
+        <tab id="4">
+            <text lang="en"> Graphs </text>
+        </tab>
+        <tab id="5">
+            <text lang="en"> Layers </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Rx1day: Monthly maximum 1-day precipitation </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Rx5day: Monthly maximum consecutive 5-day precipitation </text>
+            </option>
+            <option id="3">
+                <text lang="en"> SDII: Simple precipitation intensity index </text>
+            </option>
+            <option id="4">
+                <text lang="en"> R10mm: Annual count of days when PRCP &gt;= 10mm </text>
+            </option>
+            <option id="5">
+                <text lang="en"> R20mm: Annual count of days when PRCP &gt;= 20mm </text>
+            </option>
+            <option id="6">
+                <text lang="en"> Rnnmm: Annual count of days when PRCP &gt;= nnmm </text>
+            </option>
+            <option id="7">
+                <text lang="en"> CDD: Maximum length of dry spell </text>
+            </option>
+            <option id="8">
+                <text lang="en"> CWD: Maximum length of wet spell </text>
+            </option>
+            <option id="9">
+                <text lang="en"> R95pTOT: Annual total PRCP when RR &gt; 95th percentile </text>
+            </option>
+            <option id="10">
+                <text lang="en"> R99pTOT: Annual total PRCP when RR &gt; 99th percentile </text>
+            </option>
+            <option id="11">
+                <text lang="en"> PRCPTOT: Annual total precipitation in wet days </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Slope - Estimate </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Slope - Standard Error </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Slope t-value </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Slope p-value Pr(&gt;t) </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Intercept - Estimate </text>
+            </option>
+            <option id="6">
+                <text lang="en"> Intercept - Standard Error </text>
+            </option>
+            <option id="7">
+                <text lang="en"> Intercept t-value </text>
+            </option>
+            <option id="8">
+                <text lang="en"> Intercept p-value Pr(&gt;t) </text>
+            </option>
+            <option id="9">
+                <text lang="en"> Multiple R-squared </text>
+            </option>
+            <option id="10">
+                <text lang="en"> Residual Standard Error </text>
+            </option>
+        </combobox>
+        <combobox id="3">
+            <option id="1">
+                <text lang="en"> Line Plot </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Bar Plot </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Set Base Period </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Calculate Indices </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Southern Hemisphere: year starting on July </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Data already computed </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Add Shapefile to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Input Data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> File containing stations daily Precip data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Index file (*.rds) for daily Precip data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Format </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Directory to save indices </text>
+        </label>
+        <label id="6">
+            <text lang="en"> User defined threshold (mm) </text>
+        </label>
+        <label id="7">
+            <text lang="en"> CLIMDEX Data </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Statistics Maps </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Yearly Maps </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Plot Type </text>
+        </label>
+        <label id="11">
+            <text lang="en"> CLIMDEX Graph </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Station/Coordinates </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Shapefile </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Select a station to plot </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Enter longitude and latitude to plot </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Latitude </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the type of input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the type of input data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the daily precipitation </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the daily precipitation </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;daily precipitation dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Enter the full path to directory to save the calculated indices </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save the calculated indices </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Check desired indices to calculate </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check desired indices to calculate </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Calculating Indices (this may take some time) ....... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Indices calculation finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Indices calculation failed </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Unable to load CLIMDEX data </text>
+        </content>
+        <content id="5">
+            <text lang="en"> No Indices data found </text>
+        </content>
+        <content id="6">
+            <text lang="en"> not found </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Invalid year range </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No indices selected </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="10">
+            <text lang="en"> The dataset is not a daily data </text>
+        </content>
+        <content id="11">
+            <text lang="en"> No enough data, R95pTOT and R99pTOT will not be computed </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Station not found </text>
+        </content>
+    </message>
+</panel_cmd>

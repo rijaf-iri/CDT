@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Months to process </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Custom </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Customized Months </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Select months </text>
+        </label>
+        <label id="2">
+            <text lang="en"> From </text>
+        </label>
+        <label id="3">
+            <text lang="en"> To </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the start month </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the start month </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the end month </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the end month </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Check this box if the months to process are not consecutive </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if the months to process are not consecutive </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Edit the months to process </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Edit the months to process </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

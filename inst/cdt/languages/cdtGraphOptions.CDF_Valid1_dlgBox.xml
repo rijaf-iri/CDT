@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Multiple Panels </text>
+            </option>
+            <option id="2">
+                <text lang="en"> One Panel </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Custom </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Add legend to plot </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> User customized colorkey </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Change dataset names </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> X axis ranges </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Y axis ranges </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Axis Labels </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Graph Title </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Type of Plot </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Type </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Line </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Points </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Color </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Width </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Symbol </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Size </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Color Selection </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Observation </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Estimation </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Legend </text>
+        </label>
+        <label id="17">
+            <text lang="en"> Dataset names </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Enter here the name of the datasets separated by a comma \n should be the same number as the number of the datasets to compare </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter here the name of the datasets separated by a comma \n should be the same number as the number of the datasets to compare </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

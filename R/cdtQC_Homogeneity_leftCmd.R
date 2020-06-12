@@ -2,28 +2,28 @@
 testHomogeneityPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 29
-        largeur1 <- 44
-        largeur2 <- 47
-        largeur3 <- 34
-        largeur4 <- 28
-        largeur5 <- 28
-        largeur6 <- 30
-        largeur7 <- 8
-        largeur8 <- 16
-        largeur9 <- 29
-        largeur10 <- 24
-    }else{
         largeur0 <- 23
         largeur1 <- 31
         largeur2 <- 33
-        largeur3 <- 26
-        largeur4 <- 25
+        largeur3 <- 22
+        largeur4 <- 18
         largeur5 <- 19
         largeur6 <- 23
         largeur7 <- 7
         largeur8 <- 12
-        largeur9 <- 20
+        largeur9 <- 19
+        largeur10 <- 18
+    }else{
+        largeur0 <- 23
+        largeur1 <- 31
+        largeur2 <- 33
+        largeur3 <- 25
+        largeur4 <- 24
+        largeur5 <- 19
+        largeur6 <- 23
+        largeur7 <- 7
+        largeur8 <- 12
+        largeur9 <- 19
         largeur10 <- 18
     }
 
@@ -37,7 +37,6 @@ testHomogeneityPanelCmd <- function(){
                                           ),
                               adj = list(min.mon = 32, min.dek = 32, min.dyp = 32,
                                          seg.mon = 0, seg.dek = 0, seg.dyp = 0),
-                              # aggr = list(aggr.fun = 'mean', min.frac = 0.95),
                               aggr = list(aggr.fun = "mean", opr.fun = ">=", opr.thres = 0,
                                           min.frac = list(unique = TRUE, all = 0.95,
                                                           month = rep(0.95, 12))),
@@ -343,21 +342,7 @@ testHomogeneityPanelCmd <- function(){
             tkconfigure(bt.dataIdx, state = stateExistData)
 
             stateQC <- if(tclvalue(QCExist) == '1') 'normal' else 'disabled'
-            tkconfigure(cb.fperiod, state = stateQC)
-            tkconfigure(cb.infile, state = stateQC)
-            tkconfigure(bt.infile, state = stateQC)
-            tkconfigure(cb.hom.mthd, state = stateQC)
-            tkconfigure(bt.hom.mthd, state = stateQC)
-            tkconfigure(bt.aggrPars, state = stateQC)
-            tkconfigure(en.dir.save, state = stateQC)
-            tkconfigure(bt.dir.save, state = stateQC)
-            tkconfigure(bt.HomogTest, state = stateQC)
-
-            tkconfigure(chk.RefS, state = stateQC)
-            if(tclvalue(QCExist) == '1'){
-                stateRefS <- if(tclvalue(use.RefS) == '0') 'disabled' else 'normal'
-            }else stateRefS <- 'disabled'
-            tkconfigure(bt.RefS, state = stateRefS)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateQC)
         })
 
         #############################

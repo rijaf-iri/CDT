@@ -159,9 +159,9 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == "compute.dervTemp"){
         ret <- try(computeTvarsProcs(), silent = TRUE)
 
-        msg <- paste("Computing", .cdtData$GalParams$Tstep, tolower(.cdtData$GalParams$variable), "temperature")
-        msg0 <- paste(msg, "finished successfully")
-        msg1 <- paste(msg, "failed")
+        msg <- paste(.cdtData$GalParams$Tstep, tolower(.cdtData$GalParams$variable))
+        msg0 <- paste(msg, .cdtData$GalParams[['message']][['6']])
+        msg1 <- paste(msg, .cdtData$GalParams[['message']][['7']])
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -169,9 +169,8 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == "compute.PET"){
         ret <- try(computePETProcs(), silent = TRUE)
 
-        msg <- paste("Computing", .cdtData$GalParams$Tstep, "potential evapotranspiration")
-        msg0 <- paste(msg, "finished successfully")
-        msg1 <- paste(msg, "failed")
+        msg0 <- paste(.cdtData$GalParams$Tstep, .cdtData$GalParams[['message']][['8']])
+        msg1 <- paste(.cdtData$GalParams$Tstep, .cdtData$GalParams[['message']][['9']])
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -179,9 +178,8 @@ Execute_Function <- function(){
     if(.cdtData$GalParams$action == "compute.WB"){
         ret <- try(computeWBProcs(), silent = TRUE)
 
-        msg <- paste("Computing", .cdtData$GalParams$Tstep, "water balance")
-        msg0 <- paste(msg, "finished successfully")
-        msg1 <- paste(msg, "failed")
+        msg0 <- paste(.cdtData$GalParams$Tstep, .cdtData$GalParams[['message']][['4']])
+        msg1 <- paste(.cdtData$GalParams$Tstep, .cdtData$GalParams[['message']][['5']])
         Execute_end_msg(ret, msg0, msg1)
     }
 

@@ -2,15 +2,15 @@
 AssessDataPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- 20
-        largeur4 <- 21
-        largeur5 <- 15
-        largeur6 <- 26
+        largeur1 <- 31
+        largeur2 <- 33
+        largeur3 <- 16
+        largeur4 <- 14
+        largeur5 <- 11
+        largeur6 <- 22
     }else{
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
+        largeur1 <- 32
+        largeur2 <- 33
         largeur3 <- 14
         largeur4 <- 14
         largeur5 <- 11
@@ -275,12 +275,7 @@ AssessDataPanelCmd <- function(){
             tkconfigure(bt.dataIdx, state = stateAssesDat)
 
             stateDataIn <- if(tclvalue(availExist) == '1') 'normal' else 'disabled'
-            tkconfigure(assesDataBut, state = stateDataIn)
-            tkconfigure(cb.fperiod, state = stateDataIn)
-            tkconfigure(cb.infile, state = stateDataIn)
-            tkconfigure(bt.infile, state = stateDataIn)
-            tkconfigure(en.dir.save, state = stateDataIn)
-            tkconfigure(bt.dir.save, state = stateDataIn)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateDataIn)
         })
 
         #######################

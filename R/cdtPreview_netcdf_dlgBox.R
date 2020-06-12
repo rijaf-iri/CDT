@@ -4,11 +4,11 @@ preview.data.nc <- function(parent.win, openncf){
     if(WindowsOS()){
         txta.w <- 38
         txta.h <- 7
-        largeur <- 45
+        largeur <- 30
     }else{
         txta.w <- 40
         txta.h <- 7
-        largeur <- 25
+        largeur <- 26
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPreview_netcdf_dlgBox.xml")

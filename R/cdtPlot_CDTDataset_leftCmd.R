@@ -2,14 +2,14 @@
 PlotCDTDatasetCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- 23
-        largeur3 <- 12
-        largeur4 <- 10
+        largeur0 <- 33
+        largeur1 <- 31
+        largeur2 <- 14
+        largeur3 <- 8
+        largeur4 <- 6
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
+        largeur0 <- 33
+        largeur1 <- 31
         largeur2 <- 14
         largeur3 <- 8
         largeur4 <- 6

@@ -2,31 +2,92 @@
 climdexPanelCmd.RR <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- 30
-        largeur4 <- 23
-        largeur5 <- 22
-    }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(20)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur3 <- 22
-        largeur4 <- 14
+        hauteur <- 320
+        largeur <- 315
+        largeur0 <- 29
+        largeur1 <- 33
+        largeur2 <- 35
+        largeur3 <- 36
+        largeur4 <- 32
         largeur5 <- 14
+        largeur6 <- 18
+        largeur7 <- 7
+        largeur8 <- 19
+        largeur9 <- 20
+        largeur10 <- 10
+    }else{
+        hauteur <- 320
+        largeur <- 315
+        largeur0 <- 30
+        largeur1 <- 32
+        largeur2 <- 33
+        largeur3 <- 36
+        largeur4 <- 32
+        largeur5 <- 14
+        largeur6 <- 18
+        largeur7 <- 7
+        largeur8 <- 19
+        largeur9 <- 20
+        largeur10 <- 10
     }
 
     GeneralParameters <- list(data.type = "cdtstation", cdtstation = "", cdtdataset = "",
-                            baseYear = list(all.years = TRUE, start.year = 1981, end.year = 2010, min.year = 15),
-                            Indices = list(Rx1day = TRUE, Rx5day = TRUE, SDII = TRUE, R10mm = TRUE, R20mm = TRUE,
-                                            Rnnmm = TRUE, CDD = TRUE, CWD = TRUE, R95pTOT = TRUE, R99pTOT = TRUE,
-                                            PRCPTOT = TRUE, thres.Rnnmm = 25),
-                            start.july = FALSE, output = "")
+                              baseYear = list(all.years = TRUE, start.year = 1981, end.year = 2010, min.year = 15),
+                              Indices = list(Rx1day = TRUE, Rx5day = TRUE, SDII = TRUE, R10mm = TRUE, R20mm = TRUE,
+                                             Rnnmm = TRUE, CDD = TRUE, CWD = TRUE, R95pTOT = TRUE, R99pTOT = TRUE,
+                                             PRCPTOT = TRUE, thres.Rnnmm = 25),
+                              start.july = FALSE, output = "")
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCLIMDEX_RR_leftCmd.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-    # .cdtData$EnvData$message <- lang.dlg[['message']]
+    .cdtData$EnvData$tab$pointSize.MapStat <- NULL
+    .cdtData$EnvData$varstatMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
+                                          userCol = list(custom = FALSE, color = NULL),
+                                          userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                          title = list(user = FALSE, title = ''),
+                                          colkeyLab = list(user = FALSE, label = ''),
+                                          scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                          pointSize = .cdtData$EnvData$tab$pointSize.MapStat)
+
+    .cdtData$EnvData$tab$pointSize.MapTS <- NULL
+    .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
+                                       userCol = list(custom = FALSE, color = NULL),
+                                       userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                       title = list(user = FALSE, title = ''),
+                                       colkeyLab = list(user = FALSE, label = ''),
+                                       scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                       pointSize = .cdtData$EnvData$tab$pointSize.MapTS)
+
+    .cdtData$EnvData$TSGraphOp <- list(
+                                    bar = list(
+                                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                                colors = list(col = "darkblue")
+                                            ),
+                                    line = list(
+                                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                                plot = list(type = 'both',
+                                                            col = list(line = "red", points = "blue"),
+                                                            lwd = 2, cex = 1.4),
+                                                legend = list(
+                                                            col = list(lowess = "blue", linear = "black"),
+                                                            text = list(lowess = "Lowess smoother", linear = "Linear Trend"),
+                                                            lwd = list(lowess = 2, linear = 2),
+                                                            lty= list(lowess = 2, linear = 1)
+                                                        )
+                                            )
+                                    )
+
+    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+
+    ###################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCLIMDEX_RR_leftCmd.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    .cdtData$EnvData$message <- lang.dlg[['message']]
 
     ###################
 
@@ -34,11 +95,11 @@ climdexPanelCmd.RR <- function(){
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
 
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = "Input")
-    cmd.tab2 <- bwAddTab(tknote.cmd, text = "Indices")
-    cmd.tab3 <- bwAddTab(tknote.cmd, text = "Maps")
-    cmd.tab4 <- bwAddTab(tknote.cmd, text = "Graphs")
-    cmd.tab5 <- bwAddTab(tknote.cmd, text = "Boundaries")
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
+    cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
+    cmd.tab5 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['5']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
@@ -61,7 +122,7 @@ climdexPanelCmd.RR <- function(){
 
         #######################
 
-        frameInData <- ttklabelframe(subfr1, text = 'Input Data', relief = 'groove')
+        frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         DataType <- tclVar()
         CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
@@ -70,14 +131,14 @@ climdexPanelCmd.RR <- function(){
 
         if(GeneralParameters$data.type == 'cdtstation'){
             input.Prec <- tclVar(GeneralParameters$cdtstation)
-            txt.INPrec <- 'File containing stations daily Precip data'
+            txt.INPrec <- lang.dlg[['label']][['2']]
         }else{
             input.Prec <- tclVar(GeneralParameters$cdtdataset)
-            txt.INPrec <- 'Index file (*.rds) for daily Precip data'
+            txt.INPrec <- lang.dlg[['label']][['3']]
         }
         txt.INPrec.var <- tclVar(txt.INPrec)
 
-        txt.datatype <- tklabel(frameInData, text = 'Format', anchor = 'w', justify = 'left')
+        txt.datatype <- tklabel(frameInData, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
         cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
 
         txt.INPrec <- tklabel(frameInData, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
@@ -87,6 +148,25 @@ climdexPanelCmd.RR <- function(){
             cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
         }
         bt.INPrec <- tkbutton(frameInData, text = "...")
+
+        ############
+
+        tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.INPrec, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.en.INPrec, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.INPrec, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        ############
+
+        helpWidget(cb.datatype, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+        if(GeneralParameters$data.type == 'cdtstation'){
+            helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+            helpWidget(bt.INPrec, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        }else{
+            helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+            helpWidget(bt.INPrec, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+        }
 
         ############
 
@@ -106,26 +186,6 @@ climdexPanelCmd.RR <- function(){
         })
 
         ############
-        tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.INPrec, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.en.INPrec, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.INPrec, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-        ############
-
-        helpWidget(cb.datatype, 'Select the type of input data', 'Select the type of input data')
-        if(GeneralParameters$data.type == 'cdtstation'){
-            helpWidget(cb.en.INPrec, 'Select the file containing the daily precipitation',
-                                    'Select the file containing the daily precipitation')
-            helpWidget(bt.INPrec, 'Browse file if not listed', 'Browse file if not listed')
-        }else{
-            helpWidget(cb.en.INPrec, 'Enter the full path to the file <daily precipitation dataset name>.rds',
-                                    'Enter the full path to the file <daily precipitation dataset name>.rds')
-            helpWidget(bt.INPrec, 'or browse here', 'or browse here')
-        }
-
-        ############
 
         tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
             tkdestroy(cb.en.INPrec)
@@ -133,9 +193,13 @@ climdexPanelCmd.RR <- function(){
 
             ###
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-                tclvalue(txt.INPrec.var) <- 'File containing stations daily Precip data'
+                tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['2']]
 
                 cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
+
+                ######
+                helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+                helpWidget(bt.INPrec, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
                 ######
                 tkconfigure(bt.INPrec, command = function(){
@@ -147,29 +211,23 @@ climdexPanelCmd.RR <- function(){
                         tkconfigure(cb.en.INPrec, values = unlist(listOpenFiles))
                     }
                 })
-
-                ######
-                helpWidget(cb.en.INPrec, 'Select the file containing the daily precipitation',
-                                        'Select the file containing the daily precipitation')
-                helpWidget(bt.INPrec, 'Browse file if not listed', 'Browse file if not listed')
             }
 
             ###
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-                tclvalue(txt.INPrec.var) <- 'Index file (*.rds) for daily Precip data'
+                tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['3']]
 
                 cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
+
+                ######
+                helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+                helpWidget(bt.INPrec, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
                 ######
                 tkconfigure(bt.INPrec, command = function(){
                     path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
                     tclvalue(input.Prec) <- if(path.rds %in% c("", "NA")) "" else path.rds
                 })
-
-                ######
-                helpWidget(cb.en.INPrec, 'Enter the full path to the file <daily precipitation dataset name>.rds',
-                                        'Enter the full path to the file <daily precipitation dataset name>.rds')
-                helpWidget(bt.INPrec, 'or browse here', 'or browse here')
             }
 
             #######
@@ -182,25 +240,25 @@ climdexPanelCmd.RR <- function(){
 
         dir.save <- tclVar(GeneralParameters$output)
 
-        txt.dir.save <- tklabel(frameDirSav, text = "Directory to save indices", anchor = 'w', justify = 'left')
+        txt.dir.save <- tklabel(frameDirSav, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
         en.dir.save <- tkentry(frameDirSav, textvariable = dir.save, width = largeur2)
         bt.dir.save <- tkbutton(frameDirSav, text = "...")
-
-        ######
-        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir.save, isFile = FALSE))
 
         ######
         tkgrid(txt.dir.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(en.dir.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(bt.dir.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-        helpWidget(en.dir.save, 'Enter the full path to directory to save the calculated indices',
-                                'Enter the full path to directory to save the calculated indices')
-        helpWidget(bt.dir.save, 'or browse here', 'or browse here')
+        helpWidget(en.dir.save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+        helpWidget(bt.dir.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+
+        ######
+
+        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir.save, isFile = FALSE))
 
         ############################################
 
-        bt.Baseyear <- ttkbutton(subfr1, text = "Set Base Period")
+        bt.Baseyear <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
         tkconfigure(bt.Baseyear, command = function(){
             GeneralParameters[["baseYear"]] <<- getInfoBasePeriod(.cdtEnv$tcl$main$win,
@@ -216,17 +274,17 @@ climdexPanelCmd.RR <- function(){
     #######################################################################################################
 
     #Tab2
-    subfr2 <- bwTabScrollableFrame(cmd.tab2, hscrlwin = .cdtEnv$tcl$fun$h.scale(45))
+    subfr2 <- bwTabScrollableFrame(cmd.tab2, hscrlwin = hauteur, wscrlwin = largeur)
 
     climdex.frame1 <- tkframe(cmd.tab2)
     tkgrid(climdex.frame1, sticky = 'we')
 
-    bt.CalcIndices <- ttkbutton(cmd.tab2, text = "Calculate Indices")
+    bt.CalcIndices <- ttkbutton(cmd.tab2, text = lang.dlg[['button']][['2']])
     tkgrid(bt.CalcIndices, sticky = 'we', padx = 1, ipadx = 1)
 
         #######################
 
-        frameIndex <- tkframe(subfr2, relief = 'sunken', borderwidth = 2)
+        frameIndex <- tkframe(subfr2, relief = 'sunken', borderwidth = 2, bg = 'lightblue')
 
         is.Rx1day <- tclVar(GeneralParameters$Indices$Rx1day)
         is.Rx5day <- tclVar(GeneralParameters$Indices$Rx5day)
@@ -242,23 +300,23 @@ climdexPanelCmd.RR <- function(){
         is.R99pTOT <- tclVar(GeneralParameters$Indices$R99pTOT)
         is.PRCPTOT <- tclVar(GeneralParameters$Indices$PRCPTOT)
 
-        chk.Rx1day <- tkcheckbutton(frameIndex, variable = is.Rx1day, text = 'Rx1day: Monthly maximum 1-day precipitation', anchor = 'w', justify = 'left')
-        chk.Rx5day <- tkcheckbutton(frameIndex, variable = is.Rx5day, text = 'Rx5day: Monthly maximum consecutive 5-day precipitation', anchor = 'w', justify = 'left')
-        chk.SDII <- tkcheckbutton(frameIndex, variable = is.SDII, text = 'SDII: Simple precipitation intensity index', anchor = 'w', justify = 'left')
-        chk.R10mm <- tkcheckbutton(frameIndex, variable = is.R10mm, text = 'R10mm: Annual count of days when PRCP >= 10mm', anchor = 'w', justify = 'left')
-        chk.R20mm <- tkcheckbutton(frameIndex, variable = is.R20mm, text = 'R20mm: Annual count of days when PRCP >= 20mm', anchor = 'w', justify = 'left')
-        chk.Rnnmm <- tkcheckbutton(frameIndex, variable = is.Rnnmm, text = 'Rnnmm: Annual count of days when PRCP >= nnmm', anchor = 'w', justify = 'left')
-        chk.CDD <- tkcheckbutton(frameIndex, variable = is.CDD, text = 'CDD: Maximum length of dry spell', anchor = 'w', justify = 'left')
-        chk.CWD <- tkcheckbutton(frameIndex, variable = is.CWD, text = 'CWD: Maximum length of wet spell', anchor = 'w', justify = 'left')
-        chk.R95pTOT <- tkcheckbutton(frameIndex, variable = is.R95pTOT, text = 'R95pTOT: Annual total PRCP when RR > 95th percentile', anchor = 'w', justify = 'left')
-        chk.R99pTOT <- tkcheckbutton(frameIndex, variable = is.R99pTOT, text = 'R99pTOT: Annual total PRCP when RR > 99th percentile', anchor = 'w', justify = 'left')
-        chk.PRCPTOT <- tkcheckbutton(frameIndex, variable = is.PRCPTOT, text = 'PRCPTOT: Annual total precipitation in wet days', anchor = 'w', justify = 'left')
+        chk.Rx1day <- tkcheckbutton(frameIndex, variable = is.Rx1day, text = lang.dlg[['combobox']][['1']][1], anchor = 'w', justify = 'left')
+        chk.Rx5day <- tkcheckbutton(frameIndex, variable = is.Rx5day, text = lang.dlg[['combobox']][['1']][2], anchor = 'w', justify = 'left')
+        chk.SDII <- tkcheckbutton(frameIndex, variable = is.SDII, text = lang.dlg[['combobox']][['1']][3], anchor = 'w', justify = 'left')
+        chk.R10mm <- tkcheckbutton(frameIndex, variable = is.R10mm, text = lang.dlg[['combobox']][['1']][4], anchor = 'w', justify = 'left')
+        chk.R20mm <- tkcheckbutton(frameIndex, variable = is.R20mm, text = lang.dlg[['combobox']][['1']][5], anchor = 'w', justify = 'left')
+        chk.Rnnmm <- tkcheckbutton(frameIndex, variable = is.Rnnmm, text = lang.dlg[['combobox']][['1']][6], anchor = 'w', justify = 'left')
+        chk.CDD <- tkcheckbutton(frameIndex, variable = is.CDD, text = lang.dlg[['combobox']][['1']][7], anchor = 'w', justify = 'left')
+        chk.CWD <- tkcheckbutton(frameIndex, variable = is.CWD, text = lang.dlg[['combobox']][['1']][8], anchor = 'w', justify = 'left')
+        chk.R95pTOT <- tkcheckbutton(frameIndex, variable = is.R95pTOT, text = lang.dlg[['combobox']][['1']][9], anchor = 'w', justify = 'left')
+        chk.R99pTOT <- tkcheckbutton(frameIndex, variable = is.R99pTOT, text = lang.dlg[['combobox']][['1']][10], anchor = 'w', justify = 'left')
+        chk.PRCPTOT <- tkcheckbutton(frameIndex, variable = is.PRCPTOT, text = lang.dlg[['combobox']][['1']][11], anchor = 'w', justify = 'left')
 
         ################
 
         frameRnnmm <- tkframe(frameIndex)
 
-        txt.Rnnmm <- tklabel(frameRnnmm, text = 'User defined threshold (mm)', anchor = 'w', justify = 'left')
+        txt.Rnnmm <- tklabel(frameRnnmm, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
         en.Rnnmm <- tkentry(frameRnnmm, width = 4, textvariable = val.Rnnmm, justify = "left")
         tkgrid(txt.Rnnmm, en.Rnnmm)
 
@@ -277,7 +335,7 @@ climdexPanelCmd.RR <- function(){
         tkgrid(chk.R99pTOT, row = 10, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(chk.PRCPTOT, row = 11, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        helpWidget(frameIndex, "Check desired indices to calculate", "Check desired indices to calculate")
+        helpWidget(frameIndex, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
 
         #######################
         tkgrid(frameIndex, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -287,7 +345,7 @@ climdexPanelCmd.RR <- function(){
 
         start.july <- tclVar(GeneralParameters$start.july)
 
-        chk.StartJul <- tkcheckbutton(climdex.frame1, variable = start.july, text = 'Southern Hemisphere: year starting on July', anchor = 'w', justify = 'left')
+        chk.StartJul <- tkcheckbutton(climdex.frame1, variable = start.july, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
 
         tkgrid(chk.StartJul, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
@@ -321,30 +379,31 @@ climdexPanelCmd.RR <- function(){
 
             # assign("GeneralParameters", GeneralParameters, envir = .GlobalEnv)
 
-            Insert.Messages.Out("Calculating Indices (this may take some time) .......", TRUE, "i")
+            Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch(
-                {
-                    climdexCalc.RR(GeneralParameters)
-                },
-                warning = function(w) warningFun(w),
-                error = function(e) errorFun(e),
-                finally = {
-                    tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
-                    tcl('update')
-                }
-            )
+            ret <- tryCatch({
+                                climdexCalc.RR(GeneralParameters)
+                            },
+                            warning = function(w) warningFun(w),
+                            error = function(e) errorFun(e),
+                            finally = {
+                                tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+                                tcl('update')
+                            }
+                        )
 
             if(!is.null(ret)){
                 if(ret == 0){
-                    Insert.Messages.Out("Indices calculation finished successfully", TRUE, "s")
+                    Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
                     ## set
                     .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                     .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                     .cdtData$EnvData$indices.data <- "RR"
+
                     ###################
+
                     ret <- try(set.vars.dates(), silent = TRUE)
                     if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -356,8 +415,8 @@ climdexPanelCmd.RR <- function(){
                     if(inherits(ret1, "try-error") | is.null(ret1)) return(NULL)
                     ret2 <- try(get.data.Year(), silent = TRUE)
                     if(inherits(ret2, "try-error") | is.null(ret2)) return(NULL)
-                }else Insert.Messages.Out("Indices calculation failed", format = TRUE)
-            }else Insert.Messages.Out("Indices calculation failed", format = TRUE)
+                }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
+            }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
         })
 
     #######################################################################################################
@@ -367,16 +426,22 @@ climdexPanelCmd.RR <- function(){
 
         #######################
 
-        frameDataExist <- ttklabelframe(subfr3, text = "CLIMDEX data", relief = 'groove')
+        frameDataExist <- ttklabelframe(subfr3, text = lang.dlg[['label']][['7']], relief = 'groove')
 
-        .cdtData$EnvData$DirExist <- tclVar(0)
+        DirExist <- tclVar(0)
         file.dataIndex <- tclVar()
 
-        stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
+        stateExistData <- if(tclvalue(DirExist) == "1") "normal" else "disabled"
 
-        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = .cdtData$EnvData$DirExist, text = "CLIMDEX data already computed", anchor = 'w', justify = 'left')
-        en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2, state = stateExistData)
-        bt.dataIdx <- tkbutton(frameDataExist, text = "...", state = stateExistData)
+        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = DirExist, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+        en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2 + 5, state = stateExistData)
+        bt.dataIdx <- ttkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
+
+        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ###############
 
         tkconfigure(bt.dataIdx, command = function(){
             path.dataIdx <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -386,15 +451,15 @@ climdexPanelCmd.RR <- function(){
             if(file.exists(str_trim(tclvalue(file.dataIndex)))){
                 OutIndexdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutIndexdata, "try-error")){
-                    Insert.Messages.Out('Unable to load CLIMDEX data', format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), TRUE, 'e')
 
                     tkconfigure(cb.varstat.var, values = "")
-                    tclvalue(.cdtData$EnvData$anaVars) <- ""
+                    tclvalue(anaVars) <- ""
                     tkconfigure(cb.varstat.stat, values = "")
-                    tclvalue(.cdtData$EnvData$anaStat) <- ""
+                    tclvalue(anaStat) <- ""
                     tkconfigure(cb.data.Index, values = "")
-                    tclvalue(.cdtData$EnvData$donDate) <- ""
+                    tclvalue(donDateVar) <- ""
                     return(NULL)
                 }
 
@@ -403,7 +468,9 @@ climdexPanelCmd.RR <- function(){
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 .cdtData$EnvData$indices.data <- "RR"
+
                 ###################
+
                 ret <- try(set.vars.dates(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -418,41 +485,45 @@ climdexPanelCmd.RR <- function(){
             }
         })
 
-        tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.dataIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.dataIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
         ###############
         tkbind(chk.dataIdx, "<Button-1>", function(){
-            stateExistData <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
+            stateExistData <- if(tclvalue(DirExist) == '1') 'disabled' else 'normal'
             tkconfigure(en.dataIdx, state = stateExistData)
             tkconfigure(bt.dataIdx, state = stateExistData)
-            stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
-            tkconfigure(bt.CalcIndices, state = stateCaclBut)
+
+            stateCaclBut <- if(tclvalue(DirExist) == '1') 'normal' else 'disabled'
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateCaclBut)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab2$IDtab, state = stateCaclBut)
         })
 
         ##############################################
 
-        frameDataStatMap <- ttklabelframe(subfr3, text = "Statistics Maps", relief = 'groove')
+        frameDataStatMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['8']], relief = 'groove')
 
-        .cdtData$EnvData$anaVars <- tclVar()
-        .cdtData$EnvData$anaStat <- tclVar()
+        anaVars <- tclVar()
+        CbanaVarsVAL <- lang.dlg[['combobox']][['1']]
+        anaVarsVAL <- c("Rx1day", "Rx5day", "SDII", "R10mm", "R20mm", "Rnnmm",
+                        "CDD", "CWD", "R95pTOT", "R99pTOT", "PRCPTOT")
 
-        cb.varstat.var <- ttkcombobox(frameDataStatMap, values = "", textvariable = .cdtData$EnvData$anaVars, width = largeur3)
-        bt.varstat.maps <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['3']])
-        cb.varstat.stat <- ttkcombobox(frameDataStatMap, values = "", textvariable = .cdtData$EnvData$anaStat, width = largeur3)
-        bt.varstat.MapOpt <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+        anaStat <- tclVar()
+        CbanaStatVAL <- lang.dlg[['combobox']][['2']]
+        anaStatVAL <- c("slope", "std.slope", "t.value.slope", "p.value.slope",
+                        "intercept", "std.intercept", "t.value.intercept",
+                        "p.value.intercept", "R2", "sigma")
+
+        cb.varstat.var <- ttkcombobox(frameDataStatMap, values = "", textvariable = anaVars, justify = 'center', width = largeur3)
+        bt.varstat.maps <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur6)
+        bt.varstat.MapOpt <- ttkbutton(frameDataStatMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur6)
+        cb.varstat.stat <- ttkcombobox(frameDataStatMap, values = "", textvariable = anaStat, justify = 'center', width = largeur4)
 
         ###################
 
-        .cdtData$EnvData$tab$pointSize.MapStat <- NULL
-        .cdtData$EnvData$varstatMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-                                            userCol = list(custom = FALSE, color = NULL),
-                                            userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                            title = list(user = FALSE, title = ''),
-                                            colkeyLab = list(user = FALSE, label = ''),
-                                            scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                            pointSize = .cdtData$EnvData$tab$pointSize.MapStat)
+        tkgrid(cb.varstat.var, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.varstat.MapOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.varstat.maps, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(cb.varstat.stat, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ###################
 
         tkconfigure(bt.varstat.MapOpt, command = function(){
             if(!is.null(.cdtData$EnvData$varData$map)){
@@ -475,8 +546,12 @@ climdexPanelCmd.RR <- function(){
         .cdtData$EnvData$tab$dataMapStat <- NULL
 
         tkconfigure(bt.varstat.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$anaVars)) != "" &
-                str_trim(tclvalue(.cdtData$EnvData$anaStat)) != "")
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
+            if(length(.cdtData$EnvData$anaVars) > 0 &
+               length(.cdtData$EnvData$anaStat) > 0)
             {
                 ret <- try(get.data.Trend(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
@@ -486,16 +561,12 @@ climdexPanelCmd.RR <- function(){
 
         ###################
 
-        tkgrid(cb.varstat.var, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.varstat.maps, row = 0, column = 4, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.varstat.stat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.varstat.MapOpt, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ###################
-
         tkbind(cb.varstat.var, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$anaVars)) != "" &
-                str_trim(tclvalue(.cdtData$EnvData$anaStat)) != "")
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+
+            if(length(.cdtData$EnvData$anaVars) > 0 &
+               length(.cdtData$EnvData$anaStat) > 0)
             {
                 ret1 <- try(get.data.Trend(), silent = TRUE)
                 if(inherits(ret1, "try-error") | is.null(ret1)) return(NULL)
@@ -510,26 +581,25 @@ climdexPanelCmd.RR <- function(){
 
         ##############################################
 
-        frameDataMap <- ttklabelframe(subfr3, text = "Yearly Maps", relief = 'groove')
+        frameDataMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['9']], relief = 'groove')
 
-        .cdtData$EnvData$donDate <- tclVar()
+        donDateVar <- tclVar()
 
-        cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = .cdtData$EnvData$donDate, width = largeur4, justify = 'center')
-        bt.data.Index.prev <- ttkbutton(frameDataMap, text = "<<", width = 3)
-        bt.data.Index.next <- ttkbutton(frameDataMap, text = ">>", width = 3)
-        bt.data.maps <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        bt.data.MapOpt <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
+        cb.data.Index <- ttkcombobox(frameDataMap, values = "", textvariable = donDateVar, width = largeur8, justify = 'center')
+        bt.data.Index.prev <- ttkbutton(frameDataMap, text = "<<", width = largeur7)
+        bt.data.Index.next <- ttkbutton(frameDataMap, text = ">>", width = largeur7)
+        bt.data.maps <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur6)
+        bt.data.MapOpt <- ttkbutton(frameDataMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur6)
 
         ###############
 
-        .cdtData$EnvData$tab$pointSize.MapTS <- NULL
-        .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-                                        userCol = list(custom = FALSE, color = NULL),
-                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                        title = list(user = FALSE, title = ''),
-                                        colkeyLab = list(user = FALSE, label = ''),
-                                        scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                        pointSize = .cdtData$EnvData$tab$pointSize.MapTS)
+        tkgrid(bt.data.Index.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.data.Index, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.Index.next, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.MapOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.data.maps, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+
+        ###############
 
         tkconfigure(bt.data.MapOpt, command = function(){
             if(!is.null(.cdtData$EnvData$varData$map)){
@@ -552,18 +622,26 @@ climdexPanelCmd.RR <- function(){
         .cdtData$EnvData$tab$dataMapTS <- NULL
 
         tkconfigure(bt.data.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != "" &
-                !is.null(.cdtData$EnvData$YearData))
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
+            if(str_trim(tclvalue(donDateVar)) != "" &
+               !is.null(.cdtData$EnvData$YearData))
                     Climdex.Display.MapYear()
         })
 
         tkconfigure(bt.data.Index.prev, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
+            if(str_trim(tclvalue(donDateVar)) != ""){
                 donDates <- .cdtData$EnvData$output$year
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
+                idaty <- which(donDates == str_trim(tclvalue(donDateVar)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
-                tclvalue(.cdtData$EnvData$donDate) <- donDates[idaty]
+                tclvalue(donDateVar) <- donDates[idaty]
 
                 ret <- try(get.data.Year(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
@@ -573,12 +651,16 @@ climdexPanelCmd.RR <- function(){
         })
 
         tkconfigure(bt.data.Index.next, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
+            if(str_trim(tclvalue(donDateVar)) != ""){
                 donDates <- .cdtData$EnvData$output$year
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
+                idaty <- which(donDates == str_trim(tclvalue(donDateVar)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
-                tclvalue(.cdtData$EnvData$donDate) <- donDates[idaty]
+                tclvalue(donDateVar) <- donDates[idaty]
 
                 ret <- try(get.data.Year(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
@@ -589,15 +671,10 @@ climdexPanelCmd.RR <- function(){
 
         ###############
 
-        tkgrid(bt.data.Index.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.data.Index, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.Index.next, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.maps, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.data.MapOpt, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ###############
-
         tkbind(cb.data.Index, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+
             if(!is.null(.cdtData$EnvData$YearData)){
                 ret <- try(get.data.Year(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
@@ -610,8 +687,8 @@ climdexPanelCmd.RR <- function(){
 
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
-        txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur4)
+        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur5)
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -619,8 +696,11 @@ climdexPanelCmd.RR <- function(){
         ###############
 
         tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$anaVars)) != "" &
-                str_trim(tclvalue(.cdtData$EnvData$anaStat)) != "")
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+
+            if(length(.cdtData$EnvData$anaVars) > 0 &
+               length(.cdtData$EnvData$anaStat) > 0)
             {
                 ret1 <- try(get.data.Trend(), silent = TRUE)
                 if(inherits(ret1, "try-error") | is.null(ret1)) return(NULL)
@@ -647,45 +727,27 @@ climdexPanelCmd.RR <- function(){
 
         #######################
 
-        frameDataTS <- ttklabelframe(subfr4, text = "CLIMDEX Graph", relief = 'groove')
+        frameDataTS <- ttklabelframe(subfr4, text = lang.dlg[['label']][['11']], relief = 'groove')
 
-        typeTSPLOT <- c("Line", "Barplot")
-        .cdtData$EnvData$plot.maps$typeTSp <- tclVar("Line")
+        CbtypeTSPLOT <- lang.dlg[['combobox']][['3']]
+        typeTSPLOT <- c("line", "bar")
+        typeTSp <- tclVar(CbtypeTSPLOT[1])
 
-        cb.typeTSp <- ttkcombobox(frameDataTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur4)
-        bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
+        cb.typeTSp <- ttkcombobox(frameDataTS, values = CbtypeTSPLOT, textvariable = typeTSp, justify = 'center', width = largeur9)
+        bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur6)
+        bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur6)
 
         #################
 
-        .cdtData$EnvData$TSGraphOp <- list(
-                            bar = list(
-                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                title = list(is.title = FALSE, title = '', position = 'top'),
-                                colors = list(col = "darkblue")
-                            ),
-                            line = list(
-                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                title = list(is.title = FALSE, title = '', position = 'top'),
-                                plot = list(type = 'both',
-                                    col = list(line = "red", points = "blue"),
-                                    lwd = 2, cex = 1.4),
-                                legend = list(
-                                    col = list(lowess = "blue", linear = "black"),
-                                    text = list(lowess = "Lowess smoother", linear = "Linear Trend"),
-                                    lwd = list(lowess = 2, linear = 2),
-                                    lty= list(lowess = 2, linear = 1))
-                            )
-                        )
+        tkgrid(cb.typeTSp, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TSGraphOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsGraph.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
-                                    "Barplot" = "Bar",
-                                    "Line" = "LineCLIMDEX")
+            vtypeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            suffix.fun <- switch(vtypeTSp, "bar" = "Bar", "line" = "LineCLIMDEX")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
         })
@@ -695,21 +757,21 @@ climdexPanelCmd.RR <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(!is.null(.cdtData$EnvData$YearData)){
                 imgContainer <- CDT.Display.Graph(Climdex.plotVarGraph, .cdtData$EnvData$tab$dataGraph, 'Climdex-Graph')
                 .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
             }
         })
 
-        #################
-
-        tkgrid(cb.typeTSp, row = 0, column = 0, sticky = 'we', pady = 1, columnspan = 1)
-        tkgrid(bt.TSGraphOpt, row = 0, column = 1, sticky = 'we', padx = 4, pady = 1, columnspan = 1)
-        tkgrid(bt.TsGraph.plot, row = 0, column = 2, sticky = 'we', pady = 1, columnspan = 1)
+        tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+        })
 
         ##############################################
 
-        frameSTNCrds <- ttklabelframe(subfr4, text = "Station/Coordinates", relief = 'groove')
+        frameSTNCrds <- ttklabelframe(subfr4, text = lang.dlg[['label']][['12']], relief = 'groove')
 
         frTS2 <- tkframe(frameSTNCrds)
         .cdtData$EnvData$plot.maps$lonLOC <- tclVar()
@@ -731,16 +793,22 @@ climdexPanelCmd.RR <- function(){
 
         #######################
 
-        frameSHP <- ttklabelframe(subfr5, text = "Boundaries", relief = 'groove')
+        frameSHP <- ttklabelframe(subfr5, text = lang.dlg[['label']][['13']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
         file.plotShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
         bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
+
+        ########
+        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
         tkconfigure(bt.addshp, command = function(){
@@ -760,17 +828,10 @@ climdexPanelCmd.RR <- function(){
         })
 
         ########
-        .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
         tkconfigure(bt.addshpOpt, command = function(){
             .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
         })
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         #################
         tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
@@ -800,13 +861,21 @@ climdexPanelCmd.RR <- function(){
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
-            txt.stnSel <- tklabel(frTS2, text = "Select a station to plot")
-            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = 6)
-            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = 6)
-            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur5)
+            txt.stnSel <- tklabel(frTS2, text = lang.dlg[['label']][['14']])
+            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = largeur7)
+            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = largeur7)
+            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, justify = 'center', width = largeur8)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
+            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+            ###########
             tkconfigure(bt.stnID.prev, command = function(){
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
                 if(!is.null(.cdtData$EnvData$YearData)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
@@ -819,6 +888,8 @@ climdexPanelCmd.RR <- function(){
             })
 
             tkconfigure(bt.stnID.next, command = function(){
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
                 if(!is.null(.cdtData$EnvData$YearData)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
@@ -829,17 +900,12 @@ climdexPanelCmd.RR <- function(){
                     .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
                 }
             })
-
-            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         }else{
-            txt.crdSel <- tklabel(frTS2, text = "Enter longitude and latitude to plot", anchor = 'w', justify = 'left')
-            txt.lonLoc <- tklabel(frTS2, text = "Longitude", anchor = 'e', justify = 'right')
-            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
-            txt.latLoc <- tklabel(frTS2, text = "Latitude", anchor = 'e', justify = 'right')
-            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+            txt.crdSel <- tklabel(frTS2, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
+            txt.lonLoc <- tklabel(frTS2, text = lang.dlg[['label']][['16']], anchor = 'e', justify = 'right')
+            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = largeur10)
+            txt.latLoc <- tklabel(frTS2, text = lang.dlg[['label']][['17']], anchor = 'e', justify = 'right')
+            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = largeur10)
             stnIDTSPLOT <- ""
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
 
@@ -862,8 +928,8 @@ climdexPanelCmd.RR <- function(){
             plot.type <- c("Pixels", "Points")
             .cdtData$EnvData$plot.maps$.data.type <- "Points"
 
-            .cdtData$EnvData$varstatMapOp$pointSize <- 0.7
-            .cdtData$EnvData$dataMapOp$pointSize <- 0.7
+            .cdtData$EnvData$varstatMapOp$pointSize <- 1.0
+            .cdtData$EnvData$dataMapOp$pointSize <- 1.0
         }else{
             plot.type <- c("Pixels", "FilledContour")
             .cdtData$EnvData$plot.maps$.data.type <- "Grid"
@@ -874,37 +940,32 @@ climdexPanelCmd.RR <- function(){
     ###################
 
     set.trend.vars <- function(){
-        .cdtData$EnvData$trend$name <- c("slope", "std.slope", "t.value.slope", "p.value.slope",
-                                        "intercept", "std.intercept", "t.value.intercept",
-                                        "p.value.intercept", "R2", "sigma")
-        .cdtData$EnvData$trend$longname <- c(
-                                            "Slope - Estimate", "Slope - Standard Error", "Slope t-value", "Slope p-value Pr(>t)",
-                                            "Intercept - Estimate", "Intercept - Standard Error", "Intercept t-value", "Intercept p-value Pr(>t)",
-                                            "Multiple R-squared", "Residual Standard Error"
-                                            )
-        tkconfigure(cb.varstat.stat, values = .cdtData$EnvData$trend$longname)
-        tclvalue(.cdtData$EnvData$anaStat) <- .cdtData$EnvData$trend$longname[1]
+        tkconfigure(cb.varstat.stat, values = CbanaStatVAL)
+        tclvalue(anaStat) <- CbanaStatVAL[1]
+
+        .cdtData$EnvData$anaStat <- anaStatVAL[1]
     }
 
     ###################
 
     set.vars.dates <- function(){
-        indxlst <- c("Rx1day", "Rx5day", "SDII", "R10mm", "R20mm", "Rnnmm",
-                        "CDD", "CWD", "R95pTOT", "R99pTOT", "PRCPTOT")
         var.dir.path <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET')
         indxexist <- list.files(var.dir.path)
-        indices <- indxexist[indxexist %in% indxlst]
+        indices <- CbanaVarsVAL[anaVarsVAL %in% indxexist]
+
         if(length(indices) == 0){
-            Insert.Messages.Out('No Indices data found', format = TRUE)
+            Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, 'e')
             return(NULL)
         }
 
         tkconfigure(cb.varstat.var, values = indices)
-        tclvalue(.cdtData$EnvData$anaVars) <- indices[1]
+        tclvalue(anaVars) <- indices[1]
+
+        .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% indices[1]]
 
         YEARS <- .cdtData$EnvData$output$year
         tkconfigure(cb.data.Index, values = YEARS)
-        tclvalue(.cdtData$EnvData$donDate) <- YEARS[length(YEARS)]
+        tclvalue(donDateVar) <- YEARS[length(YEARS)]
         return(0)
     }
 
@@ -918,9 +979,9 @@ climdexPanelCmd.RR <- function(){
             tcl('update')
         })
 
-        this.vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
-        this.trend <- str_trim(tclvalue(.cdtData$EnvData$anaStat))
-        ipos <- which(.cdtData$EnvData$trend$longname %in% this.trend)
+        this.vars <- .cdtData$EnvData$anaVars
+        this.trend <- .cdtData$EnvData$anaStat
+        ipos <- which(anaStatVAL %in% this.trend)
 
         readTrendData <- TRUE
         if(!is.null(.cdtData$EnvData$TrendData))
@@ -931,7 +992,7 @@ climdexPanelCmd.RR <- function(){
             if(readTrendData){
                 filetrend <- file.path(.cdtData$EnvData$PathData, "CDTDATASET", this.vars, "Trend", paste0(this.vars, '.rds'))
                 if(!file.exists(filetrend)){
-                    Insert.Messages.Out(paste(filetrend, "not found"), format = TRUE)
+                    Insert.Messages.Out(paste(filetrend, lang.dlg[['message']][['6']]), TRUE, 'e')
                     return(NULL)
                 }
 
@@ -976,12 +1037,12 @@ climdexPanelCmd.RR <- function(){
             if(readTrendData){
                 filetrend <- file.path(.cdtData$EnvData$PathData, "DATA_NetCDF", this.vars, "Trend", paste0(this.vars, '.nc'))
                 if(!file.exists(filetrend)){
-                    Insert.Messages.Out(paste(filetrend, "not found"), format = TRUE)
+                    Insert.Messages.Out(paste(filetrend, lang.dlg[['message']][['6']]), TRUE, 'e')
                     return(NULL)
                 }
 
                 nc <- nc_open(filetrend)
-                .cdtData$EnvData$TrendData$data <- lapply(.cdtData$EnvData$trend$name, function(varid) ncvar_get(nc, varid = varid))
+                .cdtData$EnvData$TrendData$data <- lapply(anaStatVAL, function(varid) ncvar_get(nc, varid = varid))
                 nc_close(nc)
                 .cdtData$EnvData$TrendData$this.vars <- this.vars
             }
@@ -1017,8 +1078,8 @@ climdexPanelCmd.RR <- function(){
             tcl('update')
         })
 
-        this.vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
-        this.year <- str_trim(tclvalue(.cdtData$EnvData$donDate))
+        this.vars <- .cdtData$EnvData$anaVars
+        this.year <- str_trim(tclvalue(donDateVar))
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             fileyear <- file.path(.cdtData$EnvData$PathData, "CDTDATASET", this.vars,
@@ -1031,7 +1092,7 @@ climdexPanelCmd.RR <- function(){
 
             if(readYearData){
                 if(!file.exists(fileyear)){
-                    Insert.Messages.Out(paste(fileyear, "not found"), format = TRUE)
+                    Insert.Messages.Out(paste(fileyear, lang.dlg[['message']][['6']]), TRUE, 'e')
                     return(NULL)
                 }
 
@@ -1084,7 +1145,7 @@ climdexPanelCmd.RR <- function(){
 
             if(readYearData){
                 if(!file.exists(fileyear)){
-                    Insert.Messages.Out(paste(fileyear, "not found"), format = TRUE)
+                    Insert.Messages.Out(paste(fileyear, lang.dlg[['message']][['6']]), TRUE, 'e')
                     return(NULL)
                 }
 

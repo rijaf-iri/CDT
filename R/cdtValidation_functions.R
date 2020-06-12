@@ -77,9 +77,9 @@ cdtValidation.Cont.Stats <- function(x, y){
 
     stats <- rbind(CORR, BR2, BIAS, PBIAS, ME, MAE, RMSE, NSE, MNSE, RNSE, IOA, MIOA, RIOA)
     descrip <- c('Correlation', 'Coefficient of determination (R2) multiplied by the regression slope',
-                'Bias', 'Percent Bias', 'Mean Error', 'Mean Absolute Error', 'Root Mean Square Error',
-                'Nash-Sutcliffe Efficiency', 'Modified Nash-Sutcliffe efficiency', 'Relative Nash-Sutcliffe efficiency',
-                'Index of Agreement', 'Modified index of agreement', 'Relative Index of Agreement')
+                 'Bias', 'Percent Bias', 'Mean Error', 'Mean Absolute Error', 'Root Mean Square Error',
+                 'Nash-Sutcliffe Efficiency', 'Modified Nash-Sutcliffe efficiency', 'Relative Nash-Sutcliffe efficiency',
+                 'Index of Agreement', 'Modified index of agreement', 'Relative Index of Agreement')
     pscore <- c(1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1)
 
     stats[is.nan(stats)] <- NA
@@ -176,13 +176,18 @@ cdtVolumetricQuantileStats <- function(x, y, thres = NULL){
     nbrow <- nrow(x)
     if(is.null(thres)) stop("Threshold must not be null")
 
+
     if(length(thres) == 1){
        thres <- rep(thres, nbcol)
     }else{
         if(length(thres) != nbcol)
-            stop("Length of quantile threshold differs from the number of stations")
+            stop("Length of threshold differs from the number of stations")
+
+        if(all(is.na(thres)))
+            stop("All threshold values are missing")
     }
 
+    naThres <- is.na(thres)
     naCol <- colSums(is.na(x))
     colNA <- naCol == nbrow
 
@@ -263,15 +268,15 @@ cdtVolumetricQuantileStats <- function(x, y, thres = NULL){
 
     stats <- rbind(MQB, MQE, VHI, QPOD, VFAR, QFAR, VMI, QMISS, VCSI, QCSI)
     descrip <- c("Mean Quantile Bias", "Mean Quantile Error",
-                "Volumetric Hit Index", "Quantile Probability of Detection",
-                "Volumetric False Alarm Ratio", "Quantile False Alarm Ratio",
-                "Volumetric Miss Index", "Quantile Miss Index",
-                "Volumetric Critical Success Index", "Quantile Critical Success Index")
+                 "Volumetric Hit Index", "Quantile Probability of Detection",
+                 "Volumetric False Alarm Ratio", "Quantile False Alarm Ratio",
+                 "Volumetric Miss Index", "Quantile Miss Index",
+                 "Volumetric Critical Success Index", "Quantile Critical Success Index")
     pscore <- c(1, 0, 1, 1, 0, 0, 0, 0, 1, 1)
     stats[is.nan(stats)] <- NA
     stats[is.infinite(stats)] <- NA
     stats <- round(stats, 3)
+    stats[, naThres] <- NA
 
     return(list(statistics = stats, description = descrip, perfect.score = pscore))
 }
-

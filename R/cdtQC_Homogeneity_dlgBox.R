@@ -263,15 +263,15 @@ getParams.HomoRefSeries <- function(Parameters, parent.win = .cdtEnv$tcl$main$wi
 {
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 59
-        largeur2 <- 6
-        largeur3 <- 7
-        largeur4 <- 41
-    }else{
-        largeur1 <- 42
+        largeur1 <- 46
         largeur2 <- 2
         largeur3 <- 5
-        largeur4 <- 35
+        largeur4 <- 32
+    }else{
+        largeur1 <- 44
+        largeur2 <- 2
+        largeur3 <- 5
+        largeur4 <- 37
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtQC_Homogeneity_dlgBox3.xml")

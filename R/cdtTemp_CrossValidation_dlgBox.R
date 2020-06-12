@@ -2,16 +2,16 @@
 crossValidationInfoTemp <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 29
-        largeur1 <- 57
-        largeur2 <- 60
-        largeur3 <- 44
-        largeur4 <- 27
-        largeur5 <- 37
+        largeur0 <- 23
+        largeur1 <- 45
+        largeur2 <- 47
+        largeur3 <- 32
+        largeur4 <- 18
+        largeur5 <- 27
     }else{
-        largeur0 <- 22
-        largeur1 <- 41
-        largeur2 <- 42
+        largeur0 <- 23
+        largeur1 <- 43
+        largeur2 <- 45
         largeur3 <- 32
         largeur4 <- 17
         largeur5 <- 27

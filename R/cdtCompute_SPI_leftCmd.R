@@ -2,38 +2,83 @@
 SPICalcPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- 23
-        largeur4 <- 33
+        largeur0 <- 29
+        largeur1 <- 33
+        largeur2 <- 35
+        largeur3 <- 36
+        largeur4a <- 10
+        largeur4b <- 21
         largeur5 <- 22
+        largeur6 <- 19
+        largeur7 <- 7
+        largeur8 <- 18
+        largeur9 <- 14
+        largeur10 <- 20
+        largeur11 <- 10
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(16)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(21)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur3 <- 15
-        largeur4 <- 20
-        largeur5 <- 14
+        largeur0 <- 30
+        largeur1 <- 32
+        largeur2 <- 33
+        largeur3 <- 36
+        largeur4a <- 10
+        largeur4b <- 21
+        largeur5 <- 22
+        largeur6 <- 19
+        largeur7 <- 7
+        largeur8 <- 18
+        largeur9 <- 14
+        largeur10 <- 20
+        largeur11 <- 10
     }
 
-
     GeneralParameters <- list(intstep = "dekadal", data.type = "cdtstation",
-                            cdtstation = "", cdtdataset = "",
-                            outfreq = "month", tscale = 3, distr = 'Gamma',
-                            monitoring = FALSE, outdir = "",
-                            dates = list(year1 = 2018, mon1 = 6, dek1 = 1, year2 = 2018, mon2 = 6, dek2 = 3)
+                              cdtstation = "", cdtdataset = "",
+                              outfreq = "month", tscale = 3, distr = 'gamma',
+                              monitoring = FALSE, outdir = "",
+                              dates = list(year1 = 2018, mon1 = 6, dek1 = 1, year2 = 2018, mon2 = 6, dek2 = 3)
                             )
     GeneralParameters$date.range <- list(start.year = 2018, start.mon = 6, start.dek = 1,
-                                       start.pen = 1, start.day = 1,
-                                       start.hour = 0, start.min = 0,
-                                       end.year = 2018, end.mon = 6, end.dek = 3,
-                                       end.pen = 6, end.day = 30,
-                                       end.hour = 23, end.min = 55)
+                                         start.pen = 1, start.day = 1,
+                                         start.hour = 0, start.min = 0,
+                                         end.year = 2018, end.mon = 6, end.dek = 3,
+                                         end.pen = 6, end.day = 30,
+                                         end.hour = 23, end.min = 55)
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_SPI_leftCmd.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-    # .cdtData$EnvData$message <- lang.dlg[['message']]
+    .cdtData$EnvData$tab$pointSize <- NULL
+    .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = TRUE),
+                                       userCol = list(custom = FALSE, color = NULL),
+                                       userLvl = list(custom = TRUE, levels = c(-2, -1.5, -1, 0, 1, 1.5, 2), equidist = TRUE),
+                                       title = list(user = FALSE, title = ''),
+                                       colkeyLab = list(user = FALSE, label = ''),
+                                       scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                       pointSize = .cdtData$EnvData$tab$pointSize)
+
+    .cdtData$EnvData$TSGraphOp <- list(
+                                    bar.line = list(
+                                        xlim = list(is.min = FALSE, min = "1981-01-01", is.max = FALSE, max = "2017-12-31"),
+                                        ylim = list(is.min = FALSE, min = -10, is.max = FALSE, max = 10),
+                                        userYTcks = list(custom = TRUE, ticks = c(-2, -1.5, -1, 0, 1, 1.5, 2)),
+                                        axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                        title = list(is.title = FALSE, title = '', position = 'top'),
+                                        colors = list(y0 = 0, negative = "#CF661C", positive = "#157040"),
+                                        line = list(plot = FALSE, col = "black", lwd = 1.5)
+                                    )
+                                )
+
+    .cdtData$EnvData$spiVizOp <- list(presetCol = list(color = 'spi.colors', reverse = FALSE),
+                                      userCol = list(custom = FALSE, color = NULL),
+                                      userLvl = list(custom = TRUE, levels = c(-2, -1.5, -1, 0, 1, 1.5, 2), equidist = TRUE),
+                                      title = list(user = FALSE, title = ''),
+                                      colkeyLab = list(user = FALSE, label = ''),
+                                      axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = TRUE, ylab = 'Time-scale (months)'))
+
+    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+
+    ###################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_SPI_leftCmd.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    .cdtData$EnvData$message <- lang.dlg[['message']]
 
     ###################
 
@@ -41,10 +86,10 @@ SPICalcPanelCmd <- function(){
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
 
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = "SPI")
-    cmd.tab2 <- bwAddTab(tknote.cmd, text = "Maps")
-    cmd.tab3 <- bwAddTab(tknote.cmd, text = "Graphs")
-    cmd.tab4 <- bwAddTab(tknote.cmd, text = "Boundaries")
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
+    cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
@@ -65,36 +110,39 @@ SPICalcPanelCmd <- function(){
 
         #######################
 
-        frameTimeS <- ttklabelframe(subfr1, text = "Time step of input data", relief = 'groove')
+        frameTimeS <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         timeSteps <- tclVar()
         CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
         periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
         tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$intstep]
 
-        cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, width = largeur1)
+        cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
 
         tkgrid(cb.fperiod, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        infobulle(cb.fperiod, 'Select the time step of the data')
-        status.bar.display(cb.fperiod, 'Select the time step of the data')
+        helpWidget(cb.fperiod, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
 
         ############
 
         tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
-            valSPIfreq <- if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[4]) "month" else c("dekad", "month")
+            outval <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
+            tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+
+            valSPIfreq <- if(tstep == 'monthly') CbOutVAL[2] else CbOutVAL
             tkconfigure(cb.SPIfreq, values = valSPIfreq)
-            if(str_trim(tclvalue(timeSteps)) == CbperiodVAL[4]){
-                tclvalue(out.spifreq) <- "month"
-                tclvalue(txt.suffix.var) <- '-month'
+            if(tstep == 'monthly'){
+                tclvalue(out.spifreq) <- CbOutVAL[2]
+                tclvalue(txt.suffix.var) <- paste0('-', CbOutVAL[2])
             }
-            stateTscale <- if(str_trim(tclvalue(out.spifreq)) == 'month') "normal" else "disabled"
+
+            stateTscale <- if(outval == 'month') "normal" else "disabled"
             tkconfigure(spin.Tscale, state = stateTscale)
         })
 
         #######################
 
-        frameInData <- ttklabelframe(subfr1, text = "Input Data", relief = 'groove')
+        frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['2']], relief = 'groove')
 
         DataType <- tclVar()
         CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
@@ -103,15 +151,15 @@ SPICalcPanelCmd <- function(){
 
         if(GeneralParameters$data.type == 'cdtstation'){
             input.file <- tclVar(GeneralParameters$cdtstation)
-            txt.INData <- 'File containing stations Precip data'
+            txt.INData <- lang.dlg[['label']][['3']]
         }else{
             input.file <- tclVar(GeneralParameters$cdtdataset)
-            txt.INData <- 'Index file (*.rds) for Precip dataset'
+            txt.INData <- lang.dlg[['label']][['4']]
         }
 
         txt.INData.var <- tclVar(txt.INData)
 
-        txt.datatype <- tklabel(frameInData, text = "Format", anchor = 'w', justify = 'left')
+        txt.datatype <- tklabel(frameInData, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
         cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
 
         txt.infile <- tklabel(frameInData, text = tclvalue(txt.INData.var), textvariable = txt.INData.var, anchor = 'w', justify = 'left')
@@ -122,6 +170,26 @@ SPICalcPanelCmd <- function(){
             cb.en.infile <- tkentry(frameInData, textvariable = input.file, width = largeur2)
         }
         bt.infile <- tkbutton(frameInData, text = "...")
+
+        ############
+
+        tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.infile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.en.infile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.infile, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        ############
+
+        helpWidget(cb.datatype, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+
+        if(GeneralParameters$data.type == 'cdtstation'){
+            helpWidget(cb.en.infile, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+            helpWidget(bt.infile, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+        }else{
+            helpWidget(cb.en.infile, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+            helpWidget(bt.infile, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+        }
 
         ############
 
@@ -142,39 +210,18 @@ SPICalcPanelCmd <- function(){
 
         ############
 
-        tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.infile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.en.infile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.infile, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-        ############
-        infobulle(cb.datatype, 'Select the format of the input data')
-        status.bar.display(cb.datatype, 'Select the format of the input data')
-
-        if(GeneralParameters$data.type == 'cdtstation'){
-            infobulle(cb.en.infile, 'Select the file containing the input data')
-            status.bar.display(cb.en.infile, 'Select the file containing the input data')
-            infobulle(bt.infile, 'Browse file if not listed')
-            status.bar.display(bt.infile, 'Browse file if not listed')
-        }else{
-            infobulle(cb.en.infile, 'Enter the full path to the file <dataset name>.rds')
-            status.bar.display(cb.en.infile, 'Enter the full path to the file <dataset name>.rds')
-            infobulle(bt.infile, 'or browse here')
-            status.bar.display(bt.infile, 'or browse here')
-        }
-
-        ############
-
         tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
             tkdestroy(cb.en.infile)
             tclvalue(input.file) <- ''
 
             ###
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-                tclvalue(txt.INData.var) <- 'File containing stations Precip data'
+                tclvalue(txt.INData.var) <- lang.dlg[['label']][['3']]
 
                 cb.en.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
+
+                helpWidget(cb.en.infile, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+                helpWidget(bt.infile, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
                 tkconfigure(bt.infile, command = function(){
                     dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
@@ -185,28 +232,21 @@ SPICalcPanelCmd <- function(){
                         tkconfigure(cb.en.infile, values = unlist(listOpenFiles))
                     }
                 })
-
-                infobulle(cb.en.infile, 'Select the file containing the input data')
-                status.bar.display(cb.en.infile, 'Select the file containing the input data')
-                infobulle(bt.infile, 'Browse file if not listed')
-                status.bar.display(bt.infile, 'Browse file if not listed')
             }
 
             ###
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-                tclvalue(txt.INData.var) <- 'Index file (*.rds) for Precip dataset'
+                tclvalue(txt.INData.var) <- lang.dlg[['label']][['4']]
 
                 cb.en.infile <- tkentry(frameInData, textvariable = input.file, width = largeur2)
+
+                helpWidget(cb.en.infile, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+                helpWidget(bt.infile, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 
                 tkconfigure(bt.infile, command = function(){
                     path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
                     tclvalue(input.file) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
                 })
-
-                infobulle(cb.en.infile, 'Enter the full path to the file <dataset name>.rds')
-                status.bar.display(cb.en.infile, 'Enter the full path to the file <dataset name>.rds')
-                infobulle(bt.infile, 'or browse here')
-                status.bar.display(bt.infile, 'or browse here')
             }
 
             tkgrid(cb.en.infile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
@@ -226,11 +266,19 @@ SPICalcPanelCmd <- function(){
             statedatedek <- 'disabled'
         }
 
-        chk.Moni <- tkcheckbutton(frameMoni, variable = monitoring, text = "Monitoring: update SPI dataset", anchor = 'w', justify = 'left')
-        bt.DateRange <- ttkbutton(frameMoni, text = "Set Date Range", state = statedates)
+        chk.Moni <- tkcheckbutton(frameMoni, variable = monitoring, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left', width = largeur3)
+        bt.DateRange <- ttkbutton(frameMoni, text = lang.dlg[['button']][['1']], state = statedates)
+
+        tkgrid(chk.Moni, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, ipadx = 1)
+        tkgrid(bt.DateRange, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, ipadx = 1)
+
+        helpWidget(chk.Moni, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+
+        ###############
 
         tkconfigure(bt.DateRange, command = function(){
-            outfreq <- switch(str_trim(tclvalue(out.spifreq)), "dekad" = "dekadal", "month" = "monthly")
+            outval <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
+            outfreq <- switch(outval, "dekad" = "dekadal", "month" = "monthly")
 
             GeneralParameters[["date.range"]] <<- getInfoDateRange(.cdtEnv$tcl$main$win,
                                                                     GeneralParameters[["date.range"]],
@@ -243,17 +291,16 @@ SPICalcPanelCmd <- function(){
             GeneralParameters$dates$dek2 <<- GeneralParameters$date.range$end.dek
         })
 
-        tkgrid(chk.Moni, row = 0, column = 0, rowspan = 1, columnspan = 1, padx = 1, ipadx = 1)
-        tkgrid(bt.DateRange, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, ipadx = 10)
-
         ###############
 
         tkbind(chk.Moni, "<Button-1>", function(){
+            outval <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
+
             if(tclvalue(monitoring) == "0"){
                 if(tclvalue(spiDataExist) == '0'){
                     statedates <- 'normal'
-                    statedatedek <<- if(str_trim(tclvalue(out.spifreq)) == 'month') 'disabled' else 'normal'
-                    tclvalue(txt.save.var) <- "Index file (SPI.rds) for SPI data"
+                    statedatedek <<- if(outval == 'month') 'disabled' else 'normal'
+                    tclvalue(txt.save.var) <- lang.dlg[['label']][['8']]
                     tkconfigure(bt.outSPI, command = function(){
                         path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
                         tclvalue(outSPIdir) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
@@ -268,7 +315,7 @@ SPICalcPanelCmd <- function(){
                 statedatedek <<- 'disabled'
                 if(tclvalue(spiDataExist) == '0'){
                     stateDistr <- 'normal'
-                    tclvalue(txt.save.var) <- "Directory to save the outputs"
+                    tclvalue(txt.save.var) <- lang.dlg[['label']][['9']]
                     tkconfigure(bt.outSPI, command = function(){
                         dirSPI <- tk_choose.dir(getwd(), "")
                         tclvalue(outSPIdir) <- if(dirSPI %in% c("", "NA") | is.na(dirSPI)) "" else dirSPI
@@ -286,16 +333,18 @@ SPICalcPanelCmd <- function(){
 
         frameParams <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
 
-        out.spifreq <- tclVar(GeneralParameters$outfreq)
-        CbOutVAL <- c("dekad", "month")
+        out.spifreq <- tclVar()
+        CbOutVAL <- lang.dlg[['combobox']][['3']]
+        OutVAL <- c("dekad", "month")
+        tclvalue(out.spifreq) <- CbOutVAL[OutVAL %in% GeneralParameters$outfreq]
 
         if(GeneralParameters$outfreq == 'dekad'){
-            txt.suffix <- '-dekad'
+            txt.suffix <- paste0('-', CbOutVAL[1])
             stateTscale <- "disabled"
             up.tscale <- 1
             val.tscale <- 1
         }else{
-            txt.suffix <- '-month'
+            txt.suffix <- paste0('-', CbOutVAL[2])
             stateTscale <- "normal"
             up.tscale <- 60
             val.tscale <- GeneralParameters$tscale
@@ -304,25 +353,32 @@ SPICalcPanelCmd <- function(){
 
         frameTscale <- tkframe(frameParams)
         txt.SPIfreq <- tklabel(frameTscale, text = "SPI", anchor = 'e', justify = 'right')
-        cb.SPIfreq <- ttkcombobox(frameTscale, values = CbOutVAL, textvariable = out.spifreq, width = 8)
-        txt.Tscale1 <- tklabel(frameTscale, text = "Timescale", anchor = 'e', justify = 'right')
+        cb.SPIfreq <- ttkcombobox(frameTscale, values = CbOutVAL, textvariable = out.spifreq, justify = 'center', width = largeur4a)
+        txt.Tscale1 <- tklabel(frameTscale, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
         spin.Tscale <- ttkspinbox(frameTscale, from = 1, to = up.tscale, increment = 1, justify = 'center', width = 2, state = stateTscale)
         tkset(spin.Tscale, val.tscale)
         txt.Tscale2 <- tklabel(frameTscale, text = tclvalue(txt.suffix.var), textvariable = txt.suffix.var, anchor = 'w', justify = 'left')
 
-        tkgrid(txt.SPIfreq, cb.SPIfreq, txt.Tscale1, spin.Tscale, txt.Tscale2)
+        lab.SPIsep <- tklabel(frameTscale, text = "", width = 1)
+
+        tkgrid(txt.SPIfreq, cb.SPIfreq, lab.SPIsep, txt.Tscale1, spin.Tscale, txt.Tscale2)
+
+        helpWidget(cb.SPIfreq, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+        helpWidget(spin.Tscale, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
 
         ########
         tkbind(cb.SPIfreq, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(out.spifreq)) == 'dekad'){
+            outval <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
+
+            if(outval == 'dekad'){
                 stateTscale <- "disabled"
-                tclvalue(txt.suffix.var) <- '-dekad'
+                tclvalue(txt.suffix.var) <- paste0('-', CbOutVAL[1])
                 tkset(spin.Tscale, 1)
                 statedatedek <<- if(tclvalue(monitoring) == "1") "normal" else "disabled"
             }
-            if(str_trim(tclvalue(out.spifreq)) == 'month'){
+            if(outval == 'month'){
                 stateTscale <- "normal"
-                tclvalue(txt.suffix.var) <- '-month'
+                tclvalue(txt.suffix.var) <- paste0('-', CbOutVAL[2])
                 tkconfigure(spin.Tscale, to = 60)
                 statedatedek <<- "disabled"
             }
@@ -333,18 +389,23 @@ SPICalcPanelCmd <- function(){
         ########
         frameDistrb <- tkframe(frameParams)
 
-        DistrbVAL <- c("Gamma", "Pearson Type III", "log-Logistic", "Z-Score")
-        DistrbFun <- tclVar(GeneralParameters$distr)
+        CbdistrbVAL <- lang.dlg[['combobox']][['1']]
+        distrbVAL <- c('gamma', 'peasron3', 'llogistic', 'zscore')
+        DistrbFun <- tclVar()
+        tclvalue(DistrbFun) <- CbdistrbVAL[distrbVAL %in% GeneralParameters$distr]
+
         stateDistr <- if(GeneralParameters$monitoring) 'disabled' else 'normal'
 
-        txt.Distrb <- tklabel(frameDistrb, text = "Distribution function", anchor = 'e', justify = 'right')
-        cb.Distrb <- ttkcombobox(frameDistrb, values = DistrbVAL, textvariable = DistrbFun, width = largeur3, state = stateDistr)
+        txt.Distrb <- tklabel(frameDistrb, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
+        cb.Distrb <- ttkcombobox(frameDistrb, values = CbdistrbVAL, textvariable = DistrbFun, justify = 'center', width = largeur4b, state = stateDistr)
 
         tkgrid(txt.Distrb, cb.Distrb)
 
+        helpWidget(cb.Distrb, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
+
         ########
-        tkgrid(frameTscale, row = 0, column = 0, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameDistrb, row = 1, column = 0, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameTscale, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameDistrb, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         #############################
 
@@ -353,15 +414,23 @@ SPICalcPanelCmd <- function(){
         outSPIdir <- tclVar(GeneralParameters$outdir)
 
         if(GeneralParameters$monitoring){
-            text.save <- "Index file (SPI.rds) for SPI data"
+            text.save <- lang.dlg[['label']][['8']]
         }else{
-            text.save <- "Directory to save the outputs"
+            text.save <- lang.dlg[['label']][['9']]
         }
         txt.save.var <- tclVar(text.save)
 
         txt.outSPI <- tklabel(frameDirSav, text = tclvalue(txt.save.var), textvariable = txt.save.var, anchor = 'w', justify = 'left')
         en.outSPI <- tkentry(frameDirSav, textvariable = outSPIdir, width = largeur2)
         bt.outSPI <- tkbutton(frameDirSav, text = "...")
+
+        ######
+        tkgrid(txt.outSPI, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.outSPI, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.outSPI, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+        helpWidget(en.outSPI, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
+        helpWidget(bt.outSPI, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 
         ######
 
@@ -375,19 +444,9 @@ SPICalcPanelCmd <- function(){
             }
         })
 
-        ######
-        tkgrid(txt.outSPI, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(en.outSPI, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(bt.outSPI, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-        infobulle(en.outSPI, 'Enter the full path to directory to save outputs')
-        status.bar.display(en.outSPI, 'Enter the full path to directory to save outputs')
-        infobulle(bt.outSPI, 'or browse here')
-        status.bar.display(bt.outSPI, 'or browse here')
-
         #############################
 
-        calculateBut <- ttkbutton(subfr1, text = "Calculate")
+        calculateBut <- ttkbutton(subfr1, text = lang.dlg[['button']][['2']])
 
         #################
 
@@ -402,37 +461,32 @@ SPICalcPanelCmd <- function(){
 
             GeneralParameters$monitoring <- switch(tclvalue(monitoring), '0' = FALSE, '1' = TRUE)
 
-            GeneralParameters$outfreq <- str_trim(tclvalue(out.spifreq))
+            GeneralParameters$outfreq <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
             GeneralParameters$tscale <- as.numeric(str_trim(tclvalue(tkget(spin.Tscale))))
-            GeneralParameters$distr <- str_trim(tclvalue(DistrbFun))
+            GeneralParameters$distr <- distrbVAL[CbdistrbVAL %in% str_trim(tclvalue(DistrbFun))]
 
             GeneralParameters$outdir <- str_trim(tclvalue(outSPIdir))
             GeneralParameters$Indices <- "SPI"
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
-            Insert.Messages.Out("Calculate SPI ......", TRUE, "i")
+            Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch(
-              {
-                  computeSPIProcs(GeneralParameters)
-              },
-              warning = function(w) warningFun(w),
-              error = function(e) errorFun(e),
-              finally = {
-                  tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
-                  tcl('update')
-              }
-            )
-
-            msg0 <- "SPI calculation finished successfully"
-            msg1 <- "SPI calculation failed"
+            ret <- tryCatch({
+                                computeSPIProcs(GeneralParameters)
+                            },
+                            warning = function(w) warningFun(w),
+                            error = function(e) errorFun(e),
+                            finally = {
+                                tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+                                tcl('update')
+                            })
 
             if(!is.null(ret)){
               if(ret == 0){
-                  Insert.Messages.Out(msg0, TRUE, "s")
+                  Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
                   .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                   .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
@@ -445,16 +499,16 @@ SPICalcPanelCmd <- function(){
 
                   ret <- try(set.Data.Dates(), silent = TRUE)
                   if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
-              }else Insert.Messages.Out(msg1, format = TRUE)
-            }else Insert.Messages.Out(msg1, format = TRUE)
+              }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
+            }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
         })
 
         ############################################
 
         tkgrid(frameTimeS, row = 0, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameInData, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameMoni, row = 2, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameParams, row = 3, column = 0, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameMoni, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameParams, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameDirSav, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(calculateBut, row = 5, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
@@ -465,15 +519,15 @@ SPICalcPanelCmd <- function(){
 
         ##############################################
 
-        frameDataExist <- ttklabelframe(subfr2, text = "SPI data", relief = 'groove')
+        frameDataExist <- ttklabelframe(subfr2, text = lang.dlg[['label']][['10']], relief = 'groove')
 
         spiDataExist <- tclVar(0)
         file.dataIndex <- tclVar()
 
         stateExistData <- if(tclvalue(spiDataExist) == "1") "normal" else "disabled"
 
-        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = spiDataExist, text = "SPI data already computed", anchor = 'w', justify = 'left')
-        en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2, state = stateExistData)
+        chk.dataIdx <- tkcheckbutton(frameDataExist, variable = spiDataExist, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+        en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2 + 5, state = stateExistData)
         bt.dataIdx <- tkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
 
         tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -490,8 +544,8 @@ SPICalcPanelCmd <- function(){
             if(file.exists(str_trim(tclvalue(file.dataIndex)))){
                 OutSPIdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutSPIdata, "try-error")){
-                    Insert.Messages.Out('Unable to load SPI data', format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', OutSPIdata[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', OutSPIdata[1]), TRUE, 'e')
                     tkconfigure(cb.spi.maps, values = "")
                     tclvalue(.cdtData$EnvData$spi.tscale) <- ""
                     tkconfigure(cb.spi.Date, values = "")
@@ -521,56 +575,36 @@ SPICalcPanelCmd <- function(){
             stateExistData <- if(tclvalue(spiDataExist) == '1') 'disabled' else 'normal'
             tkconfigure(en.dataIdx, state = stateExistData)
             tkconfigure(bt.dataIdx, state = stateExistData)
+
             stateCaclBut <- if(tclvalue(spiDataExist) == '1') 'normal' else 'disabled'
-            tkconfigure(calculateBut, state = stateCaclBut)
-            tkconfigure(cb.fperiod, state = stateCaclBut)
-            tkconfigure(cb.datatype, state = stateCaclBut)
-            tkconfigure(cb.en.infile, state = stateCaclBut)
-            tkconfigure(bt.infile, state = stateCaclBut)
-            tkconfigure(chk.Moni, state = stateCaclBut)
-            tkconfigure(cb.SPIfreq, state = stateCaclBut)
-            tkconfigure(en.outSPI, state = stateCaclBut)
-            tkconfigure(bt.outSPI, state = stateCaclBut)
-
-            if(tclvalue(spiDataExist) == '1'){
-                statedates <- if(tclvalue(monitoring) == "1") "normal" else "disabled"
-                statedatedek <<- if(str_trim(tclvalue(out.spifreq)) == 'month') 'normal' else 'disabled'
-                stateDistr <- if(tclvalue(monitoring) == "1") 'disabled' else 'normal'
-            }else{
-                statedates <- 'disabled'
-                statedatedek <<- 'disabled'
-                stateDistr <- 'disabled'
-            }
-
-            tkconfigure(bt.DateRange, state = statedates)
-            tkconfigure(spin.Tscale, state = statedatedek)
-            tkconfigure(cb.Distrb, state = stateDistr)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateCaclBut)
         })
 
         ##############################################
 
-        frameSPIMap <- ttklabelframe(subfr2, text = "SPI Map", relief = 'groove')
+        frameSPIMap <- ttklabelframe(subfr2, text = lang.dlg[['label']][['11']], relief = 'groove')
 
         .cdtData$EnvData$spi.tscale <- tclVar()
         .cdtData$EnvData$spi.date <- tclVar()
 
-        cb.spi.maps <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.tscale, width = largeur4)
-        bt.spi.maps <- ttkbutton(frameSPIMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        cb.spi.Date <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.date, width = largeur5, justify = 'center')
-        bt.spi.Date.prev <- ttkbutton(frameSPIMap, text = "<<", width = 3)
-        bt.spi.Date.next <- ttkbutton(frameSPIMap, text = ">>", width = 3)
-        bt.spi.MapOpt <- ttkbutton(frameSPIMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 7)
+        cb.spi.maps <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.tscale, justify = 'center', width = largeur5)
+        bt.spi.maps <- ttkbutton(frameSPIMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur8)
+        bt.spi.MapOpt <- ttkbutton(frameSPIMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur8)
+        cb.spi.Date <- ttkcombobox(frameSPIMap, values = "", textvariable = .cdtData$EnvData$spi.date, justify = 'center', width = largeur6)
+        bt.spi.Date.prev <- ttkbutton(frameSPIMap, text = "<<", width = largeur7)
+        bt.spi.Date.next <- ttkbutton(frameSPIMap, text = ">>", width = largeur7)
+
+        ###################
+
+        tkgrid(cb.spi.maps, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.spi.MapOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.spi.maps, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+
+        tkgrid(bt.spi.Date.prev, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.spi.Date, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.spi.Date.next, row = 2, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ###############
-
-        .cdtData$EnvData$tab$pointSize <- NULL
-        .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = TRUE),
-                                            userCol = list(custom = FALSE, color = NULL),
-                                            userLvl = list(custom = TRUE, levels = c(-2, -1.5, -1, 0, 1, 1.5, 2), equidist = TRUE),
-                                            title = list(user = FALSE, title = ''),
-                                            colkeyLab = list(user = FALSE, label = ''),
-                                            scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                            pointSize = .cdtData$EnvData$tab$pointSize)
 
         tkconfigure(bt.spi.MapOpt, command = function(){
             if(!is.null(.cdtData$EnvData$varData$map)){
@@ -593,6 +627,8 @@ SPICalcPanelCmd <- function(){
         .cdtData$EnvData$tab$dataMap <- NULL
 
         tkconfigure(bt.spi.maps, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != "" &
                 !is.null(.cdtData$EnvData$varData))
             {
@@ -603,6 +639,8 @@ SPICalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.spi.Date.prev, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != ""){
                 donDates <- .cdtData$EnvData$varData$ts$dates
                 idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$spi.date)))
@@ -616,6 +654,8 @@ SPICalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.spi.Date.next, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != ""){
                 donDates <- .cdtData$EnvData$varData$ts$dates
                 idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$spi.date)))
@@ -629,14 +669,7 @@ SPICalcPanelCmd <- function(){
         })
 
         ###############
-        tkgrid(cb.spi.maps, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.spi.maps, row = 0, column = 4, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.spi.Date.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.spi.Date, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.spi.Date.next, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.spi.MapOpt, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        ###############
         tkbind(cb.spi.maps, "<<ComboboxSelected>>", function(){
             ret <- try(set.Data.Dates(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
@@ -648,8 +681,8 @@ SPICalcPanelCmd <- function(){
 
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
-        txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur5)
+        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['12']], anchor = 'e', justify = 'right')
+        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur9)
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -674,56 +707,47 @@ SPICalcPanelCmd <- function(){
 
         ##############################################
 
-        frameDataTS <- ttklabelframe(subfr3, text = "SPI Graph", relief = 'groove')
+        frameDataTS <- ttklabelframe(subfr3, text = lang.dlg[['label']][['13']], relief = 'groove')
 
-        typeTSPLOT <- c("Bar-Line", "Polygon")
-        .cdtData$EnvData$plot.maps$typeTSp <- tclVar("Bar-Line")
+        CbtypeTSPLOT <- lang.dlg[['combobox']][['2']]
+        typeTSPLOT <- c("bar", "poly")
+        typeTSp <- tclVar(CbtypeTSPLOT[1])
 
-        cb.typeTSp <- ttkcombobox(frameDataTS, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur5)
-        bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
+        cb.typeTSp <- ttkcombobox(frameDataTS, values = CbtypeTSPLOT, textvariable = typeTSp, justify = 'center', width = largeur10)
+        bt.TsGraph.plot <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur8)
+        bt.TSGraphOpt <- ttkbutton(frameDataTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur8)
 
         #################
 
-        .cdtData$EnvData$TSGraphOp <- list(
-                                        bar.line = list(
-                                            xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
-                                            ylim = list(is.min = FALSE, min = -10, is.max = FALSE, max = 10),
-                                            userYTcks = list(custom = TRUE, ticks = c(-2, -1.5, -1, 0, 1, 1.5, 2)),
-                                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                            title = list(is.title = FALSE, title = '', position = 'top'),
-                                            colors = list(y0 = 0, negative = "#CF661C", positive = "#157040"),
-                                            line = list(plot = FALSE, col = "black", lwd = 1.5)
-                                        )
-                                    )
+        tkgrid(cb.typeTSp, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TSGraphOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsGraph.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
-                                    "Bar-Line" = "Bar.Line",
-                                    "Polygon" = "Bar.Line")
-            plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
-            .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
+            .cdtData$EnvData$TSGraphOp <- MapGraph.GraphOptions.Bar.Line(.cdtData$EnvData$TSGraphOp)
         })
 
         #########
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(!is.null(.cdtData$EnvData$varData)){
                 imgContainer <- CDT.Display.Graph(SPICalc.Plot.Graph, .cdtData$EnvData$tab$dataGraph, 'SPI - Time Series')
                 .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
             }
         })
 
-        #################
-
-        tkgrid(cb.typeTSp, row = 0, column = 0, sticky = 'we', pady = 1, columnspan = 1)
-        tkgrid(bt.TSGraphOpt, row = 0, column = 1, sticky = 'we', padx = 4, pady = 1, columnspan = 1)
-        tkgrid(bt.TsGraph.plot, row = 0, column = 2, sticky = 'we', pady = 1, columnspan = 1)
+        tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+        })
 
         ##############################################
 
-        frameSTNCrds <- ttklabelframe(subfr3, text = "Station/Coordinates", relief = 'groove')
+        frameSTNCrds <- ttklabelframe(subfr3, text = lang.dlg[['label']][['14']], relief = 'groove')
 
         frTS2 <- tkframe(frameSTNCrds)
         .cdtData$EnvData$plot.maps$lonLOC <- tclVar()
@@ -738,19 +762,20 @@ SPICalcPanelCmd <- function(){
 
         .cdtData$EnvData$spiViz$max.tscale <- tclVar(12)
 
-        bt.VizTS <- ttkbutton(frameVizTS, text = "Visualizing time-scales")
-        bt.VizOpt <- ttkbutton(frameVizTS, text = .cdtEnv$tcl$lang$global[['button']][['4']])
-        txt.VizTS <- tklabel(frameVizTS, text = "Maximum time-scale", anchor = 'e', justify = 'right')
-        en.VizTS <- tkentry(frameVizTS, textvariable = .cdtData$EnvData$spiViz$max.tscale, width = 3)
+        bt.VizTS <- ttkbutton(frameVizTS, text = lang.dlg[['button']][['4']], width = largeur5)
+        bt.VizOpt <- ttkbutton(frameVizTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur9)
+
+        frmxTscale <- tkframe(frameVizTS)
+        txt.VizTS <- tklabel(frmxTscale, text = lang.dlg[['label']][['15']], anchor = 'e', justify = 'right')
+        en.VizTS <- tkentry(frmxTscale, textvariable = .cdtData$EnvData$spiViz$max.tscale, width = 3)
+
+        tkgrid(txt.VizTS, en.VizTS)
+
+        tkgrid(bt.VizOpt, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, ipadx = 1, pady = 1, ipady = 1)
+        tkgrid(bt.VizTS, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, ipadx = 1, pady = 1, ipady = 1)
+        tkgrid(frmxTscale, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, ipadx = 1, pady = 1, ipady = 1)
 
         ###############
-
-        .cdtData$EnvData$spiVizOp <- list(presetCol = list(color = 'spi.colors', reverse = FALSE),
-                                        userCol = list(custom = FALSE, color = NULL),
-                                        userLvl = list(custom = TRUE, levels = c(-2, -1.5, -1, 0, 1, 1.5, 2), equidist = TRUE),
-                                        title = list(user = FALSE, title = ''),
-                                        colkeyLab = list(user = FALSE, label = ''),
-                                        axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = TRUE, ylab = 'Time-scale (months)'))
 
         tkconfigure(bt.VizOpt, command = function(){
             .cdtData$EnvData$spiVizOp <- MapGraph.SpiVizOptions(.cdtData$EnvData$spiVizOp)
@@ -770,18 +795,11 @@ SPICalcPanelCmd <- function(){
             }
         })
 
-        ###############
-
-        tkgrid(bt.VizTS, row = 0, column = 0, sticky = 'we', padx = 3, ipadx = 1, pady = 1)
-        tkgrid(bt.VizOpt, row = 0, column = 1, sticky = 'we', padx = 3, ipadx = 1, pady = 1)
-        tkgrid(txt.VizTS, row = 1, column = 0, sticky = 'e', padx = 3, ipadx = 1, pady = 1)
-        tkgrid(en.VizTS, row = 1, column = 1, sticky = 'w', padx = 3, ipadx = 1, pady = 1)
-
         ##############################################
 
         tkgrid(frameDataTS, row = 0, column = 0, sticky = 'we', pady = 1)
         tkgrid(frameSTNCrds, row = 1, column = 0, sticky = '', pady = 3)
-        tkgrid(frameVizTS, row = 2, column = 0, sticky = '', pady = 3)
+        tkgrid(frameVizTS, row = 2, column = 0, sticky = 'we', pady = 3)
 
     #######################################################################################################
 
@@ -790,16 +808,22 @@ SPICalcPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr4, text = "Boundaries", relief = 'groove')
+        frameSHP <- ttklabelframe(subfr4, text = lang.dlg[['label']][['16']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
         file.plotShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
         bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
+
+        ########
+        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
         tkconfigure(bt.addshp, command = function(){
@@ -820,17 +844,10 @@ SPICalcPanelCmd <- function(){
         })
 
         ########
-        .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
         tkconfigure(bt.addshpOpt, command = function(){
             .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
         })
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         #################
         tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
@@ -860,13 +877,21 @@ SPICalcPanelCmd <- function(){
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
-            txt.stnSel <- tklabel(frTS2, text = "Select a station to plot")
-            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = 6)
-            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = 6)
-            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur5)
+            txt.stnSel <- tklabel(frTS2, text = lang.dlg[['label']][['17']])
+            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = largeur7)
+            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = largeur7)
+            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, justify = 'center', width = largeur6)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
+            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+            ######
             tkconfigure(bt.stnID.prev, command = function(){
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
                 if(!is.null(.cdtData$EnvData$varData)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
@@ -879,6 +904,8 @@ SPICalcPanelCmd <- function(){
             })
 
             tkconfigure(bt.stnID.next, command = function(){
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
                 if(!is.null(.cdtData$EnvData$varData)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
@@ -889,17 +916,12 @@ SPICalcPanelCmd <- function(){
                     .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
                 }
             })
-
-            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         }else{
-            txt.crdSel <- tklabel(frTS2, text = "Enter longitude and latitude to plot", anchor = 'w', justify = 'left')
-            txt.lonLoc <- tklabel(frTS2, text = "Longitude", anchor = 'e', justify = 'right')
-            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
-            txt.latLoc <- tklabel(frTS2, text = "Latitude", anchor = 'e', justify = 'right')
-            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+            txt.crdSel <- tklabel(frTS2, text = lang.dlg[['label']][['18']], anchor = 'w', justify = 'left')
+            txt.lonLoc <- tklabel(frTS2, text = lang.dlg[['label']][['19']], anchor = 'e', justify = 'right')
+            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = largeur11)
+            txt.latLoc <- tklabel(frTS2, text = lang.dlg[['label']][['20']], anchor = 'e', justify = 'right')
+            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = largeur11)
             stnIDTSPLOT <- ""
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
 
@@ -922,7 +944,7 @@ SPICalcPanelCmd <- function(){
             plot.type <- c("Pixels", "Points")
             .cdtData$EnvData$plot.maps$.data.type <- "Points"
 
-            .cdtData$EnvData$dataMapOp$pointSize <- 0.7
+            .cdtData$EnvData$dataMapOp$pointSize <- 1.0
         }else{
             plot.type <- c("Pixels", "FilledContour")
             .cdtData$EnvData$plot.maps$.data.type <- "Grid"
@@ -936,7 +958,7 @@ SPICalcPanelCmd <- function(){
         path.data <- file.path(.cdtData$EnvData$PathData, "CDTDATASET")
         spi.tscales <- list.files(path.data, "SPI_.+")
         if(length(spi.tscales) == 0){
-            Insert.Messages.Out('No SPI data found', format = TRUE)
+            Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, 'e')
             return(NULL)
         }
         if(.cdtData$EnvData$output$params$data.type == "cdtstation")
@@ -973,7 +995,7 @@ SPICalcPanelCmd <- function(){
                 file.path(path.data, tscale.data, paste0(tscale.data, ".rds"))
 
         if(!file.exists(file.index)){
-            Insert.Messages.Out(paste(file.index, 'not found'), format = TRUE)
+            Insert.Messages.Out(paste(file.index, lang.dlg[['message']][['6']]), TRUE, 'e')
             return(NULL)
         }
 
@@ -1077,7 +1099,7 @@ SPICalcPanelCmd <- function(){
                 file.index <- file.dek
                 viztstep <- "dekadal"
             }else{
-                Insert.Messages.Out('No dekadal or monthly data found', format = TRUE)
+                Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, 'e')
                 return(NULL)
             }
         }

@@ -2,13 +2,13 @@
 cdtDataset_getParams <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 31
-        largeur2 <- 65
-        largeur3 <- 54
+        largeur1 <- 29
+        largeur2 <- 60
+        largeur3 <- 50
     }else{
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(20.5)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(39)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(34)
+        largeur1 <- 29
+        largeur2 <- 56
+        largeur3 <- 49
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCreateDataset_dlgBox.xml")

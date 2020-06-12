@@ -1,7 +1,7 @@
 
 createColorkey <- function(parent.win, listCol){
-    txtCol_width <- if(WindowsOS()) 45 else 55
-    kcol <- if(WindowsOS()) 15 else 18
+    txtCol_width <- if(WindowsOS()) 48 else 44
+    kcol <- if(WindowsOS()) 18 else 15
 
     ########################
 

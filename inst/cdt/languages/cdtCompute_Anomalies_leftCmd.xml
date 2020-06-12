@@ -18,8 +18,8 @@
             <text lang="fr"> Graphiques </text>
         </tab>
         <tab id="5">
-            <text lang="en"> Boundaries </text>
-            <text lang="fr"> Contours </text>
+            <text lang="en"> Layers </text>
+            <text lang="fr"> Couches </text>
         </tab>
     </tab_title>
     <widget>
@@ -53,11 +53,11 @@
             <text lang="en"> Climatologies data already computed </text>
         </checkbutton>
         <checkbutton id="3">
-            <text lang="en"> Anomalies data already computed </text>
+            <text lang="en"> Data already computed </text>
         </checkbutton>
         <checkbutton id="4">
-            <text lang="en"> Add boundaries to Map </text>
-            <text lang="fr"> Ajouter des contours à la carte </text>
+            <text lang="en"> Add Shapefile to Map </text>
+            <text lang="fr"> Ajouter Shapefile à la carte </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Input Data </text>
@@ -78,11 +78,11 @@
         </label>
         <label id="3">
             <text lang="en"> File containing stations data </text>
-            <text lang="fr"> Fichier contenant les données de stations </text>
+            <text lang="fr"> Fichier contenant données stations </text>
         </label>
         <label id="4">
             <text lang="en"> Index file (*.rds) of the dataset </text>
-            <text lang="fr"> Fichier Index (*.rds) du jeu de données </text>
+            <text lang="fr"> Fichier Index (*.rds) des données </text>
         </label>
         <label id="5">
             <text lang="en"> Format </text>
@@ -95,7 +95,7 @@
             <text lang="en"> Path to the file (Anomaly.rds) </text>
         </label>
         <label id="8">
-            <text lang="en"> Climatology data </text>
+            <text lang="en"> Climatology Data </text>
         </label>
         <label id="9">
             <text lang="en"> Path to the file (Climatology.rds) </text>
@@ -112,7 +112,7 @@
             <text lang="en"> Anomaly </text>
         </label>
         <label id="13">
-            <text lang="en"> Anomalies data </text>
+            <text lang="en"> Anomalies Data </text>
         </label>
         <label id="14">
             <text lang="en"> Anomaly Map </text>
@@ -128,8 +128,8 @@
             <text lang="fr"> Station/Coordonnées </text>
         </label>
         <label id="18">
-            <text lang="en"> Boundaries </text>
-            <text lang="fr"> Contours </text>
+            <text lang="en"> Shapefile </text>
+            <text lang="fr"> Shapefile </text>
         </label>
         <label id="19">
             <text lang="en"> Select station to plot </text>
@@ -398,14 +398,6 @@
             <text lang="en"> Station not found </text>
         </content>
         <content id="28">
-            <text lang="en"> xlim: pentad must be between 1 and 6 </text>
-            <text lang="fr"> xlim: pentade doit être compris entre 1 et 6 </text>
-        </content>
-        <content id="29">
-            <text lang="en"> xlim: dekad must be 1, 2 or 3 </text>
-            <text lang="fr"> xlim: décade doit être 1, 2 ou 3 </text>
-        </content>
-        <content id="30">
             <text lang="en"> xlim: invalid date </text>
             <text lang="fr"> xlim: date invalide </text>
         </content>

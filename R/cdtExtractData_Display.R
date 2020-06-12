@@ -6,19 +6,19 @@ plotMap4Extraction <- function(){
     ymax <- .cdtData$EnvData$ZoomXYval[4]
 
     if(is.na(xmin) | is.null(xmin) | is.infinite(xmin)){
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['1']], format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['1']], TRUE, 'e')
         return(NULL)
     }
     if(is.na(xmax) | is.null(xmax) | is.infinite(xmax)){
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['2']], format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['2']], TRUE, 'e')
         return(NULL)
     }
     if(is.na(ymin) | is.null(ymin) | is.infinite(ymin)){
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['3']], format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['3']], TRUE, 'e')
         return(NULL)
     }
     if(is.na(ymax) | is.null(ymax) | is.infinite(ymax)){
-        Insert.Messages.Out(.cdtData$EnvData[['message']][['4']], format = TRUE)
+        Insert.Messages.Out(.cdtData$EnvData[['message']][['4']], TRUE, 'e')
         return(NULL)
     }
 
@@ -125,7 +125,7 @@ displayMap4Extraction <- function(notebookTab){
         if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1" & !ret$oin){
             .cdtData$EnvData$selectedPolygon <- NULL
 
-            if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "One Point"){
+            if(.cdtData$EnvData$type.extract == "point"){
                 tclvalue(.cdtData$EnvData$minlonRect) <- round(ret$xc, 4)
                 tclvalue(.cdtData$EnvData$maxlonRect) <- ''
                 tclvalue(.cdtData$EnvData$minlatRect) <- round(ret$yc, 4)
@@ -135,7 +135,7 @@ displayMap4Extraction <- function(notebookTab){
             }
 
             ##
-            if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "Rectangle"){
+            if(.cdtData$EnvData$type.extract == "rect"){
                 pPressRect(W, x, y, width = 1, outline = "red")
                 tclvalue(.cdtData$EnvData$minlonRect) <- round(ret$xc, 4)
                 tclvalue(.cdtData$EnvData$minlatRect) <- round(ret$yc, 4)
@@ -144,7 +144,7 @@ displayMap4Extraction <- function(notebookTab){
             }
 
             ##
-            if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "One Polygon"){
+            if(.cdtData$EnvData$type.extract == "poly"){
                 xypts <- data.frame(x = ret$xc, y = ret$yc)
                 coordinates(xypts) <- ~x+y
                 admin_name <- over(xypts, shpf)
@@ -161,7 +161,7 @@ displayMap4Extraction <- function(notebookTab){
             }
 
             ##
-            if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == 'Multiple Points'){
+            if(.cdtData$EnvData$type.extract == 'mpoint'){
                 tclvalue(.cdtData$EnvData$minlonRect) <- round(ret$xc, 4)
                 tclvalue(.cdtData$EnvData$maxlonRect) <- ''
                 tclvalue(.cdtData$EnvData$minlatRect) <- round(ret$yc, 4)
@@ -171,7 +171,7 @@ displayMap4Extraction <- function(notebookTab){
             }
 
             ##
-            if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == 'Multiple Polygons'){
+            if(.cdtData$EnvData$type.extract == 'mpoly'){
                 xypts <- data.frame(x = ret$xc, y = ret$yc)
                 coordinates(xypts) <- ~x+y
                 admin_name <- over(xypts, shpf)
@@ -292,7 +292,7 @@ displayMap4Extraction <- function(notebookTab){
 
         ##get coordinates rect
         if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1" &
-            str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "Rectangle")
+            .cdtData$EnvData$type.extract == "rect")
         {
             pMoveRect(W, x, y)
             tclvalue(.cdtData$EnvData$maxlonRect) <- round(ret$xc, 4)
@@ -334,7 +334,7 @@ displayMap4Extraction <- function(notebookTab){
 
         ##get coordinates rect
         if(tclvalue(.cdtData$EnvData$pressGetCoords) == "1"){
-            if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == "Rectangle")
+            if(.cdtData$EnvData$type.extract == "rect")
             {
                 xpr <- c(as.numeric(tclvalue(.cdtData$EnvData$minlonRect)), round(ret$xc, 4),
                         as.numeric(tclvalue(.cdtData$EnvData$minlatRect)), round(ret$yc, 4))
@@ -400,7 +400,7 @@ displayMap4Extraction <- function(notebookTab){
         tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
         tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-        stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% c('Multiple Points', 'Multiple Polygons')) "normal" else "disabled"
+        stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
         tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
 
         tkconfigure(canvas, cursor = 'crosshair')

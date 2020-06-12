@@ -1,15 +1,17 @@
 
 climdexCalc.TT <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
+
     if(!dir.exists(GeneralParameters$output))
     {
-        Insert.Messages.Out(paste(GeneralParameters$output, "did not find"), format = TRUE)
+        Insert.Messages.Out(paste(GeneralParameters$output, message[['6']]), TRUE, 'e')
         return(NULL)
     }
 
     if(!GeneralParameters$baseYear$all.years &
         any(is.na(GeneralParameters$baseYear[c('start.year', 'end.year')])))
     {
-        Insert.Messages.Out("Invalid year range", format = TRUE)
+        Insert.Messages.Out(message[['7']], TRUE, 'e')
         return(NULL)
     }
 
@@ -52,14 +54,14 @@ climdexCalc.TT <- function(GeneralParameters){
     {
         if(GeneralParameters$cdtstation$tx %in% c("", "NA"))
         {
-            Insert.Messages.Out('No daily maximum temperature data found', format = TRUE)
-            Insert.Messages.Out(paste(paste(indxTX, collapse = ", "), ", DTR, GSL", "will not be calculated"), format = TRUE)
+            Insert.Messages.Out(message[['8']], TRUE, 'e')
+            Insert.Messages.Out(paste(paste(indxTX, collapse = ", "), ", DTR, GSL", message[['9']]), TRUE, 'e')
             noTmax <- TRUE
         }
         if(GeneralParameters$cdtstation$tn %in% c("", "NA"))
         {
-            Insert.Messages.Out('No daily minimum temperature data found', format = TRUE)
-            Insert.Messages.Out(paste(paste(indxTN, collapse = ", "), ", DTR, GSL", "will not be calculated"), format = TRUE)
+            Insert.Messages.Out(message[['10']], TRUE, 'e')
+            Insert.Messages.Out(paste(paste(indxTN, collapse = ", "), ", DTR, GSL", message[['9']]), TRUE, 'e')
             noTmin <- TRUE
         }
     }
@@ -68,12 +70,12 @@ climdexCalc.TT <- function(GeneralParameters){
     {
         if(GeneralParameters$cdtdataset$tx %in% c("", "NA"))
         {
-            Insert.Messages.Out('No daily maximum temperature data found', format = TRUE)
+            Insert.Messages.Out(message[['8']], TRUE, 'e')
             noTmax <- TRUE
         }
         if(GeneralParameters$cdtdataset$tn %in% c("", "NA"))
         {
-            Insert.Messages.Out('No daily minimum temperature data found', format = TRUE)
+            Insert.Messages.Out(message[['10']], TRUE, 'e')
             noTmin <- TRUE
         }
     }
@@ -88,7 +90,7 @@ climdexCalc.TT <- function(GeneralParameters){
         (jTmax & !any(is.indxTX)) |
         (jTmin & !any(is.indxTN)))
     {
-        Insert.Messages.Out('No indices selected.', format = TRUE)
+        Insert.Messages.Out(message[['11']], TRUE, 'e')
         return(0)
     }
 
@@ -112,12 +114,12 @@ climdexCalc.TT <- function(GeneralParameters){
 
         if(jTmaxmin){
             if(!any(tmin$id %in% tmax$id)){
-                Insert.Messages.Out("Tmin & Tmax stations do not match", format = TRUE)
+                Insert.Messages.Out(message[['12']], TRUE, 'e')
                 return(NULL)
             }
 
             if(!any(tmin$dates %in% tmax$dates)){
-                Insert.Messages.Out("Tmin & Tmax dates do not overlap", format = TRUE)
+                Insert.Messages.Out(message[['13']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -165,11 +167,11 @@ climdexCalc.TT <- function(GeneralParameters){
         if(!noTmin){
             tmin <- try(readRDS(GeneralParameters$cdtdataset$tn), silent = TRUE)
             if(inherits(tmin, "try-error")){
-                Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset$tn), format = TRUE)
+                Insert.Messages.Out(paste(message[['14']], GeneralParameters$cdtdataset$tn), TRUE, 'e')
                 return(NULL)
             }
             if(tmin$TimeStep != "daily"){
-                Insert.Messages.Out("Tmin dataset is not a daily data", format = TRUE)
+                Insert.Messages.Out(message[['15']], TRUE, 'e')
                 return(NULL)
             }
         }
@@ -177,11 +179,11 @@ climdexCalc.TT <- function(GeneralParameters){
         if(!noTmax){
             tmax <- try(readRDS(GeneralParameters$cdtdataset$tx), silent = TRUE)
             if(inherits(tmax, "try-error")){
-                Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset$tx), format = TRUE)
+                Insert.Messages.Out(paste(message[['14']], GeneralParameters$cdtdataset$tx), TRUE, 'e')
                 return(NULL)
             }
             if(tmax$TimeStep != "daily"){
-                Insert.Messages.Out("Tmax dataset is not a daily data", format = TRUE)
+                Insert.Messages.Out(message[['16']], TRUE, 'e')
                 return(NULL)
             }
         }
@@ -190,20 +192,20 @@ climdexCalc.TT <- function(GeneralParameters){
             SP1 <- defSpatialPixels(list(lon = tmin$coords$mat$x, lat = tmin$coords$mat$y))
             SP2 <- defSpatialPixels(list(lon = tmax$coords$mat$x, lat = tmax$coords$mat$y))
             if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                Insert.Messages.Out("Tmin & Tmax have different resolution or bbox", format = TRUE)
+                Insert.Messages.Out(message[['17']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
 
             ##################
             if(tmin$chunksize != tmax$chunksize){
-                Insert.Messages.Out("Tmin & Tmax have different chunk size", format = TRUE)
+                Insert.Messages.Out(message[['18']], TRUE, 'e')
                 return(NULL)
             }
 
             ##################
             if(!any(tmin$dateInfo$date %in% tmax$dateInfo$date)){
-                Insert.Messages.Out("Tmin & Tmax dates do not match", format = TRUE)
+                Insert.Messages.Out(message[['19']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -565,8 +567,8 @@ climdexCalc.TT <- function(GeneralParameters){
             ndim <- list(ncol = length(stn.lat), y.nrow = length(index.NS$year))
             pars.trend <- list(year = as.numeric(index.NS$year), min.year = GeneralParameters$baseYear$min.year)
             pars.GSL <- list(min.frac = 0.95,
-                            thres = GeneralParameters$Indices$thresGSL,
-                            days = GeneralParameters$Indices$dayGSL)
+                             thres = GeneralParameters$Indices$thresGSL,
+                             days = GeneralParameters$Indices$dayGSL)
             GSL <- climdex_GSL.fun(tmean, daty, index.NS, ndim, pars.GSL, pars.trend)
             rm(tmean)
             climdex.write.cdtstation(GSL, index.NS$year, outDIR, "GSL", xhead)

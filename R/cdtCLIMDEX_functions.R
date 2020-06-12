@@ -1,6 +1,6 @@
 
 climdex.north.south <- function(index.year.N, index.year.S,
-                            start.july, latitude, min.frac)
+                                start.july, latitude, min.frac)
 {
     y.N <- substr(index.year.N$date, 1, 4)
     ifull.year.N <- (index.year.N$nba / index.year.N$nb0) >= min.frac
@@ -22,26 +22,34 @@ climdex.north.south <- function(index.year.N, index.year.S,
         is.south <- if(ldx.S > 0) TRUE else FALSE
         is.north <- if(ldx.N > 0) TRUE else FALSE
 
-        if(is.south){
+        if(is.south & !is.north){
             y.nrow.s <- len.S
             d.ncol.s <- ldx.S
             y.nrow.n <- NULL
             d.ncol.n <- NULL
         }
-        if(is.north){
+        if(is.north & !is.south){
             y.nrow.s <- NULL
             d.ncol.s <- NULL
+            y.nrow.n <- len.N
+            d.ncol.n <- ldx.N
+        }
+        if(is.north & is.south){
+            y.nrow.s <- len.S
+            d.ncol.s <- ldx.S
             y.nrow.n <- len.N
             d.ncol.n <- ldx.N
         }
 
         if(is.south & is.north){
             if(len.N > len.S){
+                fill.data.N <- rep(TRUE, y.nrow.n)
                 fill.data.S <- !is.na(match(y.N, y.S))
                 year.complet <- y.N
             }
             if(len.N < len.S){
                 fill.data.N <- !is.na(match(y.S, y.N))
+                fill.data.S <- rep(TRUE, y.nrow.s)
                 year.complet <- y.S
             }
             if(len.N == len.S){
@@ -77,9 +85,9 @@ climdex.north.south <- function(index.year.N, index.year.S,
 #########################################################
 
 climdex_aggr.fun <- function(don, start.july, ndim,
-                            pars.agrr, pars.trend, index.NS,
-                            month.data = FALSE, index.M = NULL,
-                            Exceedance.rate = FALSE)
+                             pars.agrr, pars.trend, index.NS,
+                             month.data = FALSE, index.M = NULL,
+                             Exceedance.rate = FALSE)
 {
     # month
     if(month.data){
@@ -138,7 +146,8 @@ climdex.write.cdtstation <- function(don, year, outdir, namedir, head)
     don.year <- round(don$year, 1)
     don.year[is.na(don.year)] <- .cdtData$Config$missval
     don.year <- rbind(cbind(c('ID.STN', 'LON', 'YEAR/LAT'), head), cbind(year, don.year))
-    nom.trend <- c("slope", "std.slope", "t-value.slope", "p-value.slope", "intercept", "std.intercept", "t-value.intercept", "p-value.intercept", "R2", "sigma")
+    nom.trend <- c("slope", "std.slope", "t-value.slope", "p-value.slope", "intercept",
+                   "std.intercept", "t-value.intercept", "p-value.intercept", "R2", "sigma")
     don.trend <- rbind(cbind(c('ID.STN', 'LON', 'VARS/LAT'), head),
                         cbind(nom.trend, round(don$trend, 6)))
                     # cbind(dimnames(don$trend)[[1]], round(don$trend, 6)))

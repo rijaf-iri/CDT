@@ -1,14 +1,14 @@
 split_3d.netcdf_getParams <- function(){
     if(WindowsOS()){
-        largeur0 <- 35
-        largeur1 <- 60
-        largeur3 <- 36
-        largeur4 <- 57
+        largeur0 <- 26
+        largeur1 <- 44
+        largeur3 <- 24
+        largeur4 <- 43
     }else{
         largeur0 <- 26
         largeur1 <- 44
         largeur3 <- 24
-        largeur4 <- 39
+        largeur4 <- 41
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtSplit3DNetCDF_dlgBox.xml")

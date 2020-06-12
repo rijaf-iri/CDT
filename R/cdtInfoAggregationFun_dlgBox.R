@@ -6,8 +6,8 @@ getInfo_AggregateFun <- function(parent.win, Parameters,
 								)
 {
     if(WindowsOS()){
-        largeur0 <- 23
-        largeur1 <- 8
+        largeur0 <- 20
+        largeur1 <- 7
     }else{
         largeur0 <- 20
         largeur1 <- 6

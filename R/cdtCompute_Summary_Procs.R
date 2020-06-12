@@ -1,19 +1,20 @@
 
 summarizeDataProcs <- function(GeneralParameters){
-    freqData <- GeneralParameters$intstep
+    intstep <- GeneralParameters$intstep
+    message <- .cdtData$EnvData$message
     if(GeneralParameters$data.type == 'cdtstation')
         input.file <- GeneralParameters$cdtstation$file
     else
         input.file <- GeneralParameters$cdtdataset$index
 
     if(input.file %in% c("", "NA")){
-        Insert.Messages.Out('No input data found', format = TRUE)
+        Insert.Messages.Out(message[['5']], TRUE, 'e')
         return(NULL)
     }
 
     if(!dir.exists(GeneralParameters$outdir)){
-        Insert.Messages.Out('Directory to save results not found', format = TRUE)
-        Insert.Messages.Out(paste('The outputs will be put in', getwd()))
+        Insert.Messages.Out(message[['6']], TRUE, 'e')
+        Insert.Messages.Out(paste(message[['7']], getwd()))
         GeneralParameters$outdir <- getwd()
     }
 
@@ -26,7 +27,7 @@ summarizeDataProcs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtstation"){
         don <- getStnOpenData(input.file)
         if(is.null(don)) return(NULL)
-        don <- getCDTdataAndDisplayMsg(don, freqData, input.file)
+        don <- getCDTdataAndDisplayMsg(don, intstep, input.file)
         if(is.null(don)) return(NULL)
 
         moy <- colMeans(don$data, na.rm = TRUE)
@@ -39,32 +40,33 @@ summarizeDataProcs <- function(GeneralParameters){
 
         output <- NULL
         output <- list(params = GeneralParameters,
-                        data = don[c('id', 'lon', 'lat', 'dates', 'data')],
-                        map = moy[c('x', 'y', 'z')],
-                        index = index)
+                       data = don[c('id', 'lon', 'lat', 'dates', 'data')],
+                       map = moy[c('x', 'y', 'z')],
+                       index = index)
     }
 
     if(GeneralParameters$data.type == "cdtdataset"){
         don <- try(readRDS(input.file), silent = TRUE)
         if(inherits(don, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", input.file), format = TRUE)
+            Insert.Messages.Out(paste(message[['8']], input.file), TRUE, 'e')
             return(NULL)
         }
-        if(freqData != don$TimeStep){
-            Insert.Messages.Out(paste("The dataset is not a", freqData, "data"), format = TRUE)
+        if(intstep != don$TimeStep){
+            Insert.Messages.Out(paste(message[['9']], intstep), TRUE, 'e')
             return(NULL)
         }
 
+        ##########
         chunkfile <- sort(unique(don$colInfo$index))
         chunkcalc <- split(chunkfile, ceiling(chunkfile / don$chunkfac))
+        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
 
+        ##########
         do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
         do.parCALC <- if(do.parChunk) FALSE else TRUE
-
-        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
-        moy <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
-                           progress = TRUE, FUN = function(jj)
+
+        moy <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE, FUN = function(jj)
         {
             don.data <- readCdtDatasetChunk.sequence(chunkcalc[[jj]], input.file, cdtParallelCond, do.par = do.parChunk)
             don.data <- don.data[don$dateInfo$index, , drop = FALSE]
@@ -82,8 +84,8 @@ summarizeDataProcs <- function(GeneralParameters){
 
         output <- NULL
         output <- list(params = GeneralParameters, data = don,
-                        index.file = input.file, map = moy,
-                        index = index)
+                       index.file = input.file, map = moy,
+                       index = index)
     }
 
     saveRDS(output, out.dat.index)

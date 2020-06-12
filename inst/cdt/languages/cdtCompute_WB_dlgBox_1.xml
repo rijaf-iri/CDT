@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Water Balance - Initialization </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Soil Water Holding Capacity </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <label id="1">
+            <text lang="en"> CDT stations file of the Water Balance on day 1 </text>
+        </label>
+        <label id="2">
+            <text lang="en"> CDT stations file containing the SWHC data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> NetCDF file of the Water Balance on day 1 </text>
+        </label>
+        <label id="4">
+            <text lang="en"> NetCDF file containing the SWHC data </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> CDT stations data format file containing the water balance on the first day of calculation, the data must have the same stations as the Precipitation and PET data </text>
+        </content>
+        <content id="2">
+            <text lang="en"> CDT station data format file containing the soil water holding capacity data, the data must have the same stations as the Precipitation and PET data </text>
+        </content>
+        <content id="3">
+            <text lang="en"> A NetCDF file containing the water balance on the first day of calculation, the grid must have the same resolution and extent as the Precipitation and PET </text>
+        </content>
+        <content id="4">
+            <text lang="en"> A NetCDF file containing the soil water holding capacity data, the grid must have the same resolution and extent as the Precipitation and PET </text>
+        </content>
+        <content id="5">
+            <text lang="en"> No input data found </text>
+        </content>
+    </message>
+</dialog_box>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Years to analyze </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Months to process </text>
+        </tab>
+    </tab_title>
+    <message>
+        <content id="1">
+            <text lang="en"> Edit the years to analyze. The years need to be separated by commas. E.g., 1983, 1984, 1991, 1997, 1998, 2002, 2003, ... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Edit the months to be included in the analysis. A month number must be between 1 and 12. The months need to be separated by commas. E.g., 1, 2, 3, 7, 8, 9 </text>
+        </content>
+        <content id="3">
+            <text lang="en"> No years edited </text>
+        </content>
+        <content id="4">
+            <text lang="en"> No months edited </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Check the years that you edited </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Check the months that you edited </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Ambiguous years. Year must be 4 digits </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Month number must be between 1 and 12 </text>
+        </content>
+    </message>
+</dialog_box>

@@ -3,11 +3,11 @@ getParams.RR.OutlierCheck <- function(Parameters)
 {
     if(WindowsOS()){
         largeur0 <- 5
-        largeur1 <- 9
-        largeur2 <- 18
+        largeur1 <- 11
+        largeur2 <- 14
     }else{
-        largeur0 <- 4
-        largeur1 <- 10
+        largeur0 <- 6
+        largeur1 <- 12
         largeur2 <- 15
     }
 
@@ -86,13 +86,13 @@ getParams.RR.OutlierCheck <- function(Parameters)
     elv.diff <- tclVar(Parameters$voisin$elv)
 
     txt.min.nb <- tklabel(frameVois, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
-    en.min.nb <- tkentry(frameVois, width = 3, textvariable = min.nbrs, justify = 'left')
+    en.min.nb <- tkentry(frameVois, width = 4, textvariable = min.nbrs, justify = 'left')
     txt.max.nb <- tklabel(frameVois, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
-    en.max.nb <- tkentry(frameVois, width = 3, textvariable = max.nbrs, justify = 'left')
+    en.max.nb <- tkentry(frameVois, width = 4, textvariable = max.nbrs, justify = 'left')
     txt.max.dt <- tklabel(frameVois, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
-    en.max.dt <- tkentry(frameVois, width = 3, textvariable = max.dst, justify = 'left')
+    en.max.dt <- tkentry(frameVois, width = 4, textvariable = max.dst, justify = 'left')
     txt.elv.dif <- tklabel(frameVois, text = lang.dlg[['label']][['8']], anchor = 'e', justify = 'right')
-    en.elv.dif <- tkentry(frameVois, width = 3, textvariable = elv.diff, justify = 'left')
+    en.elv.dif <- tkentry(frameVois, width = 4, textvariable = elv.diff, justify = 'left')
 
     tkgrid(txt.min.nb, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.min.nb, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

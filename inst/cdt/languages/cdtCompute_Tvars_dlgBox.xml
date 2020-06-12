@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Compute Temperature Variables </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Average </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Range </text>
+            </option>
+        </combobox>
+        <label id="1">
+            <text lang="en"> Time step </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Variable </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Format of input data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> File containing stations Tmin data </text>
+        </label>
+        <label id="5">
+            <text lang="en"> File containing stations Tmax data </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Index file (*.rds) for Tmin data </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Index file (*.rds) for Tmax data </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Directory of the Tmin NetCDF files </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Directory of the Tmax NetCDF files </text>
+        </label>
+        <label id="10">
+            <text lang="en"> File to save the result </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Directory to save the result </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the input data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the variable to calculate </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the variable to calculate </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the format of the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the format of the input data </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Select the file containing the minimum temperature </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the minimum temperature </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Select the file containing the maximum temperature </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the maximum temperature </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;minimum temperature dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;minimum temperature dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;maximum temperature dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;maximum temperature dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the minimum temperature files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the minimum temperature files </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the maximum temperature files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the maximum temperature files </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Enter the full path to the file to save the result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file to save the result </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> Enter the full path to the directory to save the result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory to save the result </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> No input for minimum temperature </text>
+        </content>
+        <content id="2">
+            <text lang="en"> No input for maximum temperature </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Browse a directory or enter the file to save results </text>
+        </content>
+        <content id="4">
+            <text lang="en"> You have to set the Tmin files parameters </text>
+        </content>
+        <content id="5">
+            <text lang="en"> You have to set the Tmax files parameters </text>
+        </content>
+        <content id="6">
+            <text lang="en"> temperature computation finished successfully </text>
+        </content>
+        <content id="7">
+            <text lang="en"> temperature computation failed </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Computing temperature </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Tmin and Tmax stations do not match </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Tmin and Tmax dates do not overlap </text>
+        </content>
+        <content id="11">
+            <text lang="en"> No Tmin data sample found </text>
+        </content>
+        <content id="12">
+            <text lang="en"> No Tmax data sample found </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Tmin and Tmax have different resolution or bbox </text>
+        </content>
+        <content id="14">
+            <text lang="en"> Tmin data not found </text>
+        </content>
+        <content id="15">
+            <text lang="en"> Tmax data not found </text>
+        </content>
+        <content id="16">
+            <text lang="en"> Tmin and Tmax dates do not match </text>
+        </content>
+        <content id="17">
+            <text lang="en"> Unable to read </text>
+        </content>
+        <content id="18">
+            <text lang="en"> Tmin dataset is not </text>
+        </content>
+        <content id="19">
+            <text lang="en"> Tmax dataset is not </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Tmin and Tmax have different resolution or bbox </text>
+        </content>
+        <content id="21">
+            <text lang="en"> Tmin and Tmax have different chunk size </text>
+        </content>
+    </message>
+</dialog_box>

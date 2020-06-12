@@ -2,10 +2,10 @@
 biasGetInfoTempDown <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 29
-        largeur1 <- 57
-        largeur2 <- 60
-        largeur3 <- 47
+        largeur0 <- 22
+        largeur1 <- 43
+        largeur2 <- 45
+        largeur3 <- 35
     }else{
         largeur0 <- 22
         largeur1 <- 41

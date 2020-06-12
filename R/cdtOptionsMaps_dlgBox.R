@@ -1,15 +1,15 @@
 
 MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 47
-        largeur2 <- 60
-        largeur3 <- .cdtEnv$tcl$fun$w.scale(30)
-        largeur4 <- 78
-        largeur5 <- 28
+        largeur1 <- 21
+        largeur2 <- 47
+        largeur3 <- 430
+        largeur4 <- 51
+        largeur5 <- 21
     }else{
         largeur1 <- 20
-        largeur2 <- 59
-        largeur3 <- .cdtEnv$tcl$fun$w.scale(29.6)
+        largeur2 <- 46
+        largeur3 <- 426
         largeur4 <- 50
         largeur5 <- 20
     }
@@ -314,14 +314,14 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
 MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 47
-        largeur2 <- 60
-        largeur3 <- .cdtEnv$tcl$fun$w.scale(30)
-        largeur4 <- 78
+        largeur1 <- 30
+        largeur2 <- 46
+        largeur3 <- 426
+        largeur4 <- 50
     }else{
         largeur1 <- 30
-        largeur2 <- 59
-        largeur3 <- .cdtEnv$tcl$fun$w.scale(29.6)
+        largeur2 <- 46
+        largeur3 <- 426
         largeur4 <- 50
     }
 
@@ -574,8 +574,8 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
 
 MapGraph.MultiDatasets <- function(mapOpt){
     if(WindowsOS()){
-        largeur1 <- 40
-        largeur2 <- 21
+        largeur1 <- 35
+        largeur2 <- 18
     }else{
         largeur1 <- 29
         largeur2 <- 14
@@ -925,17 +925,17 @@ MapGraph.ChkCoordsOptions <- function(CrdOpt, parent.win = .cdtEnv$tcl$main$win)
 
 MapGraph.SpiVizOptions <- function(spiVizOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 47
-        largeur2 <- 60
-        largeur3 <- .cdtEnv$tcl$fun$w.scale(30)
-        largeur4 <- 78
-        largeur5 <- 74
+        largeur1 <- 30
+        largeur2 <- 46
+        largeur3 <- 426
+        largeur4 <- 50
+        largeur5 <- 46
     }else{
         largeur1 <- 30
-        largeur2 <- 59
-        largeur3 <- .cdtEnv$tcl$fun$w.scale(29.6)
+        largeur2 <- 46
+        largeur3 <- 426
         largeur4 <- 50
-        largeur5 <- 47
+        largeur5 <- 46
     }
 
     #####################
@@ -1238,11 +1238,11 @@ MapGraph.SpiVizOptions <- function(spiVizOpt, parent.win = .cdtEnv$tcl$main$win)
 
 MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        width.col <- 4
-        width.spin <- 5
+        width.col <- 3
+        width.spin <- 4
     }else{
         width.col <- 1
-        width.spin <- 3
+        width.spin <- 4
     }
 
     #####################
@@ -1724,18 +1724,18 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
 
 #######################################################################################################
 
-MapGraph.QCgridData <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
+MapGraph.gridDataLayer <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur2 <- 60
-        largeur3 <- .cdtEnv$tcl$fun$w.scale(30)
+        largeur2 <- 48
+        largeur3 <- 445
     }else{
-        largeur2 <- 59
-        largeur3 <- .cdtEnv$tcl$fun$w.scale(29.6)
+        largeur2 <- 46
+        largeur3 <- 426
     }
 
     #####################
 
-    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtMapOptions.QCgridData_dlgBox.xml")
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtMapOptions.gridDataLayer_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     #####################
@@ -1847,8 +1847,23 @@ MapGraph.QCgridData <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
     })
 
     #####################
+
+    add.hill <- FALSE
+    if(!is.null(mapOpt$add.hill)){
+        frameElev <- tkframe(frDialog, relief = 'groove', borderwidth = 2)
+
+        hillShade <- tclVar(mapOpt$add.hill)
+        add.hill <- TRUE
+
+        chk.hillShade <- tkcheckbutton(frameElev, variable = hillShade, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left')
+
+        tkgrid(chk.hillShade)
+    }
+
+    #####################
     tkgrid(frameColkey, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frameLevel, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    if(add.hill) tkgrid(frameElev, row = 2, column = 0, padx = 2, pady = 3, ipadx = 2, ipady = 2)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -1870,6 +1885,9 @@ MapGraph.QCgridData <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
             }
             mapOpt$user.levels$levels <<- as.numeric(vlevel)
         }
+
+        if(add.hill)
+            mapOpt$add.hill <<- switch(tclvalue(hillShade), '0' = FALSE, '1' = TRUE)
 
         tkgrab.release(tt)
         tkdestroy(tt)

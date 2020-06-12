@@ -2,33 +2,147 @@
 SeasonAnalysisPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur3 <- 28
-        largeur4 <- 15
-        largeur5 <- 14
-        largeur6 <- 22
+        largeur0 <- 35
+        largeur1 <- 27
+        largeur2 <- 33
+        largeur3 <- 14
+        largeur4 <- 36
+        largeur5 <- 18
+        largeur6 <- 19
+        largeur7 <- 7
+        largeur8 <- 27
+        largeur9 <- 22
+        largeur10 <- 20
+        largeur11 <- 30
+        largeur12 <- 10
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(20)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur3 <- 21
-        largeur4 <- 11
-        largeur5 <- 10
-        largeur6 <- 14
+        largeur0 <- 33
+        largeur1 <- 28
+        largeur2 <- 32
+        largeur3 <- 14
+        largeur4 <- 36
+        largeur5 <- 18
+        largeur6 <- 19
+        largeur7 <- 7
+        largeur8 <- 27
+        largeur9 <- 22
+        largeur10 <- 20
+        largeur11 <- 30
+        largeur12 <- 10
     }
 
     GeneralParameters <- list(onset = "", cessation = "", output = "",
-                            seastot = list(useTotal = FALSE, Tstep = "dekadal",
-                                        data.type = "cdtstation",
-                                        cdtstation = list(prec = ""),
-                                        cdtdataset = list(prec = "")),
-                            dryday = 0.85, min.frac = 0.95)
+                              seastot = list(useTotal = FALSE, Tstep = "dekadal",
+                                             data.type = "cdtstation",
+                                             cdtstation = list(prec = ""),
+                                             cdtdataset = list(prec = "")),
+                              dryday = 0.85, min.frac = 0.95)
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtSeasonAnalysis_leftCmd.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-    # .cdtData$EnvData$message <- lang.dlg[['message']]
+    GeneralParameters$plotVar <- list(varPICSA = 'totrainSeas', dryspell = 5, yearseas = '')
+    GeneralParameters$analysis <- list(method = 'mean', trend = 'trendEY', mth.perc = 95,
+                                       low.thres = "0", up.thres = "200")
+    GeneralParameters$graph <- list(varTSp = 'maps', typeTSp = 'line')
+
+    .cdtData$EnvData$tab$pointSize.TSMap <- NULL
+    .cdtData$EnvData$TSMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
+                                     userCol = list(custom = FALSE, color = NULL),
+                                     userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                     title = list(user = FALSE, title = ''),
+                                     colkeyLab = list(user = FALSE, label = ''),
+                                     scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                     pointSize = .cdtData$EnvData$tab$pointSize.TSMap)
+
+    .cdtData$EnvData$tab$pointSize.climMap <- NULL
+    .cdtData$EnvData$climMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
+                                       userCol = list(custom = FALSE, color = NULL),
+                                       userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                       title = list(user = FALSE, title = ''),
+                                       colkeyLab = list(user = FALSE, label = ''),
+                                       scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                       pointSize = .cdtData$EnvData$tab$pointSize.climMap)
+
+    .cdtData$EnvData$TSGraphOp <- list(
+                            anomaly = list(
+                                    anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1981, endYr.anom = 2010),
+                                    xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                    ylim = list(is.min = FALSE, min = -100, is.max = FALSE, max = 100),
+                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                    title = list(is.title = FALSE, title = '', position = 'top'),
+                                    colors = list(negative = "blue", positive = "red")
+                                    ),
+                            bar = list(
+                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                colors = list(col = "darkblue")
+                                ),
+                            line = list(
+                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                plot = list(type = 'both',
+                                    col = list(line = "red", points = "blue"),
+                                    lwd = 2, cex = 1.4),
+                                legend = list(
+                                    is = list(mean = FALSE, tercile = FALSE, linear = FALSE),
+                                    add = list(mean = FALSE, tercile = FALSE, linear = FALSE),
+                                    col = list(mean = "black", tercile1 = "green", tercile2 = "blue", linear = "purple3"),
+                                    text = list(mean = "Average", tercile1 = "Tercile 0.33333", tercile2 = "Tercile 0.66666", linear = "Trend line"),
+                                    lwd = list(mean = 2, tercile = 2, linear = 2))
+                                ),
+                            proba = list(
+                                xlim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                plot = list(type = 'both',
+                                    col = list(line = "red", points = "blue"),
+                                    lwd = 2, cex = 0.8),
+                                proba = list(theoretical = TRUE, col = 'black', lwd = 2)
+                                ),
+                            line.enso = list(
+                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                plot = list(lwd = 2, cex = 2, col = list(line = "black",
+                                            points = c("blue", "gray", "red"))),
+                                legend = list(
+                                    is = list(mean = FALSE, tercile = FALSE, linear = FALSE),
+                                    add = list(mean = FALSE, tercile = FALSE, linear = FALSE),
+                                    col = list(mean = "darkblue", tercile1 = "chartreuse4", tercile2 = "darkgoldenrod4", linear = "purple3"),
+                                    text = list(mean = "Average", tercile1 = "Tercile 0.33333", tercile2 = "Tercile 0.66666", linear = "Trend line"),
+                                    lwd = list(mean = 2, tercile = 2, linear = 2))
+                                ),
+                            bar.enso = list(
+                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                colors = list(col = c("blue", "gray", "red"))
+                                ),
+                            proba.enso = list(
+                                xlim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
+                                axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                title = list(is.title = FALSE, title = '', position = 'top'),
+                                plot = list(type = 'both', lwd = 2, cex = 1.4,
+                                    all = list(line = "black", points = "lightgray"),
+                                    nina = list(line = "blue", points = "lightblue"),
+                                    neutre = list(line = "gray", points = "lightgray"),
+                                    nino = list(line = "red", points = "lightpink"))
+                                )
+                            )
+
+    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+
+    ###################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtSeasonAnalysis_leftCmd.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    .cdtData$EnvData$message <- lang.dlg[['message']]
 
     ###################
 
@@ -36,11 +150,11 @@ SeasonAnalysisPanelCmd <- function(){
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
 
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = "Input")
-    cmd.tab2 <- bwAddTab(tknote.cmd, text = "Output")
-    cmd.tab3 <- bwAddTab(tknote.cmd, text = "Maps")
-    cmd.tab4 <- bwAddTab(tknote.cmd, text = "Graphs")
-    cmd.tab5 <- bwAddTab(tknote.cmd, text = "Boundaries")
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
+    cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
+    cmd.tab5 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['5']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
@@ -63,16 +177,16 @@ SeasonAnalysisPanelCmd <- function(){
 
         ############################################
 
-        frameInData <- ttklabelframe(subfr1, text = "Onset & Cessation", relief = 'groove')
+        frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         input.Onset <- tclVar(GeneralParameters$onset)
         input.Cessation <- tclVar(GeneralParameters$cessation)
 
-        txt.Ons <- tklabel(frameInData, text = 'Path to the onset data <Onset.rds>', anchor = 'w', justify = 'left')
+        txt.Ons <- tklabel(frameInData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
         en.Ons <- tkentry(frameInData, textvariable = input.Onset, width = largeur0)
         bt.Ons <- tkbutton(frameInData, text = "...")
 
-        txt.Ces <- tklabel(frameInData, text = 'Path to the cessation data <Cessation.rds>', anchor = 'w', justify = 'left')
+        txt.Ces <- tklabel(frameInData, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
         en.Ces <- tkentry(frameInData, textvariable = input.Cessation, width = largeur0)
         bt.Ces <- tkbutton(frameInData, text = "...")
 
@@ -94,19 +208,15 @@ SeasonAnalysisPanelCmd <- function(){
         tkgrid(bt.Ces, row = 3, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
         ############
-        infobulle(en.Ons, 'Enter the full path to the file <Onset.rds>')
-        status.bar.display(en.Ons, 'Enter the full path to the file <Onset.rds>')
-        infobulle(en.Ces, 'Enter the full path to the file <Cessation.rds>')
-        status.bar.display(en.Ces, 'Enter the full path to the file <Cessation.rds>')
 
-        infobulle(bt.Ons, 'or browse here')
-        status.bar.display(bt.Ons, 'or browse here')
-        infobulle(bt.Ces, 'or browse here')
-        status.bar.display(bt.Ces, 'or browse here')
+        helpWidget(en.Ons, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+        helpWidget(en.Ces, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+        helpWidget(bt.Ons, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+        helpWidget(bt.Ces, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
         ############################################
 
-        frameSeasTot <- ttklabelframe(subfr1, text = "Seasonal rainfall amounts", relief = 'groove')
+        frameSeasTot <- ttklabelframe(subfr1, text = lang.dlg[['label']][['4']], relief = 'groove')
 
         useTotal <- tclVar(GeneralParameters$seastot$useTotal)
 
@@ -124,19 +234,19 @@ SeasonAnalysisPanelCmd <- function(){
 
         if(GeneralParameters$seastot$data.type == 'cdtstation'){
             input.Prec <- tclVar(GeneralParameters$seastot$cdtstation$prec)
-            txt.INPrec <- 'File containing stations Precip data'
+            txt.INPrec <- lang.dlg[['label']][['5']]
         }else{
             input.Prec <- tclVar(GeneralParameters$seastot$cdtdataset$prec)
-            txt.INPrec <- 'Index file (*.rds) of Precip data'
+            txt.INPrec <- lang.dlg[['label']][['6']]
         }
         txt.INPrec.var <- tclVar(txt.INPrec)
 
         stateSEAS <- if(GeneralParameters$seastot$useTotal) 'normal' else 'disabled'
 
-        chk.seastot <- tkcheckbutton(frameSeasTot, variable = useTotal, text = "Use aggregated data for seasonal total", anchor = 'w', justify = 'left')
-        txt.period <- tklabel(frameSeasTot, text = 'Time step', anchor = 'e', justify = 'right')
+        chk.seastot <- tkcheckbutton(frameSeasTot, variable = useTotal, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+        txt.period <- tklabel(frameSeasTot, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
         cb.period <- ttkcombobox(frameSeasTot, values = CbperiodVAL, textvariable = timeSteps, width = largeur1, state = stateSEAS)
-        txt.datatype <- tklabel(frameSeasTot, text = 'Format', anchor = 'e', justify = 'right')
+        txt.datatype <- tklabel(frameSeasTot, text = lang.dlg[['label']][['8']], anchor = 'e', justify = 'right')
         cb.datatype <- ttkcombobox(frameSeasTot, values = CbdatatypeVAL, textvariable = DataType, width = largeur1, state = stateSEAS)
 
         txt.INPrec <- tklabel(frameSeasTot, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
@@ -146,6 +256,33 @@ SeasonAnalysisPanelCmd <- function(){
             cb.en.INPrec <- tkentry(frameSeasTot, textvariable = input.Prec, width = largeur0, state = stateSEAS)
         }
         bt.INPrec <- tkbutton(frameSeasTot, text = "...", state = stateSEAS)
+
+        ############
+
+        tkgrid(chk.seastot, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(txt.period, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.period, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(txt.datatype, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.datatype, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(txt.INPrec, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.en.INPrec, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.INPrec, row = 4, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        ############
+
+        helpWidget(cb.period, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        helpWidget(cb.datatype, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+
+        if(GeneralParameters$seastot$data.type == 'cdtstation'){
+            helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+            helpWidget(bt.INPrec, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+        }else{
+            helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+            helpWidget(bt.INPrec, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+        }
 
         ############
 
@@ -163,40 +300,6 @@ SeasonAnalysisPanelCmd <- function(){
                 tclvalue(input.Prec) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
             }
         })
-
-        ############
-
-        tkgrid(chk.seastot, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkgrid(txt.period, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.period, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkgrid(txt.datatype, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.datatype, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkgrid(txt.INPrec, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.en.INPrec, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.INPrec, row = 4, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-        ############
-        infobulle(cb.period, 'Select the time step of the input data')
-        status.bar.display(cb.period, 'Select the time step of the input data')
-        infobulle(cb.datatype, 'Select the format of the input data')
-        status.bar.display(cb.datatype, 'Select the format of the input data')
-
-        if(GeneralParameters$seastot$data.type == 'cdtstation'){
-            infobulle(cb.en.INPrec, 'Select the file containing the precipitation data')
-            status.bar.display(cb.en.INPrec, 'Select the file containing the precipitation data')
-
-            infobulle(bt.INPrec, 'Browse file if not listed')
-            status.bar.display(bt.INPrec, 'Browse file if not listed')
-        }else{
-            infobulle(cb.en.INPrec, 'Enter the full path to the file <precipitation dataset name>.rds')
-            status.bar.display(cb.en.INPrec, 'Enter the full path to the file <precipitation dataset name>.rds')
-
-            infobulle(bt.INPrec, 'or browse here')
-            status.bar.display(bt.INPrec, 'or browse here')
-        }
 
         ############
 
@@ -218,9 +321,13 @@ SeasonAnalysisPanelCmd <- function(){
 
             ###
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-                tclvalue(txt.INPrec.var) <- 'File containing stations Precip data'
+                tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['5']]
 
                 cb.en.INPrec <- ttkcombobox(frameSeasTot, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur2, state = stateSEAS)
+
+                ######
+                helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+                helpWidget(bt.INPrec, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
 
                 ######
                 tkconfigure(bt.INPrec, command = function(){
@@ -232,33 +339,23 @@ SeasonAnalysisPanelCmd <- function(){
                         tkconfigure(cb.en.INPrec, values = unlist(listOpenFiles))
                     }
                 })
-
-                ######
-                infobulle(cb.en.INPrec, 'Select the file containing the precipitation data')
-                status.bar.display(cb.en.INPrec, 'Select the file containing the precipitation data')
-
-                infobulle(bt.INPrec, 'Browse file if not listed')
-                status.bar.display(bt.INPrec, 'Browse file if not listed')
             }
 
             ###
             if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-                tclvalue(txt.INPrec.var) <- 'Index file (*.rds) of Precip data'
+                tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['6']]
 
                 cb.en.INPrec <- tkentry(frameSeasTot, textvariable = input.Prec, width = largeur0, state = stateSEAS)
+
+                ######
+                helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+                helpWidget(bt.INPrec, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
                 ######
                 tkconfigure(bt.INPrec, command = function(){
                     path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
                     tclvalue(input.Prec) <- if(path.rds %in% c("", "NA")) "" else path.rds
                 })
-
-                ######
-                infobulle(cb.en.INPrec, 'Enter the full path to the file <precipitation dataset name>.rds')
-                status.bar.display(cb.en.INPrec, 'Enter the full path to the file <precipitation dataset name>.rds')
-
-                infobulle(bt.INPrec, 'or browse here')
-                status.bar.display(bt.INPrec, 'or browse here')
             }
 
             #######
@@ -286,13 +383,13 @@ SeasonAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameDryDay <- ttklabelframe(subfr2, text = "Dry Day definition", relief = 'groove')
+        frameDryDay <- ttklabelframe(subfr2, text = lang.dlg[['label']][['9']], relief = 'groove')
 
         drywet.day <- tclVar(GeneralParameters$dryday)
 
-        txt.DryDay1 <- tklabel(frameDryDay, text = 'Rainfall amount below', anchor = 'w', justify = 'left')
+        txt.DryDay1 <- tklabel(frameDryDay, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
         en.DryDay <- tkentry(frameDryDay, textvariable = drywet.day, width = 5)
-        txt.DryDay2 <- tklabel(frameDryDay, text = 'mm/day', anchor = 'w', justify = 'left')
+        txt.DryDay2 <- tklabel(frameDryDay, text = lang.dlg[['label']][['11']], anchor = 'w', justify = 'left')
 
         tkgrid(txt.DryDay1, en.DryDay, txt.DryDay2)
 
@@ -302,7 +399,7 @@ SeasonAnalysisPanelCmd <- function(){
 
         min.frac <- tclVar(GeneralParameters$min.frac)
 
-        txt.MinFrac <- tklabel(frameMinFrac, text = 'Minimum fraction of non-missing values', anchor = 'w', justify = 'left')
+        txt.MinFrac <- tklabel(frameMinFrac, text = lang.dlg[['label']][['12']], anchor = 'w', justify = 'left')
         en.MinFrac <- tkentry(frameMinFrac, textvariable = min.frac, width = 5)
         tkgrid(txt.MinFrac, en.MinFrac)
 
@@ -312,26 +409,24 @@ SeasonAnalysisPanelCmd <- function(){
 
         dir.save <- tclVar(GeneralParameters$output)
 
-        txt.dir.save <- tklabel(frameDirSav, text = "Directory to save results", anchor = 'w', justify = 'left')
+        txt.dir.save <- tklabel(frameDirSav, text = lang.dlg[['label']][['13']], anchor = 'w', justify = 'left')
         en.dir.save <- tkentry(frameDirSav, textvariable = dir.save, width = largeur0)
         bt.dir.save <- tkbutton(frameDirSav, text = "...")
-
-        ######
-        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir.save, isFile = FALSE))
 
         ######
         tkgrid(txt.dir.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(en.dir.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(bt.dir.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
-        infobulle(en.dir.save, 'Enter the full path to directory to save outputs')
-        status.bar.display(en.dir.save, 'Enter the full path to directory to save outputs')
-        infobulle(bt.dir.save, 'or browse here')
-        status.bar.display(bt.dir.save, 'or browse here')
+        helpWidget(en.dir.save, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+        helpWidget(bt.dir.save, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+
+        ######
+        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir.save, isFile = FALSE))
 
         ############################################
 
-        bt.CalcPICSA <- ttkbutton(subfr2, text = 'Run Analysis')
+        bt.CalcPICSA <- ttkbutton(subfr2, text = lang.dlg[['button']][['1']])
 
         tkconfigure(bt.CalcPICSA, command = function(){
             GeneralParameters$onset <- str_trim(tclvalue(input.Onset))
@@ -355,28 +450,23 @@ SeasonAnalysisPanelCmd <- function(){
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
-            Insert.Messages.Out("Calculate rainy season data ......", TRUE, "i")
+            Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch(
-                {
-                    compute_RainySeasonData(GeneralParameters)
-                },
-                warning = function(w) warningFun(w),
-                error = function(e) errorFun(e),
-                finally = {
-                    tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
-                    tcl('update')
-                }
-            )
-
-            msg0 <- "Rainy season data calculation finished successfully"
-            msg1 <- "Rainy season data calculation failed"
+            ret <- tryCatch({
+                            compute_RainySeasonData(GeneralParameters)
+                        },
+                        warning = function(w) warningFun(w),
+                        error = function(e) errorFun(e),
+                        finally = {
+                            tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+                            tcl('update')
+                        })
 
             if(!is.null(ret)){
                 if(ret == 0){
-                    Insert.Messages.Out(msg0, TRUE, "s")
+                    Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
                     .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$data.type
                     .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
@@ -384,8 +474,8 @@ SeasonAnalysisPanelCmd <- function(){
 
                     load.PICSA.Data()
 
-                }else Insert.Messages.Out(msg1, format = TRUE)
-            }else Insert.Messages.Out(msg1, format = TRUE)
+                }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
+            }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
         })
 
         ############################################
@@ -402,16 +492,26 @@ SeasonAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        framePICSADat <- ttklabelframe(subfr3, text = "Analysis data", relief = 'groove')
+        framePICSADat <- ttklabelframe(subfr3, text = lang.dlg[['label']][['14']], relief = 'groove')
 
-        .cdtData$EnvData$DirExist <- tclVar(0)
+        DirExist <- tclVar(0)
         file.PICSAIndex <- tclVar()
 
-        statePICSADat <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
+        statePICSADat <- if(tclvalue(DirExist) == "1") "normal" else "disabled"
 
-        chk.PICSAIdx <- tkcheckbutton(framePICSADat, variable = .cdtData$EnvData$DirExist, text = "Rainy season data are already calculated", anchor = 'w', justify = 'left')
-        en.PICSAIdx <- tkentry(framePICSADat, textvariable = file.PICSAIndex, width = largeur0, state = statePICSADat)
-        bt.PICSAIdx <- tkbutton(framePICSADat, text = "...", state = statePICSADat)
+        chk.PICSAIdx <- tkcheckbutton(framePICSADat, variable = DirExist, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+        en.PICSAIdx <- tkentry(framePICSADat, textvariable = file.PICSAIndex, width = largeur0 + 5, state = statePICSADat)
+        bt.PICSAIdx <- ttkbutton(framePICSADat, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = statePICSADat)
+
+        tkgrid(chk.PICSAIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.PICSAIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.PICSAIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        helpWidget(chk.PICSAIdx, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
+        helpWidget(en.PICSAIdx, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
+        helpWidget(bt.PICSAIdx, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+
+        ###############
 
         tkconfigure(bt.PICSAIdx, command = function(){
             path.Stat <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -421,8 +521,8 @@ SeasonAnalysisPanelCmd <- function(){
             if(file.exists(str_trim(tclvalue(file.PICSAIndex)))){
                 OutPicsa <- try(readRDS(str_trim(tclvalue(file.PICSAIndex))), silent = TRUE)
                 if(inherits(OutPicsa, "try-error")){
-                    Insert.Messages.Out('Unable to load Analysis data', format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', OutPicsa[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', OutPicsa[1]), TRUE, 'e')
                     return(NULL)
                 }
 
@@ -436,61 +536,71 @@ SeasonAnalysisPanelCmd <- function(){
             }
         })
 
-        tkgrid(chk.PICSAIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.PICSAIdx, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.PICSAIdx, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-        infobulle(chk.PICSAIdx, "Check this box if the Analysis data are already calculated")
-        status.bar.display(chk.PICSAIdx, "Check this box if the Analysis data are already calculated")
-        infobulle(en.PICSAIdx, "Enter the full path to the file <RainySeasonAnalysis.rds>")
-        status.bar.display(en.PICSAIdx, "Enter the full path to the file <RainySeasonAnalysis.rds>")
-        infobulle(bt.PICSAIdx, 'or browse here')
-        status.bar.display(bt.PICSAIdx, 'or browse here')
-
         ###############
 
         tkbind(chk.PICSAIdx, "<Button-1>", function(){
-            statePICSADat <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
+            statePICSADat <- if(tclvalue(DirExist) == '1') 'disabled' else 'normal'
             tkconfigure(en.PICSAIdx, state = statePICSADat)
             tkconfigure(bt.PICSAIdx, state = statePICSADat)
-            stateCaclBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
-            tkconfigure(bt.CalcPICSA, state = stateCaclBut)
+
+            stateCaclBut <- if(tclvalue(DirExist) == '1') 'normal' else 'disabled'
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateCaclBut)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab2$IDtab, state = stateCaclBut)
         })
 
         ##############################################
 
-        framePICSATSMap <- ttklabelframe(subfr3, text = "Maps", relief = 'groove')
+        framePICSATSMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['15']], relief = 'groove')
 
-        .cdtData$EnvData$varPICSA <- tclVar("Onset")
-        varPICSA.val <- c("Onset", "Cessation", "Season Length", "Seasonal Rainfall Amounts",
-                        "Dry Spells", "Longest Dry Spell", 
-                        "Number of rain day", "Maximum daily rain",
-                        "Total rain when RR>95thPerc", "Nb of day when RR>95thPerc")
+        varPICSA <- tclVar()
+        CbvarPICSAVAL <- lang.dlg[['combobox']][['1']]
+        varPICSAVAL <- c('onset', 'cessation', 'lengthSeas', 'totrainSeas',
+                         'dryspell', 'longdryspell', 'nbrainSeas', 'max24hrain',
+                         'totrain95P', 'nbrain95P')
+        tclvalue(varPICSA) <- CbvarPICSAVAL[varPICSAVAL %in% GeneralParameters$plotVar$varPICSA]
 
-        stateDrySpl <- 'disabled'
+        .cdtData$EnvData$plotVar$varPICSA <- GeneralParameters$plotVar$varPICSA
 
-        cb.TsMap.picsavar <- ttkcombobox(framePICSATSMap, values = varPICSA.val, textvariable = .cdtData$EnvData$varPICSA, width = largeur3)
-        txt.TsMap.dryspell <- tklabel(framePICSATSMap, text = "DrySpell", anchor = 'w', justify = 'left')
-        .cdtData$EnvData$spin.TsMap.dryspell <- ttkspinbox(framePICSATSMap, from = 1, to = 50, increment = 1, justify = 'center', width = 2, state = stateDrySpl)
-        tkset(.cdtData$EnvData$spin.TsMap.dryspell, 5)
-
-        bt.TsMap.prev <- ttkbutton(framePICSATSMap, text = "<<", width = 4)
-        bt.TsMap.next <- ttkbutton(framePICSATSMap, text = ">>", width = 4)
-        .cdtData$EnvData$spin.TsMap.year <- ttkspinbox(framePICSATSMap, from = 1800, to = 2200, increment = 1, justify = 'center', width = 4)
-        tkset(.cdtData$EnvData$spin.TsMap.year, 2015)
-        bt.TsMap.plot <- ttkbutton(framePICSATSMap, text = .cdtEnv$tcl$lang$global[['button']][['3']])
-        bt.TsMap.Opt <- ttkbutton(framePICSATSMap, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+        cb.TsMap.picsavar <- ttkcombobox(framePICSATSMap, values = CbvarPICSAVAL, textvariable = varPICSA, justify = 'center', width = largeur4)
+        bt.TsMap.plot <- ttkbutton(framePICSATSMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
+        bt.TsMap.Opt <- ttkbutton(framePICSATSMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
 
         #################
 
-        .cdtData$EnvData$tab$pointSize.TSMap <- NULL
-        .cdtData$EnvData$TSMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-                                            userCol = list(custom = FALSE, color = NULL),
-                                            userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                            title = list(user = FALSE, title = ''),
-                                            colkeyLab = list(user = FALSE, label = ''),
-                                            scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                            pointSize = .cdtData$EnvData$tab$pointSize.TSMap)
+        var.TsMap.year <- tclVar(GeneralParameters$plotVar$yearseas)
+        .cdtData$EnvData$plotVar$yearseas <- GeneralParameters$plotVar$yearseas
+
+        cb.TsMap.year <- ttkcombobox(framePICSATSMap, values = "", textvariable = var.TsMap.year, justify = 'center', width = largeur6)
+        bt.TsMap.prev <- ttkbutton(framePICSATSMap, text = "<<", width = largeur7)
+        bt.TsMap.next <- ttkbutton(framePICSATSMap, text = ">>", width = largeur7)
+
+        #################
+
+        fr.TsMap.dryspell <- tkframe(framePICSATSMap)
+
+        .cdtData$EnvData$plotVar$dryspell <- GeneralParameters$plotVar$dryspell
+
+        stateDrySpl <- 'disabled'
+
+        txt.TsMap.dryspell <- tklabel(fr.TsMap.dryspell, text = lang.dlg[['label']][['16']], anchor = 'w', justify = 'left')
+        spin.TsMap.dryspell <- ttkspinbox(fr.TsMap.dryspell, from = 1, to = 50, increment = 1, justify = 'center', width = 3, state = stateDrySpl)
+        tkset(spin.TsMap.dryspell, GeneralParameters$plotVar$dryspell)
+
+        tkgrid(txt.TsMap.dryspell, spin.TsMap.dryspell)
+
+        #################
+
+        tkgrid(cb.TsMap.picsavar, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsMap.Opt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsMap.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+
+        tkgrid(bt.TsMap.prev, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.TsMap.year, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsMap.next, row = 2, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(fr.TsMap.dryspell, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        #################
 
         tkconfigure(bt.TsMap.Opt, command = function(){
             if(!is.null(.cdtData$EnvData$tsdata)){
@@ -508,8 +618,13 @@ SeasonAnalysisPanelCmd <- function(){
                 .cdtData$EnvData$tab$pointSize.TSMap <- .cdtData$EnvData$TSMapOp$pointSize
         })
 
+        #################
+
         .cdtData$EnvData$tab$TSMap <- NULL
+ 
         tkconfigure(bt.TsMap.plot, command = function(){
+            get.analysis.method()
+
             if(!is.null(.cdtData$EnvData$tsdata)){
                 ret <- read.PicsaTSData()
                 if(is.null(ret)) return(NULL)
@@ -519,12 +634,15 @@ SeasonAnalysisPanelCmd <- function(){
         })
 
         tkconfigure(bt.TsMap.prev, command = function(){
+            get.analysis.method()
+
             if(!is.null(.cdtData$EnvData$tsdata)){
-                range.TsMap.year <- range(as.numeric(format(.cdtData$EnvData$output$start.date, '%Y')))
-                iyear <- as.numeric(str_trim(tclvalue(tkget(.cdtData$EnvData$spin.TsMap.year))))
+                val.TsMap.year <- format(.cdtData$EnvData$output$start.date, '%Y')
+                iyear <- which(val.TsMap.year == .cdtData$EnvData$plotVar$yearseas)
                 iyear <- iyear - 1
-                if(iyear < range.TsMap.year[1]) iyear <- range.TsMap.year[2]
-                tkset(.cdtData$EnvData$spin.TsMap.year, iyear)
+                if(iyear < 1) iyear <- length(val.TsMap.year)
+                tclvalue(var.TsMap.year) <- val.TsMap.year[iyear]
+                .cdtData$EnvData$plotVar$yearseas <- val.TsMap.year[iyear]
 
                 ret <- read.PicsaTSData()
                 if(is.null(ret)) return(NULL)
@@ -534,12 +652,15 @@ SeasonAnalysisPanelCmd <- function(){
         })
 
         tkconfigure(bt.TsMap.next, command = function(){
+            get.analysis.method()
+
             if(!is.null(.cdtData$EnvData$tsdata)){
-                range.TsMap.year <- range(as.numeric(format(.cdtData$EnvData$output$start.date, '%Y')))
-                iyear <- as.numeric(str_trim(tclvalue(tkget(.cdtData$EnvData$spin.TsMap.year))))
+                val.TsMap.year <- format(.cdtData$EnvData$output$start.date, '%Y')
+                iyear <- which(val.TsMap.year == .cdtData$EnvData$plotVar$yearseas)
                 iyear <- iyear + 1
-                if(iyear > range.TsMap.year[2]) iyear <- range.TsMap.year[1]
-                tkset(.cdtData$EnvData$spin.TsMap.year, iyear)
+                if(iyear > length(val.TsMap.year)) iyear <- 1
+                tclvalue(var.TsMap.year) <- val.TsMap.year[iyear]
+                .cdtData$EnvData$plotVar$yearseas <- val.TsMap.year[iyear]
 
                 ret <- read.PicsaTSData()
                 if(is.null(ret)) return(NULL)
@@ -550,76 +671,100 @@ SeasonAnalysisPanelCmd <- function(){
 
         #################
 
-        tkgrid(cb.TsMap.picsavar, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.TsMap.dryspell, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(.cdtData$EnvData$spin.TsMap.dryspell, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkgrid(bt.TsMap.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(.cdtData$EnvData$spin.TsMap.year, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.TsMap.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.TsMap.plot, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkgrid(bt.TsMap.Opt, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        infobulle(cb.TsMap.picsavar, "Select the variable to plot")
-        status.bar.display(cb.TsMap.picsavar, "Select the variable to plot")
-        infobulle(.cdtData$EnvData$spin.TsMap.dryspell, "Dry spell definition (continuous dry days)")
-        status.bar.display(.cdtData$EnvData$spin.TsMap.dryspell, "Dry spell definition (continuous dry days)")
-        infobulle(bt.TsMap.prev, "Plot the previous year")
-        status.bar.display(bt.TsMap.prev, "Plot the previous year")
-        infobulle(bt.TsMap.next, "Plot the next year")
-        status.bar.display(bt.TsMap.next, "Plot the next year")
-        infobulle(.cdtData$EnvData$spin.TsMap.year, "Select the year to plot")
-        status.bar.display(.cdtData$EnvData$spin.TsMap.year, "Select the year to plot")
-
-        #################
-
         tkbind(cb.TsMap.picsavar, "<<ComboboxSelected>>", function(){
-            stateDrySpl <- if(tclvalue(.cdtData$EnvData$varPICSA) == "Dry Spells") "normal" else "disabled"
-            tkconfigure(.cdtData$EnvData$spin.TsMap.dryspell, state = stateDrySpl)
+            get.analysis.method()
 
-            ret <- read.PicsaTSData()
-            if(is.null(ret)) return(NULL)
+            stateDrySpl <- if(.cdtData$EnvData$plotVar$varPICSA == "dryspell") "normal" else "disabled"
+            tkconfigure(spin.TsMap.dryspell, state = stateDrySpl)
+
+            if(!is.null(.cdtData$EnvData$output)){
+                ret <- read.PicsaTSData()
+                if(is.null(ret)) return(NULL)
+            }
         })
 
         ##############################################
 
-        framePICSACLMMap <- ttklabelframe(subfr3, text = "Climatological Analysis", relief = 'groove')
+            funClimMapStat <- function(analysis.mthd){
+                tkdestroy(fr.ClimMap.Stat)
+                fr.ClimMap.Stat <<- tkframe(framePICSACLMMap)
 
-        ANALYSIS <- c('Average', 'Median', 'Standard deviation', 'Trend', 'Percentiles', 'Frequency')
-        .cdtData$EnvData$analysis.method <- tclVar('Average')
-        .cdtData$EnvData$mth.perc <- tclVar(95)
-        .cdtData$EnvData$low.thres <- tclVar("09-15")
-        .cdtData$EnvData$up.thres <- tclVar("11-30")
-        .cdtData$EnvData$trend <- tclVar("Change (trend) / year")
-        TRENDOPT <- c("Change (trend) / year", "Change (trend) over the period", "Change (trend) / average (in %)")
+                ############
 
-        statePrc <- if(tclvalue(.cdtData$EnvData$analysis.method) == 'Percentiles') 'normal' else 'disabled'
-        stateFrq <- if(tclvalue(.cdtData$EnvData$analysis.method) == 'Frequency') 'normal' else 'disabled'
-        stateTrend <- if(tclvalue(.cdtData$EnvData$analysis.method) == 'Trend') 'normal' else 'disabled'
+                if(analysis.mthd == 'perc'){
+                    en.Percent <- tkentry(fr.ClimMap.Stat, textvariable = percentClimAna, width = 4, justify = 'center')
+                    th.Percent <- tklabel(fr.ClimMap.Stat, text = lang.dlg[['label']][['17']], anchor = 'w', justify = 'left')
+                    txt.Percent <- tklabel(fr.ClimMap.Stat, text = lang.dlg[['label']][['18']])
 
-        cb.anMthd <- ttkcombobox(framePICSACLMMap, values = ANALYSIS, textvariable = .cdtData$EnvData$analysis.method, width = largeur3)
-        txt.Percent <- tklabel(framePICSACLMMap, text = "Percentile", anchor = 'w', justify = 'left')
-        en.Percent <- tkentry(framePICSACLMMap, textvariable = .cdtData$EnvData$mth.perc, width = 3, state = statePrc)
+                    tkgrid(en.Percent, th.Percent, txt.Percent)
 
-        txt.Freq1 <- tklabel(framePICSACLMMap, text = "Between", anchor = 'w', justify = 'left')
-        en.Freq1 <- tkentry(framePICSACLMMap, textvariable = .cdtData$EnvData$low.thres, width = 5, state = stateFrq)
-        txt.Freq2 <- tklabel(framePICSACLMMap, text = "And", anchor = 'w', justify = 'left')
-        en.Freq2 <- tkentry(framePICSACLMMap, textvariable = .cdtData$EnvData$up.thres, width = 5, state = stateFrq)
-        bt.ClimMap.plot <- ttkbutton(framePICSACLMMap, text = .cdtEnv$tcl$lang$global[['button']][['3']])
-        cb.Trend <- ttkcombobox(framePICSACLMMap, values = TRENDOPT, textvariable = .cdtData$EnvData$trend, width = largeur3, state = stateTrend)
-        bt.ClimMap.Opt <- ttkbutton(framePICSACLMMap, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+                    helpWidget(en.Percent, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
+                }
+                if(analysis.mthd == 'freq'){
+                    txt.Freq1 <- tklabel(fr.ClimMap.Stat, text = "Between", anchor = 'e', justify = 'right')
+                    en.Freq1 <- tkentry(fr.ClimMap.Stat, textvariable = freqLowClimAna, width = 7, justify = 'center')
+                    txt.Freq2 <- tklabel(fr.ClimMap.Stat, text = "And")
+                    en.Freq2 <- tkentry(fr.ClimMap.Stat, textvariable = freqUpClimAna, width = 7, justify = 'center')
+
+                    tkgrid(txt.Freq1, en.Freq1, txt.Freq2, en.Freq2)
+
+                    helpWidget(en.Freq1, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+                    helpWidget(en.Freq2, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
+                }
+                if(analysis.mthd == 'trend'){
+                    cb.Trend <- ttkcombobox(fr.ClimMap.Stat, values = CbtrendAnalVAL, textvariable = trendClimAna, width = largeur8)
+
+                    tkgrid(cb.Trend)
+                }
+
+                ############
+                tkgrid(fr.ClimMap.Stat, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 10, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+            }
+
+        ##############################################
+
+        framePICSACLMMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['19']], relief = 'groove')
+
+        analysisMethod <- tclVar()
+        CbAnalysisVAL <- lang.dlg[['combobox']][['2']]
+        AnalysisVAL <- c('mean', 'med', 'std', 'trend', 'perc', 'freq')
+        tclvalue(analysisMethod) <- CbAnalysisVAL[AnalysisVAL %in% GeneralParameters$analysis$method]
+
+        .cdtData$EnvData$analysis$method <- GeneralParameters$analysis$method
+
+        cb.ClimMap.mth <- ttkcombobox(framePICSACLMMap, values = CbAnalysisVAL, textvariable = analysisMethod, justify = 'center', width = largeur9)
+        bt.ClimMap.plot <- ttkbutton(framePICSACLMMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
+        bt.ClimMap.Opt <- ttkbutton(framePICSACLMMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
+
+        #####################
+
+        fr.ClimMap.Stat <- tkframe(framePICSACLMMap)
+
+        trendClimAna <- tclVar()
+        CbtrendAnalVAL <- lang.dlg[['combobox']][['3']]
+        trendAnalVAL <- c('trendEY', 'trendOP', 'trendAP')
+        tclvalue(trendClimAna) <- CbtrendAnalVAL[trendAnalVAL %in% GeneralParameters$analysis$trend]
+
+        percentClimAna <- tclVar(GeneralParameters$analysis$mth.perc)
+        freqLowClimAna <- tclVar(GeneralParameters$analysis$low.thres)
+        freqUpClimAna <- tclVar(GeneralParameters$analysis$up.thres)
+
+        .cdtData$EnvData$analysis$trend <- GeneralParameters$analysis$trend
+        .cdtData$EnvData$analysis$mth.perc <- GeneralParameters$analysis$mth.perc
+        .cdtData$EnvData$analysis$low.thres <- GeneralParameters$analysis$low.thres
+        .cdtData$EnvData$analysis$up.thres <- GeneralParameters$analysis$up.thres
+
+        ######
+
+        funClimMapStat(GeneralParameters$analysis$method)
+
+        #####################
+
+        tkgrid(cb.ClimMap.mth, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.ClimMap.Opt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.ClimMap.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
 
         #################
-
-        .cdtData$EnvData$tab$pointSize.climMap <- NULL
-        .cdtData$EnvData$climMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-                                            userCol = list(custom = FALSE, color = NULL),
-                                            userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                            title = list(user = FALSE, title = ''),
-                                            colkeyLab = list(user = FALSE, label = ''),
-                                            scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                            pointSize = .cdtData$EnvData$tab$pointSize.climMap)
 
         tkconfigure(bt.ClimMap.Opt, command = function(){
             if(!is.null(.cdtData$EnvData$climdata)){
@@ -637,8 +782,13 @@ SeasonAnalysisPanelCmd <- function(){
                 .cdtData$EnvData$tab$pointSize.climMap <- .cdtData$EnvData$climMapOp$pointSize
         })
 
+        #################
+
         .cdtData$EnvData$tab$ClimMap <- NULL
+
         tkconfigure(bt.ClimMap.plot, command = function(){
+            get.analysis.method()
+
             ret <- calculate.ClimStat()
             if(is.null(ret)) return(NULL)
 
@@ -647,36 +797,9 @@ SeasonAnalysisPanelCmd <- function(){
 
         #################
 
-        tkgrid(cb.anMthd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.Percent, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.Percent, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkgrid(txt.Freq1, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.Freq1, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.Freq2, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.Freq2, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.ClimMap.plot, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.Trend, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.ClimMap.Opt, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        infobulle(cb.anMthd, "Select the analysis method")
-        status.bar.display(cb.anMthd, "Select the analysis method")
-        infobulle(en.Percent, "Enter the nth percentile to be calculated")
-        status.bar.display(en.Percent, "Enter the nth percentile to be calculated")
-        infobulle(en.Freq1, "Enter the lower bound of the interval to count the number of occurrences.\nIn the case of Onset and Cessation, the limit should be of the form Month-Day,\nnumber otherwise")
-        status.bar.display(en.Freq1, "Enter the lower bound of the interval to count the number of occurrences.\nIn the case of Onset and Cessation, the limit should be of the form Month-Day,\nnumber otherwise")
-        infobulle(en.Freq2, "Enter the upper bound of the interval to count the number of occurrences.\nIn the case of Onset and Cessation, the limit should be of the form Month-Day,\nnumber otherwise")
-        status.bar.display(en.Freq2, "Enter the upper bound of the interval to count the number of occurrences.\nIn the case of Onset and Cessation, the limit should be of the form Month-Day,\nnumber otherwise")
-
-        #################
-        tkbind(cb.anMthd, "<<ComboboxSelected>>", function(){
-            statePrc <- if(tclvalue(.cdtData$EnvData$analysis.method) == 'Percentiles') 'normal' else 'disabled'
-            stateFrq <- if(tclvalue(.cdtData$EnvData$analysis.method) == 'Frequency') 'normal' else 'disabled'
-            stateTrend <- if(tclvalue(.cdtData$EnvData$analysis.method) == 'Trend') 'normal' else 'disabled'
-            tkconfigure(en.Percent, state = statePrc)
-            tkconfigure(en.Freq1, state = stateFrq)
-            tkconfigure(en.Freq2, state = stateFrq)
-            tkconfigure(cb.Trend, state = stateTrend)
+        tkbind(cb.ClimMap.mth, "<<ComboboxSelected>>", function(){
+            analysis.method <- AnalysisVAL[CbAnalysisVAL %in% str_trim(tclvalue(analysisMethod))]
+            funClimMapStat(analysis.method)
         })
 
         ##############################################
@@ -685,8 +808,8 @@ SeasonAnalysisPanelCmd <- function(){
 
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
-        txt.plotType <- tklabel(framePlotType, text = "Plot Type", anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur3)
+        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['20']], anchor = 'e', justify = 'right')
+        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur3)
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -694,6 +817,9 @@ SeasonAnalysisPanelCmd <- function(){
         ###############
 
         tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
+            get.analysis.method()
+
+            ############
             ret <- read.PicsaTSData()
             if(is.null(ret)) return(NULL)
 
@@ -716,150 +842,102 @@ SeasonAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        framePICSATSGRAPH <- ttklabelframe(subfr4, text = "Time Series Graph", relief = 'groove')
+        framePICSATSGRAPH <- ttklabelframe(subfr4, text = lang.dlg[['label']][['21']], relief = 'groove')
 
-        varTSPLOT <- c("From Maps", "Daily Rainfall")
-        .cdtData$EnvData$plot.maps$varTSp <- tclVar("From Maps")
+        CbvarTSPLOTVAL <- lang.dlg[['combobox']][['4']]
+        varTSPLOTVAL <- c('maps', 'raints')
+        varTSp <- tclVar()
+        tclvalue(varTSp) <- CbvarTSPLOTVAL[varTSPLOTVAL %in% GeneralParameters$graph$varTSp]
 
-        typeTSPLOT <- c("Line", "Barplot", "Probability", "ENSO-Line", "ENSO-Barplot", "ENSO-Proba", "Anomaly")
-        .cdtData$EnvData$plot.maps$typeTSp <- tclVar("Line")
+        .cdtData$EnvData$plot.maps$varTSp <- GeneralParameters$graph$varTSp
+
+        CbtypeTSPLOTVAL <- lang.dlg[['combobox']][['5']]
+        typeTSPLOTVAL <- c('line', 'bar', 'proba', 'eline', 'ebar', 'eproba', 'anom')
+        typeTSp <- tclVar()
+        tclvalue(typeTSp) <- CbtypeTSPLOTVAL[typeTSPLOTVAL %in% GeneralParameters$graph$typeTSp]
+
+        .cdtData$EnvData$plot.maps$typeTSp <- GeneralParameters$graph$typeTSp
         .cdtData$EnvData$plot.maps$averageTSp <- tclVar(FALSE)
         .cdtData$EnvData$plot.maps$tercileTSp <- tclVar(FALSE)
         .cdtData$EnvData$plot.maps$trendTSp <- tclVar(FALSE)
 
-        stateTsp <- if(tclvalue(.cdtData$EnvData$plot.maps$varTSp) == "From Maps") "normal" else "disabled"
-        stateType <- if(tclvalue(.cdtData$EnvData$plot.maps$typeTSp) %in% c("Line", "ENSO-Line") && tclvalue(.cdtData$EnvData$plot.maps$varTSp) == "From Maps") "normal" else "disabled"
+        stateTsp <- if(GeneralParameters$graph$varTSp == "maps") "normal" else "disabled"
+        stateType <- if(GeneralParameters$graph$typeTSp %in% c("line", "eline") &&
+                        GeneralParameters$graph$varTSp == "maps") "normal" else "disabled"
 
-        frTS0 <- tkframe(framePICSATSGRAPH)
-        cb.varTSp <- ttkcombobox(frTS0, values = varTSPLOT, textvariable = .cdtData$EnvData$plot.maps$varTSp, width = largeur4)
-        cb.typeTSp <- ttkcombobox(frTS0, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur5, state = stateTsp)
-        bt.TsGraph.plot <- ttkbutton(frTS0, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 8)
-        tkgrid(cb.varTSp, cb.typeTSp, bt.TsGraph.plot)
+        cb.varTSp <- ttkcombobox(framePICSATSGRAPH, values = CbvarTSPLOTVAL, textvariable = varTSp, justify = 'center', width = largeur10)
+        cb.typeTSp <- ttkcombobox(framePICSATSGRAPH, values = CbtypeTSPLOTVAL, textvariable = typeTSp, justify = 'center', width = largeur11, state = stateTsp)
+
+        bt.TsGraph.plot <- ttkbutton(framePICSATSGRAPH, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
+        bt.TsGraph.Opt <- ttkbutton(framePICSATSGRAPH, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5, state = stateTsp)
 
         frTS1 <- tkframe(framePICSATSGRAPH)
-        chk.meanTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$averageTSp, text = "Add Mean", anchor = 'w', justify = 'left', state = stateType)
-        chk.tercTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$tercileTSp, text = "Add Terciles", anchor = 'w', justify = 'left', state = stateType)
-        chk.trendTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$trendTSp, text = "Add Trend", anchor = 'w', justify = 'left', state = stateType)
+        chk.meanTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$averageTSp, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left', state = stateType)
+        chk.tercTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$tercileTSp, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left', state = stateType)
+        chk.trendTSp <- tkcheckbutton(frTS1, variable = .cdtData$EnvData$plot.maps$trendTSp, text = lang.dlg[['checkbutton']][['5']], anchor = 'w', justify = 'left', state = stateType)
         tkgrid(chk.meanTSp, chk.tercTSp, chk.trendTSp)
 
-        bt.TsGraph.Opt <- ttkbutton(framePICSATSGRAPH, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8, state = stateTsp)
+        #################
+
+        tkgrid(cb.varTSp, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.typeTSp, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 10, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsGraph.Opt, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsGraph.plot, row = 2, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frTS1, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         #################
-        .cdtData$EnvData$TSGraphOp <- list(
-                                anomaly = list(
-                                        anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1981, endYr.anom = 2010),
-                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                        ylim = list(is.min = FALSE, min = -100, is.max = FALSE, max = 100),
-                                        axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                        title = list(is.title = FALSE, title = '', position = 'top'),
-                                        colors = list(negative = "blue", positive = "red")
-                                        ),
-                                bar = list(
-                                    xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                    title = list(is.title = FALSE, title = '', position = 'top'),
-                                    colors = list(col = "darkblue")
-                                    ),
-                                line = list(
-                                    xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                    title = list(is.title = FALSE, title = '', position = 'top'),
-                                    plot = list(type = 'both',
-                                        col = list(line = "red", points = "blue"),
-                                        lwd = 2, cex = 1.4),
-                                    legend = list(
-                                        is = list(mean = FALSE, tercile = FALSE, linear = FALSE),
-                                        add = list(mean = FALSE, tercile = FALSE, linear = FALSE),
-                                        col = list(mean = "black", tercile1 = "green", tercile2 = "blue", linear = "purple3"),
-                                        text = list(mean = "Average", tercile1 = "Tercile 0.33333", tercile2 = "Tercile 0.66666", linear = "Trend line"),
-                                        lwd = list(mean = 2, tercile = 2, linear = 2))
-                                    ),
-                                proba = list(
-                                    xlim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                    title = list(is.title = FALSE, title = '', position = 'top'),
-                                    plot = list(type = 'both',
-                                        col = list(line = "red", points = "blue"),
-                                        lwd = 2, cex = 0.8),
-                                    proba = list(theoretical = TRUE, col = 'black', lwd = 2)
-                                    ),
-                                line.enso = list(
-                                    xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                    title = list(is.title = FALSE, title = '', position = 'top'),
-                                    plot = list(lwd = 2, cex = 2, col = list(line = "black",
-                                                points = c("blue", "gray", "red"))),
-                                    legend = list(
-                                        is = list(mean = FALSE, tercile = FALSE, linear = FALSE),
-                                        add = list(mean = FALSE, tercile = FALSE, linear = FALSE),
-                                        col = list(mean = "darkblue", tercile1 = "chartreuse4", tercile2 = "darkgoldenrod4", linear = "purple3"),
-                                        text = list(mean = "Average", tercile1 = "Tercile 0.33333", tercile2 = "Tercile 0.66666", linear = "Trend line"),
-                                        lwd = list(mean = 2, tercile = 2, linear = 2))
-                                    ),
-                                bar.enso = list(
-                                    xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
-                                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                    title = list(is.title = FALSE, title = '', position = 'top'),
-                                    colors = list(col = c("blue", "gray", "red"))
-                                    ),
-                                proba.enso = list(
-                                    xlim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
-                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                                    title = list(is.title = FALSE, title = '', position = 'top'),
-                                    plot = list(type = 'both', lwd = 2, cex = 1.4,
-                                        all = list(line = "black", points = "lightgray"),
-                                        nina = list(line = "blue", points = "lightblue"),
-                                        neutre = list(line = "gray", points = "lightgray"),
-                                        nino = list(line = "red", points = "lightpink"))
-                                    )
-                                )
 
         tkconfigure(bt.TsGraph.Opt, command = function(){
-            suffix.fun <- switch(tclvalue(.cdtData$EnvData$plot.maps$typeTSp),
-                                    "Anomaly" = "Anomaly",
-                                    "Barplot" = "Bar",
-                                    "Line" = "Line",
-                                    "Probability" = "Proba",
-                                    "ENSO-Line" = "LineENSO",
-                                    "ENSO-Barplot" = "BarENSO",
-                                    "ENSO-Proba" = "ProbaENSO")
+            vtypeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            suffix.fun <- switch(vtypeTSp,
+                                 'anom' = "Anomaly",
+                                 'bar' = "Bar",
+                                 'line' = "Line",
+                                 'proba' = "Proba",
+                                 'eline' = "LineENSO",
+                                 'ebar' = "BarENSO",
+                                 'eproba' = "ProbaENSO")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
         })
 
+        #################
+
         .cdtData$EnvData$tab$Tsplot <- NULL
+
         tkconfigure(bt.TsGraph.plot, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+
             if(!is.null(.cdtData$EnvData$output)){
                 imgContainer <- CDT.Display.Graph(SeasonAnalysis.plot.TSGraph, .cdtData$EnvData$tab$Tsplot, 'Time-Series-Plot')
                 .cdtData$EnvData$tab$Tsplot <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Tsplot)
             }
         })
 
-        tkgrid(frTS0, row = 0, column = 0, sticky = 'we', pady = 1, columnspan = 3)
-        tkgrid(frTS1, row = 1, column = 0, sticky = 'we', pady = 1, columnspan = 3)
-        tkgrid(bt.TsGraph.Opt, row = 2, column = 2, sticky = 'e', pady = 1, columnspan = 1)
-
         #################
 
         tkbind(cb.varTSp, "<<ComboboxSelected>>", function(){
-            stateTsp <- if(tclvalue(.cdtData$EnvData$plot.maps$varTSp) == "From Maps") "normal" else "disabled"
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+
+            stateTsp <- if(vvarTSp == "maps") "normal" else "disabled"
             tkconfigure(cb.typeTSp, state = stateTsp)
             tkconfigure(bt.TsGraph.Opt, state = stateTsp)
 
-            stateType <- if(tclvalue(.cdtData$EnvData$plot.maps$typeTSp) %in% c("Line", "ENSO-Line") && tclvalue(.cdtData$EnvData$plot.maps$varTSp) == "From Maps") "normal" else "disabled"
+            stateType <- if(.cdtData$EnvData$plot.maps$typeTSp %in% c('line', 'eline') &&
+                            .cdtData$EnvData$plot.maps$varTSp == "maps") "normal" else "disabled"
             tkconfigure(chk.meanTSp, state = stateType)
             tkconfigure(chk.tercTSp, state = stateType)
             tkconfigure(chk.trendTSp, state = stateType)
         })
 
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
-            stateType <- if(tclvalue(.cdtData$EnvData$plot.maps$typeTSp) %in% c("Line", "ENSO-Line") && tclvalue(.cdtData$EnvData$plot.maps$varTSp) == "From Maps") "normal" else "disabled"
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+
+            stateType <- if(.cdtData$EnvData$plot.maps$typeTSp %in% c('line', 'eline') &&
+                            .cdtData$EnvData$plot.maps$varTSp == "maps") "normal" else "disabled"
             tkconfigure(chk.meanTSp, state = stateType)
             tkconfigure(chk.tercTSp, state = stateType)
             tkconfigure(chk.trendTSp, state = stateType)
@@ -888,7 +966,7 @@ SeasonAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameSTNCrds <- ttklabelframe(subfr4, text = "Station/Coordinates", relief = 'groove')
+        frameSTNCrds <- ttklabelframe(subfr4, text = lang.dlg[['label']][['22']], relief = 'groove')
 
         frTS2 <- tkframe(frameSTNCrds)
         .cdtData$EnvData$plot.maps$lonLOC <- tclVar()
@@ -909,16 +987,22 @@ SeasonAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr5, text = "Boundaries", relief = 'groove')
+        frameSHP <- ttklabelframe(subfr5, text = lang.dlg[['label']][['23']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
         file.plotShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = "Options", state = stateSHP)
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['6']], anchor = 'w', justify = 'left')
+        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur2, state = stateSHP)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
+
+        ########
+        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
         tkconfigure(bt.addshp, command = function(){
@@ -938,17 +1022,10 @@ SeasonAnalysisPanelCmd <- function(){
         })
 
         ########
-        .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
         tkconfigure(bt.addshpOpt, command = function(){
             .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
         })
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         #################
         tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
@@ -978,13 +1055,22 @@ SeasonAnalysisPanelCmd <- function(){
 
         if(.cdtData$EnvData$output$data.type == "cdtstation"){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
-            txt.stnSel <- tklabel(frTS2, text = "Select a station to plot", anchor = 'w', justify = 'left')
-            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = 6)
-            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = 6)
+            txt.stnSel <- tklabel(frTS2, text = lang.dlg[['label']][['24']], anchor = 'w', justify = 'left')
+            bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = largeur7)
+            bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = largeur7)
             cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur6)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
+            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+            #######
             tkconfigure(bt.stnID.prev, command = function(){
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+
                 if(!is.null(.cdtData$EnvData$output)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
@@ -997,6 +1083,9 @@ SeasonAnalysisPanelCmd <- function(){
             })
 
             tkconfigure(bt.stnID.next, command = function(){
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+
                 if(!is.null(.cdtData$EnvData$output)){
                     istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
@@ -1007,17 +1096,12 @@ SeasonAnalysisPanelCmd <- function(){
                     .cdtData$EnvData$tab$Tsplot <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Tsplot)
                 }
             })
-
-            tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         }else{
-            txt.crdSel <- tklabel(frTS2, text = "Enter longitude and latitude to plot", anchor = 'w', justify = 'left')
-            txt.lonLoc <- tklabel(frTS2, text = "Longitude", anchor = 'e', justify = 'right')
-            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
-            txt.latLoc <- tklabel(frTS2, text = "Latitude", anchor = 'e', justify = 'right')
-            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+            txt.crdSel <- tklabel(frTS2, text = lang.dlg[['label']][['25']], anchor = 'w', justify = 'left')
+            txt.lonLoc <- tklabel(frTS2, text = lang.dlg[['label']][['26']], anchor = 'e', justify = 'right')
+            en.lonLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = largeur12)
+            txt.latLoc <- tklabel(frTS2, text = lang.dlg[['label']][['27']], anchor = 'e', justify = 'right')
+            en.latLoc <- tkentry(frTS2, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = largeur12)
             stnIDTSPLOT <- ""
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
 
@@ -1040,8 +1124,8 @@ SeasonAnalysisPanelCmd <- function(){
             plot.type <- c("Pixels", "Points")
             .cdtData$EnvData$plot.maps$.data.type <- "Points"
 
-            .cdtData$EnvData$climMapOp$pointSize <- 0.7
-            .cdtData$EnvData$TSMapOp$pointSize <- 0.7
+            .cdtData$EnvData$climMapOp$pointSize <- 1.0
+            .cdtData$EnvData$TSMapOp$pointSize <- 1.0
         }else{
             plot.type <- c("Pixels", "FilledContour")
             .cdtData$EnvData$plot.maps$.data.type <- "Grid"
@@ -1049,12 +1133,43 @@ SeasonAnalysisPanelCmd <- function(){
         tkconfigure(cb.plotType, values = plot.type)
     }
 
+    #####################
+
+    get.analysis.method <- function(){
+        .cdtData$EnvData$plotVar$varPICSA <- varPICSAVAL[CbvarPICSAVAL %in% str_trim(tclvalue(varPICSA))]
+        .cdtData$EnvData$plotVar$dryspell <- as.numeric(str_trim(tclvalue(tkget(spin.TsMap.dryspell))))
+        .cdtData$EnvData$plotVar$yearseas <- str_trim(tclvalue(var.TsMap.year))
+
+        .cdtData$EnvData$analysis$method <- AnalysisVAL[CbAnalysisVAL %in% str_trim(tclvalue(analysisMethod))]
+        .cdtData$EnvData$analysis$trend <- trendAnalVAL[CbtrendAnalVAL %in% str_trim(tclvalue(trendClimAna))]
+        .cdtData$EnvData$analysis$mth.perc <- as.numeric(str_trim(tclvalue(percentClimAna)))
+
+        xlow <- str_trim(tclvalue(freqLowClimAna))
+        xup <- str_trim(tclvalue(freqUpClimAna))
+
+        # if(.cdtData$EnvData$plotVar$varPICSA %in% c("onset", "cessation")){
+        #     dlo <- try(as.POSIXlt(as.Date(paste(2015, xlow, sep = '-'))), silent = TRUE)
+        #     dup <- try(as.POSIXlt(as.Date(paste(2015, xup, sep = '-'))), silent = TRUE)
+        #     if(inherits(dlo, "try-error") | inherits(dup, "try-error"))
+        #         Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, 'e')
+        # }else{
+        #     dlow <- as.numeric(xlow)
+        #     dup <- as.numeric(xup)
+        #     if(is.na(xlow) | is.na(xup))
+        #         Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, 'e')
+        # }
+
+        .cdtData$EnvData$analysis$low.thres <- xlow
+        .cdtData$EnvData$analysis$up.thres <- xup
+    }
+
     #######################################################################################################
 
     load.PICSA.Data <- function(){
-        range.TsMap.year <- range(as.numeric(format(.cdtData$EnvData$output$start.date, '%Y')))
-        tkconfigure(.cdtData$EnvData$spin.TsMap.year, from = range.TsMap.year[1], to = range.TsMap.year[2])
-        tkset(.cdtData$EnvData$spin.TsMap.year, range.TsMap.year[2])
+        val.TsMap.year <- format(.cdtData$EnvData$output$start.date, '%Y')
+        tkconfigure(cb.TsMap.year, values = val.TsMap.year)
+        tclvalue(var.TsMap.year) <- val.TsMap.year[length(val.TsMap.year)]
+        .cdtData$EnvData$plotVar$yearseas <- tclvalue(var.TsMap.year)
 
         ###################
         ret <- read.PicsaTSData()
@@ -1062,6 +1177,7 @@ SeasonAnalysisPanelCmd <- function(){
 
         ###################
         plotCHOIX <- c("anomaly", "bar", "line", "line.enso", "bar.enso")
+        range.TsMap.year <- range(as.numeric(val.TsMap.year))
         for(pp in plotCHOIX){
             .cdtData$EnvData$TSGraphOp[[pp]]$xlim$min <- range.TsMap.year[1]
             .cdtData$EnvData$TSGraphOp[[pp]]$xlim$max <- range.TsMap.year[2]
@@ -1079,7 +1195,7 @@ SeasonAnalysisPanelCmd <- function(){
         }else file.daily.rr <- .cdtData$EnvData$output$daily.precip
 
         if(!file.exists(file.daily.rr)){
-            Insert.Messages.Out(paste(file.daily.rr, 'not found'), format = TRUE)
+            Insert.Messages.Out(paste(file.daily.rr, lang.dlg[['message']][['5']]), TRUE, 'e')
             return(NULL)
         }
 
@@ -1096,29 +1212,29 @@ SeasonAnalysisPanelCmd <- function(){
             tcl('update')
         })
 
-        tsdata.dir <- switch(str_trim(tclvalue(.cdtData$EnvData$varPICSA)),
-                            "Onset" = "Onset_days",
-                            "Cessation" = "Cessation_days",
-                            "Season Length" = "Season_length",
-                            "Seasonal Rainfall Amounts" = "Seasonal_rain_amount",
-                            "Number of rain day" = "Number_rainy_day",
-                            "Maximum daily rain" = "Maximum_rain_daily",
-                            "Total rain when RR>95thPerc" = "Total_rain_above_Perc95th",
-                            "Nb of day when RR>95thPerc" = "Number_day_above_Perc95th",
-                            "Longest Dry Spell" = "Longest_dry_spell",
-                            "Dry Spells" = "Dry_Spells")
+        tsdata.dir <- switch(.cdtData$EnvData$plotVar$varPICSA,
+                             'onset' = "Onset_days",
+                             'cessation' = "Cessation_days",
+                             'lengthSeas' = "Season_length",
+                             'totrainSeas' = "Seasonal_rain_amount",
+                             'nbrainSeas' = "Number_rainy_day",
+                             'max24hrain' = "Maximum_rain_daily",
+                             'totrain95P' = "Total_rain_above_Perc95th",
+                             'nbrain95P' = "Number_day_above_Perc95th",
+                             'longdryspell' = "Longest_dry_spell",
+                             'dryspell' = "Dry_Spells")
 
         start.date <- format(.cdtData$EnvData$output$start.date, '%Y%m%d')
         start.dateYear <- format(.cdtData$EnvData$output$start.date, '%Y')
-        idaty <- start.date[start.dateYear == str_trim(tclvalue(tkget(.cdtData$EnvData$spin.TsMap.year)))]
-        dryspl <- as.numeric(str_trim(tclvalue(tkget(.cdtData$EnvData$spin.TsMap.dryspell))))
+        idaty <- start.date[start.dateYear == .cdtData$EnvData$plotVar$yearseas]
+        dryspl <- .cdtData$EnvData$plotVar$dryspell
 
         if(.cdtData$EnvData$output$data.type == "cdtstation"){
             tsdata.path <- file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET")
             filetsdata <- file.path(tsdata.path, paste0(tsdata.dir, ".rds"))
 
             if(!file.exists(filetsdata)){
-                Insert.Messages.Out(paste(filetsdata, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filetsdata, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 
@@ -1131,8 +1247,7 @@ SeasonAnalysisPanelCmd <- function(){
                     if(.cdtData$EnvData$filetsdata == filetsdata) readTsData <- FALSE
 
             if(readTsData){
-                .cdtData$EnvData$tsdata <- list(date = start.date,
-                                            data = readRDS(filetsdata))
+                .cdtData$EnvData$tsdata <- list(date = start.date, data = readRDS(filetsdata))
                 .cdtData$EnvData$filetsdata <- filetsdata
             }
 
@@ -1143,7 +1258,7 @@ SeasonAnalysisPanelCmd <- function(){
                     if(.cdtData$EnvData$filetsdata == filetsdata)
                         if(.cdtData$EnvData$rasterTsData == idaty) rasterTsData <- FALSE
 
-            if(tsdata.dir == "Dry_Spells")
+            if(.cdtData$EnvData$plotVar$varPICSA == "dryspell")
                 if(!is.null(.cdtData$EnvData$oldDryspell))
                     if(.cdtData$EnvData$oldDryspell != dryspl & !rasterTsData) rasterTsData <- TRUE
 
@@ -1154,7 +1269,7 @@ SeasonAnalysisPanelCmd <- function(){
                 X0 <- .cdtData$EnvData$output$data$lon
                 Y0 <- .cdtData$EnvData$output$data$lat
                 idt <- which(.cdtData$EnvData$tsdata$date == idaty)
-                if(tsdata.dir == "Dry_Spells"){
+                if(.cdtData$EnvData$plotVar$varPICSA == "dryspell"){
                     tmp <- .cdtData$EnvData$tsdata$data[idt, ]
                     nval <- sapply(tmp, function(x) (length(x) == 1) & is.na(x[1]))
                     tmp <- sapply(tmp, function(x) sum(!is.na(x) & x >= dryspl))
@@ -1183,7 +1298,7 @@ SeasonAnalysisPanelCmd <- function(){
                 rm(tmp)
             }
         }else{
-            if(tsdata.dir == "Dry_Spells"){
+            if(.cdtData$EnvData$plotVar$varPICSA == "dryspell"){
                 tsdata.path <- file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET", tsdata.dir)
                 tsdata.index <- file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET", "CDTDATASET.rds")
                 filetsdata <- tsdata.path
@@ -1193,7 +1308,7 @@ SeasonAnalysisPanelCmd <- function(){
             }
 
             if(!file.exists(filetsdata)){
-                Insert.Messages.Out(paste(filetsdata, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filetsdata, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 
@@ -1202,12 +1317,12 @@ SeasonAnalysisPanelCmd <- function(){
                 if(!is.null(.cdtData$EnvData$filetsdata))
                     if(.cdtData$EnvData$filetsdata == filetsdata) readTsData <- FALSE
 
-            if(tsdata.dir == "Dry_Spells")
+            if(.cdtData$EnvData$plotVar$varPICSA == "dryspell")
                 if(!is.null(.cdtData$EnvData$oldDryspell))
                     if(.cdtData$EnvData$oldDryspell != dryspl & !rasterTsData) rasterTsData <- TRUE
 
             if(readTsData){
-                if(tsdata.dir == "Dry_Spells"){
+                if(.cdtData$EnvData$plotVar$varPICSA == "dryspell"){
                     cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
                     .cdtData$EnvData$tsdata <- readCdtDatasetChunk.sepdir.dates.order(tsdata.index, tsdata.path, idaty,
                                                                                       cdtParallelCond, onedate = TRUE)
@@ -1255,32 +1370,29 @@ SeasonAnalysisPanelCmd <- function(){
             tcl('update')
         })
 
-        varPICSA <- str_trim(tclvalue(.cdtData$EnvData$varPICSA))
-        tsdata.dir <- switch(varPICSA,
-                            "Onset" = "Onset_days",
-                            "Cessation" = "Cessation_days",
-                            "Season Length" = "Season_length",
-                            "Seasonal Rainfall Amounts" = "Seasonal_rain_amount",
-                            "Number of rain day" = "Number_rainy_day",
-                            "Maximum daily rain" = "Maximum_rain_daily",
-                            "Total rain when RR>95thPerc" = "Total_rain_above_Perc95th",
-                            "Nb of day when RR>95thPerc" = "Number_day_above_Perc95th",
-                            "Longest Dry Spell" = "Dry_Spells",
-                            "Dry Spells" = "Dry_Spells")
+        tsdata.dir <- switch(.cdtData$EnvData$plotVar$varPICSA,
+                             'onset' = "Onset_days",
+                             'cessation' = "Cessation_days",
+                             'lengthSeas' = "Season_length",
+                             'totrainSeas' = "Seasonal_rain_amount",
+                             'nbrainSeas' = "Number_rainy_day",
+                             'max24hrain' = "Maximum_rain_daily",
+                             'totrain95P' = "Total_rain_above_Perc95th",
+                             'nbrain95P' = "Number_day_above_Perc95th",
+                             'longdryspell' = "Dry_Spells",
+                             'dryspell' = "Dry_Spells")
 
-        start.dateYear <- as.numeric(format(.cdtData$EnvData$output$start.date, '%Y'))
-        dryspl <- as.numeric(str_trim(tclvalue(tkget(.cdtData$EnvData$spin.TsMap.dryspell))))
+        dryspl <- .cdtData$EnvData$plotVar$dryspell
 
         if(.cdtData$EnvData$output$data.type == "cdtstation"){
             tsdata.path <- file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET")
             filetsdata <- file.path(tsdata.path, paste0(tsdata.dir, ".rds"))
 
             if(!file.exists(filetsdata)){
-                Insert.Messages.Out(paste(filetsdata, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filetsdata, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
 
-            StatCalc <- str_trim(tclvalue(.cdtData$EnvData$analysis.method))
             change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             ########
@@ -1288,18 +1400,18 @@ SeasonAnalysisPanelCmd <- function(){
             if(!is.null(.cdtData$EnvData$climdata))
                 if(!is.null(.cdtData$EnvData$filetsdata1))
                     if(.cdtData$EnvData$filetsdata1 == filetsdata)
-                        if(.cdtData$EnvData$StatCalc == StatCalc) calcClim <- FALSE
+                        if(.cdtData$EnvData$StatCalc == .cdtData$EnvData$analysis$method) calcClim <- FALSE
 
-            trendUnit <- str_trim(tclvalue(.cdtData$EnvData$trend))
-            if(StatCalc == "Trend")
+            trendUnit <- .cdtData$EnvData$analysis$trend
+            if(.cdtData$EnvData$analysis$method == "trend")
                 if(!is.null(.cdtData$EnvData$trendUnit))
                     if(.cdtData$EnvData$trendUnit != trendUnit & !calcClim) calcClim <- TRUE
 
-            if(varPICSA == "Dry Spells")
+            if(.cdtData$EnvData$plotVar$varPICSA == 'dryspell')
                 if(!is.null(.cdtData$EnvData$oldDryspell1))
                     if(.cdtData$EnvData$oldDryspell1 != dryspl & !calcClim) calcClim <- TRUE
 
-            if(varPICSA == "Longest Dry Spell")
+            if(.cdtData$EnvData$plotVar$varPICSA == 'longdryspell')
                 if(!is.null(.cdtData$EnvData$oldDryspell2))
                     if(.cdtData$EnvData$oldDryspell2 != dryspl & !calcClim) calcClim <- TRUE
 
@@ -1308,7 +1420,7 @@ SeasonAnalysisPanelCmd <- function(){
 
             if(calcClim){
                 don <- readRDS(filetsdata)
-                if(varPICSA == "Dry Spells"){
+                if(.cdtData$EnvData$plotVar$varPICSA == 'dryspell'){
                     ndim <- dim(don)
                     nval <- sapply(don, function(x) (length(x) == 1) & is.na(x[1]))
                     don <- sapply(don, function(x) sum(!is.na(x) & x >= dryspl))
@@ -1317,7 +1429,7 @@ SeasonAnalysisPanelCmd <- function(){
                     rm(nval)
                     .cdtData$EnvData$oldDryspell1 <- dryspl
                 }
-                if(varPICSA == "Longest Dry Spell"){
+                if(.cdtData$EnvData$plotVar$varPICSA == 'longdryspell'){
                     ndim <- dim(don)
                     don <- sapply(don, max, na.rm = TRUE)
                     don[is.infinite(don)] <- NA
@@ -1346,8 +1458,8 @@ SeasonAnalysisPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$filetsdata1 <- filetsdata
-                .cdtData$EnvData$StatCalc <- StatCalc
-                if(StatCalc == "Trend") .cdtData$EnvData$trendUnit <- trendUnit
+                .cdtData$EnvData$StatCalc <- .cdtData$EnvData$analysis$method
+                if(.cdtData$EnvData$analysis$method == "trend") .cdtData$EnvData$trendUnit <- trendUnit
                 .cdtData$EnvData$change.plot.calcClim <- change.plot
                 rm(don)
             }
@@ -1357,28 +1469,26 @@ SeasonAnalysisPanelCmd <- function(){
             filetsdata <- tsdata.path
 
             if(!file.exists(filetsdata)){
-                Insert.Messages.Out(paste(filetsdata, 'not found'), format = TRUE)
+                Insert.Messages.Out(paste(filetsdata, lang.dlg[['message']][['5']]), TRUE, 'e')
                 return(NULL)
             }
-
-            StatCalc <- str_trim(tclvalue(.cdtData$EnvData$analysis.method))
 
             calcClim <- TRUE
             if(!is.null(.cdtData$EnvData$climdata))
                 if(!is.null(.cdtData$EnvData$filetsdata1))
                     if(.cdtData$EnvData$filetsdata1 == filetsdata)
-                        if(.cdtData$EnvData$StatCalc == StatCalc) calcClim <- FALSE
+                        if(.cdtData$EnvData$StatCalc == .cdtData$EnvData$analysis$method) calcClim <- FALSE
 
             trendUnit <- str_trim(tclvalue(.cdtData$EnvData$trend))
-            if(StatCalc == "Trend")
+            if(.cdtData$EnvData$analysis$method == "trend")
                 if(!is.null(.cdtData$EnvData$trendUnit))
                     if(.cdtData$EnvData$trendUnit != trendUnit & !calcClim) calcClim <- TRUE
 
-            if(varPICSA == "Dry Spells")
+            if(.cdtData$EnvData$plotVar$varPICSA == 'dryspell')
                 if(!is.null(.cdtData$EnvData$oldDryspell1))
                     if(.cdtData$EnvData$oldDryspell1 != dryspl & !calcClim) calcClim <- TRUE
 
-            if(varPICSA == "Longest Dry Spell")
+            if(.cdtData$EnvData$plotVar$varPICSA == 'longdryspell')
                 if(!is.null(.cdtData$EnvData$oldDryspell2))
                     if(.cdtData$EnvData$oldDryspell2 != dryspl & !calcClim) calcClim <- TRUE
 
@@ -1389,6 +1499,7 @@ SeasonAnalysisPanelCmd <- function(){
                 chunkcalc <- split(chunkfile, ceiling(chunkfile / index$chunkfac))
 
                 EnvData <- .cdtData$EnvData 
+
                 parsL <- doparallel.cond(length(chunkcalc) > 10)
                 don <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                    progress = TRUE, FUN = function(jj)
@@ -1399,7 +1510,7 @@ SeasonAnalysisPanelCmd <- function(){
                     })
                     don <- do.call(cbind, don)
 
-                    if(varPICSA == "Dry Spells"){
+                    if(EnvData$plotVar$varPICSA == 'dryspell'){
                         ndim <- dim(don)
                         nval <- sapply(don, function(x) (length(x) == 1) & is.na(x[1]))
                         don <- sapply(don, function(x) sum(!is.na(x) & x >= dryspl))
@@ -1407,7 +1518,7 @@ SeasonAnalysisPanelCmd <- function(){
                         dim(don) <- ndim
                         rm(nval)
                     }
-                    if(varPICSA == "Longest Dry Spell"){
+                    if(EnvData$plotVar$varPICSA == 'longdryspell'){
                         ndim <- dim(don)
                         don <- sapply(don, max, na.rm = TRUE)
                         don[is.infinite(don)] <- NA
@@ -1426,11 +1537,11 @@ SeasonAnalysisPanelCmd <- function(){
                 .cdtData$EnvData$climdata$z <- don
                 
                 rm(don, index)
-                if(varPICSA == "Dry Spells") .cdtData$EnvData$oldDryspell1 <- dryspl
-                if(varPICSA == "Longest Dry Spell") .cdtData$EnvData$oldDryspell2 <- dryspl
-                if(StatCalc == "Trend") .cdtData$EnvData$trendUnit <- trendUnit
+                if(.cdtData$EnvData$plotVar$varPICSA == 'dryspell') .cdtData$EnvData$oldDryspell1 <- dryspl
+                if(.cdtData$EnvData$plotVar$varPICSA == 'longdryspell') .cdtData$EnvData$oldDryspell2 <- dryspl
+                if(.cdtData$EnvData$analysis$method == "trend") .cdtData$EnvData$trendUnit <- trendUnit
                 .cdtData$EnvData$filetsdata1 <- filetsdata
-                .cdtData$EnvData$StatCalc <- StatCalc
+                .cdtData$EnvData$StatCalc <- .cdtData$EnvData$analysis$method
             }
         }
 
@@ -1466,49 +1577,47 @@ SeasonAnalysisPanelCmd <- function(){
     statisticFunction <- function(don, EnvData = .cdtData$EnvData){
         start.dateYear <- as.numeric(format(EnvData$output$start.date, '%Y'))
 
-        analysis.method <- stringr::str_trim(tcltk::tclvalue(EnvData$analysis.method))
-
-        if(analysis.method == 'Average'){
+        if(EnvData$analysis$method == 'mean'){
             don <- colMeans(don, na.rm = TRUE)
         }
 
-        if(analysis.method == 'Median'){
+        if(EnvData$analysis$method == 'med'){
             don <- matrixStats::colMedians(don, na.rm = TRUE)
         }
 
-        if(analysis.method == 'Standard deviation'){
+        if(EnvData$analysis$method == 'std'){
             don <- matrixStats::colSds(don, na.rm = TRUE)
         }
 
-        if(analysis.method == 'Trend'){
+        if(EnvData$analysis$method == 'trend'){
             tmp <- TrendFunction(don, start.dateYear)
-            trend <- stringr::str_trim(tcltk::tclvalue(EnvData$trend))
-            if(trend == "Change (trend) / year") don <- tmp
-            if(trend == "Change (trend) over the period"){
-                don <- tmp * (diff(range(start.dateYear, na.rm = TRUE)) + 1)
+            if(EnvData$analysis$trend == 'trendEY') don <- tmp
+            if(EnvData$analysis$trend == 'trendOP'){
+                rgYr <- diff(range(start.dateYear, na.rm = TRUE)) + 1
+                don <- tmp * rgYr
             }
-            if(trend == "Change (trend) / average (in %)"){
-                don <- 100 * tmp * (diff(range(start.dateYear, na.rm = TRUE)) + 1) / colMeans(don, na.rm = TRUE)
+            if(EnvData$analysis$trend == 'trendAP'){
+                rgYr <- diff(range(start.dateYear, na.rm = TRUE)) + 1
+                moy <- colMeans(don, na.rm = TRUE)
+                don <- 100 * tmp * rgYr / moy
             }
             rm(tmp)
         }
 
-        if(analysis.method == 'Percentiles'){
-            Q <- as.numeric(stringr::str_trim(tcltk::tclvalue(EnvData$mth.perc))) / 100
+        if(EnvData$analysis$method == 'perc'){
+            Q <- EnvData$analysis$mth.perc / 100
             don <- apply(don, 2, quantile8, probs = Q)
         }
 
-        if(analysis.method == 'Frequency'){
-            xlow <- stringr::str_trim(tcltk::tclvalue(EnvData$low.thres))
-            xup <- stringr::str_trim(tcltk::tclvalue(EnvData$up.thres))
-            if(stringr::str_trim(tcltk::tclvalue(EnvData$varPICSA)) %in% c("Onset", "Cessation")){
+        if(EnvData$analysis$method == 'freq'){
+            xlow <- EnvData$analysis$low.thres
+            xup <- EnvData$analysis$up.thres
+            if(EnvData$plotVar$varPICSA %in% c("onset", "cessation")){
                 dlo <- try(as.POSIXlt(as.Date(paste(start.dateYear, xlow, sep = '-'))), silent = TRUE)
                 dup <- try(as.POSIXlt(as.Date(paste(start.dateYear, xup, sep = '-'))), silent = TRUE)
-                if(inherits(dlo, "try-error") | inherits(dup, "try-error")){
-                    if(EnvData$output$data.type == "cdtstation")
-                        Insert.Messages.Out("Invalid frequency intervals", format = TRUE)
-                    return(rep(NA, ncol(don)))
-                }
+                if(inherits(dlo, "try-error") | inherits(dup, "try-error")) return(rep(NA, ncol(don)))
+                if(is.na(dlo) | is.na(dup)) return(rep(NA, ncol(don)))
+
                 ix <- dlo > dup
                 dup$year[ix] <- dup$year[ix] + 1
                 xlow <- as.numeric(as.Date(dlo) - EnvData$output$start.date)
@@ -1516,12 +1625,9 @@ SeasonAnalysisPanelCmd <- function(){
             }else{
                 xlow <- as.numeric(xlow)
                 xup <- as.numeric(xup)
-                if(is.na(xlow) | is.na(xup)){
-                    if(EnvData$output$data.type == "cdtstation")
-                        Insert.Messages.Out("Invalid frequency intervals", format = TRUE)
-                    return(rep(NA, ncol(don)))
-                }
+                if(is.na(xlow) | is.na(xup)) return(rep(NA, ncol(don)))
             }
+
             don <- colSums(don >= xlow & don <= xup, na.rm = TRUE)
         }
 

@@ -2,11 +2,11 @@
 Merging_ScaleDataInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 29
-        largeur2 <- 60
+        largeur1 <- 22
+        largeur2 <- 45
     }else{
         largeur1 <- 22
-        largeur2 <- 42
+        largeur2 <- 43
     }
 
     ####################################

@@ -14,7 +14,7 @@
             <text lang="en"> Zoom </text>
         </tab>
         <tab id="4">
-            <text lang="en"> Add Layers </text>
+            <text lang="en"> Layers </text>
         </tab>
     </tab_title>
     <widget>
@@ -43,7 +43,7 @@
             <text lang="en"> Load existing QC session </text>
         </checkbutton>
         <checkbutton id="2">
-            <text lang="en"> Add boundaries to Map </text>
+            <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <checkbutton id="3">
             <text lang="en"> Add DEM to map </text>

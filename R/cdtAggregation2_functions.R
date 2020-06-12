@@ -1,9 +1,9 @@
 
 cdt.data.analysis <- function(MAT, FUN,
-                        trend = list(year = NA, min.year = 10, unit = 1),
-                        percentile = 90,
-                        freq.thres = list(low = NA, up = NA)
-                        )
+                              trend = list(year = NA, min.year = 10, unit = 1),
+                              percentile = 90,
+                              freq.thres = list(low = NA, up = NA)
+                            )
 {
     nc <- ncol(MAT)
     nr <- nrow(MAT)
@@ -51,9 +51,9 @@ cdt.data.analysis <- function(MAT, FUN,
 #############################################
 
 cdt.daily.statistics <- function(MAT, STATS = "tot.rain",
-                                pars = list(min.frac = 0.95,
-                                            drywet.day = 1,
-                                            drywet.spell = 7)
+                                 pars = list(min.frac = 0.95,
+                                             drywet.day = 1,
+                                             drywet.spell = 7)
                                 )
 {
     if(STATS == "tot.rain")

@@ -2,19 +2,19 @@
 ExtractDataPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(27)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(25)
-        largeur4 <- .cdtEnv$tcl$fun$w.widgets(28)
-        largeur5 <- .cdtEnv$tcl$fun$w.widgets(10.5)
+        largeur0 <- 30
+        largeur1 <- 34
+        largeur2 <- 36
+        largeur3 <- 27
+        largeur4 <- 31
+        largeur5 <- 12
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(21)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23.5)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(19)
-        largeur4 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur5 <- .cdtEnv$tcl$fun$w.widgets(9)
+        largeur0 <- 30
+        largeur1 <- 33
+        largeur2 <- 34
+        largeur3 <- 27
+        largeur4 <- 31
+        largeur5 <- 13
     }
 
     ##############
@@ -36,7 +36,7 @@ ExtractDataPanelCmd <- function(){
                                          end.hour = 23, end.min = 55)
 
     GeneralParameters$Geom <- list(minlon = '', maxlon = '', minlat = '', maxlat = '',
-                                padlon = 0, padlat = 0, namePoly = '', multiObj = NULL)
+                                   padlon = 0, padlat = 0, namePoly = '', multiObj = NULL)
 
     .cdtData$EnvData$multiptspoly <- NULL
 
@@ -109,17 +109,17 @@ ExtractDataPanelCmd <- function(){
         tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
         tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
         tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-        # tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
+        tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
 
         tclvalue(.cdtData$EnvData$pressGetCoords) <- 0
 
         tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
         tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
         tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        # tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
+        tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
         tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-        stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+        stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
         tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
     }
 
@@ -489,7 +489,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
@@ -508,7 +508,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
@@ -527,7 +527,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
@@ -546,7 +546,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
@@ -565,7 +565,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
@@ -584,7 +584,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'red', state = 'disabled')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'lightblue', state = 'normal')
-            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
@@ -592,11 +592,11 @@ ExtractDataPanelCmd <- function(){
 
         frameExtract <- ttklabelframe(subfr2, text = lang.dlg[['label']][['12']], relief = 'groove')
 
+        .cdtData$EnvData$type.extract <- GeneralParameters$type.extract
+        type.extract <- tclVar()
         typeEXTRACT <- lang.dlg[['combobox']][['1']]
         typeEXTRACTV <- c('point', 'mpoint', 'rect', 'poly', 'mpoly')
-
-        .cdtData$EnvData$type.extract <- tclVar()
-        tclvalue(.cdtData$EnvData$type.extract) <- typeEXTRACT[typeEXTRACTV %in% GeneralParameters$type.extract]
+        tclvalue(type.extract) <- typeEXTRACT[typeEXTRACTV %in% GeneralParameters$type.extract]
 
         .cdtData$EnvData$minlonRect <- tclVar(GeneralParameters$Geom$minlon)
         .cdtData$EnvData$maxlonRect <- tclVar(GeneralParameters$Geom$maxlon)
@@ -620,7 +620,7 @@ ExtractDataPanelCmd <- function(){
         ################
 
         txt.Type <- tklabel(frameExtract, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
-        cb.TypeExtr <- ttkcombobox(frameExtract, values = typeEXTRACT, textvariable = .cdtData$EnvData$type.extract, width = largeur3)
+        cb.TypeExtr <- ttkcombobox(frameExtract, values = typeEXTRACT, textvariable = type.extract, width = largeur3)
 
         txt.PointRect <- tklabel(frameExtract, text = tclvalue(pointrect), textvariable = pointrect, anchor = 'e', justify = 'right', bg = 'green')
         txt.MIN <- tklabel(frameExtract, text = tclvalue(minrect), textvariable = minrect)
@@ -685,19 +685,19 @@ ExtractDataPanelCmd <- function(){
 
         tkconfigure(.cdtData$EnvData$bt.ADDObj, command = function(){
             if(.cdtData$EnvData$dlgBoxOpen){
-                if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == typeEXTRACT[2])
+                if(.cdtData$EnvData$type.extract == 'mpoint')
                 {
                     tkinsert(retMultiP$textObj, "end", paste(paste('Pts', nbpts, sep = ''),
                                                         tclvalue(.cdtData$EnvData$minlonRect),
                                                         tclvalue(.cdtData$EnvData$minlatRect), "\n"))
                     nbpts <<- nbpts + 1
                 }
-                if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) == typeEXTRACT[5])
+                if(.cdtData$EnvData$type.extract == 'mpoly')
                 {
                     tkinsert(retMultiP$textObj, "end", paste(tclvalue(.cdtData$EnvData$namePoly), "\n"))
                 }
             }
-            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
@@ -744,7 +744,7 @@ ExtractDataPanelCmd <- function(){
             tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
 
             tkconfigure(.cdtData$EnvData$bt.GETArea, relief = 'raised', bg = 'red', state = 'disabled')
-            stateADD <- if(str_trim(tclvalue(.cdtData$EnvData$type.extract)) %in% typeEXTRACT[c(2, 5)]) "normal" else "disabled"
+            stateADD <- if(.cdtData$EnvData$type.extract %in% c('mpoint', 'mpoly')) "normal" else "disabled"
             tkconfigure(.cdtData$EnvData$bt.ADDObj, relief = 'raised', bg = 'lightblue', state = stateADD)
         })
 
@@ -754,10 +754,10 @@ ExtractDataPanelCmd <- function(){
             .cdtData$EnvData$selectedPolygon <- NULL
             OutFileFormat <- CbOutFileFormat
 
-            type.extract <- typeEXTRACTV[typeEXTRACT %in% str_trim(tclvalue(.cdtData$EnvData$type.extract))]
+            .cdtData$EnvData$type.extract <- typeEXTRACTV[typeEXTRACT %in% str_trim(tclvalue(type.extract))]
             outfrmt <- str_trim(tclvalue(out.format))
 
-            if(type.extract == "point")
+            if(.cdtData$EnvData$type.extract == "point")
             {
                 if(!is.null(retMultiP$win)) tkdestroy(retMultiP$win)
 
@@ -783,7 +783,7 @@ ExtractDataPanelCmd <- function(){
             }
 
             ##
-            if(type.extract == "rect")
+            if(.cdtData$EnvData$type.extract == "rect")
             {
                 if(!is.null(retMultiP$win)) tkdestroy(retMultiP$win)
 
@@ -819,7 +819,7 @@ ExtractDataPanelCmd <- function(){
             }
 
             ##
-            if(type.extract == "poly")
+            if(.cdtData$EnvData$type.extract == "poly")
             {
                 if(!is.null(retMultiP$win)) tkdestroy(retMultiP$win)
 
@@ -864,12 +864,12 @@ ExtractDataPanelCmd <- function(){
             }
 
             ##
-            if(type.extract == "mpoint")
+            if(.cdtData$EnvData$type.extract == "mpoint")
             {
                 if(!is.null(retMultiP$win)) tkdestroy(retMultiP$win)
                 retMultiP <<- extractTS.previewWin(c('normal', 'disabled'),
                                                     list(.cdtData$EnvData$cb.shpAttr, shpFile),
-                                                    "mpoint")
+                                                    .cdtData$EnvData$type.extract)
                 statePts <- 'normal'
                 stateRct <- 'disabled'
                 statePad <- 'normal'
@@ -892,12 +892,12 @@ ExtractDataPanelCmd <- function(){
             }
 
             ##
-            if(type.extract == "mpoly")
+            if(.cdtData$EnvData$type.extract == "mpoly")
             {
                 if(!is.null(retMultiP$win)) tkdestroy(retMultiP$win)
                 retMultiP <<- extractTS.previewWin(c('disabled', 'normal'),
                                                     list(.cdtData$EnvData$cb.shpAttr, shpFile),
-                                                    "mpoly")
+                                                    .cdtData$EnvData$type.extract)
                 statePts <- 'disabled'
                 stateRct <- 'disabled'
                 statePad <- 'disabled'
@@ -1067,10 +1067,9 @@ ExtractDataPanelCmd <- function(){
         #################
 
         tkbind(cb.outFormat, "<<ComboboxSelected>>", function(){
-            type.extract <- str_trim(tclvalue(.cdtData$EnvData$type.extract))
             outfrmt <- str_trim(tclvalue(out.format))
 
-            if(type.extract %in% typeEXTRACT[c(1, 2)])
+            if(.cdtData$EnvData$type.extract %in% c('point', 'mpoint'))
             {
                 txtfileORdir <- lang.dlg[['label']][['19']]
                 colfileORdir <- 'lightblue'
@@ -1084,7 +1083,7 @@ ExtractDataPanelCmd <- function(){
                     colfileORdir <- 'lightgreen'
                     isFile <- FALSE
                 }else if(outfrmt == CbOutFileFormat[4] &
-                         type.extract == typeEXTRACT[5])
+                         .cdtData$EnvData$type.extract == 'mpoly')
                 {
                     txtfileORdir <- lang.dlg[['label']][['20']]
                     colfileORdir <- 'lightgreen'
@@ -1100,11 +1099,11 @@ ExtractDataPanelCmd <- function(){
                 }else if(outfrmt == CbOutFileFormat[1]){
                     spatAverg <- "1"
                 }else{
-                    spatAverg <- if(type.extract == typeEXTRACT[5]) "1" else "0"
+                    spatAverg <- if(.cdtData$EnvData$type.extract == 'mpoly') "1" else "0"
                 }
 
                 stateSpAv <- if(outfrmt == CbOutFileFormat[2] &
-                                type.extract != typeEXTRACT[5]) 'normal' else 'disabled'
+                                .cdtData$EnvData$type.extract != 'mpoly') 'normal' else 'disabled'
             }
 
             tkconfigure(chk.SpAvrg, state = stateSpAv)
@@ -1186,7 +1185,7 @@ ExtractDataPanelCmd <- function(){
             GeneralParameters$shp.file$shp <- str_trim(tclvalue(shpFile))
             GeneralParameters$shp.file$attr <- str_trim(tclvalue(shpAttr))
 
-            GeneralParameters$type.extract <- typeEXTRACTV[typeEXTRACT %in% str_trim(tclvalue(.cdtData$EnvData$type.extract))]
+            GeneralParameters$type.extract <- typeEXTRACTV[typeEXTRACT %in% str_trim(tclvalue(type.extract))]
 
             GeneralParameters$Geom$minlon <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$minlonRect)))
             GeneralParameters$Geom$maxlon <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$maxlonRect)))

@@ -1,10 +1,10 @@
 PlotOneNetCDFFileCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur1 <- 22
+        largeur0 <- 31
+        largeur1 <- 16
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
+        largeur0 <- 31
         largeur1 <- 16
     }
 

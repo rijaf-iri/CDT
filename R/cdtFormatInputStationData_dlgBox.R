@@ -1,9 +1,9 @@
 
 Format_CDT_Input_Station_Data <- function(){
     if(WindowsOS()){
-        largeur0 <- 56
-        largeur1 <- 28
-        largeur2 <- 26
+        largeur0 <- 48
+        largeur1 <- 24
+        largeur2 <- 23
     }else{
         largeur0 <- 45
         largeur1 <- 24
@@ -198,8 +198,8 @@ Format_CDT_Input_Station_Data <- function(){
 multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 50
-        largeur1 <- 19
+        largeur0 <- 40
+        largeur1 <- 16
     }else{
         largeur0 <- 38
         largeur1 <- 18
@@ -423,10 +423,10 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
 singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 50
-        largeur1 <- 26
+        largeur0 <- 43
+        largeur1 <- 20
     }else{
-        largeur0 <- 38
+        largeur0 <- 41
         largeur1 <- 20
     }
 

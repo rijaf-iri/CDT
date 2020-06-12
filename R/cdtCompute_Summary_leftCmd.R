@@ -2,46 +2,78 @@
 summariesDataPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(33)
+        largeur0 <- 26
+        largeur1 <- 32
+        largeur2 <- 34
         largeur3 <- 20
-        largeur4 <- 29
-        largeur5 <- 22
-        largeur6 <- 22
+        largeur4 <- 14
+        largeur5 <- 15
+        largeur6 <- 19
+        largeur7 <- 7
+        largeur8 <- 10
     }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(18)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur3 <- 15
-        largeur4 <- 22
-        largeur5 <- 14
-        largeur6 <- 14
+        largeur0 <- 26
+        largeur1 <- 32
+        largeur2 <- 33
+        largeur3 <- 20
+        largeur4 <- 14
+        largeur5 <- 15
+        largeur6 <- 19
+        largeur7 <- 7
+        largeur8 <- 10
     }
 
-    GeneralParameters <- list(intstep = "dekadal", data.type = "cdtstation", 
-                            cdtstation = list(file = ""),
-                            cdtdataset = list(index = ""),
-                            outdir = "")
+    ###################
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Summary_leftCmd.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
-    # .cdtData$EnvData$message <- lang.dlg[['message']]
+    GeneralParameters <- list(intstep = "dekadal", data.type = "cdtstation", 
+                              cdtstation = list(file = ""),
+                              cdtdataset = list(index = ""),
+                              outdir = "")
+
+    .cdtData$EnvData$GraphOp <- list(
+                            boxplot = list(
+                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                    title = list(is.title = FALSE, title = ''),
+                                    col = list(diff = FALSE, col = 'lightblue', outbg = 'lightblue',
+                                               medcol = 'red', whiskcol = 'blue', staplecol = 'blue',
+                                               boxcol = 'blue', outcol = 'blue')
+                                ),
+                            histogram = list(
+                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                    title = list(is.title = FALSE, title = ''),
+                                    hist = list(user.break = FALSE, breaks = NULL,
+                                                col = "lightblue", border = "blue"),
+                                    bw = list(add = FALSE, bw = 2.5, col = "red", lwd = 1.5)
+                                )
+                            )
+
+    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+
+
+    ###################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Summary_leftCmd.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    .cdtData$EnvData$message <- lang.dlg[['message']]
 
     ###################
 
     .cdtEnv$tcl$main$cmd.frame <- tkframe(.cdtEnv$tcl$main$panel.left)
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = "Input")
-    cmd.tab2 <- bwAddTab(tknote.cmd, text = "Table & Graph")
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
+
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
 
     tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab3, 0, weight = 1)
 
     #######################################################################################################
 
@@ -50,23 +82,22 @@ summariesDataPanelCmd <- function(){
 
         #######################
 
-        frameTimeS <- ttklabelframe(subfr1, text = "Time step of input data", relief = 'groove')
+        frameTimeS <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         timeSteps <- tclVar()
         CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
         periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
         tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$intstep]
 
-        cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, width = largeur1)
+        cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
 
         tkgrid(cb.fperiod, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        infobulle(cb.fperiod, 'Select the time step of the data')
-        status.bar.display(cb.fperiod, 'Select the time step of the data')
+        helpWidget(cb.fperiod, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
 
         #######################
 
-        frameInData <- ttklabelframe(subfr1, text = "Input Data", relief = 'groove')
+        frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['2']], relief = 'groove')
 
         DataType <- tclVar()
         CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
@@ -75,16 +106,16 @@ summariesDataPanelCmd <- function(){
 
         if(GeneralParameters$data.type == 'cdtstation'){
             input.file <- tclVar(GeneralParameters$cdtstation$file)
-            txt.INData <- 'File containing stations data'
+            txt.INData <- lang.dlg[['label']][['4']]
             stateSetNC <- "disabled"
         }else{
             input.file <- tclVar(GeneralParameters$cdtdataset$index)
-            txt.INData <- 'Index file (*.rds) of the dataset'
+            txt.INData <- lang.dlg[['label']][['5']]
             stateSetNC <- "disabled"
         }
         txt.INData.var <- tclVar(txt.INData)
 
-        txt.datatype <- tklabel(frameInData, text = "Format", anchor = 'w', justify = 'left')
+        txt.datatype <- tklabel(frameInData, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
         cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
 
         txt.infile <- tklabel(frameInData, text = tclvalue(txt.INData.var), textvariable = txt.INData.var, anchor = 'w', justify = 'left')
@@ -98,6 +129,23 @@ summariesDataPanelCmd <- function(){
 
         ############
 
+        tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.infile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.en.infile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.infile, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        helpWidget(cb.datatype, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+        if(GeneralParameters$data.type == 'cdtstation'){
+            helpWidget(cb.en.infile, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+            helpWidget(bt.infile, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+        }else{
+            helpWidget(cb.en.infile, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+            helpWidget(bt.infile, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+        }
+
+        ############
+
         tkconfigure(bt.infile, command = function(){
             if(GeneralParameters$data.type == 'cdtstation'){
                 dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
@@ -105,7 +153,7 @@ summariesDataPanelCmd <- function(){
                     update.OpenFiles('ascii', dat.opfiles)
                     listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(input.file) <- dat.opfiles[[1]]
-                    tkconfigure(cb.en.infile, values = unlist(listOpenFiles))
+                    lapply(list(cb.en.infile, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
                 }
             }else{
                 path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -115,37 +163,14 @@ summariesDataPanelCmd <- function(){
 
         ############
 
-        tkgrid(txt.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.infile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.en.infile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.infile, row = 2, column = 9, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-        ############
-        infobulle(cb.datatype, 'Select the format of the input data')
-        status.bar.display(cb.datatype, 'Select the format of the input data')
-
-        if(GeneralParameters$data.type == 'cdtstation'){
-            infobulle(cb.en.infile, 'Select the file containing the input data')
-            status.bar.display(cb.en.infile, 'Select the file containing the input data')
-            infobulle(bt.infile, 'Browse file if not listed')
-            status.bar.display(bt.infile, 'Browse file if not listed')
-        }else{
-            infobulle(cb.en.infile, 'Enter the full path to the file <dataset name>.rds')
-            status.bar.display(cb.en.infile, 'Enter the full path to the file <dataset name>.rds')
-            infobulle(bt.infile, 'or browse here')
-            status.bar.display(bt.infile, 'or browse here')
-        }
-
-        ############
-
         tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
             tkdestroy(cb.en.infile)
             tclvalue(input.file) <- ''
 
+            data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-                tclvalue(txt.INData.var) <- 'File containing stations data'
+            if(data.type == 'cdtstation'){
+                tclvalue(txt.INData.var) <- lang.dlg[['label']][['4']]
 
                 cb.en.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
 
@@ -155,19 +180,17 @@ summariesDataPanelCmd <- function(){
                         update.OpenFiles('ascii', dat.opfiles)
                         listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(input.file) <- dat.opfiles[[1]]
-                        tkconfigure(cb.en.infile, values = unlist(listOpenFiles))
+                        lapply(list(cb.en.infile, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
-                infobulle(cb.en.infile, 'Select the file containing the input data')
-                status.bar.display(cb.en.infile, 'Select the file containing the input data')
-                infobulle(bt.infile, 'Browse file if not listed')
-                status.bar.display(bt.infile, 'Browse file if not listed')
+                helpWidget(cb.en.infile, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+                helpWidget(bt.infile, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-                tclvalue(txt.INData.var) <- 'Index file (*.rds) of the dataset'
+            if(data.type == 'cdtdataset'){
+                tclvalue(txt.INData.var) <- lang.dlg[['label']][['5']]
 
                 cb.en.infile <- tkentry(frameInData, textvariable = input.file, width = largeur2)
 
@@ -176,10 +199,8 @@ summariesDataPanelCmd <- function(){
                     tclvalue(input.file) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
                 })
 
-                infobulle(cb.en.infile, 'Enter the full path to the file <dataset name>.rds')
-                status.bar.display(cb.en.infile, 'Enter the full path to the file <dataset name>.rds')
-                infobulle(bt.infile, 'or browse here')
-                status.bar.display(bt.infile, 'or browse here')
+                helpWidget(cb.en.infile, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+                helpWidget(bt.infile, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
             }
 
             tkgrid(cb.en.infile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
@@ -191,9 +212,16 @@ summariesDataPanelCmd <- function(){
 
         outAnom <- tclVar(GeneralParameters$outdir)
 
-        txt.outAnom <- tklabel(frameDirSav, text = "Directory to save the outputs", anchor = 'w', justify = 'left')
+        txt.outAnom <- tklabel(frameDirSav, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
         en.outAnom <- tkentry(frameDirSav, textvariable = outAnom, width = largeur2)
         bt.outAnom <- tkbutton(frameDirSav, text = "...")
+
+        tkgrid(txt.outAnom, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.outAnom, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.outAnom, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+        helpWidget(en.outAnom, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+        helpWidget(bt.outAnom, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 
         ######
 
@@ -202,23 +230,9 @@ summariesDataPanelCmd <- function(){
             tclvalue(outAnom) <- if(dirAnom %in% c("", "NA") | is.na(dirAnom)) "" else dirAnom
         })
 
-        ######
-        tkgrid(txt.outAnom, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(en.outAnom, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(bt.outAnom, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-        infobulle(en.outAnom, 'Enter the full path to directory to save outputs')
-        status.bar.display(en.outAnom, 'Enter the full path to directory to save outputs')
-        infobulle(bt.outAnom, 'or browse here')
-        status.bar.display(bt.outAnom, 'or browse here')
-
         ############################################
 
-        if(!is.null(.cdtData$EnvData$DirExist)){
-            stateSumBut <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
-        }else stateSumBut <- "normal"
-
-        summaryBut <- ttkbutton(subfr1, text = "Summarize", state = stateSumBut)
+        summaryBut <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
         #################
 
@@ -235,7 +249,7 @@ summariesDataPanelCmd <- function(){
 
             # assign("GeneralParameters", GeneralParameters, envir = .GlobalEnv)
 
-            Insert.Messages.Out("Summarizing data ......", TRUE, "i")
+            Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
@@ -251,20 +265,17 @@ summariesDataPanelCmd <- function(){
                 }
             )
 
-            msg0 <- "Summarizing finished successfully"
-            msg1 <- "Summarizing failed"
-
             if(!is.null(ret)){
                 if(ret == 0){
-                    Insert.Messages.Out(msg0, TRUE, "s")
+                    Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
                     .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                     .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                     ###################
 
                     widgets.Station.Pixel()
-                }else Insert.Messages.Out(msg1, format = TRUE)
-            }else Insert.Messages.Out(msg1, format = TRUE)
+                }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
+            }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
         })
 
         ############################################
@@ -281,24 +292,30 @@ summariesDataPanelCmd <- function(){
 
         ##############################################
 
-        frameSumData <- ttklabelframe(subfr2, text = "Summaries data", relief = 'groove')
+        frameSumData <- ttklabelframe(subfr2, text = lang.dlg[['label']][['7']], relief = 'groove')
 
-        .cdtData$EnvData$DirExist <- tclVar(0)
+        DirExist <- tclVar(0)
         file.Stat <- tclVar()
 
-        statedirStat <- if(tclvalue(.cdtData$EnvData$DirExist) == "1") "normal" else "disabled"
-
-        chk.dirStat <- tkcheckbutton(frameSumData, variable = .cdtData$EnvData$DirExist, text = "Data already summarized", anchor = 'w', justify = 'left')
-        en.dirStat <- tkentry(frameSumData, textvariable = file.Stat, width = largeur2, state = statedirStat)
-        bt.dirStat <- tkbutton(frameSumData, text = "...", state = statedirStat)
-        bt.plotMap <- ttkbutton(frameSumData, text = "Plot map to select a pixel or station")
-
-        #######################
-
-        frameSTNPX <- tkframe(frameSumData)
         .cdtData$EnvData$plot.maps$lonLOC <- tclVar()
         .cdtData$EnvData$plot.maps$latLOC <- tclVar()
         .cdtData$EnvData$plot.maps$stnIDTSp <- tclVar()
+
+        statedirStat <- if(tclvalue(DirExist) == "1") "normal" else "disabled"
+
+        chk.dirStat <- tkcheckbutton(frameSumData, variable = DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+        en.dirStat <- tkentry(frameSumData, textvariable = file.Stat, width = largeur2 + 5, state = statedirStat)
+        bt.dirStat <- tkbutton(frameSumData, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = statedirStat)
+
+        bt.plotMap <- ttkbutton(frameSumData, text = lang.dlg[['button']][['2']])
+        frameSTNPX <- tkframe(frameSumData)
+
+        tkgrid(chk.dirStat, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dirStat, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.dirStat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(bt.plotMap, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSTNPX, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
         #######################
 
@@ -310,8 +327,8 @@ summariesDataPanelCmd <- function(){
             if(file.exists(str_trim(tclvalue(file.Stat)))){
                 OutSummary <- try(readRDS(str_trim(tclvalue(file.Stat))), silent = TRUE)
                 if(inherits(OutSummary, "try-error")){
-                    Insert.Messages.Out('Unable to load Summary data', format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', OutSummary[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', OutSummary[1]), TRUE, 'e')
                     return(NULL)
                 }
 
@@ -325,77 +342,83 @@ summariesDataPanelCmd <- function(){
             }
         })
 
-        .cdtData$EnvData$tab$pMap <- NULL
-        tkconfigure(bt.plotMap, command = function(){
-            if(!is.null(.cdtData$EnvData$output))
-                SummaryData.Display.Map()
+        ###############
+        tkbind(chk.dirStat, "<Button-1>", function(){
+            statedirStat <- if(tclvalue(DirExist) == '1') 'disabled' else 'normal'
+            tkconfigure(en.dirStat, state = statedirStat)
+            tkconfigure(bt.dirStat, state = statedirStat)
+
+            stateSumBut <- if(tclvalue(DirExist) == '1') 'normal' else 'disabled'
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateSumBut)
         })
 
         ###############
 
-        tkgrid(chk.dirStat, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.dirStat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.dirStat, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.plotMap, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameSTNPX, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        .cdtData$EnvData$tab$pMap <- NULL
 
-        ###############
-        tkbind(chk.dirStat, "<Button-1>", function(){
-            statedirStat <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'disabled' else 'normal'
-            tkconfigure(en.dirStat, state = statedirStat)
-            tkconfigure(bt.dirStat, state = statedirStat)
-            stateSumBut <- if(tclvalue(.cdtData$EnvData$DirExist) == '1') 'normal' else 'disabled'
-            tkconfigure(summaryBut, state = stateSumBut)
-            tkconfigure(cb.fperiod, state = stateSumBut)
-            tkconfigure(cb.datatype, state = stateSumBut)
-            tkconfigure(cb.en.infile, state = stateSumBut)
-            tkconfigure(bt.infile, state = stateSumBut)
-            tkconfigure(en.outAnom, state = stateSumBut)
-            tkconfigure(bt.outAnom, state = stateSumBut)
+        tkconfigure(bt.plotMap, command = function(){
+            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% str_trim(tclvalue(plot.type))]
+            if(!is.null(.cdtData$EnvData$output)) SummaryData.Display.Map()
         })
 
         ##############################################
 
-        frameSumGraph <- ttklabelframe(subfr2, text = "Summary Graph", relief = 'groove')
+        frameSumGraph <- ttklabelframe(subfr2, text = lang.dlg[['label']][['8']], relief = 'groove')
 
-        mois <- c(format(ISOdate(2014, 1:12, 1), "%b"), "ALL")
-        PLOT_TYPE <- c("Boxplot", "Histogram")
-        stateMois <- "disabled"
+        cbPLOT_TYPE <- lang.dlg[['combobox']][['1']]
+        PLOT_TYPE <- c('boxplot', 'histogram')
+        plot.type <- tclVar(cbPLOT_TYPE[1])
 
-        .cdtData$EnvData$plot.maps$plotType <- tclVar(PLOT_TYPE[1])
-        .cdtData$EnvData$plot.maps$plotMois <- tclVar(mois[1])
+        cbMOIS <- c(format(ISOdate(2014, 1:12, 1), "%B"), lang.dlg[['label']][['9']])
+        mois <- c(format(ISOdate(2014, 1:12, 1), "%b"), "all")
+        plotMois <- tclVar(cbMOIS[13])
 
-        cb.SumGraph.Type <- ttkcombobox(frameSumGraph, values = PLOT_TYPE, textvariable = .cdtData$EnvData$plot.maps$plotType, width = largeur4)
-        bt.SumGraph.Plot <- ttkbutton(frameSumGraph, text = .cdtEnv$tcl$lang$global[['button']][['3']])
-        cb.SumGraph.Mois <- ttkcombobox(frameSumGraph, values = mois, textvariable = .cdtData$EnvData$plot.maps$plotMois, width = largeur5, state = stateMois)
-        bt.SumGraph.Opt <- ttkbutton(frameSumGraph, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = 'disabled')
+        cb.SumGraph.Type <- ttkcombobox(frameSumGraph, values = cbPLOT_TYPE, textvariable = plot.type, justify = 'center', width = largeur3)
+        bt.SumGraph.Plot <- ttkbutton(frameSumGraph, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
+        cb.SumGraph.Mois <- ttkcombobox(frameSumGraph, values = cbMOIS, textvariable = plotMois, justify = 'center', width = largeur4, state = "disabled")
+        bt.SumGraph.Opt <- ttkbutton(frameSumGraph, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
+
+        tkgrid(cb.SumGraph.Type, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.SumGraph.Plot, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.SumGraph.Mois, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.SumGraph.Opt, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ###################
 
         .cdtData$EnvData$tab$TGraph <- NULL
 
         tkconfigure(bt.SumGraph.Plot, command = function(){
+            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% str_trim(tclvalue(plot.type))]
+            .cdtData$EnvData$plot.maps$plotMois <- mois[cbMOIS %in% str_trim(tclvalue(plotMois))]
+
             if(!is.null(.cdtData$EnvData$output)){
                 imgContainer <- CDT.Display.Graph(SummaryData.Plot.Graph, .cdtData$EnvData$tab$TGraph, 'Summary - Plot')
                 .cdtData$EnvData$tab$TGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$TGraph)
             }
         })
 
-        ###################
-        tkgrid(cb.SumGraph.Type, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.SumGraph.Plot, row = 0, column = 4, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.SumGraph.Mois, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.SumGraph.Opt, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkconfigure(bt.SumGraph.Opt, command = function(){
+            plotType <- PLOT_TYPE[cbPLOT_TYPE %in% str_trim(tclvalue(plot.type))]
+            plot.fun <- get(paste0("Summary.GraphOptions.", str_to_title(plotType)), mode = "function")
+            .cdtData$EnvData$GraphOp <- plot.fun(.cdtData$EnvData$GraphOp)
+        })
 
         ###################
 
         tkbind(cb.SumGraph.Type, "<<ComboboxSelected>>", function(){
-            plotType <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plotType))
-            stateMois <- if(plotType == PLOT_TYPE[1]) "disabled" else "normal"
+            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% str_trim(tclvalue(plot.type))]
+
+            stateMois <- if(.cdtData$EnvData$plot.maps$plotType == 'boxplot') "disabled" else "normal"
             tkconfigure(cb.SumGraph.Mois, state = stateMois)
+        })
+
+        tkbind(cb.SumGraph.Mois, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$plot.maps$plotMois <- mois[cbMOIS %in% str_trim(tclvalue(plotMois))]
         })
 
         ##############################################
 
-        bt.SumTable <- ttkbutton(subfr2, text = "Display Summary Table")
+        bt.SumTable <- ttkbutton(subfr2, text = lang.dlg[['button']][['3']])
 
         .cdtData$EnvData$tab$Table <- NULL
 
@@ -409,16 +432,32 @@ summariesDataPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr2, text = "Boundaries", relief = 'groove')
+        tkgrid(frameSumData, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSumGraph, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(bt.SumTable, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 0, ipady = 1)
+
+    #######################################################################################################
+
+    #Tab3
+    subfr3 <- bwTabScrollableFrame(cmd.tab3)
+
+        ##############################################
+
+        frameSHP <- ttklabelframe(subfr3, text = lang.dlg[['label']][['10']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(0)
         file.plotShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = "Add boundaries to Map", anchor = 'w', justify = 'left')
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
         bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
+
+        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
         tkconfigure(bt.addshp, command = function(){
@@ -427,7 +466,7 @@ summariesDataPanelCmd <- function(){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(file.plotShp) <- shp.opfiles[[1]]
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                tkconfigure(cb.addshp, values = unlist(listOpenFiles))
+                lapply(list(cb.en.infile, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
                 shpofile <- getShpOpenData(file.plotShp)
                 if(is.null(shpofile))
@@ -438,17 +477,10 @@ summariesDataPanelCmd <- function(){
         })
 
         ########
-        .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
         tkconfigure(bt.addshpOpt, command = function(){
             .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
         })
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         #################
         tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
@@ -468,10 +500,7 @@ summariesDataPanelCmd <- function(){
 
         ##############################################
 
-        tkgrid(frameSumData, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameSumGraph, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(bt.SumTable, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameSHP, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
 
@@ -481,10 +510,10 @@ summariesDataPanelCmd <- function(){
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
-            txt.stnSel <- tklabel(frameSTNPX, text = "Select a station to plot")
-            bt.stnID.prev <- ttkbutton(frameSTNPX, text = "<<", width = 6)
-            bt.stnID.next <- ttkbutton(frameSTNPX, text = ">>", width = 6)
-            cb.stnID <- ttkcombobox(frameSTNPX, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur6)
+            txt.stnSel <- tklabel(frameSTNPX, text = lang.dlg[['label']][['11']])
+            bt.stnID.prev <- ttkbutton(frameSTNPX, text = "<<", width = largeur7)
+            bt.stnID.next <- ttkbutton(frameSTNPX, text = ">>", width = largeur7)
+            cb.stnID <- ttkcombobox(frameSTNPX, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, justify = 'center', width = largeur6)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
             tkconfigure(bt.stnID.prev, command = function(){
@@ -516,11 +545,11 @@ summariesDataPanelCmd <- function(){
             tkgrid(cb.stnID, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         }else{
-            txt.crdSel <- tklabel(frameSTNPX, text = "Enter longitude and latitude to plot", anchor = 'w', justify = 'left')
-            txt.lonLoc <- tklabel(frameSTNPX, text = "Longitude", anchor = 'e', justify = 'right')
-            en.lonLoc <- tkentry(frameSTNPX, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = 8)
-            txt.latLoc <- tklabel(frameSTNPX, text = "Latitude", anchor = 'e', justify = 'right')
-            en.latLoc <- tkentry(frameSTNPX, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = 8)
+            txt.crdSel <- tklabel(frameSTNPX, text = lang.dlg[['label']][['12']], anchor = 'w', justify = 'left')
+            txt.lonLoc <- tklabel(frameSTNPX, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
+            en.lonLoc <- tkentry(frameSTNPX, textvariable = .cdtData$EnvData$plot.maps$lonLOC, width = largeur8)
+            txt.latLoc <- tklabel(frameSTNPX, text = lang.dlg[['label']][['14']], anchor = 'e', justify = 'right')
+            en.latLoc <- tkentry(frameSTNPX, textvariable = .cdtData$EnvData$plot.maps$latLOC, width = largeur8)
             stnIDTSPLOT <- ""
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- ""
 

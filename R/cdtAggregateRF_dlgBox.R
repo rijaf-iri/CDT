@@ -2,16 +2,16 @@
 AggregateMWin_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 61
-        largeur1 <- 58
-        largeur2 <- 48
-        largeur3 <- 4
-        largeur4 <- 9
-    }else{
-        largeur0 <- 40
-        largeur1 <- 39
+        largeur0 <- 48
+        largeur1 <- 46
         largeur2 <- 30
-        largeur3 <- 8
+        largeur3 <- 11
+        largeur4 <- 6
+    }else{
+        largeur0 <- 43
+        largeur1 <- 42
+        largeur2 <- 30
+        largeur3 <- 11
         largeur4 <- 6
     }
 
@@ -100,7 +100,27 @@ AggregateMWin_GetInfo <- function(){
 
     ##############
 
+    tkgrid(cb.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(set.datatype, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.stnfl, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.stnfl, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+    if(.cdtData$GalParams$data.type == 'cdtstation'){
+        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
+        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    }else{
+        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+    }
+
+    ##############
+
     settingdone <- .cdtData$GalParams$settingdone
+
     tkconfigure(set.datatype, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         AggregateTS_ncdfData(tt, str_trim(tclvalue(file.stnfl)), tclvalue(timeSteps))
@@ -131,26 +151,6 @@ AggregateMWin_GetInfo <- function(){
             tclvalue(file.stnfl) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
         }
     })
-
-    ##############
-    tkgrid(cb.datatype, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(set.datatype, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.stnfl, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.stnfl, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-
-    ##############
-
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
-    }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-    }else{
-        helpWidget(cb.stnfl, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
-        helpWidget(bt.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-    }
 
     ##############
 
@@ -312,11 +312,7 @@ AggregateMWin_GetInfo <- function(){
     en.file.save <- tkentry(frSave, textvariable = file.save, width = largeur0)
     bt.file.save <- tkbutton(frSave, text = "...")
 
-    tkconfigure(bt.file.save, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        fileORdir2Save(file.save, isFile = isFile)
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-    })
+    ########
 
     tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
@@ -325,6 +321,14 @@ AggregateMWin_GetInfo <- function(){
     ihlpSav <- if(.cdtData$GalParams$data.type == 'cdtstation') '11' else '12'
     helpWidget(en.file.save, lang.dlg[['tooltip']][[ihlpSav]], lang.dlg[['status']][[ihlpSav]])
     helpWidget(bt.file.save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+
+    ########
+
+    tkconfigure(bt.file.save, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        fileORdir2Save(file.save, isFile = isFile)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+    })
 
     ############################################
     tkgrid(frtimestep, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)

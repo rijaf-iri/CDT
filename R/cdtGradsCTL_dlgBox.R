@@ -1,8 +1,8 @@
 
 grads_create.ctl_getParams <- function(){
     if(WindowsOS()){
-        largeur0 <- 33
-        largeur1 <- 70
+        largeur0 <- 23
+        largeur1 <- 48
     }else{
         largeur0 <- 23
         largeur1 <- 45

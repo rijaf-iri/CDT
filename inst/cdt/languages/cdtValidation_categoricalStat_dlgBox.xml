@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Categorical Statistics - Settings </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Creating Contingency Table </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Operator </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Threshold </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the operator to separate "yes" and "no" </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the operator to separate "yes" and "no" </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Specify the threshold to separate "yes" and "no" </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Specify the threshold to separate "yes" and "no" </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

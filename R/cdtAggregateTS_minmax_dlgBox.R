@@ -2,12 +2,12 @@
 AggregateTS_minmax_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 61
-        largeur1 <- 58
-        wtkcombo <- 25
+        largeur0 <- 44
+        largeur1 <- 42
+        wtkcombo <- 18
     }else{
         largeur0 <- 40
-        largeur1 <- 38
+        largeur1 <- 39
         wtkcombo <- 18
     }
 

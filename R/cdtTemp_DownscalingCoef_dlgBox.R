@@ -2,9 +2,9 @@
 Temp_coefDownGetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 29
-        largeur1 <- 57
-        largeur2 <- 60
+        largeur0 <- 22
+        largeur1 <- 43
+        largeur2 <- 45
     }else{
         largeur0 <- 22
         largeur1 <- 41

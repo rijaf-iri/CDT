@@ -2,7 +2,7 @@
 grads.getInfoNetcdfData <- function(parent.win, Parameters, ncDIR){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 51
+        largeur1 <- 38
         largeur2 <- 28
     }else{
         largeur1 <- 34

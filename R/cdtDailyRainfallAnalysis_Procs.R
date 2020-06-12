@@ -1,72 +1,79 @@
 
 dailyRainAnalysisCalcProcs <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
+
     if(!dir.exists(GeneralParameters$output)){
-        Insert.Messages.Out(paste(GeneralParameters$output, "did not find"), format = TRUE)
+        Insert.Messages.Out(paste(GeneralParameters$output, message[['5']]), TRUE, 'e')
         return(NULL)
     }
 
     #############
-    ## pour parallel
-    GeneralParameters <- GeneralParameters
+    fcdtdataset <- GeneralParameters$cdtdataset
+    fcdtstation <- GeneralParameters$cdtstation
+
+    pars.seas <- GeneralParameters$seas
+    pars.stat <- GeneralParameters$stats
+    pars.def <- GeneralParameters$def
+
+    start.year <- pars.seas$startYear
+    end.year <- pars.seas$endYear
+    start.mon <- pars.seas$startMon
+    start.day <- pars.seas$startDay
+    end.mon <- pars.seas$endMon
+    end.day <- pars.seas$endDay
+
+    drywet.day <- pars.def$drywet.day
+    drywet.day <- if(drywet.day == 0) 1e-8 else drywet.day
+    drywet.spell <- pars.def$drywet.spell
+    aggr.pars <- list(min.frac = pars.seas$min.frac,
+                      drywet.day = drywet.day,
+                      drywet.spell = drywet.spell)
 
     #############
-
-    start.year <- GeneralParameters$seas$startYear
-    end.year <- GeneralParameters$seas$endYear
-
-    start.mon <- GeneralParameters$seas$startMon
-    start.day <- GeneralParameters$seas$startDay
-    end.mon <- GeneralParameters$seas$endMon
-    end.day <- GeneralParameters$seas$endDay
 
     if(any(is.na(c(start.mon, start.day, end.mon, end.day)))){
-        Insert.Messages.Out("Invalid season date", format = TRUE)
+        Insert.Messages.Out(message[['6']], TRUE, 'e')
         return(NULL)
     }
 
-    if(!GeneralParameters$seas$all.years & any(is.na(c(start.year, end.year)))){
-        Insert.Messages.Out("Invalid year range", format = TRUE)
+    if(!pars.seas$all.years &
+        any(is.na(c(start.year, end.year))))
+    {
+        Insert.Messages.Out(message[['7']], TRUE, 'e')
         return(NULL)
     }
-
-    drywet.day <- GeneralParameters$def$drywet.day
-    drywet.day <- if(drywet.day == 0) 0.0001 else drywet.day
-    drywet.spell <- GeneralParameters$def$drywet.spell
-    aggr.pars <- list(min.frac = GeneralParameters$min.frac,
-                        drywet.day = drywet.day,
-                        drywet.spell = drywet.spell)
 
     #######################
 
-    stats.directory <- switch(GeneralParameters$stats$daily,
-                            'tot.rain' = "TOTALRAIN",
-                            'rain.int' = "RAININT",
-                            'nb.wet.day' = "WETDAY",
-                            'nb.dry.day' = "DRYDAY",
-                            'nb.wet.spell' = "WETSPELL",
-                            'nb.dry.spell' = "DRYSPELL")
+    stats.directory <- switch(pars.stat$daily,
+                              'tot.rain' = "TOTALRAIN",
+                              'rain.int' = "RAININT",
+                              'nb.wet.day' = "WETDAY",
+                              'nb.dry.day' = "DRYDAY",
+                              'nb.wet.spell' = "WETSPELL",
+                              'nb.dry.spell' = "DRYSPELL")
 
     stats.season <- paste0(start.mon, "-", start.day, "_", end.mon, "-", end.day)
 
     ################################################
 
     if(GeneralParameters$data.type == "cdtstation"){
-        don <- getStnOpenData(GeneralParameters$cdtstation)
+        don <- getStnOpenData(fcdtstation)
         if(is.null(don)) return(NULL)
-        don <- getCDTdataAndDisplayMsg(don, "daily", GeneralParameters$cdtstation)
+        don <- getCDTdataAndDisplayMsg(don, "daily", fcdtstation)
         if(is.null(don)) return(NULL)
 
         daty <- don$dates
     }
 
     if(GeneralParameters$data.type == "cdtdataset"){
-        don <- try(readRDS(GeneralParameters$cdtdataset), silent = TRUE)
+        don <- try(readRDS(fcdtdataset), silent = TRUE)
         if(inherits(don, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", GeneralParameters$cdtdataset), format = TRUE)
+            Insert.Messages.Out(paste(message[['8']], fcdtdataset), TRUE, 'e')
             return(NULL)
         }
         if(don$TimeStep != "daily"){
-            Insert.Messages.Out(paste("The dataset is not a daily data"), format = TRUE)
+            Insert.Messages.Out(message[['9']], TRUE, 'e')
             return(NULL)
         }
 
@@ -74,21 +81,24 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
     }
 
     year <- as.numeric(substr(daty, 1, 4))
-    if(GeneralParameters$seas$all.years){
+    if(pars.seas$all.years){
         start.year <- min(year, na.rm = TRUE)
         end.year <- max(year, na.rm = TRUE)
     }
 
     iyear <- year >= start.year & year <= end.year
     daty <- daty[iyear]
-    if(GeneralParameters$data.type == "cdtstation") don$data <- don$data[iyear, , drop = FALSE]
+
+    # if(GeneralParameters$data.type == "cdtstation")
+    #     don$data <- don$data[iyear, , drop = FALSE]
+
     index <- cdt.index.DailySeason(daty, start.mon, start.day, end.mon, end.day)
 
     miss.day <- sapply(seq_along(index$index), function(jj){
         xdx <- index$index[[jj]]
         xdx <- xdx[!is.na(xdx)]
         length.day <- as.numeric(diff(as.Date(index$date[[jj]], '%Y%m%d')) + 1)
-        length(xdx) / length.day < GeneralParameters$min.frac
+        length(xdx) / length.day < pars.seas$min.frac
     })
 
     out.daty <- sapply(index$date, paste0, collapse = '_')
@@ -100,11 +110,10 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 
     ################################################
 
-    toAggr <- list(index, c(start.year, end.year),
+    toAggr <- list(index, pars.stat$daily, pars.seas$min.frac,
+                   c(start.year, end.year),
                    c(start.mon, start.day, end.mon, end.day),
-                   GeneralParameters$stats$daily,
-                   c(drywet.day, drywet.spell),
-                   GeneralParameters$min.frac)
+                   c(drywet.day, drywet.spell))
 
     if(is.null(.cdtData$EnvData$toAggr)){
         aggregatData <- TRUE
@@ -113,18 +122,20 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
     }
 
     if(aggregatData){
-        Insert.Messages.Out("Calculate seasonal statistics ......", TRUE, "i")
+        Insert.Messages.Out(message[['10']], TRUE, "i")
+
         if(GeneralParameters$data.type == "cdtstation"){
             dataOUT <- file.path(outDIR, stats.directory)
             dir.create(dataOUT, showWarnings = FALSE, recursive = TRUE)
             out.cdt.rds <- gzfile(file.path(dataOUT, paste0(stats.directory, '.rds')), compression = 7)
             out.cdt.csv <- file.path(dataOUT, paste0(stats.directory, '.csv'))
 
+            don$data <- don$data[iyear, , drop = FALSE]
+
             dat.analys <- lapply(seq_along(index$index), function(jj){
                 if(miss.day[[jj]]) return(rep(NA, length(don$id)))
                 cdt.daily.statistics(don$data[index$index[[jj]], , drop = FALSE],
-                                    STATS = GeneralParameters$stats$daily,
-                                    pars = aggr.pars)
+                                     STATS = pars.stat$daily, pars = aggr.pars)
             })
             dat.analys <- do.call(rbind, dat.analys)
             index.out <- NULL
@@ -157,32 +168,32 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
             index.out <- don
 
             CbDailyStatsVAL <- c('Total Rainfall', 'Rainfall Intensity', 'Number of Wet Days',
-                                'Number of Dry Days', 'Number of Wet Spells', 'Number of Dry Spells')
-            stats.prefix <- switch(GeneralParameters$stats$daily,
-                                    'tot.rain' = CbDailyStatsVAL[1],
-                                    'rain.int' = CbDailyStatsVAL[2],
-                                    'nb.wet.day' = CbDailyStatsVAL[3],
-                                    'nb.dry.day' = CbDailyStatsVAL[4],
-                                    'nb.wet.spell' = CbDailyStatsVAL[5],
-                                    'nb.dry.spell' = CbDailyStatsVAL[6])
+                                 'Number of Dry Days', 'Number of Wet Spells', 'Number of Dry Spells')
+            stats.prefix <- switch(pars.stat$daily,
+                                   'tot.rain' = CbDailyStatsVAL[1],
+                                   'rain.int' = CbDailyStatsVAL[2],
+                                   'nb.wet.day' = CbDailyStatsVAL[3],
+                                   'nb.dry.day' = CbDailyStatsVAL[4],
+                                   'nb.wet.spell' = CbDailyStatsVAL[5],
+                                   'nb.dry.spell' = CbDailyStatsVAL[6])
 
-            stats.params <- switch(GeneralParameters$stats$daily,
-                                    'tot.rain' = "",
-                                    'rain.int' = "",
-                                    'nb.wet.day' = paste0("wet day rr >= ", drywet.day, ' mm'),
-                                    'nb.dry.day' = paste0("dry day rr < ", drywet.day, ' mm'),
-                                    'nb.wet.spell' = paste0("wet day rr >= ", drywet.day, ' mm', ' & ', "wet spell >= ", drywet.spell, ' days'),
-                                    'nb.dry.spell' = paste0("dry day rr < ", drywet.day, ' mm', ' & ', "dry spell >= ", drywet.spell, ' days'))
+            stats.params <- switch(pars.stat$daily,
+                                   'tot.rain' = "",
+                                   'rain.int' = "",
+                                   'nb.wet.day' = paste0("wet day rr >= ", drywet.day, ' mm'),
+                                   'nb.dry.day' = paste0("dry day rr < ", drywet.day, ' mm'),
+                                   'nb.wet.spell' = paste0("wet day rr >= ", drywet.day, ' mm', ' & ', "wet spell >= ", drywet.spell, ' days'),
+                                   'nb.dry.spell' = paste0("dry day rr < ", drywet.day, ' mm', ' & ', "dry spell >= ", drywet.spell, ' days'))
 
-            index.out$varInfo$name <- GeneralParameters$stats$daily
+            index.out$varInfo$name <- pars.stat$daily
             index.out$varInfo$prec <- 'float'
-            index.out$varInfo$units <- switch(GeneralParameters$stats$daily,
-                                                'tot.rain' = "mm",
-                                                'rain.int' = "mm/day",
-                                                'nb.wet.day' = "days",
-                                                'nb.dry.day' = "days",
-                                                'nb.wet.spell' = "spells",
-                                                'nb.dry.spell' = "spells")
+            index.out$varInfo$units <- switch(pars.stat$daily,
+                                              'tot.rain' = "mm",
+                                              'rain.int' = "mm/day",
+                                              'nb.wet.day' = "days",
+                                              'nb.dry.day' = "days",
+                                              'nb.wet.spell' = "spells",
+                                              'nb.dry.spell' = "spells")
             index.out$varInfo$longname <- paste(stats.prefix, ":", stats.season, ";", stats.params)
             
             index.out$TimeStep <- "seasonal"
@@ -195,26 +206,26 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
             
             #########################################
 
+            cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+
             chunkfile <- sort(unique(don$colInfo$index))
             chunkcalc <- split(chunkfile, ceiling(chunkfile/don$chunkfac))
 
             do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE
             do.parCALC <- if(do.parChunk) FALSE else TRUE
 
-            cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
             parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
             ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
                                progress = TRUE, FUN = function(chkj)
             {
-                don.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], GeneralParameters$cdtdataset, cdtParallelCond, do.par = do.parChunk)
+                don.data <- readCdtDatasetChunk.sequence(chunkcalc[[chkj]], fcdtdataset, cdtParallelCond, do.par = do.parChunk)
                 don.data <- don.data[don$dateInfo$index, , drop = FALSE]
                 don.data <- don.data[iyear, , drop = FALSE]
 
                 dat.analys <- lapply(seq_along(index$index), function(jj){
                     if(miss.day[[jj]]) return(rep(NA, ncol(don.data)))
                     cdt.daily.statistics(don.data[index$index[[jj]], , drop = FALSE],
-                                        STATS = GeneralParameters$stats$daily,
-                                        pars = aggr.pars)
+                                         STATS = pars.stat$daily, pars = aggr.pars)
                 })
                 dat.analys <- do.call(rbind, dat.analys)
 
@@ -249,7 +260,8 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
         .cdtData$EnvData$dat.analys <- dat.analys
         .cdtData$EnvData$index.out <- index.out
         .cdtData$EnvData$toAggr <- toAggr
-        Insert.Messages.Out("Computing seasonal statistics done!", TRUE, "s")
+
+        Insert.Messages.Out(message[['11']], TRUE, "s")
     }else{
         dat.analys <- .cdtData$EnvData$dat.analys
         index.out <- .cdtData$EnvData$index.out
@@ -257,14 +269,14 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 
     ################################################
 
-    if(GeneralParameters$stats$yearly == "mean")
+    if(pars.stat$yearly == "mean")
         dat.yearly <- colMeans(dat.analys, na.rm = TRUE)
-    if(GeneralParameters$stats$yearly == "stdev")
+    if(pars.stat$yearly == "stdev")
         dat.yearly <- matrixStats::colSds(dat.analys, na.rm = TRUE)
-    if(GeneralParameters$stats$yearly == "coefvar")
+    if(pars.stat$yearly == "coefvar")
         dat.yearly <- 100 * matrixStats::colSds(dat.analys, na.rm = TRUE) / colMeans(dat.analys, na.rm = TRUE)
-    if(GeneralParameters$stats$yearly == "proba")
-        dat.yearly <- 100 * colSums(!is.na(dat.analys) & dat.analys >= GeneralParameters$def$proba.thres)/colSums(!is.na(dat.analys))
+    if(pars.stat$yearly == "proba")
+        dat.yearly <- 100 * colSums(!is.na(dat.analys) & dat.analys >= pars.def$proba.thres)/colSums(!is.na(dat.analys))
 
     ################################################
 
@@ -278,12 +290,14 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
     calc.stats[[stats.directory]]$date <- out.daty
     daty.range <- out.daty[c(1, length(out.daty))]
     daty.range <- cbind(substr(daty.range, 1, 4), substr(daty.range, 10, 13))
-    vars.def <- c(GeneralParameters$def$drywet.day, GeneralParameters$def$drywet.spell, GeneralParameters$def$proba.thres)
-    calc.stats[[stats.directory]][[GeneralParameters$stats$yearly]] <- list(year = daty.range, season = stats.season, pars = vars.def)
+    vars.def <- c(pars.def$drywet.day, pars.def$drywet.spell, pars.def$proba.thres)
+    calc.stats[[stats.directory]][[pars.stat$yearly]] <- list(year = daty.range, season = stats.season, pars = vars.def)
 
-    last.vars <- c(stats.directory, GeneralParameters$stats$yearly)
+    last.vars <- c(stats.directory, pars.stat$yearly)
 
     ################################################
+
+    Insert.Messages.Out(message[['12']], TRUE, "i")
 
     if(GeneralParameters$data.type == "cdtstation"){
         stn.data <- list(id = don$id, lon = don$lon, lat = don$lat)
@@ -296,8 +310,8 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
         dataOUT <- file.path(outDIR, 'CDTDATASET')
         dir.create(dataOUT, showWarnings = FALSE, recursive = TRUE)
 
-        out.cdt.stats.csv <- file.path(datadir, paste0(stats.directory, '_', GeneralParameters$stats$yearly, '.csv'))
-        out.cdt.stats.rds <- file.path(dataOUT, paste0(stats.directory, '_', GeneralParameters$stats$yearly, '.rds'))
+        out.cdt.stats.csv <- file.path(datadir, paste0(stats.directory, '_', pars.stat$yearly, '.csv'))
+        out.cdt.stats.rds <- file.path(dataOUT, paste0(stats.directory, '_', pars.stat$yearly, '.rds'))
 
         ##################
 
@@ -313,7 +327,7 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 
         dat.yearly <- round(dat.yearly, 3)
         dat.yearly[is.na(dat.yearly)] <- -99
-        dat.yearly <- rbind(infohead, c(paste0(GeneralParameters$stats$yearly, ':', stats.season), dat.yearly))
+        dat.yearly <- rbind(infohead, c(paste0(pars.stat$yearly, ':', stats.season), dat.yearly))
         writeFiles(dat.yearly, out.cdt.stats.csv)
     }
 
@@ -324,13 +338,13 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
         ncdfOUT <- file.path(outDIR, 'DATA_NetCDF_STATS')
         dir.create(ncdfOUT, showWarnings = FALSE, recursive = TRUE)
 
-        nom <- paste0(GeneralParameters$stats$yearly, ".", index.out$varInfo$name)
-        nom_long <- paste(GeneralParameters$stats$yearly, index.out$varInfo$longname)
+        nom <- paste0(pars.stat$yearly, ".", index.out$varInfo$name)
+        nom_long <- paste(pars.stat$yearly, index.out$varInfo$longname)
 
-        if(GeneralParameters$stats$yearly == "mean") unite <- index.out$varInfo$units
-        if(GeneralParameters$stats$yearly == "stdev") unite <- index.out$varInfo$units
-        if(GeneralParameters$stats$yearly == "coefvar") unite <- "%"
-        if(GeneralParameters$stats$yearly == "proba") unite <- "%"
+        if(pars.stat$yearly == "mean") unite <- index.out$varInfo$units
+        if(pars.stat$yearly == "stdev") unite <- index.out$varInfo$units
+        if(pars.stat$yearly == "coefvar") unite <- "%"
+        if(pars.stat$yearly == "proba") unite <- "%"
 
         x <- index.out$coords$mat$x
         y <- index.out$coords$mat$y
@@ -344,11 +358,13 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
         dim(dat.yearly) <- c(length(x), length(y))
         dat.yearly[is.na(dat.yearly)] <- -99
 
-        filenc <- file.path(ncdfOUT, paste0(stats.directory, '_', GeneralParameters$stats$yearly, '.nc'))
+        filenc <- file.path(ncdfOUT, paste0(stats.directory, '_', pars.stat$yearly, '.nc'))
         nc <- nc_create(filenc, nc.grd)
         ncvar_put(nc, nc.grd, dat.yearly)
         nc_close(nc)
     }
+
+    Insert.Messages.Out(message[['13']], TRUE, "s")
 
     ##################
     con <- gzfile(out.index.file, compression = 9)

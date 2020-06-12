@@ -67,7 +67,7 @@
             <text lang="en"> Use reference series </text>
         </checkbutton>
         <checkbutton id="2">
-            <text lang="en"> Existing homogenization session </text>
+            <text lang="en"> Load existing session </text>
         </checkbutton>
         <checkbutton id="3">
             <text lang="en"> Base Series </text>

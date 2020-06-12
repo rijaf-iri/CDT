@@ -1,5 +1,6 @@
 
 read_ValidationMultipleData <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
     inputInfo <- GeneralParameters[c('intstep', 'STN.file', 'VALID.files')]
     readstnData <- TRUE
     if(!is.null(.cdtData$EnvData$inputInfo))
@@ -20,7 +21,7 @@ read_ValidationMultipleData <- function(GeneralParameters){
         if(readstnData1){
             cdtTmpVar <- getStnOpenData(GeneralParameters$STN.file)
             if(is.null(cdtTmpVar)){
-                msg <- paste("Unable to read:", GeneralParameters$STN.file)
+                msg <- paste(message[['5']], ":", GeneralParameters$STN.file)
                 Insert.Messages.Out(msg, TRUE, "e")
                 return(NULL)
             }
@@ -29,7 +30,7 @@ read_ValidationMultipleData <- function(GeneralParameters){
                                                  GeneralParameters$intstep,
                                                  GeneralParameters$STN.file)
             if(is.null(cdtTmpVar)){
-                msg <- paste("Unable to parse:", GeneralParameters$STN.file)
+                msg <- paste(message[['5a']], ":", GeneralParameters$STN.file)
                 Insert.Messages.Out(msg, TRUE, "e")
                 return(NULL)
             }
@@ -53,10 +54,10 @@ read_ValidationMultipleData <- function(GeneralParameters){
         if(readstnData2){
             cdtTmpVar <- lapply(GeneralParameters$VALID.files, function(stn){
                 dat <- getStnOpenData(stn)
-                ret <- list(data = NULL, dates = NULL, msg = paste("Unable to read:", stn))
+                ret <- list(data = NULL, dates = NULL, msg = paste(message[['5']], ":", stn))
                 if(is.null(dat)) return(ret)
                 dat <- getCDTdataAndDisplayMsg(dat, GeneralParameters$intstep, stn)
-                ret <- list(data = NULL, dates = NULL, msg = paste("Unable to parse:", stn))
+                ret <- list(data = NULL, dates = NULL, msg = paste(message[['5a']], ":", stn))
                 if(is.null(dat)) return(ret)
                 ret <- list(data = dat[c('id', 'lon', 'lat', 'dates', 'data')], dates = dat$dates, msg = NULL)
                 return(ret)
@@ -70,13 +71,13 @@ read_ValidationMultipleData <- function(GeneralParameters){
 
             ids <- Reduce(intersect, lapply(lapply(cdtTmpVar, "[[", "data"), "[[", "id"))
             if(length(ids) == 0){
-                Insert.Messages.Out("IDs of the stations data do not match", TRUE, "e")
+                Insert.Messages.Out(message[['7']], TRUE, "e")
                 return(NULL)
             }
 
             daty <- Reduce(intersect, lapply(cdtTmpVar, "[[", "dates"))
             if(length(daty) == 0){
-                Insert.Messages.Out("Dates do not overlap", TRUE, "e")
+                Insert.Messages.Out(message[['8']], TRUE, "e")
                 return(NULL)
             }
 
@@ -89,16 +90,16 @@ read_ValidationMultipleData <- function(GeneralParameters){
 
         if(readstnData1 | readstnData2){
             if(GeneralParameters$outdir %in% c("", "NA")){
-                Insert.Messages.Out("Directory to save results doesn't exist", TRUE, "e")
+                Insert.Messages.Out(message[['6']], TRUE, "e")
                 return(NULL)
             }
 
             if(!any(.cdtData$EnvData$stnData$data$id %in% .cdtData$EnvData$vldData$ids)){
-                Insert.Messages.Out("IDs of the stations data do not match", format = TRUE)
+                Insert.Messages.Out(message[['7']], TRUE, 'e')
                 return(NULL)
             }
             if(!any(.cdtData$EnvData$stnData$data$dates %in% .cdtData$EnvData$vldData$dates)){
-                Insert.Messages.Out("The dates of the stations data do not match", format = TRUE)
+                Insert.Messages.Out(message[['8']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -168,7 +169,6 @@ read_ValidationMultipleData <- function(GeneralParameters){
 
             fileValidOut <- file.path(outValidation, "VALIDATION_DATA_OUT.rds")
 
-            # stats.data <- .cdtData$EnvData[c('GeneralParameters', 'cdtData', 'vldData', 'stnData')]
             .cdtData$EnvData$VALID.names <- GeneralParameters$VALID.names
             stats.data <- .cdtData$EnvData[c('GeneralParameters', 'cdtData', 'VALID.names')]
             saveRDS(stats.data, file = fileValidOut)
@@ -181,20 +181,24 @@ read_ValidationMultipleData <- function(GeneralParameters){
 }
 
 ValidationMultipleDataProcs <- function(GeneralParameters){
-    data.exist <- tclvalue(.cdtData$EnvData$hovd) == "1"
-    if(data.exist){
+    if(GeneralParameters$validExist){
         outValidation <- dirname(.cdtData$EnvData$file.hovd)
     }else{
         outValidation <- file.path(GeneralParameters$outdir, paste0('VALIDATION_',
                                    tools::file_path_sans_ext(GeneralParameters$STN.file)))
     }
 
+    ##########################
+
+    message <- .cdtData$EnvData$message
+
     if(is.null(.cdtData$EnvData$cdtData)){
-        Insert.Messages.Out("No data found", format = TRUE)
+        Insert.Messages.Out(message[['9']], TRUE, 'e')
         return(NULL)
     }
 
-    xvargal <- c("date.range", "aggr.series", "dicho.fcst", "stat.data", "add.to.plot", "clim.var")
+    xvargal <- c("date.range", "aggr.series", "dicho.fcst", "volume.stat",
+                 "stat.data", "add.to.plot", "clim.var")
     .cdtData$EnvData$GeneralParameters[xvargal] <- GeneralParameters[xvargal]
     GeneralParameters <- .cdtData$EnvData$GeneralParameters
     clim.var <- GeneralParameters$clim.var
@@ -203,6 +207,7 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     endYear <- GeneralParameters$date.range$end.year
     startMonth <- GeneralParameters$date.range$start.month
     endMonth <- GeneralParameters$date.range$end.month
+    aggr.pars <- GeneralParameters$aggr.series
 
     dstart <- as.Date(paste0(startYear, "-1-1"))
     dend <- as.Date(paste0(endYear, "-12-31"))
@@ -243,12 +248,13 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     ###################
 
     out.series <- if(seasonLength == 1) 'monthly' else 'seasonal'
-    AggrSeries <- c(GeneralParameters$aggr.series,
-                    list(rle.fun = ">=", rle.thres = 6, out.series = out.series))
+    AggrSeries <- c(GeneralParameters$aggr.series, list(out.series = out.series))
+
+    ###################
 
     if(is.null(.cdtData$EnvData$Statistics) |
-        !isTRUE(all.equal(.cdtData$EnvData$opDATA$dates, dates0)) |
-        !isTRUE(all.equal(.cdtData$EnvData$opDATA$AggrSeries, AggrSeries)))
+       !isTRUE(all.equal(.cdtData$EnvData$opDATA$dates, dates0)) |
+       !isTRUE(all.equal(.cdtData$EnvData$opDATA$AggrSeries, AggrSeries)))
     {
         idx <- match(dates0, .cdtData$EnvData$cdtData$dates)
         .cdtData$EnvData$opDATA$dates <- dates0
@@ -268,24 +274,32 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
 
         ###################
 
-        if(GeneralParameters$aggr.series$aggr.data){
-            Insert.Messages.Out('Aggregate data ...', TRUE, 'i')
+        if(aggr.pars$aggr.data){
+            Insert.Messages.Out(message[['10']], TRUE, 'i')
 
-            agg.index <- cdt.index.aggregate(.cdtData$EnvData$opDATA$dates, timestep,
-                                            out.series, seasonLength = seasonLength, startMonth = startMonth)
+            agg.index <- cdt.index.aggregate(.cdtData$EnvData$opDATA$dates,
+                                             timestep, out.series,
+                                             seasonLength = seasonLength,
+                                             startMonth = startMonth)
 
-            AggrcdtData <- cdt.data.aggregate(.cdtData$EnvData$opDATA$stn, agg.index$index, pars = AggrSeries)
-            AggrncdfData <- lapply(.cdtData$EnvData$opDATA$ncdf, function(don) cdt.data.aggregate(don, agg.index$index, pars = AggrSeries))
+            if(aggr.pars$min.frac$unique){
+                ifull <- (agg.index$nba / agg.index$nb0) >= aggr.pars$min.frac$all
+            }else{
+                ifull <- sapply(agg.index$nb.mon, function(x){
+                    all(x$nba / x$nb0 >= aggr.pars$min.frac$month[x$mo])
+                })
+            }
 
-            imiss <- agg.index$nba/agg.index$nb0 < GeneralParameters$aggr.series$min.frac
-            AggrcdtData[imiss] <- NA
-            AggrncdfData <- lapply(AggrncdfData, function(don){
-                                      don[imiss] <- NA
-                                      don
-                                   })
+            if(all(!ifull)){
+                Insert.Messages.Out(message[['11']], TRUE, 'e')
+                return(NULL)
+            }
+
+            AggrcdtData <- cdt.data.aggregateTS(.cdtData$EnvData$opDATA$stn, agg.index, aggr.pars)
+            AggrncdfData <- lapply(.cdtData$EnvData$opDATA$ncdf, function(don) cdt.data.aggregateTS(don, agg.index, aggr.pars))
 
             temps <- do.call(c, lapply(agg.index$index, function(x) mean(temps[x])))
-            Insert.Messages.Out('Aggregating data finished', TRUE, 's')
+            Insert.Messages.Out(message[['12']], TRUE, 's')
         }else{
             AggrcdtData <- .cdtData$EnvData$opDATA$stn
             AggrncdfData <- .cdtData$EnvData$opDATA$ncdf
@@ -297,60 +311,201 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
         .cdtData$EnvData$opDATA$AggrSeries <- AggrSeries
     }
 
-    Insert.Messages.Out('Calculate statistics ...', TRUE, 'i')
+    #######
+
+    Insert.Messages.Out(message[['13']], TRUE, 'i')
 
     AggrcdtData <- .cdtData$EnvData$opDATA$stnStatData
     AggrncdfData <- .cdtData$EnvData$opDATA$ncStatData
-    dichotomous <- GeneralParameters$dicho.fcst
-    ## change from GeneralParameters leftCmd
-    names(dichotomous) <- c("fun", "thres")
+    temps <- .cdtData$EnvData$opDATA$temps
+
+    #######
+
+    volSTAT <- GeneralParameters$volume.stat
+    dicho <- GeneralParameters$dicho.fcst
+    dichoFun <- paste0("Cat.thres.", dicho$fun)
+    description1 <- "Threshold for Categorical Statistics"
+    description2 <- "Threshold for Volumetric Statistics"
 
     ####### STN
     cont.stats <- lapply(AggrncdfData, function(X) cdtValidation.Cont.Stats(AggrcdtData, X))
-    catg.stats <- lapply(AggrncdfData, function(X) cdtValidation.Categ.Stats(AggrcdtData, X, dichotomous))
+    catg.stats <- lapply(AggrncdfData, function(X) cdtValidation.Categ.Stats(AggrcdtData, X, dicho))
 
-    volume.stats <- NULL
     if(clim.var == "RR"){
-        ## unique values
-        quant.thres <- dichotomous$thres
-        ## quantile from stndata
-        # quant.thres <- matrixStats::colQuantiles(AggrcdtData, probs = 0.5, na.rm = TRUE, type = 8L)
-        ## quantile from users, read from CDT files
-        # quant.thres <- NA## 
+        if(volSTAT$user){
+            if(volSTAT$one.thres){
+                quant.thres <- volSTAT$user.val
+            }else{
+                if(volSTAT$user.file == ""){
+                    Insert.Messages.Out(message[['14']], TRUE, 'e')
+                    return(NULL)
+                }
+                quant.thres <- getStnOpenData(volSTAT$user.file)
+                if(is.null(quant.thres)) return(NULL)
+                quant.thres <- splitCDTData1(quant.thres)
+                if(is.null(quant.thres)) return(NULL)
+
+                if(!any(.cdtData$EnvData$opDATA$id %in% quant.thres$id)){
+                    Insert.Messages.Out(message[['15']], TRUE, 'e')
+                    return(NULL)
+                }
+
+                inx <- match(.cdtData$EnvData$opDATA$id, quant.thres$id)
+                quant.thres <- quant.thres$data[1, inx]
+            }
+            voln <- 'value'
+        }else{
+            # don <- if(volSTAT$from == "obs") AggrcdtData else AggrncdfData
+            don <- AggrcdtData
+            years <- as.numeric(format(temps, "%Y"))
+            if(length(unique(years)) < volSTAT$period$min.year){
+                Insert.Messages.Out(message[['16']], TRUE, 'e')
+                return(NULL)
+            }
+            iyear <- if(volSTAT$period$all.years)
+                        rep(TRUE, length(years))
+                     else
+                        years >= volSTAT$period$start.year & years <= volSTAT$period$end.year
+            years <- years[iyear]
+            don <- don[iyear, , drop = FALSE]
+            naPerc <- colSums(!is.na(don))/length(years) < volSTAT$period$min.year/length(unique(years))
+            quant.thres <- matrixStats::colQuantiles(don, probs = volSTAT$perc/100, na.rm = TRUE, type = 8)
+            quant.thres[naPerc] <- NA
+            rm(don)
+            voln <- paste0(volSTAT$from, ".P", volSTAT$perc)
+        }
         volume.stats <- lapply(AggrncdfData, function(X) cdtVolumetricQuantileStats(AggrcdtData, X, quant.thres))
+
+        quant.thres <- round(quant.thres, 1)
+        descrp1 <- description1
+        descrp2 <- description2
+        score1 <- NA
+        score2 <- NA
+    }else{
+        volume.stats <- NULL
+
+        quant.thres <- NULL
+        descrp1 <- description1
+        descrp2 <- NULL
+        score1 <- NA
+        score2 <- NULL
     }
 
-    .cdtData$EnvData$Statistics$STN <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
+    tmp <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
+    aux <- list(desciption = c(descrp1, descrp2), score = c(score1, score2))
+
+    tmp$statNames <- as.character(do.call(c, lapply(tmp, function(x) rownames(x[[1]]$statistics))))
+    nl <- length(tmp$statNames)
+    tmp$statNames[nl + 1] <- dichoFun
+    if(clim.var == "RR") tmp$statNames[nl + 2] <- paste0("Vol.thres.", voln)
+    tmp$threshold <- as.numeric(quant.thres)
+    tmp$aux <- aux
+    .cdtData$EnvData$Statistics$STN <- tmp
 
     ####### ALL
     matSTN <- matrix(AggrcdtData, ncol = 1)
     matCDF <- lapply(AggrncdfData, function(X) matrix(X, ncol = 1))
 
     cont.stats <- lapply(matCDF, function(X) cdtValidation.Cont.Stats(matSTN, X))
-    catg.stats <- lapply(matCDF, function(X) cdtValidation.Categ.Stats(matSTN, X, dichotomous))
+    catg.stats <- lapply(matCDF, function(X) cdtValidation.Categ.Stats(matSTN, X, dicho))
 
-    volume.stats <- NULL
     if(clim.var == "RR"){
-        quant.thres <- dichotomous$thres
+        if(volSTAT$user){
+            quant.thres <- volSTAT$user.val
+            voln <- 'value'
+        }else{
+            # don <- if(volSTAT$from == "obs") matSTN else matCDF
+            don <- matSTN
+            quant.thres <- stats::quantile(don, probs = volSTAT$perc/100, na.rm = TRUE, type = 8)
+            voln <- paste0(volSTAT$from, ".P", volSTAT$perc)
+        }
+
         volume.stats <- lapply(matCDF, function(X) cdtVolumetricQuantileStats(matSTN, X, quant.thres))
+
+        quant.thres <- round(quant.thres, 1)
+        descrp1 <- description1
+        descrp2 <- description2
+        score1 <- NA
+        score2 <- NA
+    }else{
+        volume.stats <- NULL
+
+        quant.thres <- NULL
+        descrp1 <- description1
+        descrp2 <- NULL
+        score1 <- NA
+        score2 <- NULL
     }
 
-    .cdtData$EnvData$Statistics$ALL <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
+    tmp <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
+    aux <- list(desciption = c(descrp1, descrp2), score = c(score1, score2))
+
+    tmp$statNames <- as.character(do.call(c, lapply(tmp, function(x) rownames(x[[1]]$statistics))))
+    nl <- length(tmp$statNames)
+    tmp$statNames[nl + 1] <- dichoFun
+    if(clim.var == "RR") tmp$statNames[nl + 2] <- paste0("Vol.thres.", voln)
+    tmp$threshold <- as.numeric(quant.thres)
+    tmp$aux <- aux
+    .cdtData$EnvData$Statistics$ALL <- tmp
 
     ####### AVG
     matSTN <- matrix(rowMeans(AggrcdtData, na.rm = TRUE), ncol = 1)
     matCDF <- lapply(AggrncdfData, function(X) matrix(rowMeans(X, na.rm = TRUE), ncol = 1))
 
     cont.stats <- lapply(matCDF, function(X) cdtValidation.Cont.Stats(matSTN, X))
-    catg.stats <- lapply(matCDF, function(X) cdtValidation.Categ.Stats(matSTN, X, dichotomous))
+    catg.stats <- lapply(matCDF, function(X) cdtValidation.Categ.Stats(matSTN, X, dicho))
 
-    volume.stats <- NULL
     if(clim.var == "RR"){
-        quant.thres <- dichotomous$thres
+        if(volSTAT$user){
+            quant.thres <- volSTAT$user.val
+            voln <- 'value'
+        }else{
+            # don <- if(volSTAT$from == "obs") matSTN else matCDF
+            don <- matSTN
+            years <- as.numeric(format(temps, "%Y"))
+            if(length(unique(years)) < volSTAT$period$min.year){
+                Insert.Messages.Out(message[['16']], TRUE, 'e')
+                return(NULL)
+            }
+            iyear <- if(volSTAT$period$all.years)
+                        rep(TRUE, length(years))
+                     else
+                        years >= volSTAT$period$start.year & years <= volSTAT$period$end.year
+            years <- years[iyear]
+            don <- don[iyear, , drop = FALSE]
+            naPerc <- colSums(!is.na(don))/length(years) < volSTAT$period$min.year/length(unique(years))
+            quant.thres <- stats::quantile(don, probs = volSTAT$perc/100, na.rm = TRUE, type = 8)
+            if(naPerc) quant.thres <- NA
+            voln <- paste0(volSTAT$from, ".P", volSTAT$perc)
+        }
+
         volume.stats <- lapply(matCDF, function(X) cdtVolumetricQuantileStats(matSTN, X, quant.thres))
+
+        quant.thres <- round(quant.thres, 1)
+        descrp1 <- description1
+        descrp2 <- description2
+        score1 <- NA
+        score2 <- NA
+    }else{
+        volume.stats <- NULL
+
+        quant.thres <- NULL
+        descrp1 <- description1
+        descrp2 <- NULL
+        score1 <- NA
+        score2 <- NULL
     }
 
-    .cdtData$EnvData$Statistics$AVG <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
+    tmp <- list(cont = cont.stats, catg = catg.stats, volume = volume.stats)
+    aux <- list(desciption = c(descrp1, descrp2), score = c(score1, score2))
+
+    tmp$statNames <- as.character(do.call(c, lapply(tmp, function(x) rownames(x[[1]]$statistics))))
+    nl <- length(tmp$statNames)
+    tmp$statNames[nl + 1] <- dichoFun
+    if(clim.var == "RR") tmp$statNames[nl + 2] <- paste0("Vol.thres.", voln)
+    tmp$threshold <- as.numeric(quant.thres)
+    tmp$aux <- aux
+    .cdtData$EnvData$Statistics$AVG <- tmp
 
     ###################
 
@@ -359,88 +514,74 @@ ValidationMultipleDataProcs <- function(GeneralParameters){
     saveRDS(hovd.data, file = fileValidOut)
 
     ###################
-
-    if(clim.var != "RR"){
-        volume.stats <- NULL
-        descrp3 <- NULL
-        pscores3 <- NULL
-    }
-
-    # write to table
     dirSTATS <- file.path(outValidation, "STATISTICS_DATA")
     dir.create(dirSTATS, showWarnings = FALSE, recursive = TRUE)
 
+    mois <- format(ISOdate(2014, 1:12, 1), "%b")
+    annes <- paste0(startYear, '-', endYear)
+    lmois <- paste0(mois[startMonth], '-', mois[endMonth])
+    lsais <- if(aggr.pars$aggr.data) out.series else timestep
+    filename_suffix <- paste0(lsais, "_", lmois, "_", annes)
+
+    ###################
+
+    NOMS <- c('Name', .cdtData$EnvData$VALID.names, 'Description', 'Perfect.Score')
+
     stat.ALL <- .cdtData$EnvData$Statistics$ALL
     cont.stats <- do.call(cbind, lapply(stat.ALL$cont, "[[", "statistics"))
-    descrp1 <- stat.ALL$cont[[1]]$description
-    pscores1 <- stat.ALL$cont[[1]]$perfect.score
-
     catg.stats <- do.call(cbind, lapply(stat.ALL$catg, "[[", "statistics"))
-    descrp2 <- stat.ALL$catg[[1]]$description
-    pscores2 <- stat.ALL$catg[[1]]$perfect.score
+    volume.stats <- do.call(cbind, lapply(stat.ALL$volume, "[[", "statistics"))
 
-    if(clim.var == "RR"){
-        volume.stats <- do.call(cbind, lapply(stat.ALL$volume, "[[", "statistics"))
-        descrp3 <- stat.ALL$volume[[1]]$description
-        pscores3 <- stat.ALL$volume[[1]]$perfect.score
-    }
+    tmp <- rbind(cont.stats, catg.stats, volume.stats, dicho$thres, stat.ALL$threshold)
+    descrp <- c(stat.ALL$cont[[1]]$description, stat.ALL$catg[[1]]$description,
+                stat.ALL$volume[[1]]$description, stat.ALL$aux$desciption)
+    pscores <- c(stat.ALL$cont[[1]]$perfect.score, stat.ALL$catg[[1]]$perfect.score,
+                 stat.ALL$volume[[1]]$perfect.score, stat.ALL$aux$score)
+    stat.ALL <- data.frame(stat.ALL$statNames, tmp, descrp, pscores)
+    names(stat.ALL) <- NOMS
 
-    stat.ALL <- rbind(cont.stats, catg.stats, volume.stats)
-    descrp <- c(descrp1, descrp2, descrp3)
-    pscores <- c(pscores1, pscores2, pscores3)
-    stat.ALL <- data.frame(Name = rownames(stat.ALL), Statistics = stat.ALL,
-                           Description = descrp, pscores = pscores)
-    names(stat.ALL) <- c('Name', .cdtData$EnvData$VALID.names, 'Description', 'Perfect.Score')
-    file.stat.all <- file.path(dirSTATS, "All_Data_Statistics.csv")
+    file.stat.all <- file.path(dirSTATS, paste0("All_Data_Statistics_", filename_suffix, ".csv"))
     writeFiles(stat.ALL, file.stat.all, col.names = TRUE)
 
     ######
     stat.AVG <- .cdtData$EnvData$Statistics$AVG
     cont.stats <- do.call(cbind, lapply(stat.AVG$cont, "[[", "statistics"))
-    descrp1 <- stat.AVG$cont[[1]]$description
-    pscores1 <- stat.AVG$cont[[1]]$perfect.score
-
     catg.stats <- do.call(cbind, lapply(stat.AVG$catg, "[[", "statistics"))
-    descrp2 <- stat.AVG$catg[[1]]$description
-    pscores2 <- stat.AVG$catg[[1]]$perfect.score
+    volume.stats <- do.call(cbind, lapply(stat.AVG$volume, "[[", "statistics"))
 
-    if(clim.var == "RR"){
-        volume.stats <- do.call(cbind, lapply(stat.AVG$volume, "[[", "statistics"))
-        descrp3 <- stat.AVG$volume[[1]]$description
-        pscores3 <- stat.AVG$volume[[1]]$perfect.score
-    }
+    tmp <- rbind(cont.stats, catg.stats, volume.stats, dicho$thres, stat.AVG$threshold)
+    descrp <- c(stat.AVG$cont[[1]]$description, stat.AVG$catg[[1]]$description,
+                stat.AVG$volume[[1]]$description, stat.AVG$aux$desciption)
+    pscores <- c(stat.AVG$cont[[1]]$perfect.score, stat.AVG$catg[[1]]$perfect.score,
+                 stat.AVG$volume[[1]]$perfect.score, stat.AVG$aux$score)
+    stat.AVG <- data.frame(stat.AVG$statNames, tmp, descrp, pscores)
+    names(stat.AVG) <- NOMS
 
-    stat.AVG <- rbind(cont.stats, catg.stats, volume.stats)
-    descrp <- c(descrp1, descrp2, descrp3)
-    pscores <- c(pscores1, pscores2, pscores3)
-    stat.AVG <- data.frame(Name = rownames(stat.AVG), Statistics = stat.AVG,
-                           Description = descrp, pscores = pscores)
-    names(stat.AVG) <- c('Name', .cdtData$EnvData$VALID.names, 'Description', 'Perfect.Score')
-    file.stat.avg <- file.path(dirSTATS, "Spatial_Average_Statistics.csv")
+    file.stat.avg <- file.path(dirSTATS, paste0("Spatial_Average_Statistics_", filename_suffix, ".csv"))
     writeFiles(stat.AVG, file.stat.avg, col.names = TRUE)
 
     ######
 
-    headinfo <- cbind(c("Station", "LON", "STATS/LAT"),
+    headinfo <- cbind(c("STATION", "LON", "STATS/LAT"),
                       do.call(rbind, .cdtData$EnvData$opDATA[c('id', 'lon', 'lat')]))
     VALID.names <- gsub(" ", "_", .cdtData$EnvData$VALID.names)
+    VALID.names <- paste0(VALID.names, "_", filename_suffix, ".csv")
 
     for(j in seq_along(.cdtData$EnvData$VALID.names)){
         stat.STN <- .cdtData$EnvData$Statistics$STN
         cont.stats <- stat.STN$cont[[j]]$statistics
         catg.stats <- stat.STN$catg[[j]]$statistics
-        if(clim.var == "RR")
-            volume.stats <- stat.STN$volume[[j]]$statistics
+        volume.stats <- stat.STN$volume[[j]]$statistics
 
-        stat.STN <- rbind(cont.stats, catg.stats, volume.stats)
-        stat.STN <- cbind(rownames(stat.STN), stat.STN)
+        tmp <- rbind(cont.stats, catg.stats, volume.stats, dicho$thres, stat.STN$threshold)
+        stat.STN <- cbind(stat.STN$statNames, tmp)
         stat.STN <- rbind(headinfo, stat.STN)
 
-        file.stat.stn <- file.path(dirSTATS, paste0(VALID.names[j], ".csv"))
+        file.stat.stn <- file.path(dirSTATS, VALID.names[j])
         writeFiles(stat.STN, file.stat.stn)
     }
 
-    Insert.Messages.Out('Statistics calculation done!', TRUE, 's')
+    Insert.Messages.Out(message[['17']], TRUE, 's')
 
     return(0)
 }

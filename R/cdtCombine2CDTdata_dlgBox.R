@@ -1,12 +1,7 @@
 merge2CDTdata_getParams <- function(){
     listOpenFiles <- openFile_ttkcomboList()
-    if(WindowsOS()){
-        largeur1 <- 55
-        largeur2 <- 52
-    }else{
-        largeur1 <- 41
-        largeur2 <- 40
-    }
+    largeur1 <- 42
+    largeur2 <- 41
 
     ############################################
 

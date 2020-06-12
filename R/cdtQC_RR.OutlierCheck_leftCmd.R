@@ -2,17 +2,17 @@
 qcRROutlierCheckPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 29
-        largeur1 <- 44
-        largeur2 <- 47
-        largeur3 <- 22
-        largeur4 <- 28
-        largeur5 <- 15
-        largeur6 <- 27
-        largeur7 <- 8
-    }else{
         largeur0 <- 23
         largeur1 <- 31
+        largeur2 <- 33
+        largeur3 <- 12
+        largeur4 <- 18
+        largeur5 <- 11
+        largeur6 <- 19
+        largeur7 <- 7
+    }else{
+        largeur0 <- 23
+        largeur1 <- 32
         largeur2 <- 33
         largeur3 <- 12
         largeur4 <- 19
@@ -243,7 +243,7 @@ qcRROutlierCheckPanelCmd <- function(){
 
         ##############################################
 
-        frameOutQC <- ttklabelframe(subfr2, text = lang.dlg[['label']][['4']], relief = 'groove')
+        frameOutQC <- ttklabelframe(subfr2, text = lang.dlg[['label']][['5']], relief = 'groove')
 
         QCExist <- tclVar(0)
         file.dataIndex <- tclVar()
@@ -317,13 +317,7 @@ qcRROutlierCheckPanelCmd <- function(){
             tkconfigure(bt.dataIdx, state = stateExistData)
 
             stateQC <- if(tclvalue(QCExist) == '1') 'normal' else 'disabled'
-            tkconfigure(cb.fperiod, state = stateQC)
-            tkconfigure(cb.infile, state = stateQC)
-            tkconfigure(bt.infile, state = stateQC)
-            tkconfigure(bt.params, state = stateQC)
-            tkconfigure(en.dir.save, state = stateQC)
-            tkconfigure(bt.dir.save, state = stateQC)
-            tkconfigure(bt.doQC, state = stateQC)
+            tcl(tknote.cmd, 'itemconfigure', cmd.tab1$IDtab, state = stateQC)
         })
 
         #######################
@@ -1147,7 +1141,7 @@ qcRROutlierCheckPanelCmd <- function(){
                 }
             }
 
-            .cdtData$EnvData$dem$Opt <- MapGraph.QCgridData(.cdtData$EnvData$dem$Opt)
+            .cdtData$EnvData$dem$Opt <- MapGraph.gridDataLayer(.cdtData$EnvData$dem$Opt)
         })
 
         ########
@@ -1231,7 +1225,7 @@ qcRROutlierCheckPanelCmd <- function(){
                 }
             }
 
-            .cdtData$EnvData$sat$Opt <- MapGraph.QCgridData(.cdtData$EnvData$sat$Opt)
+            .cdtData$EnvData$sat$Opt <- MapGraph.gridDataLayer(.cdtData$EnvData$sat$Opt)
         })
 
         ########

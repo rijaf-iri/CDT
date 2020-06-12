@@ -1,6 +1,7 @@
 
 computeWBProcs <- function(){
-    Insert.Messages.Out("Compute daily water balance ......", TRUE, "i")
+    message <- .cdtData$GalParams$message
+    Insert.Messages.Out(message[['6']], TRUE, "i")
 
     if(.cdtData$GalParams$data.type == "cdtstation"){
         prec <- getStnOpenData(.cdtData$GalParams$cdtstation$prec)
@@ -14,11 +15,11 @@ computeWBProcs <- function(){
         if(is.null(etp)) return(NULL)
 
         if(!any(prec$id %in% etp$id)){
-            Insert.Messages.Out("Precip & PET stations do not match", format = TRUE)
+            Insert.Messages.Out(message[['7']], TRUE, 'e')
             return(NULL)
         }
         if(!any(prec$dates %in% etp$dates)){
-            Insert.Messages.Out("Precip & PET dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['8']], TRUE, 'e')
             return(NULL)
         }
 
@@ -53,7 +54,7 @@ computeWBProcs <- function(){
             swhc <- as.numeric(swhc[nrow(swhc), -1])
 
             if(!isTRUE(all.equal(stn.id, swhc.id))){
-                Insert.Messages.Out("SWHC, Precip & PET stations do not match", format = TRUE)
+                Insert.Messages.Out(message[['9']], TRUE, 'e')
                 return(NULL)
             }
         }else swhc <- .cdtData$GalParams$swhc$cap.max
@@ -68,7 +69,7 @@ computeWBProcs <- function(){
             wb1 <- as.numeric(wb1[nrow(wb1), -1])
 
             if(!isTRUE(all.equal(stn.id, wb1.id))){
-                Insert.Messages.Out("Initial water balance, Precip & PET stations do not match", format = TRUE)
+                Insert.Messages.Out(message[['10']], TRUE, 'e')
                 return(NULL)
             }
         }else wb1 <- .cdtData$GalParams$wb$wb1
@@ -117,21 +118,21 @@ computeWBProcs <- function(){
     if(.cdtData$GalParams$data.type == "cdtdataset"){
         prec <- try(readRDS(.cdtData$GalParams$cdtdataset$prec), silent = TRUE)
         if(inherits(prec, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", .cdtData$GalParams$cdtdataset$prec), format = TRUE)
+            Insert.Messages.Out(paste(message[['11']], .cdtData$GalParams$cdtdataset$prec), TRUE, 'e')
             return(NULL)
         }
         if(.cdtData$GalParams$Tstep != prec$TimeStep){
-            Insert.Messages.Out(paste("Precip dataset is not a", .cdtData$GalParams$Tstep, "data"), format = TRUE)
+            Insert.Messages.Out(paste(message[['12']], .cdtData$GalParams$Tstep), TRUE, 'e')
             return(NULL)
         }
 
         etp <- try(readRDS(.cdtData$GalParams$cdtdataset$etp), silent = TRUE)
         if(inherits(etp, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", .cdtData$GalParams$cdtdataset$etp), format = TRUE)
+            Insert.Messages.Out(paste(message[['11']], .cdtData$GalParams$cdtdataset$etp), TRUE, 'e')
             return(NULL)
         }
         if(.cdtData$GalParams$Tstep != etp$TimeStep){
-            Insert.Messages.Out(paste("PET dataset is not a", .cdtData$GalParams$Tstep, "data"), format = TRUE)
+            Insert.Messages.Out(paste(message[['13']], .cdtData$GalParams$Tstep), TRUE, 'e')
             return(NULL)
         }
 
@@ -139,20 +140,20 @@ computeWBProcs <- function(){
         SP1 <- defSpatialPixels(list(lon = prec$coords$mat$x, lat = prec$coords$mat$y))
         SP2 <- defSpatialPixels(list(lon = etp$coords$mat$x, lat = etp$coords$mat$y))
         if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-            Insert.Messages.Out("Precip & PET have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['14']], TRUE, 'e')
             return(NULL)
         }
         rm(SP1, SP2)
 
         ##################
         if(prec$chunksize != etp$chunksize){
-            Insert.Messages.Out("Precip & PET have different chunk size", format = TRUE)
+            Insert.Messages.Out(message[['15']], TRUE, 'e')
             return(NULL)
         }
 
         ##################
         if(!any(prec$dateInfo$date %in% etp$dateInfo$date)){
-            Insert.Messages.Out("Precip & PET dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['8']], TRUE, 'e')
             return(NULL)
         }
 
@@ -173,14 +174,14 @@ computeWBProcs <- function(){
         if(.cdtData$GalParams$swhc$multi){
             swhc <- getNCDFSampleData(.cdtData$GalParams$swhc$file)
             if(is.null(swhc)){
-                Insert.Messages.Out("No SWHC data found", format = TRUE)
+                Insert.Messages.Out(message[['16']], TRUE, 'e')
                 return(NULL)
             }
 
             SP1 <- defSpatialPixels(swhc[c('lon', 'lat')])
             SP2 <- defSpatialPixels(list(lon = etp$coords$mat$x, lat = etp$coords$mat$y))
             if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                Insert.Messages.Out("SWHC, Precip & PET have different resolution or bbox", format = TRUE)
+                Insert.Messages.Out(message[['17']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
@@ -192,14 +193,14 @@ computeWBProcs <- function(){
         if(.cdtData$GalParams$wb$multi){
             wb1 <- getNCDFSampleData(.cdtData$GalParams$wb$file)
             if(is.null(wb1)){
-                Insert.Messages.Out("No initial water balance data found", format = TRUE)
+                Insert.Messages.Out(message[['18']], TRUE, 'e')
                 return(NULL)
             }
 
             SP1 <- defSpatialPixels(wb1[c('lon', 'lat')])
             SP2 <- defSpatialPixels(list(lon = etp$coords$mat$x, lat = etp$coords$mat$y))
             if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                Insert.Messages.Out("Initial water balance, Precip & PET have different resolution or bbox", format = TRUE)
+                Insert.Messages.Out(message[['19']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)

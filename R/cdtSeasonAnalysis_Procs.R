@@ -1,17 +1,19 @@
 
 compute_RainySeasonData <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
+
     if(!dir.exists(GeneralParameters$output)){
-        Insert.Messages.Out(paste(GeneralParameters$output, "did not find"), format = TRUE)
+        Insert.Messages.Out(paste(GeneralParameters$output, message[['5']]), TRUE, 'e')
         return(NULL)
     }
 
     if(is.na(GeneralParameters$min.frac)){
-        Insert.Messages.Out("Min Frac is missing", format = TRUE)
+        Insert.Messages.Out(message[['7']], TRUE, 'e')
         return(NULL)
     }
 
     if(is.na(GeneralParameters$dryday)){
-        Insert.Messages.Out("Dry day definition is missing", format = TRUE)
+        Insert.Messages.Out(message[['8']], TRUE, 'e')
         return(NULL)
     }else{
         if(GeneralParameters$dryday == 0) GeneralParameters$dryday <- 0.001
@@ -21,18 +23,18 @@ compute_RainySeasonData <- function(GeneralParameters){
 
     onset <- try(readRDS(GeneralParameters$onset), silent = TRUE)
     if(inherits(onset, "try-error")){
-        Insert.Messages.Out(paste("Unable to read", GeneralParameters$onset), format = TRUE)
+        Insert.Messages.Out(paste(message[['9']], GeneralParameters$onset), TRUE, 'e')
         return(NULL)
     }
 
     cessation <- try(readRDS(GeneralParameters$cessation), silent = TRUE)
     if(inherits(cessation, "try-error")){
-        Insert.Messages.Out(paste("Unable to read", GeneralParameters$cessation), format = TRUE)
+        Insert.Messages.Out(paste(message[['9']], GeneralParameters$cessation), TRUE, 'e')
         return(NULL)
     }
 
     if(onset$params$data.type != cessation$params$data.type){
-        Insert.Messages.Out("Onset and Cessation data are of different types", format = TRUE)
+        Insert.Messages.Out(message[['10']], TRUE, 'e')
         return(NULL)
     }
 
@@ -51,7 +53,7 @@ compute_RainySeasonData <- function(GeneralParameters){
     })
 
     if(all(is.na(idx.cess))){
-        Insert.Messages.Out("Onset and Cessation do not overlap", format = TRUE)
+        Insert.Messages.Out(message[['11']], TRUE, 'e')
         return(NULL)
     }
 
@@ -63,7 +65,7 @@ compute_RainySeasonData <- function(GeneralParameters){
 
     if(onset$params$data.type == "cdtstation"){
         if(!any(onset$data$id %in% cessation$data$id)){
-            Insert.Messages.Out("Onset & Cessation stations do not match", format = TRUE)
+            Insert.Messages.Out(message[['12']], TRUE, 'e')
             return(NULL)
         }
 
@@ -106,13 +108,13 @@ compute_RainySeasonData <- function(GeneralParameters){
 
         onset.index <- try(readRDS(onset.file), silent = TRUE)
         if(inherits(onset.index, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", onset.file), format = TRUE)
+            Insert.Messages.Out(paste(message[['9']], onset.file), TRUE, 'e')
             return(NULL)
         }
 
         cessa.index <- try(readRDS(cessa.file), silent = TRUE)
         if(inherits(cessa.index, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", cessa.file), format = TRUE)
+            Insert.Messages.Out(paste(message[['9']], cessa.file), TRUE, 'e')
             return(NULL)
         }
 
@@ -120,12 +122,12 @@ compute_RainySeasonData <- function(GeneralParameters){
         SP1 <- defSpatialPixels(list(lon = onset.index$coords$mat$x, lat = onset.index$coords$mat$y))
         SP2 <- defSpatialPixels(list(lon = cessa.index$coords$mat$x, lat = cessa.index$coords$mat$y))
         if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-            Insert.Messages.Out("Onset & Cessation have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['13']], TRUE, 'e')
             return(NULL)
         }
 
         if(onset.index$chunksize != cessa.index$chunksize){
-            Insert.Messages.Out("Onset & Cessation have different chunk size", format = TRUE)
+            Insert.Messages.Out(message[['14']], TRUE, 'e')
             return(NULL)
         }
 
@@ -133,13 +135,13 @@ compute_RainySeasonData <- function(GeneralParameters){
 
         prec <- try(readRDS(onset$params$cdtdataset$prec), silent = TRUE)
         if(inherits(prec, "try-error")){
-            Insert.Messages.Out(paste("Unable to read daily rainfall:", onset$params$cdtdataset$prec), format = TRUE)
+            Insert.Messages.Out(paste(message[['15']], ":", onset$params$cdtdataset$prec), TRUE, 'e')
             return(NULL)
         }
 
         SP3 <- defSpatialPixels(list(lon = prec$coords$mat$x, lat = prec$coords$mat$y))
         if(is.diffSpatialPixelsObj(SP1, SP3, tol = 1e-04)){
-            Insert.Messages.Out("Daily rainfall, Onset & Cessation have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['16']], TRUE, 'e')
             return(NULL)
         }
         rm(SP2, SP3)
@@ -149,7 +151,7 @@ compute_RainySeasonData <- function(GeneralParameters){
 
     if(GeneralParameters$seastot$useTotal){
         if(GeneralParameters$seastot$data.type != onset$params$data.type){
-            Insert.Messages.Out("Rainfall, Onset and Cessation data are of different types", format = TRUE)
+            Insert.Messages.Out(message[['17']], TRUE, 'e')
             return(NULL)
         }
 
@@ -160,7 +162,7 @@ compute_RainySeasonData <- function(GeneralParameters){
             if(is.null(prec1)) return(NULL)
 
             if(!any(stn.id %in% prec1$id)){
-                Insert.Messages.Out("Rainfall to be used to calculate seasonal amount and Onset stations do not match", format = TRUE)
+                Insert.Messages.Out(message[['18']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -189,20 +191,20 @@ compute_RainySeasonData <- function(GeneralParameters){
         if(GeneralParameters$seastot$data.type == "cdtdataset"){
             prec1 <- try(readRDS(GeneralParameters$seastot$cdtdataset$prec), silent = TRUE)
             if(inherits(prec1, "try-error")){
-                Insert.Messages.Out(paste("Unable to read", GeneralParameters$seastot$cdtdataset$prec), format = TRUE)
+                Insert.Messages.Out(paste(message[['9']], GeneralParameters$seastot$cdtdataset$prec), TRUE, 'e')
                 return(NULL)
             }
 
             SP2 <- defSpatialPixels(list(lon = prec1$coords$mat$x, lat = prec1$coords$mat$y))
             if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                Insert.Messages.Out("Rainfall to be used to calculate seasonal amount and Onset have different resolution or bbox", format = TRUE)
+                Insert.Messages.Out(message[['19']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
 
             ##################
             if(onset.index$chunksize != prec1$chunksize){
-                Insert.Messages.Out("Rainfall to be used to calculate seasonal amount and Onset have different chunk size", format = TRUE)
+                Insert.Messages.Out(message[['20']], TRUE, 'e')
                 return(NULL)
             }
         }
@@ -838,6 +840,8 @@ compute_RainySeasonData <- function(GeneralParameters){
 
         ##########################################
 
+        Insert.Messages.Out(message[['21']], TRUE, 'i')
+
         Season_length.Nc <- file.path(ncdfOUT, 'Season_length')
         dir.create(Season_length.Nc, showWarnings = FALSE, recursive = TRUE)
         Onset_days.Nc <- file.path(ncdfOUT, 'Onset_days')
@@ -1009,6 +1013,8 @@ compute_RainySeasonData <- function(GeneralParameters){
 
             return(0)
         })
+
+        Insert.Messages.Out(message[['22']], TRUE, 's')
     }
 
     rm(onset, cessation)

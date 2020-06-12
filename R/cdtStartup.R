@@ -54,7 +54,61 @@ startCDT <- function(wd = NA, lang = NA){
     xml.menu <- file.path(.cdtDir$dirLocal, "languages", "cdt_menu_bar.xml")
     lang.menu <- cdtLanguageParse.menu(xml.menu, .cdtData$Config$lang.iso)
 
-    # #################################################################################
+    #################################################################################
+
+    existFont <- strsplit(tclvalue(.Tcl("font names")), " ")[[1]]
+    if("cdtDefaultFont" %in% existFont)
+        .Tcl("font delete cdtDefaultFont")
+
+    .Tcl("font create cdtDefaultFont -family Helvetica -size 11")
+    .Tcl("option add *font cdtDefaultFont")
+
+    # .Tcl("option add *Menuentry.font cdtDefaultFont widgetDefault")
+    # .Tcl("option add *Menu.font cdtDefaultFont widgetDefault")
+    # .Tcl("option add *Menubutton.font cdtDefaultFont widgetDefault")
+
+    .Tcl("option add *TCombobox*Listbox.font cdtDefaultFont")
+    .Tcl("ttk::style configure TButton -font cdtDefaultFont")
+    .Tcl("ttk::style configure TMenubutton -font cdtDefaultFont")
+    .Tcl("ttk::style configure Toolbutton -font cdtDefaultFont")
+    .Tcl("ttk::style configure TLabel -font cdtDefaultFont")
+    .Tcl("ttk::style configure TLabelframe.Label -font cdtDefaultFont")
+    .Tcl("ttk::style configure TLabelframe.Label -foreground black")
+
+    fontOutTxt <- tkfont.create(family = "courier", size = 11)
+    .Tcl(paste('option add *Text.font', fontOutTxt))
+
+    bgnotebk <- tclvalue(.Tcl('::ttk::style lookup TFrame -background'))
+    .Tcl(paste('ttk::style configure TPanedwindow -background', bgnotebk))
+    .Tcl(paste('ttk::style configure Sash -background', bgnotebk))
+
+    .Tcl("ttk::style configure TNotebook.Tab -font cdtDefaultFont")
+    .Tcl('ttk::style layout TNotebook {Notebook.client -sticky nswe}')
+    .Tcl(paste('ttk::style configure TNotebook -background', bgnotebk))
+    # .Tcl('ttk::style configure TNotebook -background red')
+
+    ### Tabs manipulation (close)
+    closeTabgif0 <- file.path(.cdtDir$Root, "images", "closeTabButton0.gif")
+    closeTabgif1 <- file.path(.cdtDir$Root, "images", "closeTabButton1.gif")
+    closeTabgif2 <- file.path(.cdtDir$Root, "images", "closeTabButton2.gif")
+    .Tcl(paste0("image create photo img_close -file ", '"', closeTabgif0, '"'))
+    .Tcl(paste0("image create photo img_closeactive  -file ", '"', closeTabgif1, '"'))
+    .Tcl(paste0("image create photo img_closepressed -file ", '"', closeTabgif2, '"'))
+
+    try(.Tcl('ttk::style element create Fermer image [list img_close {active pressed !disabled} img_closepressed {active !disabled} img_closeactive ] -border 4 -sticky e'), silent = TRUE)
+
+    .Tcl("ttk::style layout TNotebook.Tab {
+            TNotebook.tab -sticky nswe -children {
+                TNotebook.padding  -side top -sticky nswe -children {
+                    TNotebook.focus -side top -sticky nswe -children {
+                        TNotebook.label -side left -sticky {}
+                        TNotebook.Fermer  -side right -sticky e
+                    }
+                }
+            }
+        }", sep = '\n')
+
+    #################################################################################
 
     options(warn = -1)
     # options(warn = 0)
@@ -82,30 +136,18 @@ startCDT <- function(wd = NA, lang = NA){
     .cdtEnv$tcl$data$hscrlwin <- .cdtEnv$tcl$fun$h.scale(50)
 
     ## Font width
-    .cdtEnv$tcl$data$sfont0 <- as.numeric(
-                            tclvalue(
-                                tkfont.measure(.cdtEnv$tcl$main$win,
-                                    paste0("0123456789", paste0(letters[1:26], LETTERS[1:26], collapse = ''))
-                                )
-                            )
-                        ) / (10 + 2 * 26)
+    font_size <- paste0("0123456789", paste0(letters[1:26], LETTERS[1:26], collapse = ''))
+    font_size <- tclvalue(tkfont.measure(.cdtEnv$tcl$main$win, font_size))
+    font_size <- as.numeric(font_size) / (10 + 2 * 26)
 
     ## Widgets width function in %
     .cdtEnv$tcl$fun$w.widgets <- function(percent) 
-            as.integer(.cdtEnv$tcl$fun$w.scale(percent) / .cdtEnv$tcl$data$sfont0)
+            as.integer(.cdtEnv$tcl$fun$w.scale(percent) / font_size)
     .cdtEnv$tcl$fun$h.widgets <- function(percent) 
-            as.integer(.cdtEnv$tcl$fun$h.scale(percent) / .cdtEnv$tcl$data$sfont0)
+            as.integer(.cdtEnv$tcl$fun$h.scale(percent) / font_size)
 
-    if(WindowsOS()){
-        ## Output message, tktext height
-        txtHeight <- 6
-        w.opfiles.perc <- 39
-    }else{
-        txtHeight <- 7
-        w.opfiles.perc <- 30
-    }
     ## List open files width
-    .cdtEnv$tcl$data$w.opfiles <- .cdtEnv$tcl$fun$w.widgets(w.opfiles.perc)
+    .cdtEnv$tcl$data$w.opfiles <- .cdtEnv$tcl$fun$w.widgets(30)
 
     ## Files extension
     .cdtEnv$tcl$data$filetypes1 <- "{{Text Files} {.txt .TXT}} {{CSV Files} {.csv .CSV}} {{All files} *}"
@@ -718,18 +760,6 @@ startCDT <- function(wd = NA, lang = NA){
                     mrgGetInfoTemp()
                 })
 
-            # ##########
-            # tkadd(menu.mrg, "separator")
-
-            # ###########
-            # tkadd(menu.mrg, "command", label = lang.menu[["merging.data"]][["4"]],
-            #       command = function()
-            # {
-            #     refreshCDT(staterun = "normal")
-            #     initialize.parameters('merge.dekrain', 'dekadal')
-            #     # mergeDekadInfoRain()
-            # })
-
             ##########
             tkadd(menu.mrg, "separator")
 
@@ -1293,13 +1323,10 @@ startCDT <- function(wd = NA, lang = NA){
 
         ####################################
 
-        if(WindowsOS()) {
-            horiz <- .cdtEnv$tcl$fun$w.scale(70) / 385
-            verti <- .cdtEnv$tcl$fun$h.scale(60) / 385
-        }else{
-            horiz <- .cdtEnv$tcl$fun$w.scale(70) / 480
-            verti <- .cdtEnv$tcl$fun$h.scale(60) / 480
-        }
+        plot.scale <- if(WindowsOS()) 385 else 480
+        horiz <- .cdtEnv$tcl$fun$w.scale(70) / plot.scale
+        verti <- .cdtEnv$tcl$fun$h.scale(60) / plot.scale
+
         horizS <- round(horiz, 1)
         vertiS <- round(verti, 1)
 
@@ -1668,17 +1695,11 @@ startCDT <- function(wd = NA, lang = NA){
         tkgrid(txtlab.auth)
 
         #######
-        # hauteur_sep <- if(WindowsOS()) 15 else 13
-        # largeur_sep <- if(WindowsOS()) 27 else 18
-        # # hauteur_sep <- if(WindowsOS()) 8 else 13
-        # # largeur_sep <- if(WindowsOS()) 17 else 18
-        # hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(hauteur_sep)
-        # largeur_sep <- .cdtEnv$tcl$fun$w.widgets(largeur_sep)
 
         acc_dim <- switch(tools::toTitleCase(Sys.info()["sysname"]),
-                          "Windows" = c(15, 27),
-                          "Darwin" = c(13, 18),
-                          "Linux" = c(13, 18))
+                          "Windows" = c(17, 21),
+                          "Darwin" = c(15, 18),
+                          "Linux" = c(15, 18))
         hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(acc_dim[1])
         largeur_sep <- .cdtEnv$tcl$fun$w.widgets(acc_dim[2])
 
@@ -1722,29 +1743,6 @@ startCDT <- function(wd = NA, lang = NA){
 
     #################################################################################
 
-    ### Tabs manipulation (close)
-    .Tcl(paste0("image create photo img_close -file ", '"', file.path(.cdtDir$Root, "images", "closeTabButton0.gif"), '"'))
-    .Tcl(paste0("image create photo img_closeactive  -file ", '"', file.path(.cdtDir$Root, "images", "closeTabButton1.gif"), '"'))
-    .Tcl(paste0("image create photo img_closepressed -file ", '"', file.path(.cdtDir$Root, "images", "closeTabButton2.gif"), '"'))
-
-    try(.Tcl('ttk::style element create Fermer image [list img_close {active pressed !disabled} img_closepressed {active  !disabled} img_closeactive ] -border 4 -sticky e'), silent = TRUE)
-
-    .Tcl('ttk::style layout TNotebook {TNotebook.client -sticky nswe}')
-    # .Tcl('ttk::style configure TNotebook -background blue')
-
-    .Tcl("ttk::style layout TNotebook.Tab {
-            TNotebook.tab -sticky nswe -children {
-                TNotebook.padding  -side top -sticky nswe -children {
-                    TNotebook.focus -side top -sticky nswe -children {
-                        TNotebook.label -side left -sticky {}
-                        TNotebook.Fermer  -side right -sticky e
-                    }
-                }
-            }
-        }", sep = '\n')
-
-    #################################################################################
-
     out.frame <- tkframe(main.pane0, bd = 2, relief = 'groove')
 
         ####################################
@@ -1758,7 +1756,7 @@ startCDT <- function(wd = NA, lang = NA){
                                         #font = tkfont.create(family = "courier", size = 11),
                                         xscrollcommand = function(...) tkset(.cdtEnv$tcl$main$out.xscr, ...),
                                         yscrollcommand = function(...) tkset(.cdtEnv$tcl$main$out.yscr, ...),
-                                        wrap = "none", height = txtHeight)
+                                        wrap = "none", height = 6)
 
         tkgrid(.cdtEnv$tcl$main$out.text, .cdtEnv$tcl$main$out.yscr)
         tkgrid(.cdtEnv$tcl$main$out.xscr)

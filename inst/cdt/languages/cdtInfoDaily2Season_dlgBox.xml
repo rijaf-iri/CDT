@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Season Definition </text>
+    </title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Use all years from the input data </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Start Year </text>
+        </label>
+        <label id="2">
+            <text lang="en"> End Year </text>
+        </label>
+        <label id="3">
+            <text lang="en"> From </text>
+        </label>
+        <label id="4">
+            <text lang="en"> To </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Minimum fraction of available data </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Invalid start of season </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Invalid end of season </text>
+        </content>
+    </message>
+</dialog_box>

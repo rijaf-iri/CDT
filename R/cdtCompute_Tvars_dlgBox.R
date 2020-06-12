@@ -2,19 +2,21 @@
 computeTvars_getParams <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 12
+        largeur0 <- 14
         largeur1 <- 11
-        largeur2 <- 47
-        largeur3 <- 44
+        largeur2 <- 45
+        largeur3 <- 43
+        largeur4 <- 33
     }else{
-        largeur0 <- 11
-        largeur1 <- 10
-        largeur2 <- 35
-        largeur3 <- 34
+        largeur0 <- 14
+        largeur1 <- 11
+        largeur2 <- 40
+        largeur3 <- 39
+        largeur4 <- 30
     }
 
-    # xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Tvars_dlgBox.xml")
-    # lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Tvars_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     ############################################
 
@@ -28,6 +30,193 @@ computeTvars_getParams <- function(){
 
     ############################################
 
+    inputDataFun <- function(data.type){
+        tkdestroy(frameInData)
+        frameInData <<- tkframe(frameData)
+
+        #######
+
+        if(data.type == 'cdtstation'){
+            txt.INTmin <- lang.dlg[['label']][['4']]
+            txt.INTmax <- lang.dlg[['label']][['5']]
+            stateSetNC <- "disabled"
+        }else if(data.type == 'cdtdataset'){
+            txt.INTmin <- lang.dlg[['label']][['6']]
+            txt.INTmax <- lang.dlg[['label']][['7']]
+            stateSetNC <- "disabled"
+        }else{
+            txt.INTmin <- lang.dlg[['label']][['8']]
+            txt.INTmax <- lang.dlg[['label']][['9']]
+            stateSetNC <- "normal"
+        }
+        txt.INTmin.var <- tclVar(txt.INTmin)
+        txt.INTmax.var <- tclVar(txt.INTmax)
+
+        #######
+
+        txt.tmin <- tklabel(frameInData, text = tclvalue(txt.INTmin.var), textvariable = txt.INTmin.var, anchor = 'w', justify = 'left')
+        set.tmin <- ttkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
+        txt.tmax <- tklabel(frameInData, text = tclvalue(txt.INTmax.var), textvariable = txt.INTmax.var, anchor = 'w', justify = 'left')
+        set.tmax <- ttkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
+
+        if(data.type == 'cdtstation'){
+            cb.en.tmin <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Tmin, width = largeur3)
+            cb.en.tmax <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Tmax, width = largeur3)
+        }else{
+            cb.en.tmin <- tkentry(frameInData, textvariable = input.Tmin, width = largeur2)
+            cb.en.tmax <- tkentry(frameInData, textvariable = input.Tmax, width = largeur2)
+        }
+        bt.tmin <- tkbutton(frameInData, text = "...")
+        bt.tmax <- tkbutton(frameInData, text = "...")
+
+        ############ 
+        tkgrid(txt.tmin, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(set.tmin, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(cb.en.tmin, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.tmin, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+        tkgrid(txt.tmax, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(set.tmax, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(cb.en.tmax, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.tmax, row = 3, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+        #############
+        if(data.type == 'cdtstation'){
+            helpWidget(cb.en.tmin, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+            helpWidget(cb.en.tmax, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+            helpWidget(bt.tmin, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+            helpWidget(bt.tmax, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+        }else if(data.type == 'cdtdataset'){
+            helpWidget(cb.en.tmin, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
+            helpWidget(cb.en.tmax, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+            helpWidget(bt.tmin, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+            helpWidget(bt.tmax, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+        }else{
+            helpWidget(cb.en.tmin, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
+            helpWidget(cb.en.tmax, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
+            helpWidget(bt.tmin, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+            helpWidget(bt.tmax, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+        }
+
+        ############
+
+        tkconfigure(set.tmin, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
+                                                                        str_trim(tclvalue(input.Tmin)),
+                                                                        str_trim(tclvalue(timeSteps)))
+            settingTmin <<- 1
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+        })
+
+        tkconfigure(bt.tmin, command = function(){
+            if(data.type == 'cdtstation'){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                dat.opfiles <- getOpenFiles(tt)
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                if(!is.null(dat.opfiles)){
+                    update.OpenFiles('ascii', dat.opfiles)
+                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+                    tclvalue(input.Tmin) <- dat.opfiles[[1]]
+                    lapply(list(cb.en.tmin, cb.en.tmax), tkconfigure, values = unlist(listOpenFiles))
+                }
+            }else if(data.type == 'cdtdataset'){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                tclvalue(input.Tmin) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+            }else{
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                dirnc <- tk_choose.dir(getwd(), "")
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                tclvalue(input.Tmin) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
+            }
+        })
+
+        ############
+
+        tkconfigure(set.tmax, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
+                                                                        str_trim(tclvalue(input.Tmax)),
+                                                                        str_trim(tclvalue(timeSteps)))
+            settingTmax <<- 1
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+        })
+
+        tkconfigure(bt.tmax, command = function(){
+            if(data.type == 'cdtstation'){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                dat.opfiles <- getOpenFiles(tt)
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+
+                if(!is.null(dat.opfiles)){
+                    update.OpenFiles('ascii', dat.opfiles)
+                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
+                    tclvalue(input.Tmax) <- dat.opfiles[[1]]
+                    lapply(list(cb.en.tmin, cb.en.tmax), tkconfigure, values = unlist(listOpenFiles))
+                }
+            }else if(data.type == 'cdtdataset'){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                tclvalue(input.Tmax) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+            }else{
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                dirnc <- tk_choose.dir(getwd(), "")
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                tclvalue(input.Tmax) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
+            }
+        })
+
+        ############
+        tkgrid(frameInData)
+    }
+
+    ######################
+
+    saveFun <- function(data.type){
+        tkdestroy(frSaveIn)
+        frSaveIn <<- tkframe(frSave)
+
+        #########
+        if(data.type == 'cdtstation'){
+            txtSaveDir <- lang.dlg[['label']][['10']]
+            isFile <- TRUE
+        }else{
+            txtSaveDir <- lang.dlg[['label']][['11']]
+            isFile <- FALSE
+        }
+        fileORdir <- tclVar(txtSaveDir)
+
+        txt.file.save <- tklabel(frSaveIn, text = tclvalue(fileORdir), textvariable = fileORdir, anchor = 'w', justify = 'left')
+        en.file.save <- tkentry(frSaveIn, textvariable = file.save, width = largeur2)
+        bt.file.save <- tkbutton(frSaveIn, text = "...")
+
+        #########
+        tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.file.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+        isHlp <- if(data.type == 'cdtstation') '12' else '13'
+
+        helpWidget(en.file.save, lang.dlg[['tooltip']][[isHlp]], lang.dlg[['status']][[isHlp]])
+        helpWidget(bt.file.save, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+
+        #########
+
+        tkconfigure(bt.file.save, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            fileORdir2Save(file.save, isFile = isFile)
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+        })
+
+        #########
+        tkgrid(frSaveIn)
+    }
+
+    ############################################
+
     frtimestep <- tkframe(frMain, relief = 'sunken', borderwidth = 2)
 
     timeSteps <- tclVar()
@@ -35,23 +224,23 @@ computeTvars_getParams <- function(){
     periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
     tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$Tstep]
 
-    cb.varsVAL <- c('Mean', 'Range')
-    temp.variable <- tclVar(.cdtData$GalParams$variable)
+    temp.variable <- tclVar()
+    CbvarsVAL <- lang.dlg[['combobox']][['1']]
+    varsVAL <- c('Mean', 'Range')
+    tclvalue(temp.variable) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$variable]
 
-    txt.period <- tklabel(frtimestep, text = 'Time step', anchor = 'e', justify = 'right')
+    txt.period <- tklabel(frtimestep, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
     cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
-    txt.variable <- tklabel(frtimestep, text = 'Variable', anchor = 'e', justify = 'right')
-    cb.variable <- ttkcombobox(frtimestep, values = cb.varsVAL, textvariable = temp.variable, width = largeur1)
+    txt.variable <- tklabel(frtimestep, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
+    cb.variable <- ttkcombobox(frtimestep, values = CbvarsVAL, textvariable = temp.variable, width = largeur1)
 
     tkgrid(txt.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 5, ipadx = 1, ipady = 1)
     tkgrid(cb.period, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 5, ipadx = 1, ipady = 1)
     tkgrid(txt.variable, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 5, ipadx = 1, ipady = 1)
     tkgrid(cb.variable, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
-    infobulle(cb.period, 'Select the time step of the input data')
-    status.bar.display(cb.period, 'Select the time step of the input data')
-    infobulle(cb.variable, 'Select the variable to calculate')
-    status.bar.display(cb.variable, 'Select the variable to calculate')
+    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(cb.variable, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     ############################################
 
@@ -62,390 +251,60 @@ computeTvars_getParams <- function(){
     datatypeVAL <- c('cdtstation', 'cdtdataset', 'cdtnetcdf')
     tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% .cdtData$GalParams$data.type]
 
-    txt.datatyp <- tklabel(frdatatype, text = 'Format of input data', anchor = 'w', justify = 'left')
-    cb.datatyp <- ttkcombobox(frdatatype, values = CbdatatypeVAL, textvariable = DataType, width = largeur3)
+    txt.datatyp <- tklabel(frdatatype, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
+    cb.datatyp <- ttkcombobox(frdatatype, values = CbdatatypeVAL, textvariable = DataType, width = largeur4)
 
     tkgrid(txt.datatyp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.datatyp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    infobulle(cb.datatyp, 'Select the format of the input data')
-    status.bar.display(cb.datatyp, 'Select the format of the input data')
+    helpWidget(cb.datatyp, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
     ###############
 
     tkbind(cb.datatyp, "<<ComboboxSelected>>", function(){
-        tkdestroy(cb.en.tmin)
-        tclvalue(input.Tmin) <- ''
+        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
 
-        tkdestroy(cb.en.tmax)
-        tclvalue(input.Tmax) <- ''
-
-        ###
-        stateSetNC <- if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]) "normal" else "disabled"
-        tkconfigure(set.tmin, state = stateSetNC)
-        tkconfigure(set.tmax, state = stateSetNC)
-
-        ###
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-            tclvalue(txt.INTmin.var) <- 'File containing stations Tmin data'
-            tclvalue(txt.INTmax.var) <- 'File containing stations Tmax data'
-
-            cb.en.tmin <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Tmin, width = largeur3)
-            cb.en.tmax <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Tmax, width = largeur3)
-
-            ######
-            tkconfigure(bt.tmin, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                dat.opfiles <- getOpenFiles(tt)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                if(!is.null(dat.opfiles)){
-                    update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-                    tclvalue(input.Tmin) <- dat.opfiles[[1]]
-                    lapply(list(cb.en.tmin, cb.en.tmax), tkconfigure, values = unlist(listOpenFiles))
-                }
-            })
-
-            tkconfigure(bt.tmax, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                dat.opfiles <- getOpenFiles(tt)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                if(!is.null(dat.opfiles)){
-                    update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-                    tclvalue(input.Tmax) <- dat.opfiles[[1]]
-                    lapply(list(cb.en.tmin, cb.en.tmax), tkconfigure, values = unlist(listOpenFiles))
-                }
-            })
-
-            ######
-            infobulle(cb.en.tmin, 'Select the file containing the minimum temperature')
-            status.bar.display(cb.en.tmin, 'Select the file containing the minimum temperature')
-            infobulle(cb.en.tmax, 'Select the file containing the maximum temperature')
-            status.bar.display(cb.en.tmax, 'Select the file containing the maximum temperature')
-            infobulle(bt.tmin, 'Browse file if not listed')
-            status.bar.display(bt.tmin, 'Browse file if not listed')
-            infobulle(bt.tmax, 'Browse file if not listed')
-            status.bar.display(bt.tmax, 'Browse file if not listed')
-        }
-
-        ###
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-            tclvalue(txt.INTmin.var) <- 'Index file (*.rds) for Tmin data'
-            tclvalue(txt.INTmax.var) <- 'Index file (*.rds) for Tmax data'
-
-            cb.en.tmin <- tkentry(frameInData, textvariable = input.Tmin, width = largeur2)
-            cb.en.tmax <- tkentry(frameInData, textvariable = input.Tmax, width = largeur2)
-
-            ######
-            tkconfigure(bt.tmin, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(input.Tmin) <- if(path.rds %in% c("", "NA")) "" else path.rds
-            })
-
-            tkconfigure(bt.tmax, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(input.Tmax) <- if(path.rds %in% c("", "NA")) "" else path.rds
-            })
-
-            ######
-            infobulle(cb.en.tmin, 'Enter the full path to the file <minimum temperature dataset name>.rds')
-            status.bar.display(cb.en.tmin, 'Enter the full path to the file <minimum temperature dataset name>.rds')
-            infobulle(cb.en.tmax, 'Enter the full path to the file <maximum temperature dataset name>.rds')
-            status.bar.display(cb.en.tmax, 'Enter the full path to the file <maximum temperature dataset name>.rds')
-            infobulle(bt.tmin, 'or browse here')
-            status.bar.display(bt.tmin, 'or browse here')
-            infobulle(bt.tmax, 'or browse here')
-            status.bar.display(bt.tmax, 'or browse here')
-        }
-
-        ###
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]){
-            tclvalue(txt.INTmin.var) <- 'Directory of the Tmin NetCDF files'
-            tclvalue(txt.INTmax.var) <- 'Directory of the Tmax NetCDF files'
-
-            cb.en.tmin <- tkentry(frameInData, textvariable = input.Tmin, width = largeur2)
-            cb.en.tmax <- tkentry(frameInData, textvariable = input.Tmax, width = largeur2)
-
-            ######
-            tkconfigure(set.tmin, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
-                                                                str_trim(tclvalue(input.Tmin)), str_trim(tclvalue(timeSteps)))
-                settingTmin <<- 1
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-            })
-
-            tkconfigure(set.tmax, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
-                                                                str_trim(tclvalue(input.Tmax)), str_trim(tclvalue(timeSteps)))
-                settingTmax <<- 1
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-            })
-
-            tkconfigure(bt.tmin, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                dirnc <- tk_choose.dir(getwd(), "")
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(input.Tmin) <- if(dirnc %in% c("", "NA")) "" else dirnc
-            })
-
-            tkconfigure(bt.tmax, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                dirnc <- tk_choose.dir(getwd(), "")
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(input.Tmax) <- if(dirnc %in% c("", "NA")) "" else dirnc
-            })
-
-            ######
-            infobulle(cb.en.tmin, 'Enter the full path to directory containing the minimum temperature files')
-            status.bar.display(cb.en.tmin, 'Enter the full path to directory containing the minimum temperature files')
-            infobulle(cb.en.tmax, 'Enter the full path to directory containing the maximum temperature files')
-            status.bar.display(cb.en.tmax, 'Enter the full path to directory containing the maximum temperature files')
-            infobulle(bt.tmin, 'or browse here')
-            status.bar.display(bt.tmin, 'or browse here')
-            infobulle(bt.tmax, 'or browse here')
-            status.bar.display(bt.tmax, 'or browse here')
-        }
-
-        #######
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-            txtSaveHelp <- 'Enter the full path of the file to save the result'
-            tclvalue(fileORdir) <- 'File to save the result'
-            isFile <- TRUE
-        }else{
-            tclvalue(fileORdir) <- 'Directory to save the result'
-            txtSaveHelp <- 'Enter the full path to the directory to save the result'
-            isFile <- FALSE
-        }
-
-        tkconfigure(bt.file.save, command = function(){
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            fileORdir2Save(file.save, isFile = isFile)
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-        })
-
-        infobulle(en.file.save, txtSaveHelp)
-        status.bar.display(en.file.save, txtSaveHelp)
-        infobulle(bt.file.save, 'or browse here')
-        status.bar.display(bt.file.save, 'or browse here')
-
-        #######
-        tkgrid(cb.en.tmin, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(cb.en.tmax, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        inputDataFun(data.type)
+        saveFun(data.type)
         tkfocus(tt)
     })
 
     ############################################
 
-    frameInData <- tkframe(frMain, relief = 'sunken', borderwidth = 2)
+    frameData <- tkframe(frMain, relief = 'sunken', borderwidth = 2)
+
+    frameInData <- tkframe(frameData)
 
     if(.cdtData$GalParams$data.type == 'cdtstation'){
         input.Tmin <- tclVar(.cdtData$GalParams$cdtstation$tmin)
         input.Tmax <- tclVar(.cdtData$GalParams$cdtstation$tmax)
-        txt.INTmin <- 'File containing stations Tmin data'
-        txt.INTmax <- 'File containing stations Tmax data'
-        stateSetNC <- "disabled"
     }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
         input.Tmin <- tclVar(.cdtData$GalParams$cdtdataset$tmin)
         input.Tmax <- tclVar(.cdtData$GalParams$cdtdataset$tmax)
-        txt.INTmin <- 'Index file (*.rds) for Tmin data'
-        txt.INTmax <- 'Index file (*.rds) for Tmax data'
-        stateSetNC <- "disabled"
     }else{
         input.Tmin <- tclVar(.cdtData$GalParams$cdtnetcdf$tmin$dir)
         input.Tmax <- tclVar(.cdtData$GalParams$cdtnetcdf$tmax$dir)
-        txt.INTmin <- 'Directory of the Tmin NetCDF files'
-        txt.INTmax <- 'Directory of the Tmax NetCDF files'
-        stateSetNC <- "normal"
     }
-    txt.INTmin.var <- tclVar(txt.INTmin)
-    txt.INTmax.var <- tclVar(txt.INTmax)
 
-    ##############
-    txt.tmin <- tklabel(frameInData, text = tclvalue(txt.INTmin.var), textvariable = txt.INTmin.var, anchor = 'w', justify = 'left')
-    set.tmin <- ttkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
-
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        cb.en.tmin <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Tmin, width = largeur3)
-    }else{
-        cb.en.tmin <- tkentry(frameInData, textvariable = input.Tmin, width = largeur2)
-    }
-    bt.tmin <- tkbutton(frameInData, text = "...")
-
-    ############
     settingTmin <- .cdtData$GalParams$settingTmin
-    tkconfigure(set.tmin, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
-                                                        str_trim(tclvalue(input.Tmin)), str_trim(tclvalue(timeSteps)))
-        settingTmin <<- 1
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-    })
-
-    tkconfigure(bt.tmin, command = function(){
-        if(.cdtData$GalParams$data.type == 'cdtstation'){
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            dat.opfiles <- getOpenFiles(tt)
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-            if(!is.null(dat.opfiles)){
-                update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-                tclvalue(input.Tmin) <- dat.opfiles[[1]]
-                lapply(list(cb.en.tmin, cb.en.tmax), tkconfigure, values = unlist(listOpenFiles))
-            }
-        }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-            tclvalue(input.Tmin) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
-        }else{
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            dirnc <- tk_choose.dir(getwd(), "")
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-            tclvalue(input.Tmin) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-        }
-    })
-
-    ##############
-    txt.tmax <- tklabel(frameInData, text = tclvalue(txt.INTmax.var), textvariable = txt.INTmax.var, anchor = 'w', justify = 'left')
-    set.tmax <- ttkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
-
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        cb.en.tmax <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Tmax, width = largeur3)
-    }else{
-        cb.en.tmax <- tkentry(frameInData, textvariable = input.Tmax, width = largeur2)
-    }
-    bt.tmax <- tkbutton(frameInData, text = "...")
-
-    ############
     settingTmax <- .cdtData$GalParams$settingTmax
-    tkconfigure(set.tmax, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
-                                                        str_trim(tclvalue(input.Tmax)), str_trim(tclvalue(timeSteps)))
-        settingTmax <<- 1
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-    })
 
-    tkconfigure(bt.tmax, command = function(){
-        if(.cdtData$GalParams$data.type == 'cdtstation'){
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            dat.opfiles <- getOpenFiles(tt)
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-
-            if(!is.null(dat.opfiles)){
-                update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-                tclvalue(input.Tmax) <- dat.opfiles[[1]]
-                lapply(list(cb.en.tmin, cb.en.tmax), tkconfigure, values = unlist(listOpenFiles))
-            }
-        }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-            tclvalue(input.Tmax) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
-        }else{
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            dirnc <- tk_choose.dir(getwd(), "")
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-            tclvalue(input.Tmax) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-        }
-    })
-
-    ############ 
-    tkgrid(txt.tmin, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(set.tmin, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(cb.en.tmin, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(bt.tmin, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-    tkgrid(txt.tmax, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(set.tmax, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(cb.en.tmax, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(bt.tmax, row = 3, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-    #############
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        infobulle(cb.en.tmin, 'Select the file containing the minimum temperature')
-        status.bar.display(cb.en.tmin, 'Select the file containing the minimum temperature')
-        infobulle(cb.en.tmax, 'Select the file containing the maximum temperature')
-        status.bar.display(cb.en.tmax, 'Select the file containing the maximum temperature')
-        infobulle(bt.tmin, 'Browse file if not listed')
-        status.bar.display(bt.tmin, 'Browse file if not listed')
-        infobulle(bt.tmax, 'Browse file if not listed')
-        status.bar.display(bt.tmax, 'Browse file if not listed')
-    }else if(.cdtData$GalParams$data.type == 'cdtdataset'){
-        infobulle(cb.en.tmin, 'Enter the full path to the file <minimum temperature dataset name>.rds')
-        status.bar.display(cb.en.tmin, 'Enter the full path to the file <minimum temperature dataset name>.rds')
-        infobulle(cb.en.tmax, 'Enter the full path to the file <maximum temperature dataset name>.rds')
-        status.bar.display(cb.en.tmax, 'Enter the full path to the file <maximum temperature dataset name>.rds')
-        infobulle(bt.tmin, 'or browse here')
-        status.bar.display(bt.tmin, 'or browse here')
-        infobulle(bt.tmax, 'or browse here')
-        status.bar.display(bt.tmax, 'or browse here')
-    }else{
-        infobulle(cb.en.tmin, 'Enter the full path to directory containing the minimum temperature files')
-        status.bar.display(cb.en.tmin, 'Enter the full path to directory containing the minimum temperature files')
-        infobulle(cb.en.tmax, 'Enter the full path to directory containing the maximum temperature files')
-        status.bar.display(cb.en.tmax, 'Enter the full path to directory containing the maximum temperature files')
-        infobulle(bt.tmin, 'or browse here')
-        status.bar.display(bt.tmin, 'or browse here')
-        infobulle(bt.tmax, 'or browse here')
-        status.bar.display(bt.tmax, 'or browse here')
-    }
+    inputDataFun(.cdtData$GalParams$data.type)
 
     ############################################
 
     frSave <- tkframe(frMain, relief = 'sunken', borderwidth = 2)
 
+    frSaveIn <- tkframe(frSave)
+
     file.save <- tclVar(.cdtData$GalParams$output)
 
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        txtSaveDir <- 'File to save the output'
-        isFile <- TRUE
-    }else{
-        txtSaveDir <- 'Directory to save the output'
-        isFile <- FALSE
-    }
-    fileORdir <- tclVar(txtSaveDir)
-
-    txt.file.save <- tklabel(frSave, text = tclvalue(fileORdir), textvariable = fileORdir, anchor = 'w', justify = 'left')
-    en.file.save <- tkentry(frSave, textvariable = file.save, width = largeur2)
-    bt.file.save <- tkbutton(frSave, text = "...")
-
-    #########
-    tkconfigure(bt.file.save, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        fileORdir2Save(file.save, isFile = isFile)
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-    })
-
-    #########
-    tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(bt.file.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-    #########
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        txtSaveHelp <- 'Enter the full path of the file to save the result'
-    }else{
-        txtSaveHelp <- 'Directory to save the result'
-    }
-
-    infobulle(en.file.save, txtSaveHelp)
-    status.bar.display(en.file.save, txtSaveHelp)
-    infobulle(bt.file.save, 'or browse here')
-    status.bar.display(bt.file.save, 'or browse here')
+    saveFun(.cdtData$GalParams$data.type)
 
     ############################################
     tkgrid(frtimestep, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frdatatype, row = 1, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(frameInData, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frameData, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
     tkgrid(frSave, row = 3, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     ############################################
@@ -458,37 +317,37 @@ computeTvars_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
+        .cdtData$GalParams$Tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+        .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        .cdtData$GalParams$variable <- varsVAL[CbvarsVAL %in% str_trim(tclvalue(temp.variable))]
+
         if(str_trim(tclvalue(input.Tmin)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "No input for minimum temperature", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(str_trim(tclvalue(input.Tmax)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "No input for maximum temperature", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(tclvalue(file.save) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = "Choose a directory or enter the file to save results", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingTmin)){
-            cdt.tkmessageBox(tt, message = "You have to set the Tmin files parameters", icon = "warning", type = "ok")
+        }else if(.cdtData$GalParams$data.type == 'cdtnetcdf' & is.null(settingTmin)){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingTmax)){
-            cdt.tkmessageBox(tt, message = "You have to set the Tmax files parameters", icon = "warning", type = "ok")
+        }else if(.cdtData$GalParams$data.type == 'cdtnetcdf' & is.null(settingTmax)){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$Tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-            .cdtData$GalParams$variable <- str_trim(tclvalue(temp.variable))
-
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(.cdtData$GalParams$data.type == 'cdtstation'){
                 .cdtData$GalParams$cdtstation$tmin <- str_trim(tclvalue(input.Tmin))
                 .cdtData$GalParams$cdtstation$tmax <- str_trim(tclvalue(input.Tmax))
             }
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(.cdtData$GalParams$data.type == 'cdtdataset'){
                 .cdtData$GalParams$cdtdataset$tmin <- str_trim(tclvalue(input.Tmin))
                 .cdtData$GalParams$cdtdataset$tmax <- str_trim(tclvalue(input.Tmax))
             }
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]){
+            if(.cdtData$GalParams$data.type == 'cdtnetcdf'){
                 .cdtData$GalParams$cdtnetcdf$tmin$dir <- str_trim(tclvalue(input.Tmin))
                 .cdtData$GalParams$cdtnetcdf$tmax$dir <- str_trim(tclvalue(input.Tmax))
             }
@@ -498,7 +357,7 @@ computeTvars_getParams <- function(){
             .cdtData$GalParams$settingTmin <- settingTmin
             .cdtData$GalParams$settingTmax <- settingTmax
 
-            # .cdtData$GalParams$message <- lang.dlg[['message']]
+            .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)
             tkdestroy(tt)
@@ -529,7 +388,7 @@ computeTvars_getParams <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, 'Compute Temperature Variables')
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

@@ -1,6 +1,8 @@
 
 computeTvarsProcs <- function(){
-    Insert.Messages.Out(paste("Compute", .cdtData$GalParams$Tstep, tolower(.cdtData$GalParams$variable), "temperature ......"), TRUE, "i")
+    message <- .cdtData$GalParams$message
+    msg <- paste(.cdtData$GalParams$Tstep, tolower(.cdtData$GalParams$variable))
+    Insert.Messages.Out(paste(message[['8']], msg, "......"), TRUE, "i")
 
     if(.cdtData$GalParams$data.type == "cdtstation"){
         tmin <- getStnOpenData(.cdtData$GalParams$cdtstation$tmin)
@@ -14,12 +16,12 @@ computeTvarsProcs <- function(){
         if(is.null(tmax)) return(NULL)
 
         if(!any(tmin$id %in% tmax$id)){
-            Insert.Messages.Out("Tmin & Tmax stations do not match", format = TRUE)
+            Insert.Messages.Out(message[['9']], TRUE, 'e')
             return(NULL)
         }
 
         if(!any(tmin$dates %in% tmax$dates)){
-            Insert.Messages.Out("Tmin & Tmax dates do not overlap", format = TRUE)
+            Insert.Messages.Out(message[['10']], TRUE, 'e')
             return(NULL)
         }
 
@@ -56,15 +58,16 @@ computeTvarsProcs <- function(){
     }
 
     #######################################################
+
     if(.cdtData$GalParams$data.type == "cdtnetcdf"){
         tnDataInfo <- getNCDFSampleData(.cdtData$GalParams$cdtnetcdf$tmin$sample)
         if(is.null(tnDataInfo)){
-            Insert.Messages.Out("No Tmin data sample found", format = TRUE)
+            Insert.Messages.Out(message[['11']], TRUE, 'e')
             return(NULL)
         }
         txDataInfo <- getNCDFSampleData(.cdtData$GalParams$cdtnetcdf$tmax$sample)
         if(is.null(txDataInfo)){
-            Insert.Messages.Out("No Tmax data sample found", format = TRUE)
+            Insert.Messages.Out(message[['12']], TRUE, 'e')
             return(NULL)
         }
 
@@ -72,7 +75,7 @@ computeTvarsProcs <- function(){
         SP1 <- defSpatialPixels(tnDataInfo[c('lon', 'lat')])
         SP2 <- defSpatialPixels(txDataInfo[c('lon', 'lat')])
         if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-            Insert.Messages.Out("Tmin & Tmax have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['13']], TRUE, 'e')
             return(NULL)
         }
         rm(SP1, SP2)
@@ -85,7 +88,7 @@ computeTvarsProcs <- function(){
 
         tmin.DIR <- .cdtData$GalParams$cdtnetcdf$tmin$dir
         tmin.Format <- .cdtData$GalParams$cdtnetcdf$tmin$format
-        tmin.errmsg <- "Tmin data not found"
+        tmin.errmsg <- message[['14']]
         tminInfo <- ncFilesInfo(tstep, start.date, end.date, months, tmin.DIR, tmin.Format, tmin.errmsg)
         if(is.null(tminInfo)) return(NULL)
         tminInfo$ncinfo <- list(xo = tnDataInfo$ilon, yo = tnDataInfo$ilat, varid = tnDataInfo$varid)
@@ -96,7 +99,7 @@ computeTvarsProcs <- function(){
 
         tmax.DIR <- .cdtData$GalParams$cdtnetcdf$tmax$dir
         tmax.Format <- .cdtData$GalParams$cdtnetcdf$tmax$format
-        tmax.errmsg <- "Tmax data not found"
+        tmax.errmsg <- message[['15']]
         tmaxInfo <- ncFilesInfo(tstep, start.date, end.date, months, tmax.DIR, tmax.Format, tmax.errmsg)
         if(is.null(tmaxInfo)) return(NULL)
         tmaxInfo$ncinfo <- list(xo = txDataInfo$ilon, yo = txDataInfo$ilat, varid = txDataInfo$varid)
@@ -108,7 +111,7 @@ computeTvarsProcs <- function(){
         ##################
 
         if(!any(tminInfo$dates %in% tmaxInfo$dates)){
-            Insert.Messages.Out("Tmin & Tmax dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['16']], TRUE, 'e')
             return(NULL)
         }
 
@@ -213,21 +216,21 @@ computeTvarsProcs <- function(){
     if(.cdtData$GalParams$data.type == "cdtdataset"){
         tmin <- try(readRDS(.cdtData$GalParams$cdtdataset$tmin), silent = TRUE)
         if(inherits(tmin, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", .cdtData$GalParams$cdtdataset$tmin), format = TRUE)
+            Insert.Messages.Out(paste(message[['17']], .cdtData$GalParams$cdtdataset$tmin), TRUE, 'e')
             return(NULL)
         }
         if(.cdtData$GalParams$Tstep != tmin$TimeStep){
-            Insert.Messages.Out(paste("Tmin dataset is not a", .cdtData$GalParams$Tstep, "data"), format = TRUE)
+            Insert.Messages.Out(paste(message[['18']], .cdtData$GalParams$Tstep), TRUE, 'e')
             return(NULL)
         }
 
         tmax <- try(readRDS(.cdtData$GalParams$cdtdataset$tmax), silent = TRUE)
         if(inherits(tmax, "try-error")){
-            Insert.Messages.Out(paste("Unable to read", .cdtData$GalParams$cdtdataset$tmax), format = TRUE)
+            Insert.Messages.Out(paste(message[['17']], .cdtData$GalParams$cdtdataset$tmax), TRUE, 'e')
             return(NULL)
         }
         if(.cdtData$GalParams$Tstep != tmax$TimeStep){
-            Insert.Messages.Out(paste("Tmax dataset is not a", .cdtData$GalParams$Tstep, "data"), format = TRUE)
+            Insert.Messages.Out(paste(message[['19']], .cdtData$GalParams$Tstep), TRUE, 'e')
             return(NULL)
         }
 
@@ -235,20 +238,20 @@ computeTvarsProcs <- function(){
         SP1 <- defSpatialPixels(list(lon = tmin$coords$mat$x, lat = tmin$coords$mat$y))
         SP2 <- defSpatialPixels(list(lon = tmax$coords$mat$x, lat = tmax$coords$mat$y))
         if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-            Insert.Messages.Out("Tmin & Tmax have different resolution or bbox", format = TRUE)
+            Insert.Messages.Out(message[['20']], TRUE, 'e')
             return(NULL)
         }
         rm(SP1, SP2)
 
         ##################
         if(tmin$chunksize != tmax$chunksize){
-            Insert.Messages.Out("Tmin & Tmax have different chunk size", format = TRUE)
+            Insert.Messages.Out(message[['21']], TRUE, 'e')
             return(NULL)
         }
 
         ##################
         if(!any(tmin$dateInfo$date %in% tmax$dateInfo$date)){
-            Insert.Messages.Out("Tmin & Tmax dates do not match", format = TRUE)
+            Insert.Messages.Out(message[['16']], TRUE, 'e')
             return(NULL)
         }
 

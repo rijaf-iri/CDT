@@ -2,19 +2,19 @@
 PlotCDTStationCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(16)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(30)
-        largeur3 <- 20
-        largeur4 <- 26
-        largeur5 <- 14
-        largeur6 <- .cdtEnv$tcl$fun$w.widgets(26)
-    }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(14)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(21)
+        largeur0 <- 20
+        largeur1 <- 30
         largeur3 <- 14
         largeur4 <- 20
         largeur5 <- 10
-        largeur6 <- .cdtEnv$tcl$fun$w.widgets(21)
+        largeur6 <- 30
+    }else{
+        largeur0 <- 20
+        largeur1 <- 30
+        largeur3 <- 14
+        largeur4 <- 20
+        largeur5 <- 10
+        largeur6 <- 30
     }
 
     ###################

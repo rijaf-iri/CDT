@@ -1,17 +1,8 @@
+
 cdtConfiguration <- function(parent.win){
-    if(WindowsOS()){
-        wscrlwin <- .cdtEnv$tcl$fun$w.scale(28)
-        hscrlwin <- .cdtEnv$tcl$fun$h.scale(28)
-        largeur0 <- 19
-        largeur1 <- 50
-        largeur2 <- 15
-    }else{
-        wscrlwin <- .cdtEnv$tcl$fun$w.scale(30)
-        hscrlwin <- .cdtEnv$tcl$fun$h.scale(30)
-        largeur0 <- 16
-        largeur1 <- 35
-        largeur2 <- 15
-    }
+    largeur0 <- 19
+    largeur1 <- 50
+    largeur2 <- 15
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtConfiguration_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
@@ -63,9 +54,17 @@ cdtConfiguration <- function(parent.win){
         en.miss <- tkentry(frTab1, textvariable = miss.value, width = 8)
         txt.amiss <- tklabel(frTab1, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
         en.amiss <- tkentry(frTab1, textvariable = miss.value.anom, width = 8)
-        txt.wd <- tklabel(frTab1, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
-        en.wd <- tkentry(frTab1, textvariable = work.dir, width = largeur1)
-        bt.wd <- tkbutton(frTab1, text = "...")
+ 
+        ######
+        frWd <- tkframe(frTab1, relief = 'groove', borderwidth = 2)
+
+        txt.wd <- tklabel(frWd, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
+        en.wd <- tkentry(frWd, textvariable = work.dir, width = largeur1)
+        bt.wd <- tkbutton(frWd, text = "...")
+
+        tkgrid(txt.wd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.wd, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.wd, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
         tkconfigure(bt.wd, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
@@ -74,15 +73,14 @@ cdtConfiguration <- function(parent.win){
             tclvalue(work.dir) <- if(dir.in %in% c("", "NA") | is.na(dir.in)) "" else dir.in
         })
 
+        ######
         tkgrid(txt.lang, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.lang, row = 0, column = 3, sticky = 'w', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(txt.miss, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(en.miss, row = 1, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(txt.amiss, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(en.amiss, row = 2, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(txt.wd, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(en.wd, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.wd, row = 4, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frWd, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(en.miss, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
         helpWidget(en.amiss, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])

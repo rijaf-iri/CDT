@@ -1,7 +1,9 @@
 
 compute_SeasonCessation_Procs <- function(GeneralParameters){
+    message <- .cdtData$EnvData$message
+
     if(!dir.exists(GeneralParameters$output)){
-        Insert.Messages.Out(paste(GeneralParameters$output, .cdtData$EnvData[['message']][['16']]), format = TRUE)
+        Insert.Messages.Out(paste(GeneralParameters$output, message[['16']]), TRUE, 'e')
         return(NULL)
     }
 
@@ -11,7 +13,7 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
         if(GeneralParameters$onset.reg$subdiv == "Shapefile"){
             shpf <- getShpOpenData(GeneralParameters$onset.reg$shp$file)[[2]]
             if(is.null(shpf)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['19']], format = TRUE)
+                Insert.Messages.Out(message[['19']], TRUE, 'e')
                 return(NULL)
             }
             shpattr <- GeneralParameters$onset.reg$shp$attr
@@ -32,7 +34,7 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtstation"){
         if(any(omethods == 1) & GeneralParameters$wb.data){
             if(GeneralParameters$cdtstation$wb == ""){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['27']], format = TRUE)
+                Insert.Messages.Out(message[['27']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -51,11 +53,11 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
 
         if(any(omethods != 1) | (any(omethods == 1) & !GeneralParameters$wb.data)){
             if(GeneralParameters$cdtstation$prec == ""){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['28']], format = TRUE)
+                Insert.Messages.Out(message[['28']], TRUE, 'e')
                 return(NULL)
             }
             if(GeneralParameters$cdtstation$etp == ""){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['29']], format = TRUE)
+                Insert.Messages.Out(message[['29']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -70,11 +72,11 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
             if(is.null(etp)) return(NULL)
 
             if(!any(prec$id %in% etp$id)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['17']], format = TRUE)
+                Insert.Messages.Out(message[['17']], TRUE, 'e')
                 return(NULL)
             }
             if(!any(prec$dates %in% etp$dates)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['18']], format = TRUE)
+                Insert.Messages.Out(message[['18']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -111,11 +113,11 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
             }else{
                 if(!is.null(USEWB0)){
                     if(!any(prec$id %in% wb$id)){
-                        Insert.Messages.Out(.cdtData$EnvData[['message']][['30']], format = TRUE)
+                        Insert.Messages.Out(message[['30']], TRUE, 'e')
                         return(NULL)
                     }
                     if(!any(prec$dates %in% wb$dates)){
-                        Insert.Messages.Out(.cdtData$EnvData[['message']][['31']], format = TRUE)
+                        Insert.Messages.Out(message[['31']], TRUE, 'e')
                         return(NULL)
                     }
 
@@ -165,7 +167,7 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
                 swhc <- as.numeric(swhc[nrow(swhc), -1])
 
                 if(!isTRUE(all.equal(stn.id, swhc.id))){
-                    Insert.Messages.Out(.cdtData$EnvData[['message']][['32']], format = TRUE)
+                    Insert.Messages.Out(message[['32']], TRUE, 'e')
                     return(NULL)
                 }
             }else swhc <- GeneralParameters$wb.pars$swhc$cap.max
@@ -178,13 +180,13 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
                 wb1 <- as.numeric(wb1[nrow(wb1), -1])
 
                 if(!isTRUE(all.equal(stn.id, wb1.id))){
-                    Insert.Messages.Out(.cdtData$EnvData[['message']][['33']], format = TRUE)
+                    Insert.Messages.Out(message[['33']], TRUE, 'e')
                     return(NULL)
                 }
             }else wb1 <- GeneralParameters$wb.pars$wb$wb1
 
             ##################
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['34']])
+            Insert.Messages.Out(message[['34']], TRUE, 'i')
 
             index <- cdt.index.DailyYears(daty, GeneralParameters$wb.pars$hdate$start.month,
                                                 GeneralParameters$wb.pars$hdate$start.day)
@@ -210,7 +212,7 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
             wb.out <- wb.out[startDaty:endDaty, , drop = FALSE]
             wb <- NULL
             wb$data <- wb.out
-            Insert.Messages.Out(.cdtData$EnvData[['message']][['34-a']])
+            Insert.Messages.Out(message[['34-a']], TRUE, 's')
         }
 
         ##################
@@ -324,17 +326,17 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
     if(GeneralParameters$data.type == "cdtdataset"){
         if(any(omethods == 1) & GeneralParameters$wb.data){
             if(GeneralParameters$cdtdataset$wb == ""){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['27']], format = TRUE)
+                Insert.Messages.Out(message[['27']], TRUE, 'e')
                 return(NULL)
             }
 
             wb <- try(readRDS(GeneralParameters$cdtdataset$wb), silent = TRUE)
             if(inherits(wb, "try-error")){
-                Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['20']], GeneralParameters$cdtdataset$wb), format = TRUE)
+                Insert.Messages.Out(paste(message[['20']], GeneralParameters$cdtdataset$wb), TRUE, 'e')
                 return(NULL)
             }
             if(wb$TimeStep != "daily"){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['21']], format = TRUE)
+                Insert.Messages.Out(message[['21']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -345,31 +347,31 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
 
         if(any(omethods != 1) | (any(omethods == 1) & !GeneralParameters$wb.data)){
             if(GeneralParameters$cdtdataset$prec == ""){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['28']], format = TRUE)
+                Insert.Messages.Out(message[['28']], TRUE, 'e')
                 return(NULL)
             }
             if(GeneralParameters$cdtdataset$etp == ""){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['29']], format = TRUE)
+                Insert.Messages.Out(message[['29']], TRUE, 'e')
                 return(NULL)
             }
 
             prec <- try(readRDS(GeneralParameters$cdtdataset$prec), silent = TRUE)
             if(inherits(prec, "try-error")){
-                Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['20']], GeneralParameters$cdtdataset$prec), format = TRUE)
+                Insert.Messages.Out(paste(message[['20']], GeneralParameters$cdtdataset$prec), TRUE, 'e')
                 return(NULL)
             }
             if(prec$TimeStep != "daily"){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['22']], format = TRUE)
+                Insert.Messages.Out(message[['22']], TRUE, 'e')
                 return(NULL)
             }
 
             etp <- try(readRDS(GeneralParameters$cdtdataset$etp), silent = TRUE)
             if(inherits(etp, "try-error")){
-                Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['20']], GeneralParameters$cdtdataset$etp), format = TRUE)
+                Insert.Messages.Out(paste(message[['20']], GeneralParameters$cdtdataset$etp), TRUE, 'e')
                 return(NULL)
             }
             if(etp$TimeStep != "daily"){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['22-a']], format = TRUE)
+                Insert.Messages.Out(message[['22-a']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -377,20 +379,20 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
             SP1 <- defSpatialPixels(list(lon = prec$coords$mat$x, lat = prec$coords$mat$y))
             SP2 <- defSpatialPixels(list(lon = etp$coords$mat$x, lat = etp$coords$mat$y))
             if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['23']], format = TRUE)
+                Insert.Messages.Out(message[['23']], TRUE, 'e')
                 return(NULL)
             }
             rm(SP1, SP2)
 
             ##################
             if(prec$chunksize != etp$chunksize){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['24']], format = TRUE)
+                Insert.Messages.Out(message[['24']], TRUE, 'e')
                 return(NULL)
             }
 
             ##################
             if(!any(prec$dateInfo$date %in% etp$dateInfo$date)){
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['25']], format = TRUE)
+                Insert.Messages.Out(message[['25']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -420,20 +422,20 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
                     SP1 <- defSpatialPixels(list(lon = prec$coords$mat$x, lat = prec$coords$mat$y))
                     SP2 <- defSpatialPixels(list(lon = wb$coords$mat$x, lat = wb$coords$mat$y))
                     if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                        Insert.Messages.Out(.cdtData$EnvData[['message']][['23-a']], format = TRUE)
+                        Insert.Messages.Out(message[['23-a']], TRUE, 'e')
                         return(NULL)
                     }
                     rm(SP1, SP2)
 
                     ##################
                     if(prec$chunksize != wb$chunksize){
-                        Insert.Messages.Out(.cdtData$EnvData[['message']][['24-a']], format = TRUE)
+                        Insert.Messages.Out(message[['24-a']], TRUE, 'e')
                         return(NULL)
                     }
 
                     ##################
                     if(!any(prec$dateInfo$date %in% wb$dateInfo$date)){
-                        Insert.Messages.Out(.cdtData$EnvData[['message']][['25-a']], format = TRUE)
+                        Insert.Messages.Out(message[['25-a']], TRUE, 'e')
                         return(NULL)
                     }
 
@@ -469,7 +471,7 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
                 wbOK <- TRUE
                 precOK <- FALSE
             }else{
-                Insert.Messages.Out(.cdtData$EnvData[['message']][['26']], format = TRUE)
+                Insert.Messages.Out(message[['26']], TRUE, 'e')
                 return(NULL)
             }
         }
@@ -500,14 +502,14 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
             if(GeneralParameters$wb.pars$swhc$multi){
                 swhc <- getNCDFSampleData(GeneralParameters$wb.pars$swhc$file)
                 if(is.null(swhc)){
-                    Insert.Messages.Out(.cdtData$EnvData[['message']][['35']], format = TRUE)
+                    Insert.Messages.Out(message[['35']], TRUE, 'e')
                     return(NULL)
                 }
 
                 SP1 <- defSpatialPixels(swhc[c('lon', 'lat')])
                 SP2 <- defSpatialPixels(list(lon = etp$coords$mat$x, lat = etp$coords$mat$y))
                 if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                    Insert.Messages.Out(.cdtData$EnvData[['message']][['35-a']], format = TRUE)
+                    Insert.Messages.Out(message[['35-a']], TRUE, 'e')
                     return(NULL)
                 }
                 rm(SP1, SP2)
@@ -519,14 +521,14 @@ compute_SeasonCessation_Procs <- function(GeneralParameters){
             if(GeneralParameters$wb.pars$wb$multi){
                 wb1 <- getNCDFSampleData(GeneralParameters$wb.pars$wb$file)
                 if(is.null(wb1)){
-                    Insert.Messages.Out(.cdtData$EnvData[['message']][['36']], format = TRUE)
+                    Insert.Messages.Out(message[['36']], TRUE, 'e')
                     return(NULL)
                 }
 
                 SP1 <- defSpatialPixels(wb1[c('lon', 'lat')])
                 SP2 <- defSpatialPixels(list(lon = etp$coords$mat$x, lat = etp$coords$mat$y))
                 if(is.diffSpatialPixelsObj(SP1, SP2, tol = 1e-04)){
-                    Insert.Messages.Out(.cdtData$EnvData[['message']][['36-a']], format = TRUE)
+                    Insert.Messages.Out(message[['36-a']], TRUE, 'e')
                     return(NULL)
                 }
                 rm(SP1, SP2)

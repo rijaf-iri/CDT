@@ -2,25 +2,25 @@
 PlotVarNetCDFFilesCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(32)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(31)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(16)
-        largeur3 <- 29
-        largeur4 <- 13
-        largeur5 <- 17
-        largeur7 <- .cdtEnv$tcl$fun$w.widgets(18)
-        vars.w <- .cdtEnv$tcl$fun$w.scale(19)
-        vars.h <- .cdtEnv$tcl$fun$h.scale(15)
-    }else{
-        largeur0 <- .cdtEnv$tcl$fun$w.widgets(23)
-        largeur1 <- .cdtEnv$tcl$fun$w.widgets(22)
-        largeur2 <- .cdtEnv$tcl$fun$w.widgets(15)
-        largeur3 <- .cdtEnv$tcl$fun$w.widgets(16)
+        largeur0 <- 33
+        largeur1 <- 31
+        largeur2 <- 21
+        largeur3 <- 23
         largeur4 <- 10
         largeur5 <- 13
-        largeur7 <- .cdtEnv$tcl$fun$w.widgets(16)
-        vars.w <- .cdtEnv$tcl$fun$w.scale(22)
-        vars.h <- .cdtEnv$tcl$fun$h.scale(15)
+        largeur7 <- 23
+        vars.w <- 316
+        vars.h <- 131
+    }else{
+        largeur0 <- 33
+        largeur1 <- 31
+        largeur2 <- 21
+        largeur3 <- 23
+        largeur4 <- 10
+        largeur5 <- 13
+        largeur7 <- 23
+        vars.w <- 316
+        vars.h <- 131
     }
 
     ###################
