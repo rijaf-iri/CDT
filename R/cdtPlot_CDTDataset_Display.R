@@ -55,15 +55,16 @@ CDTdataset.Plot.Graph <- function(){
     don <- as.numeric(xyloc$data)
     daty <- xyloc$date
 
-    nchar.daty <- nchar(daty[1])
+    nchar.daty <- nchar(daty)
+    nchar.daty <- if(all(nchar.daty[1] == nchar.daty)) nchar.daty[1] else 0
     known.data.tstep <- switch(cdtdataset$TimeStep,
-                            "minute" = nchar.daty == 12,
-                            "hourly" = nchar.daty == 10,
-                            "daily" = nchar.daty == 8,
-                            "pentad" = nchar.daty == 7,
-                            "dekadal" = nchar.daty == 7,
-                            "monthly" = nchar.daty == 6,
-                            FALSE)
+                               "minute" = nchar.daty == 12,
+                               "hourly" = nchar.daty == 10,
+                               "daily" = nchar.daty == 8,
+                               "pentad" = nchar.daty == 7,
+                               "dekadal" = nchar.daty == 7,
+                               "monthly" = nchar.daty == 6,
+                               FALSE)
     known.data.tstep <- known.data.tstep && !grepl("[^[:digit:]]", daty[1])
 
     if(known.data.tstep){
@@ -79,7 +80,39 @@ CDTdataset.Plot.Graph <- function(){
             daty <- as.Date(paste0(substr(daty, 1, 6), dek), "%Y%m%d")
         }
         if(cdtdataset$TimeStep == "monthly") daty <- as.Date(paste0(daty, 1), "%Y%m%d")
-    }else daty <- seq_along(daty)
+    }else{
+        others.frmt <- 'numeric'
+        if(all(!grepl("[^[:digit:]]", daty))){
+            # yearly and others sequential data 
+            daty <- as.numeric(daty)
+        }else if(all(nchar(daty) == 15)){
+            mosep1 <- substr(daty, 5, 5)
+            mosep2 <- substr(daty, 13, 13)
+            yrsep <- substr(daty, 8, 8)
+            mosep1 <- all(mosep1 == "-")
+            mosep2 <- all(mosep2 == "-")
+            yrsep <- all(yrsep == "_")
+            if(mosep1 & mosep2 & yrsep){
+                years <- substr(daty, 1, 4)
+                if(any(duplicated(years))){
+                    # rolling season
+                    mois <- substr(daty, 6, 7)
+                    mois <- paste0(years, '-', mois, '-', 1)
+                    daty <- as.Date(mois)
+                    others.frmt <- 'date'
+                }else{
+                    # seasonal data
+                    daty <- as.numeric(years)
+                }
+            }else{
+                # unknown
+                daty <- seq_along(daty)
+            }
+        }else{
+            # unknown
+            daty <- seq_along(daty)
+        }
+    }
 
     timestep <- if(known.data.tstep) cdtdataset$TimeStep else "others"
     titre <- cdtdataset$varInfo$longname
@@ -88,9 +121,9 @@ CDTdataset.Plot.Graph <- function(){
     #######
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
-    GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
-    if(GRAPHTYPE == "Line") optsgph <- TSGraphOp$line
-    if(GRAPHTYPE == "Barplot") optsgph <- TSGraphOp$bar
+    GRAPHTYPE <- .cdtData$EnvData$plot.maps$typeTSp
+    if(GRAPHTYPE == "line") optsgph <- TSGraphOp$line
+    if(GRAPHTYPE == "bar") optsgph <- TSGraphOp$bar
 
     xlim <- range(daty, na.rm = TRUE)
     if(timestep != "others"){
@@ -107,20 +140,34 @@ CDTdataset.Plot.Graph <- function(){
         }
     }else{
         if(optsgph$xlim$is.min){
-            xx <- str_trim(optsgph$xlim$min)
-            if(grepl("[^[:digit:]]", xx)){
-                Insert.Messages.Out(.cdtData$EnvData$message[['7']], TRUE, "e")
-                return(NULL)
+            if(others.frmt == 'numeric'){
+                xx <- str_trim(optsgph$xlim$min)
+                if(grepl("[^[:digit:]]", xx)){
+                    Insert.Messages.Out(.cdtData$EnvData$message[['7']], TRUE, "e")
+                    return(NULL)
+                }
+                xlim[1] <- as.numeric(xx)
             }
-            xlim[1] <- as.numeric(xx)
+            if(others.frmt == 'date'){
+                xx <- format.xlim.date.range(optsgph$xlim$min, 'monthly', .cdtData$EnvData$message)
+                if(is.null(xx)) return(NULL)
+                xlim[1] <- xx
+            }
         }
         if(optsgph$xlim$is.max){
-            xx <- str_trim(optsgph$xlim$max)
-            if(grepl("[^[:digit:]]", xx)){
-                Insert.Messages.Out(.cdtData$EnvData$message[['7']], TRUE, "e")
-                return(NULL)
+            if(others.frmt == 'numeric'){
+                xx <- str_trim(optsgph$xlim$max)
+                if(grepl("[^[:digit:]]", xx)){
+                    Insert.Messages.Out(.cdtData$EnvData$message[['7']], TRUE, "e")
+                    return(NULL)
+                }
+                xlim[2] <- as.numeric(xx)
             }
-            xlim[2] <- as.numeric(xx)
+            if(others.frmt == 'date'){
+                xx <- format.xlim.date.range(optsgph$xlim$max, 'monthly', .cdtData$EnvData$message)
+                if(is.null(xx)) return(NULL)
+                xlim[2] <- xx
+            }
         }
     }
 
@@ -144,7 +191,7 @@ CDTdataset.Plot.Graph <- function(){
 
     #######
 
-    if(GRAPHTYPE == "Line"){
+    if(GRAPHTYPE == "line"){
         graphs.plot.line(daty, don, xlim = xlim, ylim = ylim,
                         xlab = xlab, ylab = ylab, ylab.sub = NULL,
                         title = titre, title.position = titre.pos, axis.font = 1,
@@ -152,7 +199,7 @@ CDTdataset.Plot.Graph <- function(){
                         location = location)
     }
 
-    if(GRAPHTYPE == "Barplot"){
+    if(GRAPHTYPE == "bar"){
         graphs.plot.bar(daty, don, xlim = xlim, ylim = ylim, origindate = NULL,
                         xlab = xlab, ylab = ylab, ylab.sub = NULL,
                         title = titre, title.position = titre.pos, axis.font = 1,

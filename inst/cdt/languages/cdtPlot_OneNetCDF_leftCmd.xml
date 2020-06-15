@@ -7,10 +7,10 @@
     </tab_title>
     <widget>
         <checkbutton id="1">
-            <text lang="en"> Blank grid outside the boundaries </text>
+            <text lang="en"> Blank grid outside the shapefile boundaries </text>
         </checkbutton>
         <checkbutton id="2">
-            <text lang="en"> Add boundaries to Map </text>
+            <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> NetCDF data file </text>
@@ -19,7 +19,7 @@
             <text lang="en"> Plot Type </text>
         </label>
         <label id="3">
-            <text lang="en"> Boundaries </text>
+            <text lang="en"> Shapefile </text>
         </label>
     </widget>
     <help>

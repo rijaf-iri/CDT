@@ -4,10 +4,13 @@
         <tab id="1">
             <text lang="en"> Plot NetCDF Data </text>
         </tab>
+        <tab id="2">
+            <text lang="en"> Layers </text>
+        </tab>
     </tab_title>
     <widget>
         <checkbutton id="1">
-            <text lang="en"> Add boundaries to Map </text>
+            <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Directory containing the NetCDF data </text>
@@ -25,7 +28,7 @@
             <text lang="en"> Plot Type </text>
         </label>
         <label id="6">
-            <text lang="en"> Boundaries </text>
+            <text lang="en"> Shapefile </text>
         </label>
     </widget>
     <help>
@@ -58,7 +61,7 @@
                 <text lang="en"> Enter the filename format of NetCDF data, example: rfe_2017_01-dk2.nc\nReplace the whole string representing the date or sequence by %S\nrfe_2017_01-dk2.nc becomes rfe_%S.nc </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of NetCDF data, example: rfe_2017_01-dk2.nc </text>
+                <text lang="en"> Enter the filename format of NetCDF data, example: rfe_2017_01-dk2.nc -&gt; rfe_%S.nc </text>
             </tooltip>
         </content>
     </help>

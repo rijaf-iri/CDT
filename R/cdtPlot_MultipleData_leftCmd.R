@@ -3,18 +3,18 @@ PlotMulitpleDataCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 21
-        largeur1 <- 30
-        largeur2 <- 31
+        largeur1 <- 32
+        largeur2 <- 33
         largeur3 <- 20
-        largeur4 <- 10
+        largeur4 <- 11
         data.w <- 360
-        data.h <- 351
+        data.h <- 380
     }else{
         largeur0 <- 21
-        largeur1 <- 30
-        largeur2 <- 31
+        largeur1 <- 32
+        largeur2 <- 33
         largeur3 <- 20
-        largeur4 <- 10
+        largeur4 <- 11
         data.w <- 360
         data.h <- 351
     }
@@ -45,14 +45,17 @@ PlotMulitpleDataCmd <- function(){
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
     cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
     cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
 
     tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab3, 0, weight = 1)
 
     #######################################################################################################
 
@@ -361,7 +364,7 @@ PlotMulitpleDataCmd <- function(){
         tkgrid(bt.date.prev, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
         tkgrid(bt.Map.plot, row = 1, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
         tkgrid(bt.date.next, row = 1, column = 2, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(bt.Map.Opt, row = 2, column = 2, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+        tkgrid(bt.Map.Opt, row = 2, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
 
         #######################
 
@@ -544,7 +547,7 @@ PlotMulitpleDataCmd <- function(){
             }
 
             if(returnNULL){
-                Insert.Messages.Out(lang.dlg[['message']][['9']], format = TRUE)
+                Insert.Messages.Out(lang.dlg[['message']][['9']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -613,7 +616,18 @@ PlotMulitpleDataCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr2, text = lang.dlg[['label']][['13']], relief = 'groove')
+        tkgrid(framePlotMap, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(bt.Load, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+    #######################################################################################################
+
+    #Tab3
+    subfr3 <- bwTabScrollableFrame(cmd.tab3)
+
+        ##############################################
+
+        frameSHP <- ttklabelframe(subfr3, text = lang.dlg[['label']][['13']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
         file.plotShp <- tclVar()
@@ -672,10 +686,7 @@ PlotMulitpleDataCmd <- function(){
 
         ##############################################
 
-        tkgrid(framePlotMap, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameSHP, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.Save, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(bt.Load, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -734,13 +745,13 @@ PlotMulitpleDataCmd <- function(){
 
             no.data <- sapply(lapply(tmp.don, "[[", "data"), is.null)
             if(any(no.data)){
-                sapply(lapply(tmp.don[no.data], "[[", "msg"), Insert.Messages.Out, format = TRUE)
+                sapply(lapply(tmp.don[no.data], "[[", "msg"), Insert.Messages.Out, TRUE, 'e')
                 return(NULL)
             }
 
             daty <- Reduce(intersect, lapply(tmp.don, "[[", "dates"))
             if(length(daty) == 0){
-                Insert.Messages.Out(lang.dlg[['message']][['13']], format = TRUE)
+                Insert.Messages.Out(lang.dlg[['message']][['13']], TRUE, 'e')
                 return(NULL)
             }
 
@@ -842,10 +853,10 @@ PlotMulitpleDataCmd <- function(){
         Obj <- lapply(data.Obj, "[[", "obj")
         no.data <- sapply(Obj, is.null)
         if(all(no.data)){
-            Insert.Messages.Out(lang.dlg[['message']][['15']], format = TRUE)
+            Insert.Messages.Out(lang.dlg[['message']][['15']], TRUE, 'e')
             return(NULL)
         }
-        if(any(no.data)) sapply(lapply(data.Obj[no.data], "[[", "msg"), Insert.Messages.Out, format = TRUE)
+        if(any(no.data)) sapply(lapply(data.Obj[no.data], "[[", "msg"), Insert.Messages.Out, TRUE, 'e')
 
         .cdtData$GalParams$donnees$date2plot <- daty2plot
         .cdtData$EnvData$data.Obj <- Obj

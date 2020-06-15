@@ -5,16 +5,17 @@ SPICalcPanelCmd <- function(){
         largeur0 <- 29
         largeur1 <- 33
         largeur2 <- 35
-        largeur3 <- 36
+        largeur3 <- 31
         largeur4a <- 10
-        largeur4b <- 21
+        largeur4b <- 19
         largeur5 <- 22
-        largeur6 <- 19
+        largeur6 <- 20
         largeur7 <- 7
-        largeur8 <- 18
+        largeur8 <- 19
         largeur9 <- 14
         largeur10 <- 20
         largeur11 <- 10
+        largeur12 <- 24
     }else{
         largeur0 <- 30
         largeur1 <- 32
@@ -29,6 +30,7 @@ SPICalcPanelCmd <- function(){
         largeur9 <- 14
         largeur10 <- 20
         largeur11 <- 10
+        largeur12 <- 22
     }
 
     GeneralParameters <- list(intstep = "dekadal", data.type = "cdtstation",
@@ -762,7 +764,7 @@ SPICalcPanelCmd <- function(){
 
         .cdtData$EnvData$spiViz$max.tscale <- tclVar(12)
 
-        bt.VizTS <- ttkbutton(frameVizTS, text = lang.dlg[['button']][['4']], width = largeur5)
+        bt.VizTS <- ttkbutton(frameVizTS, text = lang.dlg[['button']][['4']], width = largeur12)
         bt.VizOpt <- ttkbutton(frameVizTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur9)
 
         frmxTscale <- tkframe(frameVizTS)

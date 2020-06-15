@@ -2,18 +2,18 @@
 OnsetCalcPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        hauteur <- 260
+        hauteur <- 290
         largeur0 <- 29
         largeur1 <- 33
         largeur2 <- 35
         largeur3 <- 14
         largeur4 <- 20
-        largeur5 <- 18
-        largeur6 <- 19
+        largeur5 <- 19
+        largeur6 <- 20
         largeur7 <- 7
         largeur8 <- 10
-        largeur9 <- 38
-        largeur10 <- 8
+        largeur9 <- 35
+        largeur10 <- 7
     }else{
         hauteur <- 260
         largeur0 <- 30

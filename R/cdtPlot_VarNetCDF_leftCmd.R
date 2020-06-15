@@ -3,24 +3,24 @@ PlotVarNetCDFFilesCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 33
-        largeur1 <- 31
+        largeur1 <- 32
         largeur2 <- 21
-        largeur3 <- 23
-        largeur4 <- 10
-        largeur5 <- 13
-        largeur7 <- 23
-        vars.w <- 316
-        vars.h <- 131
+        largeur3 <- 14
+        largeur4 <- 11
+        largeur5 <- 12
+        largeur6 <- 25
+        vars.w <- 310
+        vars.h <- 160
     }else{
         largeur0 <- 33
-        largeur1 <- 31
+        largeur1 <- 32
         largeur2 <- 21
-        largeur3 <- 23
-        largeur4 <- 10
-        largeur5 <- 13
-        largeur7 <- 23
-        vars.w <- 316
-        vars.h <- 131
+        largeur3 <- 14
+        largeur4 <- 11
+        largeur5 <- 15
+        largeur6 <- 25
+        vars.w <- 310
+        vars.h <- 160
     }
 
     ###################
@@ -49,71 +49,35 @@ PlotVarNetCDFFilesCmd <- function(){
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
     cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
     cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
 
     tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab3, 0, weight = 1)
 
     #######################################################################################################
 
-    #Tab1
-    subfr1 <- bwTabScrollableFrame(cmd.tab1)
+        selectVarsFun <- function(fileopen){
+            tkdestroy(frSelVars)
+            frSelVars <<- tkframe(sel.vars)
 
-        #######################
+            ##################################
 
-        frameNC <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
-
-        ncDIR <- tclVar(GeneralParameters$dir)
-        ncSample <- tclVar(GeneralParameters$sample)
-        ncFormat <- tclVar(GeneralParameters$format)
-
-        txt.ncdr <- tklabel(frameNC, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-        en.ncdr <- tkentry(frameNC, textvariable = ncDIR, width = largeur0)
-        bt.ncdr <- tkbutton(frameNC, text = "...")
-        txt.ncfl <- tklabel(frameNC, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-        en.ncfl <- tkentry(frameNC, textvariable = ncSample, width = largeur0, state = 'disabled')
-        bt.ncfl <- tkbutton(frameNC, text = "...", bg = 'lightblue')
-        txt.ncff <- tklabel(frameNC, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
-        en.ncff <- tkentry(frameNC, textvariable = ncFormat, width = largeur0)
-
-        #################
-
-        tkgrid(txt.ncdr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(en.ncdr, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(bt.ncdr, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(txt.ncfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(en.ncfl, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(bt.ncfl, row = 3, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-        tkgrid(txt.ncff, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(en.ncff, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-
-        helpWidget(en.ncdr, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
-        helpWidget(en.ncfl, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
-        helpWidget(bt.ncfl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
-        helpWidget(en.ncff, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
-
-        #################
-
-        tkconfigure(bt.ncdr, command = function(){
-            dir4cdf <- tk_choose.dir(getwd(), "")
-            tclvalue(ncDIR) <- if(dir4cdf %in% c("", "NA") | is.na(dir4cdf)) "" else dir4cdf
-        })
-
-        tkconfigure(bt.ncfl, command = function(){
-            initialdir <- if(file.exists(str_trim(tclvalue(ncDIR)))) str_trim(tclvalue(ncDIR)) else getwd()
-            fileopen <- tclvalue(tkgetOpenFile(initialdir = initialdir, filetypes = .cdtEnv$tcl$data$filetypes3))
-            if(fileopen == "" | is.na(fileopen)) return(NULL)
+            if(fileopen == "" | is.na(fileopen)){
+                Insert.Messages.Out(lang.dlg[['message']][['8']], TRUE, 'e')
+                return(NULL)
+            }
             if(!file.exists(fileopen)){
-                Insert.Messages.Out(paste(fileopen, lang.dlg[['message']][['3']]), format = TRUE)
+                Insert.Messages.Out(paste(fileopen, lang.dlg[['message']][['3']]), TRUE, 'e')
                 .cdtData$EnvData$ncvar <- NULL
                 return(NULL)
             }
-            tclvalue(ncSample) <- basename(fileopen)
 
             nc <- nc_open(fileopen)
             ncdims <- sapply(nc$dim, '[[', 'name')
@@ -124,13 +88,13 @@ PlotVarNetCDFFilesCmd <- function(){
             ncvars <- paste0(var.name, '::', var.lname)
 
             if(length(ncdims) < 2){
-                Insert.Messages.Out(lang.dlg[['message']][['1']], format = TRUE)
+                Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, 'e')
                 .cdtData$EnvData$ncvar <- NULL
                 return(NULL)
             }
 
             if(length(ncvars) < 1){
-                Insert.Messages.Out(lang.dlg[['message']][['2']], format = TRUE)
+                Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, 'e')
                 .cdtData$EnvData$ncvar <- NULL
                 return(NULL)
             }
@@ -158,19 +122,19 @@ PlotVarNetCDFFilesCmd <- function(){
                 .cdtData$EnvData$ncvar[[j]]$ncops <- ncMapOp
                 .cdtData$EnvData$ncvar[[j]]$var.name <- var.name[j]
                 .cdtData$EnvData$ncvar[[j]]$chk.var <- tclVar(1)
-                .cdtData$EnvData$ncvar[[j]]$chk.wdg <- tkcheckbutton(sel.vars, variable = .cdtData$EnvData$ncvar[[j]]$chk.var,
-                                                                text = ncvars[j], anchor = 'w', justify = 'left', width = largeur7)
-                .cdtData$EnvData$ncvar[[j]]$bt.wdg <- ttkbutton(sel.vars, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+                .cdtData$EnvData$ncvar[[j]]$chk.wdg <- tkcheckbutton(frSelVars, variable = .cdtData$EnvData$ncvar[[j]]$chk.var,
+                                                                     text = ncvars[j], anchor = 'w', justify = 'left', width = largeur6)
+                .cdtData$EnvData$ncvar[[j]]$bt.wdg <- ttkbutton(frSelVars, text = .cdtEnv$tcl$lang$global[['button']][['4']])
 
-                tkgrid(.cdtData$EnvData$ncvar[[j]]$chk.wdg, row = j - 1, column = 0)
-                tkgrid(.cdtData$EnvData$ncvar[[j]]$bt.wdg, row = j - 1, column = 1, padx = 3)
+                tkgrid(.cdtData$EnvData$ncvar[[j]]$chk.wdg, row = j - 1, column = 0, sticky = 'w')
+                tkgrid(.cdtData$EnvData$ncvar[[j]]$bt.wdg, row = j - 1, column = 1, sticky = 'e')
 
                 infobulle(.cdtData$EnvData$ncvar[[j]]$chk.wdg, ncvars[j])
             }
 
             #################
 
-            lapply(seq_along(ncvars), function(j){
+            res <- lapply(seq_along(ncvars), function(j){
                 tkconfigure(.cdtData$EnvData$ncvar[[j]]$bt.wdg, command = function(){
                     if(!is.null(.cdtData$EnvData$ncData$map)){
                         atlevel <- pretty(.cdtData$EnvData$ncData$map[[j]]$z, n = 10, min.n = 7)
@@ -187,12 +151,94 @@ PlotVarNetCDFFilesCmd <- function(){
 
             #################
 
-            lapply(seq_along(ncvars), function(j){
+            res <- lapply(seq_along(ncvars), function(j){
                 tkbind(.cdtData$EnvData$ncvar[[j]]$chk.wdg, "<Button-1>", function(){
                     stateOP <- if(tclvalue(.cdtData$EnvData$ncvar[[j]]$chk.var) == "1") "disabled" else "normal"
                     tkconfigure(.cdtData$EnvData$ncvar[[j]]$bt.wdg, state = stateOP)
                 })
             })
+
+            ##################################
+
+            tkgrid(frSelVars)
+
+            return(list(varinfo = var.name, diminfo = ncdims))
+        }
+
+    #######################################################################################################
+
+    #Tab1
+    subfr1 <- bwTabScrollableFrame(cmd.tab1)
+
+        #######################
+
+        frameNC <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
+
+        ncDIR <- tclVar(GeneralParameters$dir)
+        ncSample <- tclVar(GeneralParameters$sample)
+        ncFormat <- tclVar(GeneralParameters$format)
+
+        txt.ncdr <- tklabel(frameNC, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
+        en.ncdr <- tkentry(frameNC, textvariable = ncDIR, width = largeur0)
+        bt.ncdr <- tkbutton(frameNC, text = "...")
+
+        txt.ncfl <- tklabel(frameNC, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
+        cb.ncfl <- ttkcombobox(frameNC, values = unlist(listOpenFiles), textvariable = ncSample, width = largeur1)
+        bt.ncfl <- tkbutton(frameNC, text = "...")
+
+        txt.ncff <- tklabel(frameNC, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
+        en.ncff <- tkentry(frameNC, textvariable = ncFormat, width = largeur0)
+
+        #################
+
+        tkgrid(txt.ncdr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.ncdr, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.ncdr, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(txt.ncfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(cb.ncfl, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.ncfl, row = 3, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+        tkgrid(txt.ncff, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.ncff, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+
+        helpWidget(en.ncdr, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+        helpWidget(cb.ncfl, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+        helpWidget(bt.ncfl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+        helpWidget(en.ncff, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+
+        #################
+
+        tkconfigure(bt.ncdr, command = function(){
+            dir4cdf <- tk_choose.dir(getwd(), "")
+            tclvalue(ncDIR) <- if(dir4cdf %in% c("", "NA") | is.na(dir4cdf)) "" else dir4cdf
+        })
+
+        tkconfigure(bt.ncfl, command = function(){
+            initialdir <- if(file.exists(str_trim(tclvalue(ncDIR)))) str_trim(tclvalue(ncDIR)) else getwd()
+            fileopen <- tclvalue(tkgetOpenFile(initialdir = initialdir, filetypes = .cdtEnv$tcl$data$filetypes3))
+
+            ret <- selectVarsFun(fileopen)
+
+            if(!is.null(ret)){
+                nc.opfiles <- list(basename(fileopen), ret, fileopen)
+                tkinsert(.cdtEnv$tcl$main$Openfiles, "end", basename(fileopen))
+
+                update.OpenFiles('netcdf', nc.opfiles)
+                listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
+                tclvalue(ncSample) <- nc.opfiles[[1]]
+                lapply(list(cb.ncfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+            }
+        })
+
+        tkbind(cb.ncfl, "<<ComboboxSelected>>", function(){
+            jfile <- getIndex.AllOpenFiles(str_trim(tclvalue(ncSample)))
+            fileopen <- ""
+            if(length(jfile) > 0){
+                if(.cdtData$OpenFiles$Type[[jfile]] == "netcdf")
+                    fileopen <- .cdtData$OpenFiles$Data[[jfile]][[3]]
+            }
+
+            ret <- selectVarsFun(fileopen)
         })
 
         #######################
@@ -218,6 +264,8 @@ PlotVarNetCDFFilesCmd <- function(){
 
         sel.vars <- bwTabScrollableFrame(frameVARS, wscrlwin = vars.w, hscrlwin = vars.h)
 
+        frSelVars <- tkframe(sel.vars)
+
         ##############################################
 
         tkgrid(frameNC, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -242,10 +290,10 @@ PlotVarNetCDFFilesCmd <- function(){
 
         ###################
 
-        tkgrid(cb.nc.maps, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.nc.Date.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.nc.maps, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.nc.Date.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.nc.maps, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.nc.Date.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.nc.maps, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.nc.Date.next, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ###################
 
@@ -314,14 +362,35 @@ PlotVarNetCDFFilesCmd <- function(){
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
         txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = plot.type, textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur3)
+        cb.plotType <- ttkcombobox(framePlotType, values = plot.type, textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur3, justify = 'center')
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr2, text = lang.dlg[['label']][['10']], relief = 'groove')
+        frameBox <- tkframe(subfr2)
+
+        .cdtData$EnvData$plot.maps$draw.box <- tclVar(0)
+
+        chk.addbox <- tkcheckbutton(frameBox, variable = .cdtData$EnvData$plot.maps$draw.box, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+
+        tkgrid(chk.addbox, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+
+        ############################################
+
+        tkgrid(frameMap, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(framePlotType, row = 1, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(frameBox, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #######################################################################################################
+
+    #Tab3
+    subfr3 <- bwTabScrollableFrame(cmd.tab3)
+
+        ##############################################
+
+        frameSHP <- ttklabelframe(subfr3, text = lang.dlg[['label']][['10']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(0)
         file.plotShp <- tclVar()
@@ -345,7 +414,7 @@ PlotVarNetCDFFilesCmd <- function(){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(file.plotShp) <- shp.opfiles[[1]]
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                tkconfigure(cb.addshp, values = unlist(listOpenFiles))
+                lapply(list(cb.ncfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
                 shpofile <- getShpOpenData(file.plotShp)
                 if(is.null(shpofile))
@@ -377,22 +446,9 @@ PlotVarNetCDFFilesCmd <- function(){
             tkconfigure(bt.addshpOpt, state = stateSHP)
         })
 
-        ##############################################
-
-        frameBox <- tkframe(subfr2)
-
-        .cdtData$EnvData$plot.maps$draw.box <- tclVar(0)
-
-        chk.addbox <- tkcheckbutton(frameBox, variable = .cdtData$EnvData$plot.maps$draw.box, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
-
-        tkgrid(chk.addbox, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-
         ############################################
 
-        tkgrid(frameMap, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(framePlotType, row = 1, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameSHP, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameBox, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -462,7 +518,7 @@ PlotVarNetCDFFilesCmd <- function(){
 
         pvar <- sapply(.cdtData$EnvData$ncvar, function(x) ifelse(tclvalue(x$chk.var) == "1", TRUE, FALSE))
         if(!any(pvar)){
-            Insert.Messages.Out(lang.dlg[['message']][['5']], format = TRUE)
+            Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, 'e')
             .cdtData$EnvData$ncData$map <- NULL
             return(NULL)
         }
@@ -478,7 +534,7 @@ PlotVarNetCDFFilesCmd <- function(){
 
             nc <- try(nc_open(ncfile.path), silent = TRUE)
             if(inherits(nc, "try-error")){
-                Insert.Messages.Out(paste(lang.dlg[['message']][['6']], ncfile.path), format = TRUE)
+                Insert.Messages.Out(paste(lang.dlg[['message']][['6']], ncfile.path), TRUE, 'e')
                 .cdtData$EnvData$ncData$map <- NULL
                 return(NULL)
             }
@@ -487,7 +543,7 @@ PlotVarNetCDFFilesCmd <- function(){
                 idim <- match(sapply(nc$var[[varid]]$dim, "[[", "name"), c(nlon, nlat))
                 idim <- idim[!is.na(idim)]
                 if(length(idim) != 2){
-                    Insert.Messages.Out(paste(varid, lang.dlg[['message']][['7']]), format = TRUE)
+                    Insert.Messages.Out(paste(varid, lang.dlg[['message']][['7']]), TRUE, 'e')
                     .cdtData$EnvData$ncData$map <- NULL
                     return(NULL)
                 }

@@ -5,12 +5,20 @@
             <text lang="en"> Plot CDT Station Data </text>
         </tab>
         <tab id="2">
-            <text lang="en"> Boundaries </text>
+            <text lang="en"> Layers </text>
         </tab>
     </tab_title>
     <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Line Plot </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Bar Plot </text>
+            </option>
+        </combobox>
         <checkbutton id="1">
-            <text lang="en"> Add boundaries to Map </text>
+            <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Station Data </text>
@@ -55,7 +63,7 @@
             <text lang="en"> Stations </text>
         </label>
         <label id="15">
-            <text lang="en"> Boundaries </text>
+            <text lang="en"> Shapefile </text>
         </label>
     </widget>
     <message>
@@ -82,7 +90,7 @@
             <text lang="en"> Invalid date or index </text>
         </content>
         <content id="8">
-            <text lang="en"> xlim must be an integer value </text>
+            <text lang="en"> xlim must be a numeric value </text>
         </content>
     </message>
 </panel_cmd>

@@ -2,18 +2,18 @@
 PlotCDTStationCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 20
-        largeur1 <- 30
+        largeur0 <- 22
+        largeur1 <- 32
         largeur3 <- 14
-        largeur4 <- 20
-        largeur5 <- 10
+        largeur4 <- 25
+        largeur5 <- 12
         largeur6 <- 30
     }else{
-        largeur0 <- 20
-        largeur1 <- 30
+        largeur0 <- 23
+        largeur1 <- 33
         largeur3 <- 14
-        largeur4 <- 20
-        largeur5 <- 10
+        largeur4 <- 25
+        largeur5 <- 12
         largeur6 <- 30
     }
 
@@ -33,23 +33,23 @@ PlotCDTStationCmd <- function(){
                                        pointSize = pointSizeI)
 
     .cdtData$EnvData$TSGraphOp <- list(
-                bar = list(
-                        xlim = list(is.min = FALSE, min = "1981-01-1", is.max = FALSE, max = "2017-12-3"),
-                        ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
-                        axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                        title = list(is.title = FALSE, title = '', position = 'top'),
-                        colors = list(col = "darkblue")
-                    ),
-                line = list(
-                    xlim = list(is.min = FALSE, min = "1981-01-1", is.max = FALSE, max = "2017-12-3"),
-                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
-                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                    title = list(is.title = FALSE, title = '', position = 'top'),
-                    plot = list(type = 'both',
-                        col = list(line = "red", points = "blue"),
-                        lwd = 2, cex = 1.4),
-                    legend = NULL)
-                )
+                                    bar = list(
+                                            xlim = list(is.min = FALSE, min = "1981-01-1", is.max = FALSE, max = "2017-12-3"),
+                                            ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
+                                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                            title = list(is.title = FALSE, title = '', position = 'top'),
+                                            colors = list(col = "darkblue")
+                                        ),
+                                    line = list(
+                                            xlim = list(is.min = FALSE, min = "1981-01-1", is.max = FALSE, max = "2017-12-3"),
+                                            ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
+                                            axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                            title = list(is.title = FALSE, title = '', position = 'top'),
+                                            plot = list(type = 'both',
+                                                        col = list(line = "red", points = "blue"),
+                                                        lwd = 2, cex = 1.4),
+                                            legend = NULL)
+                                        )
 
     .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
@@ -83,7 +83,7 @@ PlotCDTStationCmd <- function(){
     date.time.selection <- function(intstep, frTS1){
         if(intstep == 'others'){
             txt.other <- tklabel(frTS1, text = lang.dlg[['label']][['5']])
-            cb.other <<- ttkcombobox(frTS1, values = "", textvariable = date.other, width = largeur6)
+            cb.other <<- ttkcombobox(frTS1, values = "", textvariable = date.other, justify = "center", width = largeur6)
 
             tkgrid(txt.other, row = 0, column = 0, sticky = 'we', pady = 1, padx = 1)
             tkgrid(cb.other, row = 1, column = 0, sticky = 'we', pady = 1, padx = 1)
@@ -207,7 +207,7 @@ PlotCDTStationCmd <- function(){
 
         txt.cdtdata1 <- tklabel(frameCDTdata, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
         cb.cdtdata1 <- ttkcombobox(frameCDTdata, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
-        cb.minhour <- ttkcombobox(frameCDTdata, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
+        cb.minhour <- ttkcombobox(frameCDTdata, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2, justify = 'center')
 
         txt.cdtdata2 <- tklabel(frameCDTdata, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
         cb.cdtdata2 <- ttkcombobox(frameCDTdata, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
@@ -302,7 +302,7 @@ PlotCDTStationCmd <- function(){
         bt.date.next <- ttkbutton(frameMap, text = ">>", width = largeur5)
 
         frOPTS0 <- tkframe(frameMap)
-        cb.Map.type <- ttkcombobox(frOPTS0, values = typeMapPLOT, textvariable = .cdtData$EnvData$map$typeMap, width = largeur3)
+        cb.Map.type <- ttkcombobox(frOPTS0, values = typeMapPLOT, textvariable = .cdtData$EnvData$map$typeMap, justify = 'center', width = largeur3)
         bt.Map.Opt <- ttkbutton(frOPTS0, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
 
         ##############
@@ -357,7 +357,7 @@ PlotCDTStationCmd <- function(){
         })
 
         tkconfigure(bt.date.prev, command = function(){
-            if(is.null(.cdtData$EnvData$don)) return(NULL) 
+            if(is.null(.cdtData$EnvData$don)) return(NULL)
             intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
 
             if(intstep == "others"){
@@ -423,6 +423,7 @@ PlotCDTStationCmd <- function(){
                 .cdtData$EnvData$dataMapOp$pointSize <- pointSizeI
             }else .cdtData$EnvData$dataMapOp$pointSize <- NULL
 
+            if(is.null(.cdtData$EnvData$don)) return(NULL)
             getStnMap()
         })
 
@@ -430,22 +431,25 @@ PlotCDTStationCmd <- function(){
 
         frameGraph <- ttklabelframe(subfr1, text = lang.dlg[['label']][['13']], relief = 'groove')
 
-        typeTSPLOT <- c("Line", "Barplot")
-        .cdtData$EnvData$plot.maps$typeTSp <- tclVar("Line")
+        CbtypeTSPLOT <- lang.dlg[['combobox']][['1']]
+        typeTSPLOT <- c('line', 'bar')
+        typeTSp <- tclVar(CbtypeTSPLOT[1])
+        .cdtData$EnvData$plot.maps$typeTSp <- 'line'
+
         .cdtData$EnvData$plot.maps$stnIDTSp <- tclVar()
 
         ##############
 
         frTS2 <- tkframe(frameGraph)
         txt.stnID <- tklabel(frTS2, text = lang.dlg[['label']][['14']], anchor = 'w', justify = 'left')
-        cb.stnID <- ttkcombobox(frTS2, values = "", textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur4)
+        cb.stnID <- ttkcombobox(frTS2, values = "", textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur4, justify = 'center')
 
         bt.stnID.prev <- ttkbutton(frameGraph, text = "<<", width = largeur5)
         bt.TsGraph.plot <- ttkbutton(frameGraph, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
         bt.stnID.next <- ttkbutton(frameGraph, text = ">>", width = largeur5)
 
         frOPTS1 <- tkframe(frameGraph)
-        cb.typeTSp <- ttkcombobox(frOPTS1, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur3)
+        cb.typeTSp <- ttkcombobox(frOPTS1, values = CbtypeTSPLOT, textvariable = typeTSp, width = largeur3, justify = 'center')
         bt.TSGraphOpt <- ttkbutton(frOPTS1, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
 
         ##############
@@ -469,9 +473,8 @@ PlotCDTStationCmd <- function(){
         ##############
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
-                                    "Barplot" = "Bar",
-                                    "Line" = "Line")
+            ptype <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            suffix.fun <- switch(ptype, "bar" = "Bar", "line" = "Line")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
         })
@@ -481,6 +484,8 @@ PlotCDTStationCmd <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(is.null(.cdtData$EnvData$don)) return(NULL)
             getStnTS()
 
@@ -491,6 +496,8 @@ PlotCDTStationCmd <- function(){
         })
 
         tkconfigure(bt.stnID.prev, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(is.null(.cdtData$EnvData$don)) return(NULL)
             istn <- which(.cdtData$EnvData$don$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
             istn <- istn - 1
@@ -506,6 +513,8 @@ PlotCDTStationCmd <- function(){
         })
 
         tkconfigure(bt.stnID.next, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(is.null(.cdtData$EnvData$don)) return(NULL)
             istn <- which(.cdtData$EnvData$don$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
             istn <- istn + 1
@@ -518,6 +527,10 @@ PlotCDTStationCmd <- function(){
             titre <- paste('Station -', .cdtData$EnvData$stndata$series$id)
             imgContainer <- CDT.Display.Graph(plotCDTStation.Graph, .cdtData$EnvData$tab$dataGraph, titre)
             .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
+        })
+
+        tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
         })
 
         ############################################
@@ -606,7 +619,38 @@ PlotCDTStationCmd <- function(){
 
         if(intstep == "others"){
             don <- splitCDTData1(don)
-            .cdtData$EnvData$tsdates <- seq_along(don$dates)
+            daty <- don$dates
+            .cdtData$EnvData$others.frmt <- 'numeric'
+            if(all(!grepl("[^[:digit:]]", daty))){
+                # yearly and others sequential data 
+                .cdtData$EnvData$tsdates <- as.numeric(daty)
+            }else if(all(nchar(daty) == 15)){
+                mosep1 <- substr(daty, 5, 5)
+                mosep2 <- substr(daty, 13, 13)
+                yrsep <- substr(daty, 8, 8)
+                mosep1 <- all(mosep1 == "-")
+                mosep2 <- all(mosep2 == "-")
+                yrsep <- all(yrsep == "_")
+                if(mosep1 & mosep2 & yrsep){
+                    years <- substr(daty, 1, 4)
+                    if(any(duplicated(years))){
+                        # rolling season
+                        mois <- substr(daty, 6, 7)
+                        mois <- paste0(years, '-', mois, '-', 1)
+                        .cdtData$EnvData$tsdates <- as.Date(mois)
+                        .cdtData$EnvData$others.frmt <- 'date'
+                    }else{
+                        # seasonal data
+                        .cdtData$EnvData$tsdates <- as.numeric(years)
+                    }
+                }else{
+                    # unknown
+                    .cdtData$EnvData$tsdates <- seq_along(daty)
+                }
+            }else{
+                # unknown
+                .cdtData$EnvData$tsdates <- seq_along(daty)
+            }
 
             ##########
             tkconfigure(cb.other, values = don$dates)

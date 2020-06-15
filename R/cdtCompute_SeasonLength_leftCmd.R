@@ -5,9 +5,9 @@ SeasonLengthCalcPanelCmd <- function(){
         largeur0 <- 35
         largeur1 <- 33
         largeur2 <- 14
-        largeur3 <- 19
+        largeur3 <- 20
         largeur4 <- 7
-        largeur5 <- 18
+        largeur5 <- 19
         largeur6 <- 20
         largeur7 <- 10
     }else{

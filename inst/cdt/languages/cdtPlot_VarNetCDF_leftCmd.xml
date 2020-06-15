@@ -7,10 +7,13 @@
         <tab id="2">
             <text lang="en"> Maps </text>
         </tab>
+        <tab id="3">
+            <text lang="en"> Layers </text>
+        </tab>
     </tab_title>
     <widget>
         <checkbutton id="1">
-            <text lang="en"> Add boundaries to Maps </text>
+            <text lang="en"> Add Shapefile to Maps </text>
         </checkbutton>
         <checkbutton id="2">
             <text lang="en"> Draw a box around plots </text>
@@ -43,7 +46,7 @@
             <text lang="en"> Plot Type </text>
         </label>
         <label id="10">
-            <text lang="en"> Boundaries </text>
+            <text lang="en"> Shapefile </text>
         </label>
     </widget>
     <help>
@@ -57,10 +60,10 @@
         </content>
         <content id="2">
             <status>
-                <text lang="en"> File containing a sample of the data in NetCDF, browse with (...) </text>
+                <text lang="en"> Select a sample file of the data in NetCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> File containing a sample of the data in NetCDF, browse with (...) </text>
+                <text lang="en"> Select a sample file of the data in NetCDF </text>
             </tooltip>
         </content>
         <content id="3">
@@ -101,6 +104,9 @@
         </content>
         <content id="7">
             <text lang="en"> not a spatial data </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No NetCDF file found </text>
         </content>
     </message>
 </panel_cmd>

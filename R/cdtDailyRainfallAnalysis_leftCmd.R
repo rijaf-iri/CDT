@@ -6,11 +6,11 @@ dailyRainAnalysisPanelCmd <- function(){
         largeur1 <- 33
         largeur2 <- 35
         largeur3 <- 24
-        largeur4 <- 26
+        largeur4 <- 28
         largeur5 <- 14
         largeur6 <- 9
         largeur7 <- 7
-        largeur8 <- 18
+        largeur8 <- 19
         largeur9 <- 20
         largeur10 <- 30
         largeur11 <- 10
@@ -482,7 +482,7 @@ dailyRainAnalysisPanelCmd <- function(){
 
         chk.dataIdx <- tkcheckbutton(frameDataExist, variable = DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
         en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2 + 5, state = stateExistData)
-        bt.dataIdx <- tkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
+        bt.dataIdx <- ttkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
 
         tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

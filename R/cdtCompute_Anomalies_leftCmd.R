@@ -6,7 +6,7 @@ anomaliesCalcPanelCmd <- function(){
         largeur1 <- 33
         largeur2 <- 35
         largeur3 <- 25
-        largeur4 <- 19
+        largeur4 <- 20
         largeur5 <- 15
         largeur6 <- 18
         largeur7 <- 7

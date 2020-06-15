@@ -14,10 +14,10 @@ plotCDTStation.Maps <- function(){
     opar <- par(mar = map.args$mar)
 
     map.args.add <- list(titre = .titre,
-                        SHPOp = .cdtData$EnvData$SHPOp,
-                        MapOp = dataMapOp,
-                        data.type = "Points",
-                        plot.type = don$p)
+                         SHPOp = .cdtData$EnvData$SHPOp,
+                         MapOp = dataMapOp,
+                         data.type = "Points",
+                         plot.type = don$p)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
@@ -43,9 +43,9 @@ plotCDTStation.Graph <- function(){
 
     #######
 
-    GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
-    if(GRAPHTYPE == "Line") optsgph <- TSGraphOp$line
-    if(GRAPHTYPE == "Barplot") optsgph <- TSGraphOp$bar
+    GRAPHTYPE <- .cdtData$EnvData$plot.maps$typeTSp
+    if(GRAPHTYPE == "line") optsgph <- TSGraphOp$line
+    if(GRAPHTYPE == "bar") optsgph <- TSGraphOp$bar
 
     xlim <- range(daty, na.rm = TRUE)
     if(timestep != "others"){
@@ -62,20 +62,34 @@ plotCDTStation.Graph <- function(){
         }
     }else{
         if(optsgph$xlim$is.min){
-            xx <- str_trim(optsgph$xlim$min)
-            if(grepl("[^[:digit:]]", xx)){
-                Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, "e")
-                return(NULL)
+            if(.cdtData$EnvData$others.frmt == 'numeric'){
+                xx <- str_trim(optsgph$xlim$min)
+                if(grepl("[^[:digit:]]", xx)){
+                    Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, "e")
+                    return(NULL)
+                }
+                xlim[1] <- as.numeric(xx)
             }
-            xlim[1] <- as.numeric(xx)
+            if(.cdtData$EnvData$others.frmt == 'date'){
+                xx <- format.xlim.date.range(optsgph$xlim$min, 'monthly', .cdtData$EnvData$message)
+                if(is.null(xx)) return(NULL)
+                xlim[1] <- xx
+            }
         }
         if(optsgph$xlim$is.max){
-            xx <- str_trim(optsgph$xlim$max)
-            if(grepl("[^[:digit:]]", xx)){
-                Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, "e")
-                return(NULL)
+            if(.cdtData$EnvData$others.frmt == 'numeric'){
+                xx <- str_trim(optsgph$xlim$max)
+                if(grepl("[^[:digit:]]", xx)){
+                    Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, "e")
+                    return(NULL)
+                }
+                xlim[2] <- as.numeric(xx)
             }
-            xlim[2] <- as.numeric(xx)
+            if(.cdtData$EnvData$others.frmt == 'date'){
+                xx <- format.xlim.date.range(optsgph$xlim$max, 'monthly', .cdtData$EnvData$message)
+                if(is.null(xx)) return(NULL)
+                xlim[2] <- xx
+            }
         }
     }
 
@@ -99,15 +113,15 @@ plotCDTStation.Graph <- function(){
 
     #######
 
-    if(GRAPHTYPE == "Line"){
+    if(GRAPHTYPE == "line"){
         graphs.plot.line(daty, don, xlim = xlim, ylim = ylim,
-                        xlab = xlab, ylab = ylab, ylab.sub = NULL,
-                        title = titre, title.position = titre.pos, axis.font = 1,
-                        plotl = optsgph$plot, legends = NULL,
-                        location = location)
+                         xlab = xlab, ylab = ylab, ylab.sub = NULL,
+                         title = titre, title.position = titre.pos, axis.font = 1,
+                         plotl = optsgph$plot, legends = NULL,
+                         location = location)
     }
 
-    if(GRAPHTYPE == "Barplot"){
+    if(GRAPHTYPE == "bar"){
         graphs.plot.bar(daty, don, xlim = xlim, ylim = ylim, origindate = NULL,
                         xlab = xlab, ylab = ylab, ylab.sub = NULL,
                         title = titre, title.position = titre.pos, axis.font = 1,

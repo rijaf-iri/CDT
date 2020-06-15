@@ -40,7 +40,7 @@ graphs.plot.line <- function(x, y, xlim = NULL, ylim = NULL, origindate = NULL,
     if(xlim[2] - xlim[1] == 1) xlim <- xlim + c(-0.5, 0.5)
 
     nylab <- max(nchar(as.character(pretty(y))), na.rm = TRUE)
-    line.ylab <- if(nylab < 2) 2 else nylab + 1
+    line.ylab <- if(nylab < 2) 2.5 else nylab + 1.5
 
     draw.title <- if(missing(title) | str_trim(title) == "") FALSE else TRUE
     plt.h <- if(legends$add$mean | legends$add$tercile | legends$add$linear) 0.18 else 0.07
@@ -207,7 +207,7 @@ graphs.plot.bar <- function(x, y, xlim = NULL, ylim = NULL, origindate = NULL,
     if(xlim[2] - xlim[1] == 1) xlim <- xlim + c(-0.5, 0.5)
 
     nylab <- max(nchar(as.character(pretty(y))), na.rm = TRUE)
-    line.ylab <- if(nylab < 2) 2 else nylab + 0.5
+    line.ylab <- if(nylab < 2) 2.5 else nylab + 1.5
 
     draw.title <- if(missing(title) | str_trim(title) == "") FALSE else TRUE
     nr.ylab <- str_count(ylab, pattern = "\n")
@@ -289,7 +289,7 @@ graphs.plot.bar <- function(x, y, xlim = NULL, ylim = NULL, origindate = NULL,
     }else axis(2, at = axTicks(2), font = axis.font, las = 1)
     axis(2, at = minTck, labels = NA, tcl = par("tcl") * 0.5)
 
-    mtext(xlab, side = 1, line = 2.5)
+    mtext(xlab, side = 1, line = 2)
     if(!is.null(ylab.sub)){
         mtext(ylab, side = 2, line = line.ylab + 1)
         mtext(ylab.sub, side = 2, line = line.ylab, font = 3, cex = 0.8)

@@ -7,8 +7,8 @@ SeasonAnalysisPanelCmd <- function(){
         largeur2 <- 33
         largeur3 <- 14
         largeur4 <- 36
-        largeur5 <- 18
-        largeur6 <- 19
+        largeur5 <- 19
+        largeur6 <- 20
         largeur7 <- 7
         largeur8 <- 27
         largeur9 <- 22

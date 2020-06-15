@@ -2,18 +2,18 @@
 CessationCalcPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        hauteur <- 260
+        hauteur <- 290
         largeur0 <- 29
         largeur1 <- 33
         largeur2 <- 35
         largeur3 <- 14
         largeur4 <- 20
-        largeur5 <- 18
-        largeur6 <- 19
+        largeur5 <- 19
+        largeur6 <- 20
         largeur7 <- 7
         largeur8 <- 10
-        largeur9 <- 38
-        largeur10 <- 8
+        largeur9 <- 35
+        largeur10 <- 4
     }else{
         hauteur <- 260
         largeur0 <- 30
@@ -667,7 +667,7 @@ CessationCalcPanelCmd <- function(){
             frMethod <- tkframe(frameOnset)
             txt.method <- tklabel(frMethod, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
             cb.method <- ttkcombobox(frMethod, values = 1:2, textvariable = onset.method, width = 3, justify = 'center')
-            bt.method <- tkbutton(frMethod, text = lang.dlg[['button']][['2']])
+            bt.method <- ttkbutton(frMethod, text = lang.dlg[['button']][['2']])
 
             txt.sepMthd <- tklabel(frMethod, text = "", width = largeur10)
 

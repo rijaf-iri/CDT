@@ -2,17 +2,17 @@
 climdexPanelCmd.RR <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        hauteur <- 320
-        largeur <- 315
+        hauteur <- 370
+        largeur <- 320
         largeur0 <- 29
         largeur1 <- 33
         largeur2 <- 35
         largeur3 <- 36
         largeur4 <- 32
         largeur5 <- 14
-        largeur6 <- 18
+        largeur6 <- 19
         largeur7 <- 7
-        largeur8 <- 19
+        largeur8 <- 20
         largeur9 <- 20
         largeur10 <- 10
     }else{

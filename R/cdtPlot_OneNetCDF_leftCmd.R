@@ -1,11 +1,13 @@
 PlotOneNetCDFFileCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 31
-        largeur1 <- 16
+        largeur0 <- 32
+        largeur1 <- 18
+        largeur2 <- 14
     }else{
-        largeur0 <- 31
-        largeur1 <- 16
+        largeur0 <- 32
+        largeur1 <- 18
+        largeur2 <- 14
     }
 
     ###################
@@ -126,7 +128,7 @@ PlotOneNetCDFFileCmd <- function(){
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
         txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = plot.type, textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur1)
+        cb.plotType <- ttkcombobox(framePlotType, values = plot.type, textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur2, justify = 'center')
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

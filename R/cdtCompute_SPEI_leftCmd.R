@@ -5,15 +5,16 @@ SPEICalcPanelCmd <- function(){
         largeur0 <- 29
         largeur1 <- 33
         largeur2 <- 35
-        largeur3 <- 36
+        largeur3 <- 31
         largeur4 <- 10
         largeur5 <- 22
-        largeur6 <- 19
+        largeur6 <- 20
         largeur7 <- 7
-        largeur8 <- 18
+        largeur8 <- 19
         largeur9 <- 14
         largeur10 <- 20
         largeur11 <- 10
+        largeur12 <- 24
     }else{
         largeur0 <- 30
         largeur1 <- 32
@@ -27,6 +28,7 @@ SPEICalcPanelCmd <- function(){
         largeur9 <- 14
         largeur10 <- 20
         largeur11 <- 10
+        largeur12 <- 22
     }
 
     GeneralParameters <- list(intstep = "dekadal", data.type = "cdtstation", 
@@ -424,7 +426,8 @@ SPEICalcPanelCmd <- function(){
         tkset(spin.Tscale, val.tscale)
         txt.Tscale2 <- tklabel(frameTscale, text = tclvalue(txt.suffix.var), textvariable = txt.suffix.var, anchor = 'w', justify = 'left')
 
-        lab.SPIsep <- tklabel(frameTscale, text = "", width = 1)
+        sepwd <- if(WindowsOS()) 0 else 1
+        lab.SPIsep <- tklabel(frameTscale, text = "", width = sepwd)
 
         tkgrid(txt.SPIfreq, cb.SPIfreq, lab.SPIsep, txt.Tscale1, spin.Tscale, txt.Tscale2)
 
@@ -810,7 +813,7 @@ SPEICalcPanelCmd <- function(){
 
         .cdtData$EnvData$spiViz$max.tscale <- tclVar(12)
 
-        bt.VizTS <- ttkbutton(frameVizTS, text = lang.dlg[['button']][['4']], width = largeur5)
+        bt.VizTS <- ttkbutton(frameVizTS, text = lang.dlg[['button']][['4']], width = largeur12)
         bt.VizOpt <- ttkbutton(frameVizTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur9)
 
         frmxTscale <- tkframe(frameVizTS)
@@ -847,7 +850,7 @@ SPEICalcPanelCmd <- function(){
 
         tkgrid(frameDataTS, row = 0, column = 0, sticky = 'we', pady = 1)
         tkgrid(frameSTNCrds, row = 1, column = 0, sticky = '', pady = 3)
-        tkgrid(frameVizTS, row = 2, column = 0, sticky = '', pady = 3)
+        tkgrid(frameVizTS, row = 2, column = 0, sticky = 'we', pady = 3)
 
     #######################################################################################################
 

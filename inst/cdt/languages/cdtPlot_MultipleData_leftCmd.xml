@@ -7,6 +7,9 @@
         <tab id="2">
             <text lang="en"> Maps </text>
         </tab>
+        <tab id="3">
+            <text lang="en"> Layers </text>
+        </tab>
     </tab_title>
     <widget>
         <button id="1">
@@ -22,7 +25,7 @@
             <text lang="en"> Load </text>
         </button>
         <checkbutton id="1">
-            <text lang="en"> Add boundaries to Map </text>
+            <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Time step </text>
@@ -55,7 +58,7 @@
             <text lang="en"> Minute </text>
         </label>
         <label id="13">
-            <text lang="en"> Boundaries </text>
+            <text lang="en"> Shapefile </text>
         </label>
     </widget>
     <help>

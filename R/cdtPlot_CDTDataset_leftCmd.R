@@ -3,38 +3,40 @@ PlotCDTDatasetCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 33
-        largeur1 <- 31
-        largeur2 <- 14
-        largeur3 <- 8
-        largeur4 <- 6
+        largeur1 <- 32
+        largeur2 <- 20
+        largeur3 <- 10
+        largeur4 <- 8
+        largeur5 <- 18
     }else{
         largeur0 <- 33
-        largeur1 <- 31
-        largeur2 <- 14
-        largeur3 <- 8
-        largeur4 <- 6
+        largeur1 <- 32
+        largeur2 <- 20
+        largeur3 <- 10
+        largeur4 <- 8
+        largeur5 <- 18
     }
 
     ###################
 
     .cdtData$EnvData$TSGraphOp <- list(
-                bar = list(
-                        xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
-                        ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
-                        axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                        title = list(is.title = FALSE, title = '', position = 'top'),
-                        colors = list(col = "darkblue")
-                    ),
-                line = list(
-                    xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
-                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
-                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
-                    title = list(is.title = FALSE, title = '', position = 'top'),
-                    plot = list(type = 'both',
-                        col = list(line = "red", points = "blue"),
-                        lwd = 2, cex = 1.4),
-                    legend = NULL)
-                )
+                                bar = list(
+                                        xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
+                                        ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
+                                        axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                        title = list(is.title = FALSE, title = '', position = 'top'),
+                                        colors = list(col = "darkblue")
+                                    ),
+                                line = list(
+                                    xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
+                                    ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
+                                    axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
+                                    title = list(is.title = FALSE, title = '', position = 'top'),
+                                    plot = list(type = 'both',
+                                                col = list(line = "red", points = "blue"),
+                                                lwd = 2, cex = 1.4),
+                                    legend = NULL)
+                                )
 
     .cdtData$EnvData$plot.maps$data.type <- 'cdtdataset'
 
@@ -211,23 +213,24 @@ PlotCDTDatasetCmd <- function(){
 
         frGph1 <- tkframe(frameGraph)
 
-        typeTSPLOT <- c("Line", "Barplot")
-        .cdtData$EnvData$plot.maps$typeTSp <- tclVar("Line")
+        CbtypeTSPLOT <- lang.dlg[['combobox']][['1']]
+        typeTSPLOT <- c('line', 'bar')
+        typeTSp <- tclVar(CbtypeTSPLOT[1])
+        .cdtData$EnvData$plot.maps$typeTSp <- 'line'
 
-        cb.typeTSp <- ttkcombobox(frGph1, values = typeTSPLOT, textvariable = .cdtData$EnvData$plot.maps$typeTSp, width = largeur2)
-        bt.TsGraph.plot <- ttkbutton(frGph1, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = 7)
-        bt.TSGraphOpt <- ttkbutton(frGph1, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = 8)
+        cb.typeTSp <- ttkcombobox(frGph1, values = CbtypeTSPLOT, textvariable = typeTSp, width = largeur2, justify = 'center')
+        bt.TsGraph.plot <- ttkbutton(frGph1, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
+        bt.TSGraphOpt <- ttkbutton(frGph1, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
 
-        tkgrid(cb.typeTSp, row = 0, column = 0, sticky = 'we', pady = 1, columnspan = 1)
-        tkgrid(bt.TSGraphOpt, row = 0, column = 1, sticky = 'we', padx = 4, pady = 1, columnspan = 1)
-        tkgrid(bt.TsGraph.plot, row = 0, column = 2, sticky = 'we', pady = 1, columnspan = 1)
+        tkgrid(cb.typeTSp, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TSGraphOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TsGraph.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         #########
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
-                                    "Barplot" = "Bar",
-                                    "Line" = "Line")
+            ptype <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            suffix.fun <- switch(ptype, "bar" = "Bar", "line" = "Line")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
         })
@@ -237,10 +240,16 @@ PlotCDTDatasetCmd <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+
             if(!is.null(.cdtData$EnvData$cdtdataset)){
                 imgContainer <- CDT.Display.Graph(CDTdataset.Plot.Graph, .cdtData$EnvData$tab$dataGraph, "CDT Dataset - TS")
                 .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
             }
+        })
+
+        tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
         })
 
         #################
@@ -287,7 +296,7 @@ PlotCDTDatasetCmd <- function(){
         #################
         tkgrid(frGph1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frGph2, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frGph3, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frGph3, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ############################################
 
@@ -315,8 +324,8 @@ PlotCDTDatasetCmd <- function(){
             if(file.exists(file.CDT.Idx)){
                 OutIndexdata <- try(readRDS(file.CDT.Idx), silent = TRUE)
                 if(inherits(OutIndexdata, "try-error")){
-                    Insert.Messages.Out(lang.dlg[['message']][['1']], format = TRUE)
-                    Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), format = TRUE)
+                    Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, 'e')
+                    Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), TRUE, 'e')
                     .cdtData$EnvData$cdtdataset <- NULL
                     return(NULL)
                 }

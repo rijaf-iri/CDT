@@ -3,16 +3,20 @@ PlotSeqNetCDFFilesCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 33
-        largeur1 <- 31
-        largeur2 <- 20
-        largeur3 <- 21
-        largeur4 <- 10
+        largeur1 <- 32
+        largeur2 <- 24
+        largeur3 <- 19
+        largeur4 <- 7
+        largeur5 <- 18
+        largeur6 <- 14
     }else{
         largeur0 <- 33
-        largeur1 <- 31
-        largeur2 <- 20
-        largeur3 <- 21
-        largeur4 <- 10
+        largeur1 <- 32
+        largeur2 <- 24
+        largeur3 <- 19
+        largeur4 <- 7
+        largeur5 <- 18
+        largeur6 <- 14
     }
 
     ###################
@@ -42,11 +46,15 @@ PlotSeqNetCDFFilesCmd <- function(){
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
     cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+
     tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
 
     #######################################################################################################
 
@@ -107,26 +115,19 @@ PlotSeqNetCDFFilesCmd <- function(){
 
         ncdf.date.file <- tclVar()
 
-        frOPTS <- tkframe(frameMap)
-        cb.nc.maps <- ttkcombobox(frOPTS, values = "", textvariable = ncdf.date.file, width = largeur3)
-        bt.nc.MapOpt <- ttkbutton(frOPTS, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur4)
-
-        frMAPS <- tkframe(frameMap)
-        bt.nc.Date.prev <- ttkbutton(frMAPS, text = "<<", width = largeur4)
-        bt.nc.maps <- ttkbutton(frMAPS, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur4)
-        bt.nc.Date.next <- ttkbutton(frMAPS, text = ">>", width = largeur4)
+        cb.nc.maps <- ttkcombobox(frameMap, values = "", textvariable = ncdf.date.file, width = largeur3, justify = 'center')
+        bt.nc.Date.prev <- ttkbutton(frameMap, text = "<<", width = largeur4)
+        bt.nc.Date.next <- ttkbutton(frameMap, text = ">>", width = largeur4)
+        bt.nc.MapOpt <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
+        bt.nc.maps <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
 
         ###################
 
-        tkgrid(cb.nc.maps, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.nc.MapOpt, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkgrid(bt.nc.Date.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.nc.maps, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.nc.Date.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        tkgrid(frOPTS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frMAPS, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.nc.Date.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.nc.maps, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.nc.Date.next, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.nc.MapOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.nc.maps, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
 
         ###################
 
@@ -210,14 +211,25 @@ PlotSeqNetCDFFilesCmd <- function(){
         .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
 
         txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = plot.type, textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur3)
+        cb.plotType <- ttkcombobox(framePlotType, values = plot.type, textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur6, justify = 'center')
 
         tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
+        ############################################
+
+        tkgrid(frameNC, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(framePlotType, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+    #######################################################################################################
+
+    #Tab2
+    subfr2 <- bwTabScrollableFrame(cmd.tab2)
+
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr1, text = lang.dlg[['label']][['6']], relief = 'groove')
+        frameSHP <- ttklabelframe(subfr2, text = lang.dlg[['label']][['6']], relief = 'groove')
 
         .cdtData$EnvData$shp$add.shp <- tclVar(0)
         file.plotShp <- tclVar()
@@ -275,10 +287,7 @@ PlotSeqNetCDFFilesCmd <- function(){
 
         ############################################
 
-        tkgrid(frameNC, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(framePlotType, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameSHP, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -319,7 +328,7 @@ PlotSeqNetCDFFilesCmd <- function(){
 
             rfeDataInfo <- getNCDFSampleData(str_trim(tclvalue(ncSample)))
             if(is.null(rfeDataInfo)){
-                Insert.Messages.Out(lang.dlg[['message']][['2']], format = TRUE)
+                Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, 'e')
                 return(NULL)
             }
 
