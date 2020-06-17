@@ -18,7 +18,7 @@ DisplayPlot <- function(parent, fun, hscale = 1, vscale = 1){
     tmpfl <- file.path(.cdtEnv$tcl$dir, paste0(image, '.png'))
 
     mul <- if(WindowsOS()) 385 else 480
-    opts <- list(filename = tmpfl, width = mul * hscale, height = mul * vscale)
+    opts <- list(filename = tmpfl, width = mul * hscale, height = mul * vscale, type = "cairo")
     if(WindowsOS()) opts <- c(opts, list(restoreConsole = FALSE))
     do.call(grDevices::png, opts)
     ret <- try(fun(), silent = TRUE)
@@ -49,7 +49,7 @@ reDisplayPlot <- function(lab, hscale = lab$hscale, vscale = lab$vscale){
     tmpfl <- file.path(.cdtEnv$tcl$dir, paste0(lab$image, '.png'))
 
     mul <- if(WindowsOS()) 385 else 480
-    opts <- list(filename = tmpfl, width = mul * hscale, height = mul * vscale)
+    opts <- list(filename = tmpfl, width = mul * hscale, height = mul * vscale, type = "cairo")
     if(WindowsOS()) opts <- c(opts, list(restoreConsole = FALSE))
     do.call(grDevices::png, opts)
     ret <- try(lab$fun(), silent = TRUE)
