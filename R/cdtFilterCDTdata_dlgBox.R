@@ -3,7 +3,7 @@ filterCDTData_getParams <- function(){
     if(WindowsOS()){
         largeur1 <- 47
         largeur2 <- 45
-        largeur3 <- 21
+        largeur3 <- 20
     }else{
         largeur1 <- 42
         largeur2 <- 40

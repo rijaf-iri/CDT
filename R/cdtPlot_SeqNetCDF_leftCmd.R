@@ -2,8 +2,8 @@
 PlotSeqNetCDFFilesCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 33
-        largeur1 <- 32
+        largeur0 <- 36
+        largeur1 <- 33
         largeur2 <- 24
         largeur3 <- 19
         largeur4 <- 7

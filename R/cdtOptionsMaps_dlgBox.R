@@ -2,9 +2,9 @@
 MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
         largeur1 <- 21
-        largeur2 <- 47
-        largeur3 <- 430
-        largeur4 <- 51
+        largeur2 <- 46
+        largeur3 <- 429
+        largeur4 <- 57
         largeur5 <- 21
     }else{
         largeur1 <- 20
@@ -317,7 +317,7 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
         largeur1 <- 30
         largeur2 <- 46
         largeur3 <- 426
-        largeur4 <- 50
+        largeur4 <- 57
     }else{
         largeur1 <- 30
         largeur2 <- 46
@@ -928,8 +928,8 @@ MapGraph.SpiVizOptions <- function(spiVizOpt, parent.win = .cdtEnv$tcl$main$win)
         largeur1 <- 30
         largeur2 <- 46
         largeur3 <- 426
-        largeur4 <- 50
-        largeur5 <- 46
+        largeur4 <- 57
+        largeur5 <- 53
     }else{
         largeur1 <- 30
         largeur2 <- 46
@@ -1726,8 +1726,8 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
 
 MapGraph.gridDataLayer <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur2 <- 48
-        largeur3 <- 445
+        largeur2 <- 46
+        largeur3 <- 426
     }else{
         largeur2 <- 46
         largeur3 <- 426

@@ -3,11 +3,11 @@ crossValidationInfoRain <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 23
-        largeur1 <- 45
-        largeur2 <- 47
+        largeur1 <- 47
+        largeur2 <- 49
         largeur3 <- 32
         largeur4 <- 18
-        largeur5 <- 27
+        largeur5 <- 28
     }else{
         largeur0 <- 23
         largeur1 <- 43

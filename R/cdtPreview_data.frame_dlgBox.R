@@ -2,7 +2,7 @@
 ## Preview data.frame
 preview.data <- function(parent.win, fileopen){
     if(WindowsOS()){
-        txta.w <- 38
+        txta.w <- 41
         txta.h <- 8
         labprvw <- 50
     }else{

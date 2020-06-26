@@ -4,7 +4,7 @@ spatialAnalysisPanelCmd <- function(){
     if(WindowsOS()){
         largeur0 <- 29
         largeur1 <- 33
-        largeur2 <- 35
+        largeur2 <- 36
         largeur3 <- 25
         largeur4a <- 27
         largeur4b <- 34

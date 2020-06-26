@@ -1,7 +1,7 @@
 
 getInfoMonths2Process <- function(parent.win, Parameters)
 {
-    largeur0 <- 40
+    largeur0 <- if(WindowsOS()) 35 else 39
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoMonths2Analyze_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)

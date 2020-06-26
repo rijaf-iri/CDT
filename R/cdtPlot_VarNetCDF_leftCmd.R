@@ -2,15 +2,15 @@
 PlotVarNetCDFFilesCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 33
-        largeur1 <- 32
-        largeur2 <- 21
+        largeur0 <- 36
+        largeur1 <- 33
+        largeur2 <- 22
         largeur3 <- 14
         largeur4 <- 11
         largeur5 <- 12
-        largeur6 <- 25
-        vars.w <- 310
-        vars.h <- 160
+        largeur6 <- 20
+        vars.w <- 280
+        vars.h <- 140
     }else{
         largeur0 <- 33
         largeur1 <- 32

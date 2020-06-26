@@ -4,7 +4,7 @@ extractTS.previewWin <- function(states, shpL, type){
     if(WindowsOS()){
         largeur0 <- 40
         largeur1 <- 45
-        wtext <- 39
+        wtext <- 35
     }else{
         largeur0 <- 39
         largeur1 <- 45

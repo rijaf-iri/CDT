@@ -277,8 +277,8 @@ MapGraph.GraphOptions.LineSHP <- function(shpLineOpt, parent.win = .cdtEnv$tcl$m
 
 MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 60
-        largeur2 <- 64
+        largeur1 <- 64
+        largeur2 <- 68
         width.col <- 7
     }else{
         largeur1 <- 60
@@ -546,8 +546,8 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
 
 MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 60
-        largeur2 <- 64
+        largeur1 <- 64
+        largeur2 <- 68
         largeur3 <- 6
         width.col <- 7
     }else{
@@ -900,9 +900,9 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
 MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 60
-        largeur2 <- 64
-        largeur3 <- 37
+        largeur1 <- 64
+        largeur2 <- 68
+        largeur3 <- 40
         width.col <- 3
         width.spin <- 4
     }else{
@@ -1386,13 +1386,15 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
 
 MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 48
-        largeur2 <- 52
+        largeur1 <- 51
+        largeur2 <- 55
+        largeur3 <- 3
         width.col <- 3
         width.spin <- 4
     }else{
         largeur1 <- 48
         largeur2 <- 52
+        largeur3 <- 4
         width.col <- 1
         width.spin <- 4
     }
@@ -1484,7 +1486,7 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
 
     #####################
 
-    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 4)
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = largeur3)
 
     tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
     tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')
@@ -1733,9 +1735,9 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
 
 MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 65
-        largeur2 <- 69
-        largeur3 <- 42
+        largeur1 <- 68
+        largeur2 <- 72
+        largeur3 <- 44
         width.xlim <- 11
         width.ylim <- 5
         width.col <- 3
@@ -2216,8 +2218,8 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
 MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 60
-        largeur2 <- 64
+        largeur1 <- 64
+        largeur2 <- 68
         width.xlim <- 11
         width.ylim <- 5
         width.col <- 3
@@ -2507,8 +2509,8 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
 MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 58
-        largeur2 <- 62
+        largeur1 <- 62
+        largeur2 <- 66
         width.xlim <- 11
         width.ylim <- 5
         width.col <- 3
@@ -2918,9 +2920,9 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
 
 MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 60
-        largeur2 <- 64
-        largeur3 <- 58
+        largeur1 <- 64
+        largeur2 <- 68
+        largeur3 <- 54
         width.xlim <- 11
         width.ylim <- 5
         width.col <- 4
@@ -3307,9 +3309,10 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
 MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 52
-        largeur2 <- 56
+        largeur1 <- 54
+        largeur2 <- 58
         largeur3 <- 23
+        largeur4 <- 4
         width.xlim <- 5
         width.ylim <- 5
         width.col <- 3
@@ -3318,6 +3321,7 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
         largeur1 <- 54
         largeur2 <- 58
         largeur3 <- 23
+        largeur4 <- 8
         width.xlim <- 5
         width.ylim <- 5
         width.col <- 1
@@ -3409,7 +3413,7 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
 
     #####################
 
-    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = 8)
+    sepXYlim <- tklabel(frameGraphXYlim, text = "", width = largeur4)
 
     tkgrid(frameGraphXlim, row = 0, column = 0, sticky = 'w')
     tkgrid(sepXYlim, row = 0, column = 1, sticky = 'we')

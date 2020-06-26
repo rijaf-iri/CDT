@@ -4,7 +4,7 @@ computeTvars_getParams <- function(){
     if(WindowsOS()){
         largeur0 <- 14
         largeur1 <- 11
-        largeur2 <- 45
+        largeur2 <- 46
         largeur3 <- 43
         largeur4 <- 33
     }else{

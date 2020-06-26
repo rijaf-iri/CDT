@@ -1,6 +1,6 @@
 
 spatialAnalysisEditYrsMon <- function(parent.win, vedit, is.year){
-    largeur1 <- 40
+    largeur1 <- if(WindowsOS()) 30 else 36
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtSpatialAnalysis_YrsMon_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)

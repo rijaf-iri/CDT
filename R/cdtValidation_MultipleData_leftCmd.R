@@ -2,8 +2,8 @@
 Validation.MultiData.PanelCmd <- function(clim.var){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 32
-        largeur1 <- 34
+        largeur0 <- 33
+        largeur1 <- 36
         largeur1a <- 19
         largeur2 <- 36
         largeur3 <- 19
@@ -15,7 +15,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         largeur9 <- 18
 
         data.w <- 360
-        data.h <- 237
+        data.h <- 350
     }else{
         largeur0 <- 32
         largeur1 <- 33
@@ -30,7 +30,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         largeur9 <- 17
 
         data.w <- 360
-        data.h <- 237
+        data.h <- 351
     }
 
     ###################
@@ -221,37 +221,13 @@ Validation.MultiData.PanelCmd <- function(clim.var){
     #######################################################################################################
 
     #Tab1
-    frameInValid <- tkframe(cmd.tab1)
-    sep_dataset <- ttkseparator(cmd.tab1)
-    bt.AddData <- tkbutton(cmd.tab1, text = lang.dlg[['button']][['0a']], bg = 'lightgreen')
-    frameDirSav <- ttklabelframe(cmd.tab1, text = lang.dlg[['label']][['5']], relief = 'groove')
-
-    ##################
-
-    dir2save <- tclVar(GeneralParameters$outdir)
-
-    en.dir.save <- tkentry(frameDirSav, textvariable = dir2save, width = largeur1)
-    bt.dir.save <- tkbutton(frameDirSav, text = "...")
-
-    tkgrid(en.dir.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.dir.save, row = 0, column = 5, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    helpWidget(en.dir.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
-    helpWidget(bt.dir.save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-
-    tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir2save, isFile = FALSE))
-
-    ##################
-    tkgrid(frameInValid, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(sep_dataset, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
     subfr1 <- bwTabScrollableFrame(cmd.tab1, hscrlwin = data.h, wscrlwin = data.w)
-    tkgrid(bt.AddData, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameDirSav, sticky = '', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    frameBas <- tkframe(cmd.tab1)
+    tkgrid(frameBas, sticky = 'swe', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ##############################################
 
-        frInputData <- ttklabelframe(frameInValid, text = lang.dlg[['label']][['1']], relief = 'groove')
+        frInputData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         timeSteps <- tclVar()
         CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
@@ -292,9 +268,11 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         #######################
 
-        tkgrid(frInputData, row = 0, column = 0, sticky = 'we')
+        tkgrid(frInputData, row = 0, column = 0, sticky = 'nwe')
 
         ##############################################
+
+        bt.AddData <- tkbutton(frameBas, text = lang.dlg[['button']][['0a']], bg = 'lightgreen')
 
         tkconfigure(bt.AddData, command = function(){
             jj <- length(.cdtData$GalParams$DATASETs) + 1
@@ -306,6 +284,28 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
             add.new.datasets(jj, ids)
         })
+
+        ##############################################
+
+        frameSave <- ttklabelframe(frameBas, text = lang.dlg[['label']][['5']], relief = 'groove')
+
+        dir2save <- tclVar(GeneralParameters$outdir)
+
+        en.dir.save <- tkentry(frameSave, textvariable = dir2save, width = largeur1)
+        bt.dir.save <- tkbutton(frameSave, text = "...")
+
+        tkgrid(en.dir.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.dir.save, row = 0, column = 5, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        helpWidget(en.dir.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+        helpWidget(bt.dir.save, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+
+        tkconfigure(bt.dir.save, command = function() fileORdir2Save(dir2save, isFile = FALSE))
+
+        ##############################################
+
+        tkgrid(bt.AddData, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSave, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 

@@ -2,13 +2,13 @@
 PlotMulitpleDataCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 21
-        largeur1 <- 32
-        largeur2 <- 33
+        largeur0 <- 22
+        largeur1 <- 33
+        largeur2 <- 36
         largeur3 <- 20
         largeur4 <- 11
         data.w <- 360
-        data.h <- 380
+        data.h <- 350
     }else{
         largeur0 <- 21
         largeur1 <- 32
@@ -267,14 +267,14 @@ PlotMulitpleDataCmd <- function(){
     #######################################################################################################
 
     #Tab1
-    frameTS <- tkframe(cmd.tab1)
-    tkgrid(frameTS)
     subfr1 <- bwTabScrollableFrame(cmd.tab1, hscrlwin = data.h, wscrlwin = data.w)
 
     bt.AddData <- tkbutton(cmd.tab1, text = lang.dlg[['button']][['1']], bg = 'lightgreen')
-    tkgrid(bt.AddData, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.AddData, sticky = 'swe', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ##############################################
+
+        frameTS <- tkframe(subfr1)
 
         timeSteps <- tclVar()
         CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:6]
@@ -293,6 +293,8 @@ PlotMulitpleDataCmd <- function(){
         tkgrid(txt.tstep, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.tstep, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.minhour, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(frameTS)
 
         ########
 

@@ -4,7 +4,7 @@ Validation.STAT.PanelCmd <- function(clim.var){
     if(WindowsOS()){
         largeur0 <- 32
         largeur1 <- 34
-        largeur2 <- 37
+        largeur2 <- 38
         largeur3 <- 20
         largeur4 <- 15
         largeur5 <- 2
@@ -682,7 +682,7 @@ Validation.STAT.PanelCmd <- function(clim.var){
 
         ##########
         tkgrid(cb.stats.maps, row = 0, column = 0, sticky = 'we')
-        tkgrid(frMapBt, row = 1, column = 0, sticky = 'we')
+        tkgrid(frMapBt, row = 1, column = 0, sticky = '')
         tkgrid(frPlotT, row = 2, column = 0, sticky = '')
 
         ##############

@@ -305,7 +305,7 @@ summariesDataPanelCmd <- function(){
 
         chk.dirStat <- tkcheckbutton(frameSumData, variable = DirExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
         en.dirStat <- tkentry(frameSumData, textvariable = file.Stat, width = largeur2 + 5, state = statedirStat)
-        bt.dirStat <- tkbutton(frameSumData, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = statedirStat)
+        bt.dirStat <- ttkbutton(frameSumData, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = statedirStat)
 
         bt.plotMap <- ttkbutton(frameSumData, text = lang.dlg[['button']][['2']])
         frameSTNPX <- tkframe(frameSumData)

@@ -197,9 +197,9 @@ Summary.GraphOptions.Boxplot <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
 
 Summary.GraphOptions.Histogram <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 57
-        largeur2 <- 60
-        largeur3 <- 64
+        largeur1 <- 59
+        largeur2 <- 63
+        largeur3 <- 67
         width.col <- 3
         width.spin <- 4
     }else{

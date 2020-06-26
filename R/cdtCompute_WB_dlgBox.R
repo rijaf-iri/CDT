@@ -3,10 +3,10 @@ computeWB_getParams <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur1 <- 38
-        largeur2 <- 60
+        largeur2 <- 61
         largeur3 <- 58
-        largeur4 <- 9
-        largeur5 <- 4
+        largeur4 <- 7
+        largeur5 <- 3
     }else{
         largeur1 <- 35
         largeur2 <- 55
@@ -428,7 +428,7 @@ computeWB_get.WB.SWHC <- function(parent.win, Parameters, dataType, donne)
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 46
-        largeur1 <- 42
+        largeur1 <- 36
     }else{
         largeur0 <- 46
         largeur1 <- 42

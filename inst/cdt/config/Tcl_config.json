@@ -17,7 +17,14 @@
         "Bwidget.auto": true,
         // Full path to Bwidget
         // Leave blank if "Bwidget.auto" is true
-        "Bwidget.path": ""
+        "Bwidget.path": "",
+        // 
+        // Change the font size to adjust the geometry 
+        "font.size": 10, 
+        // Change the height of the welcome panel 
+        "height.panRight": 9, 
+        // Change the width of the welcome panel  
+        "width.panRight": 15.8
     },
     "MacOS": {
         // Tktable located under auto_path, installed with the Tcl/Tk library
@@ -32,9 +39,16 @@
         "Bwidget.auto": true,
         // Full path to Bwidget
         // Leave blank if "Bwidget.auto" is true
-        "Bwidget.path": ""
-            // "Bwidget.path": "/opt/local/lib/BWidget"
-            // "Bwidget.path": "/Library/Tcl/teapot/package/tcl/lib/BWidget1.9.8"
+        "Bwidget.path": "",
+        // "Bwidget.path": "/opt/local/lib/BWidget"
+        // "Bwidget.path": "/Library/Tcl/teapot/package/tcl/lib/BWidget1.9.8"
+        // 
+        // Change the font size to adjust the geometry 
+        "font.size": 11, 
+        // Change the height of the welcome panel 
+        "height.panRight": 15, 
+        // Change the width of the welcome panel  
+        "width.panRight": 18
     },
     "Linux": {
         // Tktable located under auto_path, installed with the Tcl/Tk library
@@ -47,6 +61,13 @@
         "Bwidget.auto": true,
         // Full path to Bwidget
         // Leave blank if "Bwidget.auto" is true
-        "Bwidget.path": ""
+        "Bwidget.path": "", 
+        // 
+        // Change the font size to adjust the geometry 
+        "font.size": 11,
+        // Change the height of the welcome panel 
+        "height.panRight": 15, 
+        // Change the width of the welcome panel  
+        "width.panRight": 18
     }
 }

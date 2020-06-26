@@ -2,10 +2,9 @@
 CessationCalcPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        hauteur <- 290
         largeur0 <- 29
         largeur1 <- 33
-        largeur2 <- 35
+        largeur2 <- 36
         largeur3 <- 14
         largeur4 <- 20
         largeur5 <- 19
@@ -15,7 +14,6 @@ CessationCalcPanelCmd <- function(){
         largeur9 <- 35
         largeur10 <- 4
     }else{
-        hauteur <- 260
         largeur0 <- 30
         largeur1 <- 32
         largeur2 <- 33
@@ -466,18 +464,7 @@ CessationCalcPanelCmd <- function(){
     #######################################################################################################
 
     #Tab2
-    calcOnset.frame1 <- tkframe(cmd.tab2)
-    tkgrid(calcOnset.frame1, sticky = 'nwe')
-    subfr2 <- bwTabScrollableFrame(cmd.tab2, hscrlwin = hauteur)
-
-    bt.CalcOnset <- ttkbutton(cmd.tab2, text = lang.dlg[['button']][['3']])
-    tkgrid(bt.CalcOnset, sticky = 'we')
-
-        ##############################################
-
-        ONSET.vars <- NULL
-        ONSET.vars[[1]]$frame <- tkframe(subfr2)
-        tkgrid(ONSET.vars[[1]]$frame)
+    subfr2 <- bwTabScrollableFrame(cmd.tab2)
 
         ##############################################
 
@@ -626,12 +613,12 @@ CessationCalcPanelCmd <- function(){
                         ONSET.vars <<- NULL
                         tcl("update", "idletasks")
                         for(i in seq_along(subdiv))
-                            ONSET.vars[[i]] <<- OnsetDefinitionCriteria(subfr2, GeneralParameters$onset.def, subdiv = subdiv[i])
+                            ONSET.vars[[i]] <<- OnsetDefinitionCriteria(frameOnsetDEF, GeneralParameters$onset.def, subdiv = subdiv[i])
                     }
                 })
             }else{
                 tcl("update", "idletasks")
-                ONSET.vars[[1]] <<- OnsetDefinitionCriteria(subfr2, GeneralParameters$onset.def)
+                ONSET.vars[[1]] <<- OnsetDefinitionCriteria(frameOnsetDEF, GeneralParameters$onset.def)
             }
 
             ######
@@ -802,7 +789,15 @@ CessationCalcPanelCmd <- function(){
 
         ##############################################
 
-        frameRegion <- tkframe(calcOnset.frame1)
+        frameOnsetDEF <- tkframe(subfr2)
+
+        ONSET.vars <- NULL
+        ONSET.vars[[1]]$frame <- tkframe(frameOnsetDEF)
+        tkgrid(ONSET.vars[[1]]$frame)
+
+        ##############################################
+
+        frameRegion <- tkframe(subfr2)
 
         onset.region <- tclVar(GeneralParameters$onset.reg$region)
         onset.subdiv <- tclVar(GeneralParameters$onset.reg$subdiv)
@@ -842,7 +837,7 @@ CessationCalcPanelCmd <- function(){
 
         ########################
 
-        frameRegDef <- tkframe(calcOnset.frame1)
+        frameRegDef <- tkframe(subfr2)
 
         shp.file <- tclVar(GeneralParameters$onset.reg$shp$file)
         shp.attr <- tclVar(GeneralParameters$onset.reg$shp$attr)
@@ -856,11 +851,9 @@ CessationCalcPanelCmd <- function(){
         OnsetDefinitionInput()
         tcl('update')
 
-        ########################
-        tkgrid(frameRegion, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameRegDef, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
         ##############################################
+
+        bt.CalcOnset <- ttkbutton(subfr2, text = lang.dlg[['button']][['3']])
 
         tkconfigure(bt.CalcOnset, command = function(){
             GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
@@ -1011,6 +1004,13 @@ CessationCalcPanelCmd <- function(){
                 }else Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, 'e')
             }else Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, 'e')
         })
+
+        ##############################################
+
+        tkgrid(frameRegion, row = 0, column = 0, sticky = 'we')
+        tkgrid(frameRegDef, row = 1, column = 0, sticky = 'we')
+        tkgrid(frameOnsetDEF, row = 2, column = 0, sticky = 'we')
+        tkgrid(bt.CalcOnset, row = 3, column = 0, sticky = 'we')
 
     #######################################################################################################
 

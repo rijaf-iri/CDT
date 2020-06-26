@@ -2,7 +2,7 @@
 SeasonAnalysisPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 35
+        largeur0 <- 36
         largeur1 <- 27
         largeur2 <- 33
         largeur3 <- 14

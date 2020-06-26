@@ -60,7 +60,17 @@ startCDT <- function(wd = NA, lang = NA){
     if("cdtDefaultFont" %in% existFont)
         .Tcl("font delete cdtDefaultFont")
 
-    .Tcl("font create cdtDefaultFont -family Helvetica -size 11")
+    tcl.file.conf <- file.path(.cdtDir$dirLocal, "config", "Tcl_config.json")
+    TclConfig <- fromJSON(tcl.file.conf)
+    TclConfig <- rapply(TclConfig, str_trim, classes = "character", how = "replace")
+
+    fontSize <- switch(tools::toTitleCase(Sys.info()["sysname"]),
+                      "Windows" = TclConfig$Windows$font.size,
+                      "Darwin" = TclConfig$MacOS$font.size,
+                      "Linux" = TclConfig$Linux$font.size)
+    if(is.null(fontSize) | is.na(fontSize)) fontSize <- 11
+
+    .Tcl(paste("font create cdtDefaultFont -family Helvetica -size", fontSize))
     .Tcl("option add *font cdtDefaultFont")
 
     # .Tcl("option add *Menuentry.font cdtDefaultFont widgetDefault")
@@ -1695,11 +1705,15 @@ startCDT <- function(wd = NA, lang = NA){
         tkgrid(txtlab.auth)
 
         #######
-
-        acc_dim <- switch(tools::toTitleCase(Sys.info()["sysname"]),
-                          "Windows" = c(17, 21),
+        sysNom <- tools::toTitleCase(Sys.info()["sysname"])
+        acc_dim0 <- switch(sysNom,
+                          "Windows" = c(9, 15.8),
                           "Darwin" = c(15, 18),
                           "Linux" = c(15, 18))
+        if(sysNom == "Darwin") sysNom <- "MacOS"
+        acc_dim <- c(TclConfig[[sysNom]]$height.panRight,
+                     TclConfig[[sysNom]]$width.panRight)
+        if((length(acc_dim) < 2) | any(is.na(acc_dim))) acc_dim <- acc_dim0
         hauteur_sep <- .cdtEnv$tcl$fun$h.widgets(acc_dim[1])
         largeur_sep <- .cdtEnv$tcl$fun$w.widgets(acc_dim[2])
 

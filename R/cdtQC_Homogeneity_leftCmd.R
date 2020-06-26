@@ -7,12 +7,12 @@ testHomogeneityPanelCmd <- function(){
         largeur2 <- 33
         largeur3 <- 22
         largeur4 <- 18
-        largeur5 <- 19
-        largeur6 <- 23
+        largeur5 <- 17
+        largeur6 <- 21
         largeur7 <- 7
-        largeur8 <- 12
-        largeur9 <- 19
-        largeur10 <- 18
+        largeur8 <- 11
+        largeur9 <- 17
+        largeur10 <- 17
     }else{
         largeur0 <- 23
         largeur1 <- 31

@@ -6,8 +6,8 @@ climdexPanelCmd.TT <- function(){
         largeur <- 320
         largeur0 <- 29
         largeur1 <- 33
-        largeur2 <- 35
-        largeur3 <- 36
+        largeur2 <- 36
+        largeur3 <- 38
         largeur4 <- 32
         largeur5 <- 14
         largeur6 <- 19

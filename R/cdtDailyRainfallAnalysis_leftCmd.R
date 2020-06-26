@@ -4,7 +4,7 @@ dailyRainAnalysisPanelCmd <- function(){
     if(WindowsOS()){
         largeur0 <- 29
         largeur1 <- 33
-        largeur2 <- 35
+        largeur2 <- 36
         largeur3 <- 24
         largeur4 <- 28
         largeur5 <- 14

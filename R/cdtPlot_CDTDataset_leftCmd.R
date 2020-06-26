@@ -2,8 +2,8 @@
 PlotCDTDatasetCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 33
-        largeur1 <- 32
+        largeur0 <- 36
+        largeur1 <- 33
         largeur2 <- 20
         largeur3 <- 10
         largeur4 <- 8

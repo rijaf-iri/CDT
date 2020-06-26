@@ -2,7 +2,7 @@
 ## Preview netcdf file
 preview.data.nc <- function(parent.win, openncf){
     if(WindowsOS()){
-        txta.w <- 38
+        txta.w <- 40
         txta.h <- 7
         largeur <- 30
     }else{

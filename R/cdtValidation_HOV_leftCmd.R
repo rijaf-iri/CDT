@@ -2,13 +2,13 @@
 Validation.HOV.PanelCmd <- function(clim.var){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 33
-        largeur1 <- 35
-        largeur2 <- 37
+        largeur0 <- 36
+        largeur1 <- 38
+        largeur2 <- 38
         largeur3 <- 20
-        largeur4 <- 16
-        largeur5 <- 3
-        largeur6 <- 33
+        largeur4 <- 17
+        largeur5 <- 4
+        largeur6 <- 34
         largeur7 <- 7
         largeur8 <- 8
         largeur9 <- 18
@@ -930,7 +930,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
         bt.aggrPars <- ttkbutton(frameAggr, text = lang.dlg[['button']][['1']], state = stateAggr)
 
         tkgrid(chk.aggrdata, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.aggrPars, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.aggrPars, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
 
         ########
         tkconfigure(bt.aggrPars, command = function(){
@@ -1207,7 +1207,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
 
         ##########
         tkgrid(cb.stats.maps, row = 0, column = 0, sticky = 'we')
-        tkgrid(frMapBt, row = 1, column = 0, sticky = 'we')
+        tkgrid(frMapBt, row = 1, column = 0, sticky = '')
         tkgrid(frPlotT, row = 2, column = 0, sticky = '')
 
         ##############

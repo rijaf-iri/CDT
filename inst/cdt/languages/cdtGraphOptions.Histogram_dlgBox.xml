@@ -20,7 +20,7 @@
             <text lang="en"> Histogram </text>
         </label>
         <label id="4">
-            <text lang="en"> Inner Color </text>
+            <text lang="en"> Filling Color </text>
         </label>
         <label id="5">
             <text lang="en"> Border Color </text>

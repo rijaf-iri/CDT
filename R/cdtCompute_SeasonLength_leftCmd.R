@@ -2,7 +2,7 @@
 SeasonLengthCalcPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 35
+        largeur0 <- 36
         largeur1 <- 33
         largeur2 <- 14
         largeur3 <- 20

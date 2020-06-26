@@ -4,7 +4,7 @@ SPEICalcPanelCmd <- function(){
     if(WindowsOS()){
         largeur0 <- 29
         largeur1 <- 33
-        largeur2 <- 35
+        largeur2 <- 36
         largeur3 <- 31
         largeur4 <- 10
         largeur5 <- 22
@@ -583,7 +583,7 @@ SPEICalcPanelCmd <- function(){
 
         chk.dataIdx <- tkcheckbutton(frameDataExist, variable = speiDataExist, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
         en.dataIdx <- tkentry(frameDataExist, textvariable = file.dataIndex, width = largeur2 + 5, state = stateExistData)
-        bt.dataIdx <- tkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
+        bt.dataIdx <- ttkbutton(frameDataExist, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
 
         tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

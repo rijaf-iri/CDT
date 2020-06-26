@@ -1,9 +1,9 @@
 
 Validation.GraphOptions.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 54
-        largeur2 <- 58
-        largeur3 <- 7
+        largeur1 <- 55
+        largeur2 <- 59
+        largeur3 <- 5
         width.col <- 3
         width.spin <- 4
     }else{
@@ -338,10 +338,10 @@ Validation.GraphOptions.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$m
 
 Validation.GraphOptions.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 60
-        largeur2 <- 64
+        largeur1 <- 63
+        largeur2 <- 67
         largeur3 <- 12
-        largeur4 <- 33
+        largeur4 <- 35
         width.col <- 3
         width.spin <- 4
     }else{
@@ -792,10 +792,10 @@ Validation.GraphOptions.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$
 
 Validation.GraphOptions.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur1 <- 60
-        largeur2 <- 64
+        largeur1 <- 63
+        largeur2 <- 67
         largeur3 <- 1
-        largeur4 <- 33
+        largeur4 <- 35
         width.col <- 3
         width.spin <- 4
     }else{
@@ -1249,7 +1249,7 @@ Validation.GraphOptions.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$mai
 
 Validation.GraphOptions.Rank <- function(GraphOpt, description, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur0 <- 445
+        largeur0 <- 390
         largeur1 <- 4
         largeur2 <- 52
         largeur3 <- 13
@@ -1648,11 +1648,11 @@ SelectStats2Display.Valid.Rank <- function(parent, stats, description, title){
 
 Validation.GraphOptions1.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur0 <- 292
-        largeur1 <- 55
-        largeur2 <- 58
-        largeur3 <- 7
-        largeur4 <- 61
+        largeur0 <- 270
+        largeur1 <- 57
+        largeur2 <- 61
+        largeur3 <- 6
+        largeur4 <- 64
         width.col <- 3
         width.spin <- 4
     }else{
@@ -2130,13 +2130,13 @@ Validation.GraphOptions1.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$
 
 Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur0 <- 370
-        largeur1 <- 61
-        largeur2 <- 64
-        largeur3 <- 12
-        largeur4 <- 33
-        largeur5 <- 66
-        largeur6 <- 54
+        largeur0 <- 350
+        largeur1 <- 63
+        largeur2 <- 67
+        largeur3 <- 11
+        largeur4 <- 35
+        largeur5 <- 70
+        largeur6 <- 56
         width.col <- 3
         width.spin <- 4
     }else{
@@ -2864,13 +2864,13 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
 
 Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
-        largeur0 <- 370
-        largeur1 <- 61
-        largeur2 <- 64
+        largeur0 <- 350
+        largeur1 <- 63
+        largeur2 <- 67
         largeur3 <- 1
-        largeur4 <- 33
-        largeur5 <- 67
-        largeur6 <- 54
+        largeur4 <- 35
+        largeur5 <- 70
+        largeur6 <- 56
         width.col <- 3
         width.spin <- 4
     }else{

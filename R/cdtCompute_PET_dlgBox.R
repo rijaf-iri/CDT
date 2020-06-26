@@ -4,7 +4,7 @@ computePET_getParams <- function(){
     if(WindowsOS()){
         largeur0 <- 14
         largeur1 <- 18
-        largeur2 <- 51
+        largeur2 <- 52
         largeur3 <- 49
         largeur4 <- 33
     }else{
