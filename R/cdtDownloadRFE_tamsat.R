@@ -33,17 +33,28 @@ tamsat.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
 
 ## toexport
 tamsat.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    baseurl <- "https://www.tamsat.org.uk/public_data/TAMSAT3"
+    # baseurl <- "https://www.tamsat.org.uk/public_data/TAMSAT3"
+    # fileformat <- switch(GalParams$tstep,
+    #                      "daily" = "rfe%s_%s_%s.v3.nc", 
+    #                      "pentad" = "rfe%s_%s-pt%s.v3.nc",
+    #                      "dekadal" = "rfe%s_%s-dk%s.v3.nc",
+    #                      "monthly" = "rfe%s_%s.v3.nc"
+    #                     )
+    # rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
+    # ncfiles0 <- sprintf(fileformat, rdate[, 1], rdate[, 2], rdate[, 3])
+    # urls <- file.path(baseurl, rdate[, 1], rdate[, 2], ncfiles0)
 
+    baseurl <- "http://www.tamsat.org.uk/public_data/data/v3.1"
     fileformat <- switch(GalParams$tstep,
-                         "daily" = "rfe%s_%s_%s.v3.nc", 
-                         "pentad" = "rfe%s_%s-pt%s.v3.nc",
-                         "dekadal" = "rfe%s_%s-dk%s.v3.nc",
-                         "monthly" = "rfe%s_%s.v3.nc"
+                         "daily" = "rfe%s_%s_%s.v3.1.nc", 
+                         "pentad" = "rfe%s_%s-pt%s.v3.1.nc",
+                         "dekadal" = "rfe%s_%s-dk%s.v3.1.nc",
+                         "monthly" = "rfe%s_%s.v3.1.nc"
                         )
+    timestep <- switch(GalParams$tstep, "pentad" = "pentadal", GalParams$tstep)
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
     ncfiles0 <- sprintf(fileformat, rdate[, 1], rdate[, 2], rdate[, 3])
-    urls <- file.path(baseurl, rdate[, 1], rdate[, 2], ncfiles0)
+    urls <- file.path(baseurl, timestep, rdate[, 1], rdate[, 2], ncfiles0)
 
     #########
     data.name <- paste0("TAMSATv3_", GalParams$tstep)

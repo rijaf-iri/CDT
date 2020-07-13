@@ -45,7 +45,7 @@ rfe.product.list <- function(tstep = "dekadal", minhour = NULL){
 
     ## daily
     if(tstep == "daily"){
-        cbname <- c("TAMSAT v3 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
+        cbname <- c("TAMSAT v3.1 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
                     "NOAA-CPC ARC2 (Africa)", "NOAA-CPC RFEv2 (Africa)", "NOAA-CPC RFEv2 (South Asia)",
                     "PERSIANN-CDR (Global)", "PERSIANN (Global)",
                     "TRMM 3B42 v7 (Global)", "TRMM 3B42RT v7 (Global)",
@@ -61,20 +61,20 @@ rfe.product.list <- function(tstep = "dekadal", minhour = NULL){
 
     ## pentad
     if(tstep == "pentad"){
-        cbname <- c("TAMSAT v3 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)")
+        cbname <- c("TAMSAT v3.1 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)")
         name <- c("tamsatv3-af", "chirp-gb", "chirpsv2-gb")
     }
 
     ## dekad
     if(tstep == "dekadal"){
-        cbname <- c("TAMSAT v3 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
+        cbname <- c("TAMSAT v3.1 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
                     "NOAA-CPC ARC2 (Africa)", "NOAA-CPC RFEv2 (Africa)", "NOAA-CPC RFEv2 (South Asia)")
         name <- c("tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af", "rfev2-af", "rfev2-sa")
     }
 
     ## monthly
     if(tstep == "monthly"){
-        cbname <- c("TAMSAT v3 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
+        cbname <- c("TAMSAT v3.1 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
                     "ARC2 (Africa)", "PERSIANN-CDR (Global)", "PERSIANN (Global)",
                     "GPM L3 IMERG V06 Final (Global)")
         name <- c("tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af",
