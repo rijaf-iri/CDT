@@ -8,17 +8,18 @@ exec.download_RFE <- function(){
     tcl('update')
 
     download.fun <- switch(.cdtData$GalParams$rfe.src,
+                    "tamsatv3.1-af" = tamsatv3.1.download.reading,
                     "tamsatv3-af" = local({
                             url.down <- if(.cdtData$GalParams$iridl.src)
                                             tamsat.download.iridl
                                         else
-                                            tamsat.download.reading
+                                            tamsatv3.0.download.reading
 
                             switch(.cdtData$GalParams$tstep,
                                     "daily" = url.down,
-                                    "pentad" = tamsat.download.reading,
+                                    "pentad" = tamsatv3.0.download.reading,
                                     "dekadal" = url.down,
-                                    "monthly" = tamsat.download.reading
+                                    "monthly" = tamsatv3.0.download.reading
                                 )
                             }),
                     "chirp-gb" = local({

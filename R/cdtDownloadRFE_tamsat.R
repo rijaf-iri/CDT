@@ -32,18 +32,7 @@ tamsat.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
 }
 
 ## toexport
-tamsat.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    # baseurl <- "https://www.tamsat.org.uk/public_data/TAMSAT3"
-    # fileformat <- switch(GalParams$tstep,
-    #                      "daily" = "rfe%s_%s_%s.v3.nc", 
-    #                      "pentad" = "rfe%s_%s-pt%s.v3.nc",
-    #                      "dekadal" = "rfe%s_%s-dk%s.v3.nc",
-    #                      "monthly" = "rfe%s_%s.v3.nc"
-    #                     )
-    # rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    # ncfiles0 <- sprintf(fileformat, rdate[, 1], rdate[, 2], rdate[, 3])
-    # urls <- file.path(baseurl, rdate[, 1], rdate[, 2], ncfiles0)
-
+tamsatv3.1.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     baseurl <- "http://www.tamsat.org.uk/public_data/data/v3.1"
     fileformat <- switch(GalParams$tstep,
                          "daily" = "rfe%s_%s_%s.v3.1.nc", 
@@ -55,6 +44,34 @@ tamsat.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose =
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
     ncfiles0 <- sprintf(fileformat, rdate[, 1], rdate[, 2], rdate[, 3])
     urls <- file.path(baseurl, timestep, rdate[, 1], rdate[, 2], ncfiles0)
+
+    #########
+    data.name <- paste0("TAMSATv3.1_", GalParams$tstep)
+    outdir <- file.path(GalParams$dir2save, data.name)
+    extrdir <- file.path(outdir, "Extracted")
+    dir.create(extrdir, showWarnings = FALSE, recursive = TRUE)
+    origdir <- file.path(outdir, "Data_Africa")
+    dir.create(origdir, showWarnings = FALSE, recursive = TRUE)
+    destfiles <- file.path(origdir, ncfiles0)
+    ncfiles <- file.path(extrdir, ncfiles0)
+
+    ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI, verbose,
+                             data.name, tamsat.download.data, bbox = GalParams$bbox)
+
+    return(ret)
+}
+
+tamsatv3.0.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
+    baseurl <- "http://www.tamsat.org.uk/public_data/TAMSAT3"
+    fileformat <- switch(GalParams$tstep,
+                         "daily" = "rfe%s_%s_%s.v3.nc", 
+                         "pentad" = "rfe%s_%s-pt%s.v3.nc",
+                         "dekadal" = "rfe%s_%s-dk%s.v3.nc",
+                         "monthly" = "rfe%s_%s.v3.nc"
+                        )
+    rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
+    ncfiles0 <- sprintf(fileformat, rdate[, 1], rdate[, 2], rdate[, 3])
+    urls <- file.path(baseurl, rdate[, 1], rdate[, 2], ncfiles0)
 
     #########
     data.name <- paste0("TAMSATv3_", GalParams$tstep)

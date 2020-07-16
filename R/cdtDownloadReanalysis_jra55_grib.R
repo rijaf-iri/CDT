@@ -148,6 +148,8 @@ jra55.download.minmax_surf <- function(lnk, dest, ncfl, handle, pars){
                 xx <- paste0(paste0(basename(dest[ix]), collapse = "\n"), "\n")
             }else xx <- NULL
         }
+    }else{
+        xx <- paste0(xx, "\n", ret)
     }
 
     return(xx)

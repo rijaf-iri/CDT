@@ -381,5 +381,6 @@ devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, upgrade_dependen
 To update `CDT` and all dependencies packages, use 
 
 ```r
+update.packages(ask = FALSE)
 devtools::install_github("rijaf-iri/CDT")
 ```

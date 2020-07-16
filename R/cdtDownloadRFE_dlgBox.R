@@ -45,7 +45,7 @@ rfe.product.list <- function(tstep = "dekadal", minhour = NULL){
 
     ## daily
     if(tstep == "daily"){
-        cbname <- c("TAMSAT v3.1 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
+        cbname <- c("TAMSAT v3.1 (Africa)", "TAMSAT v3.0 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
                     "NOAA-CPC ARC2 (Africa)", "NOAA-CPC RFEv2 (Africa)", "NOAA-CPC RFEv2 (South Asia)",
                     "PERSIANN-CDR (Global)", "PERSIANN (Global)",
                     "TRMM 3B42 v7 (Global)", "TRMM 3B42RT v7 (Global)",
@@ -53,7 +53,7 @@ rfe.product.list <- function(tstep = "dekadal", minhour = NULL){
                     "CMORPH V1.0 CRT (Global)", "CMORPH RT V0.x ICDR (Global)",
                     "CMORPH V0.x RAW (Global)", "GPM L3 IMERG V06 Final (Global)",
                     "GPM L3 IMERG V06 Late (Global)", "GPM L3 IMERG V06 Early (Global)")
-        name <- c("tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af", "rfev2-af", "rfev2-sa",
+        name <- c("tamsatv3.1-af", "tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af", "rfev2-af", "rfev2-sa",
                   "persianncdr-gb", "persiann-gb", "trmm3b42v7-gb", "trmm3b42rtv7-gb",
                   "cmorphv1.0bld-gb", "cmorphrtv0.xbld-gb", "cmorphv1.0adj-gb", "cmorphrtv0.xadj-gb",
                   "cmorphv0.xraw-gb", "gpm.imerg.f-gb", "gpm.imerg.l-gb", "gpm.imerg.e-gb")
@@ -61,23 +61,23 @@ rfe.product.list <- function(tstep = "dekadal", minhour = NULL){
 
     ## pentad
     if(tstep == "pentad"){
-        cbname <- c("TAMSAT v3.1 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)")
-        name <- c("tamsatv3-af", "chirp-gb", "chirpsv2-gb")
+        cbname <- c("TAMSAT v3.1 (Africa)", "TAMSAT v3.0 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)")
+        name <- c("tamsatv3.1-af", "tamsatv3-af", "chirp-gb", "chirpsv2-gb")
     }
 
     ## dekad
     if(tstep == "dekadal"){
-        cbname <- c("TAMSAT v3.1 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
+        cbname <- c("TAMSAT v3.1 (Africa)", "TAMSAT v3.0 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
                     "NOAA-CPC ARC2 (Africa)", "NOAA-CPC RFEv2 (Africa)", "NOAA-CPC RFEv2 (South Asia)")
-        name <- c("tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af", "rfev2-af", "rfev2-sa")
+        name <- c("tamsatv3.1-af", "tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af", "rfev2-af", "rfev2-sa")
     }
 
     ## monthly
     if(tstep == "monthly"){
-        cbname <- c("TAMSAT v3.1 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
+        cbname <- c("TAMSAT v3.1 (Africa)", "TAMSAT v3.0 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
                     "ARC2 (Africa)", "PERSIANN-CDR (Global)", "PERSIANN (Global)",
                     "GPM L3 IMERG V06 Final (Global)")
-        name <- c("tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af",
+        name <- c("tamsatv3.1-af", "tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af",
                   "persianncdr-gb", "persiann-gb", "gpm.imerg.f-gb")
     }
 
@@ -157,8 +157,9 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     ## daily
     if(tstep == "daily"){
         urls <- switch(src,
+            "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
             "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.daily/.rfe",
-                              "https://www.tamsat.org.uk/data/rfe/index.cgi"),
+                              "http://www.tamsat.org.uk/data"),
             "chirp-gb" = "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP/daily",
             "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.daily-improved/.global/.0p05/.prcp",
                               "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_daily/tifs/p05"),
@@ -198,7 +199,8 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     ## pentad
     if(tstep == "pentad"){
         urls <- switch(src,
-            "tamsatv3-af" = "https://www.tamsat.org.uk/data/rfe/index.cgi",
+            "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
+            "tamsatv3-af" = "http://www.tamsat.org.uk/data",
             "chirp-gb" = "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP/pentads",
             "chirpsv2-gb" = "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_pentad/tifs"
         )
@@ -207,8 +209,9 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     ## dekad
     if(tstep == "dekadal"){
         urls <- switch(src,
+            "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
             "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.dekadal/.rfe",
-                              "https://www.tamsat.org.uk/data/rfe/index.cgi"),
+                              "http://www.tamsat.org.uk/data"),
             "chirp-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp",
                            "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP/dekads"),
             "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.dekad/.prcp",
@@ -225,8 +228,9 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     ## monthly
     if(tstep == "monthly"){
         urls <- switch(src,
+            "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
             "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.dekadal/.rfe/monthlyAverage/3.0/mul",
-                              "https://www.tamsat.org.uk/data/rfe/index.cgi"),
+                              "http://www.tamsat.org.uk/data"),
             "chirp-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp/monthlyAverage/3.0/mul",
                            "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP/monthly"),
             "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.monthly/.global/.precipitation",
