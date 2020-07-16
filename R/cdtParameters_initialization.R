@@ -110,7 +110,7 @@ cdt.init.params <- function(action, tstep){
         ret.params <- list(action = action,
                            tstep = "dekadal",
                            rfe.src = "tamsatv3-af",
-                           iridl.src = TRUE,
+                           iridl.src = FALSE,
                            minhour = 1,
                            date.range = date.range,
                            bbox = .cdtData$Config$region,
