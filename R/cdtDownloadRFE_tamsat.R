@@ -33,6 +33,7 @@ tamsat.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
 
 ## toexport
 tamsatv3.1.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
+    # baseurl <- "http://gws-access.jasmin.ac.uk/public/tamsat/rfe/data/v3.1"
     baseurl <- "http://www.tamsat.org.uk/public_data/data/v3.1"
     fileformat <- switch(GalParams$tstep,
                          "daily" = "rfe%s_%s_%s.v3.1.nc", 

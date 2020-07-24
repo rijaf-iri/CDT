@@ -156,7 +156,7 @@
         <label id="16">
             <text lang="en"> Longitude </text>
         </label>
-        <label id="16">
+        <label id="17">
             <text lang="en"> Latitude </text>
         </label>
     </widget>

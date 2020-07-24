@@ -195,13 +195,13 @@
         <label id="16">
             <text lang="en"> Longitude </text>
         </label>
-        <label id="16">
+        <label id="17">
             <text lang="en"> Latitude </text>
         </label>
-        <label id="17">
+        <label id="18">
             <text lang="en"> Centred time window </text>
         </label>
-        <label id="18">
+        <label id="19">
             <text lang="en"> days </text>
         </label>
     </widget>

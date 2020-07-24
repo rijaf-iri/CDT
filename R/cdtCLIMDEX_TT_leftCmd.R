@@ -333,9 +333,9 @@ climdexPanelCmd.TT <- function(){
         ######
         dayWin <- tclVar(GeneralParameters$baseYear$window)
 
-        txt.daywin1 <- tklabel(fr.window, text = lang.dlg[['label']][['17']], anchor = 'e', justify = 'right')
+        txt.daywin1 <- tklabel(fr.window, text = lang.dlg[['label']][['18']], anchor = 'e', justify = 'right')
         en.daywin <- tkentry(fr.window, textvariable = dayWin, width = 3)
-        txt.daywin2 <- tklabel(fr.window, text = lang.dlg[['label']][['18']], anchor = 'w', justify = 'left')
+        txt.daywin2 <- tklabel(fr.window, text = lang.dlg[['label']][['19']], anchor = 'w', justify = 'left')
 
         tkgrid(txt.daywin1, en.daywin, txt.daywin2)
 

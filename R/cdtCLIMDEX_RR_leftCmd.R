@@ -785,7 +785,6 @@ climdexPanelCmd.RR <- function(){
         tkgrid(frameDataTS, row = 0, column = 0, sticky = 'we', pady = 1)
         tkgrid(frameSTNCrds, row = 1, column = 0, sticky = '', pady = 3)
 
-
     #######################################################################################################
 
     #Tab5
