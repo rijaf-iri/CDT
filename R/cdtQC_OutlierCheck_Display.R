@@ -170,7 +170,7 @@ qcPlot_Spatial.Check <- function(){
     ix2 <- selvois[!selvois %in% usevois]
     ix3 <- allvois[!allvois %in% selvois]
     ix4 <- seq_along(STNID)
-    ix4 <- ix4[!ix4 %in% c(ix0, allvois)]
+    ix4 <- ix4[!ix4 %in% c(ix0, ix2, allvois)]
 
     stndon <- lapply(list(ix0, ix1, ix2, ix3, ix4), function(ix){
         x <- y <- z <- NA
