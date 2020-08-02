@@ -191,25 +191,42 @@ climatologiesCalcPanelCmd <- function(){
         ############
 
         tkbind(cb.outclim, "<<ComboboxSelected>>", function(){
-            statedayW <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[1]) "normal" else "disabled"
+            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+
+            statedayW <- if(outstep == 'daily') "normal" else "disabled"
             tkconfigure(en.daywin, state = statedayW)
 
-            stateSeas <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[6]) "normal" else "disabled"
+            stateSeas <- if(outstep == 'seasonal') "normal" else "disabled"
             tkconfigure(cb.seasS, state = stateSeas)
             tkconfigure(cb.seasL, state = stateSeas)
 
             stateAggr <- if(str_trim(tclvalue(timeSteps)) == str_trim(tclvalue(outSteps))) "disabled" else "normal"
             tkconfigure(bt.AggrFun, state = stateAggr)
 
-            stateMaps <- if(str_trim(tclvalue(outSteps)) %in% CbOutVAL[5:6]) 'disabled' else 'normal'
+            stateMaps <- if(outstep %in% c('annual', 'seasonal')) 'disabled' else 'normal'
             tkconfigure(cb.clim.Date, state = stateMaps)
             tkconfigure(bt.clim.Date.prev, state = stateMaps)
             tkconfigure(bt.clim.Date.next, state = stateMaps)
 
-            stateGraphs <- if(str_trim(tclvalue(outSteps)) %in% CbOutVAL[5:6]) 'disabled' else 'normal'
+            stateGraphs <- if(outstep %in% c('annual', 'seasonal')) 'disabled' else 'normal'
             tkconfigure(cb.typeTSp, state = stateGraphs)
             tkconfigure(bt.TsGraph.plot, state = stateGraphs)
             tkconfigure(bt.TSGraphOpt, state = stateGraphs)
+
+            seasdef <- ""
+            if(outstep == 'annual'){
+                tclvalue(start.mon) <- MOIS[1]
+                tclvalue(length.mon) <- 12
+                seasdef <- paste(MOIS[1], "->", MOIS[12])
+            }
+            if(outstep == 'seasonal'){
+                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
+                len <- as.numeric(str_trim(tclvalue(length.mon)))
+                mon1 <- (mon + len - 1) %% 12
+                mon1[mon1 == 0] <- 12
+                seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
+            }
+            tclvalue(season.def) <- seasdef
         })
 
         #############################
@@ -251,8 +268,10 @@ climatologiesCalcPanelCmd <- function(){
         ##############
 
         tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
+            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+
             seasdef <- ""
-            if(str_trim(tclvalue(outSteps)) == CbOutVAL[6]){
+            if(outstep == 'seasonal'){
                 mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
                 len <- as.numeric(str_trim(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
@@ -265,8 +284,10 @@ climatologiesCalcPanelCmd <- function(){
         ##############
 
         tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
+            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+
             seasdef <- ""
-            if(str_trim(tclvalue(outSteps)) == CbOutVAL[6]){
+            if(outstep == 'seasonal'){
                 mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
                 len <- as.numeric(str_trim(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
@@ -1000,9 +1021,11 @@ climatologiesCalcPanelCmd <- function(){
             tcl('update')
         })
 
+        cdtdatatype <- .cdtData$EnvData$plot.maps$data.type
+        climdate <- str_trim(tclvalue(.cdtData$EnvData$climDate))
         cilmdata.Var <- if(str_trim(tclvalue(.cdtData$EnvData$climVar)) == .cdtData$EnvData$CbClimSTAT[1]) "CDTMEAN" else "CDTSTD"
 
-        if(.cdtData$EnvData$plot.maps$data.type == "cdtstation"){
+        if(cdtdatatype == "cdtstation"){
             fileClimdata <- file.path(.cdtData$EnvData$PathClim, cilmdata.Var, paste0(cilmdata.Var, ".rds"))
             if(!file.exists(fileClimdata)){
                 Insert.Messages.Out(paste(fileClimdata, lang.dlg[['message']][['6']]), TRUE, 'e')
@@ -1010,30 +1033,50 @@ climatologiesCalcPanelCmd <- function(){
             }
 
             change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+        }else{
+            fileClimdata <- file.path(.cdtData$EnvData$PathClim, "DATA_NetCDF", cilmdata.Var,
+                                      paste0("clim_", as.numeric(climdate), ".nc"))
+            if(!file.exists(fileClimdata)){
+                Insert.Messages.Out(paste(fileClimdata, lang.dlg[['message']][['6']]), TRUE, 'e')
+                return(NULL)
+            }
+        }
 
-            ########
-            readClimData <- TRUE
-            if(!is.null(.cdtData$EnvData$climdata))
-                if(!is.null(.cdtData$EnvData$fileClimdata))
-                    if(.cdtData$EnvData$fileClimdata == fileClimdata) readClimData <- FALSE
+        ###########
+        compClimdata <- list(fileClimdata, .cdtData$EnvData$output$params)
 
-            if(readClimData){
+        readClimData <- TRUE
+        if(!is.null(.cdtData$EnvData$climdata))
+            if(!is.null(.cdtData$EnvData$compClimdata))
+                if(isTRUE(all.equal(.cdtData$EnvData$compClimdata, compClimdata))) readClimData <- FALSE
+
+        if(readClimData){
+            if(cdtdatatype == "cdtstation"){
                 .cdtData$EnvData$climdata$data <- readRDS(fileClimdata)
-                .cdtData$EnvData$fileClimdata <- fileClimdata
+            }else{
+                nc <- nc_open(fileClimdata)
+                .cdtData$EnvData$climdata$map$x <- nc$dim[[1]]$vals
+                .cdtData$EnvData$climdata$map$y <- nc$dim[[2]]$vals
+                .cdtData$EnvData$climdata$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
+                nc_close(nc)
+                .cdtData$EnvData$climdata$Var <- cilmdata.Var
             }
 
-            ########
+            .cdtData$EnvData$compClimdata <- compClimdata
+        }
+
+        if(cdtdatatype == "cdtstation"){
             rasterClimData <- TRUE
             if(!rasterClimData)
                 if(!is.null(.cdtData$EnvData$climdata$rasterIdx))
                     if(.cdtData$EnvData$fileClimdata == fileClimdata)
-                        if(.cdtData$EnvData$climdata$rasterIdx == str_trim(tclvalue(.cdtData$EnvData$climDate))) rasterClimData <- FALSE
+                        if(.cdtData$EnvData$climdata$rasterIdx == climdate) rasterClimData <- FALSE
 
             if(!rasterClimData)
                 if(.cdtData$EnvData$change.plot != change.plot) rasterClimData <- TRUE
 
             if(rasterClimData){
-                idt <- which(.cdtData$EnvData$output$index == as.numeric(str_trim(tclvalue(.cdtData$EnvData$climDate))))
+                idt <- which(.cdtData$EnvData$output$index == as.numeric(climdate))
 
                 X0 <- .cdtData$EnvData$output$data$lon
                 Y0 <- .cdtData$EnvData$output$data$lat
@@ -1055,35 +1098,11 @@ climatologiesCalcPanelCmd <- function(){
                     .cdtData$EnvData$climdata$map$z <- VAR0
                 }
 
-                .cdtData$EnvData$climdata$rasterIdx <- str_trim(tclvalue(.cdtData$EnvData$climDate))
+                .cdtData$EnvData$climdata$rasterIdx <- climdate
                 .cdtData$EnvData$climdata$Var <- cilmdata.Var
                 .cdtData$EnvData$change.plot <- change.plot
             }
         }else{
-            fileClimdata <- file.path(.cdtData$EnvData$PathClim, "DATA_NetCDF", cilmdata.Var,
-                            paste0("clim_", as.numeric(str_trim(tclvalue(.cdtData$EnvData$climDate))), ".nc"))
-            if(!file.exists(fileClimdata)){
-                Insert.Messages.Out(paste(fileClimdata, lang.dlg[['message']][['6']]), TRUE, 'e')
-                return(NULL)
-            }
-
-            readClimData <- TRUE
-            if(!is.null(.cdtData$EnvData$climdata))
-                if(!is.null(.cdtData$EnvData$fileClimdata))
-                    if(.cdtData$EnvData$fileClimdata == fileClimdata) readClimData <- FALSE
-
-            if(readClimData){
-                nc <- nc_open(fileClimdata)
-                .cdtData$EnvData$climdata$map$x <- nc$dim[[1]]$vals
-                .cdtData$EnvData$climdata$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$climdata$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
-                .cdtData$EnvData$fileClimdata <- fileClimdata
-                .cdtData$EnvData$climdata$Var <- cilmdata.Var
-            }
-
-            ###################
-
             fileClimIdx <- file.path(.cdtData$EnvData$PathClim, cilmdata.Var, paste0(cilmdata.Var, ".rds"))
 
             readClimIdx <- TRUE

@@ -199,15 +199,32 @@ anomaliesCalcPanelCmd <- function(){
         ############
 
         tkbind(cb.outclim, "<<ComboboxSelected>>", function(){
-            statedayW <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[1]) "normal" else "disabled"
+            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+
+            statedayW <- if(outstep == 'daily') "normal" else "disabled"
             tkconfigure(en.daywin, state = statedayW)
 
-            stateSeas <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[6]) "normal" else "disabled"
+            stateSeas <- if(outstep == 'seasonal') "normal" else "disabled"
             tkconfigure(cb.seasS, state = stateSeas)
             tkconfigure(cb.seasL, state = stateSeas)
 
             stateAggr <- if(str_trim(tclvalue(timeSteps)) == str_trim(tclvalue(outSteps))) "disabled" else "normal"
             tkconfigure(bt.AggrFun, state = stateAggr)
+
+            seasdef <- ""
+            if(outstep == 'annual'){
+                tclvalue(start.mon) <- MOIS[1]
+                tclvalue(length.mon) <- 12
+                seasdef <- paste(MOIS[1], "->", MOIS[12])
+            }
+            if(outstep == 'seasonal'){
+                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
+                len <- as.numeric(str_trim(tclvalue(length.mon)))
+                mon1 <- (mon + len - 1) %% 12
+                mon1[mon1 == 0] <- 12
+                seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
+            }
+            tclvalue(season.def) <- seasdef
         })
 
        #############################
@@ -249,8 +266,10 @@ anomaliesCalcPanelCmd <- function(){
         ##############
 
         tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
+            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+
             seasdef <- ""
-            if(str_trim(tclvalue(outSteps)) == CbOutVAL[6]){
+            if(outstep == 'seasonal'){
                 mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
                 len <- as.numeric(str_trim(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
@@ -263,8 +282,10 @@ anomaliesCalcPanelCmd <- function(){
         ##############
 
         tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
+            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+
             seasdef <- ""
-            if(str_trim(tclvalue(outSteps)) == CbOutVAL[6]){
+            if(outstep == 'seasonal'){
                 mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
                 len <- as.numeric(str_trim(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
@@ -1114,7 +1135,10 @@ anomaliesCalcPanelCmd <- function(){
             tcl('update')
         })
 
-        if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
+        cdtdatatype <- .cdtData$EnvData$plot.maps$data.type
+        anomdate <- str_trim(tclvalue(.cdtData$EnvData$anomDate))
+
+        if(cdtdatatype == "cdtstation"){
             fileAnomdata <- file.path(.cdtData$EnvData$PathAnom, "CDTANOM/CDTANOM.rds")
             if(!file.exists(fileAnomdata)){
                 Insert.Messages.Out(paste(fileAnomdata, lang.dlg[['message']][['6']]), TRUE, 'e')
@@ -1122,30 +1146,51 @@ anomaliesCalcPanelCmd <- function(){
             }
 
             change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+        }else{
+            fileAnomdata <- file.path(.cdtData$EnvData$PathAnom, "DATA_NetCDF/CDTANOM",
+                                      paste0("anomaly_", anomdate, ".nc"))
+            if(!file.exists(fileAnomdata)){
+                Insert.Messages.Out(paste(fileAnomdata, lang.dlg[['message']][['6']]), TRUE, 'e')
+                return(NULL)
+            }
+        }
 
-            ########
-            readAnomData <- TRUE
-            if(!is.null(.cdtData$EnvData$anomdata))
-                if(!is.null(.cdtData$EnvData$fileAnomdata))
-                    if(.cdtData$EnvData$fileAnomdata == fileAnomdata) readAnomData <- FALSE
+        ###########
+        compAnomData <- list(fileAnomdata, .cdtData$EnvData$output$params)
 
-            if(readAnomData){
+        readAnomData <- TRUE
+        if(!is.null(.cdtData$EnvData$anomdata))
+            if(!is.null(.cdtData$EnvData$compAnomData))
+                if(isTRUE(all.equal(.cdtData$EnvData$compAnomData, compAnomData))) readAnomData <- FALSE
+
+        if(readAnomData){
+            if(cdtdatatype == "cdtstation"){
                 .cdtData$EnvData$anomdata$data <- readRDS(fileAnomdata)
-                .cdtData$EnvData$fileAnomdata <- fileAnomdata
+            }else{
+                nc <- nc_open(fileAnomdata)
+                .cdtData$EnvData$anomdata$map$x <- nc$dim[[1]]$vals
+                .cdtData$EnvData$anomdata$map$y <- nc$dim[[2]]$vals
+                .cdtData$EnvData$anomdata$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
+                nc_close(nc)
             }
 
-            ########
+            .cdtData$EnvData$compAnomData <- compAnomData
+        }
+
+        #################################
+
+        if(cdtdatatype == "cdtstation"){
             rasterAnomData <- TRUE
             if(!rasterAnomData)
                 if(!is.null(.cdtData$EnvData$anomdata$rasterDate))
                     if(.cdtData$EnvData$fileAnomdata == fileAnomdata)
-                        if(.cdtData$EnvData$anomdata$rasterDate == str_trim(tclvalue(.cdtData$EnvData$anomDate))) rasterAnomData <- FALSE
+                        if(.cdtData$EnvData$anomdata$rasterDate == anomdate) rasterAnomData <- FALSE
 
             if(!rasterAnomData)
                 if(.cdtData$EnvData$change.plot != change.plot) rasterAnomData <- TRUE
 
             if(rasterAnomData){
-                idt <- which(.cdtData$EnvData$output$data$dates == str_trim(tclvalue(.cdtData$EnvData$anomDate)))
+                idt <- which(.cdtData$EnvData$output$data$dates == anomdate)
 
                 X0 <- .cdtData$EnvData$output$data$lon
                 Y0 <- .cdtData$EnvData$output$data$lat
@@ -1167,33 +1212,10 @@ anomaliesCalcPanelCmd <- function(){
                     .cdtData$EnvData$anomdata$map$z <- VAR0
                 }
 
-                .cdtData$EnvData$anomdata$rasterDate <- str_trim(tclvalue(.cdtData$EnvData$anomDate))
+                .cdtData$EnvData$anomdata$rasterDate <- anomdate
                 .cdtData$EnvData$change.plot <- change.plot
             }
         }else{
-            fileAnomdata <- file.path(.cdtData$EnvData$PathAnom, "DATA_NetCDF/CDTANOM",
-                            paste0("anomaly_", str_trim(tclvalue(.cdtData$EnvData$anomDate)), ".nc"))
-            if(!file.exists(fileAnomdata)){
-                Insert.Messages.Out(paste(fileAnomdata, lang.dlg[['message']][['6']]), TRUE, 'e')
-                return(NULL)
-            }
-
-            readAnomData <- TRUE
-            if(!is.null(.cdtData$EnvData$anomdata))
-                if(!is.null(.cdtData$EnvData$fileAnomdata))
-                    if(.cdtData$EnvData$fileAnomdata == fileAnomdata) readAnomData <- FALSE
-
-            if(readAnomData){
-                nc <- nc_open(fileAnomdata)
-                .cdtData$EnvData$anomdata$map$x <- nc$dim[[1]]$vals
-                .cdtData$EnvData$anomdata$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$anomdata$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
-                .cdtData$EnvData$fileAnomdata <- fileAnomdata
-            }
-
-            ###################
-
             fileAnomIdx <- file.path(.cdtData$EnvData$PathAnom, "CDTANOM/CDTANOM.rds")
 
             readAnomIdx <- TRUE

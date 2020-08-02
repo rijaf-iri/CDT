@@ -304,7 +304,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
 
             out.cdt.aggregate <- file.path(datadir, paste0("Aggregated_data_", outstep, ".csv"))
 
-            if(file.exists(out.cdt.aggregate)){
+            if(GeneralParameters$outdir$update & file.exists(out.cdt.aggregate)){
                 don0 <- try(read.table(out.cdt.aggregate, sep = ',', na.strings = miss.val,
                             colClasses = 'character', stringsAsFactors = FALSE), silent = TRUE)
                 if(inherits(don0, "try-error")){
@@ -352,7 +352,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
             ##########
 
             readPrevAggr <- FALSE
-            if(file.exists(file.index)){
+            if(GeneralParameters$outdir$update & file.exists(file.index)){
                 don0 <- try(readRDS(file.index), silent = TRUE)
                 if(inherits(don0, "try-error")){
                     Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['7']], file.index), TRUE, 'e')
@@ -632,7 +632,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
         iyearAnom <- daty0 >= daty.range$start & daty0 <= daty.range$end
         datyAnom <- daty[iyearAnom]
     }else{
-        daty0 <- if(intstep == "monthly") paste0(daty, 1) else daty
+        daty0 <- if(outstep == "monthly") paste0(daty, 1) else daty
         daty0 <- as.Date(daty0, "%Y%m%d")
         daty.range <- get.range.date.time(date.range, outstep)
         iyearAnom <- daty0 >= daty.range$start & daty0 <= daty.range$end

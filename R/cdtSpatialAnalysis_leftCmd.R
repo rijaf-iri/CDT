@@ -380,6 +380,8 @@ spatialAnalysisPanelCmd <- function(){
                 seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
             }
             if(outstep == 'annual'){
+                tclvalue(start.mon) <- MOIS[1]
+                tclvalue(length.mon) <- 12
                 seasdef <- paste(MOIS[1], "->", MOIS[12])
             }
             tclvalue(season.def) <- seasdef
