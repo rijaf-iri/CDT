@@ -302,7 +302,7 @@ qcTTOutlierCheckPanelCmd <- function(){
 
         chk.dataIdx <- tkcheckbutton(frameOutQC, variable = QCExist, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
         en.dataIdx <- tkentry(frameOutQC, textvariable = file.dataIndex, width = largeur2 + 5, state = stateExistData)
-        bt.dataIdx <- tkbutton(frameOutQC, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
+        bt.dataIdx <- ttkbutton(frameOutQC, text = .cdtEnv$tcl$lang$global[['button']][['6']], state = stateExistData)
 
         tkgrid(chk.dataIdx, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.dataIdx, row = 0, column = 4, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

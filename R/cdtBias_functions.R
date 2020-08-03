@@ -1112,6 +1112,7 @@ applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TR
         }
 
         if(variable == "rain") xadj[xadj < 0] <- 0
+        xadj[is.na(xadj)] <- varinfo$missval
 
         nc <- ncdf4::nc_create(ncoutfiles[jj], grd.bsadj)
         ncdf4::ncvar_put(nc, grd.bsadj, xadj)
