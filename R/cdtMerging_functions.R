@@ -44,7 +44,7 @@ create_grid_buffer <- function(locations.stn, newgrid, radius, fac = 4)
     ixy <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
     coarsegrid <- as(newgrid[ixy, ], "SpatialPixels")
 
-    xgrd <- apply(coarsegrid@coords, 2, unique)
+    xgrd <- lapply(as.list(data.frame(coarsegrid@coords)), unique)
     loc.stn <- cdt.as.image(locations.stn$stn, locations.stn@coords, xgrd, regrid = TRUE)
     loc.stn <- cbind(do.call(expand.grid, loc.stn[c('x', 'y')]), z = c(loc.stn$z))
     loc.stn <- loc.stn[!is.na(loc.stn$z), , drop = FALSE]
