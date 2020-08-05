@@ -26,7 +26,7 @@ rain_no_rain.mask <- function(locations.stn, newgrid, nmax)
     return(rnr)
 }
 
-#######################
+###############################
 
 create_grid_buffer <- function(locations.stn, newgrid, radius, fac = 4)
 {
@@ -67,7 +67,7 @@ create_grid_buffer <- function(locations.stn, newgrid, radius, fac = 4)
     list(grid.buff = newdata0, ij = igrid, coarse = coarsegrid)
 }
 
-#######################
+###############################
 
 merging.functions <- function(locations.stn, newgrid, params,
                               formuleRK, nc.date, log.file)
@@ -262,7 +262,7 @@ merging.functions <- function(locations.stn, newgrid, params,
     return(out.mrg)
 }
 
-#######################
+###############################
 
 cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
                        demData, outdir, mask = NULL, GUI = TRUE)
@@ -376,14 +376,16 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             ncdf4::nc_close(nc)
             nc.val <- transposeNCDFData(nc.val, ncinfo)
         }else{
-            cat(paste(ncInfo$dates[jj], ":", "no netcdf data", "|",
-                "no file generated", "\n"), file = log.file, append = TRUE)
+            msg <- paste(ncInfo$dates[jj], ":", "no NetCDF data",
+                         "|", "no file generated", "\n")
+            cat(msg, file = log.file, append = TRUE)
             return(-1)
         }
 
         if(all(is.na(nc.val))){
-            cat(paste(ncInfo$dates[jj], ":", "all netcdf data are missing", "|",
-                "no file generated", "\n"), file = log.file, append = TRUE)
+            msg <- paste(ncInfo$dates[jj], ":", "all NetCDF data are missing",
+                         "|", "no file generated", "\n")
+            cat(msg, file = log.file, append = TRUE)
             return(-1)
         }
 
@@ -394,19 +396,35 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
 
         donne.stn <- stnData$data[which(stnData$date == ncInfo$dates[jj]), , drop = FALSE]
         if(nrow(donne.stn) == 0){
-            cat(paste(ncInfo$dates[jj], ":", "no station data", "|",
-                "no file generated", "\n"), file = log.file, append = TRUE)
-            return(-1)
+            msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
+                         "No merging performed, output equals to the input NetCDF data", "\n")
+            cat(msg, file = log.file, append = TRUE)
+            write.merging.output(jj, nc.val, grd.nc.out, outdir, ncfile,
+                                 varinfo, ncInfo, params, mask)
+            return(0)
         }
 
         locations.stn$stn <- as.numeric(donne.stn[1, ])
         noNA <- !is.na(locations.stn$stn)
         locations.stn <- locations.stn[noNA, ]
+        donne.len <- length(locations.stn)
 
-        if(length(locations.stn) < 5){
-            cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|",
-                "no file generated", "\n"), file = log.file, append = TRUE)
-            return(-1)
+        if(donne.len == 0){
+            msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
+                         "No merging performed, output equals to the input NetCDF data", "\n")
+            cat(msg, file = log.file, append = TRUE)
+            write.merging.output(jj, nc.val, grd.nc.out, outdir, ncfile,
+                                 varinfo, ncInfo, params, mask)
+            return(0)
+        }
+
+        if(donne.len > 0 & donne.len < 5){
+            msg <- paste(ncInfo$dates[jj], ":", "not enough station data", "|",
+                         "No merging performed, output equals to the input NetCDF data", "\n")
+            cat(msg, file = log.file, append = TRUE)
+            write.merging.output(jj, nc.val, grd.nc.out, outdir, ncfile,
+                                 varinfo, ncInfo, params, mask)
+            return(0)
         }
 
         if(params$MRG$method == "RK" & any(is.auxvar)){
@@ -414,9 +432,12 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             loc.data <- split(loc.data, col(loc.data))
             nna <- Reduce("&", loc.data)
             if(length(which(nna)) < 5){
-                cat(paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
-                    "no file generated", "\n"), file = log.file, append = TRUE)
-                return(-1)
+                msg <- paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
+                             "No merging performed, output equals to the input NetCDF data", "\n")
+                cat(msg, file = log.file, append = TRUE)
+                write.merging.output(jj, nc.val, grd.nc.out, outdir, ncfile,
+                                     varinfo, ncInfo, params, mask)
+                return(0)
             }
         }
 
@@ -425,23 +446,8 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
         out.mrg <- merging.functions(locations.stn, newgrid, params,
                                      formuleRK, ncInfo$dates[jj], log.file)
 
-        ###################
-        if(!is.null(mask)) out.mrg[is.na(mask)] <- varinfo$missval
-
-        out.mrg[is.na(out.mrg)] <- varinfo$missval
-
-        year <- substr(ncInfo$dates[jj], 1, 4)
-        month <- substr(ncInfo$dates[jj], 5, 6)
-        if(params$period == 'daily'){
-            ncfile <- sprintf(params$output$format, year, month, substr(ncInfo$dates[jj], 7, 8))
-        }else if(params$period %in% c('pentad', 'dekadal')){
-            ncfile <- sprintf(params$output$format, year, month, substr(ncInfo$dates[jj], 7, 7))
-        }else ncfile <- sprintf(params$output$format, year, month)
-
-        out.nc.file <- file.path(outdir, ncfile)
-        nc <- ncdf4::nc_create(out.nc.file, grd.nc.out)
-        ncdf4::ncvar_put(nc, grd.nc.out, out.mrg)
-        ncdf4::nc_close(nc)
+        write.merging.output(jj, out.mrg, grd.nc.out, outdir, ncfile,
+                             varinfo, ncInfo, params, mask)
 
         return(0)
     })
@@ -451,3 +457,29 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
     return(0)
 }
 
+###############################
+
+write.merging.output <- function(jj, out.mrg, grd.nc.out,
+                                 outdir, ncfile,
+                                 varinfo, ncInfo, params,
+                                 mask)
+{
+    if(!is.null(mask)) out.mrg[is.na(mask)] <- varinfo$missval
+
+    out.mrg[is.na(out.mrg)] <- varinfo$missval
+
+    year <- substr(ncInfo$dates[jj], 1, 4)
+    month <- substr(ncInfo$dates[jj], 5, 6)
+    if(params$period == 'daily'){
+        ncfile <- sprintf(params$output$format, year, month, substr(ncInfo$dates[jj], 7, 8))
+    }else if(params$period %in% c('pentad', 'dekadal')){
+        ncfile <- sprintf(params$output$format, year, month, substr(ncInfo$dates[jj], 7, 7))
+    }else ncfile <- sprintf(params$output$format, year, month)
+
+    out.nc.file <- file.path(outdir, ncfile)
+    nc <- ncdf4::nc_create(out.nc.file, grd.nc.out)
+    ncdf4::ncvar_put(nc, grd.nc.out, out.mrg)
+    ncdf4::nc_close(nc)
+
+    return(0)
+}
