@@ -921,7 +921,7 @@ SeasonAnalysisPanelCmd <- function(){
             .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
             .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
 
-            stateTsp <- if(vvarTSp == "maps") "normal" else "disabled"
+            stateTsp <- if(.cdtData$EnvData$plot.maps$varTSp == "maps") "normal" else "disabled"
             tkconfigure(cb.typeTSp, state = stateTsp)
             tkconfigure(bt.TsGraph.Opt, state = stateTsp)
 
@@ -1319,7 +1319,7 @@ SeasonAnalysisPanelCmd <- function(){
 
             if(.cdtData$EnvData$plotVar$varPICSA == "dryspell")
                 if(!is.null(.cdtData$EnvData$oldDryspell))
-                    if(.cdtData$EnvData$oldDryspell != dryspl & !rasterTsData) rasterTsData <- TRUE
+                    if(.cdtData$EnvData$oldDryspell != dryspl & !readTsData) readTsData <- TRUE
 
             if(readTsData){
                 if(.cdtData$EnvData$plotVar$varPICSA == "dryspell"){

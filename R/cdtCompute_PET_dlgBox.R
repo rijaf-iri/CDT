@@ -43,18 +43,18 @@ computePET_getParams <- function(){
             stateSetNC <- "disabled"
             stateSetNC1 <- "disabled"
         }else if(data.type == 'cdtdataset'){
-            input.Tmin <- tclVar(.cdtData$GalParams$cdtdataset$tmin)
-            input.Tmax <- tclVar(.cdtData$GalParams$cdtdataset$tmax)
-            input.Prec <- tclVar(.cdtData$GalParams$cdtdataset$prec)
+            input.Tmin <<- tclVar(.cdtData$GalParams$cdtdataset$tmin)
+            input.Tmax <<- tclVar(.cdtData$GalParams$cdtdataset$tmax)
+            input.Prec <<- tclVar(.cdtData$GalParams$cdtdataset$prec)
             txt.INTmin <- lang.dlg[['label']][['7']]
             txt.INTmax <- lang.dlg[['label']][['8']]
             txt.INPrec <- lang.dlg[['label']][['9']]
             stateSetNC <- "disabled"
             stateSetNC1 <- "disabled"
         }else{
-            input.Tmin <- tclVar(.cdtData$GalParams$cdtnetcdf$tmin$dir)
-            input.Tmax <- tclVar(.cdtData$GalParams$cdtnetcdf$tmax$dir)
-            input.Prec <- tclVar(.cdtData$GalParams$cdtnetcdf$prec$dir)
+            input.Tmin <<- tclVar(.cdtData$GalParams$cdtnetcdf$tmin$dir)
+            input.Tmax <<- tclVar(.cdtData$GalParams$cdtnetcdf$tmax$dir)
+            input.Prec <<- tclVar(.cdtData$GalParams$cdtnetcdf$prec$dir)
             txt.INTmin <- lang.dlg[['label']][['10']]
             txt.INTmax <- lang.dlg[['label']][['11']]
             txt.INPrec <- lang.dlg[['label']][['12']]

@@ -261,16 +261,14 @@ SeasonAnalysis.plot.TSGraph <- function(){
             don <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = tsdata.dir, parllCond = cdtParallelCond, do.par = FALSE)
 
             if(varPICSA == "dryspell"){
-                nval <- sapply(don, function(x) (length(x) == 1) & is.na(x[1]))
-                don <- sapply(don, function(x) sum(!is.na(x) & x >= dryspl))
+                nval <- sapply(don$data[, 1], function(x) (length(x) == 1) & is.na(x[1]))
+                don <- sapply(don$data[, 1], function(x) sum(!is.na(x) & x >= dryspl))
                 don[nval] <- NA
-            }
-            if(varPICSA == "longdryspell"){
-                don <- sapply(don, max, na.rm = TRUE)
+            }else if(varPICSA == "longdryspell"){
+                don <- sapply(don$data[, 1], max, na.rm = TRUE)
                 don[is.infinite(don)] <- NA
-            }
+            }else don <- as.numeric(don$data[, 1])
 
-            don <- as.numeric(don$data[, 1])
             dates <- cdtdataset$dateInfo$date
             daty <- as.numeric(substr(dates, 1, 4))
         }else{
@@ -373,9 +371,9 @@ SeasonAnalysis.plot.TSGraph <- function(){
             cessat <- as.numeric(cessat[, ixy])
         }else{
             onset <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = "Onset_days", parllCond = cdtParallelCond, do.par = FALSE)
-            onset <- as.numeric(onset$data[.cdtData$EnvData$daily.precip$dateInfo$index, 1])
+            onset <- as.numeric(onset$data[.cdtData$EnvData$cdtdataset$dateInfo$index, 1])
             cessat <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = "Cessation_days", parllCond = cdtParallelCond, do.par = FALSE)
-            cessat <- as.numeric(cessat$data[.cdtData$EnvData$daily.precip$dateInfo$index, 1])
+            cessat <- as.numeric(cessat$data[.cdtData$EnvData$cdtdataset$dateInfo$index, 1])
         }
 
         onset <- format(onset + .cdtData$EnvData$output$start.date, "%Y%m%d")
