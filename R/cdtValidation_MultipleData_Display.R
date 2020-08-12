@@ -188,6 +188,8 @@ multiValidation.plotGraph <- function(){
         if(optsgph$plot.type == "multi"){
             xax <- seq(xmin0, xmax0, length.out = 1000)
             fx <- ecdf(x)
+            # define "grp" to avoid "no visible binding for global variable" in R CMD check
+            grp <- NULL
             don <- lapply(seq_along(y), function(i){
                 obs <- data.frame(x = xax, y = fx(xax), name = data.name[i], grp = 'obs')
                 fy <- ecdf(y[[i]])

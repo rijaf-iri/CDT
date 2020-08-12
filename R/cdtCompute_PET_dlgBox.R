@@ -372,6 +372,10 @@ computePET_getParams <- function(){
     settingTmax <- .cdtData$GalParams$settingTmax
     settingPrec <- .cdtData$GalParams$settingPrec
 
+    set.prec <- NULL
+    cb.en.prec <- NULL
+    bt.prec <- NULL
+
     inputDataFun(.cdtData$GalParams$data.type, .cdtData$GalParams$method)
 
     ############################################

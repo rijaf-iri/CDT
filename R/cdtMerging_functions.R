@@ -399,7 +399,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
                          "No merging performed, output equals to the input NetCDF data", "\n")
             cat(msg, file = log.file, append = TRUE)
-            write.merging.output(jj, nc.val, grd.nc.out, outdir, ncfile,
+            write.merging.output(jj, nc.val, grd.nc.out, outdir,
                                  varinfo, ncInfo, params, mask)
             return(0)
         }
@@ -413,7 +413,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
                          "No merging performed, output equals to the input NetCDF data", "\n")
             cat(msg, file = log.file, append = TRUE)
-            write.merging.output(jj, nc.val, grd.nc.out, outdir, ncfile,
+            write.merging.output(jj, nc.val, grd.nc.out, outdir,
                                  varinfo, ncInfo, params, mask)
             return(0)
         }
@@ -422,7 +422,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             msg <- paste(ncInfo$dates[jj], ":", "not enough station data", "|",
                          "No merging performed, output equals to the input NetCDF data", "\n")
             cat(msg, file = log.file, append = TRUE)
-            write.merging.output(jj, nc.val, grd.nc.out, outdir, ncfile,
+            write.merging.output(jj, nc.val, grd.nc.out, outdir,
                                  varinfo, ncInfo, params, mask)
             return(0)
         }
@@ -435,7 +435,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
                 msg <- paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
                              "No merging performed, output equals to the input NetCDF data", "\n")
                 cat(msg, file = log.file, append = TRUE)
-                write.merging.output(jj, nc.val, grd.nc.out, outdir, ncfile,
+                write.merging.output(jj, nc.val, grd.nc.out, outdir,
                                      varinfo, ncInfo, params, mask)
                 return(0)
             }
@@ -446,7 +446,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
         out.mrg <- merging.functions(locations.stn, newgrid, params,
                                      formuleRK, ncInfo$dates[jj], log.file)
 
-        write.merging.output(jj, out.mrg, grd.nc.out, outdir, ncfile,
+        write.merging.output(jj, out.mrg, grd.nc.out, outdir,
                              varinfo, ncInfo, params, mask)
 
         return(0)
@@ -459,10 +459,8 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
 
 ###############################
 
-write.merging.output <- function(jj, out.mrg, grd.nc.out,
-                                 outdir, ncfile,
-                                 varinfo, ncInfo, params,
-                                 mask)
+write.merging.output <- function(jj, out.mrg, grd.nc.out, outdir, 
+                                 varinfo, ncInfo, params, mask)
 {
     if(!is.null(mask)) out.mrg[is.na(mask)] <- varinfo$missval
 

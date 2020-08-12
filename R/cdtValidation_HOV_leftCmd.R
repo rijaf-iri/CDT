@@ -1372,7 +1372,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 tclvalue(file.plotShp) <- shp.opfiles[[1]]
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
                 listOpenFiles <- openFile_ttkcomboList()
-                lapply(list(cb.stnfl, cb.valid, cb.adddem, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+                lapply(list(cb.stnfl, cb.adddem, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
                 shpofile <- getShpOpenData(file.plotShp)
                 if(is.null(shpofile))
@@ -1430,7 +1430,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                 tclvalue(file.grddem) <- nc.opfiles[[1]]
                 listOpenFiles <- openFile_ttkcomboList()
-                lapply(list(cb.stnfl, cb.valid, cb.adddem, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
+                lapply(list(cb.stnfl, cb.adddem, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
                 demData <- getNCDFSampleData(str_trim(tclvalue(file.grddem)))
                 if(!is.null(demData)){

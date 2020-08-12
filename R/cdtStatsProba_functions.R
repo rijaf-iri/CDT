@@ -79,7 +79,7 @@ regression.Vector <- function(X, Y, min.len){
 #' X <- matrix(rnorm(200), nrow = 20, ncol = 10)
 #' set.seed(2)
 #' Y <- matrix(rnorm(200), nrow = 20, ncol = 10)
-#' res <- regression.Vector(X, Y, 10)
+#' res <- regression.Matrix(X, Y, 10)
 #' 
 #' @export
 

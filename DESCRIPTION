@@ -52,6 +52,10 @@ Imports:
     latticeExtra,
     dynamicTreeCut,
     hexbin,
+    RColorBrewer,
+    gridBase,
+    rvest,
+    xml2,
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues

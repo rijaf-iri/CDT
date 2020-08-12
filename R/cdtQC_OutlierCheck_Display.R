@@ -161,16 +161,30 @@ qcPlot_Spatial.Check <- function(){
     allvois <- .cdtData$EnvData$outqc$res[[stnid]]$vois
 
     ix <- sapply(.cdtData$EnvData$outqc$spatial.vois, '[[', 'id') == stnid
-    useidx <- .cdtData$EnvData$outqc$spatial.vois[[which(ix)]]
-    ix <- which(useidx$it == daty)
-    usevois <- if(length(ix)) useidx$is[[ix]][-1] else ix
+    if(any(ix)){ 
+        useidx <- .cdtData$EnvData$outqc$spatial.vois[[which(ix)]]
+        ix <- which(useidx$it == daty)
+        usevois <- if(length(ix)) useidx$is[[ix]][-1] else ix
+    }else usevois <- NULL
 
     ix0 <- which(STNID == stnid)
-    ix1 <- usevois
-    ix2 <- selvois[!selvois %in% usevois]
-    ix3 <- allvois[!allvois %in% selvois]
+    ix1 <- integer(0)
+    ix2 <- integer(0)
+    ix3 <- integer(0)
+
+    if(!is.null(usevois)){
+        ix1 <- usevois
+        if(!is.null(selvois))
+            ix2 <- selvois[!selvois %in% usevois]
+    }
+
+    if(!is.null(allvois)){
+        if(!is.null(selvois))
+            ix3 <- allvois[!allvois %in% selvois]
+    }
+
     ix4 <- seq_along(STNID)
-    ix4 <- ix4[!ix4 %in% c(ix0, ix2, allvois)]
+    ix4 <- ix4[!ix4 %in% c(ix0, ix1, ix2, ix3)]
 
     stndon <- lapply(list(ix0, ix1, ix2, ix3, ix4), function(ix){
         x <- y <- z <- NA

@@ -1953,6 +1953,9 @@ Validation.GraphOptions1.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$
 
     stateKol2 <- if(GraphOpt$scatter$hexbin$custom) "normal" else "disabled"
 
+    spin.PtT <- NULL
+    spin.PtS <- NULL
+
     if(GraphOpt$scatter$plot.type == 'points') plotPoints() else plotHexbin()
 
     ##########
@@ -2749,6 +2752,13 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
     stateKol2 <- if(GraphOpt$cdf$plot1$custom) "normal" else "disabled"
     valid.obsN <- tclVar(GraphOpt$cdf$validName$obs)
 
+    spin.pltPointS1 <- NULL
+    spin.pltPointS2 <- NULL
+    spin.pltPointT1 <- NULL
+    spin.pltPointT2 <- NULL
+    spin.pltLineW1 <- NULL
+    spin.pltLineW2 <- NULL
+
     if(GraphOpt$cdf$plot.type == 'multi') plotMultiplePanel() else plotSinglePanel()
 
     #####################
@@ -3485,6 +3495,13 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
     custom.color <- tclVar(GraphOpt$line$plot1$custom)
     stateKol2 <- if(GraphOpt$line$plot1$custom) "normal" else "disabled"
     valid.obsN <- tclVar(GraphOpt$line$validName$obs)
+
+    spin.pltPointS1 <- NULL
+    spin.pltPointS2 <- NULL
+    spin.pltPointT1 <- NULL
+    spin.pltPointT2 <- NULL
+    spin.pltLineW1 <- NULL
+    spin.pltLineW2 <- NULL
 
     if(GraphOpt$line$plot.type == 'multi') plotMultiplePanel() else plotSinglePanel()
 
