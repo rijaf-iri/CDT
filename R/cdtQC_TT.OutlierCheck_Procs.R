@@ -556,7 +556,7 @@ qcTTOutliersCheckProcs <- function(GeneralParameters){
                 })
             }else spatial.vois <- NULL
 
-            outqc.spatial$minmax <- NA
+            if(!is.null(outqc.spatial)) outqc.spatial$minmax <- NA
         }
 
         Insert.Messages.Out(message[['23']], TRUE, "s")
