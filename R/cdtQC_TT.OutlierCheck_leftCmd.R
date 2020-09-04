@@ -26,7 +26,7 @@ qcTTOutlierCheckPanelCmd <- function(){
     GeneralParameters <- list(intstep = "daily", infile1 = "", infile2 = "",
                               qc.tmax = TRUE, outdir = "",
                               params = list(
-                                            temp.max = 60, temp.min = -5, sigma = 3, window = 30,
+                                            temp.max = 50, temp.min = -5, sigma = 3, window = 30,
                                             voisin = list(min = 4, max = 15, dist = 50, elv = 800),
                                             elv = list(use = FALSE, dem = TRUE, file = "")
                                           )

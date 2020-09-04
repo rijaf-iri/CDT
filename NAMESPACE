@@ -3,6 +3,7 @@ useDynLib(CDT, .registration = TRUE)
 
 export(startCDT, cdtInterp, distance.Matrix)
 export(regression.Vector, regression.Matrix)
+export(download.oni.cpc.ncep.noaa)
 
 importFrom("methods", "as", "is", "slot")
 importFrom("graphics", "abline", "arrows", "axTicks", "axis",
