@@ -1,8 +1,8 @@
 
 ## check OS type
-WindowsOS <- function() if(Sys.info()["sysname"] == "Windows") TRUE else FALSE
-MacOSXP <- function() if(Sys.info()["sysname"] %in% c("darwin", "Darwin")) TRUE else FALSE
-LinuxOS <- function() if(Sys.info()["sysname"] == "Linux") TRUE else FALSE
+WindowsOS <- function() if(tolower(Sys.info()["sysname"]) == "windows") TRUE else FALSE
+MacOSXP <- function() if(tolower(Sys.info()["sysname"]) == "darwin") TRUE else FALSE
+LinuxOS <- function() if(tolower(Sys.info()["sysname"]) == "linux") TRUE else FALSE
 
 ##############################################
 
@@ -21,6 +21,17 @@ is.HelpServerRunning <- function(){
             get("httpdPort", envir = environment(tools::startDynamicHelp)) > 0,
             tools::startDynamicHelp(NA) > 0)
 }
+
+##############################################
+
+## Load local configuration file
+cdtLocalConfigData <- function(){
+    cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
+    Config <- fromJSON(cdt.file.conf)
+    Config <- rapply(Config, str_trim, classes = "character", how = "replace")
+    .cdtData$Config <- Config
+}
+
 
 ##############################################
 

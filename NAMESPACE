@@ -4,6 +4,7 @@ useDynLib(CDT, .registration = TRUE)
 export(startCDT, cdtInterp, distance.Matrix)
 export(regression.Vector, regression.Matrix)
 export(download.oni.cpc.ncep.noaa)
+export(cdtMergingPrecipCMD, cdtMergingTempCMD)
 
 importFrom("methods", "as", "is", "slot")
 importFrom("graphics", "abline", "arrows", "axTicks", "axis",

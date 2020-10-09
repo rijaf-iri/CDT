@@ -226,7 +226,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     # spatial check
 
     params$spatial <- list(ispmax = 1, ispobs = 10, isdmin = 3,
-                           isdobs = 1, isdq1 = 10, iqrf = 2.8)
+                           isdobs = 1, isdq1 = 10, iqrf = 3.0, minDevA = 5)
 
     outqc.spatial <- NULL
     spatial.vois <- NULL
@@ -307,14 +307,16 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
 
             ## check less than 25% percentile and greater than 75% 
             iqr0 <- matrixStats::rowQuantiles(x, probs = c(0.25, 0.75), na.rm = TRUE, type = 8, drop = FALSE)
-            iqr0 <- iqr0[, 2] - iqr0[, 1]
+            iqr0 <- (iqr0[, 2] - iqr0[, 1]) + 1e-6
             med <- matrixStats::rowMedians(x, na.rm = TRUE)
             stat0 <- (x[, 1] - med) / (params$spatial$iqrf * iqr0)
-            stat0[is.nan(stat0) | is.infinite(stat0)] <- 0
+            # stat0[is.nan(stat0) | is.infinite(stat0)] <- 0
 
             ## include temporal outliers
             tmp.chk <- rep(FALSE, length(stat0))
             if(!is.null(tmp.date[[j]])) tmp.chk <- idaty %in% tmp.date[[j]]
+
+            ## Filter
             iq <- which(stat0 < -0.9 | stat0 > 0.9 | tmp.chk)
 
             if(length(iq) == 0){
@@ -337,16 +339,28 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             stat0 <- stat0[iq]
             tmp.chk <- tmp.chk[iq]
             VOIS <- VOIS[iq]
+            ########
 
+            # ## remove target station
             min.nbrs <- matrixStats::rowMins(x[, -1, drop = FALSE], na.rm = TRUE)
             max.nbrs <- matrixStats::rowMaxs(x[, -1, drop = FALSE], na.rm = TRUE)
-            Q <- matrixStats::rowQuantiles(x[, -1, drop = FALSE], probs = c(0.25, 0.75), na.rm = TRUE, type = 8, drop = FALSE)
-            iqr <- Q[, 2] - Q[, 1]
+            Q <- matrixStats::rowQuantiles(x[, -1, drop = FALSE], probs = c(0.05, 0.25, 0.75, 0.98), na.rm = TRUE, type = 8, drop = FALSE)
+            iqr <- (Q[, 3] - Q[, 2]) + 1e-6
 
+            ########
             ## isolated precipitation
-            ispr1 <- params$spatial$ispmax - max.nbrs
-            ispr2 <- x[, 1] - params$spatial$ispobs
-            isol.pre <- ispr1 > 0 & ispr2 > 0 & stat0 > 1
+            isp <- stat0 >= 1e+6
+            isol.pre <- rep(FALSE, length(isp))
+            if(any(isp)){
+                Qispmax <- rowMeans(x[isp, , drop = FALSE], na.rm = TRUE)
+                ispr1 <- Qispmax - max.nbrs[isp]
+                ispr2 <- x[isp, 1] - Q[isp, 4]
+                isol.pre[isp] <- ispr1 > 0 & ispr2 > 0
+            }else{
+                ispr1 <- params$spatial$ispmax - max.nbrs[!isp]
+                ispr2 <- x[!isp, 1] - params$spatial$ispobs
+                isol.pre[!isp] <- ispr1 > 0 & ispr2 > 0 & stat0[!isp] > 1
+            }
 
             isolated.precip <- NULL
             if(any(isol.pre)){
@@ -358,7 +372,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             ## isolated dryness
             isdr1 <- min.nbrs - params$spatial$isdmin
             isdr2 <- params$spatial$isdobs - 2 * x[, 1]
-            isdr3 <- Q[, 1] - params$spatial$isdq1
+            isdr3 <- Q[, 2] - params$spatial$isdq1
             isol.dry <- isdr1 > 0 & isdr2 > 0 & isdr3 > 0 & stat0 < -1
 
             isolated.dry <- NULL
@@ -368,10 +382,28 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
                 isolated.dry$stats <- abs(stat0[isol.dry])
             }
 
+            ################################################
+
+            # DIST <- lapply(VOIS, function(x){
+            #     voisin[[j]]$dist[match(x, voisin[[j]]$stn)]
+            # })
+
+            # EST <- sapply(seq_along(VOIS), function(i){
+            #     inv.dst <- 1/(DIST[[i]][-1] + 1e-6)^2
+            #     v <- x[i, -1]
+            #     inv.dst <- inv.dst[!is.na(v)]
+            #     v <- v[!is.na(v)]
+            #     sum(inv.dst * v) / sum(inv.dst)
+            # })
+            # MOY <- rowMeans(x[, -1, drop = FALSE], na.rm = TRUE)
+            # SDS <- matrixStats::rowSds(x[, -1, drop = FALSE], na.rm = TRUE)
+
+            ########
+
             ## Too large deviations above
-            atldv <- (x[, 1] - Q[, 2]) / (2 * params$spatial$iqrf * iqr)
-            atldv[is.nan(atldv) | is.infinite(atldv)] <- 0
-            large.above <- atldv > 1 & ispr2 > 0 & !isol.pre
+            atldv <- (x[, 1] - Q[, 3]) / (2 * params$spatial$iqrf * iqr)
+            extraC1 <- x[, 1] > Q[, 4] & x[, 1] > params$spatial$minDevA
+            large.above <- atldv > 1 & !isol.pre & extraC1
 
             largedev.above <- NULL
             if(any(large.above)){
@@ -381,9 +413,9 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             }
 
             ## Too large deviations below
-            btldv <- (x[, 1] - Q[, 1]) / (params$spatial$iqrf * iqr)
-            btldv[is.nan(btldv) | is.infinite(btldv)] <- 0
-            large.below <- btldv < -1 & isdr2 > 0 & !isol.dry
+            btldv <- (x[, 1] - Q[, 2]) / (params$spatial$iqrf * iqr)
+            extraC2 <- x[, 1] < Q[, 1]
+            large.below <- btldv < -1 & isdr2 > 0 & !isol.dry & extraC2
 
             largedev.below <- NULL
             if(any(large.below)){

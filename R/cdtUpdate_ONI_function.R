@@ -10,6 +10,7 @@
 #' @export
 
 download.oni.cpc.ncep.noaa <- function(GUI = FALSE){
+    cdtLocalConfigData()
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtUpdate_ONI_function.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 

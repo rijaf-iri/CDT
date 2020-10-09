@@ -64,7 +64,8 @@ chirps.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
 chirp.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     bbx <- GalParams$bbox
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP"
+    # ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP"
+    ftp.ucsb <- "ftp://ftp.chc.ucsb.edu/pub/org/chc/products/CHIRP"
 
     if(GalParams$tstep == "daily"){
         data.dir <- "global"
@@ -162,7 +163,8 @@ chirp.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRU
 chirps.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     bbx <- GalParams$bbox
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0"
+    # ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0"
+    ftp.ucsb <- "ftp://ftp.chc.ucsb.edu/pub/org/chc/products/CHIRPS-2.0"
 
     if(GalParams$tstep == "daily"){
         if((bbx$minlon >= -19.975 && bbx$maxlon <= 54.975) &&
@@ -273,7 +275,8 @@ chirps.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TR
 ## toexport
 chirps.6hrAF.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range, GalParams$minhour)
-    ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly"
+    # ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly"
+    ftp.ucsb <- "ftp://ftp.chc.ucsb.edu/pub/org/chc/products/CHIRPS-2.0/africa_6-hourly"
     data.dir <- "africa"
     daty <- as.Date(paste(rdate[, 1], rdate[, 2], rdate[, 3], sep = "-"))
     baseurl <- ifelse(daty <= as.Date("2015-07-31"), "p1_bin", "p1_bin/extra_step")

@@ -103,7 +103,13 @@ menuCopyPaste <- function(parent, scopy = 'normal', scut = 'disabled', spaste = 
 {
     cpmenu <- tkmenu(parent, tearoff = FALSE)
 
-    tkadd(cpmenu, "command", label = "Copy  ........ <Ctrl-C>", state = scopy,
+    tkadd(cpmenu, "command", label = "Select All  ... <Ctrl+/>",
+          command = function()
+        {
+            tktag.add(parent, "sel", "1.0", "end")
+        })
+    tkadd(cpmenu, "separator")
+    tkadd(cpmenu, "command", label = "Copy   ........ <Ctrl+C>", state = scopy,
           command = function()
         {
             .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(parent), "<<Copy>>")))
@@ -120,13 +126,13 @@ menuCopyPaste <- function(parent, scopy = 'normal', scut = 'disabled', spaste = 
             }
         })
     tkadd(cpmenu, "separator")
-    tkadd(cpmenu, "command", label = "Cut    ........ <Ctrl-X>", state = scut,
+    tkadd(cpmenu, "command", label = "Cut    ........ <Ctrl+X>", state = scut,
           command = function()
         {
             .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(parent), "<<Cut>>")))
         })
     tkadd(cpmenu, "separator")
-    tkadd(cpmenu, "command", label = "Paste ........ <Ctrl-V>", state = spaste,
+    tkadd(cpmenu, "command", label = "Paste  ........ <Ctrl+V>", state = spaste,
           command = function()
         {
             .Tcl(paste("event", "generate", .Tcl.args(.Tk.ID(parent), "<<Paste>>")))

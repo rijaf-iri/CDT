@@ -18,9 +18,9 @@ qcRRZeroCheckPanelCmd <- function(){
     ###################
 
     GeneralParameters <- list(infile = "", outdir = "",
-                              params = list(min.nbrs = 4, max.nbrs = 8,
-                                            min.days = 22, max.dist = 45,
-                                            min.thrs = 1.5))
+                              params = list(min.nbrs = 4, max.nbrs = 20,
+                                            min.days = 22, max.dist = 120,
+                                            min.thrs = 1.8))
 
     ###################
 

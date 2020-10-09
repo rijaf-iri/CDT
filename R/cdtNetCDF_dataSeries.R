@@ -27,9 +27,8 @@ ncInfo.no.date.range <- function(ncdf, intstep){
 
 ##############################################
 
-ncInfo.with.date.range <- function(ncdf, date.range, tstep, minhour = NA){
-    dates <- table.format.date.time(tstep, date.range, minhour)
-    dates <- dates[, -ncol(dates), drop = FALSE]
+ncInfo.dates.table <- function(ncdf, dates.table){
+    dates <- dates.table[, -ncol(dates.table), drop = FALSE]
     ldates <- split(dates, col(dates))
     dates <- do.call(paste0, ldates)
 
@@ -39,8 +38,17 @@ ncInfo.with.date.range <- function(ncdf, date.range, tstep, minhour = NA){
     nc.exist <- file.exists(nc.path)
     if(!any(nc.exist)) return(NULL)
 
-    ret <- list(dates = dates, ncfiles = nc.path, exist = nc.exist)
-    return(ret)
+    list(dates = dates, ncfiles = nc.path, exist = nc.exist)
+}
+
+ncInfo.with.date.range <- function(ncdf, date.range, tstep, minhour = NA){
+    dates <- table.format.date.time(tstep, date.range, minhour)
+    ncInfo.dates.table(ncdf, dates)
+}
+
+ncInfo.from.date.vector <- function(ncdf, dates, tstep){
+    dates <- table.format.date.time1(tstep, dates)
+    ncInfo.dates.table(ncdf, dates)
 }
 
 ##############################################

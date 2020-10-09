@@ -80,6 +80,15 @@ merge2CDTdata <- function(){
         return(NULL)
     }
 
+    ######################
+    # TODO: check duplicate ID and coordinates for each file (donne[[1]] and donne[[2]])
+    # compare first the duplicates for each file
+    # Take one if all equal
+    # compare with the other file
+    # put aside the result then continue
+
+    ######################
+    # date 
     ldate1 <- donne[[1]]$date %in% donne[[2]]$date
     ldate2 <- donne[[2]]$date %in% donne[[1]]$date
     if(any(ldate1)){
@@ -123,21 +132,59 @@ merge2CDTdata <- function(){
                 id.com <- c(donne[[1]]$id[same.id1], idd)
                 don.com <- cbind(retComp[[1]], ddon)
             }
-            stn.diff.values <- retComp[[2]]
+
+            if(!is.null(retComp[[2]])){
+                dat1 <- retComp[[2]]$data1
+                dat2 <- retComp[[2]]$data2
+                stnID <- names(dat1)[-1]
+                stn.diff.values <- lapply(stnID, function(x){
+                    ix0 <- is.na(dat1[[x]]) & is.na(dat2[[x]])
+                    ix <- (dat1[[x]] != dat2[[x]]) & !ix0
+                    ix[is.na(ix)] <- TRUE
+                    don <- data.frame(dat1$Date[ix], dat1[[x]][ix], dat2[[x]][ix])
+                    names(don) <- c('Date', file1, file2)
+                    don
+                })
+                names(stn.diff.values) <- stnID
+            }else stn.diff.values <- NULL
         }else{
             id.com <- c(donne[[1]]$id, donne[[2]]$id)
             don.com <- cbind(idon1, idon2)
             stn.diff.values <- NULL
         }
 
+        # different date from donne1
         XX1 <- data.frame(date1, donne1)
         names(XX1) <- c('Daty', donne[[1]]$id)
+        # date intersection
         XX2 <- data.frame(idate, don.com)
         names(XX2) <- c('Daty', id.com)
+        # different date from donne2
         XX3 <- data.frame(date2, donne2)
         names(XX3) <- c('Daty', donne[[2]]$id)
-        XX <- merge(merge(XX1, XX2, all = TRUE), XX3, all = TRUE)
-        rm(date1, date2, idon1, idon2, XX1, XX2, XX3)
+
+        ## A verifier encore (replace merge)
+        if(nrow(XX1) > 0 & nrow(XX2) > 0){
+            XX4 <- merge(XX1, XX2, all = TRUE)
+        }else if(nrow(XX1) > 0){
+            XX4 <- XX1
+        }else if(nrow(XX2) > 0){
+            XX4 <- XX2
+        }else{
+            XX4 <- XX1
+        }
+
+        if(nrow(XX4) > 0 & nrow(XX3) > 0){
+            XX <- merge(XX4, XX3, all = TRUE)
+        }else if(nrow(XX3) > 0){
+            XX <- XX3
+        }else if(nrow(XX4) > 0){
+            XX <- XX4
+        }else{
+            XX <- XX3
+        }
+
+        rm(date1, date2, idon1, idon2, XX1, XX2, XX3, XX4)
     }else{
         stn.diff.values <- NULL
         XX1 <- data.frame(donne[[1]]$date, donne[[1]]$data)
@@ -152,12 +199,13 @@ merge2CDTdata <- function(){
     xxdaty <- as.character(XX$Daty)
 
     ######################
+    # coords
 
     id1 <- donne[[1]]$id
     id2 <- donne[[2]]$id
     im <- min(c(nrow(donne[[1]]$crd), nrow(donne[[2]]$crd)))
-    head1 <- donne[[1]]$crd[1:im, ]
-    head2 <- donne[[2]]$crd[1:im, ]
+    head1 <- donne[[1]]$crd[1:im, , drop = FALSE]
+    head2 <- donne[[2]]$crd[1:im, , drop = FALSE]
 
     head1.id <- id1 %in% id2
     head2.id <- id2 %in% id1
@@ -187,7 +235,13 @@ merge2CDTdata <- function(){
             id.com <- c(id1[head1.id], idd)
             head.com <- cbind(retComp[[1]], dhead)
         }
-        stn.crd.diff <- retComp[[2]]
+
+        if(!is.null(retComp[[2]])){
+            stn.crd.diff <- data.frame(t(retComp[[2]]$Coord1), t(retComp[[2]]$Coord2)[, -1])
+            stn.crd.diff <- stn.crd.diff[-1, ]
+            names(stn.crd.diff) <- c('STATIONS', paste0("LON_", file1), paste0("LAT_", file1),
+                                     paste0("LON_", file2), paste0("LAT_", file2))
+        }else stn.crd.diff <- NULL
     }else{
         id.com <- c(id1, id2)
         head.com <- cbind(head1, head2)
@@ -207,7 +261,13 @@ merge2CDTdata <- function(){
     }
     names(headF) <- c('Daty', id.com)
 
-    donne <- merge(headF, XX, all = TRUE, sort = FALSE)
+    ## A verifier encore (replace merge)
+    if(all(names(XX) == names(headF))){
+        donne <- rbind(headF, XX)
+    }else{
+        donne <- merge(headF, XX, all = TRUE, sort = FALSE)
+    }
+
     donne[is.na(donne)] <- donneInfo[[3]]$miss.val
     writeFiles(donne, File2Save)
     rm(donne1, donne2, ldate1, ldate2, donne, XX, headF, head1, head2)
@@ -215,11 +275,11 @@ merge2CDTdata <- function(){
     ########################
 
     outlist <- list()
-    if(!is.null(stn.diff.values)){
-        outlist <- c(outlist, list(GalParams[['message']][['6']], stn.diff.values))
-    }
     if(!is.null(stn.crd.diff)){
         outlist <- c(outlist, list(GalParams[['message']][['7']], stn.crd.diff))
+    }
+    if(!is.null(stn.diff.values)){
+        outlist <- c(outlist, list(GalParams[['message']][['6']], stn.diff.values))
     }
 
     if(length(outlist) > 0){

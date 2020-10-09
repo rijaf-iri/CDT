@@ -24,8 +24,8 @@ qcRROutlierCheckPanelCmd <- function(){
     ###################
 
     GeneralParameters <- list(intstep = "daily", infile = "", outdir = "",
-                              params = list(precip.max = 300, sigma = 3,
-                                            voisin = list(min = 4, max = 15, dist = 30, elv = 800),
+                              params = list(precip.max = 300, sigma = 3.5,
+                                            voisin = list(min = 4, max = 15, dist = 120, elv = 800),
                                             elv = list(use = FALSE, dem = TRUE, file = "")
                                            )
                               )

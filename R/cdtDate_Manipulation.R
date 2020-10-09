@@ -208,6 +208,21 @@ get.date.time.range.cdt.station <- function(dates, tstep){
 
 ##############################################
 
+rename_date.range <- function(date.range){
+    rename <- function(x){
+        nm <- names(x)
+        ix <- !nm %in% 'year'
+        nm[ix] <- substr(nm[ix], 1, 3)
+        return(nm)
+    }
+    names(date.range$start) <- rename(date.range$start)
+    names(date.range$end) <- rename(date.range$end)
+
+    as.list(unlist(date.range))
+}
+
+##############################################
+
 get.range.date.time <- function(date.range, tstep, minhour = NA){
     if(tstep %in% c("daily", "pentad", "dekadal", "monthly")){
         dekpenday <- switch(tstep,
@@ -320,6 +335,47 @@ table.format.date.time <- function(tstep, date.range, minhour = NA){
     }
 
     if(tstep == "monthly"){
+        dates <- format(dates, '%Y-%m-%d')
+        dates <- do.call(rbind, strsplit(dates, "-"))
+    }
+
+    return(dates)
+}
+
+table.format.date.time1 <- function(tstep, dates){
+    if(tstep %in% c("daily", "hourly", "minute")){
+        format <- switch(tstep,
+                         "minute" = c("%Y%m%d%H%M", "%Y-%m-%d-%H-%M"),
+                         "hourly" = c("%Y%m%d%H", "%Y-%m-%d-%H"),
+                         "daily" = c("%Y%m%d", "%Y-%m-%d")
+                        )
+        dates <- as.POSIXct(dates, tz = "UTC", format = format[1])
+        dates <- dates[!is.na(dates)]
+        doy <- strftime(dates, format = "%j", tz = "UTC")
+        dates <- format(dates, format[2])
+        dates <- do.call(rbind, strsplit(dates, "-"))
+        dates <- cbind(dates, doy)
+    }
+
+    if(tstep %in% c("pentad", "dekadal")){
+        dates <- as.Date(dates, '%Y%m%d')
+        dates <- dates[!is.na(dates)]
+        dates <- format(dates, '%Y-%m-%d')
+        dates <- do.call(rbind, strsplit(dates, "-"))
+        n <- switch(tstep, "pentad" = 6, "dekadal" = 3)
+        xx <- as.numeric(dates[, 3])
+        dates <- dates[xx <= n, , drop = FALSE]
+        xx <- cbind(str_pad(rep(1:12, each = n), 2, pad = "0"),
+                    str_pad(rep(1:n, 12), 2, pad = "0"))
+        p1 <- paste(dates[, 2], dates[, 3], sep = "-")
+        p2 <- paste(xx[, 1], xx[, 2], sep = "-")
+        xx <- str_pad(match(p1, p2), 2, pad = "0")
+        dates <- cbind(dates[, 1:2, drop = FALSE], as.numeric(dates[, 3]), xx)
+    }
+
+    if(tstep == "monthly"){
+        dates <- as.Date(paste0(dates, '15'), '%Y%m%d')
+        dates <- dates[!is.na(dates)]
         dates <- format(dates, '%Y-%m-%d')
         dates <- do.call(rbind, strsplit(dates, "-"))
     }

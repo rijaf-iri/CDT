@@ -127,7 +127,7 @@ execMergeRain <- function(){
     if(!is.null(ret)){
         if(ret != 0){
           Insert.Messages.Out(paste(message[['18']],
-                              file.path(outdir, "log_file.txt")), TRUE, "w")  
+                              file.path(outdir, "log_file.txt")), TRUE, "w")
         }
     }else return(NULL)
 
