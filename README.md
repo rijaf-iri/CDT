@@ -274,7 +274,7 @@ Install R
 sudo apt-get install r-base r-base-dev
 ```
 
-### 5) Install `R` packages `ncdf4`
+### 5) Install `R` package `ncdf4`
 
 ```bash
 sudo apt-get install r-cran-ncdf4
