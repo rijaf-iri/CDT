@@ -7,7 +7,7 @@ Climate Data Tools `CDT` is a  set of utility functions for meteorological data 
 ### 1) Install `R`
 
 Go to the CRAN website [CRAN](https://CRAN.R-project.org).
-Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`. For example: [Download R 3.6.2 for Windows](https://cran.r-project.org/bin/windows/base/R-3.6.2-win.exe) (62 megabytes, 32/64 bit).
+Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`. For example: [Download R 3.6.2 for Windows](https://cran.r-project.org/bin/windows/base/R-4.0.3-win.exe) (85 megabytes, 32/64 bit).
 Install the downloaded file (example: R-3.6.2-win.exe). Perform a default installation (Just click on **Next**).
 
 ```
@@ -18,17 +18,9 @@ CDT requires R version 3.5.0 or higher. We recommend that you have the latest ve
 
 Go to the CRAN website [CRAN](https://CRAN.R-project.org).
 Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [Rtools](https://cran.r-project.org/bin/windows/Rtools/). Download the recommended version of `Rtools`.
-Install the downloaded file. Use the default installation path **C:\Rtools**, install all components, and add `Rtools` to the system PATH.
+Install the downloaded file. Follow the installation instructions on [Rtools](https://cran.r-project.org/bin/windows/Rtools/).
 
-### 3) Install the package `tkrplot`
-
-Install the latest version of the package `tkrplot` by entering the following in `R`:
-
-```r
-install.packages("tkrplot")
-```
-
-### 4) Install `CDT`
+### 3) Install `CDT`
 
 Open `R` and install `devtools` package with:
 
@@ -157,15 +149,7 @@ Download and install `R` binary for your MacOS X version from [https://cran.r-pr
 CDT requires R version 3.5.0 or higher. We recommend that you have the latest version of R.
 ```
 
-### 5) Install the package `tkrplot`
-
-Install the latest version of the package `tkrplot` by entering the following in `R`:
-
-```r
-install.packages("tkrplot")
-```
-
-### 6) Install `rgeos` and `rgdal`
+### 5) Install `rgeos` and `rgdal`
 
 Open `R` and install `rgdal` package with:
 
@@ -188,7 +172,7 @@ configure.args =
 )
 ```
 
-### 7) Install `CDT`
+### 6) Install `CDT`
 Open `R` and install `devtools` package with: 
 
 ```r
@@ -290,10 +274,10 @@ Install R
 sudo apt-get install r-base r-base-dev
 ```
 
-### 5) Install `R` packages `ncdf4` and `tkrplot`
+### 5) Install `R` packages `ncdf4`
 
 ```bash
-sudo apt-get install r-cran-tkrplot r-cran-ncdf4
+sudo apt-get install r-cran-ncdf4
 ```
 
 You can install `ncdf4` package with:
@@ -306,15 +290,7 @@ install.packages('ncdf4', type = "source",
         configure.args = paste0('--with-nc-config=', nc_config))
 ```
 
-### 6) Install the package `tkrplot`
-
-Install the latest version of the package `tkrplot` by entering the following in `R`:
-
-```r
-install.packages("tkrplot")
-```
-
-### 7) Install `rgeos` and `rgdal`
+### 6) Install `rgeos` and `rgdal`
 
 Open `R` and install `rgdal` package with:
 
@@ -344,7 +320,7 @@ install.packages("rgeos", type = "source",
        )
 ```
 
-### 8) Install `CDT`
+### 7) Install `CDT`
 
 Open `R` and install `devtools` package with: 
 
