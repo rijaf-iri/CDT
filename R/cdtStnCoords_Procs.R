@@ -241,6 +241,14 @@ StnChkCoordsCorrect <- function(){
 
     if(!is.null(Table.Disp)){
         idx <- as.character(Table.Disp[, 2])
+
+        idup0 <- !duplicated(idx0)
+        idup <- !duplicated(idx)
+        idx0 <- idx0[idup0]
+        idx <- idx[idup]
+        .cdtData$EnvData$Table.Disp0 <- .cdtData$EnvData$Table.Disp0[idup0, , drop = FALSE]
+        Table.Disp <- Table.Disp[idup, , drop = FALSE]
+
         id.del0 <- idx0[!idx0 %in% idx]
         change <- Table.Disp[, -1, drop = FALSE]
 
