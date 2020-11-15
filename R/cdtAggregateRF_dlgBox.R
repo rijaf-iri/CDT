@@ -1,5 +1,4 @@
 
-
 AggregateMWin_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
