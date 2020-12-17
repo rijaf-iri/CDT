@@ -1,11 +1,11 @@
 
 ## toexport
-tamsat.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
+tamsat3.0.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0"
     vartime <- switch(GalParams$tstep,
                       "daily" = c(".daily/.rfe", "time"),
-                      "dekadal" = c("dekadal/.rfe", "T"),
-                      "monthly" = c("dekadal/.rfe", "T")
+                      "dekadal" = c(".dekadal/.rfe", "T"),
+                      "monthly" = c(".monthly/.rfe", "time")
                      )
 
     rlon <- unlist(GalParams$bbox[c('minlon', 'maxlon')])
@@ -13,18 +13,47 @@ tamsat.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
     rlat <- unlist(GalParams$bbox[c('minlat', 'maxlat')])
     rlat <- paste(c('lat', rlat, 'RANGE'), collapse = "/")
 
-    aggr <- if(GalParams$tstep == "monthly") "monthlyAverage/3./mul" else NULL
-
     rdate <- iridl.format.date(GalParams$tstep, GalParams$date.range)
     urls <- urltools::url_encode(paste0("(", rdate$dates, ")"))
     urls <- paste0(vartime[2], "/", urls, "/", "VALUE")
-    urls <- paste(dlpath, vartime[1], rlon, rlat, aggr, urls, 'data.nc', sep = "/")
+    urls <- paste(dlpath, vartime[1], rlon, rlat, urls, 'data.nc', sep = "/")
 
     #########
     data.name <- paste0("TAMSATv3_", GalParams$tstep)
     outdir <- file.path(GalParams$dir2save, data.name)
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
     destfiles <- file.path(outdir, paste0("tamsatv3_", rdate$out, ".nc"))
+
+    ret <- cdt.download.data(urls, destfiles, destfiles, nbfile, GUI,
+                             verbose, data.name, iridl.download.data)
+    return(ret)
+}
+
+## toexport
+tamsat3.1.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
+    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1"
+    vartime <- switch(GalParams$tstep,
+                      "daily" = ".daily/.rfe",
+                      "dekadal" = ".dekadal/.rfe",
+                      "monthly" = ".monthly/.rfe"
+                     )
+
+    rlon <- unlist(GalParams$bbox[c('minlon', 'maxlon')])
+    rlon <- paste(c('X', rlon, 'RANGE'), collapse = "/")
+    rlat <- unlist(GalParams$bbox[c('minlat', 'maxlat')])
+    rlat <- paste(c('Y', rlat, 'RANGE'), collapse = "/")
+
+    rdate <- iridl.format.date(GalParams$tstep, GalParams$date.range)
+    urls <- urltools::url_encode(paste0("(", rdate$dates, ")"))
+    urls <- paste("T", urls, "VALUE", sep = "/")
+    
+    urls <- paste(dlpath, vartime, rlon, rlat, urls, 'data.nc', sep = "/")
+
+    #########
+    data.name <- paste0("TAMSATv3.1_", GalParams$tstep)
+    outdir <- file.path(GalParams$dir2save, data.name)
+    dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
+    destfiles <- file.path(outdir, paste0("tamsatv3.1_", rdate$out, ".nc"))
 
     ret <- cdt.download.data(urls, destfiles, destfiles, nbfile, GUI,
                              verbose, data.name, iridl.download.data)
@@ -57,7 +86,8 @@ tamsatv3.1.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbo
     ncfiles <- file.path(extrdir, ncfiles0)
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI, verbose,
-                             data.name, tamsat.download.data, bbox = GalParams$bbox)
+                             data.name, tamsat.download.data,
+                             bbox = GalParams$bbox, version = "3.1")
 
     return(ret)
 }
@@ -85,14 +115,15 @@ tamsatv3.0.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbo
     ncfiles <- file.path(extrdir, ncfiles0)
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI, verbose,
-                             data.name, tamsat.download.data, bbox = GalParams$bbox)
+                             data.name, tamsat.download.data,
+                             bbox = GalParams$bbox, version = "3.0")
 
     return(ret)
 }
 
 #################################################################################
 
-tamsat.download.data <- function(lnk, dest, ncfl, bbox){
+tamsat.download.data <- function(lnk, dest, ncfl, bbox, version){
     xx <- basename(dest)
 
     link.exist <- try(readLines(lnk, 1), silent = TRUE)
@@ -100,7 +131,7 @@ tamsat.download.data <- function(lnk, dest, ncfl, bbox){
 
     dc <- try(curl::curl_download(lnk, dest), silent = TRUE)
     if(!inherits(dc, "try-error")){
-        ret <- tamsat.extract.data(dest, ncfl, bbox)
+        ret <- tamsat.extract.data(dest, ncfl, bbox, version)
         if(ret == 0){
             xx <- NULL
         }else{
@@ -110,7 +141,7 @@ tamsat.download.data <- function(lnk, dest, ncfl, bbox){
     return(xx)
 }
 
-tamsat.extract.data <- function(dest, ncfl, bbox){
+tamsat.extract.data <- function(dest, ncfl, bbox, version){
     nc <- try(ncdf4::nc_open(dest), silent = TRUE)
     ret <- 1
     if(!inherits(nc, "try-error")){
@@ -121,6 +152,9 @@ tamsat.extract.data <- function(dest, ncfl, bbox){
         start <- c(which(ix)[1], which(iy)[1], 1)
         count <- c(diff(range(which(ix))) + 1, diff(range(which(iy))) + 1, 1)
         val <- ncdf4::ncvar_get(nc, "rfe", start, count)
+        if(version == "3.1")
+            if(all(is.na(val)))
+                val <- ncdf4::ncvar_get(nc, "rfe_filled", start, count)
         ncdf4::nc_close(nc)
 
         lon <- lon[ix]

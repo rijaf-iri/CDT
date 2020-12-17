@@ -12,10 +12,8 @@
             <option id="2">
                 <text lang="en"> Minimum temperature at 2m above ground </text>
             </option>
-        </combobox>
-        <combobox id="2">
-            <option id="1">
-                <text lang="en"> Max and Min temperature at 2m above ground </text>
+            <option id="2">
+                <text lang="en"> Average temperature at 2m above ground </text>
             </option>
         </combobox>
         <button id="1">
@@ -57,14 +55,6 @@
         <label id="6">
             <text lang="en"> Password </text>
             <text lang="fr"> Password </text>
-        </label>
-        <label id="7-1">
-            <text lang="en"> GrADS executable </text>
-            <text lang="fr"> GrADS executable </text>
-        </label>
-        <label id="7-2">
-            <text lang="en"> Python executable </text>
-            <text lang="fr"> Python executable </text>
         </label>
         <label id="8">
             <text lang="en"> Area of interest </text>
@@ -126,14 +116,6 @@
             <tooltip>
                 <text lang="en"> Start and end date and time to download reanalysis </text>
                 <text lang="fr"> Date de début et de fin pour télécharger les réanalyses </text>
-            </tooltip>
-        </content>
-        <content id="2c">
-            <status>
-                <text lang="en"> Full path to grads or python executable,\n if it is in your environment variable you can use "grads.exe" </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Full path to grads or python executable,\n if it is in your environment variable you can use "grads.exe" </text>
             </tooltip>
         </content>
         <content id="3">
@@ -227,6 +209,12 @@
         </content>
         <content id="8">
             <text lang="en"> Wrong area subsetting </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Unable to login to https://cds.climate.copernicus.eu </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Unable to get the API key </text>
         </content>
     </message>
 </dialog_box>

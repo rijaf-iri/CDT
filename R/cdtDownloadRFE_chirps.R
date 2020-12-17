@@ -1,7 +1,12 @@
 
 ## toexport
 chirp.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp"
+    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0"
+    vartime <- switch(GalParams$tstep,
+                      "daily" = ".daily/.prcp",
+                      "dekadal" = ".dekad/.prcp",
+                      "monthly" = ".dekad/.prcp"
+                     )
 
     rlon <- unlist(GalParams$bbox[c('minlon', 'maxlon')])
     rlon <- paste(c('X', rlon, 'RANGE'), collapse = "/")
@@ -14,7 +19,7 @@ chirp.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TR
     urls <- urltools::url_encode(paste0("(", rdate$dates, ")"))
     urls <- paste0("T", "/", urls, "/", "VALUE")
 
-    urls <- paste(dlpath, rlon, rlat, aggr, urls, 'data.nc', sep = "/")
+    urls <- paste(dlpath, vartime, rlon, rlat, aggr, urls, 'data.nc', sep = "/")
 
     #########
     data.name <- paste0("CHIRP_", GalParams$tstep)
@@ -64,7 +69,6 @@ chirps.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
 chirp.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     bbx <- GalParams$bbox
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    # ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP"
     ftp.ucsb <- "ftp://ftp.chc.ucsb.edu/pub/org/chc/products/CHIRP"
 
     if(GalParams$tstep == "daily"){
@@ -163,7 +167,6 @@ chirp.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRU
 chirps.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     bbx <- GalParams$bbox
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    # ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0"
     ftp.ucsb <- "ftp://ftp.chc.ucsb.edu/pub/org/chc/products/CHIRPS-2.0"
 
     if(GalParams$tstep == "daily"){
@@ -275,7 +278,6 @@ chirps.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TR
 ## toexport
 chirps.6hrAF.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range, GalParams$minhour)
-    # ftp.ucsb <- "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly"
     ftp.ucsb <- "ftp://ftp.chc.ucsb.edu/pub/org/chc/products/CHIRPS-2.0/africa_6-hourly"
     data.dir <- "africa"
     daty <- as.Date(paste(rdate[, 1], rdate[, 2], rdate[, 3], sep = "-"))

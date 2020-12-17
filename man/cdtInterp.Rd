@@ -4,8 +4,17 @@
 \alias{cdtInterp}
 \title{CDT interpolation methods}
 \usage{
-cdtInterp(locations, values, newdata, nmin = 4, nmax = 10,
-  method = "idw", spheric = FALSE, vgm = NULL, p = 2)
+cdtInterp(
+  locations,
+  values,
+  newdata,
+  nmin = 4,
+  nmax = 10,
+  method = "idw",
+  spheric = FALSE,
+  vgm = NULL,
+  p = 2
+)
 }
 \arguments{
 \item{locations}{A matrix containing the coordinates of the station data. The 1st column is the longitude and the 2nd coulmn the latitude.}

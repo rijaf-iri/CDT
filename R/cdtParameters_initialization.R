@@ -109,7 +109,7 @@ cdt.init.params <- function(action, tstep){
     if(action == 'down.RFE'){
         ret.params <- list(action = action,
                            tstep = "dekadal",
-                           rfe.src = "tamsatv3-af",
+                           rfe.src = "tamsatv3.1-af",
                            iridl.src = FALSE,
                            minhour = 1,
                            date.range = date.range,
@@ -128,8 +128,7 @@ cdt.init.params <- function(action, tstep){
                            date.range = date.range,
                            bbox = .cdtData$Config$region,
                            dir2save = getwd(),
-                           login = list(usr = "", pwd = ""),
-                           path.exe = "C:/OpenGrADS-2.2/Contents/Cygwin/Versions/2.2.1.oga.1/i686/opengrads.exe"
+                           login = list(usr = "", pwd = "")
                         )
     }
 

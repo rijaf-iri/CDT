@@ -37,23 +37,32 @@ iridl.download.data <- function(lnk, dest, ncfl = NULL)
     ncfl <- ncfl
     xx <- basename(dest)
 
-    # dc <- try(utils::download.file(lnk, dest, mode = "wb", quiet = TRUE), silent = TRUE)
     dc <- try(curl::curl_download(lnk, dest), silent = TRUE)
     if(!inherits(dc, "try-error")){
-        # if(dc == 0){
-            nc <- try(ncdf4::nc_open(dest), silent = TRUE)
-            if(!inherits(nc, "try-error")){
-                v <- ncdf4::ncvar_get(nc, nc$var[[1]]$name)
-                ncdf4::nc_close(nc)
-                if(!all(is.na(v)))
-                    xx <- NULL
-                else
+        nc <- try(ncdf4::nc_open(dest), silent = TRUE)
+        if(!inherits(nc, "try-error")){
+            v <- ncdf4::ncvar_get(nc, nc$var[[1]]$name)
+            ncdf4::nc_close(nc)
+            if(!all(is.na(v))){
+                ## TAMSAT v3.1
+                if(grepl("\\.TAMSAT", lnk) && grepl("\\.v3p1", lnk)){
                     unlink(dest)
-            }else{
-                unlink(dest)
-            }
-        # }
+                    lnk <- sub("\\.rfe", "\\.rfe_filled", lnk)
+                    dc <- try(curl::curl_download(lnk, dest), silent = TRUE)
+                    if(!inherits(dc, "try-error")){
+                        nc <- try(ncdf4::nc_open(dest, write = TRUE), silent = TRUE)
+                        if(!inherits(nc, "try-error")){
+                            ncdf4::ncvar_rename(nc, "rfe_filled", "rfe")
+                            ncdf4::nc_close(nc)
+                            xx <- NULL
+                        }else unlink(dest)
+                    }
+                }else{
+                    ## other dataset
+                    xx <- NULL
+                }
+            }else unlink(dest)
+        }else unlink(dest)
     }
     return(xx)
 }
-

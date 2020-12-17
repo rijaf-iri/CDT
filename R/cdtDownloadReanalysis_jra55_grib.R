@@ -26,6 +26,15 @@ jra55.download.jra.kishou <- function(GalParams, nbfile = 1, GUI = TRUE, verbose
     }
 
     ####
+
+    ## path to grads exe
+    ## windows
+    # GalParams$path.exe <- "C:/OpenGrADS-2.2/Contents/Cygwin/Versions/2.2.1.oga.1/i686/opengrads.exe"
+    ## linux, mac
+    GalParams$path.exe <- "grads"
+
+    ######
+
     grads.bin <- GalParams$path.exe
     if(WindowsOS()){
         if(!file.exists(grads.bin)) return(2)

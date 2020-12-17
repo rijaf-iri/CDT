@@ -27,22 +27,30 @@ jra55.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbose =
     height <- "[0:1:0]"
     times <- "[0:1:1]"
 
-    origin <- as.POSIXct("1957-12-31T18:00:00Z", tz = "GMT", format = "%Y-%m-%dT%H:%M:%SZ")
     start <- GalParams$date.range[paste0('start.', c('year', 'mon', 'day', 'hour'))]
     start <- jra55.start.end.time(start)
     end <- GalParams$date.range[paste0('end.', c('year', 'mon', 'day', 'hour'))]
     end <- jra55.start.end.time(end)
 
     ncfiles.range <- seq(start, end, "3 hours")
-    start_end <- split(ncfiles.range, ceiling(seq_along(ncfiles.range)/80))
+    split_years <- split(ncfiles.range, format(ncfiles.range, "%Y"))
+    start_end <- lapply(split_years, function(x) split(x, ceiling(seq_along(x)/80)))
+    start_end <- unlist(start_end, recursive = FALSE)
     ncfiles.range <- lapply(start_end, function(x) range(x))
-    start_end <- lapply(start_end, function(x){
-        floor(as.numeric(range(x) - origin, units = "days") * 4)
+    start_years <- sapply(ncfiles.range, function(y) as.numeric(format(y[1], "%Y")))
+
+    start_end <- lapply(seq_along(start_end), function(j){
+        stime <- paste0(start_years[j] - 1, "-12-31T18:00:00Z")
+        origin <- as.POSIXct(stime, tz = "GMT", format = "%Y-%m-%dT%H:%M:%SZ")
+        floor(as.numeric(ncfiles.range[[j]] - origin, units = "days") * 8) - 1
     })
 
     rftime <- sapply(start_end, function(x) paste0("[", x[1], ":", 1, ":", x[2], "]"))
-    req.timebds <- paste0("time_bounds", rftime, times, times)
-    filenames <- sapply(start_end, function(x) paste(x, collapse = "-"))
+    filenames <- sapply(seq_along(start_end), function(j){
+        paste(c(start_years[j], start_end[[j]]), collapse = "-")
+    })
+
+    endpoint_years <- paste0("JRA-55_3-Hourly_Model_Resolution_2-Dimensional_Minimum-Maximum_Diagnostic_Fields-", start_years, ".ascii")
 
     ######################
     varname <- switch(GalParams$var,
@@ -50,16 +58,16 @@ jra55.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbose =
                       "tmin" = "Minimum_temperature_height_above_ground_3_Hour",
                       NULL)
     longname <- switch(GalParams$var,
-                          "tmax" = "JRA55 3 Hourly Maximum temperature at 2 m above ground",
-                          "tmin" = "JRA55 3 Hourly Minimum temperature at 2 m above ground",
+                       "tmax" = "JRA55 3 Hourly Maximum temperature at 2 m above ground",
+                       "tmin" = "JRA55 3 Hourly Minimum temperature at 2 m above ground",
                           NULL)
     pars <- list(varid = GalParams$var, varname = varname, longname = longname)
-    dods <- "https://rda.ucar.edu/thredds/dodsC/aggregations/JRA55/ds628.0/31/TwoD.ascii"
+    dods <- paste0("https://rda.ucar.edu/thredds/dodsC/aggregations/g/ds628.0/31/", endpoint_years)
 
     urls <- lapply(seq_along(rftime), function(j){
         sapply(lon, function(x){
-            req <- paste0(varname, rftime[j], times, height, lat, x)
-            paste0(dods, "?", req.timebds[j], ",", req)
+            req <- paste0(varname, rftime[j], height, lat, x)
+            paste0(dods[j], "?", req)
         })
     })
 
@@ -141,14 +149,12 @@ jra55.parse.dods.mat <- function(x){
 }
 
 jra55.parse.dods.ascii <- function(filetxt, varname){
-    pattern <- list("^time_bounds",
-                    paste0("^", varname, ".", varname),
-                    paste0("^", varname, ".", "reftime"),
+    pattern <- list(paste0("^", varname, ".", varname),
                     paste0("^", varname, ".", "time"),
                     paste0("^", varname, ".", "height_above_ground"),
                     paste0("^", varname, ".", "lat"),
                     paste0("^", varname, ".", "lon")
-                )
+                  )
 
     jra <- readLines(filetxt)
     jra <- str_trim(jra)
@@ -164,37 +170,38 @@ jra55.parse.dods.ascii <- function(filetxt, varname){
     don <- lapply(ix, function(j) jra[j])
     don <- lapply(don, function(x) x[x != ""])
 
-    lon <- as.numeric(str_trim(strsplit(don[[7]], ",")[[1]]))
+    lon <- as.numeric(str_trim(strsplit(don[[5]], ",")[[1]]))
     lon <- ((lon + 180) %% 360) - 180
-    lat <- as.numeric(str_trim(strsplit(don[[6]], ",")[[1]]))
+    lat <- as.numeric(str_trim(strsplit(don[[4]], ",")[[1]]))
     ox <- order(lon)
     oy <- order(lat)
     lon <- lon[ox]
     lat <- lat[oy]
 
-    timebounds <- lapply(don[[1]], jra55.parse.dods.mat)
-    id.time <- do.call(rbind, lapply(timebounds, "[[", 1))
-    timebounds <- do.call(rbind, lapply(timebounds, "[[", 2))
+    oyear <- sub(varname, "", basename(filetxt))
+    oyear <- strsplit(oyear, "_|-")[[1]]
+    oyear <- oyear[oyear != ""]
+    oyear <- as.numeric(oyear[1]) - 1
+    oyear <- paste0(oyear, "-12-31T18:00:00Z")
+    origin <- as.POSIXct(oyear, tz = "GMT", format = "%Y-%m-%dT%H:%M:%SZ")
 
-    origin <- as.POSIXct("1957-12-31T18:00:00Z", tz = "GMT", format = "%Y-%m-%dT%H:%M:%SZ")
-    time0 <- as.POSIXct(timebounds[, 1] * 3600, origin = origin, tz = "GMT")
-    time1 <- as.POSIXct(timebounds[, 2] * 3600, origin = origin, tz = "GMT")
+    times <- as.numeric(str_trim(strsplit(don[[2]], ",")[[1]]))
+    times <- as.POSIXct(times * 3600, origin = origin, tz = "GMT")
 
-    dat <- lapply(don[[2]], jra55.parse.dods.mat)
+    dat <- lapply(don[[1]], jra55.parse.dods.mat)
     id.crd <- do.call(rbind, lapply(dat, "[[", 1))
     dat <- do.call(rbind, lapply(dat, "[[", 2))
 
-    tstep0 <- paste(id.time[, 1], id.time[, 2], sep = "_")
-    tstep1 <- paste(id.crd[, 1], id.crd[, 2], sep = "_")
-    ix <- split(seq_along(tstep1), tstep1)
+    tstep <- factor(id.crd[, 1], levels = unique(id.crd[, 1]))
+    ix <- split(seq_along(tstep), tstep)
+
     dat <- lapply(ix, function(j){
         x <- t(dat[j, , drop = FALSE])[ox, oy]
         x[is.nan(x)] <- NA
         x - 273.15
     })
 
-    list(id = tstep0, start.time = time0, end.time = time1,
-         lon = lon, lat = lat, data = dat)
+    list(time = times, lon = lon, lat = lat, data = dat)
 }
 
 jra55.regrid.data <- function(dat){
@@ -214,7 +221,7 @@ jra55.regrid.data <- function(dat){
 }
 
 jra55.write.ncdf <- function(dat, varid, longname, outdir){
-    hours <- format(dat$start.time, "%Y%m%d%H")
+    hours <- format(dat$time, "%Y%m%d%H")
     ncfiles <- file.path(outdir, paste0(varid, "_", hours, ".nc"))
 
     dx <- ncdf4::ncdim_def("Lon", "degreeE", dat$lon, longname = "Longitude")
@@ -223,7 +230,7 @@ jra55.write.ncdf <- function(dat, varid, longname, outdir){
     ncgrd <- ncdf4::ncvar_def(varid, "degC", list(dx, dy), missval,
                               longname, "float", compression = 6)
     for(j in seq_along(ncfiles)){
-        don <- dat$data[[dat$id[j]]]
+        don <- dat$data[[j]]
         don[is.na(don)] <- missval
         nc <- ncdf4::nc_create(ncfiles[j], ncgrd)
         ncdf4::ncvar_put(nc, ncgrd, don)

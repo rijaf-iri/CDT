@@ -20,10 +20,10 @@ arc2.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRU
     urls <- paste(dlpath, vardir, rlon, rlat, urls, 'data.nc', sep = "/")
 
     #########
-    data.name <- paste0("CHIRPSv2_", GalParams$tstep)
+    data.name <- paste0("ARC2_", GalParams$tstep)
     outdir <- file.path(GalParams$dir2save, data.name)
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
-    destfiles <- file.path(outdir, paste0("chirps_", rdate$out, ".nc"))
+    destfiles <- file.path(outdir, paste0("arc2_", rdate$out, ".nc"))
 
     ret <- cdt.download.data(urls, destfiles, destfiles, nbfile, GUI,
                              verbose, data.name, iridl.download.data)

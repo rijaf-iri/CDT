@@ -1,28 +1,25 @@
 
 reanal.product.source <- function(prod){
     data.source <- switch(prod,
-                       "jra55" = c("rda.ucar.edu", "jra.kishou.go.jp"),
-                       "merra2" = c("iridl.ldeo.columbia.edu", "disc.gsfc.nasa.gov"),
-                       "era5" = c("cds.climate.copernicus.eu")
-                    )
+                          "jra55" = c("rda.ucar.edu"),
+                          "merra2" = c("iridl.ldeo.columbia.edu", "disc.gsfc.nasa.gov"),
+                          "era5" = c("cds.climate.copernicus.eu")
+                        )
     return(data.source)
 }
 
 reanal.product.info <- function(prod, src){
     if(prod == "jra55"){
-        urls <- switch(src,
-                    "rda.ucar.edu" = c("https://rda.ucar.edu/datasets/ds628.0/"),
-                    "jra.kishou.go.jp" = c("https://jra.kishou.go.jp/JRA-55/index_en.html",
-                                           "ftp://ds.data.jma.go.jp/JRA-55/Hist")
-                )
+        if(src == "rda.ucar.edu")
+            urls <- "https://rda.ucar.edu/datasets/ds628.0/"
     }
 
     if(prod == "merra2"){
         urls <- switch(src,
                     "iridl.ldeo.columbia.edu" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NASA/.GSFC/.MERRA2/.Anl_MonoLev/",
                                                   "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"),
-                    "disc.gsfc.nasa.gov" = c("https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/",
-                                             "https://disc.gsfc.nasa.gov/datasets/M2SDNXSLV_V5.12.4/summary?keywords=merra-2")
+                    "disc.gsfc.nasa.gov" = c("https://disc.gsfc.nasa.gov/datasets/M2SDNXSLV_5.12.4/summary",
+                                             "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/")
                 )
     }
 
@@ -52,8 +49,6 @@ reanal.need.usrpwd <- function(prod, src){
         usrpwd <- TRUE
         if(src == "rda.ucar.edu")
             urllog <- "https://rda.ucar.edu"
-        if(src == "jra.kishou.go.jp")
-            urllog <- "https://jra.kishou.go.jp"
     }
 
     if(prod == "merra2"){
@@ -75,11 +70,6 @@ reanal.need.usrpwd <- function(prod, src){
 reanal.need.extern <- function(prod, src){
     ret <- list(state = "disabled",
                 text = "grads")
-    if(prod == "jra55"){
-        if(src == "jra.kishou.go.jp")
-            ret <- list(state = "normal",
-                        text = "grads")
-    }
     if(prod == "era5"){
         if(src == "cds.climate.copernicus.eu"){
             ret <- list(state = "normal",
@@ -87,19 +77,6 @@ reanal.need.extern <- function(prod, src){
         }
     }
     return(ret)
-}
-
-reanal.under.construction <- function(parent, prod, src){
-    ok <- FALSE
-    # if(prod == "jra55"){
-    #     if(src != "rda.ucar.edu") ok <- TRUE
-    # }
-    if(prod == "merra2"){
-        if(src != "iridl.ldeo.columbia.edu") ok <- TRUE
-    }
-    if(prod == "era5") ok <- TRUE
-
-    if(ok) cdt.tkmessageBox(parent, message = "Under Construction", icon = "info", type = "ok")
 }
 
 #######################################
@@ -140,14 +117,15 @@ download_Reanalysis <- function(){
 
     downVar <- tclVar()
 
-    if(.cdtData$GalParams$prod == "jra55" &
-       .cdtData$GalParams$src == "jra.kishou.go.jp")
-    {
-        CbvarsVAL <- c(lang.dlg[['combobox']][['2']], '')
-        varsVAL <- c('tmax', '')
+    CbvarsVAL0 <- lang.dlg[['combobox']][['1']]
+    varsVAL0 <- c('tmax', 'tmin', 'tmean')
+
+    if(.cdtData$GalParams$prod == "jra55"){
+        CbvarsVAL <- CbvarsVAL0[1:2]
+        varsVAL <- varsVAL0[1:2]
     }else{
-        CbvarsVAL <- lang.dlg[['combobox']][['1']]
-        varsVAL <- c('tmax', 'tmin')
+        CbvarsVAL <- CbvarsVAL0
+        varsVAL <- varsVAL0
     }
 
     tclvalue(downVar) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$var]
@@ -166,14 +144,6 @@ download_Reanalysis <- function(){
     url.log <- tclVar(need.pwd$urllog)
     username <- tclVar(.cdtData$GalParams$login$usr)
     password <- tclVar(.cdtData$GalParams$login$pwd)
-
-    progbin <- tclVar(.cdtData$GalParams$path.exe)
-    progexe <- reanal.need.extern(.cdtData$GalParams$prod, .cdtData$GalParams$src)
-    progstate <- progexe$state
-    progtext <- switch(progexe$text,
-                       "grads" = lang.dlg[['label']][['7-1']],
-                       "python" = lang.dlg[['label']][['7-2']])
-    proglab <- tclVar(progtext)
 
     ###########################
 
@@ -195,9 +165,6 @@ download_Reanalysis <- function(){
     en.pwd <- tkentry(frRFE, textvariable = password, show = "*", state = statepwd, width = largeur7, justify = "left")
 
     bt.info <- ttkbutton(frRFE, text = lang.dlg[['button']][['4']])
-
-    txt.grads <- tklabel(frRFE, text = tclvalue(proglab), textvariable = proglab, anchor = 'w', justify = 'left')
-    en.grads <- tkentry(frRFE, justify = "left", textvariable = progbin, state = progstate)
 
     ###########################
 
@@ -236,14 +203,10 @@ download_Reanalysis <- function(){
 
     tkgrid(bt.info, row = 6, column = 2, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
-    tkgrid(txt.grads, row = 7, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-    tkgrid(en.grads, row = 8, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-
     helpWidget(cb.vars, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(cb.prod, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
     helpWidget(cb.src, lang.dlg[['tooltip']][['2a']], lang.dlg[['status']][['2a']])
     helpWidget(bt.range, lang.dlg[['tooltip']][['2b']], lang.dlg[['status']][['2b']])
-    helpWidget(en.grads, lang.dlg[['tooltip']][['2c']], lang.dlg[['status']][['2c']])
 
     ###########################
 
@@ -265,28 +228,17 @@ download_Reanalysis <- function(){
         tkconfigure(en.pwd, state = statepwd)
 
         ########
-        if(prod == "jra55" & src == "jra.kishou.go.jp")
-        {
-            CbvarsVAL <<- c(lang.dlg[['combobox']][['2']], '')
-            varsVAL <<- c('tmax', '')
+        if(prod == "jra55"){
+            CbvarsVAL <<- CbvarsVAL0[1:2]
+            varsVAL <<- varsVAL0[1:2]
         }else{
-            CbvarsVAL <<- lang.dlg[['combobox']][['1']]
-            varsVAL <<- c('tmax', 'tmin')
+            CbvarsVAL <<- CbvarsVAL0
+            varsVAL <<- varsVAL0
         }
 
         tkconfigure(cb.vars, values = CbvarsVAL)
         if(!str_trim(tclvalue(downVar)) %in% CbvarsVAL)
             tclvalue(downVar) <- CbvarsVAL[1]
-
-        ########
-        progexe <- reanal.need.extern(prod, src)
-        tclvalue(proglab) <- switch(progexe$text,
-                                   "grads" = lang.dlg[['label']][['7-1']],
-                                   "python" = lang.dlg[['label']][['7-2']])
-        tkconfigure(en.grads, state = progexe$state)
-
-        ########
-        reanal.under.construction(tt, prod, src)
     })
 
     tkbind(cb.src, "<<ComboboxSelected>>", function(){
@@ -294,13 +246,12 @@ download_Reanalysis <- function(){
         src <- str_trim(tclvalue(reanalSrc))
 
         ########
-        if(prod == "jra55" & src == "jra.kishou.go.jp")
-        {
-            CbvarsVAL <<- c(lang.dlg[['combobox']][['2']], '')
-            varsVAL <<- c('tmax', '')
+        if(prod == "jra55"){
+            CbvarsVAL <<- CbvarsVAL0[1:2]
+            varsVAL <<- varsVAL0[1:2]
         }else{
-            CbvarsVAL <<- lang.dlg[['combobox']][['1']]
-            varsVAL <<- c('tmax', 'tmin')
+            CbvarsVAL <<- CbvarsVAL0
+            varsVAL <<- varsVAL0
         }
 
         tkconfigure(cb.vars, values = CbvarsVAL)
@@ -314,16 +265,6 @@ download_Reanalysis <- function(){
         tclvalue(url.log) <- need.pwd$urllog
         tkconfigure(en.usr, state = statepwd)
         tkconfigure(en.pwd, state = statepwd)
-
-        ########
-        progexe <- reanal.need.extern(prod, src)
-        tclvalue(proglab) <- switch(progexe$text,
-                                   "grads" = lang.dlg[['label']][['7-1']],
-                                   "python" = lang.dlg[['label']][['7-2']])
-        tkconfigure(en.grads, state = progexe$state)
-
-        ########
-        reanal.under.construction(tt, prod, src)
     })
 
     ###################################################
@@ -416,7 +357,6 @@ download_Reanalysis <- function(){
             .cdtData$GalParams$var <- varsVAL[CbvarsVAL %in% str_trim(tclvalue(downVar))]
             .cdtData$GalParams$prod <- prodVAL[CbprodVAL %in% str_trim(tclvalue(reanalProd))]
             .cdtData$GalParams$src <- str_trim(tclvalue(reanalSrc))
-            .cdtData$GalParams$path.exe <- str_trim(tclvalue(progbin))
 
             .cdtData$GalParams$login$usr <- str_trim(tclvalue(username))
             .cdtData$GalParams$login$pwd <- str_trim(tclvalue(password))
@@ -438,12 +378,14 @@ download_Reanalysis <- function(){
                         Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "s")
                     if(ret == 1)
                         Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, "w")
-                    if(ret == 2)
-                        Insert.Messages.Out(paste(.cdtData$GalParams$path.exe, "not found!"), TRUE, "e")
                     if(ret == -1)
                         Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "w")
                     if(ret == -2)
                         Insert.Messages.Out(lang.dlg[['message']][['8']], TRUE, "w")
+                    if(ret == -3)
+                        Insert.Messages.Out(lang.dlg[['message']][['9']], TRUE, "e")
+                    if(ret == -4)
+                        Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, "e")
                 }else{
                     Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), TRUE, "e")
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "e")

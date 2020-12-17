@@ -144,9 +144,9 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
         ## 6 hour
         if(minhour == 6){
             urls <- switch(src,
-                "chirpsv2-af" = c("ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly",
-                                  "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly/README.6-hourly.txt",
-                                  "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly/p1_bin/extra_step/readme_chirps6hrly.txt"
+                "chirpsv2-af" = c("ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly",
+                                  "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly/README.6-hourly.txt",
+                                  "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly/p1_bin/extra_step/readme_chirps6hrly.txt"
                                 ),
                 "persiann-gb" = c("https://chrsdata.eng.uci.edu",
                                   "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN/6hrly")
@@ -157,12 +157,14 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     ## daily
     if(tstep == "daily"){
         urls <- switch(src,
-            "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
+            "tamsatv3.1-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.daily/.rfe",
+                                "http://www.tamsat.org.uk/sites/data-download/index.html"),
             "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.daily/.rfe",
                               "http://www.tamsat.org.uk/data"),
-            "chirp-gb" = "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP/daily",
+            "chirp-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.daily/.prcp",
+                           "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRP/daily"),
             "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.daily-improved/.global/.0p05/.prcp",
-                              "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_daily/tifs/p05"),
+                              "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_daily/tifs/p05"),
             "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.daily/.est_prcp",
                           "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
             "rfev2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.RFEv2/.est_prcp",
@@ -201,21 +203,22 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
         urls <- switch(src,
             "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
             "tamsatv3-af" = "http://www.tamsat.org.uk/data",
-            "chirp-gb" = "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP/pentads",
-            "chirpsv2-gb" = "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_pentad/tifs"
+            "chirp-gb" = "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRP/pentads",
+            "chirpsv2-gb" = "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_pentad/tifs"
         )
     }
 
     ## dekad
     if(tstep == "dekadal"){
         urls <- switch(src,
-            "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
+            "tamsatv3.1-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.dekadal/.rfe",
+                                "http://www.tamsat.org.uk/sites/data-download/index.html"),
             "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.dekadal/.rfe",
                               "http://www.tamsat.org.uk/data"),
             "chirp-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp",
-                           "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP/dekads"),
+                           "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRP/dekads"),
             "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.dekad/.prcp",
-                              "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_dekad/tifs"),
+                              "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_dekad/tifs"),
             "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.TEN-DAY/.ARC2/.est_prcp",
                           "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
             "rfev2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.TEN-DAY/.RFEv2/.est_prcp",
@@ -228,13 +231,14 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     ## monthly
     if(tstep == "monthly"){
         urls <- switch(src,
-            "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
-            "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.dekadal/.rfe/monthlyAverage/3.0/mul",
+            "tamsatv3.1-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.monthly/.rfe",
+                                "http://www.tamsat.org.uk/sites/data-download/index.html"),
+            "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.monthly/.rfe",
                               "http://www.tamsat.org.uk/data"),
             "chirp-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp/monthlyAverage/3.0/mul",
-                           "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRP/monthly"),
+                           "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRP/monthly"),
             "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.monthly/.global/.precipitation",
-                              "ftp://chg-ftpout.geog.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_monthly/tifs"),
+                              "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_monthly/tifs"),
             "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.monthly/.est_prcp",
                           "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
             "persianncdr-gb" = c("https://chrsdata.eng.uci.edu",
@@ -261,8 +265,9 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
 
 rfe.iridl.ulrs <- function(src, tstep){
     ret <- FALSE
+    if(src == "tamsatv3.1-af" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
     if(src == "tamsatv3-af" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
-    if(src == "chirp-gb" & (tstep %in% c("dekadal", "monthly"))) ret <- TRUE
+    if(src == "chirp-gb" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
     if(src == "chirpsv2-gb" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
     if(src == "arc2-af" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
     if(src == "rfev2-af" & (tstep %in% c("daily", "dekadal"))) ret <- TRUE

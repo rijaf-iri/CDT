@@ -78,6 +78,11 @@ splitCDTData <- function(donne, tstep, GUI = TRUE){
     lang.dlg <- cdtLanguageParse(xml.dlg, Config$lang.iso)
 
     ###############
+
+    first_col <- trimws(donne[, 1])
+    i1st_col <- first_col != ""
+    donne <- donne[i1st_col, , drop = FALSE]
+
     ideb <- nrow(donne)
     datylen <- nchar(as.character(donne[ideb, 1]))
 
@@ -321,6 +326,10 @@ splitTsData <- function(donne, tstep, filefrmt, datefrmt, GUI = TRUE){
 
     ###############
     ## get dates
+    first_col <- trimws(donne[, 1])
+    i1st_col <- first_col != ""
+    donne <- donne[i1st_col, , drop = FALSE]
+
     ideb <- nrow(donne)
     datylen <- nchar(as.character(donne[ideb, 1]))
 

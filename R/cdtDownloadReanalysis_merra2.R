@@ -3,7 +3,8 @@ merra2.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
     dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.NASA/.GSFC/.MERRA2/.Anl_MonoLev"
     varid <- switch(GalParams$var,
                       "tmax" = ".t2mmax",
-                      "tmin" = ".t2mmin"
+                      "tmin" = ".t2mmin",
+                      "tmean" = ".t2mmean"
                     )
     rlon <- unlist(GalParams$bbox[c('minlon', 'maxlon')])
     rlon <- paste(c('X', rlon, 'RANGE'), collapse = "/")
@@ -18,7 +19,7 @@ merra2.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
     urls <- paste(dlpath, varid, rlon, rlat, urls, units, 'data.nc', sep = "/")
 
     #########
-    data.name <- paste0("MERRA2_daily_", GalParams$var)
+    data.name <- paste0("MERRA2_daily_iridl_", GalParams$var)
     outdir <- file.path(GalParams$dir2save, data.name)
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
     destfiles <- file.path(outdir, paste0(GalParams$var, "_", rdate$out, ".nc"))

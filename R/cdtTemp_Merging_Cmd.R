@@ -1,5 +1,24 @@
 
-## #' @export
+#' Merging stations observation and reanalysis data.
+#'
+#' Function to merge stations observation and reanalysis data.
+#' @param time.step the time step of the data
+#' @param dates a named list providing the dates to merge.
+#' A component "from" with available option "range", "file" or "dates".
+#' (to be completed) 
+#' @param station.data a named list (to be completed)
+#' @param netcdf.data a named list (to be completed)
+#' @param merge.method a named list (to be completed)
+#' @param interp.method a named list (to be completed)
+#' @param auxvar a named list (to be completed)
+#' @param dem.data a named list (to be completed)
+#' @param grid a named list (to be completed)
+#' @param blank a named list (to be completed)
+#' @param output a named list (to be completed)
+#' @param GUI a logical indicating whether or not the output message should be displayed on CDT GUI.
+#' 
+#' @export
+
 cdtMergingTempCMD <- function(time.step = "dekadal",
                               dates = list(from = "range", 
                                            range = list(start = list(year = 2018, month = 1, dekad = 1),

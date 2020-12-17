@@ -21,11 +21,9 @@ NeedsCompilation: yes
 Depends: 
     R (>= 3.5.0),
 Imports: 
+    devtools,
     ncdf4,
     sp,
-    jsonlite (>= 1.2),
-    stringr,
-    XML,
     rgdal,
     rgeos,
     raster,
@@ -38,12 +36,9 @@ Imports:
     doSNOW,
     R.utils,
     matrixStats,
-    urltools,
-    curl,
     fields,
     maps,
     methods,
-    devtools,
     fitdistrplus,
     ADGofTest,
     qmap,
@@ -54,9 +49,16 @@ Imports:
     hexbin,
     RColorBrewer,
     gridBase,
-    rvest,
+    units,
+    jsonlite (>= 1.2),
+    stringr,
+    XML,
     xml2,
+    urltools,
+    curl,
+    httr,
+    rvest,
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
