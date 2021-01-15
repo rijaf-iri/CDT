@@ -82,6 +82,8 @@ jra55.format.ncdf <- function(dirNCDF, dirOUT){
     lon <- nc$dim[[nlon]]$vals
     ncdf4::nc_close(nc)
 
+    lon <- ((lon + 180) %% 360) - 180
+
     xo <- order(lon)
     yo <- order(lat)
 
