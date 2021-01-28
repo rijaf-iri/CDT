@@ -13,13 +13,22 @@ rain_no_rain.mask <- function(locations.stn, newgrid, nmax)
         locations.stn$rnr.res <- residuals(glm.binom)
         rnr.trend <- predict(glm.binom, newdata = newgrid, type = 'link')
 
-        rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newgrid, nmax = nmax, debug.level = 0)
+        rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newgrid,
+                                    nmax = nmax, set = list(idp = 4.0), debug.level = 0)
         rnr <- rnr.trend + rnr.res.grd$var1.pred
 
         rnr <- exp(rnr) / (1 + exp(rnr))
+
         ### decision boundary = 0.5
-        rnr[rnr >= 0.5] <- 1
-        rnr[rnr < 0.5] <- 0
+        # rnr[rnr >= 0.5] <- 1
+        # rnr[rnr < 0.5] <- 0
+        # rnr[is.na(rnr)] <- 1
+
+        ## Test
+        ### decision boundary
+        ### below 0.1 set to 0
+        ### greater than 0.1 continuous values
+        rnr[rnr < 0.1] <- 0
         rnr[is.na(rnr)] <- 1
     }
 

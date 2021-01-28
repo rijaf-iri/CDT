@@ -298,8 +298,10 @@ getBoundaries <- function(shpf){
 # ncgrid: named list(lon, lat)
 create.mask.grid <- function(shp, ncgrid){
     width <- mean(diff(sapply(ncgrid, range)) / (sapply(ncgrid, length) - 1))
-    shp <- rgeos::gSimplify(shp, width/4, topologyPreserve = TRUE)
-    shp <- rgeos::gBuffer(shp, width = width/2)
+    shp <- as(shp, "SpatialPolygons")
+    shp <- rgeos::gUnaryUnion(shp)
+    shp <- rgeos::gSimplify(shp, tol = width / 4, topologyPreserve = TRUE)
+    shp <- rgeos::gBuffer(shp, width = 4 * width)
     slot.shp <- slot(shp, "polygons")
     shp.df <- data.frame(vtmp = rep(1, length(slot.shp)))
     row.names(shp.df) <- sapply(slot.shp, function(x) slot(x, "ID"))
