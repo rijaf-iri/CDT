@@ -296,12 +296,13 @@ getBoundaries <- function(shpf){
 
 ## create mask, blanking
 # ncgrid: named list(lon, lat)
-create.mask.grid <- function(shp, ncgrid){
+create.mask.grid <- function(shp, ncgrid, buffer = NULL){
     width <- mean(diff(sapply(ncgrid, range)) / (sapply(ncgrid, length) - 1))
     shp <- as(shp, "SpatialPolygons")
     shp <- rgeos::gUnaryUnion(shp)
     shp <- rgeos::gSimplify(shp, tol = width / 4, topologyPreserve = TRUE)
-    shp <- rgeos::gBuffer(shp, width = 4 * width)
+    if(is.null(buffer)) buffer <- 4 * width
+    shp <- rgeos::gBuffer(shp, width = buffer)
     slot.shp <- slot(shp, "polygons")
     shp.df <- data.frame(vtmp = rep(1, length(slot.shp)))
     row.names(shp.df) <- sapply(slot.shp, function(x) slot(x, "ID"))

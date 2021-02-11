@@ -573,6 +573,10 @@ PlotMulitpleDataCmd <- function(){
                 ids <- isaDataSet()
                 .cdtData$GalParams$DATASETs[[jj]] <- list()
                 .cdtData$GalParams$DATASETs[[jj]]$pars <- x$PARS
+
+                if(.cdtData$GalParams$DATASETs[[jj]]$pars$data.type == "cdtstation")
+                    .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- x$Data[[1]]
+
                 add.new.datasets(jj, ids)
 
                 jfile <- length(.cdtData$OpenFiles$Type) + 1

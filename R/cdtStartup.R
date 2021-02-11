@@ -971,6 +971,18 @@ startCDT <- function(wd = NA, lang = NA){
                     computeWB_getParams()
                 })
 
+                # ########
+                # tkadd(menu.ClimVars, "separator")
+
+                # ########
+                # tkadd(menu.ClimVars, "command", label = "WRSI",
+                #       command = function()
+                # {
+                #     # refreshCDT(staterun = "normal")
+                #     # initialize.parameters('compute.WRSI', 'daily')
+                #     # computeWRSI_getParams()
+                # })
+
             ##########
             tkadd(menu.dataproc, "separator")
 
@@ -1182,6 +1194,21 @@ startCDT <- function(wd = NA, lang = NA){
                         .cdtEnv$tcl$data$lcmd.frame <- 1
                     }
                 })
+
+            # ##########
+            # tkadd(menu.dataproc, "separator")
+
+            # ##########
+            # tkadd(menu.dataproc, "command", label = "Crop Probabilities Tables",
+            #       command = function()
+            # {
+            #     refreshCDT(staterun = "disabled")
+            #     spinbox.state(state = 'normal')
+            #     # if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+            #     #     CropProbaPanelCmd()
+            #     #     .cdtEnv$tcl$data$lcmd.frame <- 1
+            #     # }
+            # })
 
         ###################################
 

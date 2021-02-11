@@ -119,13 +119,16 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         }
         if(is.auxvar['lon']) newgrid$alon <- newgrid@coords[, 'lon']
         if(is.auxvar['lat']) newgrid$alat <- newgrid@coords[, 'lat']
-        if(any(is.auxvar)) locations.stn@data <- newgrid@data[ijs, , drop = FALSE]
+        if(any(is.auxvar))
+            locations.stn@data <- newgrid@data[ijs, , drop = FALSE]
     }
 
     ##################
 
     args <- methods::formalArgs(cdtMergingLOOCV)
     for(v in args) assign(v, get(v), envir = environment())
+
+    mrgOpts <- merging.options()
 
     parsL <- doparallel.cond(length(ncInfo$ncfiles) > 10)
     ret <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
@@ -196,7 +199,8 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         xstn <- lapply(seq_along(ijv), function(ii){
             loc.stn <- locations.stn[-ijv[ii], ]
             out.mrg <- merging.functions(loc.stn, newgrid, params,
-                                         formuleRK, ncInfo$dates[jj], log.file)
+                                         formuleRK, ncInfo$dates[jj],
+                                         log.file, mrgOpts)
 
             out.mrg[ijout[ii]]
         })

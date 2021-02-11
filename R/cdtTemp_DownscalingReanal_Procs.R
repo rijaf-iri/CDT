@@ -8,9 +8,9 @@ Temp_execDownscaling <- function(){
         xfin <- format(daty$end, "%b%Y")
     }else{
         xdeb <- paste0(as.numeric(format(daty$start, "%d")), format(daty$start, "%b%Y"))
-        xfin <- paste0(as.numeric(format(daty$start, "%d")), format(daty$end, "%b%Y"))
+        xfin <- paste0(as.numeric(format(daty$end, "%d")), format(daty$end, "%b%Y"))
     }
-    
+
     output.dir <- .cdtData$GalParams$output
     outdir <- file.path(output.dir$dir, paste('Downscaled_Reanalysis', xdeb, xfin, sep = '_'))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)

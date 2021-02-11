@@ -222,7 +222,7 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
     ret <- cdtMerging(stnData = stnData, ncInfo = ncInfo,
                       xy.grid = xy.grid, params = params,
                       variable = "temp", demData = demData,
-                      outdir = outdir, mask = outMask)
+                      outdir = outdir, mask = outMask, GUI = GUI)
 
     if(!is.null(ret)){
         if(ret != 0){

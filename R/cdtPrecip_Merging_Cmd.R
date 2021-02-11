@@ -45,7 +45,7 @@ cdtMergingPrecipCMD <- function(time.step = "dekadal",
                           precision = list(from.data = TRUE, prec = "short"),
                           GUI = FALSE)
 {
-	cdtLocalConfigData()
+    cdtLocalConfigData()
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPrecip_Merging_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
     message <- lang.dlg[['message']]
@@ -224,7 +224,7 @@ cdtMergingPrecipCMD <- function(time.step = "dekadal",
     ret <- cdtMerging(stnData = stnData, ncInfo = ncInfo,
                       xy.grid = xy.grid, params = params,
                       variable = "rain", demData = demData,
-                      outdir = outdir, mask = outMask)
+                      outdir = outdir, mask = outMask, GUI = GUI)
 
     if(!is.null(ret)){
         if(ret != 0){

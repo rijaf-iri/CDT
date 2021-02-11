@@ -1,11 +1,52 @@
 
-rain_no_rain.mask <- function(locations.stn, newgrid, nmax)
+merging.options <- function(...){
+    ## copied from lattice.options
+    new <- list(...)
+    if(is.null(names(new)) && length(new) == 1 && is.list(new[[1]])) new <- new[[1]]
+    old <- .cdtMRG$merging.options
+    if(length(new) == 0) return(old)
+    
+    nm <- names(new)
+    if (is.null(nm)) return(old[unlist(new)])
+
+    isNamed <- nm != ""
+    if (any(!isNamed)) nm[!isNamed] <- unlist(new[!isNamed])
+    retVal <- old[nm]
+    names(retVal) <- nm
+    nm <- nm[isNamed]
+
+    .cdtMRG$merging.options <- utils::modifyList(old, new[nm])
+
+    invisible(retVal)
+}
+
+merging.getOption <- function(name)
+{
+    get("merging.options", envir = .cdtMRG)[[name]]
+}
+
+.defaultMrgOptions <- function(){
+    list(saveGridBuffer = FALSE,
+         dirGridBuffer = path.expand("~"),
+         saveRnoR = FALSE,
+         dirRnoR = path.expand("~"),
+         ## RnoR model: "logit", "additive"
+         RnoRModel = "logit", 
+         RnoRCutOff = 3,
+         RnoRaddCoarse = FALSE,
+         RnoRUseMerged = FALSE,
+         RnoRSmoothingPixels = 2
+        )
+}
+
+###############################
+
+rain_no_rain.mask_log <- function(locations.stn, newgrid, nmax)
 {
     glm.binom <- tryCatch(
-            glm(rnr ~ grd, data = locations.stn, family = stats::binomial(link = "logit")),
+            glm(rnr.stn ~ grd, data = locations.stn, family = stats::binomial(link = "logit")),
             error=function(e) e, warning=function(w) w
         )
-
     if(inherits(glm.binom, "warning") | inherits(glm.binom, "error")) return(NULL)
 
     rnr <- NULL
@@ -15,43 +56,84 @@ rain_no_rain.mask <- function(locations.stn, newgrid, nmax)
 
         rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newgrid,
                                     nmax = nmax, set = list(idp = 4.0), debug.level = 0)
-        rnr <- rnr.trend + rnr.res.grd$var1.pred
 
+        rnr <- rnr.trend + rnr.res.grd$var1.pred
         rnr <- exp(rnr) / (1 + exp(rnr))
 
-        ### decision boundary = 0.5
-        # rnr[rnr >= 0.5] <- 1
-        # rnr[rnr < 0.5] <- 0
-        # rnr[is.na(rnr)] <- 1
-
-        ## Test
-        ### decision boundary
-        ### below 0.1 set to 0
-        ### greater than 0.1 continuous values
-        rnr[rnr < 0.1] <- 0
         rnr[is.na(rnr)] <- 1
     }
 
     return(rnr)
 }
 
+rain_no_rain.mask_add <- function(locations.stn, newgrid, nmax)
+{
+    locations.stn$rnr.res <- locations.stn$rnr.stn - locations.stn$rnr.grd
+    rnr.trend <- newgrid$rnr.grd
+
+    rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newgrid,
+                                nmax = nmax, set = list(idp = 4.0), debug.level = 0)
+
+    rnr <- rnr.trend + rnr.res.grd$var1.pred
+    rnr[rnr < 0] <- 0
+    rnr[rnr > 1] <- 1
+
+    rnr[is.na(rnr)] <- 1
+
+    return(rnr)
+}
+
+rain_no_rain.cut_off <- function(rnr, RnoRCutOff){
+    if(RnoRCutOff == 1){
+        rnr[rnr >= 0.5] <- 1
+        rnr[rnr < 0.5] <- 0
+    }else if(RnoRCutOff == 2){
+        rnr[rnr < 0.1] <- 0
+    }else{
+        rnr[rnr < 0.25] <- 0
+        rnr[rnr > 0.75] <- 1
+    }
+  
+    return(rnr)
+}
+
 ###############################
 
-create_grid_buffer <- function(locations.stn, newgrid, radius, fac = 4)
+coarse_grid_space <- function(res){
+    space <- (0.4 / res)^0.9
+    space <- ceiling(space)
+    space[space == 0] <- 1
+    space
+}
+
+create_grid_buffer <- function(locations.stn, newgrid,
+                               saveGridBuffer = FALSE,
+                               fileGridBuffer = "")
 {
     nx <- newgrid@grid@cells.dim[1]
     ny <- newgrid@grid@cells.dim[2]
+    resx <- newgrid@grid@cellsize[1]
+    resy <- newgrid@grid@cellsize[2]
+    rx <- coarse_grid_space(resx)
+    ry <- coarse_grid_space(resy)
 
-    rx <- as.integer(radius / (fac * newgrid@grid@cellsize[1]))
-    ry <- as.integer(radius / (fac * newgrid@grid@cellsize[2]))
+    radius <- 2 * max(c(rx, ry)) * mean(c(resx, resy))
 
     ix <- seq(1, nx, rx)
     iy <- seq(1, ny, ry)
-    if(nx - ix[length(ix)] > rx/3) ix <- c(ix, nx)
-    if(ny - iy[length(iy)] > ry/3) iy <- c(iy, ny)
+    if(nx - ix[length(ix)] > 1) ix <- c(ix, nx)
+    if(ny - iy[length(iy)] > 1) iy <- c(iy, ny)
+
     ixy <- expand.grid(ix, iy)
-    ixy <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
-    coarsegrid <- as(newgrid[ixy, ], "SpatialPixels")
+    icoarse <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
+    coarsegrid <- as(newgrid[icoarse, ], "SpatialPixels")
+
+    #####
+    if(saveGridBuffer){
+        out_grid <- list(stn = locations.stn)
+        out_grid$coarse0 <- coarsegrid
+    }
+    #####
 
     xgrd <- lapply(as.list(data.frame(coarsegrid@coords)), unique)
     loc.stn <- cdt.as.image(locations.stn$stn, locations.stn@coords, xgrd, regrid = TRUE)
@@ -62,24 +144,35 @@ create_grid_buffer <- function(locations.stn, newgrid, radius, fac = 4)
     dst <- fields::rdist(locations.stn@coords, coarsegrid@coords)
     dst <- colSums(dst < 0.5 * radius) == 0
     coarsegrid <- coarsegrid[dst, ]
+    icoarse <- icoarse[dst]
 
-    buffer.out <- rgeos::gBuffer(loc.stn, width = 0.75 * radius)
+    buffer.out <- rgeos::gBuffer(loc.stn, width = 1.25 * radius)
     icoarse.out <- as.logical(over(coarsegrid, buffer.out))
     icoarse.out[is.na(icoarse.out)] <- FALSE
     coarsegrid <- coarsegrid[icoarse.out, ]
+    icoarse <- icoarse[icoarse.out]
 
-    buffer.grid <- rgeos::gBuffer(loc.stn, width = 0.75 * radius)
-    igrid <- as.logical(over(newgrid, buffer.grid))
+    igrid <- as.logical(over(newgrid, buffer.out))
     igrid[is.na(igrid)] <- FALSE
-    newdata0 <- newgrid[igrid, ]
 
-    list(grid.buff = newdata0, ij = igrid, coarse = coarsegrid)
+    #####
+    if(saveGridBuffer){
+        out_grid$buffer <- buffer.out
+        out_grid$icoarse <- icoarse
+        out_grid$coarse1 <- coarsegrid
+        out_grid$igrid <- igrid
+        saveRDS(out_grid, fileGridBuffer)
+    }
+    #####
+
+    list(igrid = igrid, coarse = coarsegrid, icoarse = icoarse)
 }
 
 ###############################
 
 merging.functions <- function(locations.stn, newgrid, params,
-                              formuleRK, nc.date, log.file)
+                              formuleRK, nc.date, log.file,
+                              mrgOpts)
 {
     spheric <- FALSE
     interp.method <- switch(params$MRG$method,
@@ -90,7 +183,9 @@ merging.functions <- function(locations.stn, newgrid, params,
     if(params$RnoR$use){
         wet.day <- params$RnoR$wet
         if(wet.day <= 0) wet.day <- wet.day + 1e-13
-        locations.stn$rnr <- ifelse(locations.stn$stn < wet.day, 0, 1)
+        RnoR_out <- array(NA, newgrid@grid@cells.dim)
+        RnoR_get <- 0
+        RnoR_nmax <- params$interp$nmax[params$MRG$nrun]
     }
 
     if(interp.method %in% c("idw", "okr")){
@@ -99,23 +194,36 @@ merging.functions <- function(locations.stn, newgrid, params,
             bGrd <- createBlock(newgrid@grid@cellsize, 1, 5)
     }
 
-    nrun <- if(params$MRG$nrun > 1) params$MRG$nrun else 2
-    fac <- c(4, 3, rep(2, nrun - 2))
+    ###############
+
+    saveGridBuffer <- mrgOpts$saveGridBuffer
+    dirGridBuffer <- mrgOpts$dirGridBuffer
+
+    if(saveGridBuffer){
+        dirMthd <- paste0(params$MRG$method, "-", interp.method)
+        dirBuff <- file.path(dirGridBuffer, paste0("MRG_GRID_BUFFER_", dirMthd))
+        if(!dir.exists(dirBuff))
+            dir.create(dirBuff, showWarnings = FALSE, recursive = TRUE)
+
+        fileGridBuffer <- file.path(dirBuff, paste0("grid_buffer_", nc.date, ".rds"))
+        xy.grid <- create_grid_buffer(locations.stn, newgrid,
+                                      saveGridBuffer, fileGridBuffer)
+    }else{
+        xy.grid <- create_grid_buffer(locations.stn, newgrid)
+    }
+
+    ###############
+
+    igrid <- xy.grid$igrid
+    icoarse <- xy.grid$icoarse
+    coarsegrid <- xy.grid$coarse
+
+    ###############
 
     for(pass in seq(params$MRG$nrun)){
-        xy.grid <- create_grid_buffer(locations.stn, newgrid, params$interp$maxdist[pass], fac[pass])
-        newdata0 <- xy.grid$grid.buff
-
-        igrid <- xy.grid$ij
-        coarsegrid <- xy.grid$coarse
-        coarsegrid$res <- rep(0, length(coarsegrid))
-
-        ###########
-
+        newdata0 <- newgrid[igrid, ]
         locations.stn$grd <- over(locations.stn, newdata0)$grd
         locations.stn <- locations.stn[!is.na(locations.stn$grd), ]
-
-        ###########
 
         if(length(locations.stn) < 5){
             cat(paste(nc.date, ":", paste("not enough station data pass#", pass), "|",
@@ -144,13 +252,18 @@ merging.functions <- function(locations.stn, newgrid, params,
                         "Simple Bias Adjustment", "\n"), file = log.file, append = TRUE)
                 }else{
                     sp.trend <- predict(glm.stn, newdata = newdata0)
+                    # sp.trend <- predict(glm.stn, newdata = newgrid)
                     ina.out <- is.na(sp.trend)
                     sp.trend[ina.out] <- newdata0@data$grd[ina.out]
+                    # sp.trend[ina.out] <- newgrid@data$grd[ina.out]
                     xres <- rep(NA, length(locations.stn))
                     if(length(glm.stn$na.action) > 0)
                         xres[-glm.stn$na.action] <- glm.stn$residuals
                     else
                         xres <- glm.stn$residuals
+                
+                    # sp.trend <- sp.trend[igrid]
+                    # xres <- xres[igrid]
                 }
             }
         }
@@ -185,9 +298,11 @@ merging.functions <- function(locations.stn, newgrid, params,
         #########
 
         if(length(coarsegrid) > 0){
+            coarse_interp <- coarsegrid
+            coarse_interp$res <- rep(0, length(coarse_interp))
             row.names(loc.stn) <- 1:length(loc.stn)
-            row.names(coarsegrid) <- length(loc.stn) + (1:length(coarsegrid))
-            loc.stn <- maptools::spRbind(loc.stn, coarsegrid)
+            row.names(coarse_interp) <- length(loc.stn) + (1:length(coarse_interp))
+            loc.stn <- maptools::spRbind(loc.stn, coarse_interp)
         }
 
         #########
@@ -204,10 +319,10 @@ merging.functions <- function(locations.stn, newgrid, params,
                 interp.res <- interp.res$var1.pred
             }else{
                 interp.res <- switch(interp.method,
-                    "barnes" = barnes.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 2),
+                    "barnes" = barnes.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 0.5),
                     "cressman" = cressman.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric),
                     # "idw" = idw.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 2),
-                    "shepard" = shepard.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 2),
+                    "shepard" = shepard.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 0.7),
                     "sphere" = spheremap.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric),
                     # "okr" = kriging.interp(loc.stn@coords, loc.stn$res, newdata0@coords, vgm, nmin, nmax, spheric)
                 )
@@ -222,10 +337,10 @@ merging.functions <- function(locations.stn, newgrid, params,
             }else{
                 ## replace
                 interp.res <- switch(interp.method,
-                    "barnes" = barnes.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 2),
+                    "barnes" = barnes.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 0.5),
                     "cressman" = cressman.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric),
                     # "idw" = idw.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 2),
-                    "shepard" = shepard.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 2),
+                    "shepard" = shepard.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 0.7),
                     "sphere" = spheremap.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric),
                     # "okr" = kriging.interp(loc.stn@coords, loc.stn$res, newdata0@coords, vgm, nmin, nmax, spheric)
                 )
@@ -244,27 +359,91 @@ merging.functions <- function(locations.stn, newgrid, params,
         #########
 
         if(params$RnoR$use){
-            newdata0$grd <- out.mrg[igrid]
-            rnr0 <- rain_no_rain.mask(locations.stn, newdata0, nmax)
-            if(!is.null(rnr0)){
-                rnr <- array(1, newgrid@grid@cells.dim)
-                rnr[igrid] <- rnr0
+            RnoRCutOff <- mrgOpts$RnoRCutOff
 
-               if(params$RnoR$smooth){
-                    if(pass == params$MRG$nrun){
-                        ij <- over(locations.stn, as(newgrid, "SpatialPixels"))
-                        rnr[ij] <- locations.stn$rnr
-                    }
-                    rnr <- (2 * rnr + smooth.matrix(rnr, 2))/3
-                }
-                out.mrg <- out.mrg * c(rnr)
+            if(mrgOpts$RnoRUseMerged){
+                ## rfe data: fresh merged data
+                newdata0$grd <- out.mrg[igrid]
+            }else{
+                ## rfe data: input gridded data
+                newdata0$grd <- newgrid@data$grd[igrid]
             }
-        }
+            newdata0$rnr.grd <- ifelse(newdata0$grd < wet.day, 0, 1)
 
-        #########
+            ######
+            loc.stn <- locations.stn
+            rnr_stn <- ifelse(loc.stn$stn < wet.day, 0, 1)
+            loc.stn <- loc.stn['grd']
+            loc.stn$rnr.stn <- rnr_stn
+            loc.stn$rnr.grd <- ifelse(loc.stn$grd < wet.day, 0, 1)
+
+            ######
+            ## add coarse grid to locations.stn
+            if(mrgOpts$RnoRUseMerged){
+                if(length(coarsegrid) > 0){
+                    coarse_rnr <- coarsegrid
+                    if(mrgOpts$RnoRUseMerged){
+                        ## rfe data: merged data
+                        coarse_rnr$grd <- out.mrg[icoarse]
+                    }else{
+                        ## rfe data: input data
+                        coarse_rnr$grd <- newgrid@data$grd[icoarse]
+                    }
+
+                    rnr_coarse <- ifelse(coarse_rnr$grd < wet.day, 0, 1)
+                    coarse_rnr$rnr.stn <- rnr_coarse
+                    coarse_rnr$rnr.grd <- rnr_coarse
+
+                    row.names(loc.stn) <- 1:length(loc.stn)
+                    row.names(coarse_rnr) <- length(loc.stn) + (1:length(coarse_rnr))
+                    loc.stn <- maptools::spRbind(loc.stn, coarse_rnr)
+                    loc.stn <- loc.stn[!is.na(loc.stn$grd), ]
+                }
+            }
+
+            ######
+
+            if(mrgOpts$RnoRModel == "logit"){
+                rain_no_rain_fun <- rain_no_rain.mask_log
+                rnr_nmax <- RnoR_nmax
+            }else{
+                rain_no_rain_fun <- rain_no_rain.mask_add
+                rnr_nmax <- nmax
+                # rnr_nmax <- RnoR_nmax
+            }
+
+            rnr0 <- rain_no_rain_fun(loc.stn, newdata0, rnr_nmax)
+            rnr <- array(1, newgrid@grid@cells.dim)
+            if(!is.null(rnr0)){
+                rnr0 <- rain_no_rain.cut_off(rnr0, RnoRCutOff)
+                rnr[igrid] <- rnr0
+                if(params$RnoR$smooth)
+                    rnr <- (2 * rnr + smooth.matrix(rnr, mrgOpts$RnoRSmoothingPixels))/3
+                RnoR_out <- rnr
+                RnoR_get <- pass
+            }
+
+            out.mrg <- out.mrg * c(rnr)
+        }
 
         newgrid@data$grd <- out.mrg
     }
+
+    #########
+
+    if(params$RnoR$use & mrgOpts$saveRnoR){
+        dirRnoR <- file.path(mrgOpts$dirRnoR, paste0('RnoR_DATA_', RnoRCutOff))
+        if(!dir.exists(dirRnoR))
+            dir.create(dirRnoR, showWarnings = FALSE, recursive = TRUE)
+
+        rnrfile <- file.path(dirRnoR, paste0('rnr_', nc.date, '.rds'))
+
+        xygrd <- lapply(as.list(data.frame(newgrid@coords)), unique)
+        rnor <- list(x = xygrd$lon, y = xygrd$lat, z = RnoR_out, pass = RnoR_get)
+        saveRDS(rnor, file = rnrfile)
+    }
+
+    #########
 
     dim(out.mrg) <- newgrid@grid@cells.dim
 
@@ -366,7 +545,8 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
         }
         if(is.auxvar['lon']) newgrid$alon <- newgrid@coords[, 'lon']
         if(is.auxvar['lat']) newgrid$alat <- newgrid@coords[, 'lat']
-        if(any(is.auxvar)) locations.stn@data <- newgrid@data[ijs, , drop = FALSE]
+        if(any(is.auxvar))
+            locations.stn@data <- newgrid@data[ijs, , drop = FALSE]
     }
 
     ##################
@@ -374,7 +554,9 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
     args <- methods::formalArgs(cdtMerging)
     for(v in args) assign(v, get(v), envir = environment())
 
-    parsL <- doparallel.cond(length(ncInfo$ncfiles) > 30)
+    mrgOpts <- merging.options()
+
+    parsL <- doparallel.cond(length(ncInfo$ncfiles) > 20)
     ret <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
                        progress = TRUE, .packages = "sp",
                        FUN = function(jj)
@@ -453,7 +635,8 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
         ######
 
         out.mrg <- merging.functions(locations.stn, newgrid, params,
-                                     formuleRK, ncInfo$dates[jj], log.file)
+                                     formuleRK, ncInfo$dates[jj],
+                                     log.file, mrgOpts)
 
         write.merging.output(jj, out.mrg, grd.nc.out, outdir,
                              varinfo, ncInfo, params, mask)

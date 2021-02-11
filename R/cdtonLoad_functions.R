@@ -13,6 +13,9 @@ LinuxOS <- function() if(Sys.info()["sysname"] == "Linux") TRUE else FALSE
 local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Config'
 .cdtDir$dirLocal <- path.expand(local_dir)
 
+.cdtMRG <- new.env()
+assign("merging.options", list(), envir = .cdtMRG)
+
 #############################
 
 .onLoad <- function(libname, pkgname){
@@ -168,6 +171,10 @@ local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Co
     is.nobw <- tclRequire("BWidget")
     if(is.logical(is.nobw)) warning(paste0("Tcl package 'BWidget' not found", editcfg.msg('BWidget')))
 
+    #############################
+    ## load merging default options
+    merging.options(.defaultMrgOptions())
+
     invisible()
 }
 
@@ -177,7 +184,7 @@ local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Co
     CDT version ", .cdtEnv$pkg$version, " -- Copyright (C) 2014-", format(Sys.Date(), "%Y"), "
     Climate Data Tools
     International Research Institute for Climate and Society
-    CDT can be found at https://github.com/rijaf/CDT
+    CDT can be found at https://github.com/rijaf-iri/CDT
     If you have issues installing CDT, you can report it to
     https://github.com/rijaf-iri/CDT/issues/1
 

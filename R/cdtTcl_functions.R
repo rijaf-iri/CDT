@@ -545,18 +545,18 @@ resizeTclImage <- function(file, factor = 2, zoom = TRUE){
 
 ## update progress bar
 updateProgressBar <- function(n){
-    nmax <- as.numeric(tclvalue(.cdtEnv$tcl$status$pbnmax))
+    nmax <- as.numeric(tcltk::tclvalue(.cdtEnv$tcl$status$pbnmax))
     newvalue <- 100 * n / nmax
-    newlabel <- sprintf("%d %%", round(newvalue))
-    tclvalue(.cdtEnv$tcl$status$pbLab) <- newlabel
-    tclvalue(.cdtEnv$tcl$status$pbBar) <- newvalue
-    tcl("update", "idletask")
+    newlabel <- sprintf("%.f %%", round(newvalue))
+    tcltk::tclvalue(.cdtEnv$tcl$status$pbLab) <- newlabel
+    tcltk::tclvalue(.cdtEnv$tcl$status$pbBar) <- newvalue
+    tcltk::tcl("update", "idletask")
 }
 
 updateProgressText <- function(n){
-    nmax <- as.numeric(tclvalue(.cdtEnv$tcl$status$pbnmax))
+    nmax <- as.numeric(tcltk::tclvalue(.cdtEnv$tcl$status$pbnmax))
     newvalue <- 100 * n / nmax
-    cat(sprintf("Task %d done; %.1f %% completed\n", n, newvalue))
+    cat(sprintf("Task %.f done; %.1f %% completed\n", n, newvalue))
 }
 
 ########################################################################
