@@ -7,6 +7,7 @@ export(download.oni.cpc.ncep.noaa)
 export(cdtMergingPrecipCMD, cdtMergingTempCMD)
 export(jra55.send.request, jra55.format.ncdf)
 export(merging.options)
+export(readCDTStationData, matchCDTStationsData, matchCDTStationsIDs)
 
 importFrom("methods", "as", "is", "slot")
 importFrom("graphics", "abline", "arrows", "axTicks", "axis",

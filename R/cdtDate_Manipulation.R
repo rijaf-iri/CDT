@@ -221,6 +221,22 @@ rename_date.range <- function(date.range){
     as.list(unlist(date.range))
 }
 
+split_date.range <- function(tstep, date.range){
+    year <- lapply(date.range, substr, start = 1, stop = 4)
+    names(year) <- paste0(names(year), ".year")
+    mon <- lapply(date.range, substr, start = 5, stop = 6)
+    names(mon) <- paste0(names(mon), ".mon")
+    out <- c(year, mon)
+    if(tstep != "monthly"){
+        dd <- lapply(date.range, substr, start = 7, stop = 8)
+        nm <- if(tstep == "daily") "day" else substr(tstep, 1, 3)
+        names(dd) <- paste0(names(dd), ".", nm)
+        out <- c(out, dd)
+    }
+
+    lapply(out, as.numeric)
+}
+
 ##############################################
 
 get.range.date.time <- function(date.range, tstep, minhour = NA){
