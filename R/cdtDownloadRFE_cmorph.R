@@ -338,22 +338,21 @@ cmorph.extract.data.3 <- function(tmpf, ncfl, bbox, pars){
         varid <- "cmorph"
         lon <- nc$var[[varid]]$dim[[1]]$vals
         lat <- nc$var[[varid]]$dim[[2]]$vals
-
-        lon <- ((lon + 180) %% 360) - 180
-        ix <- lon >= bbox$minlon & lon <= bbox$maxlon
-        iy <- lat >= bbox$minlat & lat <= bbox$maxlat
-        start <- c(which(ix)[1], which(iy)[1], 1)
-        count <- c(diff(range(which(ix))) + 1, diff(range(which(iy))) + 1, 1)
-
-        val <- ncdf4::ncvar_get(nc, varid, start, count)
+        val <- ncdf4::ncvar_get(nc, varid)
         ncdf4::nc_close(nc)
 
         ############
-        missval <- -999.0
+        lon <- ((lon + 180) %% 360) - 180
+        ix <- lon >= bbox$minlon & lon <= bbox$maxlon
+        iy <- lat >= bbox$minlat & lat <= bbox$maxlat
         lon <- lon[ix]
         lat <- lat[iy]
         ox <- order(lon)
         lon <- lon[ox]
+
+        ############
+        missval <- -999.0
+        val <- val[ix, iy]
         val <- val[ox, ]
         val[is.na(val)] <- missval
 

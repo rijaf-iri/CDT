@@ -186,10 +186,15 @@ create_grid_buffer <- function(locations.stn, newgrid,
     icoarse <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
     coarsegrid <- as(newgrid[icoarse, ], "SpatialPixels")
 
+    resx_c <- resx * rx
+    resy_c <- resy * ry
+
     #####
     if(saveGridBuffer){
         out_grid <- list(stn = locations.stn)
         out_grid$coarse0 <- coarsegrid
+        out_grid$resx_c <- resx_c
+        out_grid$resy_c <- resy_c
     }
     #####
 
@@ -205,12 +210,12 @@ create_grid_buffer <- function(locations.stn, newgrid,
     icoarse <- icoarse[dst]
 
     buffer.out <- rgeos::gBuffer(loc.stn, width = 1.25 * radius)
-    icoarse.out <- as.logical(over(coarsegrid, buffer.out))
+    icoarse.out <- as.logical(sp::over(coarsegrid, buffer.out))
     icoarse.out[is.na(icoarse.out)] <- FALSE
     coarsegrid <- coarsegrid[icoarse.out, ]
     icoarse <- icoarse[icoarse.out]
 
-    igrid <- as.logical(over(newgrid, buffer.out))
+    igrid <- as.logical(sp::over(newgrid, buffer.out))
     igrid[is.na(igrid)] <- FALSE
 
     #####
@@ -223,7 +228,8 @@ create_grid_buffer <- function(locations.stn, newgrid,
     }
     #####
 
-    list(igrid = igrid, coarse = coarsegrid, icoarse = icoarse)
+    list(igrid = igrid, coarse = coarsegrid, icoarse = icoarse,
+         resx_c = resx_c, resy_c = resy_c)
 }
 
 ###############################
@@ -367,44 +373,14 @@ merging.functions <- function(locations.stn, newgrid, params,
 
         nmin <- params$interp$nmin[pass]
         nmax <- params$interp$nmax[pass]
+        maxdist <- if(params$interp$vargrd) Inf else params$interp$maxdist[pass]
 
         #########
 
-        if(params$interp$vargrd){
-            if(interp.method %in% c("idw", "okr")){
-                interp.res <- gstat::krige(res ~ 1, locations = loc.stn, newdata = newdata0, model = vgm,
-                                           block = bGrd, nmin = nmin, nmax = nmax, debug.level = 0)
-                interp.res <- interp.res$var1.pred
-            }else{
-                interp.res <- switch(interp.method,
-                    "barnes" = barnes.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 0.5),
-                    "cressman" = cressman.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric),
-                    # "idw" = idw.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 2),
-                    "shepard" = shepard.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 0.7),
-                    "sphere" = spheremap.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric),
-                    # "okr" = kriging.interp(loc.stn@coords, loc.stn$res, newdata0@coords, vgm, nmin, nmax, spheric)
-                )
-                interp.res <- interp.res[, 3]
-            }
-        }else{
-            maxdist <- params$interp$maxdist[pass]
-            if(interp.method %in% c("idw", "okr")){
-                interp.res <- gstat::krige(res ~ 1, locations = loc.stn, newdata = newdata0, model = vgm,
-                                           block = bGrd, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
-                interp.res <- interp.res$var1.pred
-            }else{
-                ## replace
-                interp.res <- switch(interp.method,
-                    "barnes" = barnes.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 0.5),
-                    "cressman" = cressman.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric),
-                    # "idw" = idw.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 2),
-                    "shepard" = shepard.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric, p = 0.7),
-                    "sphere" = spheremap.interp(loc.stn@coords, loc.stn$res, newdata0@coords, nmin, nmax, spheric),
-                    # "okr" = kriging.interp(loc.stn@coords, loc.stn$res, newdata0@coords, vgm, nmin, nmax, spheric)
-                )
-                interp.res <- interp.res[, 3]
-            }
-        }
+        interp.res <- merging.residuals.interp(loc.stn, newdata0, interp.method,
+                                               params$interp$vargrd, nmin, nmax,
+                                               maxdist, bGrd, vgm, spheric
+                                              )
 
         #########
 
@@ -506,6 +482,50 @@ merging.functions <- function(locations.stn, newgrid, params,
     dim(out.mrg) <- newgrid@grid@cells.dim
 
     return(out.mrg)
+}
+
+###############################
+
+merging.residuals.interp <- function(locations, newdata, interp.method,
+                                    var.grid, nmin, nmax, maxdist = Inf,
+                                    block = NULL, vgm = NULL, spheric = FALSE)
+{
+    if(var.grid){
+        if(interp.method %in% c("idw", "okr")){
+            interp.res <- gstat::krige(res ~ 1, locations = locations, newdata = newdata, model = vgm,
+                                       block = block, nmin = nmin, nmax = nmax, debug.level = 0)
+            interp.res <- interp.res$var1.pred
+        }else{
+            interp.res <- switch(interp.method,
+                "barnes" = barnes.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 0.5),
+                "cressman" = cressman.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric),
+                # "idw" = idw.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 2),
+                "shepard" = shepard.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 0.7),
+                "sphere" = spheremap.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric),
+                # "okr" = kriging.interp(locations@coords, locations$res, newdata@coords, vgm, nmin, nmax, spheric)
+            )
+            interp.res <- interp.res[, 3]
+        }
+    }else{
+        if(interp.method %in% c("idw", "okr")){
+            interp.res <- gstat::krige(res ~ 1, locations = locations, newdata = newdata, model = vgm,
+                                       block = block, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
+            interp.res <- interp.res$var1.pred
+        }else{
+            ## replace
+            interp.res <- switch(interp.method,
+                "barnes" = barnes.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 0.5),
+                "cressman" = cressman.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric),
+                # "idw" = idw.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 2),
+                "shepard" = shepard.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 0.7),
+                "sphere" = spheremap.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric),
+                # "okr" = kriging.interp(locations@coords, locations$res, newdata@coords, vgm, nmin, nmax, spheric)
+            )
+            interp.res <- interp.res[, 3]
+        }
+    }
+
+    return(interp.res)
 }
 
 ###############################
