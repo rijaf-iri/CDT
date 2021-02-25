@@ -84,16 +84,26 @@ merging.getOption <- function(name)
 }
 
 .defaultMrgOptions <- function(){
-    list(saveGridBuffer = FALSE,
+    list(
+         useLocalInterpolation = TRUE,
+         powerWeightIDW = 2,
+         powerWeightShepard = 0.7,
+         powerWeightBarnes = 0.5,
+         addCoarseGrid = FALSE,
+         intCoarseGrid = 0.5,
+         saveGridBuffer = FALSE,
          dirGridBuffer = path.expand("~"),
          saveRnoR = FALSE,
          dirRnoR = path.expand("~"),
          ## RnoR model: "logit", "additive"
          RnoRModel = "logit", 
          RnoRCutOff = 3,
+         ## if RnoRaddCoarse = TRUE, addCoarseGrid must be TRUE 
          RnoRaddCoarse = FALSE,
          RnoRUseMerged = FALSE,
-         RnoRSmoothingPixels = 2
+         RnoRSmoothingPixels = 2,
+         blockFac = 2,
+         blockLen = 5
         )
 }
 
@@ -157,8 +167,8 @@ rain_no_rain.cut_off <- function(rnr, RnoRCutOff){
 
 ###############################
 
-coarse_grid_space <- function(res){
-    space <- (0.4 / res)^0.9
+coarse_grid_space <- function(res, intCoarseGrid){
+    space <- intCoarseGrid/res
     space <- ceiling(space)
     space[space == 0] <- 1
     space
@@ -166,21 +176,24 @@ coarse_grid_space <- function(res){
 
 create_grid_buffer <- function(locations.stn, newgrid,
                                saveGridBuffer = FALSE,
-                               fileGridBuffer = "")
+                               fileGridBuffer = "",
+                               useLocalInterpolation = TRUE,
+                               intCoarseGrid = 0.5
+                              )
 {
     nx <- newgrid@grid@cells.dim[1]
     ny <- newgrid@grid@cells.dim[2]
     resx <- newgrid@grid@cellsize[1]
     resy <- newgrid@grid@cellsize[2]
-    rx <- coarse_grid_space(resx)
-    ry <- coarse_grid_space(resy)
+    rx <- coarse_grid_space(resx, intCoarseGrid)
+    ry <- coarse_grid_space(resy, intCoarseGrid)
 
     radius <- 2 * max(c(rx, ry)) * mean(c(resx, resy))
 
     ix <- seq(1, nx, rx)
     iy <- seq(1, ny, ry)
-    if(nx - ix[length(ix)] > 1) ix <- c(ix, nx)
-    if(ny - iy[length(iy)] > 1) iy <- c(iy, ny)
+    if(nx - ix[length(ix)] > 1) ix <- c(ix[-length(ix)], nx)
+    if(ny - iy[length(iy)] > 1) iy <- c(iy[-length(iy)], ny)
 
     ixy <- expand.grid(ix, iy)
     icoarse <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
@@ -209,7 +222,9 @@ create_grid_buffer <- function(locations.stn, newgrid,
     coarsegrid <- coarsegrid[dst, ]
     icoarse <- icoarse[dst]
 
-    buffer.out <- rgeos::gBuffer(loc.stn, width = 1.25 * radius)
+    width <- if(useLocalInterpolation) 1.25 * radius else 2.5
+
+    buffer.out <- rgeos::gBuffer(loc.stn, width = width)
     icoarse.out <- as.logical(sp::over(coarsegrid, buffer.out))
     icoarse.out[is.na(icoarse.out)] <- FALSE
     coarsegrid <- coarsegrid[icoarse.out, ]
@@ -255,13 +270,14 @@ merging.functions <- function(locations.stn, newgrid, params,
     if(interp.method %in% c("idw", "okr")){
         bGrd <- NULL
         if(params$interp$use.block)
-            bGrd <- createBlock(newgrid@grid@cellsize, 1, 5)
+            bGrd <- createBlock(newgrid@grid@cellsize, mrgOpts$blockFac, mrgOpts$blockLen)
     }
 
     ###############
 
     saveGridBuffer <- mrgOpts$saveGridBuffer
     dirGridBuffer <- mrgOpts$dirGridBuffer
+    fileGridBuffer <- ""
 
     if(saveGridBuffer){
         dirMthd <- paste0(params$MRG$method, "-", interp.method)
@@ -270,13 +286,13 @@ merging.functions <- function(locations.stn, newgrid, params,
             dir.create(dirBuff, showWarnings = FALSE, recursive = TRUE)
 
         fileGridBuffer <- file.path(dirBuff, paste0("grid_buffer_", nc.date, ".rds"))
-        xy.grid <- create_grid_buffer(locations.stn, newgrid,
-                                      saveGridBuffer, fileGridBuffer)
-    }else{
-        xy.grid <- create_grid_buffer(locations.stn, newgrid)
     }
 
-    ###############
+    xy.grid <- create_grid_buffer(locations.stn, newgrid,
+                                  saveGridBuffer, fileGridBuffer,
+                                  mrgOpts$useLocalInterpolation,
+                                  mrgOpts$intCoarseGrid
+                                )
 
     igrid <- xy.grid$igrid
     icoarse <- xy.grid$icoarse
@@ -361,7 +377,7 @@ merging.functions <- function(locations.stn, newgrid, params,
 
         #########
 
-        if(length(coarsegrid) > 0){
+        if(mrgOpts$addCoarseGrid & length(coarsegrid) > 0){
             coarse_interp <- coarsegrid
             coarse_interp$res <- rep(0, length(coarse_interp))
             row.names(loc.stn) <- 1:length(loc.stn)
@@ -371,17 +387,25 @@ merging.functions <- function(locations.stn, newgrid, params,
 
         #########
 
-        nmin <- params$interp$nmin[pass]
-        nmax <- params$interp$nmax[pass]
-        maxdist <- if(params$interp$vargrd) Inf else params$interp$maxdist[pass]
-
-        #########
+        ## change maxdist Inf to finite value for interp other than idw and okr
+        if(mrgOpts$useLocalInterpolation){
+            nmin <- params$interp$nmin[pass]
+            nmax <- params$interp$nmax[pass]
+            maxdist <- if(params$interp$vargrd) 180 else params$interp$maxdist[pass]
+            # maxdist <- if(params$interp$vargrd) Inf else params$interp$maxdist[pass]
+        }else{
+            nmin <- 0
+            nmax <- 1000
+            ## 180 degree
+            maxdist <- 180
+            # nmax <- Inf
+            # maxdist <- Inf
+        }
 
         interp.res <- merging.residuals.interp(loc.stn, newdata0, interp.method,
                                                params$interp$vargrd, nmin, nmax,
-                                               maxdist, bGrd, vgm, spheric
+                                               maxdist, bGrd, vgm, spheric, mrgOpts
                                               )
-
         #########
 
         out.mrg <- newgrid@data$grd
@@ -413,7 +437,7 @@ merging.functions <- function(locations.stn, newgrid, params,
 
             ######
             ## add coarse grid to locations.stn
-            if(mrgOpts$RnoRUseMerged){
+            if(mrgOpts$RnoRaddCoarse){
                 if(length(coarsegrid) > 0){
                     coarse_rnr <- coarsegrid
                     if(mrgOpts$RnoRUseMerged){
@@ -487,20 +511,24 @@ merging.functions <- function(locations.stn, newgrid, params,
 ###############################
 
 merging.residuals.interp <- function(locations, newdata, interp.method,
-                                    var.grid, nmin, nmax, maxdist = Inf,
-                                    block = NULL, vgm = NULL, spheric = FALSE)
+                                     var.grid, nmin, nmax, maxdist = Inf,
+                                     block = NULL, vgm = NULL, spheric = FALSE,
+                                     mrgOpts = list(powerWeightIDW = 2,
+                                                    powerWeightShepard = 0.7,
+                                                    powerWeightBarnes = 0.5))
 {
     if(var.grid){
         if(interp.method %in% c("idw", "okr")){
             interp.res <- gstat::krige(res ~ 1, locations = locations, newdata = newdata, model = vgm,
-                                       block = block, nmin = nmin, nmax = nmax, debug.level = 0)
+                                       block = block, nmin = nmin, nmax = nmax,
+                                       set = list(idp = mrgOpts$powerWeightIDW), debug.level = 0)
             interp.res <- interp.res$var1.pred
         }else{
             interp.res <- switch(interp.method,
-                "barnes" = barnes.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 0.5),
+                "barnes" = barnes.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = mrgOpts$powerWeightBarnes),
                 "cressman" = cressman.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric),
-                # "idw" = idw.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 2),
-                "shepard" = shepard.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 0.7),
+                # "idw" = idw.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = mrgOpts$powerWeightIDW),
+                "shepard" = shepard.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = mrgOpts$powerWeightShepard),
                 "sphere" = spheremap.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric),
                 # "okr" = kriging.interp(locations@coords, locations$res, newdata@coords, vgm, nmin, nmax, spheric)
             )
@@ -509,15 +537,16 @@ merging.residuals.interp <- function(locations, newdata, interp.method,
     }else{
         if(interp.method %in% c("idw", "okr")){
             interp.res <- gstat::krige(res ~ 1, locations = locations, newdata = newdata, model = vgm,
-                                       block = block, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
+                                       block = block, nmin = nmin, nmax = nmax, maxdist = maxdist,
+                                       set = list(idp = mrgOpts$powerWeightIDW), debug.level = 0)
             interp.res <- interp.res$var1.pred
         }else{
             ## replace
             interp.res <- switch(interp.method,
-                "barnes" = barnes.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 0.5),
+                "barnes" = barnes.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = mrgOpts$powerWeightBarnes),
                 "cressman" = cressman.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric),
-                # "idw" = idw.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 2),
-                "shepard" = shepard.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = 0.7),
+                # "idw" = idw.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = mrgOpts$powerWeightIDW),
+                "shepard" = shepard.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric, p = mrgOpts$powerWeightShepard),
                 "sphere" = spheremap.interp(locations@coords, locations$res, newdata@coords, nmin, nmax, spheric),
                 # "okr" = kriging.interp(locations@coords, locations$res, newdata@coords, vgm, nmin, nmax, spheric)
             )
@@ -590,12 +619,11 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
     locations.stn <- as.data.frame(stnData[c('lon', 'lat')])
     coordinates(locations.stn) <- c('lon', 'lat')
     ijs <- over(locations.stn, newgrid)
-    locations.stn$stn <- rep(NA,  length(locations.stn))
+    locations.stn$stn <- rep(NA, length(locations.stn))
 
     ##################
 
     xy.data <- defSpatialPixels(ncinfo[c('lon', 'lat')])
-    # ijgs <- over(locations.stn, xy.data)
 
     is.regridNCDF <- is.diffSpatialPixelsObj(newgrid, xy.data, tol = 1e-07)
     ijnc <- NULL
@@ -660,7 +688,6 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
 
         ######
 
-        # locations.stn$grd <- nc.val[ijgs]
         newgrid$grd <- if(is.null(ijnc)) c(nc.val) else nc.val[ijnc]
 
         donne.stn <- stnData$data[which(stnData$date == ncInfo$dates[jj]), , drop = FALSE]

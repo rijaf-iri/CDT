@@ -289,6 +289,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
         }
 
         #######
+        ## add options for the power
         if(interp$method %in% c("idw", "okr")){
             interp.stn <- gstat::krige(stn ~ 1, locations = locations.stn, newdata = newgrid, model = vgm,
                                        block = bGrd, nmin = nmin, nmax = nmax, maxdist = maxdist, debug.level = 0)
@@ -311,7 +312,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
             interp.stn[!ixs] <- NA
         }
         if(interp$method == "shepard"){
-            interp.stn <- shepard.interp(locations.stn@coords, locations.stn$stn, newgrid@coords, nmin, nmax, FALSE, p = 2)
+            interp.stn <- shepard.interp(locations.stn@coords, locations.stn$stn, newgrid@coords, nmin, nmax, FALSE, p = 0.7)
             interp.stn <- interp.stn[, 3]
         }
         if(interp$method == "sphere"){

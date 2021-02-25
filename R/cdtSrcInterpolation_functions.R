@@ -60,7 +60,7 @@ idw.interp <- function(locations, values, newdata, nmin, nmax, spheric, p = 2){
     out$outM
 }
 
-shepard.interp <- function(locations, values, newdata, nmin, nmax, spheric, p = 2){
+shepard.interp <- function(locations, values, newdata, nmin, nmax, spheric, p = 0.7){
     nGrd <- nrow(newdata)
     outM <- matrix(double(1), nrow = nGrd, ncol = 3)
     nStn <- length(values)
@@ -71,7 +71,7 @@ shepard.interp <- function(locations, values, newdata, nmin, nmax, spheric, p = 
     out$outM
 }
 
-barnes.interp <- function(locations, values, newdata, nmin, nmax, spheric, p = 2){
+barnes.interp <- function(locations, values, newdata, nmin, nmax, spheric, p = 0.5){
     nGrd <- nrow(newdata)
     outM <- matrix(double(1), nrow = nGrd, ncol = 3)
     nStn <- length(values)
