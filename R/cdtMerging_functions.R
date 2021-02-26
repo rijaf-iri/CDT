@@ -90,7 +90,7 @@ merging.getOption <- function(name)
          powerWeightShepard = 0.7,
          powerWeightBarnes = 0.5,
          addCoarseGrid = FALSE,
-         intCoarseGrid = 0.5,
+         resCoarseGrid = 0.5,
          saveGridBuffer = FALSE,
          dirGridBuffer = path.expand("~"),
          saveRnoR = FALSE,
@@ -167,8 +167,8 @@ rain_no_rain.cut_off <- function(rnr, RnoRCutOff){
 
 ###############################
 
-coarse_grid_space <- function(res, intCoarseGrid){
-    space <- intCoarseGrid/res
+coarse_grid_space <- function(res, resCoarseGrid){
+    space <- resCoarseGrid/res
     space <- ceiling(space)
     space[space == 0] <- 1
     space
@@ -178,15 +178,15 @@ create_grid_buffer <- function(locations.stn, newgrid,
                                saveGridBuffer = FALSE,
                                fileGridBuffer = "",
                                useLocalInterpolation = TRUE,
-                               intCoarseGrid = 0.5
+                               resCoarseGrid = 0.5
                               )
 {
     nx <- newgrid@grid@cells.dim[1]
     ny <- newgrid@grid@cells.dim[2]
     resx <- newgrid@grid@cellsize[1]
     resy <- newgrid@grid@cellsize[2]
-    rx <- coarse_grid_space(resx, intCoarseGrid)
-    ry <- coarse_grid_space(resy, intCoarseGrid)
+    rx <- coarse_grid_space(resx, resCoarseGrid)
+    ry <- coarse_grid_space(resy, resCoarseGrid)
 
     radius <- 2 * max(c(rx, ry)) * mean(c(resx, resy))
 
@@ -291,7 +291,7 @@ merging.functions <- function(locations.stn, newgrid, params,
     xy.grid <- create_grid_buffer(locations.stn, newgrid,
                                   saveGridBuffer, fileGridBuffer,
                                   mrgOpts$useLocalInterpolation,
-                                  mrgOpts$intCoarseGrid
+                                  mrgOpts$resCoarseGrid
                                 )
 
     igrid <- xy.grid$igrid
