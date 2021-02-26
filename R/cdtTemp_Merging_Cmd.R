@@ -232,6 +232,7 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
                 Insert.Messages.Out("No vector dates", TRUE, "e", GUI)
                 return(NULL)
             }
+            daty <- daty[order(daty)]
 
             dirMrg <- paste('Merged_Temp_Data', daty[1], daty[length(daty)], sep = '_')
         }
