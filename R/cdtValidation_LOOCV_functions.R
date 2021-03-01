@@ -171,7 +171,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         ijv <- which(which(noNA) %in% stnVID)
         ijout <- ijs[noNA][ijv]
 
-        if(length(locations.stn) < 5){
+        if(length(locations.stn) < mrgOpts$mrgMinNumberSTN){
             cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|",
                 "no cross-validation performed", "\n"), file = log.file, append = TRUE)
             return(NULL)
@@ -181,17 +181,11 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
             loc.data <- !is.na(locations.stn@data)
             loc.data <- split(loc.data, col(loc.data))
             nna <- Reduce("&", loc.data)
-            if(length(which(nna)) < 5){
+            if(length(which(nna)) < mrgOpts$rkMinNumberSTN){
                 cat(paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
                     "no cross-validation performed", "\n"), file = log.file, append = TRUE)
                 return(NULL)
             }
-        }
-
-        if(params$RnoR$use){
-            wet.day <- params$RnoR$wet
-            if(wet.day <= 0) wet.day <- wet.day + 1e-13
-            locations.stn$rnr <- ifelse(locations.stn$stn < wet.day, 0, 1)
         }
 
         ######

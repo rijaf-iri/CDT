@@ -66,7 +66,6 @@
 #' \item{\code{maxdist}: }{maximum radius of influence in decimal degree}
 #' \item{\code{use.block}: }{logical, use block mean values to interpolate a grid point}
 #' \item{\code{vargrd}: }{logical, use a variable radius of influence}
-#' \item{\code{minstn}: }{minimum number of non missing values from station to perform the interpolation}
 #' \item{\code{vgm.model}: }{vector of variogram model to be used if \code{method} is \code{"okr"}. Default is \code{c("Exp", "Gau", "Sph", "Pen")}}
 #' }
 #' @param auxvar a named list specifying the auxiliary variables to use when the merging method is \code{"RK"}.
@@ -117,7 +116,7 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
                                                  varid = "temp", ilon = 1, ilat = 2),
                               merge.method = list(method = "SBA", nrun = 3, pass = c(1, 0.75, 0.5)),
                               interp.method = list(method = "idw", nmin = 8, nmax = 16, maxdist = 3.5,
-                                                   use.block = TRUE, vargrd = FALSE, minstn = 10,
+                                                   use.block = TRUE, vargrd = FALSE,
                                                    vgm.model = c("Sph", "Exp", "Gau", "Pen")),
                               auxvar = list(dem = FALSE, slope = FALSE, aspect = FALSE, lon = FALSE, lat = FALSE),
                               dem.data = list(file = "", varid = "dem", ilon = 1, ilat = 2),
@@ -170,7 +169,7 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
     merge.method <- init.default.list.args(merge.method, mrgmthd_pars)
 
     #######
-    intmthd_pars <- list(method = "idw", vargrd = FALSE, minstn = 10,
+    intmthd_pars <- list(method = "idw", vargrd = FALSE,
                          nmin = 8, nmax = 16, maxdist = 3.5, use.block = TRUE,
                          vgm.model = c("Sph", "Exp", "Gau", "Pen"))
     interp.method <- init.default.list.args(interp.method, intmthd_pars)

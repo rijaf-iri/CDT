@@ -10,7 +10,7 @@ download.oni.cpc.ncep.noaa(GUI = FALSE)
 \item{GUI}{logical, if TRUE, display message on CDT (if CDT GUI is open), otherwise the message is displayed on R console.}
 }
 \description{
-Updating ONI data
+Updating CDT's ONI data from cpc.ncep.noaa.gov.
 }
 \references{
 \url{https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php}

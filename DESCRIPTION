@@ -51,6 +51,7 @@ Imports:
     gridBase,
     units,
     jsonlite (>= 1.2),
+    stringi,
     stringr,
     XML,
     xml2,

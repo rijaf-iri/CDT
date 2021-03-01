@@ -85,11 +85,14 @@ merging.getOption <- function(name)
 
 .defaultMrgOptions <- function(){
     list(
+         mrgMinNumberSTN = 10,
+         rkMinNumberSTN = 20,
+         vgmMinNumberSTN = 20,
          useLocalInterpolation = TRUE,
          powerWeightIDW = 2,
          powerWeightShepard = 0.7,
          powerWeightBarnes = 0.5,
-         addCoarseGrid = FALSE,
+         addCoarseGrid = TRUE,
          resCoarseGrid = 0.5,
          saveGridBuffer = FALSE,
          dirGridBuffer = path.expand("~"),
@@ -98,8 +101,7 @@ merging.getOption <- function(name)
          ## RnoR model: "logit", "additive"
          RnoRModel = "logit", 
          RnoRCutOff = 3,
-         ## if RnoRaddCoarse = TRUE, addCoarseGrid must be TRUE 
-         RnoRaddCoarse = FALSE,
+         RnoRaddCoarse = TRUE,
          RnoRUseMerged = FALSE,
          RnoRSmoothingPixels = 2,
          blockFac = 2,
@@ -305,7 +307,7 @@ merging.functions <- function(locations.stn, newgrid, params,
         locations.stn$grd <- over(locations.stn, newdata0)$grd
         locations.stn <- locations.stn[!is.na(locations.stn$grd), ]
 
-        if(length(locations.stn) < 5){
+        if(length(locations.stn) < mrgOpts$mrgMinNumberSTN){
             cat(paste(nc.date, ":", paste("not enough station data pass#", pass), "|",
                 "Output: gridded data", "\n"), file = log.file, append = TRUE)
             out.mrg <- matrix(newgrid@data$grd,
@@ -358,7 +360,7 @@ merging.functions <- function(locations.stn, newgrid, params,
 
         vgm <- NULL
         if(interp.method == "okr"){
-            calc.vgm <- if(length(loc.stn$res) > params$interp$minstn &
+            calc.vgm <- if(length(loc.stn$res) > mrgOpts$vgmMinNumberSTN &
                            var(loc.stn$res) > 1e-15) TRUE else FALSE
             if(calc.vgm){
                 exp.var <- gstat::variogram(res~1, locations = loc.stn, cressie = TRUE)
@@ -714,7 +716,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             return(0)
         }
 
-        if(donne.len > 0 & donne.len < 5){
+        if(donne.len > 0 & donne.len < mrgOpts$mrgMinNumberSTN){
             msg <- paste(ncInfo$dates[jj], ":", "not enough station data", "|",
                          "No merging performed, output equals to the input NetCDF data", "\n")
             cat(msg, file = log.file, append = TRUE)
@@ -727,7 +729,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             loc.data <- !is.na(locations.stn@data)
             loc.data <- split(loc.data, col(loc.data))
             nna <- Reduce("&", loc.data)
-            if(length(which(nna)) < 5){
+            if(length(which(nna)) < mrgOpts$rkMinNumberSTN){
                 msg <- paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
                              "No merging performed, output equals to the input NetCDF data", "\n")
                 cat(msg, file = log.file, append = TRUE)

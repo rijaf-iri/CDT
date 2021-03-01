@@ -430,6 +430,46 @@ iridl.format.date <- function(tstep, date.range)
 
 ##############################################
 
+iridl.seasonal.dates <- function(seasonal_dates){
+    months <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+    seas <- strsplit(seasonal_dates, "-")
+    seas <- lapply(seas, trimws)
+    lenS <- sapply(seas, length)
+    if(all(lenS == 1)){
+        seas <- do.call(c, seas)
+        seas <- strsplit(seas, " ")
+        seas_mon <- sapply(seas, "[[", 1)
+        start_mon <- match(seas_mon, months)
+        end_mon <- start_mon
+        start_year <- sapply(seas, "[[", 2)
+        end_year <- start_year
+    }else{
+        end <- sapply(seas, "[[", 2)
+        end <- strsplit(end, " ")
+        end_mon <- sapply(end, "[[", 1)
+        end_mon <- match(end_mon, months)
+        end_year <- sapply(end, "[[", 2)
+        start <- sapply(seas, "[[", 1)
+        start <- strsplit(start, " ")
+        start <- lapply(start, function(x){
+            if(length(x) == 1) c(x, NA) else x
+        })
+        start_mon <- sapply(start, "[[", 1)
+        start_mon <- match(start_mon, months)
+        start_year <- sapply(start, "[[", 2)
+        ina <- is.na(start_year)
+        start_year[ina] <- end_year[ina]
+    }
+
+    start <- as.Date(paste(start_year, start_mon, 1, sep = "-"))
+    end <- as.Date(paste(end_year, end_mon, 1, sep = "-"))
+    list(start = format(start, "%Y-%m"),
+         end = format(end, "%Y-%m"))
+}
+
+##############################################
+
 table.annuel <- function(){
     uneAnne <- seq(as.Date('2014-1-1'), by = 'day', length.out = 365)
     day <- as.numeric(format(uneAnne, "%d"))
