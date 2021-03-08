@@ -127,6 +127,12 @@ subroutine predict_vgm(x, n, m, vgm, nug, sill, rg, pred)
       pred = sill
     end where
   else
-    stop 1
+    ! stop gives a warning
+    ! Compiled code should not call entry points which might terminate R nor write to stdout/stderr
+    ! instead of to the console, nor use Fortran I/O nor system RNGs.
+    ! use "Gau" as default
+
+    ! stop 1
+    pred = nug + (sill - nug) * (1.0_rp - exp(-3.0_rp * (x/rg)**2))
   end if
 end subroutine predict_vgm

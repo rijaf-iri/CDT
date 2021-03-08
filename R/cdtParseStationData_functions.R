@@ -3,9 +3,9 @@
 #'
 #' Read CDT station format file.
 #' 
-#' @param file Full path to the file containing the CDT data
-#' @param sep The column's separator of the data
-#' @param missing The missing values flag
+#' @param file character, full path to the file containing the CDT data
+#' @param sep character, the column's separator of the data
+#' @param na.strings character, the missing values flag
 #'  
 #' @return A list object
 #' \itemize{
@@ -18,9 +18,9 @@
 #' 
 #' @export
 
-readCDTStationData <- function(file, sep = ",", missing = "-99"){
+readCDTStationData <- function(file, sep = ",", na.strings = "-99"){
     donne <- utils::read.table(file, sep = sep,
-                               na.strings = missing,
+                               na.strings = na.strings,
                                colClasses = "character",
                                stringsAsFactors = FALSE)
     dat <- splitCDTData0(donne, GUI = FALSE)

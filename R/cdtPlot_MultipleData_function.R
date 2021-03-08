@@ -2,10 +2,12 @@
 #'
 #' Display maps from multiple data in one plot.
 #' 
-#' @param dataObj list of data. Each data list(x, y, z, type). \cr
-#' Type: "grid" or "points".\cr
-#' "grid": x vector, y vector, z matrix of dim c(length(x), length(y))
-#' "points": x, y, z vectors same length
+#' @param dataObj list of data. Each data has the form \code{list(x, y, z, type)}. \cr
+#' Valid options for type: \code{"grid"} or \code{"points"}.
+#' \itemize{
+#' \item{\code{"grid"}: }{\code{x} vector, \code{y} vector, \code{z} matrix of \code{dim} equals \code{c(length(x), length(y))}}
+#' \item{\code{"points"}: }{\code{x, y, z} vectors same length}
+#' }
 #' @param shp sp object of class \code{SpatialPolygons} or \code{SpatialPolygonsDataFrame}
 #' @param xlim,ylim vector of length 2.
 #' @param dataTitle vector same length as dataObj, title for each data
@@ -33,6 +35,23 @@ plotMultipleData <- function(dataObj, shp = NULL, xlim = NULL, ylim = NULL,
     }else{
         ocrds <- matrix(NA, ncol = 2)
     }
+
+    #######
+
+    presetCol_pars <- list(color = 'tim.colors', reverse = FALSE)
+    presetCol <- init.default.list.args(presetCol, presetCol_pars)
+
+    userCol_pars <- list(custom = FALSE, color = NULL)
+    userCol <- init.default.list.args(userCol, userCol_pars)
+
+    userLvl_pars <- list(custom = FALSE, levels = NULL, equidist = FALSE)
+    userLvl <- init.default.list.args(userLvl, userLvl_pars)
+
+    ptsOpt_pars <- list(pch = 20, cex = 1)
+    ptsOpt <- init.default.list.args(ptsOpt, ptsOpt_pars)
+
+    shpOpt_pars <- list(col = "black", lwd = 1)
+    shpOpt <- init.default.list.args(shpOpt, shpOpt_pars)
 
     #######
 

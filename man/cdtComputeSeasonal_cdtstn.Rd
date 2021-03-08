@@ -7,7 +7,7 @@
 cdtComputeSeasonal_cdtstn(
   season.def = list(start.month = 1, season.length = 3),
   period = list(start.year = 1981, end.year = 2010),
-  station.data = list(time.step = "dekadal", file = "", sep = ",", missing = "-99"),
+  station.data = list(time.step = "dekadal", file = "", sep = ",", na.strings = "-99"),
   season.min.frac = 0.95,
   aggregation.fun = "sum",
   count.opr = ">=",
@@ -16,19 +16,33 @@ cdtComputeSeasonal_cdtstn(
 )
 }
 \arguments{
-\item{season.def}{a named list, season definition.}
+\item{season.def}{named list, season definition.
+\itemize{
+  \item{\code{start.month}: }{integer, start month of the season}
+  \item{\code{season.length}: }{integer, length of the season}
+}}
 
-\item{period}{a named list, the period of data to compute.}
+\item{period}{named list, the period of data to compute.
+\itemize{
+  \item{\code{start.year}: }{integer, start year of the period}
+  \item{\code{end.year}: }{integer, the end year}
+}}
 
-\item{station.data}{a named list, stations data info.}
+\item{station.data}{named list, stations data info.
+\itemize{
+  \item{\code{time.step}: }{character, the time step of the station data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}}
+  \item{\code{file}: }{character, full path to the file containing the CDT data}
+  \item{\code{sep}: }{character, the column's separator of the data}
+  \item{\code{na.strings}: }{character, the missing values flag}
+}}
 
-\item{season.min.frac}{used to aggregate the seasonal data, minimum fraction of non-missing values for each season.}
+\item{season.min.frac}{numeric, used to aggregate the seasonal data, minimum fraction of non-missing values for each season.}
 
 \item{aggregation.fun}{character, aggregation function to use. Options are: "sum", "mean", "median", "max", "min", "sd", "var", "count", "user".}
 
 \item{count.opr}{character, the comparison operator to use when \code{aggregation.fun} is \code{"count"}.}
 
-\item{count.thres}{the threshold to use when \code{aggregation.fun} is \code{"count"}.}
+\item{count.thres}{numeric, the threshold to use when \code{aggregation.fun} is \code{"count"}.}
 
 \item{...}{when \code{aggregation.fun} is \code{"user"}, the user function and additional arguments to be passed to the user's function.}
 }

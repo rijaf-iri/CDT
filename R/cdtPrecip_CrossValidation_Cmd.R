@@ -1,7 +1,6 @@
-
-#' Merging stations observation and reanalysis data.
+#' Cross-validation, merging stations observation and satellite rainfall estimates data.
 #'
-#' Function to merge stations observation and reanalysis data.
+#' Function to perform a Leave-One-Out Cross-Validation for rainfall merging.
 #' 
 #' @param time.step character, the time step of the data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}.
 #' @param dates named list, providing the dates to merge.
@@ -34,12 +33,12 @@
 #' \item{\code{format}: }{character, format of the netCDF file names}
 #' \item{\code{varid}: }{character, name of the variable to read from the netCDF data}
 #' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
-#' Example: if the variable "temp" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
+#' Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
 #' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 #' }
 #' @param merge.method named list, indicating the merging method.
 #' \itemize{
-#' \item{\code{"method"}: }{the merging method. Valid options: \code{"CSc"}, \code{"BSc"}, \code{"SBA"} or \code{"RK"}.
+#' \item{\code{"method"}: }{character, the merging method. Valid options: \code{"CSc"}, \code{"BSc"}, \code{"SBA"} or \code{"RK"}.
 #'  \itemize{
 #'   \item{\strong{"CSc"}: }{Cressman Scheme}
 #'   \item{\strong{"BSc"}: }{Barnes Scheme}
@@ -68,6 +67,26 @@
 #' \item{\code{vargrd}: }{logical, use a variable radius of influence}
 #' \item{\code{vgm.model}: }{character vector of variogram model to be used if \code{method} is \code{"okr"}. Default is \code{c("Exp", "Gau", "Sph", "Pen")}}
 #' }
+#' @param crossv.station named list, selecting the stations to use for the cross-validation.
+#' The list includes an element \code{from} with available options \code{"all"}, \code{"file"} or \code{"cdt"}, and 
+#' an element \code{pars} which is a named list specifying the parameters related to \code{from}:
+#' \itemize{
+#' \item{\strong{"all"}: }{all the stations from \code{station.data} will be used for cross-validation, \code{pars} can be omitted}
+#' \item{\strong{"file"}: }{the list of stations to be used for the cross-validation comes from a file.
+#'  \itemize{
+#'    \item{\code{type}: }{character, the type of the data, valid options are:\cr
+#'       \strong{"cdtstation"}: the stations come from a CDT stations data, \cr
+#'       \strong{"cdtcoords"}: the stations come from a CDT coordinates file}
+#'    \item{\code{file}: }{character, full path to the file containing the stations}
+#'    \item{\code{sep}: }{character, column separator of the data}
+#'    \item{\code{na.strings}: }{character, missing values flag}
+#'    \item{\code{header}: }{logical, in case of \strong{"cdtcoords"}, set \code{TRUE} if the data has a header}
+#'  }
+#' }
+#' \item{\strong{"cdt"}: }{the list of stations to be used for the cross-validation will be selected from \code{station.data} 
+#'   by providing the percent of minimum available data for each station.\cr
+#'   Example: \code{pars = list(min.perc = 40)}}
+#' }
 #' @param auxvar named list, specifying the auxiliary variables to use when the merging method is \code{"RK"}.
 #' \itemize{
 #' \item{\code{dem}: }{logical, include elevation data as auxiliary variable}
@@ -83,50 +102,35 @@
 #' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
 #' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 #' }
-#' @param grid named list, providing the grid to use to interpolate the data.
-#' The list includes an element \code{from} with available options \code{"data"}, \code{"ncdf"} or \code{"new"}, and 
-#'  an element \code{pars} which is a named list specifying the parameters related to \code{from}:
+#' @param RnoR named list, specifying the rain-no-rain mask parameters.
 #' \itemize{
-#' \item{\strong{"data"}: }{the grid to interpolate will be taken from the input netCDF data, \code{pars} can be omitted} 
-#' \item{\strong{"ncdf"}: }{the grid to interpolate will be taken from a provided netCDF file, 
-#' \code{pars} specifies the full path to the netCDF file containing the grid to be extracted, 
-#' the name of the variable to read, the order for the longitude and latitude dimension.\cr
-#' Example: \code{pars = list(file = "/home/data/files/rfe_2020121.nc", varid = "precip", ilon = 1, ilat = 2)}
+#' \item{\code{use}: }{logical, apply rain-no-rain mask}
+#' \item{\code{wet}: }{numeric, threshold to be use to define the wet/dry event}
+#' \item{\code{smooth}: }{logical, smooth the rain-no-rain mask after interpolation}
 #' }
-#' \item{\strong{"new"}: }{the grid to interpolate will be created from the information provided by user, 
-#' \code{pars} specifies the minimum/maximum of the longitude and latitude of the domain and the resolution to be used. \cr
-#' Example: \code{pars = list(minlon = 42, maxlon = 52, minlat = -26, maxlat = -11, reslon = 0.1, reslat = 0.1)}
-#' }
-#' }
-#' @param blank named list, indicating if the data outside a provided shapefile will be removed.
-#' \itemize{
-#' \item{\code{data}: }{logical, blank the grid outside the provided shapefile}
-#' \item{\code{shapefile}: }{character, full path to the shapefile to be used for blanking with the extension ".shp"}
-#' }
-#' @param output named list, indicating the directory to save the merged data and the format of the merged netCDF file name.
+#' @param output.dir character, full path to the directory to save the output.
 #' @param GUI logical, indicating whether or not the output message should be displayed on CDT GUI. If \code{TRUE}, CDT GUI must be open.
 #' 
 #' @export
 
-
-cdtMergingTempCMD <- function(time.step = "dekadal",
-                              dates = list(from = "range", pars = list(start = "2018011", end = "2018123")),
-                              station.data = list(file = "", sep = ",", na.strings = "-99"),
-                              netcdf.data = list(dir = "", format = "tmax_adj_%s%s%s.nc",
-                                                 varid = "temp", ilon = 1, ilat = 2),
-                              merge.method = list(method = "SBA", nrun = 3, pass = c(1, 0.75, 0.5)),
-                              interp.method = list(method = "idw", nmin = 8, nmax = 16, maxdist = 3.5,
-                                                   use.block = TRUE, vargrd = FALSE,
-                                                   vgm.model = c("Sph", "Exp", "Gau", "Pen")),
-                              auxvar = list(dem = FALSE, slope = FALSE, aspect = FALSE, lon = FALSE, lat = FALSE),
-                              dem.data = list(file = "", varid = "dem", ilon = 1, ilat = 2),
-                              grid = list(from = "data", pars = NULL),
-                              blank = list(data = FALSE, shapefile = ""),
-                              output = list(dir = "", format = "tmax_mrg_%s%s%s.nc"),
-                              GUI = FALSE)
+cdtCrossValidationPrecipCMD <- function(time.step = "dekadal",
+                                        dates = list(from = "range", pars = list(start = "2018011", end = "2018123")),
+                                        station.data = list(file = "", sep = ",", na.strings = "-99"),
+                                        netcdf.data = list(dir = "", format = "rr_adj_%s%s%s.nc",
+                                                           varid = "precip", ilon = 1, ilat = 2),
+                                        merge.method = list(method = "SBA", nrun = 3, pass = c(1, 0.75, 0.5)),
+                                        interp.method = list(method = "idw", nmin = 8, nmax = 16, maxdist = 2.5,
+                                                             use.block = TRUE, vargrd = FALSE,
+                                                             vgm.model = c("Sph", "Exp", "Gau", "Pen")),
+                                        crossv.station = list(from = "all", pars = NULL),
+                                        auxvar = list(dem = FALSE, slope = FALSE, aspect = FALSE, lon = FALSE, lat = FALSE),
+                                        dem.data = list(file = "", varid = "dem", ilon = 1, ilat = 2),
+                                        RnoR = list(use = FALSE, wet = 1.0, smooth = FALSE),
+                                        output.dir = "",
+                                        GUI = FALSE)
 {
     cdtLocalConfigData()
-    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_Merging_dlgBox.xml")
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPrecip_CrossValidation_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
     message <- lang.dlg[['message']]
 
@@ -140,8 +144,8 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
             Insert.Messages.Out(msg, TRUE, "e", GUI)
             return(NULL)
         }else{
-            ncdata_pars <- list(dir = "", format = "tmax_adj_%s%s%s.nc",
-                               varid = "temp", ilon = 1, ilat = 2)
+            ncdata_pars <- list(dir = "", format = "rr_adj_%s%s%s.nc",
+                                varid = "precip", ilon = 1, ilat = 2)
             netcdf.data <- init.default.list.args(netcdf.data, ncdata_pars)
         }
     }else{
@@ -165,12 +169,31 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
     }
 
     #######
+
+    if(crossv.station$from == "file"){
+        if(!file.exists(crossv.station$pars$file)){
+            msg <- paste("File containing the stations, to be used for the cross-validation, does not exist",
+                         ":", crossv.station$pars$file)
+            Insert.Messages.Out(msg, TRUE, "e", GUI)
+            return(NULL)
+        }
+
+        cv_pars <- list(type = "cdtstation", file = "", sep = ",", na.strings = "-99", header = FALSE)
+        crossv.station$pars <- init.default.list.args(crossv.station$pars, cv_pars)
+    }
+
+    if(crossv.station$from == "cdt"){
+        cv_pars <- list(min.perc = 40)
+        crossv.station$pars <- init.default.list.args(crossv.station$pars, cv_pars)
+    }
+
+    #######
     mrgmthd_pars <- list(method = "SBA", nrun = 3, pass = c(1, 0.75, 0.5))
     merge.method <- init.default.list.args(merge.method, mrgmthd_pars)
 
     #######
     intmthd_pars <- list(method = "idw", vargrd = FALSE,
-                         nmin = 8, nmax = 16, maxdist = 3.5, use.block = TRUE,
+                         nmin = 8, nmax = 16, maxdist = 2.5, use.block = TRUE,
                          vgm.model = c("Sph", "Exp", "Gau", "Pen"))
     interp.method <- init.default.list.args(interp.method, intmthd_pars)
 
@@ -183,31 +206,8 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
     dem.data <- init.default.list.args(dem.data, dem_pars)
 
     #######
-    if(grid$from %in% c("data", "ncdf", "new")){
-        if(grid$from != "data"){
-            if(grid$from == "ncdf"){
-                grid_pars <- list(file = "", varid = "temp",
-                                  ilon = 1, ilat = 2)
-            }
-            if(grid$from == "new"){
-                grid_pars <- list(minlon = 42, maxlon = 52,
-                                  minlat = -26, maxlat = -11,
-                                  reslon = 0.1, reslat = 0.1)
-            }
-            grid$pars <- init.default.list.args(grid$pars, grid_pars)
-        }
-    }else{
-       Insert.Messages.Out("Unknown grid for interpolation", TRUE, "e", GUI)
-       return(NULL)
-    }
-
-    #######
-    blank_pars <- list(data = FALSE, shapefile = "")
-    blank <- init.default.list.args(blank, blank_pars)
-
-    #######
-    output_pars <- list(dir = "", format = "tmax_mrg_%s%s%s.nc")
-    output <- init.default.list.args(output, output_pars)
+    rnr_pars <- list(use = FALSE, wet = 1.0, smooth = FALSE)
+    RnoR <- init.default.list.args(RnoR, rnr_pars)
 
     ##################
 
@@ -223,7 +223,7 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
             daty <- read.table(dates$pars$file, stringsAsFactors = FALSE, colClasses = "character")
             daty <- daty[, 1]
 
-            dirMrg <- paste0('Merged_Temp_Data_',
+            dirMrg <- paste0('CrossValidation_Precip_Data_',
                              tools::file_path_sans_ext(basename(dates$pars$file)))
         }else{
             daty <- dates$pars$dates
@@ -231,15 +231,13 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
                 Insert.Messages.Out("No vector dates", TRUE, "e", GUI)
                 return(NULL)
             }
-            daty <- daty[order(daty)]
 
-            dirMrg <- paste('Merged_Temp_Data', daty[1], daty[length(daty)], sep = '_')
+            dirMrg <- paste('CrossValidation_Precip_Data', daty[1], daty[length(daty)], sep = '_')
         }
 
         ncInfo <- ncInfo.from.date.vector(netcdf.data, daty, time.step)
     }else{
         date.range <- split_date.range(time.step, dates$pars)
-        # date.range <- rename_date.range(dates$pars)
         daty <- get.range.date.time(date.range, time.step)
         if(time.step == 'monthly'){
             xdeb <- format(daty$start, "%b%Y")
@@ -249,19 +247,17 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
             xfin <- paste0(as.numeric(format(daty$end, "%d")), format(daty$end, "%b%Y"))
         }
 
-        dirMrg <- paste('Merged_Temp_Data', xdeb, xfin, sep = '_')
+        dirMrg <- paste('CrossValidation_Precip_Data', xdeb, xfin, sep = '_')
         ncInfo <- ncInfo.with.date.range(netcdf.data, date.range, time.step)
     }
 
     if(is.null(ncInfo)){
-        Insert.Messages.Out(message[['15']], TRUE, "e", GUI)
+        Insert.Messages.Out(message[['14']], TRUE, "e", GUI)
         return(NULL)
     }
 
-    outdir <- file.path(output$dir, dirMrg)
+    outdir <- file.path(output.dir, dirMrg)
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
-
-    Insert.Messages.Out(message[['11']], TRUE, "i", GUI)
 
     ##################
     ## Station data
@@ -272,7 +268,7 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
     if(is.null(stnData)) return(NULL)
 
     ##################
-    ## Get NetCDF data info
+    ## Get RFE data info
 
     varid <- netcdf.data$varid
     nc <- nc_open(ncInfo$ncfiles[ncInfo$exist][1])
@@ -288,6 +284,7 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
     ncInfo$ncinfo <- list(varid = varid, lon = lon, lat = lat,
                           ilon = netcdf.data$ilon, ilat = netcdf.data$ilat,
                           xo = xo, yo = yo, varinfo = varinfo)
+
     ##################
     ## DEM data
 
@@ -316,30 +313,8 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
     ##################
     ##Create grid for interpolation
 
-    if(grid$from == "data"){
-        grd.lon <- ncInfo$ncinfo$lon
-        grd.lat <- ncInfo$ncinfo$lat
-    }
-
-    if(grid$from == "new"){
-        grd.lon <- seq(grid$pars$minlon, grid$pars$maxlon, grid$pars$reslon)
-        grd.lat <- seq(grid$pars$minlat, grid$pars$maxlat, grid$pars$reslat)
-    }
-
-    if(grid$from == "ncdf"){
-        if(!file.exists(grid$pars$file)){
-            Insert.Messages.Out(message[['14']], TRUE, "e", GUI)
-            return(NULL)
-        }
-        nc <- nc_open(grid$pars$file)
-        lon <- nc$var[[grid$pars$varid]]$dim[[grid$pars$ilon]]$vals
-        lat <- nc$var[[grid$pars$varid]]$dim[[grid$pars$ilat]]$vals
-        nc_close(nc)
-
-        grd.lon <- lon[order(lon)]
-        grd.lat <- lat[order(lat)]
-    }
-
+    grd.lon <- ncInfo$ncinfo$lon
+    grd.lat <- ncInfo$ncinfo$lat
     xy.grid <- list(lon = grd.lon, lat = grd.lat)
 
     ##################
@@ -358,47 +333,92 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
     }
 
     ##################
-    ## blanking
+    ## select station for cross-validation
 
-    outMask <- NULL
+    nbNA <- colSums(!is.na(stnData$data[stnData$dates %in% ncInfo$dates, , drop = FALSE]))
 
-    if(blank$data){
-        if(!file.exists(blank$shapefile)){
-            msg <- paste("The shapefile not found", ":", blank$shapefile)
-            Insert.Messages.Out(msg, TRUE, "e", GUI)
-            return(NULL)
-        }
-        dsn <- dirname(blank$shapefile)
-        layer <- tools::file_path_sans_ext(basename(blank$shapefile))
-        shpd <- rgdal::readOGR(dsn, layer)
-        proj4string(shpd) <- CRS(as.character(NA))
-        outMask <- create.mask.grid(shpd, xy.grid)
+    if(!any(nbNA > 0)){
+        Insert.Messages.Out(message[['15']], TRUE, "e", GUI)
+        return(NULL)
     }
 
-    Insert.Messages.Out(message[['16']], TRUE, "s", GUI)
+    if(crossv.station$from == "file"){
+        cv_pars <- crossv.station$pars[!names(crossv.station$pars) %in% "type"]
+        cvpars_read <- list(stringsAsFactors = FALSE, colClasses = "character")
+        df <- do.call(read.table, c(cv_pars, cvpars_read))
+
+        if(crossv.station$pars$type == 'cdtstation'){
+            df <- splitCDTData0(df, GUI)
+            if(is.null(df)) return(NULL)
+            df <- as.data.frame(df[c("id", 'lon', 'lat')])
+        }
+
+        istn <- as.character(df[, 1]) %in% stnData$id
+        if(!any(istn)){
+            Insert.Messages.Out(message[['20']], TRUE, "e", GUI)
+            return(NULL)
+        }
+
+        if(any(!istn)){
+            outlist <- list(message[['21']], df[!istn, , drop = FALSE])
+            if(GUI){
+                containertab <- Display_Output_Console_Tab(outlist, title = basename(crossv.station$pars$file))
+                ntab <- update.OpenTabs('ctxt', containertab)
+                tkselect(.cdtEnv$tcl$main$tknotes, ntab)
+            }else{
+                print(outlist)
+            }
+        }
+
+        stn.valid <- as.character(df[istn, 1])
+        ix <- match(stn.valid, stnData$id)
+        stn.valid <- stn.valid[nbNA[ix] > 0]
+        if(length(stn.valid) == 0){
+            Insert.Messages.Out(message[['15']], TRUE, "e", GUI)
+            return(NULL)
+        }
+    }
+
+    if(crossv.station$from == "cdt"){
+        istn <- nbNA / length(ncInfo$dates) >= (crossv.station$pars$min.perc / 100)
+        if(!any(istn)){
+            Insert.Messages.Out(message[['16']], TRUE, "e", GUI)
+            return(NULL)
+        }
+        df <- as.data.frame(stnData[c("id", 'lon', 'lat')])
+        df <- df[istn, , drop = FALSE]
+
+        stn.valid <- select.Station.Validation(df, perc = 80)
+        stn.valid <- as.character(stn.valid$id)
+    }
+
+    if(crossv.station$from == "all"){
+        stn.valid <- stnData$id[nbNA > 0]
+        if(length(stn.valid) == 0){
+            Insert.Messages.Out(message[['15']], TRUE, "e", GUI)
+            return(NULL)
+        }
+    }
+
+    stn.valid <- which(stnData$id %in% stn.valid)
 
     ##################
 
-    Insert.Messages.Out(message[['17']], TRUE, "i", GUI)
-
-    RnoR <- list(use = FALSE, wet = 1.0, smooth = FALSE)
     params <- list(period = time.step, MRG = merge.method,
-                   interp = interp.method, output = output,
-                   auxvar = auxvar, RnoR = RnoR)
+                   interp = interp.method, auxvar = auxvar, RnoR = RnoR)
 
-    ret <- cdtMerging(stnData = stnData, ncInfo = ncInfo,
-                      xy.grid = xy.grid, params = params,
-                      variable = "temp", demData = demData,
-                      outdir = outdir, mask = outMask, GUI = GUI)
+    ret <- cdtMergingLOOCV(stnData = stnData, stnVID = stn.valid,
+                           ncInfo = ncInfo, xy.grid = xy.grid, 
+                           params = params, variable = "rain",
+                           demData = demData, outdir = outdir, GUI = GUI)
 
     if(!is.null(ret)){
         if(ret != 0){
-          Insert.Messages.Out(paste(message[['18']],
+          Insert.Messages.Out(paste(message[['17']],
                               file.path(outdir, "log_file.txt")), TRUE, "w", GUI)
         }
     }else return(NULL)
 
-    Insert.Messages.Out(message[['19']], TRUE, "s", GUI)
-
+    Insert.Messages.Out(message[['18']], TRUE, "s", GUI)
     return(0)
 }

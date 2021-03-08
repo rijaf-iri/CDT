@@ -18,7 +18,7 @@ select.Station.Validation <- function(df, perc = 20){
 
     ipt <- lapply(seq(nClust), function(j){
         ij <- df$k == j
-        io <- order(df$nb[ij], decreasing = TRUE)
+        io <- order(df$k[ij], decreasing = TRUE)
         which(ij)[io[1:2]]
     })
     ipt <- sort.int(do.call(c, ipt))

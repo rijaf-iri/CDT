@@ -2,8 +2,8 @@
 #'
 #' Function to merge stations observation and satellite rainfall estimates data.
 #' 
-#' @param time.step the time step of the data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}.
-#' @param dates a named list providing the dates to merge.
+#' @param time.step character, the time step of the data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}.
+#' @param dates named list, providing the dates to merge.
 #' The list includes an element \code{from} with available options \code{"range"}, \code{"file"} or \code{"dates"}, and 
 #'  an element \code{pars} which is a named list specifying the parameters related to \code{from}:
 #' \itemize{
@@ -21,24 +21,24 @@
 #' \item{\strong{"dates"}: }{\code{pars} specifies a vector containing the dates to merge. \cr
 #' Example: \code{pars = list(dates = c("2020011", "2020012", 2020091, 2020113))}}
 #' } 
-#' @param station.data a named list providing the station data to be used in CDT format.
+#' @param station.data named list, providing the station data to be used in CDT format.
 #' \itemize{
-#' \item{\code{file}: }{full path to the file containing the stations data}
-#' \item{\code{sep}: }{column separator of the data}
-#' \item{\code{na.strings}: }{missing values flag}
+#' \item{\code{file}: }{character, full path to the file containing the stations data}
+#' \item{\code{sep}: }{character, column separator of the data}
+#' \item{\code{na.strings}: }{character, missing values flag}
 #' }
-#' @param netcdf.data a named list providing the input netCDF dataset to be used.
+#' @param netcdf.data named list, providing the input netCDF dataset to be used.
 #' \itemize{
-#' \item{\code{dir}: }{full path to the directory containing the netCDF files.}
-#' \item{\code{format}: }{format of the netCDF file names}
-#' \item{\code{varid}: }{name of the variable to read from the netCDF data}
-#' \item{\code{ilon}: }{order for the longitude dimension of the variable. 
+#' \item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
+#' \item{\code{format}: }{character, format of the netCDF file names}
+#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data}
+#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
 #' Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
-#' \item{\code{ilat}: }{order for the latitude dimension of the variable.}
+#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 #' }
-#' @param merge.method a named list indicating the merging method.
+#' @param merge.method named list, indicating the merging method.
 #' \itemize{
-#' \item{\code{"method"}: }{the merging method. Valid options: \code{"CSc"}, \code{"BSc"}, \code{"SBA"} or \code{"RK"}.
+#' \item{\code{"method"}: }{character, the merging method. Valid options: \code{"CSc"}, \code{"BSc"}, \code{"SBA"} or \code{"RK"}.
 #'  \itemize{
 #'   \item{\strong{"CSc"}: }{Cressman Scheme}
 #'   \item{\strong{"BSc"}: }{Barnes Scheme}
@@ -46,12 +46,12 @@
 #'   \item{\strong{"RK"}: }{Regression Kriging}
 #'  }
 #' }
-#' \item{\code{"nrun"}: }{number of the nested run to be performed}
-#' \item{\code{"pass"}: }{vector giving the fraction of \code{nmin}, \code{nmax} and \code{maxdist} to be used for each pass.}
+#' \item{\code{"nrun"}: }{integer, number of the nested run to be performed}
+#' \item{\code{"pass"}: }{numeric vector giving the fraction of \code{nmin}, \code{nmax} and \code{maxdist} to be used for each pass.}
 #' }
-#' @param interp.method a named list indicating the interpolation method and parameters to be used for \code{"SBA"} and \code{"RK"}. 
+#' @param interp.method named list, indicating the interpolation method and parameters to be used for \code{"SBA"} and \code{"RK"}. 
 #' \itemize{
-#' \item{\code{method}: }{the interpolation method to be used.
+#' \item{\code{method}: }{character, the interpolation method to be used.
 #' Valid options: \code{"idw"}, \code{"shepard"}, \code{"sphere"} or \code{"okr"}.
 #' \itemize{
 #'  \item{\strong{"idw"}: }{Inverse distance weighted}
@@ -60,14 +60,14 @@
 #'  \item{\strong{"okr"}: }{Ordiranry kriging}
 #' }
 #' }
-#' \item{\code{nmin}: }{minimum number of stations to be used to interpolate a grid point}
-#' \item{\code{nmax}: }{maximum number of stations to be used to interpolate a grid point}
-#' \item{\code{maxdist}: }{maximum radius of influence in decimal degree}
+#' \item{\code{nmin}: }{integer, minimum number of stations to be used to interpolate a grid point}
+#' \item{\code{nmax}: }{integer, maximum number of stations to be used to interpolate a grid point}
+#' \item{\code{maxdist}: }{numeric, maximum radius of influence in decimal degree}
 #' \item{\code{use.block}: }{logical, use block mean values to interpolate a grid point}
 #' \item{\code{vargrd}: }{logical, use a variable radius of influence}
-#' \item{\code{vgm.model}: }{vector of variogram model to be used if \code{method} is \code{"okr"}. Default is \code{c("Exp", "Gau", "Sph", "Pen")}}
+#' \item{\code{vgm.model}: }{character vector of variogram model to be used if \code{method} is \code{"okr"}. Default is \code{c("Exp", "Gau", "Sph", "Pen")}}
 #' }
-#' @param auxvar a named list specifying the auxiliary variables to use when the merging method is \code{"RK"}.
+#' @param auxvar named list, specifying the auxiliary variables to use when the merging method is \code{"RK"}.
 #' \itemize{
 #' \item{\code{dem}: }{logical, include elevation data as auxiliary variable}
 #' \item{\code{slope}: }{logical, include slope as auxiliary variable}
@@ -75,14 +75,14 @@
 #' \item{\code{lon}: }{logical, include longitude as auxiliary variable}
 #' \item{\code{lat}: }{logical, include latitude as auxiliary variable}
 #' }
-#' @param dem.data a named list providing the Digital Elevation Model (in netCDF format) when using regression kriging method with elevation related data as auxiliary variable.
+#' @param dem.data named list, providing the Digital Elevation Model (in netCDF format) when using regression kriging method with elevation related data as auxiliary variable.
 #' \itemize{
-#' \item{\code{file}: }{full path to the netCDF file containing the elevation data.}
-#' \item{\code{varid}: }{name of the variable to read from the netCDF data}
-#' \item{\code{ilon}: }{order for the longitude dimension of the variable.}
-#' \item{\code{ilat}: }{order for the latitude dimension of the variable.}
+#' \item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
+#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data}
+#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
+#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 #' }
-#' @param grid a named list providing the grid to use to interpolate the data.
+#' @param grid named list, providing the grid to use to interpolate the data.
 #' The list includes an element \code{from} with available options \code{"data"}, \code{"ncdf"} or \code{"new"}, and 
 #'  an element \code{pars} which is a named list specifying the parameters related to \code{from}:
 #' \itemize{
@@ -97,24 +97,24 @@
 #' Example: \code{pars = list(minlon = 42, maxlon = 52, minlat = -26, maxlat = -11, reslon = 0.1, reslat = 0.1)}
 #' }
 #' }
-#' @param RnoR a named list specifying the rain-no-rain mask parameters.
+#' @param RnoR named list, specifying the rain-no-rain mask parameters.
 #' \itemize{
 #' \item{\code{use}: }{logical, apply rain-no-rain mask}
-#' \item{\code{wet}: }{threshold to be use to define the wet/dry event}
+#' \item{\code{wet}: }{numeric, threshold to be use to define the wet/dry event}
 #' \item{\code{smooth}: }{logical, smooth the rain-no-rain mask after interpolation}
 #' }
-#' @param blank a named list indicating if the data outside a provided shapefile will be removed.
+#' @param blank named list, indicating if the data outside a provided shapefile will be removed.
 #' \itemize{
 #' \item{\code{data}: }{logical, blank the grid outside the provided shapefile}
-#' \item{\code{shapefile}: }{full path to the shapefile to be used for blanking with the extension ".shp"}
+#' \item{\code{shapefile}: }{character, full path to the shapefile to be used for blanking with the extension ".shp"}
 #' }
-#' @param output a named list indicating the directory to save the merged data and the format of the merged netCDF file name.
-#' @param precision a named list indicating the precision of the merged data.
+#' @param output named list, indicating the directory to save the merged data and the format of the merged netCDF file name.
+#' @param precision named list, indicating the precision of the merged data.
 #' \itemize{
-#' \item{\code{from.data}: }{if \code{TRUE} the precision from the input netCDF data will be used.}
-#' \item{\code{prec}: }{if \code{from.data} is \code{FALSE} specify here the precision to be used}
+#' \item{\code{from.data}: }{logical, if \code{TRUE} the precision from the input netCDF data will be used.}
+#' \item{\code{prec}: }{character, if \code{from.data} is \code{FALSE} specify here the precision to be used}
 #' }
-#' @param GUI a logical indicating whether or not the output message should be displayed on CDT GUI. If \code{TRUE}, CDT GUI must be open.
+#' @param GUI logical, indicating whether or not the output message should be displayed on CDT GUI. If \code{TRUE}, CDT GUI must be open.
 #' 
 #' @export
 
@@ -257,7 +257,6 @@ cdtMergingPrecipCMD <- function(time.step = "dekadal",
         ncInfo <- ncInfo.from.date.vector(netcdf.data, daty, time.step)
     }else{
         date.range <- split_date.range(time.step, dates$pars)
-        # date.range <- rename_date.range(dates$pars)
         daty <- get.range.date.time(date.range, time.step)
         if(time.step == 'monthly'){
             xdeb <- format(daty$start, "%b%Y")

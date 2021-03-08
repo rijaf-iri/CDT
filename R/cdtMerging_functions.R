@@ -1,252 +1,197 @@
 
-#' Options Controlling the merging parameters.
-#'
-#' Functions to handle settings used by the merging.
-#' 
-#' @param ... using one or more arguments of the form name = value.
-#'   Existing values can be retrieved by supplying the names (as character strings) of the components as unnamed arguments.
-#'  
-#' @details
-#' Available options are
-#' \itemize{ 
-#'   \item{\code{saveGridBuffer}: }{logical, save the buffer of coarse grid used to interpolate the residuals. Default is \code{FALSE}}
-#'   \item{\code{dirGridBuffer}: }{in case \code{saveGridBuffer} is \code{TRUE}, the full path to the directory to save the buffer data}
-#'   \item{\code{saveRnoR}: }{logical, save the rain-no-rain mask. Default is \code{FALSE}}
-#'   \item{\code{dirRnoR}: }{in case \code{saveRnoR} is \code{TRUE}, the full path to the directory to save the mask data}
-#'   \item{\code{RnoRModel}: }{model to use to compute the rain-no-rain mask. Options are: \code{"logit"}, \code{"additive"}. Default is \code{"logit"}}
-#'   \item{\code{RnoRCutOff}: }{integer, the method to be used to define the decision boundaries of the rain-no-rain mask. Options are: \code{1, 2, 3}
-#'        \itemize{
-#'           \item{\strong{option}: \code{1}}{
-#'  %%
-#'  \deqn{mask = \left\{
-#'    \begin{array}{l l}
-#'    0 & \quad \mbox{if } rnr < 0.5 \\
-#'    1 & \quad \mbox{if } rnr \geq 0.5
-#'    \end{array} \right.
-#'  }{mask = if(rnr < 0) 0 else 1}
-#'  %%
-#'              }
-#'           \item{\strong{option}: \code{2}}{
-#'  %%
-#'  \deqn{mask = \left\{
-#'    \begin{array}{l l}
-#'    0 & \quad \mbox{if } rnr < 0.1 \\
-#'    rnr & \quad \mbox{if } rnr \geq 0.1
-#'    \end{array} \right.
-#'  }{mask = if(rnr < 0.1) 0 else rnr}
-#'  %%
-#'              }
-#'           \item{\strong{option}: \code{3}}{
-#'  %%
-#'  \deqn{mask = \left\{
-#'    \begin{array}{l l}
-#'    0 & \quad \mbox{if } rnr < 0.25 \\
-#'    rnr & \quad \mbox{if } 0.25 \leq rnr < 0.75 \\
-#'    1 & \quad \mbox{if } rnr \geq 0.75
-#'    \end{array} \right.
-#'  }{mask = if(rnr < 0.25) 0 else if(rnr >= 0.25 & rnr < 0.75) rnr else 1}
-#'  %%
-#'                }
-#'          }
-#'     where \eqn{rnr} is the interpolated rain-no-rain values. Default is \code{3}.
-#'     }
-#'   \item{\code{RnoRaddCoarse}: }{logical, use the coarse grid to create the rain-no-rain mask. Default is \code{FALSE}}
-#'   \item{\code{RnoRUseMerged}: }{logical, if \code{TRUE} the merged data is used to compute the rain-no-rain mask, otherwise the input gridded data is used. Default is \code{FALSE}}
-#'   \item{\code{RnoRSmoothingPixels}: }{the number of pixels from the target pixel to be used to smooth the rain-no-rain mask. Default is 2.}
-#' }
-#' 
-#' @export
-
-merging.options <- function(...){
-    ## copied from lattice.options
-    new <- list(...)
-    if(is.null(names(new)) && length(new) == 1 && is.list(new[[1]])) new <- new[[1]]
-    old <- .cdtMRG$merging.options
-    if(length(new) == 0) return(old)
-    
-    nm <- names(new)
-    if (is.null(nm)) return(old[unlist(new)])
-
-    isNamed <- nm != ""
-    if (any(!isNamed)) nm[!isNamed] <- unlist(new[!isNamed])
-    retVal <- old[nm]
-    names(retVal) <- nm
-    nm <- nm[isNamed]
-
-    .cdtMRG$merging.options <- utils::modifyList(old, new[nm])
-
-    invisible(retVal)
-}
-
-merging.getOption <- function(name)
+cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
+                       demData, outdir, mask = NULL, GUI = TRUE)
 {
-    get("merging.options", envir = .cdtMRG)[[name]]
-}
+    log.file <- file.path(outdir, "log_file.txt")
+    ncinfo <- ncInfo$ncinfo
+    varinfo <- switch(variable,
+                      "rain" = list(name = "precip",
+                                    units = "mm",
+                                    missval = -99,
+                                    longname = "Merged Station-Satellite Rainfall",
+                                    prec = {
+                                            if(params$prec$from.data)
+                                                ncinfo$varinfo$prec
+                                            else
+                                                params$prec$prec
+                                           }
+                                    ),
+                      "temp" = list(name = "temp",
+                                    units = "C",
+                                    missval = -99,
+                                    longname = "Downscaled Reanalysis merged with station",
+                                    prec = ncinfo$varinfo$prec
+                                    )
+                    )
 
-.defaultMrgOptions <- function(){
-    list(
-         mrgMinNumberSTN = 10,
-         rkMinNumberSTN = 20,
-         vgmMinNumberSTN = 20,
-         useLocalInterpolation = TRUE,
-         powerWeightIDW = 2,
-         powerWeightShepard = 0.7,
-         powerWeightBarnes = 0.5,
-         addCoarseGrid = TRUE,
-         resCoarseGrid = 0.5,
-         saveGridBuffer = FALSE,
-         dirGridBuffer = path.expand("~"),
-         saveRnoR = FALSE,
-         dirRnoR = path.expand("~"),
-         ## RnoR model: "logit", "additive"
-         RnoRModel = "logit", 
-         RnoRCutOff = 3,
-         RnoRaddCoarse = TRUE,
-         RnoRUseMerged = FALSE,
-         RnoRSmoothingPixels = 2,
-         blockFac = 2,
-         blockLen = 5
-        )
-}
+    params$MRG$negative <- switch(variable, "rain" = FALSE, "temp" = TRUE)
 
-###############################
+    ##################
 
-rain_no_rain.mask_log <- function(locations.stn, newgrid, nmax)
-{
-    glm.binom <- tryCatch(
-            glm(rnr.stn ~ grd, data = locations.stn, family = stats::binomial(link = "logit")),
-            error=function(e) e, warning=function(w) w
-        )
-    if(inherits(glm.binom, "warning") | inherits(glm.binom, "error")) return(NULL)
+    dx <- ncdim_def("Lon", "degree_east", xy.grid$lon)
+    dy <- ncdim_def("Lat", "degree_north", xy.grid$lat)
+    shuffle <- if(varinfo$prec %in% c("integer", "short")) TRUE else FALSE
+    grd.nc.out <- ncvar_def(varinfo$name, varinfo$units, list(dx, dy), varinfo$missval,
+                            longname = varinfo$longname, prec = varinfo$prec,
+                            shuffle = shuffle, compression = 9)
 
-    rnr <- NULL
-    if(!is.na(glm.binom$coef[2])){
-        locations.stn$rnr.res <- residuals(glm.binom)
-        rnr.trend <- predict(glm.binom, newdata = newgrid, type = 'link')
+    ##################
 
-        rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newgrid,
-                                    nmax = nmax, set = list(idp = 4.0), debug.level = 0)
+    newgrid <- defSpatialPixels(xy.grid)
 
-        rnr <- rnr.trend + rnr.res.grd$var1.pred
-        rnr <- exp(rnr) / (1 + exp(rnr))
+    nmin <- ceiling(params$MRG$pass * params$interp$nmin)
+    nmax <- ceiling(params$MRG$pass * params$interp$nmax)
+    nmax <- ifelse(nmax - nmin < 2, nmax + 2, nmax)
+    params$interp$nmin <- nmin
+    params$interp$nmax <- nmax
 
-        rnr[is.na(rnr)] <- 1
-    }
-
-    return(rnr)
-}
-
-rain_no_rain.mask_add <- function(locations.stn, newgrid, nmax)
-{
-    locations.stn$rnr.res <- locations.stn$rnr.stn - locations.stn$rnr.grd
-    rnr.trend <- newgrid$rnr.grd
-
-    rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newgrid,
-                                nmax = nmax, set = list(idp = 4.0), debug.level = 0)
-
-    rnr <- rnr.trend + rnr.res.grd$var1.pred
-    rnr[rnr < 0] <- 0
-    rnr[rnr > 1] <- 1
-
-    rnr[is.na(rnr)] <- 1
-
-    return(rnr)
-}
-
-rain_no_rain.cut_off <- function(rnr, RnoRCutOff){
-    if(RnoRCutOff == 1){
-        rnr[rnr >= 0.5] <- 1
-        rnr[rnr < 0.5] <- 0
-    }else if(RnoRCutOff == 2){
-        rnr[rnr < 0.1] <- 0
+    if(!params$interp$vargrd){
+        maxdist <- params$MRG$pass * params$interp$maxdist
+        params$interp$maxdist <- maxdist
     }else{
-        rnr[rnr < 0.25] <- 0
-        rnr[rnr > 0.75] <- 1
+        bx <- diff(sapply(stnData[c('lon', 'lat')], range))
+        # dg <- sqrt(bx[1]^2 + bx[2]^2) / 4
+        dg <- sqrt(bx[1]^2 + bx[2]^2)
+        dg <- 0.08 * dg + 0.199
+        params$interp$maxdist <- params$MRG$pass * dg
     }
-  
-    return(rnr)
-}
 
-###############################
+    locations.stn <- as.data.frame(stnData[c('lon', 'lat')])
+    coordinates(locations.stn) <- c('lon', 'lat')
+    ijs <- over(locations.stn, newgrid)
+    locations.stn$stn <- rep(NA, length(locations.stn))
 
-coarse_grid_space <- function(res, resCoarseGrid){
-    space <- resCoarseGrid/res
-    space <- ceiling(space)
-    space[space == 0] <- 1
-    space
-}
+    ##################
 
-create_grid_buffer <- function(locations.stn, newgrid,
-                               saveGridBuffer = FALSE,
-                               fileGridBuffer = "",
-                               useLocalInterpolation = TRUE,
-                               resCoarseGrid = 0.5
-                              )
-{
-    nx <- newgrid@grid@cells.dim[1]
-    ny <- newgrid@grid@cells.dim[2]
-    resx <- newgrid@grid@cellsize[1]
-    resy <- newgrid@grid@cellsize[2]
-    rx <- coarse_grid_space(resx, resCoarseGrid)
-    ry <- coarse_grid_space(resy, resCoarseGrid)
+    xy.data <- defSpatialPixels(ncinfo[c('lon', 'lat')])
 
-    radius <- 2 * max(c(rx, ry)) * mean(c(resx, resy))
+    is.regridNCDF <- is.diffSpatialPixelsObj(newgrid, xy.data, tol = 1e-07)
+    ijnc <- NULL
+    if(is.regridNCDF) ijnc <- over(newgrid, xy.data)
 
-    ix <- seq(1, nx, rx)
-    iy <- seq(1, ny, ry)
-    if(nx - ix[length(ix)] > 1) ix <- c(ix[-length(ix)], nx)
-    if(ny - iy[length(iy)] > 1) iy <- c(iy[-length(iy)], ny)
+    ##################
 
-    ixy <- expand.grid(ix, iy)
-    icoarse <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
-    coarsegrid <- as(newgrid[icoarse, ], "SpatialPixels")
+    is.auxvar <- rep(FALSE, 5)
+    formuleRK <- NULL
+    if(params$MRG$method == "RK"){
+        auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
+        is.auxvar <- unlist(params$auxvar[1:5])
+        if(any(is.auxvar)){
+            formuleRK <- formula(paste0('stn', '~', 'grd', '+',
+                                 paste(auxvar[is.auxvar], collapse = '+')))
+        }else{
+            formuleRK <- formula(paste0('stn', '~', 'grd'))
+        }
 
-    resx_c <- resx * rx
-    resy_c <- resy * ry
-
-    #####
-    if(saveGridBuffer){
-        out_grid <- list(stn = locations.stn)
-        out_grid$coarse0 <- coarsegrid
-        out_grid$resx_c <- resx_c
-        out_grid$resy_c <- resy_c
+        if(is.auxvar['dem']) newgrid$dem <- c(demData$z)
+        if(is.auxvar['slope'] | is.auxvar['aspect']){
+            slpasp <- raster.slope.aspect(demData)
+            if(is.auxvar['slope']) newgrid$slp <- c(slpasp$slope)
+            if(is.auxvar['aspect']) newgrid$asp <- c(slpasp$aspect)
+        }
+        if(is.auxvar['lon']) newgrid$alon <- newgrid@coords[, 'lon']
+        if(is.auxvar['lat']) newgrid$alat <- newgrid@coords[, 'lat']
+        if(any(is.auxvar))
+            locations.stn@data <- newgrid@data[ijs, , drop = FALSE]
     }
-    #####
 
-    xgrd <- lapply(as.list(data.frame(coarsegrid@coords)), unique)
-    loc.stn <- cdt.as.image(locations.stn$stn, locations.stn@coords, xgrd, regrid = TRUE)
-    loc.stn <- cbind(do.call(expand.grid, loc.stn[c('x', 'y')]), z = c(loc.stn$z))
-    loc.stn <- loc.stn[!is.na(loc.stn$z), , drop = FALSE]
-    coordinates(loc.stn) <- c('x', 'y')
+    ##################
 
-    dst <- fields::rdist(locations.stn@coords, coarsegrid@coords)
-    dst <- colSums(dst < 0.5 * radius) == 0
-    coarsegrid <- coarsegrid[dst, ]
-    icoarse <- icoarse[dst]
+    args <- methods::formalArgs(cdtMerging)
+    for(v in args) assign(v, get(v), envir = environment())
 
-    width <- if(useLocalInterpolation) 1.25 * radius else 2.5
+    mrgOpts <- merging.options()
 
-    buffer.out <- rgeos::gBuffer(loc.stn, width = width)
-    icoarse.out <- as.logical(sp::over(coarsegrid, buffer.out))
-    icoarse.out[is.na(icoarse.out)] <- FALSE
-    coarsegrid <- coarsegrid[icoarse.out, ]
-    icoarse <- icoarse[icoarse.out]
+    parsL <- doparallel.cond(length(ncInfo$ncfiles) > 20)
+    ret <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
+                       progress = TRUE, .packages = "sp",
+                       FUN = function(jj)
+    {
+        if(ncInfo$exist[jj]){
+            nc <- ncdf4::nc_open(ncInfo$ncfiles[jj])
+            nc.val <- ncdf4::ncvar_get(nc, varid = ncinfo$varid)
+            ncdf4::nc_close(nc)
+            nc.val <- transposeNCDFData(nc.val, ncinfo)
+        }else{
+            msg <- paste(ncInfo$dates[jj], ":", "no NetCDF data",
+                         "|", "no file generated", "\n")
+            cat(msg, file = log.file, append = TRUE)
+            return(-1)
+        }
 
-    igrid <- as.logical(sp::over(newgrid, buffer.out))
-    igrid[is.na(igrid)] <- FALSE
+        if(all(is.na(nc.val))){
+            msg <- paste(ncInfo$dates[jj], ":", "all NetCDF data are missing",
+                         "|", "no file generated", "\n")
+            cat(msg, file = log.file, append = TRUE)
+            return(-1)
+        }
 
-    #####
-    if(saveGridBuffer){
-        out_grid$buffer <- buffer.out
-        out_grid$icoarse <- icoarse
-        out_grid$coarse1 <- coarsegrid
-        out_grid$igrid <- igrid
-        saveRDS(out_grid, fileGridBuffer)
-    }
-    #####
+        ######
 
-    list(igrid = igrid, coarse = coarsegrid, icoarse = icoarse,
-         resx_c = resx_c, resy_c = resy_c)
+        newgrid$grd <- if(is.null(ijnc)) c(nc.val) else nc.val[ijnc]
+
+        donne.stn <- stnData$data[which(stnData$date == ncInfo$dates[jj]), , drop = FALSE]
+        if(nrow(donne.stn) == 0){
+            msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
+                         "No merging performed, output equals to the input NetCDF data", "\n")
+            cat(msg, file = log.file, append = TRUE)
+            write.merging.output(jj, nc.val, grd.nc.out, outdir,
+                                 varinfo, ncInfo, params, mask)
+            return(0)
+        }
+
+        locations.stn$stn <- as.numeric(donne.stn[1, ])
+        noNA <- !is.na(locations.stn$stn)
+        locations.stn <- locations.stn[noNA, ]
+        donne.len <- length(locations.stn)
+
+        if(donne.len == 0){
+            msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
+                         "No merging performed, output equals to the input NetCDF data", "\n")
+            cat(msg, file = log.file, append = TRUE)
+            write.merging.output(jj, nc.val, grd.nc.out, outdir,
+                                 varinfo, ncInfo, params, mask)
+            return(0)
+        }
+
+        if(donne.len > 0 & donne.len < mrgOpts$mrgMinNumberSTN){
+            msg <- paste(ncInfo$dates[jj], ":", "not enough station data", "|",
+                         "No merging performed, output equals to the input NetCDF data", "\n")
+            cat(msg, file = log.file, append = TRUE)
+            write.merging.output(jj, nc.val, grd.nc.out, outdir,
+                                 varinfo, ncInfo, params, mask)
+            return(0)
+        }
+
+        if(params$MRG$method == "RK" & any(is.auxvar)){
+            loc.data <- !is.na(locations.stn@data)
+            loc.data <- split(loc.data, col(loc.data))
+            nna <- Reduce("&", loc.data)
+            if(length(which(nna)) < mrgOpts$rkMinNumberSTN){
+                msg <- paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
+                             "No merging performed, output equals to the input NetCDF data", "\n")
+                cat(msg, file = log.file, append = TRUE)
+                write.merging.output(jj, nc.val, grd.nc.out, outdir,
+                                     varinfo, ncInfo, params, mask)
+                return(0)
+            }
+        }
+
+        ######
+
+        out.mrg <- merging.functions(locations.stn, newgrid, params,
+                                     formuleRK, ncInfo$dates[jj],
+                                     log.file, mrgOpts)
+
+        write.merging.output(jj, out.mrg, grd.nc.out, outdir,
+                             varinfo, ncInfo, params, mask)
+
+        return(0)
+    })
+
+    ret <- do.call(c, ret)
+    if(any(ret == -1)) return(-1)
+    return(0)
 }
 
 ###############################
@@ -557,203 +502,6 @@ merging.residuals.interp <- function(locations, newdata, interp.method,
     }
 
     return(interp.res)
-}
-
-###############################
-
-cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
-                       demData, outdir, mask = NULL, GUI = TRUE)
-{
-    log.file <- file.path(outdir, "log_file.txt")
-    ncinfo <- ncInfo$ncinfo
-    varinfo <- switch(variable,
-                      "rain" = list(name = "precip",
-                                    units = "mm",
-                                    missval = -99,
-                                    longname = "Merged Station-Satellite Rainfall",
-                                    prec = {
-                                            if(params$prec$from.data)
-                                                ncinfo$varinfo$prec
-                                            else
-                                                params$prec$prec
-                                           }
-                                    ),
-                      "temp" = list(name = "temp",
-                                    units = "C",
-                                    missval = -99,
-                                    longname = "Downscaled Reanalysis merged with station",
-                                    prec = ncinfo$varinfo$prec
-                                    )
-                    )
-
-    params$MRG$negative <- switch(variable, "rain" = FALSE, "temp" = TRUE)
-
-    ##################
-
-    dx <- ncdim_def("Lon", "degree_east", xy.grid$lon)
-    dy <- ncdim_def("Lat", "degree_north", xy.grid$lat)
-    shuffle <- if(varinfo$prec %in% c("integer", "short")) TRUE else FALSE
-    grd.nc.out <- ncvar_def(varinfo$name, varinfo$units, list(dx, dy), varinfo$missval,
-                            longname = varinfo$longname, prec = varinfo$prec,
-                            shuffle = shuffle, compression = 9)
-
-    ##################
-
-    newgrid <- defSpatialPixels(xy.grid)
-
-    nmin <- ceiling(params$MRG$pass * params$interp$nmin)
-    nmax <- ceiling(params$MRG$pass * params$interp$nmax)
-    nmax <- ifelse(nmax - nmin < 2, nmax + 2, nmax)
-    params$interp$nmin <- nmin
-    params$interp$nmax <- nmax
-
-    if(!params$interp$vargrd){
-        maxdist <- params$MRG$pass * params$interp$maxdist
-        params$interp$maxdist <- maxdist
-    }else{
-        bx <- diff(sapply(stnData[c('lon', 'lat')], range))
-        # dg <- sqrt(bx[1]^2 + bx[2]^2) / 4
-        dg <- sqrt(bx[1]^2 + bx[2]^2)
-        dg <- 0.08 * dg + 0.199
-        params$interp$maxdist <- params$MRG$pass * dg
-    }
-
-    locations.stn <- as.data.frame(stnData[c('lon', 'lat')])
-    coordinates(locations.stn) <- c('lon', 'lat')
-    ijs <- over(locations.stn, newgrid)
-    locations.stn$stn <- rep(NA, length(locations.stn))
-
-    ##################
-
-    xy.data <- defSpatialPixels(ncinfo[c('lon', 'lat')])
-
-    is.regridNCDF <- is.diffSpatialPixelsObj(newgrid, xy.data, tol = 1e-07)
-    ijnc <- NULL
-    if(is.regridNCDF) ijnc <- over(newgrid, xy.data)
-
-    ##################
-
-    is.auxvar <- rep(FALSE, 5)
-    formuleRK <- NULL
-    if(params$MRG$method == "RK"){
-        auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
-        is.auxvar <- unlist(params$auxvar[1:5])
-        if(any(is.auxvar)){
-            formuleRK <- formula(paste0('stn', '~', 'grd', '+',
-                                 paste(auxvar[is.auxvar], collapse = '+')))
-        }else{
-            formuleRK <- formula(paste0('stn', '~', 'grd'))
-        }
-
-        if(is.auxvar['dem']) newgrid$dem <- c(demData$z)
-        if(is.auxvar['slope'] | is.auxvar['aspect']){
-            slpasp <- raster.slope.aspect(demData)
-            if(is.auxvar['slope']) newgrid$slp <- c(slpasp$slope)
-            if(is.auxvar['aspect']) newgrid$asp <- c(slpasp$aspect)
-        }
-        if(is.auxvar['lon']) newgrid$alon <- newgrid@coords[, 'lon']
-        if(is.auxvar['lat']) newgrid$alat <- newgrid@coords[, 'lat']
-        if(any(is.auxvar))
-            locations.stn@data <- newgrid@data[ijs, , drop = FALSE]
-    }
-
-    ##################
-
-    args <- methods::formalArgs(cdtMerging)
-    for(v in args) assign(v, get(v), envir = environment())
-
-    mrgOpts <- merging.options()
-
-    parsL <- doparallel.cond(length(ncInfo$ncfiles) > 20)
-    ret <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
-                       progress = TRUE, .packages = "sp",
-                       FUN = function(jj)
-    {
-        if(ncInfo$exist[jj]){
-            nc <- ncdf4::nc_open(ncInfo$ncfiles[jj])
-            nc.val <- ncdf4::ncvar_get(nc, varid = ncinfo$varid)
-            ncdf4::nc_close(nc)
-            nc.val <- transposeNCDFData(nc.val, ncinfo)
-        }else{
-            msg <- paste(ncInfo$dates[jj], ":", "no NetCDF data",
-                         "|", "no file generated", "\n")
-            cat(msg, file = log.file, append = TRUE)
-            return(-1)
-        }
-
-        if(all(is.na(nc.val))){
-            msg <- paste(ncInfo$dates[jj], ":", "all NetCDF data are missing",
-                         "|", "no file generated", "\n")
-            cat(msg, file = log.file, append = TRUE)
-            return(-1)
-        }
-
-        ######
-
-        newgrid$grd <- if(is.null(ijnc)) c(nc.val) else nc.val[ijnc]
-
-        donne.stn <- stnData$data[which(stnData$date == ncInfo$dates[jj]), , drop = FALSE]
-        if(nrow(donne.stn) == 0){
-            msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
-                         "No merging performed, output equals to the input NetCDF data", "\n")
-            cat(msg, file = log.file, append = TRUE)
-            write.merging.output(jj, nc.val, grd.nc.out, outdir,
-                                 varinfo, ncInfo, params, mask)
-            return(0)
-        }
-
-        locations.stn$stn <- as.numeric(donne.stn[1, ])
-        noNA <- !is.na(locations.stn$stn)
-        locations.stn <- locations.stn[noNA, ]
-        donne.len <- length(locations.stn)
-
-        if(donne.len == 0){
-            msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
-                         "No merging performed, output equals to the input NetCDF data", "\n")
-            cat(msg, file = log.file, append = TRUE)
-            write.merging.output(jj, nc.val, grd.nc.out, outdir,
-                                 varinfo, ncInfo, params, mask)
-            return(0)
-        }
-
-        if(donne.len > 0 & donne.len < mrgOpts$mrgMinNumberSTN){
-            msg <- paste(ncInfo$dates[jj], ":", "not enough station data", "|",
-                         "No merging performed, output equals to the input NetCDF data", "\n")
-            cat(msg, file = log.file, append = TRUE)
-            write.merging.output(jj, nc.val, grd.nc.out, outdir,
-                                 varinfo, ncInfo, params, mask)
-            return(0)
-        }
-
-        if(params$MRG$method == "RK" & any(is.auxvar)){
-            loc.data <- !is.na(locations.stn@data)
-            loc.data <- split(loc.data, col(loc.data))
-            nna <- Reduce("&", loc.data)
-            if(length(which(nna)) < mrgOpts$rkMinNumberSTN){
-                msg <- paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
-                             "No merging performed, output equals to the input NetCDF data", "\n")
-                cat(msg, file = log.file, append = TRUE)
-                write.merging.output(jj, nc.val, grd.nc.out, outdir,
-                                     varinfo, ncInfo, params, mask)
-                return(0)
-            }
-        }
-
-        ######
-
-        out.mrg <- merging.functions(locations.stn, newgrid, params,
-                                     formuleRK, ncInfo$dates[jj],
-                                     log.file, mrgOpts)
-
-        write.merging.output(jj, out.mrg, grd.nc.out, outdir,
-                             varinfo, ncInfo, params, mask)
-
-        return(0)
-    })
-
-    ret <- do.call(c, ret)
-    if(any(ret == -1)) return(-1)
-    return(0)
 }
 
 ###############################

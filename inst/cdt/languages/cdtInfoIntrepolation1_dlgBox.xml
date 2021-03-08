@@ -28,9 +28,6 @@
             <text lang="en"> Variogram Model </text>
         </label>
         <label id="2">
-            <text lang="en"> Minimum number of stations </text>
-        </label>
-        <label id="3">
             <text lang="en"> Interpolation method </text>
         </label>
     </widget>
@@ -73,14 +70,6 @@
             </status>
             <tooltip>
                 <text lang="en"> Candidate variogram models to be selected, the best fitting will be used for the interpolation,\nsee gstat package for list of available model </text>
-            </tooltip>
-        </content>
-        <content id="6">
-            <status>
-                <text lang="en"> Minimum number of points used to fit variogram models </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Minimum number of points used to fit variogram models </text>
             </tooltip>
         </content>
     </help>

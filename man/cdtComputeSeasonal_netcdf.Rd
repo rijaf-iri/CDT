@@ -17,13 +17,30 @@ cdtComputeSeasonal_netcdf(
 )
 }
 \arguments{
-\item{season.def}{a named list, season definition.}
+\item{season.def}{named list, season definition.
+\itemize{
+  \item{\code{start.month}: }{integer, start month of the season}
+  \item{\code{season.length}: }{integer, length of the season}
+}}
 
-\item{period}{a named list, the period of data to compute.}
+\item{period}{named list, the period of data to compute.
+\itemize{
+  \item{\code{start.year}: }{integer, start year of the period}
+  \item{\code{end.year}: }{integer, the end year}
+}}
 
-\item{netcdf.data}{a named list, netCDF data info.}
+\item{netcdf.data}{named list, netCDF data info.
+\itemize{
+\item{\code{time.step}: }{character, the time step of the netCDF data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}}
+\item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
+\item{\code{format}: }{character, format of the netCDF file names}
+\item{\code{varid}: }{character, name of the variable to read from the netCDF data}
+\item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
+Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
+\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+}}
 
-\item{season.min.frac}{used to aggregate the seasonal data, minimum fraction of non-missing values for each season.}
+\item{season.min.frac}{numeric, used to aggregate the seasonal data, minimum fraction of non-missing values for each season.}
 
 \item{aggregation.fun}{character, aggregation function to use. Options are: "sum", "mean", "median", "max", "min", "sd", "var", "count", "user".}
 

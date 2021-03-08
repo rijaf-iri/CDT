@@ -4,14 +4,14 @@
 \alias{readCDTStationData}
 \title{Read CDT station format file.}
 \usage{
-readCDTStationData(file, sep = ",", missing = "-99")
+readCDTStationData(file, sep = ",", na.strings = "-99")
 }
 \arguments{
-\item{file}{Full path to the file containing the CDT data}
+\item{file}{character, full path to the file containing the CDT data}
 
-\item{sep}{The column's separator of the data}
+\item{sep}{character, the column's separator of the data}
 
-\item{missing}{The missing values flag}
+\item{na.strings}{character, the missing values flag}
 }
 \value{
 A list object

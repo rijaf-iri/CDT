@@ -2,10 +2,27 @@
 #'
 #' Compute seasonal data for netCDF dataset.
 #'
-#' @param season.def a named list, season definition.
-#' @param period a named list, the period of data to compute.
-#' @param netcdf.data a named list, netCDF data info.
-#' @param season.min.frac used to aggregate the seasonal data, minimum fraction of non-missing values for each season.
+#' @param season.def named list, season definition.
+#' \itemize{
+#'   \item{\code{start.month}: }{integer, start month of the season}
+#'   \item{\code{season.length}: }{integer, length of the season}
+#' }
+#' @param period named list, the period of data to compute.
+#' \itemize{
+#'   \item{\code{start.year}: }{integer, start year of the period}
+#'   \item{\code{end.year}: }{integer, the end year}
+#' }
+#' @param netcdf.data named list, netCDF data info.
+#' \itemize{
+#' \item{\code{time.step}: }{character, the time step of the netCDF data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}}
+#' \item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
+#' \item{\code{format}: }{character, format of the netCDF file names}
+#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data}
+#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
+#' Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
+#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+#' }
+#' @param season.min.frac numeric, used to aggregate the seasonal data, minimum fraction of non-missing values for each season.
 #' @param aggregation.fun character, aggregation function to use. Options are: "sum", "mean", "median", "max", "min", "sd", "var", "count", "user".
 #' @param count.opr character, the comparison operator to use when \code{aggregation.fun} is \code{"count"}.
 #' @param count.thres the threshold to use when \code{aggregation.fun} is \code{"count"}.
@@ -26,6 +43,24 @@ cdtComputeSeasonal_netcdf <- function(
                                        ...
                                     )
 {
+    GUI <- FALSE
+    progress <- FALSE
+
+    if(!is.null(netcdf.data$dir)){
+        if(!dir.exists(netcdf.data$dir)){
+            msg <- paste("Folder containing the netCDF data does not exist", ":", netcdf.data$dir)
+            Insert.Messages.Out(msg, TRUE, "e", GUI)
+            return(NULL)
+        }else{
+            ncdata_pars <- list(time.step = "dekadal", dir = "", format = "tmax_mrg_%s%s%s.nc",
+                                varid = "temp", ilon = 1, ilat = 2)
+            netcdf.data <- init.default.list.args(netcdf.data, ncdata_pars)
+        }
+    }else{
+        Insert.Messages.Out("No folder containing the netCDF data provided", TRUE, "e", GUI)
+        return(NULL)
+    }
+
     start <- paste0(period$start.year, '-1-1')
     end <- paste0(period$end.year, '-12-31')
     step <- if(netcdf.data$time.step == "monthly") "month" else "day"
@@ -51,13 +86,15 @@ cdtComputeSeasonal_netcdf <- function(
         ncfiles <- sprintf(netcdf.data$format, year, mon)
         daty <- paste0(year, mon)
     }else{
-        stop("Unknown netCDF time step")
+        Insert.Messages.Out("Unknown netCDF time step", TRUE, "e", GUI)
+        return(NULL)
     }
 
     ncpaths <- file.path(netcdf.data$dir, ncfiles)
     ifiles <- file.exists(ncpaths)
     if(!any(ifiles)){
-        stop("No netCDF files found")
+        Insert.Messages.Out("No netCDF files found", TRUE, "e", GUI)
+        return(NULL)
     }
     ncpaths <- ncpaths[ifiles]
     daty <- daty[ifiles]
@@ -88,8 +125,6 @@ cdtComputeSeasonal_netcdf <- function(
 
     ########
     cdtLocalConfigData()
-    GUI <- FALSE
-    progress <- FALSE
     parsL <- doparallel.cond(length(index$index) >= 10)
 
     seas_data <- cdt.foreach(seq_along(index$index), parsL, GUI, progress, FUN = function(i)
@@ -141,13 +176,27 @@ cdtComputeSeasonal_netcdf <- function(
 #'
 #' Compute seasonal data for CDT stations data.
 #'
-#' @param season.def a named list, season definition.
-#' @param period a named list, the period of data to compute.
-#' @param station.data a named list, stations data info.
-#' @param season.min.frac used to aggregate the seasonal data, minimum fraction of non-missing values for each season.
+#' @param season.def named list, season definition.
+#' \itemize{
+#'   \item{\code{start.month}: }{integer, start month of the season}
+#'   \item{\code{season.length}: }{integer, length of the season}
+#' }
+#' @param period named list, the period of data to compute.
+#' \itemize{
+#'   \item{\code{start.year}: }{integer, start year of the period}
+#'   \item{\code{end.year}: }{integer, the end year}
+#' }
+#' @param station.data named list, stations data info.
+#' \itemize{
+#'   \item{\code{time.step}: }{character, the time step of the station data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}}
+#'   \item{\code{file}: }{character, full path to the file containing the CDT data}
+#'   \item{\code{sep}: }{character, the column's separator of the data}
+#'   \item{\code{na.strings}: }{character, the missing values flag}
+#' }
+#' @param season.min.frac numeric, used to aggregate the seasonal data, minimum fraction of non-missing values for each season.
 #' @param aggregation.fun character, aggregation function to use. Options are: "sum", "mean", "median", "max", "min", "sd", "var", "count", "user".
 #' @param count.opr character, the comparison operator to use when \code{aggregation.fun} is \code{"count"}.
-#' @param count.thres the threshold to use when \code{aggregation.fun} is \code{"count"}.
+#' @param count.thres numeric, the threshold to use when \code{aggregation.fun} is \code{"count"}.
 #' @param ... when \code{aggregation.fun} is \code{"user"}, the user function and additional arguments to be passed to the user's function.
 #' 
 #' @return A named list
@@ -158,13 +207,29 @@ cdtComputeSeasonal_cdtstn <- function(
                                        season.def = list(start.month = 1, season.length = 3),
                                        period = list(start.year = 1981, end.year = 2010),
                                        station.data = list(time.step = "dekadal", file = "",
-                                                           sep = ",", missing = "-99"),
+                                                           sep = ",", na.strings = "-99"),
                                        season.min.frac = 0.95,
                                        aggregation.fun = "sum", count.opr = ">=", count.thres = 1,
                                        ...
                                     )
 {
-    stn <- readCDTStationData(station.data$file, station.data$sep, station.data$missing)
+    GUI <- FALSE
+    if(!is.null(station.data$file)){
+        if(!file.exists(station.data$file)){
+            msg <- paste("File containing the station data does not exist", ":", station.data$file)
+            Insert.Messages.Out(msg, TRUE, "e", GUI)
+            return(NULL)
+        }else{
+            stndata_pars <- list(time.step = "dekadal",file = "", sep = ",", na.strings = "-99")
+            station.data <- init.default.list.args(station.data, stndata_pars)
+        }
+    }else{
+        Insert.Messages.Out("No station data file provided", TRUE, "e", GUI)
+        return(NULL)
+    }
+
+    cdtfile <- station.data[c('file', 'sep', 'na.strings')]
+    stn <- do.call(readCDTStationData, cdtfile)
     nbstn <- length(stn$id)
     years <- as.numeric(substr(stn$dates, 1, 4))
     iyr <- years >= period$start.year & years <= period$end.year

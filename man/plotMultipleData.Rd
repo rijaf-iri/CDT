@@ -20,10 +20,12 @@ plotMultipleData(
 )
 }
 \arguments{
-\item{dataObj}{list of data. Each data list(x, y, z, type). \cr
-Type: "grid" or "points".\cr
-"grid": x vector, y vector, z matrix of dim c(length(x), length(y))
-"points": x, y, z vectors same length}
+\item{dataObj}{list of data. Each data has the form \code{list(x, y, z, type)}. \cr
+Valid options for type: \code{"grid"} or \code{"points"}.
+\itemize{
+\item{\code{"grid"}: }{\code{x} vector, \code{y} vector, \code{z} matrix of \code{dim} equals \code{c(length(x), length(y))}}
+\item{\code{"points"}: }{\code{x, y, z} vectors same length}
+}}
 
 \item{shp}{sp object of class \code{SpatialPolygons} or \code{SpatialPolygonsDataFrame}}
 

@@ -49,20 +49,11 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
             tkgrid(txt.vgm, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(en.vgm, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-            fr.minstn <- tkframe(frInterpP)
-            txt.minstn <- tklabel(fr.minstn, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
-            en.minstn <- tkentry(fr.minstn, width = 3, textvariable = minstn.var)
-
-            tkgrid(txt.minstn, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(en.minstn, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
             tkgrid(chk.block, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(fr.vgm, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(fr.minstn, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
             helpWidget(chk.block, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
             helpWidget(en.vgm, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
-            helpWidget(en.minstn, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
         }
 
         if(intmthd %in% c("shepard", "sphere")){
@@ -90,7 +81,7 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
 
     statemdst <- if(Parameters$vargrd) "disabled" else "normal"
 
-    txt.mthd <- tklabel(frInterpMthd, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+    txt.mthd <- tklabel(frInterpMthd, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
     cb.mthd <- ttkcombobox(frInterpMthd, values = cb.interpMthd, textvariable = interp.method, width = largeur0, state = stateMethod)
     chk.GRDVar <- tkcheckbutton(frInterpMthd, variable = grid.var, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
 
@@ -140,7 +131,6 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
 
     frInterpP <- tkframe(frInterpPars)
 
-    minstn.var <- tclVar(Parameters$minstn)
     use.block.var <- tclVar(Parameters$use.block)
     vgm.model.var <- tclVar(paste0(Parameters$vgm.model, collapse = ", "))
 
@@ -161,7 +151,6 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
         Parameters$nmin <<- as.numeric(str_trim(tclvalue(nmin.var)))
         Parameters$nmax <<- as.numeric(str_trim(tclvalue(nmax.var)))
         Parameters$maxdist <<- as.numeric(str_trim(tclvalue(maxdist.var)))
-        Parameters$minstn <<- as.numeric(str_trim(tclvalue(minstn.var)))
         Parameters$use.block <<- switch(tclvalue(use.block.var), '0' = FALSE, '1' = TRUE)
         Parameters$vargrd <<- switch(tclvalue(grid.var), '0' = FALSE, '1' = TRUE)
 
