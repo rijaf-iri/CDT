@@ -124,6 +124,8 @@ multiValidation.plotGraph <- function(){
         }
     }
 
+    plot.order <- match(data.name, levels(as.factor(data.name)))
+
     ##############
 
     if(plotType == "Scatter"){
@@ -137,7 +139,7 @@ multiValidation.plotGraph <- function(){
 
         #######
         par.StripText <- list(cex = 1.0, col = 'black', font = 2)
-        par.stripCust <- lattice::strip.custom(factor.levels = data.name, bg = 'lightblue')
+        par.stripCust <- lattice::strip.custom(bg = 'lightblue')
         par.Settings <- list(background = list(alpha = 1, col = 'white'),
                              layout.widths = list(left.padding = 1, right.padding = 0.5),
                              layout.heights = list(top.padding = 1, bottom.padding = 1),
@@ -178,6 +180,7 @@ multiValidation.plotGraph <- function(){
         pp <- update(pp, as.table = TRUE, par.settings = par.Settings,
                      par.strip.text = par.StripText, strip = par.stripCust,
                      # scales = list(x = Xaxis, y = Yaxis),
+                     index.cond = list(plot.order),
                      xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab
                     )
 
@@ -209,7 +212,7 @@ multiValidation.plotGraph <- function(){
 
             ######
             par.StripText <- list(cex = 1.0, col = 'black', font = 2)
-            par.stripCust <- lattice::strip.custom(factor.levels = data.name, bg = 'lightblue')
+            par.stripCust <- lattice::strip.custom(bg = 'lightblue')
             par.Settings <- list(background = list(alpha = 1, col = 'white'),
                                  layout.widths = list(left.padding = 1, right.padding = 0.5),
                                  layout.heights = list(top.padding = 1, bottom.padding = 1, key.top = 2),
@@ -262,6 +265,7 @@ multiValidation.plotGraph <- function(){
 
             pp <- update(pp, as.table = TRUE, par.settings = par.Settings,
                          par.strip.text = par.StripText, strip = par.stripCust,
+                         index.cond = list(plot.order),
                          xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab
                         )
 
@@ -350,7 +354,7 @@ multiValidation.plotGraph <- function(){
 
             ######
             par.StripText <- list(cex = 1.0, col = 'black', font = 2)
-            par.stripCust <- lattice::strip.custom(factor.levels = data.name, bg = 'lightblue')
+            par.stripCust <- lattice::strip.custom(bg = 'lightblue')
             par.Settings <- list(background = list(alpha = 1, col = 'white'),
                                  layout.widths = list(left.padding = 1, right.padding = 0.5),
                                  layout.heights = list(top.padding = 1, bottom.padding = 0.5, key.top = 2),
@@ -403,6 +407,7 @@ multiValidation.plotGraph <- function(){
 
             pp <- update(pp, as.table = TRUE, par.settings = par.Settings,
                          par.strip.text = par.StripText, strip = par.stripCust,
+                         index.cond = list(plot.order),
                          xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab
                         )
 

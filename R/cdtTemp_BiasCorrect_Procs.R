@@ -50,17 +50,17 @@ execAjdBiasDownTemp <- function(){
     upy <- min(bbox1[2, 2], bbox2[2, 2])
 
     if(btx >= upx | bty >= upy){
-        Insert.Messages.Out(message[['11']], TRUE, "e")
+        Insert.Messages.Out(message[['10']], TRUE, "e")
         return(NULL)
     }
 
-    diff.grid <- is.diffSpatialPixelsObj(defSpatialPixels(BIAS[c("lon", "lat")]),
-                                         defSpatialPixels(tmpDataInfo[c("lon", "lat")]),
-                                         tol = 1e-03)
-    if(diff.grid){
-        Insert.Messages.Out(message[['11']], TRUE, "e")
-        return(NULL)
-    }
+    # diff.grid <- is.diffSpatialPixelsObj(defSpatialPixels(BIAS[c("lon", "lat")]),
+    #                                      defSpatialPixels(tmpDataInfo[c("lon", "lat")]),
+    #                                      tol = 1e-03)
+    # if(diff.grid){
+    #     Insert.Messages.Out(message[['11']], TRUE, "e")
+    #     return(NULL)
+    # }
 
     ret <- applyBiasCorrection(BIAS, ncInfo, outdir, params = .cdtData$GalParams, variable = "temp")
 

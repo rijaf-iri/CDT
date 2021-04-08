@@ -61,7 +61,7 @@ writeFiles <- function(data2save, file2save,
                        row.names = FALSE, col.names = FALSE,
                        quote = FALSE, append = FALSE, sep = " ", ...)
 {
-    extFl <- tolower(str_trim(tools::file_ext(basename(file2save))))
+    extFl <- tolower(tools::file_ext(str_trim(basename(file2save))))
     sep <- if(extFl == "csv") ',' else sep
     if(sep == "") sep <- " "
     write.table(data2save, file = file2save,

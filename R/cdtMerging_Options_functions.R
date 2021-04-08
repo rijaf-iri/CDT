@@ -120,7 +120,10 @@ merging.getOption <- function(name)
          RnoRaddCoarse = TRUE,
          RnoRUseMerged = FALSE,
          RnoRSmoothingPixels = 2,
-         blockFac = 2,
-         blockLen = 5
+         ## blockType "matrix" or "vector"
+         blockType = "vector",
+         blockFac = 10,
+         blockLen = 10,
+         blockSize = c(2, 2)
         )
 }

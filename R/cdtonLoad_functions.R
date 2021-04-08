@@ -15,6 +15,7 @@ local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Co
 
 .cdtMRG <- new.env()
 assign("merging.options", list(), envir = .cdtMRG)
+assign("biascoeff.options", list(), envir = .cdtMRG)
 
 #############################
 
@@ -174,6 +175,7 @@ assign("merging.options", list(), envir = .cdtMRG)
     #############################
     ## load merging default options
     merging.options(.defaultMrgOptions())
+    biascoeff.options(.defaultBiasCoefOptions())
 
     invisible()
 }

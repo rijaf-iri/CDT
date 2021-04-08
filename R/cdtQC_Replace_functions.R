@@ -179,10 +179,13 @@ QC.TT_replaceAll <- function(file.index, action = c("all", "partial", "estimated
         }
         if(action == "estimated"){
             stn.val[] <- info$miss.val
-            ina <- !is.na(not.replace) & not.replace == 2
+            # ina <- !is.na(not.replace) & not.replace == 2
+            # stn.val[ina] <- est.val[ina]
+            # nna <- !is.na(to.replace)
+            # stn.val[nna] <- to.replace[nna]
+
+            ina <- !is.na(est.val)
             stn.val[ina] <- est.val[ina]
-            nna <- !is.na(to.replace)
-            stn.val[nna] <- to.replace[nna]
         }
         if(action == "all")
             stn.val[] <- info$miss.val

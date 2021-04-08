@@ -57,12 +57,26 @@ multiplicative.bias.fun <- function(stn, grd, variable, min.length){
     ina <- is.na(stn) | is.na(grd)
     stn[ina] <- NA
     grd[ina] <- NA
+    # if(variable == "rain"){
+    #     izero <- !ina & (stn == 0 & grd == 0)
+    #     stn[izero] <- NA
+    #     grd[izero] <- NA
+    # }
     len <- colSums(!ina)
-    stn <- colSums(stn, na.rm = TRUE)
-    grd <- colSums(grd, na.rm = TRUE)
+
+    biasFun <- biascoeff.getOption("mulBiasFunction")
+    if(biasFun == "mean"){
+        stn <- colSums(stn, na.rm = TRUE)
+        grd <- colSums(grd, na.rm = TRUE)
+    }
+    if(biasFun == "median"){
+        stn <- matrixStats::colMedians(stn, na.rm = TRUE)
+        grd <- matrixStats::colMedians(grd, na.rm = TRUE)
+    }
+
     bs <- stn/grd
-    bs[len < min.length] <- 1
-    bs[is.na(bs)] <- 1
+    bs[len < min.length] <- NA
+    # bs[is.na(bs)] <- 1
 
     if(variable == "rain"){
         bs[is.infinite(bs)] <- 1
@@ -74,7 +88,7 @@ multiplicative.bias.fun <- function(stn, grd, variable, min.length){
     if(variable == "temp"){
         bs[is.infinite(bs)] <- 1.5
         bs[is.nan(bs)] <- 1
-        bs[bs < 0] <- 1
+        # bs[bs < 0] <- 1
         bs[bs < 0.6] <- 0.6
         bs[bs > 1.5] <- 1.5
     }
@@ -142,17 +156,17 @@ quantile.mapping.Gauss <- function(x, pars.stn, pars.reanal){
     p.reanal <- x
     ix <- !is.na(x)
     p.reanal[ix] <- pnorm(x[ix], mean = pars.reanal$mean[ix], sd = pars.reanal$sd[ix])
-    p.reanal[ix][p.reanal[ix] < 0.001] <- 0.01
-    p.reanal[ix][p.reanal[ix] > 0.999] <- 0.99
+    # p.reanal[ix][p.reanal[ix] < 0.001] <- 0.01
+    # p.reanal[ix][p.reanal[ix] > 0.999] <- 0.99
     res <- qnorm(p.reanal, mean = pars.stn$mean, sd = pars.stn$sd)
 
     miss <- is.na(res) | is.nan(res) | is.infinite(res)
     res[miss] <- x[miss]
 
     ## high values
-    ix <- abs((res - pars.reanal$mean) / pars.reanal$sd) > 4
-    ix[is.na(ix)] <- FALSE
-    res[ix] <- x[ix]
+    # ix <- abs((res - pars.reanal$mean) / pars.reanal$sd) > 4
+    # ix[is.na(ix)] <- FALSE
+    # res[ix] <- x[ix]
 
     return(res)
 }
@@ -171,6 +185,8 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
     tstep <- params$period
     bias.method <- params$BIAS$method
     min.length <- params$BIAS$min.length
+
+    biasOpts <- biascoeff.options()
 
     ############### 
 
@@ -244,15 +260,41 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
         dg <- sqrt(boxregion$blon^2 + boxregion$blat^2)
         grdData <- readNetCDFData2AggrBox(ncInfo, boxregion, GUI)
 
-        xypts <- as.data.frame(stnData[c('lon', 'lat')])
-        coordinates(xypts) <- c('lon', 'lat')
-        stn <- lapply(seq_along(grdData$spbox), function(j){
-            ix <- over(xypts, grdData$spbox[j])
-            ix <- which(!is.na(ix))
-            if(length(ix) == 0) return(NA)
-            rowMeans(stnData$data[, ix, drop = FALSE], na.rm = TRUE)
-        })
-        stn <- do.call(cbind, stn)
+        if(biasOpts$qmecdfBoxInterp == "mean"){
+            xypts <- as.data.frame(stnData[c('lon', 'lat')])
+            sp::coordinates(xypts) <- c('lon', 'lat')
+            stn <- lapply(seq_along(grdData$spbox), function(j){
+                ix <- over(xypts, grdData$spbox[j])
+                ix <- which(!is.na(ix))
+                if(length(ix) == 0) return(NA)
+                rowMeans(stnData$data[, ix, drop = FALSE], na.rm = TRUE)
+            })
+            stn <- do.call(cbind, stn)
+            stn[is.nan(stn)] <- NA
+        }
+
+        ## interpolate stn at grdData$spbox
+        if(biasOpts$qmecdfBoxInterp == "idw"){
+            dst <- distance.Matrix(sp::coordinates(grdData$spbox),
+                                   cbind(stnData$lon, stnData$lat))
+
+            dst[dst > biasOpts$qmecdfBoxMaxdist] <- NA
+            Wk <- 1/dst^2
+            inf <- is.infinite(Wk)
+            Wk[inf] <- NA
+            if(any(inf))
+                Wk[inf] <- 2 * max(Wk, na.rm = TRUE)
+
+            stn <- matrix(NA, length(stnData$dates), length(grdData$spbox))
+            for(j in seq_along(grdData$spbox)){
+                WK <- matrix(Wk[, j], nrow(stnData$data), ncol(stnData$data), byrow = TRUE)
+                ina <- is.na(stnData$data) | is.na(WK)
+                WK[ina] <- NA
+                stn[, j] <- rowSums(WK * stnData$data, na.rm = TRUE) / rowSums(WK, na.rm = TRUE)
+            }
+        }
+
+        ########
         bbx.crd <- expand.grid(grdData[c('lon', 'lat')])
 
         istn <- match(ncInfo$dates, stnData$dates)
@@ -484,6 +526,8 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
     dx <- ncdf4::ncdim_def("Lon", "degreeE", xy.grid$lon)
     dy <- ncdf4::ncdim_def("Lat", "degreeN", xy.grid$lat)
 
+    biasOpts <- biascoeff.options()
+
     #############
 
     if(bias.method %in% c("mbvar", "mbmon")){
@@ -533,8 +577,12 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
             vgm.model <- pars.interp$vgm.model
 
             bGrd <- NULL
-            if(pars.interp$use.block)
-                bGrd <- createBlock(interp.grid@grid@cellsize, 1, 5)
+            if(pars.interp$use.block){
+                if(biasOpts$blockType == "matrix")
+                    bGrd <- createBlock(interp.grid@grid@cellsize, biasOpts$blockFac, biasOpts$blockLen)
+                if(biasOpts$blockType == "vector")
+                    bGrd <- biasOpts$blockSize
+            }
         }
 
         #############
@@ -702,8 +750,12 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
             vgm.model <- pars.interp$vgm.model
 
             bGrd <- NULL
-            if(pars.interp$use.block)
-                bGrd <- createBlock(interp.grid@grid@cellsize, 1, 5)
+            if(pars.interp$use.block){
+                if(biasOpts$blockType == "matrix")
+                    bGrd <- createBlock(interp.grid@grid@cellsize, biasOpts$blockFac, biasOpts$blockLen)
+                if(biasOpts$blockType == "vector")
+                    bGrd <- biasOpts$blockSize
+            }
         }
 
         #############
@@ -1006,6 +1058,15 @@ applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TR
                            longname = paste("Bias Corrected", varinfo$longname),
                            prec = varinfo$prec, compression = 9)
 
+    ######  regrid
+
+    biasGrd <- bias[c("lon", "lat")]
+    ncdfGrd <- ncInfo$ncinfo[c("lon", "lat")]
+    is.regridNCDF <- is.diffSpatialPixelsObj(defSpatialPixels(biasGrd),
+                                             defSpatialPixels(ncdfGrd),
+                                             tol = 1e-03)
+    #####
+
     yrs <- substr(ncInfo$dates, 1, 4)
     mon <- substr(ncInfo$dates, 5, 6)
     if(params$period == 'daily'){
@@ -1072,6 +1133,12 @@ applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TR
         ncdf4::nc_close(nc)
         xval <- transposeNCDFData(xval, ncinfo)
 
+        if(is.regridNCDF){
+            ncObj <- c(ncdfGrd, list(z = xval))
+            ncObj <- cdt.interp.surface.grid(ncObj, biasGrd)
+            xval <- ncObj$z
+        }
+
         if(params$BIAS$method %in% c("mbvar", "mbmon")){
             xadj <- xval * bias$bias[[ijt[jj]]]
         }
@@ -1097,7 +1164,7 @@ applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TR
             for(j in seq(ncol(bias$id))){
                 fobs <- fun.stn[bias$id[, j]]
                 fgrd <- fun.grd[bias$id[, j]]
-                inull <- sapply(fobs, is.null) & sapply(fgrd, is.null)
+                inull <- sapply(fobs, is.null) | sapply(fgrd, is.null)
                 if(all(inull)) next
                 fobs <- fobs[!inull]
                 fgrd <- fgrd[!inull]

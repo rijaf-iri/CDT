@@ -7,11 +7,12 @@
 #' @param sep character, the column's separator of the data
 #' @param na.strings character, the missing values flag
 #'  
-#' @return A list object
+#' @return A CDT stations data objects. It is a list object with elements
 #' \itemize{
 #'   \item{\strong{id}: }{Vector of the points/stations id}
 #'   \item{\strong{lon}: }{Vector of the points/stations longitude}
 #'   \item{\strong{lat}: }{Vector of the points/stations latitude}
+#'   \item{\strong{elv}: }{Vector of the points/stations elevation, NULL if there is no elevation data}
 #'   \item{\strong{dates}: }{Vector of the dates or times of the data}
 #'   \item{\strong{data}: }{Matrix of the data, row indicates the dates and column the stations}
 #' }
@@ -27,14 +28,42 @@ readCDTStationData <- function(file, sep = ",", na.strings = "-99"){
     if(is.null(dat))
         stop("Station data is not in a standard CDT format")
 
+    class(dat) <- append(class(dat), "cdtstationdata")
     return(dat)
+}
+
+#' Write CDT station format to a file.
+#'
+#' Write CDT station format to a file.
+#' 
+#' @param data CDT stations data objects.
+#' @param file character, full path to the file to save the CDT data
+#' @param na.strings character, the missing values flag to write to the file
+#' 
+#' @export
+
+writeCDTStationData <- function(data, file, na.strings = "-99"){
+    if(!inherits(data, "cdtstationdata"))
+        stop("data is not a CDT stations data object")
+
+    extFl <- tolower(tools::file_ext(trimws(basename(file))))
+    sep <- if(extFl == "csv") "," else sep
+    if(sep == "") sep <- " "
+    capt <- c('ID', 'LON', 'LAT')
+    if(!is.null(data$elv)) capt <- c(capt, 'ELV')
+
+    dat <- do.call(rbind, data[c('id', 'lon', 'lat', 'elv', 'data')])
+    dat <- cbind(c(capt, data$dates), dat)
+
+    write.table(dat, file = file, sep = sep, na = na.strings,
+                row.names = FALSE, col.names = FALSE, quote = FALSE)
 }
 
 #' Match CDT stations data.
 #'
 #' Filter CDT stations data to match the stations and dates.
 #' 
-#' @param ... CDT stations data objects, possibly named, output from \code{readCDTStationData}.
+#' @param ... CDT stations data objects, possibly named.
 #' 
 #' @return A list of CDT stations data objects, in same order as provided in the input arguments.
 #' A named list if input arguments are named.
@@ -50,7 +79,7 @@ matchCDTStationsData <- function(...){
 #'
 #' Filter CDT stations data to match the stations.
 #' 
-#' @param ... CDT stations data objects, possibly named, output from \code{readCDTStationData}.
+#' @param ... CDT stations data objects, possibly named.
 #' 
 #' @return A list of CDT stations data objects, in same order as provided in the input arguments.
 #' A named list if input arguments are named.
@@ -62,6 +91,19 @@ matchCDTStationsIDs <- function(...){
     if(nargs() == 1){
         cat("Nothing to do.\n")
         return(x)
+    }
+
+    is_cdt <- sapply(x, inherits, what = "cdtstationdata")
+    if(any(!is_cdt)){
+        nom <- names(x)
+        if(is.null(nom)){
+            msg <- paste("Elements number",
+                   paste0(which(!is_cdt), collapse = ', '))
+        }else{
+            msg <- paste("The elements",
+                   paste0(nom[!is_cdt], collapse = ', '))
+        }
+        stop(paste(msg, "are not a CDT stations data objects"))
     }
 
     id <- Reduce(intersect, lapply(x, "[[", "id"))
@@ -83,7 +125,7 @@ matchCDTStationsIDs <- function(...){
 #'
 #' Filter CDT stations data to match the dates.
 #' 
-#' @param ... CDT stations data objects, possibly named, output from \code{readCDTStationData}.
+#' @param ... CDT stations data objects, possibly named.
 #' 
 #' @return A list of CDT stations data objects, in same order as provided in the input arguments.
 #' A named list if input arguments are named.
@@ -95,6 +137,19 @@ matchCDTStationsDates <- function(...){
     if(nargs() == 1){
         cat("Nothing to do.\n")
         return(x)
+    }
+
+    is_cdt <- sapply(x, inherits, what = "cdtstationdata")
+    if(any(!is_cdt)){
+        nom <- names(x)
+        if(is.null(nom)){
+            msg <- paste("Elements number",
+                   paste0(which(!is_cdt), collapse = ', '))
+        }else{
+            msg <- paste("The elements",
+                   paste0(nom[!is_cdt], collapse = ', '))
+        }
+        stop(paste(msg, "are not a CDT stations data objects"))
     }
 
     it <- Reduce(intersect, lapply(x, "[[", "dates"))

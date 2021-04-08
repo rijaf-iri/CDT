@@ -216,8 +216,12 @@ merging.functions <- function(locations.stn, newgrid, params,
 
     if(interp.method %in% c("idw", "okr")){
         bGrd <- NULL
-        if(params$interp$use.block)
-            bGrd <- createBlock(newgrid@grid@cellsize, mrgOpts$blockFac, mrgOpts$blockLen)
+        if(params$interp$use.block){
+            if(mrgOpts$blockType == "matrix")
+                bGrd <- createBlock(newgrid@grid@cellsize, mrgOpts$blockFac, mrgOpts$blockLen)
+            if(mrgOpts$blockType == "vector")
+                bGrd <- mrgOpts$blockSize
+        }
     }
 
     ###############

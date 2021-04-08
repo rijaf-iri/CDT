@@ -54,13 +54,13 @@ execAdjBiasRain <- function(){
         return(NULL)
     }
 
-    diff.grid <- is.diffSpatialPixelsObj(defSpatialPixels(BIAS[c("lon", "lat")]),
-                                         defSpatialPixels(rfeDataInfo[c("lon", "lat")]),
-                                         tol = 1e-03)
-    if(diff.grid){
-        Insert.Messages.Out(message[['11']], TRUE, "e")
-        return(NULL)
-    }
+    # diff.grid <- is.diffSpatialPixelsObj(defSpatialPixels(BIAS[c("lon", "lat")]),
+    #                                      defSpatialPixels(rfeDataInfo[c("lon", "lat")]),
+    #                                      tol = 1e-03)
+    # if(diff.grid){
+    #     Insert.Messages.Out(message[['11']], TRUE, "e")
+    #     return(NULL)
+    # }
 
     ret <- applyBiasCorrection(BIAS, ncInfo, outdir, params = .cdtData$GalParams, variable = "rain")
 

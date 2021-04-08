@@ -7,7 +7,7 @@
 matchCDTStationsDates(...)
 }
 \arguments{
-\item{...}{CDT stations data objects, possibly named, output from \code{readCDTStationData}.}
+\item{...}{CDT stations data objects, possibly named.}
 }
 \value{
 A list of CDT stations data objects, in same order as provided in the input arguments.
