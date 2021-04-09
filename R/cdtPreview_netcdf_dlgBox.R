@@ -42,13 +42,16 @@ preview.data.nc <- function(parent.win, openncf){
     for(i in 1:ncvar){
         vardim <- nc$var[[i]]$dim
         ndim <- length(vardim)
+        if(ndim == 0) ndim <- 1
         dim.info <- data.frame(matrix(NA, ncol = 3, nrow = ncdim))
         dim.val <- vector(mode = 'list', length = ncdim)
         for(j in 1:ndim){
-            dim.info[j, 1] <- vardim[[j]]$name
-            dim.info[j, 2] <- vardim[[j]]$len
-            dim.info[j, 3] <- vardim[[j]]$units
-            dim.val[[j]] <- vardim[[j]]$vals
+            if(!is.null(vardim)){
+                dim.info[j, 1] <- vardim[[j]]$name
+                dim.info[j, 2] <- vardim[[j]]$len
+                dim.info[j, 3] <- vardim[[j]]$units
+                dim.val[[j]] <- vardim[[j]]$vals
+            }
         }
         var.dim.info[[i]] <- dim.info
         var.dim.val[[i]] <- dim.val

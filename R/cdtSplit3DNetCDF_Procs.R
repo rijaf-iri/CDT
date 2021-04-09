@@ -1,6 +1,7 @@
 
 get.netcdf.time <- function(time.dim){
     temps <- time.dim$units
+    calendar <- time.dim$calendar
     if(grepl("since", temps, ignore.case = TRUE)){
         tmp <- trimws(strsplit(temps, " ")[[1]])
         tmp <- tmp[(grep("since", tmp) + 1):length(tmp)]
@@ -37,6 +38,20 @@ get.netcdf.time <- function(time.dim){
             units <- temps
             daty <- time.dim$vals
             warning(paste("Unknown time units:", temps), "\n")
+        }
+
+        if(calendar %in% c("365_day", "365_days", "365 days",
+                           "365days", "noleap", "no_leap"))
+        {
+            syear <- as.numeric(format(origin, '%Y'))
+            eyear <- as.numeric(format(daty, '%Y'))
+            nbdays <- sum(is.leapyears(syear:eyear))
+            if(units == "days"){
+                daty <- daty + nbdays
+            }
+            if(units %in% c("seconds", "minutes", "hours")){
+                daty <- daty + nbdays * 60 * 60 * 24
+            }
         }
     }else{
         if(grepl("julian", temps, ignore.case = TRUE)){
@@ -95,14 +110,25 @@ split_3d.netcdf_writeNC <- function(){
         ret <- get.netcdf.time(time.dim)
         daty <- ret$vals
         if(!is.null(ret$origin)){
-            rdaty <- lapply(c("%Y", "%m", "%d", "%H", "%M", "%S"), function(v) format(daty, v))
-            for(it in 6:1){
-                if(all.equal.elements(rdaty[[it]]))
-                   rdaty[[it]] <- NULL
-               else
-                    break
+            if(ret$len > 1){
+                rdaty <- lapply(c("%Y", "%m", "%d", "%H", "%M", "%S"), function(v) format(daty, v))
+                for(it in 6:1){
+                    if(all.equal.elements(rdaty[[it]]))
+                       rdaty[[it]] <- NULL
+                   else
+                        break
+                }
+                daty <- do.call(paste0, rdaty)
+            }else{
+                frmt <- switch(ret$units,
+                               "seconds" = "%Y%m%d%H%M%S",
+                               "minutes" = "%Y%m%d%H%M",
+                               "hours" = "%Y%m%d%H",
+                               "days" = "%Y%m%d",
+                               "months" = "%Y%m",
+                                       "%Y%m%d%H%M%S")
+                daty <- format(daty, frmt)
             }
-            daty <- do.call(paste0, rdaty)
         }
 
         dx <- do.call(ncdim_def, c(ncpars$dim[[1]][c('name', 'units', 'vals')],
