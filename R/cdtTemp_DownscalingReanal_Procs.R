@@ -204,7 +204,7 @@ Temp_ReanalysisDownscaling <- function(){
 
         bGrd <- NULL
         if(.cdtData$GalParams$interp$use.block) 
-            bGrd <- createBlock(interp.grid@grid@cellsize, 1, 5)
+            bGrd <- createBlock(c(1, 1, 1, 1))
 
         locations.reanl <- expand.grid(lon = lon.reanl, lat = lat.reanl)
         coordinates(locations.reanl) <- ~lon+lat

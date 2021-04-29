@@ -149,7 +149,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     if(interp$method %in% c("idw", "okr", "ukr")){
         bGrd <- NULL
         if(interp$use.block)
-            bGrd <- createBlock(newgrid@grid@cellsize, 1, 5)
+            bGrd <- createBlock(c(1, 1, 1, 1))
     }
 
     #####################

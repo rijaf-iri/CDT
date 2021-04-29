@@ -387,13 +387,40 @@ raster.slope.aspect <- function(dem){
 ###########################################
 
 ## gstat block size
-createBlock <- function(cellsize, fac = 0.5, len = 4){
-    sDX <- cellsize[1]*fac
-    dBX <- seq(-sDX, sDX, length.out = len)
-    sDY <- cellsize[2] * fac
-    dBY <- seq(-sDY, sDY, length.out = len)
+createBlock <- function(blockSize = c(1, 0.5, 1, 0.5)){
+    if(length(blockSize) != 4)
+        stop("blockSize must be of length 4 in the form c(width_x, by_x, width_y, by_y)")
+
+    sX <- blockSize[1]/2
+    lX <- ceiling((blockSize[1]/blockSize[2]) + 1)
+    dBX <- seq(-sX, sX, length.out = lX)
+    sY <- blockSize[3]/2
+    lY <- ceiling((blockSize[3]/blockSize[4]) + 1)
+    dBY <- seq(-sY, sY, length.out = lY)
     bGrd <- expand.grid(x = dBX, y = dBY)
+
     return(bGrd)
+}
+
+gaussBlock <- function(blockSize = c(1, 1)){
+    gauss_n = c(-0.4305681558, -0.1699905218,
+                 0.1699905218, 0.4305681558) 
+    gauss_w = c(0.1739274226, 0.3260725774,
+                0.3260725774, 0.1739274226)
+
+    nblock <- length(blockSize)
+    if(nblock < 2)
+        stop("The length of blockSize must be 2 or 3")
+
+    d <- sweep(replicate(nblock, gauss_n), 2, rev(blockSize), '*')
+    d <- expand.grid(split(d, col(d)))
+    if(nblock == 2) d <- cbind(0, d)
+    names(d) <- c('z', 'y', 'x')
+
+    w <- expand.grid(rep(list(gauss_w), nblock))
+    w <- Reduce('*', w)
+
+    list(d = d, w = w, n = nblock)
 }
 
 ###########################################

@@ -578,10 +578,10 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
 
             bGrd <- NULL
             if(pars.interp$use.block){
-                if(biasOpts$blockType == "matrix")
-                    bGrd <- createBlock(interp.grid@grid@cellsize, biasOpts$blockFac, biasOpts$blockLen)
-                if(biasOpts$blockType == "vector")
-                    bGrd <- biasOpts$blockSize
+                bGrd <- switch(biasOpts$blockType,
+                                "userdefined" = createBlock(biasOpts$blockSize),
+                                "gaussian" = biasOpts$blockSize
+                               )
             }
         }
 
@@ -751,10 +751,10 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
 
             bGrd <- NULL
             if(pars.interp$use.block){
-                if(biasOpts$blockType == "matrix")
-                    bGrd <- createBlock(interp.grid@grid@cellsize, biasOpts$blockFac, biasOpts$blockLen)
-                if(biasOpts$blockType == "vector")
-                    bGrd <- biasOpts$blockSize
+                bGrd <- switch(biasOpts$blockType,
+                                "userdefined" = createBlock(biasOpts$blockSize),
+                                "gaussian" = biasOpts$blockSize
+                               )
             }
         }
 

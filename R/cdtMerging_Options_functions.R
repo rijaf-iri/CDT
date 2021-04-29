@@ -64,12 +64,23 @@
 #'                }
 #'          }
 #'     where \eqn{rnr} is the interpolated rain-no-rain values. Default is \code{3}.
-#'     }
+#'    }
 #'   \item{\code{RnoRaddCoarse}: }{logical, use the coarse grid to create the rain-no-rain mask. Default is \code{FALSE}}
 #'   \item{\code{RnoRUseMerged}: }{logical, if \code{TRUE} the merged data is used to compute the rain-no-rain mask, otherwise the input gridded data is used. Default is \code{FALSE}}
 #'   \item{\code{RnoRSmoothingPixels}: }{integer, the number of pixels from the target pixel to be used to smooth the rain-no-rain mask. Default is 2.}
-#'    \item{\code{blockFac}: }{numeric, a factor to be applied to the input grid to create the block size when the argument \code{use.block} from \code{interp.method} is \code{TRUE}}
-#'    \item{\code{blockLen}: }{integer, length of the block size}
+#'   \item{\code{blockType}: }{character, the method to use to create the block estimation when the argument \code{use.block} from \code{interp.method} is \code{TRUE}.
+#'          Available options are \code{"gaussian"} and \code{"userdefined"}
+#'          \itemize{
+#'             \item{\code{"gaussian"}: }{using Gaussian quadrature method}
+#'             \item{\code{"userdefined"}: }{user defined block}
+#'        }
+#'    }
+#'    \item{\code{blockSize}: }{vector, the size of the block.
+#'          \itemize{
+#'             \item{\code{"gaussian"}: }{vector of length 2 in the form \code{c(width_x, width_y)}}
+#'             \item{\code{"userdefined"}: }{vector of length 4 in the form \code{c(width_x, by_x, width_y, by_y)}}
+#'        }
+#'    }
 #' }
 #' 
 #' @export
@@ -120,10 +131,8 @@ merging.getOption <- function(name)
          RnoRaddCoarse = TRUE,
          RnoRUseMerged = FALSE,
          RnoRSmoothingPixels = 2,
-         ## blockType "matrix" or "vector"
-         blockType = "vector",
-         blockFac = 10,
-         blockLen = 10,
+         ## blockType "gaussian" or "userdefined"
+         blockType = "gaussian",
          blockSize = c(2, 2)
         )
 }
