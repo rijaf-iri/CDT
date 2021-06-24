@@ -581,10 +581,10 @@ anomaliesCalcProcs <- function(GeneralParameters){
 
             x <- index.out$coords$mat$x
             y <- index.out$coords$mat$y
-            dx <- ncdim_def("Lon", "degreeE", x)
-            dy <- ncdim_def("Lat", "degreeN", y)
+            dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+            dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
             xy.dim <- list(dx, dy)
-            nc.grd <- ncvar_def(index.out$varInfo$name, index.out$varInfo$units, xy.dim, -99, index.out$varInfo$longname, "float", compression = 9)
+            nc.grd <- ncdf4::ncvar_def(index.out$varInfo$name, index.out$varInfo$units, xy.dim, -99, index.out$varInfo$longname, "float", compression = 9)
 
             ######################
 
@@ -596,17 +596,17 @@ anomaliesCalcProcs <- function(GeneralParameters){
                 dat.moy <- dat.moy$z
                 dat.moy[is.na(dat.moy)] <- -99
                 filenc <- file.path(ncdfOUT1, paste0("clim_", id, ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, dat.moy)
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, dat.moy)
+                ncdf4::nc_close(nc)
 
                 dat.sds <- readCdtDatasetChunk.multi.dates.order(index.file.sds, id, cdtParallelCond, onedate = TRUE)
                 dat.sds <- dat.sds$z
                 dat.sds[is.na(dat.sds)] <- -99
                 filenc <- file.path(ncdfOUT2, paste0("clim_", id, ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, dat.sds)
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, dat.sds)
+                ncdf4::nc_close(nc)
 
                 return(0)
             })
@@ -832,13 +832,13 @@ anomaliesCalcProcs <- function(GeneralParameters){
         y <- index.out$coords$mat$y
         nx <- length(x)
         ny <- length(y)
-        dx <- ncdim_def("Lon", "degreeE", x)
-        dy <- ncdim_def("Lat", "degreeN", y)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
         xy.dim <- list(dx, dy)
         if(anomaly.fonct == "Difference") units <- index.out$varInfo$units
         if(anomaly.fonct == "Percentage") units <- "percentage"
         if(anomaly.fonct == "Standardized") units <- ""
-        nc.grd <- ncvar_def("anom", units, xy.dim, -9999, index.out$varInfo$longname, "float", compression = 9)
+        nc.grd <- ncdf4::ncvar_def("anom", units, xy.dim, -9999, index.out$varInfo$longname, "float", compression = 9)
 
         #########################################
 

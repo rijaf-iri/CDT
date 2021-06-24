@@ -287,8 +287,7 @@ cdt.init.params <- function(action, tstep){
     if(action == 'rmbias.rain'){
         ret.params <- list(action = action, period = tstep, date.range = date.range,
                            RFE = list(dir = "", sample = "", format = "rfe_%s%s%s.nc"),
-                           BIAS = list(method = "mbvar", dir = "", Adjusted.to.Zero = TRUE,
-                                       format = "STN_GRID_Bias_%s"),
+                           BIAS = list(method = "mbvar", dir = "", format = "STN_GRID_Bias_%s"),
                            output = list(dir = getwd(), format = "rr_adj_%s%s%s.nc")
                           )
     }

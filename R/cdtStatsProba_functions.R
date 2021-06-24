@@ -196,6 +196,64 @@ startweibull <- function(x){
 
 #############################################
 
+## Bernoulli-Gamma distribution L-moments
+rain.berngamma.params <- function(dat, min.length, thres = 1){
+    ## dat matrix of data
+    nadat <- rep(NA, ncol(dat))
+    coef <- list(proba = nadat, shape = nadat, scale = nadat)
+
+    ina <- colSums(!is.na(dat))
+    ix <- ina >= min.length
+
+    if(!any(ix)) return(coef)
+
+    dat <- dat[, ix, drop = FALSE]
+    nb <- ina[ix]
+
+    if(thres == 0) thres <- 1e-2
+
+    P <- colSums(dat >= thres, na.rm = TRUE) / nb
+    P[P == 0] <- 1e-6
+
+    dat[dat < thres] <- NA
+    nna <- colSums(!is.na(dat))
+    miss <- nna < 7
+
+    M <- colMeans(dat, na.rm = TRUE)
+    V <- matrixStats::colVars(dat, na.rm = TRUE)
+    M[miss] <- NA
+    V[miss] <- NA
+    V[V == 0] <- 0.075
+
+    coef$proba[ix] <- P
+    coef$shape[ix] <- M^2 / V
+    coef$scale[ix] <- V / M
+
+    return(coef)
+}
+
+temp.normal.params <- function(dat, min.length){
+    nadat <- rep(NA, ncol(dat))
+    coef <- list(mean = nadat, sd = nadat)
+
+    ina <- colSums(!is.na(dat))
+    ix <- ina >= min.length
+
+    if(!any(ix)) return(coef)
+    dat <- dat[, ix, drop = FALSE]
+
+    M <- colMeans(dat, na.rm = TRUE)
+    S <- matrixStats::colSds(dat, na.rm = TRUE)
+    S[S == 0] <- 1e-3
+
+    coef$mean[ix] <- M
+    coef$sd[ix] <- S
+
+    return(coef)
+}
+
+#############################################
+
 ## Fitting empirical distributions to theoretical models
 fit.distributions <- function(x, distr = c("norm", "snorm", "lnorm", "gamma", "weibull"),
                               method = 'mle', ...)

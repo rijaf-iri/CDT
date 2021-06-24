@@ -172,7 +172,7 @@ cdtDataset_readData <- function(){
 
     Insert.Messages.Out(.cdtData$GalParams[['message']][['18']], TRUE, "i")
 
-    parsL <- doparallel.cond(length(col.idx) >= 100)
+    parsL <- doparallel.cond(length(col.idx) >= 20)
 
     ret <- lapply(seq_along(chunkdate), function(jj){
         file.tmp <- file.path(datadir, paste0(jj, "_v.rds"))

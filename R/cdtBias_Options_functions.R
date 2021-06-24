@@ -11,6 +11,7 @@
 #'   \item{\code{mulBiasFunction}: }{character, the function to be used to compute the multiplicative bias coefficients. Options are "mean" (default), "median"}
 #'   \item{\code{qmecdfBoxInterp}: }{character, the interpolation method to use in case of \strong{Quantile Mapping with Empirical Distribution}. Options are "idw" (default), "means"}
 #'   \item{\code{qmecdfBoxMaxdist}: }{numeric, maximum distance to use if \code{qmecdfBoxInterp} is \code{TRUE}}
+#'   \item{\code{qmdistRainyDayThres}: }{numeric, rainy day threshold to use when computing the occurrence of rainy days in case of \strong{Quantile Mapping with Fitted Distribution}}
 #'   \item{\code{blockType}: }{character, the method to use to create the block estimation when the argument \code{use.block} from \code{interp.method} is \code{TRUE}.
 #'          Available options are \code{"gaussian"} and \code{"userdefined"}
 #'          \itemize{
@@ -62,6 +63,9 @@ biascoeff.getOption <- function(name)
          qmecdfBoxInterp = "idw",
          ## if qmecdfBoxInterp = "idw"
          qmecdfBoxMaxdist = 4,
+         ## Rainy day threshold
+         qmdistRainyDayThres = 1,
+         qmdistTest = 1,
          ## blockType "gaussian" or "userdefined"
          blockType = "gaussian",
          blockSize = c(2, 2)

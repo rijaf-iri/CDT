@@ -241,7 +241,7 @@ CPT.convertStationData <- function(data, date, stninfo, varid, units, missval){
 }
 
 CPT.convertStationData.Files <- function(cdtdata, output.file, cptInfo){
-    data <- splitCDTData0(cdtdata)
+    data <- splitCDTData1(cdtdata)
     if(is.null(data)) return(NULL)
 
     ncmax <- max(nchar(formatC(c(data$data))))
