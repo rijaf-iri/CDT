@@ -7,7 +7,7 @@ export(download.oni.cpc.ncep.noaa, oni.cpc.ncep.noaa, oni.iridl.ldeo)
 export(cdtMergingPrecipCMD, cdtMergingTempCMD)
 export(cdtCrossValidationPrecipCMD, cdtCrossValidationTempCMD)
 export(jra55.send.request, jra55.format.ncdf)
-export(merging.options, biascoeff.options)
+export(merging.options, biascoeff.options, blanking.options)
 export(readCDTStationData, writeCDTStationData, matchCDTStationsData, matchCDTStationsIDs)
 export(extractGeomPoints, extractGeomPolys, extractGeomRect)
 export(plotMultipleData)
@@ -31,7 +31,7 @@ importFrom("sp", "over", "bbox", "CRS", "geometry",
            "SpatialPolygonsDataFrame")
 importFrom("stats", "sd", "var", "cor", "cov", "quantile", "lm",
            "glm", "update", "ecdf", "median", "residuals", "as.formula",
-           "formula", "qnorm", "pnorm", "dnorm", "predict")
+           "formula", "qnorm", "pnorm", "dnorm", "pgamma", "qgamma", "predict")
 
 importFrom(latticeExtra, xyplot.list)
 

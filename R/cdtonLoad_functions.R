@@ -16,6 +16,7 @@ local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Co
 .cdtMRG <- new.env()
 assign("merging.options", list(), envir = .cdtMRG)
 assign("biascoeff.options", list(), envir = .cdtMRG)
+assign("blanking.options", list(), envir = .cdtMRG)
 
 #############################
 
@@ -173,9 +174,10 @@ assign("biascoeff.options", list(), envir = .cdtMRG)
     if(is.logical(is.nobw)) warning(paste0("Tcl package 'BWidget' not found", editcfg.msg('BWidget')))
 
     #############################
-    ## load merging default options
+    ## load all default options
     merging.options(.defaultMrgOptions())
     biascoeff.options(.defaultBiasCoefOptions())
+    blanking.options(.defaultBlankingOptions())
 
     invisible()
 }

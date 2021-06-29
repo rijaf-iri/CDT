@@ -294,24 +294,6 @@ getBoundaries <- function(shpf){
     return(ocrds)
 }
 
-## create mask, blanking
-# ncgrid: named list(lon, lat)
-create.mask.grid <- function(shp, ncgrid, buffer = NULL){
-    width <- mean(diff(sapply(ncgrid, range)) / (sapply(ncgrid, length) - 1))
-    shp <- as(shp, "SpatialPolygons")
-    shp <- rgeos::gUnaryUnion(shp)
-    shp <- rgeos::gSimplify(shp, tol = width / 4, topologyPreserve = TRUE)
-    if(is.null(buffer)) buffer <- 4 * width
-    shp <- rgeos::gBuffer(shp, width = buffer)
-    slot.shp <- slot(shp, "polygons")
-    shp.df <- data.frame(vtmp = rep(1, length(slot.shp)))
-    row.names(shp.df) <- sapply(slot.shp, function(x) slot(x, "ID"))
-    shp <- SpatialPolygonsDataFrame(shp, shp.df)
-    mask <- over(defSpatialPixels(ncgrid), shp)[, 'vtmp']
-    dim(mask) <- sapply(ncgrid, length)
-    return(mask)
-}
-
 ##############################################
 
 ## convert km to degree
