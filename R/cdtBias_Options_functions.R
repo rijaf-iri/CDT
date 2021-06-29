@@ -68,6 +68,6 @@ biascoeff.getOption <- function(name)
          qmdistTest = 1,
          ## blockType "gaussian" or "userdefined"
          blockType = "gaussian",
-         blockSize = c(2, 2)
+         blockSize = c(1, 1)
         )
 }

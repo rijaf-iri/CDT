@@ -133,6 +133,6 @@ merging.getOption <- function(name)
          RnoRSmoothingPixels = 2,
          ## blockType "gaussian" or "userdefined"
          blockType = "gaussian",
-         blockSize = c(2, 2)
+         blockSize = c(1, 1)
         )
 }
