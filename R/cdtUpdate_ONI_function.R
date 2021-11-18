@@ -24,7 +24,7 @@ download.oni.cpc.ncep.noaa <- function(GUI = FALSE){
     page.oni <- xml2::read_html(url.oni)
     tbl.oni <- rvest::html_nodes(page.oni, "table")
     tbl.oni <- rvest::html_table(tbl.oni[9], fill = TRUE)
-    tbl.oni <- tbl.oni[[1]]
+    tbl.oni <- as.data.frame(tbl.oni[[1]])
     xhead <- as.character(tbl.oni[1, ])
     tbl.oni <- tbl.oni[!grepl('[^[:digit:]]', tbl.oni[, 1]), , drop = FALSE]
     names(tbl.oni) <- xhead
