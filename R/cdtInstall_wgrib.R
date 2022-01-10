@@ -10,7 +10,7 @@ install_wgrib <- function(){
     wgrib_dir <- file.path(.cdtDir$dirLocal, 'wgrib')
     dir.create(wgrib_dir, showWarnings = FALSE, recursive = TRUE)
 
-    wgrib_lnk <- "ftp://ftp.cpc.ncep.noaa.gov/wd51we/wgrib/wgrib.c"
+    wgrib_lnk <- "https://ftp.cpc.ncep.noaa.gov/wd51we/wgrib/wgrib.c"
     wgrib_dest <- file.path(wgrib_dir, 'wgrib.c')
     ret <- try(utils::download.file(wgrib_lnk, wgrib_dest, method = "auto", quiet = TRUE, mode = "wb"), silent = TRUE)
 
@@ -29,7 +29,7 @@ install_wgrib <- function(){
         }
 
         rtools_pth <- pkgbuild::rtools_path()
-        rtools_pth <- rev(split_path(rtools_pth))
+        rtools_pth <- rev(split_path(rtools_pth[1]))
         rtools_pth <- file.path(rtools_pth[1], rtools_pth[2])
 
         r_arch <- switch(Sys.getenv("R_ARCH"), "/x64" = 64, "/i386" = 32)

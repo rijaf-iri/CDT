@@ -100,5 +100,8 @@
         <content id="15">
             <text lang="en"> Unable to open NetCDF sample files </text>
         </content>
+        <content id="16">
+            <text lang="en"> The NetCDF grids do not match </text>
+        </content>
     </message>
 </dialog_box>
