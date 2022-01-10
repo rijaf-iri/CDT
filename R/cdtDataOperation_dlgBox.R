@@ -318,7 +318,7 @@ dataOperation_GetInfo <- function(){
         if(data.type == "cdtnetcdf"){
             inputFile <- .cdtData$GalParams$DATASETs[[1]]$pars$sample
             if(inputFile != ""){
-                varInfo <- getNCDFSampleData()
+                varInfo <- getNCDFSampleData(inputFile)
                 varInfo <- varInfo$varinfo
             }
         }
@@ -374,10 +374,10 @@ dataOperation_GetInfo <- function(){
     tkconfigure(bt.prm.OK, command = function(){
         .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
         .cdtData$GalParams$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
-        .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        .cdtData$GalParams$datatype <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
 
         if(str_trim(tclvalue(file.save)) %in% c("", "NA")){
-            imsg <- if(.cdtData$GalParams$data.type == "cdtstation") "2" else 3
+            imsg <- if(.cdtData$GalParams$datatype == "cdtstation") "2" else 3
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][[imsg]], icon = "warning", type = "ok")
             tkwait.window(tt)
         }
@@ -397,8 +397,14 @@ dataOperation_GetInfo <- function(){
             tkwait.window(tt)
         }
 
-        for(jj in seq_along(.cdtData$GalParams$DATASETs))
+        for(jj in seq_along(.cdtData$GalParams$DATASETs)){
             .cdtData$GalParams$inputs[[paste0('file', jj)]]$dir <- inputFiles[[jj]]
+
+            if(.cdtData$GalParams$datatype == "cdtnetcdf"){
+                .cdtData$GalParams$inputs[[paste0('file', jj)]]$sample <- .cdtData$GalParams$DATASETs[[jj]]$pars$sample
+                .cdtData$GalParams$inputs[[paste0('file', jj)]]$format <- .cdtData$GalParams$DATASETs[[jj]]$pars$format
+            }
+        }
 
         txtFormula <- str_trim(tclvalue(tkget(text.Formula, "0.0", "end")))
         txtFormula <- gsub("[\t\r\n]", "", txtFormula)
@@ -434,7 +440,7 @@ dataOperation_GetInfo <- function(){
 
         ########
 
-        if(.cdtData$GalParams$data.type != "cdtstation"){
+        if(.cdtData$GalParams$datatype != "cdtstation"){
             if(.cdtData$GalParams$varinfo$name == "" |
                .cdtData$GalParams$varinfo$longname == ""){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['7']], icon = "warning", type = "ok")
@@ -444,10 +450,10 @@ dataOperation_GetInfo <- function(){
 
         .cdtData$GalParams$message <- lang.dlg[['message']]
 
-        # for(jj in seq_along(.cdtData$GalParams$DATASETs))
-        #     tkdestroy(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
+        for(jj in seq_along(.cdtData$GalParams$DATASETs))
+            tkdestroy(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
 
-        # .cdtData$GalParams$DATASETs <- NULL
+        .cdtData$GalParams$DATASETs <- NULL
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -455,10 +461,10 @@ dataOperation_GetInfo <- function(){
     })
 
     tkconfigure(bt.prm.CA, command = function(){
-        # for(jj in seq_along(.cdtData$GalParams$DATASETs))
-        #     tkdestroy(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
+        for(jj in seq_along(.cdtData$GalParams$DATASETs))
+            tkdestroy(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
 
-        # .cdtData$GalParams$DATASETs <- NULL
+        .cdtData$GalParams$DATASETs <- NULL
 
         tkgrab.release(tt)
         tkdestroy(tt)

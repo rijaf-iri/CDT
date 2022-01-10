@@ -27,7 +27,7 @@ mergeCDTStationData <- function(){
     inull <- sapply(don, is.null)
     if(any(inull)){
         msg <- paste0(unlist(GalParams$inputs[inull]), collapse = ", ")
-        msg <- paste(GalParams[['message']][['4']], ":", msg)
+        msg <- paste(GalParams[['message']][['4-1']], ":", msg)
         Insert.Messages.Out(msg, TRUE, "e")
         return(NULL)
     }
@@ -36,7 +36,7 @@ mergeCDTStationData <- function(){
     inull <- sapply(don, is.null)
     if(any(inull)){
         msg <- paste0(unlist(GalParams$inputs[inull]), collapse = ", ")
-        msg <- paste("Files", ":", msg)
+        msg <- paste(GalParams[['message']][['4-2']], ":", msg)
         Insert.Messages.Out(msg, TRUE, "e")
         return(NULL)
     }

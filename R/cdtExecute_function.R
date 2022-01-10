@@ -155,6 +155,15 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
+    ## Data operation
+    if(.cdtData$GalParams$action == "data.Operation"){
+        ret <- try(dataOperation_Execute(), silent = TRUE)
+
+        msg0 <- .cdtData$GalParams[['message']][['13']]
+        msg1 <- .cdtData$GalParams[['message']][['14']]
+        Execute_end_msg(ret, msg0, msg1)
+    }
+
     ## Compute derived temperature variables
     if(.cdtData$GalParams$action == "compute.dervTemp"){
         ret <- try(computeTvarsProcs(), silent = TRUE)

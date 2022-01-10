@@ -42,8 +42,12 @@
             <text lang="en"> Combining CDT stations data failed </text>
             <text lang="fr"> Fusion des données stations CDT échouée </text>
         </content>
-        <content id="4">
+        <content id="4-1">
             <text lang="en"> Unable to import files </text>
+            <text lang="fr"> Impossible d'importer les fichiers </text>
+        </content>
+        <content id="4-2">
+            <text lang="en"> Unable to parse files </text>
             <text lang="fr"> Impossible d'importer les fichiers </text>
         </content>
         <content id="5">
