@@ -34,14 +34,14 @@ SeasonLengthCalcPanelCmd <- function(){
 
     .cdtData$EnvData$TSGraphOp <- list(
                                     bar = list(
-                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
                                             ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                             axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                             title = list(is.title = FALSE, title = '', position = 'top'),
                                             colors = list(col = "darkblue")
                                         ),
                                     line = list(
-                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
                                             ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                             axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                             title = list(is.title = FALSE, title = '', position = 'top'),

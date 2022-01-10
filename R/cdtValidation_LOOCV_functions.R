@@ -1,51 +1,17 @@
 
-select.Station.Validation <- function(df, perc = 20){
-    dst <- stats::dist(df[, c('lon', 'lat')], method = "euclidean")
-    dmat <- as.matrix(dst)
-    hklust <- stats::hclust(dst, method = 'average')
-
-    nl <- length(df$id)
-    n0 <- round(nl * perc/100)
-    minSize <- floor(nl / n0)
-    repeat{
-        df$k <- dynamicTreeCut::cutreeDynamic(hklust, minClusterSize = minSize, method = "hybrid",
-                                                distM = dmat, deepSplit = 4, verbose = 0)
-        nClust <- length(unique(df$k))
-        minSize <- minSize - 1
-       if(minSize < 3) break
-       if(n0 <= nClust) break
-    }
-
-    ipt <- lapply(seq(nClust), function(j){
-        ij <- df$k == j
-        io <- order(df$k[ij], decreasing = TRUE)
-        which(ij)[io[1:2]]
-    })
-    ipt <- sort.int(do.call(c, ipt))
-    dp <- df[ipt, , drop = FALSE]
-
-    dmat <- dmat[ipt, ipt]
-    dimnames(dmat) <- list(seq(nrow(dmat)), seq(ncol(dmat)))
-    ir <- sample.int(nrow(dmat), nClust)
-    repeat{
-        ir0 <- ir
-        for (i in 1:nClust){
-            mm <- dmat[ir[-i], -ir[-i], drop = FALSE]
-            k <- which.max(mm[(1:ncol(mm) - 1) * nrow(mm) + max.col(t(-mm))])
-            ir[i] <- as.numeric(dimnames(mm)[[2]][k])
-        }
-        if(identical(ir0, ir)) break
-    }
-
-    dp[ir, c("id", 'lon', 'lat'), drop = FALSE]
-}
-
 cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
                             variable, demData, outdir, GUI = TRUE)
 {
     log.file <- file.path(outdir, "log_file.txt")
     ncinfo <- ncInfo$ncinfo
-    params$MRG$negative <- switch(variable, "rain" = FALSE, "temp" = TRUE)
+
+    params$MRG$limits <- switch(variable,
+                                "rain" = c(0, 5000),
+                                "temp" = c(-40, 50),
+                                "rh" = c(0, 100),
+                                "pres" = c(500, 1100),
+                                "rad" = c(0, 1500),
+                                NULL)
 
     ##################
     tmpdir <- file.path(outdir, "tmp")

@@ -214,10 +214,9 @@ ExtractDataPanelCmd <- function(){
         ############
         settingINData <- NULL
         tkconfigure(set.infile, command = function(){
-            GeneralParameters[['cdtnetcdf']] <<- getInfoNetcdfData(.cdtEnv$tcl$main$win,
+            GeneralParameters[['cdtnetcdf']] <<- getInfoNetCDFData(.cdtEnv$tcl$main$win,
                                                                    GeneralParameters[['cdtnetcdf']],
-                                                                   str_trim(tclvalue(input.file)),
-                                                                   str_trim(tclvalue(timeSteps)))
+                                                                   str_trim(tclvalue(input.file)))
             settingINData <<- 1
         })
 

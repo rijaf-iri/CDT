@@ -36,12 +36,15 @@
         // Number of chunk files to be used for each calculation
         "chunkfac": 5
     },
-    // use parallel processing
-    "dopar": true,
-    // set number of cores automatically detectCores() - 1
-    "detect.cores": false,
-    // set the Number of cores to be used if "detect.cores": false,
-    "nb.cores": 3,
+    "parallel":
+    {
+        // use parallel processing
+        "dopar": true,
+        // set number of cores automatically detectCores() - 1
+        "detect.cores": false,
+        // set the Number of cores to be used if "detect.cores": false,
+        "nb.cores": 3
+    },
     // to use Google Maps API key, put null if you do not have api key
     "Google.Maps.API.key": null
 }

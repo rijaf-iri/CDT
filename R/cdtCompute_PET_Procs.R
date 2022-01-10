@@ -487,7 +487,7 @@ computePETProcs <- function(){
 
         ##################
         GalParams <- .cdtData$GalParams
-        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+        cdtParallelCond <- .cdtData$Config$parallel
 
         ##################
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))

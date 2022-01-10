@@ -19,21 +19,45 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
                       "temp" = list(name = "temp",
                                     units = "C",
                                     missval = -99,
-                                    longname = "Downscaled Reanalysis merged with station",
+                                    longname = "Downscaled Temperature Reanalysis merged with station",
                                     prec = ncinfo$varinfo$prec
-                                    )
+                                    ),
+                      "rh" = list(name = "rh",
+                                  units = "%",
+                                  missval = -99,
+                                  longname = "Downscaled Relative Humidity Reanalysis merged with station",
+                                  prec = ncinfo$varinfo$prec
+                                 ),
+                      "pres" = list(name = "pres",
+                                    units = "hPa",
+                                    missval = -99,
+                                    longname = "Downscaled Pressure Reanalysis merged with station",
+                                    prec = ncinfo$varinfo$prec
+                                   ),
+                      "rad" = list(name = "rad",
+                                   units = "W/m2",
+                                   missval = -99,
+                                   longname = "Downscaled Radiation Reanalysis merged with station",
+                                   prec = ncinfo$varinfo$prec
+                                 )
                     )
 
-    params$MRG$negative <- switch(variable, "rain" = FALSE, "temp" = TRUE)
+    params$MRG$limits <- switch(variable,
+                                "rain" = c(0, 5000),
+                                "temp" = c(-40, 50),
+                                "rh" = c(0, 100),
+                                "pres" = c(500, 1100),
+                                "rad" = c(0, 1500),
+                                NULL)
 
     ##################
 
-    dx <- ncdim_def("Lon", "degree_east", xy.grid$lon)
-    dy <- ncdim_def("Lat", "degree_north", xy.grid$lat)
+    dx <- ncdf4::ncdim_def("Lon", "degree_east", xy.grid$lon)
+    dy <- ncdf4::ncdim_def("Lat", "degree_north", xy.grid$lat)
     shuffle <- if(varinfo$prec %in% c("integer", "short")) TRUE else FALSE
-    grd.nc.out <- ncvar_def(varinfo$name, varinfo$units, list(dx, dy), varinfo$missval,
-                            longname = varinfo$longname, prec = varinfo$prec,
-                            shuffle = shuffle, compression = 9)
+    grd.nc.out <- ncdf4::ncvar_def(varinfo$name, varinfo$units, list(dx, dy), varinfo$missval,
+                                   longname = varinfo$longname, prec = varinfo$prec,
+                                   shuffle = shuffle, compression = 9)
 
     ##################
 
@@ -135,6 +159,9 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
                          "No merging performed, output equals to the input NetCDF data", "\n")
             cat(msg, file = log.file, append = TRUE)
+
+            nc.val <- newgrid$grd
+            dim(nc.val) <- newgrid@grid@cells.dim
             write.merging.output(jj, nc.val, grd.nc.out, outdir,
                                  varinfo, ncInfo, params, mask)
             return(0)
@@ -149,6 +176,9 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
                          "No merging performed, output equals to the input NetCDF data", "\n")
             cat(msg, file = log.file, append = TRUE)
+
+            nc.val <- newgrid$grd
+            dim(nc.val) <- newgrid@grid@cells.dim
             write.merging.output(jj, nc.val, grd.nc.out, outdir,
                                  varinfo, ncInfo, params, mask)
             return(0)
@@ -158,6 +188,9 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
             msg <- paste(ncInfo$dates[jj], ":", "not enough station data", "|",
                          "No merging performed, output equals to the input NetCDF data", "\n")
             cat(msg, file = log.file, append = TRUE)
+
+            nc.val <- newgrid$grd
+            dim(nc.val) <- newgrid@grid@cells.dim
             write.merging.output(jj, nc.val, grd.nc.out, outdir,
                                  varinfo, ncInfo, params, mask)
             return(0)
@@ -171,6 +204,9 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
                 msg <- paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
                              "No merging performed, output equals to the input NetCDF data", "\n")
                 cat(msg, file = log.file, append = TRUE)
+
+                nc.val <- newgrid$grd
+                dim(nc.val) <- newgrid@grid@cells.dim
                 write.merging.output(jj, nc.val, grd.nc.out, outdir,
                                      varinfo, ncInfo, params, mask)
                 return(0)
@@ -315,12 +351,23 @@ merging.functions <- function(locations.stn, newgrid, params,
                 exp.var <- gstat::variogram(res~1, locations = loc.stn, cressie = TRUE)
                 vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(params$interp$vgm.model)), silent = TRUE)
                 if(inherits(vgm, "try-error")){
-                    cat(paste(nc.date, ":", paste("Unable to compute variogram pass#", pass), "|",
+                    cat(paste(nc.date, ":", paste("Unable to compute variogram ( Error ) pass#", pass), "|",
                         "Interpolation using IDW", "\n"), file = log.file, append = TRUE)
                     interp.method <- "idw"
+                    vgm <- NULL
+                }
+                if(vgm$range[2] < 0){
+                    cat(paste(nc.date, ":", paste("Variogram range is negative pass#", pass), "|",
+                        "Interpolation using IDW", "\n"), file = log.file, append = TRUE)
+                    interp.method <- "idw"
+                    vgm <- NULL
                 }
             }else{
-                cat(paste(nc.date, ":", paste("Unable to compute variogram pass#", pass), "|",
+                if(length(loc.stn$res) <= mrgOpts$vgmMinNumberSTN)
+                    vmsg <- "not enough station data"
+                if(var(loc.stn$res) <= 1e-15)
+                    vmsg <- "zero variance station data"
+                cat(paste(nc.date, ":", paste("Unable to compute variogram (", vmsg, ") pass#", pass), "|",
                     "Interpolation using IDW", "\n"), file = log.file, append = TRUE)
                 interp.method <- "idw"
             }
@@ -361,7 +408,10 @@ merging.functions <- function(locations.stn, newgrid, params,
 
         out.mrg <- newgrid@data$grd
         out.mrg[igrid] <- sp.trend + interp.res
-        if(!params$MRG$negative) out.mrg[out.mrg < 0] <- 0
+
+        out.mrg[out.mrg < params$MRG$limits[1]] <- params$MRG$limits[1]
+        out.mrg[out.mrg > params$MRG$limits[2]] <- params$MRG$limits[2]
+
         ina <- is.na(out.mrg)
         out.mrg[ina] <- newgrid@data$grd[ina]
 

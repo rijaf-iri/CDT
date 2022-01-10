@@ -76,9 +76,8 @@ fill_Miss_DekTemp <- function(){
 
     tkconfigure(set.dir.rfe, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["NCDF"]] <- getInfoNetcdfData(tt, .cdtData$GalParams[["NCDF"]],
-                                                        str_trim(tclvalue(dir.rfe)),
-                                                        .cdtEnv$tcl$lang$global[['combobox']][['1']][5])
+        .cdtData$GalParams[["NCDF"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["NCDF"]],
+                                                          str_trim(tclvalue(dir.rfe)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 

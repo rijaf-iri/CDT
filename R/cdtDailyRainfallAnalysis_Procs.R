@@ -206,7 +206,7 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
             
             #########################################
 
-            cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+            cdtParallelCond <- .cdtData$Config$parallel
 
             chunkfile <- sort(unique(don$colInfo$index))
             chunkcalc <- split(chunkfile, ceiling(chunkfile/don$chunkfac))

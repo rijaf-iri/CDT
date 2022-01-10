@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Combine NetCDF Data </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Time step </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Directory containing the NetCDF files </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File to save the combined NetCDF files </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Combine NetCDF data ................. </text>
+        </content>
+    </message>
+</dialog_box>

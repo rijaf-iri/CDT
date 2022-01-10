@@ -163,7 +163,7 @@ SPICalc.Plot.VizTS <- function(){
         tcl('update')
     })
 
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
 
     op <- par(bg = "white")
 

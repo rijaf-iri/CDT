@@ -15,7 +15,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
     analysis <- GeneralParameters$analysis
 
     ## pour parallel
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
 
     #############
 

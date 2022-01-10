@@ -147,7 +147,7 @@ computeDecileProcs <- function(GeneralParameters){
     #####################
 
     GeneralParameters <- GeneralParameters
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
 
     #####################
 

@@ -250,7 +250,7 @@ computeWBProcs <- function(){
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
         GalParams <- .cdtData$GalParams
-        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+        cdtParallelCond <- .cdtData$Config$parallel
 
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 5))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,

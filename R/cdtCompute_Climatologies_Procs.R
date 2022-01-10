@@ -13,7 +13,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
     #############
     ## pour parallel
     GeneralParameters <- GeneralParameters
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
 
     #############
 

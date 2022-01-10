@@ -83,12 +83,15 @@ multiplicative.bias.fun <- function(stn, grd, variable, min.length){
         bs[is.nan(bs)] <- 1
         bs[bs < 0.01] <- 0.01
         bs[bs > 3] <- 3
-    }
-
-    if(variable == "temp"){
+    }else if(variable == "temp"){
         bs[is.infinite(bs)] <- 1.5
         bs[is.nan(bs)] <- 1
         # bs[bs < 0] <- 1
+        bs[bs < 0.6] <- 0.6
+        bs[bs > 1.5] <- 1.5
+    }else{
+        bs[is.infinite(bs)] <- 1.5
+        bs[is.nan(bs)] <- 1
         bs[bs < 0.6] <- 0.6
         bs[bs > 1.5] <- 1.5
     }
@@ -384,6 +387,8 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
 
         stnPars <- lapply(1:12, function(m){
             dat <- stnData$data[stn_index[[m]], , drop = FALSE]
+
+            ## check other variables
             if(variable == "rain")
                 rain.berngamma.params(dat, min.length, biasOpts$qmdistRainyDayThres)
             else
@@ -414,6 +419,7 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
 
             dat <- do.call(rbind, dat)
 
+            ## check other variables
             if(variable == "rain"){
                 pars <- rain.berngamma.params(dat, min.length, biasOpts$qmdistRainyDayThres)
                 nbvar <- 3
@@ -434,9 +440,10 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
 
         ############### 
 
+        ## perform.test <- params$BIAS$stat.test
         # perform.test <- switch(variable,
-        #                       "rain" = params$BIAS$AD.test,
-        #                       "temp" = params$BIAS$SWnorm.test)
+        #                       "rain" = params$BIAS$stat.test,
+        #                       "temp" = params$BIAS$stat.test)
         # fun.test <- switch(variable,
         #                    "rain" = fit.berngamma.rain,
         #                    "temp" = fit.norm.temp)
@@ -726,8 +733,10 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
             if(variable == "rain"){
                 grd.bs[grd.bs < 0.01] <- 0.01
                 grd.bs[grd.bs > 3] <- 3
-            }
-            if(variable == "temp"){
+            }else if(variable == "temp"){
+                grd.bs[grd.bs < 0.6] <- 0.6
+                grd.bs[grd.bs > 1.5] <- 1.5
+            }else{
                 grd.bs[grd.bs < 0.6] <- 0.6
                 grd.bs[grd.bs > 1.5] <- 1.5
             }
@@ -754,9 +763,17 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
             ncoutPARS <- list(PROB, SHAPE, SCALE)
             nbvar <- 3
             distrname <- "BernGamma"
-        }
-
-        if(variable == "temp"){
+        }else if(variable == "temp"){
+            MEAN <- ncdf4::ncvar_def("mean", "degC", list(dx, dy), NA,
+                                     longname = "Means normal distribution",
+                                     prec = "float", compression = 9)
+            SD <- ncdf4::ncvar_def("sd", "degC", list(dx, dy), NA,
+                                   longname = "Standard deviations normal distribution",
+                                   prec = "float", compression = 9)
+            ncoutPARS <- list(MEAN, SD)
+            nbvar <- 2
+            distrname <- "Gaussian"
+        }else{
             MEAN <- ncdf4::ncvar_def("mean", "degC", list(dx, dy), NA,
                                      longname = "Means normal distribution",
                                      prec = "float", compression = 9)
@@ -910,9 +927,10 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
                         grd.bs[grd.bs < 0] <- 0.01
                         grd.bs[grd.bs > 1] <- 0.99
                     }else grd.bs[grd.bs < 0] <- NA
-                }
-
-                if(variable == "temp"){
+                }else if(variable == "temp"){
+                    ## standard deviation params
+                    if(j == 2) grd.bs[grd.bs < 1e-3] <- 1e-3
+                }else{
                     if(j == 2) grd.bs[grd.bs < 1e-3] <- 1e-3
                 }
 
@@ -1152,6 +1170,7 @@ readBiasFiles <- function(params, variable, GUI = TRUE){
     }
 
     if(params$BIAS$method == "qmdist"){
+        ## check other variables (rh, pres, rad, wind)
         distrname <- if(variable == "rain") "BernGamma" else "Gaussian"
         stnfiles <- file.path(params$BIAS$dir, sprintf("STN_Bias_Pars_%s_%s.nc", distrname, 1:12))
         grdfiles <- file.path(params$BIAS$dir, sprintf("GRD_Bias_Pars_%s_%s.nc", distrname, 1:12))
@@ -1189,6 +1208,7 @@ readBiasFiles <- function(params, variable, GUI = TRUE){
 
         PARS.stn <- vector(mode = 'list', length = 12)
         PARS.grd <- vector(mode = 'list', length = 12)
+        ## check other variables (rh, pres, rad, wind)
         varids <- if(variable == "rain") c("prob", "scale", "shape") else c("mean", "sd")
 
         PARS.stn[which(bs.exist)] <- lapply(which(bs.exist), function(m){
@@ -1344,8 +1364,9 @@ applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TR
                 #                                 biasOpts$qmdistRainyDayThres)
                 foo <- if(biasOpts$qmdistTest == 1) quantile.mapping.BGamma else quantile.mapping.BGamma1
                 xadj <- foo(xval, pars.stn, pars.grd, biasOpts$qmdistRainyDayThres)
-            }
-            if(variable == "temp"){
+            }else if(variable == "temp"){
+                xadj <- quantile.mapping.Gauss(xval, pars.stn, pars.grd)
+            }else{
                 xadj <- quantile.mapping.Gauss(xval, pars.stn, pars.grd)
             }
         }
@@ -1373,6 +1394,12 @@ applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TR
         }
 
         if(variable == "rain") xadj[xadj < 0] <- 0
+        if(variable == "rad") xadj[xadj < 0] <- 0
+        if(variable == "rh"){
+            xadj[xadj < 0] <- 0
+            xadj[xadj > 100] <- 100
+        }
+
         xadj[is.na(xadj)] <- varinfo$missval
 
         nc <- ncdf4::nc_create(ncoutfiles[jj], grd.bsadj)

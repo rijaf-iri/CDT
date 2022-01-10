@@ -675,7 +675,7 @@ image.foramtted.table <- function(X, rk, title = "",
 
     draw.title <- if(title == "") FALSE else TRUE
     mar.top <- if(draw.title) 6.0 else 4.5
-    mar.bas <- max(nchar(mc)) * 0.4 + 1.1
+    mar.bas <- max(nchar(mc)) * 0.4 + 1.8
 
     #########
     op <- par(mar = c(mar.bas, 5.0, mar.top, 2.0))
@@ -685,7 +685,7 @@ image.foramtted.table <- function(X, rk, title = "",
     if(draw.title) title(title, line = 4.5, cex.main = 1.5)
 
     axis(side = 1, at = x, tcl = -0.2, labels = FALSE)
-    text(x = x, y = par("usr")[3] + 0.6, srt = 45, adj = 1, labels = mc, cex = 1, xpd = TRUE)
+    text(x = x, y = par("usr")[3] + 0.4, srt = 50, adj = 1, labels = mc, cex = 1, xpd = TRUE)
     mtext(mr, at = y, side = 2, las = 1, adj = 1.2, cex = 1)
 
     image(x, y, t(rk), col = kolor, breaks = breaks, xaxt = 'n', yaxt = 'n', add = TRUE)

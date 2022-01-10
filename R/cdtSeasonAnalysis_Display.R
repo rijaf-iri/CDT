@@ -202,7 +202,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
     dryspl <- .cdtData$EnvData$plotVar$dryspell
     varPICSA <- .cdtData$EnvData$plotVar$varPICSA
     
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
 
     if(.cdtData$EnvData$output$data.type == "cdtstation"){
         ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))

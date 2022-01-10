@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Bias Correction - Settings </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Multiplicative Bias Time Step Variable </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Multiplicative Bias for Each Month </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Quantile Mapping with Fitted Distribution </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Quantile Mapping with Empirical Distribution </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Speed </text>
+            </option>
+            <option id="2">
+                <text lang="en"> U and V components </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Set Date Range </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> U and V components are in one NetCDF file </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Bias method </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Directory of bias files </text>
+        </label>
+        <label id="3-1">
+            <text lang="en"> Directory of the NetCDF wind speed files </text>
+        </label>
+        <label id="3-2">
+            <text lang="en"> Directory of the NetCDF U-component files </text>
+        </label>
+        <label id="3-3">
+            <text lang="en"> Directory of the NetCDF V-component files </text>
+        </label>
+        <label id="3-4">
+            <text lang="en"> Directory of the NetCDF U and V data files </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Directory to save result </text>
+        </label>
+        <label id="5-1">
+            <text lang="en"> Adjusted wind speed filename format </text>
+        </label>
+        <label id="5-2">
+            <text lang="en"> Adjusted U-component filename format </text>
+        </label>
+        <label id="5-3">
+            <text lang="en"> Adjusted V-component filename format </text>
+        </label>
+        <label id="5-4">
+            <text lang="en"> Adjusted U and V wind filenames format </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Wind data </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Set the start and end date of data to correct </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Set the start and end date of data to correct </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the method used to calculate the Bias Coefficients </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the method used to calculate the Bias Coefficients </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the bias files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the bias files </text>
+            </tooltip>
+        </content>
+        <content id="5-0">
+            <status>
+                <text lang="en"> Check the box if the zonal (U) and meridional (V) velocities are included in the same NeCDF file </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check the box if the zonal (U) and meridional (V) velocities are included in the same NeCDF file </text>
+            </tooltip>
+        </content>
+        <content id="5-1">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the wind speed data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the wind speed data </text>
+            </tooltip>
+        </content>
+        <content id="5-2">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the wind U-component data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the wind U-component data </text>
+            </tooltip>
+        </content>
+        <content id="5-3">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the wind V-component data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the wind V-component data </text>
+            </tooltip>
+        </content>
+        <content id="5-4">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the wind U and V components data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the wind U and V components data </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Setting NetCDF data options </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Setting NetCDF data options </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Enter the full path to directory to save result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save result </text>
+            </tooltip>
+        </content>
+        <content id="9-1">
+            <status>
+                <text lang="en"> The NetCDF file names format of the wind speed bias corrected data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The NetCDF file names format of the wind speed bias corrected data </text>
+            </tooltip>
+        </content>
+        <content id="9-2">
+            <status>
+                <text lang="en"> The NetCDF file names format of the zonal velocity (U grid) bias corrected data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The NetCDF file names format of the zonal velocity (U grid) bias corrected data </text>
+            </tooltip>
+        </content>
+        <content id="9-3">
+            <status>
+                <text lang="en"> The NetCDF file names format of the meridional velocity (V grid) bias corrected data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The NetCDF file names format of the meridional velocity (V grid) bias corrected data </text>
+            </tooltip>
+        </content>
+        <content id="9-4">
+            <status>
+                <text lang="en"> The NetCDF file names format of the wind data (U and V grid) bias corrected </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The NetCDF file names format of the wind data (U and V grid) bias corrected </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1-1">
+            <text lang="en"> Enter the path to the directory containing the wind speed NetCDF files </text>
+        </content>
+        <content id="1-2">
+            <text lang="en"> Enter the path to the directory containing the zonal velocity (U grid) NetCDF files </text>
+        </content>
+        <content id="1-3">
+            <text lang="en"> Enter the path to the directory containing the meridional velocity (V grid) NetCDF files </text>
+        </content>
+        <content id="1-4">
+            <text lang="en"> Enter the path to the directory containing the wind data (U and V grid) NetCDF files </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Enter the path to the directory containing the bias coefficients </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Browse or enter the path to directory to save results </text>
+        </content>
+        <content id="4">
+            <text lang="en"> You have to set the NetCDF files parameters </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Bias correction finished successfully </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Bias correction failed </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Bias correction ... </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No NetCDF data sample found </text>
+        </content>
+        <content id="9">
+            <text lang="en"> NetCDF data not found </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Bias and NetCDF data are in the different region </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Bias and NetCDF data have different grid </text>
+        </content>
+    </message>
+</dialog_box>

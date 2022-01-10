@@ -23,10 +23,10 @@ SpatialInterpPanelCmd <- function(){
 
     ###################
 
-    date.range <- list(start.year = 2017, start.mon = 1, start.dek = 1,
+    date.range <- list(start.year = 2021, start.mon = 1, start.dek = 1,
                        start.pen = 1, start.day = 1,
                        start.hour = 0, start.min = 0,
-                       end.year = 2017, end.mon = 1, end.dek = 1,
+                       end.year = 2021, end.mon = 1, end.dek = 1,
                        end.pen = 1, end.day = 1,
                        end.hour = 0, end.min = 0)
 
@@ -43,7 +43,7 @@ SpatialInterpPanelCmd <- function(){
                                            ),
                              negative = list(set = FALSE, value = 0),
                              blank = list(blank = FALSE, shpf = ""),
-                             date = list(year = 2017, mon = 1, day = 1,
+                             date = list(year = 2021, mon = 1, day = 1,
                                           hour = 1, min = 0, other = ""))
 
     pointSizeI <- 1.0

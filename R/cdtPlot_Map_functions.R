@@ -29,9 +29,9 @@ cdt.plotmap.args0 <- function(don,
     }else{
         pars <- list(
                     horizontal = FALSE,
-                    legend.mar = 6.2,
+                    legend.mar = 7.2,
                     legend.width = 0.9,
-                    mar = c(4, 4, 2.5, 6)
+                    mar = c(4, 4, 2.5, 7)
                 )
     }
 
@@ -40,7 +40,7 @@ cdt.plotmap.args0 <- function(don,
 }
 
 cdt.plotmap.args <- function(don, MapOp, shpf, 
-                        mar.h = c(7, 4, 2.5, 2.5), mar.v = c(4, 4, 2.5, 6),
+                        mar.h = c(7, 4, 2.5, 2.5), mar.v = c(4, 4, 2.5, 7),
                         legend.text = NULL, label.fun = identity, ...)
 {
     ## colorscale title
@@ -87,10 +87,10 @@ cdt.plotmap.args <- function(don, MapOp, shpf,
         legend.args <- if(!is.null(legend.texta)) list(text = legend.texta, cex = 1.0, side = 1, line = 2) else NULL
     }else{
         horizontal <- FALSE
-        legend.mar <- 6.2
+        legend.mar <- 7.2
         mar <- mar.v
         legend.width <- 0.9
-        line <- if(max(nchar(as.character(legendLabel))) > 4) 3 else 2
+        line <- if(max(nchar(as.character(legendLabel))) > 4) 4 else 3
         legend.args <- if(!is.null(legend.texta)) list(text = legend.texta, cex = 1.0, side = 4, line = line) else NULL
     }
 

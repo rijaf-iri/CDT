@@ -1,9 +1,6 @@
 
-getInfoNetcdfData <- function(parent.win, Parameters, ncDIR,
-                              tstep = .cdtEnv$tcl$lang$global[['combobox']][['1']][5],
-                              scale = FALSE)
+getInfoNetCDFData <- function(parent.win, Parameters, ncDIR)
 {
-    listOpenFiles <- openFile_ttkcomboList()
     largeur1 <- if(WindowsOS()) 42 else 40
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoNetcdfData_dlgBox.xml")
@@ -22,28 +19,11 @@ getInfoNetcdfData <- function(parent.win, Parameters, ncDIR,
 
     frFF <- tkframe(frMRG0, relief = "sunken", borderwidth = 2)
 
-    TSTEPVAL0 <- .cdtEnv$tcl$lang$global[['combobox']][['1']][4:6]
-
-    if(scale){
-        scale.tstep <- tclVar()
-
-        TSTEPVAL1 <- c('pentad', 'dekadal', 'monthly')
-        tclvalue(scale.tstep) <- TSTEPVAL0[TSTEPVAL1 %in% Parameters$tstep]
-
-        TSTEPVAL <- TSTEPVAL0
-        if(tstep == TSTEPVAL0[1]) TSTEPVAL <- TSTEPVAL0[-1]
-        if(tstep == TSTEPVAL0[2]){
-            TSTEPVAL <- c(TSTEPVAL0[3], '')
-            tclvalue(scale.tstep) <- TSTEPVAL0[3]
-        }
-        cb.scale.tstep <- ttkcombobox(frFF, values = TSTEPVAL, textvariable = scale.tstep, width = largeur1)
-    }
-
     inrfeff <- tclVar(Parameters$format)
     rfesample <- tclVar(Parameters$sample)
 
     txt.ncsample <- tklabel(frFF, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-    cb.ncsample <- ttkcombobox(frFF, values = unlist(listOpenFiles), textvariable = rfesample, width = largeur1)
+    cb.ncsample <- ttkcombobox(frFF, values = unlist(openFile_ttkcomboList()), textvariable = rfesample, width = largeur1)
     bt.ncsample <- tkbutton(frFF, text = "...")
     txt.inrfeff <- tklabel(frFF, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     en.inrfeff <- tkentry(frFF, textvariable = inrfeff, width = largeur1)
@@ -57,15 +37,12 @@ getInfoNetcdfData <- function(parent.win, Parameters, ncDIR,
         tcl('wm', 'attributes', tt1, topmost = TRUE)
         if(!is.null(nc.opfiles)){
             update.OpenFiles('netcdf', nc.opfiles)
-            listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
             tclvalue(rfesample) <- nc.opfiles[[1]]
-            tkconfigure(cb.ncsample, values = unlist(listOpenFiles))
+            tkconfigure(cb.ncsample, values = unlist(openFile_ttkcomboList()))
         }
     })
 
     ###################
-
-    if(scale) tkgrid(cb.scale.tstep, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     tkgrid(txt.ncsample, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.ncsample, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
@@ -73,14 +50,9 @@ getInfoNetcdfData <- function(parent.win, Parameters, ncDIR,
     tkgrid(txt.inrfeff, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.inrfeff, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    ddk <- if(tstep %in% TSTEPVAL0[1:2]) 1 else '01'
-    example <- do.call(sprintf, c(list(fmt = Parameters$format),
-                as.list(c(1981, '01', ddk)[seq(length(gregexpr('%s', Parameters$format)[[1]]))])))
-
-    status.bar.display(cb.ncsample, lang.dlg[['status']][['1']])
-    infobulle(bt.ncsample, lang.dlg[['tooltip']][['1']])
-    helpWidget(en.inrfeff, paste(lang.dlg[['tooltip']][['2']], example),
-                            paste(lang.dlg[['status']][['2']], example))
+    helpWidget(cb.ncsample, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.ncsample, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+    helpWidget(en.inrfeff, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
     ###################
 
@@ -98,18 +70,6 @@ getInfoNetcdfData <- function(parent.win, Parameters, ncDIR,
         }else{
             Parameters$format <<- str_trim(tclvalue(inrfeff))
             Parameters$sample <<- str_trim(tclvalue(rfesample))
-
-            if(scale){
-                Parameters$tstep <<- TSTEPVAL1[TSTEPVAL0 %in% str_trim(tclvalue(scale.tstep))]
-
-                lenS <- length(gregexpr('%s', Parameters$format)[[1]])
-                if((Parameters$tstep %in% c('pentad', 'dekadal') & lenS != 3) |
-                    (Parameters$tstep == 'monthly' & lenS != 2))
-                {
-                    cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
-                    tkwait.window(tt1)
-                }
-            }
 
             tkgrab.release(tt1)
             tkdestroy(tt1)

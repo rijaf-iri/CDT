@@ -6,16 +6,24 @@
     </title>
     <tab_title>
         <tab id="1">
-            <text lang="en"> CDT Configuration </text>
-            <text lang="fr"> Configuration de CDT </text>
+            <text lang="en"> CDT Config </text>
+            <text lang="fr"> CDT Config </text>
         </tab>
         <tab id="2">
-            <text lang="en"> Spatial Configuration </text>
-            <text lang="fr"> Configuration Spatiale </text>
+            <text lang="en"> Spatial BBOX </text>
+            <text lang="fr"> Spatiale BBOX </text>
         </tab>
         <tab id="3">
-            <text lang="en"> Tcl Configuration </text>
-            <text lang="fr"> Configuration de Tcl </text>
+            <text lang="en"> TCL Config </text>
+            <text lang="fr"> TCL Config </text>
+        </tab>
+        <tab id="4">
+            <text lang="en"> CDT Dataset </text>
+            <text lang="fr"> CDT Dataset </text>
+        </tab>
+        <tab id="5">
+            <text lang="en"> Parallel </text>
+            <text lang="fr"> Parallèle </text>
         </tab>
     </tab_title>
     <widget>
@@ -86,6 +94,24 @@
         <label id="12">
             <text lang="en"> Maximum </text>
             <text lang="fr"> Maximum </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Chunk Size </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Chunk Factor </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Chunk properties to use to create the CDT Dataset Format </text>
+        </label>
+        <checkbutton id="4">
+            <text lang="en"> Use parallel processing </text>
+        </checkbutton>
+        <checkbutton id="5">
+            <text lang="en"> Number of cores should be detected automatically </text>
+        </checkbutton>
+        <label id="16">
+            <text lang="en"> Number of cores to be used </text>
         </label>
     </widget>
     <help>
@@ -207,6 +233,22 @@
             <tooltip>
                 <text lang="en"> Maximum latitude in decimal degree </text>
                 <text lang="fr"> Latitude maximum en degré décimal </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> Integer value indicating the number of pixels per chunk to create the CDT Dataset </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Number of pixels per chunk </text>
+            </tooltip>
+        </content>
+        <content id="14">
+            <status>
+                <text lang="en"> Integer value indicating the number of chunks to be loaded at the same time for the computation </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Number of chunk per computation</text>
             </tooltip>
         </content>
     </help>

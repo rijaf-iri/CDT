@@ -117,7 +117,7 @@ AggregateTS_Execute <- function(){
         ##########
         chunkfile <- sort(unique(donne$colInfo$index))
         chunkcalc <- split(chunkfile, ceiling(chunkfile / donne$chunkfac))
-        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+        cdtParallelCond <- .cdtData$Config$parallel
 
         ##########
         do.parChunk <- if(donne$chunkfac > length(chunkcalc)) TRUE else FALSE

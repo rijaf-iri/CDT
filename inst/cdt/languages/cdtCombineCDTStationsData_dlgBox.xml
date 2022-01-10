@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <title>
+        <text lang="en"> Merge CDTs Station Data </text>
+        <text lang="fr"> Combiner des Données Stations CDT </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> CDT station data format </text>
+            <text lang="fr"> Format de données de station CDT</text>
+        </label>
+        <label id="2">
+            <text lang="en"> CDT station data format #2 </text>
+            <text lang="fr"> Format de données de station CDT #2 </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File to save merged data </text>
+            <text lang="fr"> Fichier de sauvegarde des données fusionnées </text>
+        </label>
+        <button id="1">
+            <text lang="en"> Merge Data </text>
+            <text lang="fr"> Fusionner Données </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Remove </text>
+            <text lang="fr"> Supprimer </text>
+        </button>
+        <button id="3">
+            <text lang="en"> Add CDT station data </text>
+        </button>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Combine CDT stations data ........... </text>
+            <text lang="fr"> Fusionner des données stations CDT........ </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Combining CDT stations data finished successfully </text>
+            <text lang="fr"> Fusion des données stations CDT terminée avec succès </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Combining CDT stations data failed </text>
+            <text lang="fr"> Fusion des données stations CDT échouée </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Unable to import files </text>
+            <text lang="fr"> Impossible d'importer les fichiers </text>
+        </content>
+        <content id="5">
+            <text lang="en"> The two data have different time step </text>
+            <text lang="fr"> Les deux données ont un pas de temps différent </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Different Values </text>
+            <text lang="fr"> Valeurs Différentes </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Different station coordinates </text>
+            <text lang="fr"> Différentes coordonnées des stations </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Invalid file names </text>
+            <text lang="fr"> Noms de fichiers invalides </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Files number </text>
+            <text lang="fr"> Fichiers numéro </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Browse or enter the file to save the combined data </text>
+            <text lang="fr"> Parcourrir ou entrer le fichier pour enregistrer les données combinées </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Need at least 2 CDT stations data </text>
+            <text lang="fr"> Besoin d'au moins 2 données stations CDT </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Mixed dates format </text>
+            <text lang="fr"> Format de dates mixtes </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Files with different time steps </text>
+            <text lang="fr"> Fichiers avec des pas de temps différents </text>
+        </content>
+    </message>
+</panel_cmd>

@@ -30,6 +30,33 @@ cdt.interp.surface.grid <- function(obj, grid.list, edge = TRUE)
     return(out)
 }
 
+interp.bilinear.pars <- function(old_grid, new_grid, edge = TRUE){
+    nx0 <- length(new_grid$lon)
+    ny0 <- length(new_grid$lat)
+    loc <- do.call(expand.grid, new_grid)
+
+    nx <- length(old_grid$lon)
+    ny <- length(old_grid$lat)
+    rule <- if(edge) 2 else 1
+    lx <- stats::approx(old_grid$lon, 1:nx, loc$lon, rule = rule)$y
+    ly <- stats::approx(old_grid$lat, 1:ny, loc$lat, rule = rule)$y
+    lx1 <- floor(lx)
+    ly1 <- floor(ly)
+    ex <- lx - lx1
+    ey <- ly - ly1
+    ex[lx1 == nx] <- 1
+    ey[ly1 == ny] <- 1
+    lx1[lx1 == nx] <- nx - 1
+    ly1[ly1 == ny] <- ny - 1
+
+    zo <- matrix(seq(nx * ny), nx, ny)
+    index <- cbind(zo[cbind(lx1, ly1)], zo[cbind(lx1 + 1, ly1)],
+                   zo[cbind(lx1, ly1 + 1)], zo[cbind(lx1 + 1, ly1 + 1)])
+    coeff <- cbind((1 - ex) * (1 - ey), ex * (1 - ey), (1 - ex) * ey, ex * ey)
+
+    return(list(index = index, fac = coeff))
+}
+
 ##############################################
 
 ## Aggregate spatial data

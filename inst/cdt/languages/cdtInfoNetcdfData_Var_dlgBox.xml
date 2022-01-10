@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> NetCDF Variable Information </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> name </text>
+        </label>
+        <label id="2">
+            <text lang="en"> units </text>
+        </label>
+        <label id="3">
+            <text lang="en"> precision </text>
+        </label>
+        <label id="4">
+            <text lang="en"> missval </text>
+        </label>
+        <label id="5">
+            <text lang="en"> longname </text>
+        </label>
+    </widget>
+</dialog_box>

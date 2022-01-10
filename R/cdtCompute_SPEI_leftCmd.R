@@ -36,13 +36,13 @@ SPEICalcPanelCmd <- function(){
                               cdtdataset = list(prec = "", etp = ""),
                               outfreq = "month", tscale = 3, distr = "llogistic",
                               monitoring = FALSE,
-                              dates = list(year1 = 2018, mon1 = 6, dek1 = 1, year2 = 2018, mon2 = 6, dek2 = 3),
+                              dates = list(year1 = 2021, mon1 = 6, dek1 = 1, year2 = 2021, mon2 = 6, dek2 = 3),
                               outdir = "")
 
-    GeneralParameters$date.range <- list(start.year = 2018, start.mon = 6, start.dek = 1,
+    GeneralParameters$date.range <- list(start.year = 2021, start.mon = 6, start.dek = 1,
                                          start.pen = 1, start.day = 1,
                                          start.hour = 0, start.min = 0,
-                                         end.year = 2018, end.mon = 6, end.dek = 3,
+                                         end.year = 2021, end.mon = 6, end.dek = 3,
                                          end.pen = 6, end.day = 30,
                                          end.hour = 23, end.min = 55)
 
@@ -57,7 +57,7 @@ SPEICalcPanelCmd <- function(){
 
     .cdtData$EnvData$TSGraphOp <- list(
                                     bar.line = list(
-                                        xlim = list(is.min = FALSE, min = "1981-01-01", is.max = FALSE, max = "2017-12-31"),
+                                        xlim = list(is.min = FALSE, min = "1981-01-01", is.max = FALSE, max = "2021-12-31"),
                                         ylim = list(is.min = FALSE, min = -10, is.max = FALSE, max = 10),
                                         userYTcks = list(custom = TRUE, ticks = c(-2, -1.5, -1, 0, 1, 1.5, 2)),
                                         axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),

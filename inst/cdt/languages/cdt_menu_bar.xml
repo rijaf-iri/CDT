@@ -52,8 +52,8 @@
             <text lang="fr"> Manipulation de données station CDT </text>
         </submenu>
         <submenu id="2-1">
-            <text lang="en"> Merge two CDT Station Data </text>
-            <text lang="fr"> Combiner 2 données station CDT </text>
+            <text lang="en"> Merge multiple CDT stations data </text>
+            <text lang="fr"> Combiner plusieurs données stations CDT </text>
         </submenu>
         <submenu id="2-2">
             <text lang="en"> Filtering CDT Station Data </text>
@@ -73,7 +73,7 @@
         </submenu>
         <submenu id="5">
             <text lang="en"> Split NetCDF files into CDT NetCDF format </text>
-            <text lang="fr"> Morceler des fichiers NetCDF en format NetCDF CDT </text>
+            <text lang="fr"> Morceler des fichiers NetCDF en format CDT NetCDF </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Download Data </text>
@@ -93,7 +93,15 @@
         </submenu>
         <submenu id="6-4">
             <text lang="en"> Download Reanalysis data </text>
-            <text lang="fr"> Télécharger des données Réanalyse </text>
+            <text lang="fr"> Télécharger les données Réanalyse </text>
+        </submenu>
+        <submenu id="6-5">
+            <text lang="en"> Extract GRIB data from JRA-55 NRT Reanalysis </text>
+            <text lang="fr"> Extraire données GRIB pour le Réanalyse JRA-55 NRT</text>
+        </submenu>
+        <submenu id="6-6">
+            <text lang="en"> Download Reanalysis Elevation data </text>
+            <text lang="fr"> Télécharger les données d'Elevation de Réanalyse </text>
         </submenu>
         <submenu id="7">
             <text lang="en"> Aggregate Data </text>
@@ -104,8 +112,8 @@
             <text lang="fr"> Agréger Series Temporelles </text>
         </submenu>
         <submenu id="7-2">
-            <text lang="en"> Aggregate/Disaggregate Spatial NetCDF data </text>
-            <text lang="fr"> Agréger/Désagréger données spatiales NetCDF </text>
+            <text lang="en"> Regrid Spatial Data </text>
+            <text lang="fr"> Regrid de Données Spatiales </text>
         </submenu>
         <submenu id="7-3">
             <text lang="en"> Aggregating Time Series - Moving window</text>
@@ -132,8 +140,8 @@
             <text lang="fr"> Convertir NetCDF/GeoTIFF/ESRI .hdr Labelled </text>
         </submenu>
         <submenu id="9-3">
-            <text lang="en"> Create GrADS Descriptor File from CDT NetCDF files </text>
-            <text lang="fr"> Créer un descripteur GrADS à partir de fichiers CDT NetCDF </text>
+            <text lang="en"> Create GrADS Descriptor File from CDT NetCDF format files </text>
+            <text lang="fr"> Créer un descripteur GrADS à partir de fichiers au format CDT NetCDF </text>
         </submenu>
         <submenu id="10">
             <text lang="en"> Data Extraction </text>
@@ -141,7 +149,15 @@
         </submenu>
         <submenu id="11">
             <text lang="en"> Blank Grid Outside Polygons </text>
-            <text lang="fr"> Blank Grid Outside Polygons </text>
+            <text lang="fr"> Masquer les grilles à l'extérieur des polygones </text>
+        </submenu>
+        <submenu id="12">
+            <text lang="en"> Combine multiple CDT NetCDF format files into one </text>
+            <text lang="fr"> Combiner plusieurs fichiers au format CDT NetCDF en un seul </text>
+        </submenu>
+        <submenu id="13">
+            <text lang="en"> Data Operation </text>
+            <text lang="fr"> Opération sur les Données </text>
         </submenu>
     </menu>
     <menu id="quality.control">
@@ -180,42 +196,50 @@
             <text lang="fr"> Interpolation Spatiale </text>
         </submenu>
         <submenu id="2">
-            <text lang="en"> Merging Rainfall Data </text>
-            <text lang="fr"> Merging Rainfall Data </text>
+            <text lang="en"> Merging Climate Data </text>
+            <text lang="fr"> Fusion des Données Climatiques </text>
         </submenu>
         <submenu id="2-1">
-            <text lang="en"> Compute Bias Coefficients </text>
-            <text lang="fr"> Calcul Coefficients de Biais </text>
+            <text lang="en"> Rainfall Data</text>
+            <text lang="fr"> Données de Précipitations </text>
         </submenu>
         <submenu id="2-2">
-            <text lang="en"> Apply Bias Correction </text>
-            <text lang="fr"> Correction de Biais </text>
+            <text lang="en"> Temperatures Data </text>
+            <text lang="fr"> Données de Températures </text>
         </submenu>
-        <submenu id="2-3">
-            <text lang="en"> Merging Data </text>
-            <text lang="fr"> Fusion Données </text>
-        </submenu>
-        <submenu id="3">
-            <text lang="en"> Merging Temperature Data </text>
-            <text lang="fr"> Merging Temperature Data </text>
-        </submenu>
-        <submenu id="3-1">
+        <submenu id="2-2-1">
             <text lang="en"> Compute Downscaling Coefficients </text>
             <text lang="fr"> Calcul Coefficients Downscaling</text>
         </submenu>
-        <submenu id="3-2">
-            <text lang="en"> Reanalysis Downscaling </text>
+        <submenu id="2-3">
+            <text lang="en"> Relative Humidity Data </text>
+            <text lang="fr"> Données d'Humidité Relative </text>
+        </submenu>
+        <submenu id="2-4">
+            <text lang="en"> Pressure Data </text>
+            <text lang="fr"> Données de Pression </text>
+        </submenu>
+        <submenu id="2-5">
+            <text lang="en"> Wind Data </text>
+            <text lang="fr"> Données de Vent </text>
+        </submenu>
+        <submenu id="2-6">
+            <text lang="en"> Radiation Data </text>
+            <text lang="fr"> Données de Rayonnement </text>
+        </submenu>
+        <submenu id="3-1">
+            <text lang="en"> Downscaling Data </text>
             <text lang="fr"> Downscaling Réanalyses </text>
         </submenu>
-        <submenu id="3-3">
+        <submenu id="3-2">
             <text lang="en"> Compute Bias Coefficients </text>
             <text lang="fr"> Calcul Coefficients de Biais </text>
         </submenu>
-        <submenu id="3-4">
+        <submenu id="3-3">
             <text lang="en"> Apply Bias Correction </text>
             <text lang="fr"> Correction de Biais </text>
         </submenu>
-        <submenu id="3-5">
+        <submenu id="3-4">
             <text lang="en"> Merging Data </text>
             <text lang="fr"> Fusion Données </text>
         </submenu>
@@ -231,14 +255,6 @@
             <text lang="en"> Merging - Cross-Validation </text>
             <text lang="fr"> Merging - Cross-Validation </text>
         </submenu>
-        <submenu id="6-1">
-            <text lang="en"> Precipitation Data </text>
-            <text lang="fr"> Données de Précipitation </text>
-        </submenu>
-        <submenu id="6-2">
-            <text lang="en"> Temperature Data </text>
-            <text lang="fr"> Données de Température </text>
-        </submenu>
     </menu>
     <menu id="validation">
         <submenu id="0">
@@ -246,40 +262,28 @@
             <text lang="fr"> Validation </text>
         </submenu>
         <submenu id="1">
-            <text lang="en"> Spatial Points Data (CDT Format) </text>
-            <text lang="fr"> Spatial Points Data (CDT Format) </text>
-        </submenu>
-        <submenu id="1-1">
-            <text lang="en"> Precipitation Data </text>
-            <text lang="fr"> Données de Précipitation </text>
-        </submenu>
-        <submenu id="1-2">
-            <text lang="en"> Temperature Data </text>
-            <text lang="fr"> Données de Température </text>
+            <text lang="en"> Spatial Points Data (CDT Station Format) </text>
+            <text lang="fr"> Spatial Points Data (CDT Station Format) </text>
         </submenu>
         <submenu id="2">
+            <text lang="en"> Gridded Data (CDT Dataset Format) </text>
+            <text lang="fr"> Gridded Data (CDT Dataset Format) </text>
+        </submenu>
+        <submenu id="3">
+            <text lang="en"> Validate multiple data sets (CDT Station Format) </text>
+            <text lang="fr"> Validate multiple data sets (CDT Station Format) </text>
+        </submenu>
+        <submenu id="2-old">
             <text lang="en"> Gridded Data (NetCDF Format) </text>
             <text lang="fr"> Gridded Data (NetCDF Format) </text>
         </submenu>
-        <submenu id="2-1">
+        <submenu id="4-1">
             <text lang="en"> Precipitation Data </text>
             <text lang="fr"> Données de Précipitation </text>
         </submenu>
-        <submenu id="2-2">
-            <text lang="en"> Temperature Data </text>
-            <text lang="fr"> Données de Température </text>
-        </submenu>
-        <submenu id="3">
-            <text lang="en"> Validate multiple data sets </text>
-            <text lang="fr"> Validate multiple data sets </text>
-        </submenu>
-        <submenu id="3-1">
-            <text lang="en"> Precipitation Data </text>
-            <text lang="fr"> Données de Précipitation </text>
-        </submenu>
-        <submenu id="3-2">
-            <text lang="en"> Temperature Data </text>
-            <text lang="fr"> Données de Température </text>
+        <submenu id="4-2">
+            <text lang="en"> Other Climate Data </text>
+            <text lang="fr"> Autres Données Climatiques </text>
         </submenu>
     </menu>
     <menu id="data.analysis">
@@ -300,12 +304,20 @@
             <text lang="fr"> Variables de Température </text>
         </submenu>
         <submenu id="2-2">
+            <text lang="en"> Wind Data </text>
+            <text lang="fr"> Données Vent </text>
+        </submenu>
+        <submenu id="2-3">
             <text lang="en"> Potential Evapotranspiration </text>
             <text lang="fr"> Evapotranspiration Potentielle </text>
         </submenu>
-        <submenu id="2-3">
+        <submenu id="2-4">
             <text lang="en"> Water Balance </text>
             <text lang="fr"> Bilan Hydrique </text>
+        </submenu>
+        <submenu id="2-5">
+            <text lang="en"> Water Requirement Satisfaction Index (WRSI) </text>
+            <text lang="fr"> Indice de Satisfaction des Besoins en Eau (WRSI) </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> Climatologies and Anomalies </text>

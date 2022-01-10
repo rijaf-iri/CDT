@@ -40,7 +40,7 @@ climatologiesCalcPanelCmd <- function(){
                               cdtnetcdf = list(dir = "", sample = "", format = "rfe_%s%s%s.nc"),
                               aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 1,
                                                  min.frac = list(unique = TRUE, all = 0.95, month = rep(0.95, 12))),
-                              climato = list(all.years = TRUE, start.year = 1981, end.year = 2010,
+                              climato = list(all.years = TRUE, start.year = 1991, end.year = 2020,
                                              min.year = 20, window = 0),
                               out.dir = "")
 
@@ -372,8 +372,8 @@ climatologiesCalcPanelCmd <- function(){
         ############
         settingINData <- NULL
         tkconfigure(set.infile, command = function(){
-            GeneralParameters$cdtnetcdf <<- getInfoNetcdfData(.cdtEnv$tcl$main$win, GeneralParameters$cdtnetcdf,
-                                                              str_trim(tclvalue(input.file)), tclvalue(timeSteps))
+            GeneralParameters$cdtnetcdf <<- getInfoNetCDFData(.cdtEnv$tcl$main$win, GeneralParameters$cdtnetcdf,
+                                                              str_trim(tclvalue(input.file)))
             settingINData <<- 1
         })
 
@@ -447,8 +447,8 @@ climatologiesCalcPanelCmd <- function(){
                 cb.en.infile <<- tkentry(frameInData, textvariable = input.file, width = largeur2)
 
                 tkconfigure(set.infile, command = function(){
-                    GeneralParameters$cdtnetcdf <<- getInfoNetcdfData(.cdtEnv$tcl$main$win, GeneralParameters$cdtnetcdf,
-                                                                    str_trim(tclvalue(input.file)), tclvalue(timeSteps))
+                    GeneralParameters$cdtnetcdf <<- getInfoNetCDFData(.cdtEnv$tcl$main$win, GeneralParameters$cdtnetcdf,
+                                                                      str_trim(tclvalue(input.file)))
                     settingINData <<- 1
                 })
 

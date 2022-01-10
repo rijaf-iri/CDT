@@ -40,7 +40,7 @@ dailyRainAnalysisPanelCmd <- function(){
     GeneralParameters <- list(data.type = "cdtstation", cdtstation = "", cdtdataset = "",
                               seas = list(all.years = TRUE,
                                           startYear = 1981, startMon = 9, startDay = 1,
-                                          endYear = 2017, endMon = 12, endDay = 31,
+                                          endYear = 2021, endMon = 12, endDay = 31,
                                           min.frac = 0.95),
                               stats = list(daily = 'tot.rain', yearly = 'mean'),
                               def = list(drywet.day = 0.85, drywet.spell = 7, proba.thres = 400),
@@ -69,22 +69,22 @@ dailyRainAnalysisPanelCmd <- function(){
 
     .cdtData$EnvData$TSGraphOp <- list(
                         anomaly = list(
-                                anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1981, endYr.anom = 2010),
-                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                                anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1991, endYr.anom = 2020),
+                                xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
                                 ylim = list(is.min = FALSE, min = -100, is.max = FALSE, max = 100),
                                 axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                 title = list(is.title = FALSE, title = '', position = 'top'),
                                 colors = list(negative = "blue", positive = "red")
                             ),
                         bar = list(
-                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
                             ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                             axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                             title = list(is.title = FALSE, title = '', position = 'top'),
                             colors = list(col = "darkblue")
                         ),
                         line = list(
-                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
+                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
                             ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                             axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                             title = list(is.title = FALSE, title = '', position = 'top'),

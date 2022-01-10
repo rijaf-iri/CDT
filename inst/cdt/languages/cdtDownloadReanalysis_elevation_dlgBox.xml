@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Reanalysis Elevation Data </text>
+        <text lang="fr"> Données d'Elevation de Réanalyse </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Download </text>
+            <text lang="fr"> Télécharger </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Cancel </text>
+            <text lang="fr"> Annuler </text>
+        </button>
+        <label id="0">
+            <text lang="en"> Reanalysis Product </text>
+            <text lang="fr"> Reanalysis Product </text>
+        </label>
+        <label id="1">
+            <text lang="en"> Area of interest </text>
+            <text lang="fr"> Zone d'interêt </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Longitude </text>
+            <text lang="fr"> Longitude </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Latitude </text>
+            <text lang="fr"> Latitude </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Minimum </text>
+            <text lang="fr"> Minimum </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Maximum </text>
+            <text lang="fr"> Maximum </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Directory to save downloaded file </text>
+            <text lang="fr"> Répertoire pour sauver le fichier téléchargé </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Minimum longitude in decimal degree </text>
+                <text lang="fr"> Longitude minimum en degré décimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum longitude in decimal degree </text>
+                <text lang="fr"> Longitude minimum en degré décimal </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Maximum longitude in decimal degree </text>
+                <text lang="fr"> Longitude maximum en degré décimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum longitude in decimal degree </text>
+                <text lang="fr"> Longitude maximum en degré décimal </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Minimum latitude in decimal degree </text>
+                <text lang="fr"> Latitude minimum en degré décimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum latitude in decimal degree </text>
+                <text lang="fr"> Latitude minimum en degré décimal </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Maximum latitude in decimal degree </text>
+                <text lang="fr"> Latitude maximum en degré décimal </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum latitude in decimal degree </text>
+                <text lang="fr"> Latitude maximum en degré décimal </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Enter the full path to directory to save downloaded file </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver le fichier téléchargé </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save downloaded file </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire pour sauver le fichier téléchargé </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+                <text lang="fr"> ou parcourir ici </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Browse or enter directory to put the downloaded file </text>
+            <text lang="fr"> Parcourez ou entrez le répertoire pour mettre le fichier téléchargé </text>
+        </content>
+        <content id="2">
+            <text lang="en"> No Internet connection </text>
+            <text lang="fr"> Pas de connection Internet </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Downloading ................. </text>
+            <text lang="fr"> Téléchargement en cours...... </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Download complete </text>
+            <text lang="fr"> Téléchargement termininé </text>
+        </content>
+    </message>
+</dialog_box>

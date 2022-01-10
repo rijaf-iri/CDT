@@ -33,7 +33,7 @@ Validation.STAT.PanelCmd <- function(clim.var){
     graphMax <- switch(clim.var, "RR" = 80, "TT" = 35)
 
     GeneralParameters <- list(Tstep = "dekadal", STN.file1 = "", STN.file2 = "",
-                              date.range = list(start.year = 1981, start.month = 1, end.year = 2018, end.month = 12),
+                              date.range = list(start.year = 1981, start.month = 1, end.year = 2021, end.month = 12),
                               aggr.series = list(aggr.data = FALSE, aggr.fun = aggFun, opr.fun = ">=", opr.thres = 0,
                                                  min.frac = list(unique = TRUE, all = 0.95,
                                                                  month = rep(0.95, 12))),
@@ -41,8 +41,8 @@ Validation.STAT.PanelCmd <- function(clim.var){
                               dicho.fcst = list(fun = ">=", thres = trhesVal),
                               volume.stat = list(user = TRUE, one.thres = TRUE,
                                                  user.val = 80, user.file = '', from = 'obs', perc = 75,
-                                                 period = list(all.years = TRUE, start.year = 1981,
-                                                               end.year = 2010, min.year = 5)
+                                                 period = list(all.years = TRUE, start.year = 1991,
+                                                               end.year = 2020, min.year = 5)
                                                 ),
                               add.to.plot = list(add.shp = FALSE, shp.file = "", add.dem = FALSE, dem.file = ""),
                               outdir = "", clim.var = clim.var, statsVar = 'CORR', type.graph = "Scatter"

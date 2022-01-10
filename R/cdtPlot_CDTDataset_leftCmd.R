@@ -21,14 +21,14 @@ PlotCDTDatasetCmd <- function(){
 
     .cdtData$EnvData$TSGraphOp <- list(
                                 bar = list(
-                                        xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
+                                        xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2021-12-3"),
                                         ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
                                         axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                         title = list(is.title = FALSE, title = '', position = 'top'),
                                         colors = list(col = "darkblue")
                                     ),
                                 line = list(
-                                    xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-3"),
+                                    xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2021-12-3"),
                                     ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
                                     axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                     title = list(is.title = FALSE, title = '', position = 'top'),
@@ -334,7 +334,7 @@ PlotCDTDatasetCmd <- function(){
                 .cdtData$EnvData$file.CDT.Idx <- file.CDT.Idx
                 ####
 
-                cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+                cdtParallelCond <- .cdtData$Config$parallel
 
                 .cdtData$EnvData$map <- readCdtDatasetChunk.multi.dates.order(file.CDT.Idx, OutIndexdata$dateInfo$date[1], cdtParallelCond, onedate = TRUE)
             }

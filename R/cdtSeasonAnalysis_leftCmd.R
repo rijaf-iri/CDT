@@ -1323,7 +1323,7 @@ SeasonAnalysisPanelCmd <- function(){
 
             if(readTsData){
                 if(.cdtData$EnvData$plotVar$varPICSA == "dryspell"){
-                    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+                    cdtParallelCond <- .cdtData$Config$parallel
                     .cdtData$EnvData$tsdata <- readCdtDatasetChunk.sepdir.dates.order(tsdata.index, tsdata.path, idaty,
                                                                                       cdtParallelCond, onedate = TRUE)
                     zdim <- dim(.cdtData$EnvData$tsdata$z)

@@ -22,8 +22,7 @@ PlotMulitpleDataCmd <- function(){
     ###################
 
     GeneralParameters <- list(intstep = "dekadal", minhour = 1,
-                              date = list(year = 2017, mon = 1, day = 1, hour = 1, min = 0))
-
+                              date = list(year = 2021, mon = 1, day = 1, hour = 1, min = 0))
 
     .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
                                         userCol = list(custom = FALSE, color = NULL),
@@ -136,10 +135,9 @@ PlotMulitpleDataCmd <- function(){
         ####
 
         tkconfigure(bt.datatype, command = function(){
-            .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]] <- getInfoNetcdfData(.cdtEnv$tcl$main$win,
+            .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]] <- getInfoNetCDFData(.cdtEnv$tcl$main$win,
                                                                                    .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]],
-                                                                                   str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)),
-                                                                                   str_trim(tclvalue(timeSteps)))
+                                                                                   str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
         })
 
         ####
@@ -243,9 +241,8 @@ PlotMulitpleDataCmd <- function(){
                 cb.en.datafile <- tkentry(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur2)
 
                 tkconfigure(bt.datatype, command = function(){
-                    .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]] <- getInfoNetcdfData(.cdtEnv$tcl$main$win, .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]],
-                                                                        str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)),
-                                                                        str_trim(tclvalue(timeSteps)))
+                    .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]] <- getInfoNetCDFData(.cdtEnv$tcl$main$win, .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]],
+                                                                                            str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
                 })
 
                 tkconfigure(bt.datafile, command = function(){

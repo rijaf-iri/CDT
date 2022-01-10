@@ -28,11 +28,15 @@ cdtConfiguration <- function(parent.win){
     conf.tab1 <- bwAddTab(bwnote, text = lang.dlg[['tab_title']][['1']])
     conf.tab2 <- bwAddTab(bwnote, text = lang.dlg[['tab_title']][['2']])
     conf.tab3 <- bwAddTab(bwnote, text = lang.dlg[['tab_title']][['3']])
+    conf.tab4 <- bwAddTab(bwnote, text = lang.dlg[['tab_title']][['4']])
+    conf.tab5 <- bwAddTab(bwnote, text = lang.dlg[['tab_title']][['5']])
 
     bwRaiseTab(bwnote, conf.tab1)
     tkgrid.columnconfigure(conf.tab1, 0, weight = 1)
     tkgrid.columnconfigure(conf.tab2, 0, weight = 1)
     tkgrid.columnconfigure(conf.tab3, 0, weight = 1)
+    tkgrid.columnconfigure(conf.tab4, 0, weight = 1)
+    tkgrid.columnconfigure(conf.tab5, 0, weight = 1)
 
     ####################################
 
@@ -253,6 +257,65 @@ cdtConfiguration <- function(parent.win){
 
     ####################################
 
+    frTab4 <- tkframe(conf.tab4)
+
+        ####################################
+
+        chunkSize <- tclVar(cdtConfig$cdtDataset.chunk$chunksize)
+        chunkFac <- tclVar(cdtConfig$cdtDataset.chunk$chunkfac)
+
+        txt.cdtD <- tklabel(frTab4, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
+        txt.chkS <- tklabel(frTab4, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
+        en.chkS <- tkentry(frTab4, textvariable = chunkSize, width = 6)
+        txt.chkF <- tklabel(frTab4, text = lang.dlg[['label']][['14']], anchor = 'e', justify = 'right')
+        en.chkF <- tkentry(frTab4, textvariable = chunkFac, width = 3)
+
+        helpWidget(en.chkS, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+        helpWidget(en.chkF, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
+
+        tkgrid(txt.cdtD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 3)
+        tkgrid(txt.chkS, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.chkS, row = 1, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.chkF, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.chkF, row = 2, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ####################################
+
+        tkgrid(frTab4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+    ####################################
+
+    frTab5 <- tkframe(conf.tab5)
+
+        ####################################
+
+        doparVar <- tclVar(cdtConfig$parallel$dopar)
+        coresVar <- tclVar(cdtConfig$parallel$detect.cores)
+        nbCores <- tclVar(cdtConfig$parallel$nb.cores)
+
+        stateCores <- if(cdtConfig$parallel$detect.cores) "disabled" else "normal"
+
+        chk.dopar <- tkcheckbutton(frTab5, variable = doparVar, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left')
+        chk.cores <- tkcheckbutton(frTab5, variable = coresVar, text = lang.dlg[['checkbutton']][['5']], anchor = 'w', justify = 'left')
+        txt.cores <- tklabel(frTab5, text = lang.dlg[['label']][['16']], anchor = 'e', justify = 'right')
+        en.cores <- tkentry(frTab5, textvariable = nbCores, width = 3, state = stateCores)
+
+        tkgrid(chk.dopar, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(chk.cores, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.cores, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(en.cores, row = 2, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+        tkbind(chk.cores, "<Button-1>", function(){
+            stateCores <- if(tclvalue(coresVar) == '1') 'normal' else 'disabled'
+            tkconfigure(en.cores, state = stateCores)
+        })
+
+        ####################################
+
+        tkgrid(frTab5, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+    ####################################
+
     bt.prm.OK <- ttkbutton(frMRG1, text = lang.dlg[['button']][['1']])
     bt.prm.CA <- ttkbutton(frMRG1, text = lang.dlg[['button']][['2']])
 
@@ -312,6 +375,13 @@ cdtConfiguration <- function(parent.win){
             cdtConfig$region$minlat <- as.numeric(str_trim(tclvalue(minLat)))
             cdtConfig$region$maxlat <- as.numeric(str_trim(tclvalue(maxLat)))
 
+            cdtConfig$cdtDataset.chunk$chunksize <- as.integer(str_trim(tclvalue(chunkSize)))
+            cdtConfig$cdtDataset.chunk$chunkfac <- as.integer(str_trim(tclvalue(chunkFac)))
+
+            cdtConfig$parallel$dopar <- switch(tclvalue(doparVar), '0' = FALSE, '1' = TRUE)
+            cdtConfig$parallel$detect.cores <- switch(tclvalue(coresVar), '0' = FALSE, '1' = TRUE)
+            cdtConfig$parallel$nb.cores <- as.integer(str_trim(tclvalue(nbCores)))
+
             write_json(cdtConfig, path = cdt.file.conf, auto_unbox = TRUE, pretty = TRUE)
 
             .cdtData$Config$wd <- cdtConfig$wd
@@ -319,6 +389,8 @@ cdtConfiguration <- function(parent.win){
             .cdtData$Config$missval.anom <- cdtConfig$missval.anom
             .cdtData$Config$lang.iso <- cdtConfig$lang.iso
             .cdtData$Config$region <- cdtConfig$region
+            .cdtData$Config$cdtDataset.chunk <- cdtConfig$cdtDataset.chunk
+            .cdtData$Config$parallel <- cdtConfig$parallel
 
             setwd(cdtConfig$wd)
             Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")

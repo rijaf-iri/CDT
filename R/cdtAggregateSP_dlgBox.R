@@ -18,10 +18,20 @@ AggregateNcdf_GetInfo <- function(){
 
     ###################
 
-    infoOpenNC <- function(ncfichier){
-        ncDataInfo <- getNCDFSampleData(ncfichier)
-        ncDataInfo <- defSpatialPixels(ncDataInfo[c('lon', 'lat')], regrid = TRUE)
-        nxy <- ncDataInfo@grid
+    infoGridData <- function(pthfichier, type){
+        if(type == "nc"){
+            dataInfo <- getNCDFSampleData(pthfichier)
+            dataInfo <- dataInfo[c('lon', 'lat')]
+        }
+        if(type == "rds"){
+            dataInfo <- readRDS(pthfichier)
+            dataInfo <- dataInfo$coords$mat
+            names(dataInfo) <- c('lon', 'lat')
+        }
+
+        dataInfo <- defSpatialPixels(dataInfo, regrid = TRUE)
+        nxy <- dataInfo@grid
+
         minlon <- nxy@cellcentre.offset["lon"]
         reslon <- nxy@cellsize["lon"]
         maxlon <- minlon + reslon * (nxy@cells.dim["lon"] - 1)
@@ -47,10 +57,20 @@ AggregateNcdf_GetInfo <- function(){
         tkconfigure(txta.ncinfo, state = "disabled")
     }
 
-    infoOpenNC1 <- function(ncfichier){
-        ncDataInfo <- getNCDFSampleData(ncfichier)
-        ncDataInfo <- defSpatialPixels(ncDataInfo[c('lon', 'lat')], regrid = TRUE)
-        nxy <- ncDataInfo@grid
+    infoGridOtherData <- function(pthfichier, type){
+        if(type == "cdtnetcdf"){
+            dataInfo <- getNCDFSampleData(pthfichier)
+            dataInfo <- dataInfo[c('lon', 'lat')]
+        }
+        if(type == "cdtdataset"){
+            dataInfo <- readRDS(pthfichier)
+            dataInfo <- dataInfo$coords$mat
+            names(dataInfo) <- c('lon', 'lat')
+        }
+
+        dataInfo <- defSpatialPixels(dataInfo, regrid = TRUE)
+        nxy <- dataInfo@grid
+
         minlon <- nxy@cellcentre.offset["lon"]
         reslon <- nxy@cellsize["lon"]
         maxlon <- minlon + reslon * (nxy@cells.dim["lon"] - 1)
@@ -84,25 +104,31 @@ AggregateNcdf_GetInfo <- function(){
 
     frNCDATA <- ttklabelframe(frNCDF, text = lang.dlg[['label']][['1']], relief = 'groove')
 
-    nbcnfile <- tclVar()
     NBNCF <- lang.dlg[['combobox']][['1']]
-    NBNC <- c('one', 'several')
+    NBNC <- c('cdtnetcdf1', 'cdtnetcdfs', 'cdtdataset')
+
+    nbcnfile <- tclVar()
     tclvalue(nbcnfile) <- NBNCF[NBNC %in% .cdtData$GalParams$nb.ncfile]
 
     ncfiledir <- tclVar(.cdtData$GalParams$ncdf$fileordir)
     ncsample <- tclVar(.cdtData$GalParams$ncdf$sample)
 
-    statesample <- if(.cdtData$GalParams$nb.ncfile == "one") "disabled" else "normal"
-    txtfiledir <- if(.cdtData$GalParams$nb.ncfile == "one") lang.dlg[['label']][['2']] else lang.dlg[['label']][['3']]
+    statesample <- if(.cdtData$GalParams$nb.ncfile == "cdtnetcdfs") "normal" else "disabled"
+    txtfiledir <- switch(.cdtData$GalParams$nb.ncfile,
+                         "cdtnetcdf1" = lang.dlg[['label']][['2']],
+                         "cdtnetcdfs" = lang.dlg[['label']][['3']],
+                         "cdtdataset" = lang.dlg[['label']][['3-1']])
+    stateCDTData <- if(.cdtData$GalParams$nb.ncfile == "cdtdataset") "readonly" else "normal"
+
     fileINdir <- tclVar(txtfiledir)
 
-    cb.nbncf <- ttkcombobox(frNCDATA, values = NBNCF, textvariable = nbcnfile, width = largeur0)
+    cb.nbncf <- ttkcombobox(frNCDATA, values = NBNCF, textvariable = nbcnfile, justify = 'center', width = largeur0)
 
     txt.ncfldir <- tklabel(frNCDATA, text = tclvalue(fileINdir), textvariable = fileINdir, anchor = 'w', justify = 'left')
-    if(.cdtData$GalParams$nb.ncfile == "one"){
+    if(.cdtData$GalParams$nb.ncfile == "cdtnetcdf1"){
         cb.ncfldir <- ttkcombobox(frNCDATA, values = unlist(listOpenFiles), textvariable = ncfiledir, width = largeur0)
     }else{
-        cb.ncfldir <- tkentry(frNCDATA, textvariable = ncfiledir, width = largeur1)
+        cb.ncfldir <- tkentry(frNCDATA, textvariable = ncfiledir, width = largeur1, state = stateCDTData)
     }
     bt.ncfldir <- tkbutton(frNCDATA, text = "...")
 
@@ -120,7 +146,8 @@ AggregateNcdf_GetInfo <- function(){
     ###################
 
     tkconfigure(bt.ncfldir, command = function(){
-        if(tclvalue(nbcnfile) == NBNCF[1]){
+        srcfile <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+        if(srcfile == "cdtnetcdf1"){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             nc.opfiles <- getOpenNetcdf(tt, initialdir = getwd())
             tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -129,15 +156,23 @@ AggregateNcdf_GetInfo <- function(){
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                 tclvalue(ncfiledir) <- nc.opfiles[[1]]
 
-                lapply(list(cb.ncfldir, cb.ncsample, cb.ncgrid), tkconfigure, values = unlist(listOpenFiles))
+                lapply(list(cb.ncfldir, cb.ncsample), tkconfigure, values = unlist(listOpenFiles))
                 ####
-                infoOpenNC(tclvalue(ncfiledir))
+                infoGridData(tclvalue(ncfiledir), "nc")
             }
+        }else if(srcfile == "cdtdataset"){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+            tclvalue(ncfiledir) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+
+            ####
+            infoGridData(tclvalue(ncfiledir), "rds")
         }else{
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            file2convert <- tk_choose.dir(getwd(), "")
+            path.nc <- tk_choose.dir(getwd(), "")
             tcl('wm', 'attributes', tt, topmost = TRUE)
-            tclvalue(ncfiledir) <- if(!is.na(file2convert)) file2convert else ""
+            tclvalue(ncfiledir) <- if(!is.na(path.nc)) path.nc else ""
         }
     })
 
@@ -150,16 +185,15 @@ AggregateNcdf_GetInfo <- function(){
             update.OpenFiles('netcdf', nc.opfiles)
             listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
             tclvalue(ncsample) <- nc.opfiles[[1]]
-
-            lapply(list(cb.ncsample, cb.ncgrid), tkconfigure, values = unlist(listOpenFiles))
+            tkconfigure(cb.ncsample, values = unlist(listOpenFiles))
             ####
-            infoOpenNC(tclvalue(ncsample))
+            infoGridData(tclvalue(ncsample), "nc")
         }
     })
 
     ###################
 
-    tkgrid(cb.nbncf, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.nbncf, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 7, ipadx = 1, ipady = 1)
 
     tkgrid(txt.ncfldir, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.ncfldir, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
@@ -175,14 +209,15 @@ AggregateNcdf_GetInfo <- function(){
     ###################
 
     tkgrid(frNCDATA, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frNCINFO, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frNCINFO, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
     ###################
     tkbind(cb.nbncf, "<<ComboboxSelected>>", function(){
         tkdestroy(cb.ncfldir)
         tclvalue(ncfiledir) <- ''
+        srcfile <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
 
-        if(tclvalue(nbcnfile) == NBNCF[1]){
+        if(srcfile == "cdtnetcdf1"){
             tclvalue(fileINdir) <- lang.dlg[['label']][['2']]
 
             cb.ncfldir <- ttkcombobox(frNCDATA, values = unlist(listOpenFiles), textvariable = ncfiledir, width = largeur0)
@@ -197,9 +232,9 @@ AggregateNcdf_GetInfo <- function(){
                     listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                     tclvalue(ncfiledir) <- nc.opfiles[[1]]
 
-                    lapply(list(cb.ncfldir, cb.ncsample, cb.ncgrid), tkconfigure, values = unlist(listOpenFiles))
+                    lapply(list(cb.ncfldir, cb.ncsample), tkconfigure, values = unlist(listOpenFiles))
                     ####
-                    infoOpenNC(tclvalue(ncfiledir))
+                    infoGridData(tclvalue(ncfiledir), "nc")
                 }
             })
 
@@ -208,7 +243,7 @@ AggregateNcdf_GetInfo <- function(){
         }
 
         #######
-        if(tclvalue(nbcnfile) == NBNCF[2]){
+        if(srcfile == "cdtnetcdfs"){
             tclvalue(fileINdir) <- lang.dlg[['label']][['3']]
 
             cb.ncfldir <- tkentry(frNCDATA, textvariable = ncfiledir, width = largeur1)
@@ -216,9 +251,9 @@ AggregateNcdf_GetInfo <- function(){
             #######
             tkconfigure(bt.ncfldir, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
-                file2convert <- tk_choose.dir(getwd(), "")
+                path.nc <- tk_choose.dir(getwd(), "")
                 tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(ncfiledir) <- if(!is.na(file2convert)) file2convert else ""
+                tclvalue(ncfiledir) <- if(!is.na(path.nc)) path.nc else ""
             })
 
             tkconfigure(cb.ncsample, state = 'normal')
@@ -226,11 +261,32 @@ AggregateNcdf_GetInfo <- function(){
         }
 
         #######
+        if(srcfile == "cdtdataset"){
+            tclvalue(fileINdir) <- lang.dlg[['label']][['3-1']]
+
+            cb.ncfldir <- tkentry(frNCDATA, textvariable = ncfiledir, width = largeur1, state = "readonly")
+
+            #######
+            tkconfigure(bt.ncfldir, command = function(){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                tclvalue(ncfiledir) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+
+                if(tclvalue(ncfiledir) != "")
+                    infoGridData(tclvalue(ncfiledir), "rds")
+            })
+
+            tkconfigure(cb.ncsample, state = 'disabled')
+            tkconfigure(bt.ncsample, state = 'disabled')
+        }
+
+        #######
         tkgrid(cb.ncfldir, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-        if(tclvalue(nbcnfile) == NBNCF[1]){
+        if(srcfile == "cdtnetcdf1"){
             tkbind(cb.ncfldir, "<<ComboboxSelected>>", function(){
-                infoOpenNC(tclvalue(ncfiledir))
+                infoGridData(tclvalue(ncfiledir), "nc")
             })
         }
 
@@ -240,13 +296,13 @@ AggregateNcdf_GetInfo <- function(){
     ###################
     if(tclvalue(nbcnfile) == NBNCF[1]){
         tkbind(cb.ncfldir, "<<ComboboxSelected>>", function(){
-            infoOpenNC(tclvalue(ncfiledir))
+            infoGridData(tclvalue(ncfiledir), "nc")
         })
     }
 
     ###################
     tkbind(cb.ncsample, "<<ComboboxSelected>>", function(){
-        infoOpenNC(tclvalue(ncsample))
+        infoGridData(tclvalue(ncsample), "nc")
     })
 
     ############################################
@@ -254,46 +310,27 @@ AggregateNcdf_GetInfo <- function(){
     frNCGRID <- tkframe(frLeft, relief = "sunken", borderwidth = 2)
 
     use.ncgrid <- tclVar(.cdtData$GalParams$ncdf.grid$use.ncgrid)
-    file.ncgrid <- tclVar(.cdtData$GalParams$ncdf.grid$file)
 
     statencgrid <- if(.cdtData$GalParams$ncdf.grid$use.ncgrid) 'normal' else 'disabled'
 
     chk.ncgrid <- tkcheckbutton(frNCGRID, variable = use.ncgrid, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
-    frncgrid <- tkframe(frNCGRID, relief = 'groove', borderwidth = 2)
-
-    txt.ncgrid <- tklabel(frncgrid, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
-    cb.ncgrid <- ttkcombobox(frncgrid, values = unlist(listOpenFiles), textvariable = file.ncgrid, width = largeur0, state = statencgrid)
-    bt.ncgrid <- tkbutton(frncgrid, text = "...", state = statencgrid)
+    bt.ncgrid <- ttkbutton(frNCGRID, text = lang.dlg[['button']][['1']], state = statencgrid)
 
     ########
     tkconfigure(bt.ncgrid, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        nc.opfiles <- getOpenNetcdf(tt, initialdir = getwd())
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-        if(!is.null(nc.opfiles)){
-            update.OpenFiles('netcdf', nc.opfiles)
-            listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
-            tclvalue(file.ncgrid) <- nc.opfiles[[1]]
+        .cdtData$GalParams[["ncdf.grid"]] <- getGridForRegriding(tt, .cdtData$GalParams[["ncdf.grid"]])
 
-            if(tclvalue(nbcnfile) == NBNCF[1]) tkconfigure(cb.ncfldir, values = unlist(listOpenFiles))
-            lapply(list(cb.ncsample, cb.ncgrid), tkconfigure, values = unlist(listOpenFiles))
-            ####
-            infoOpenNC1(tclvalue(file.ncgrid))
-        }
+        if(.cdtData$GalParams$ncdf.grid$file != "")
+            infoGridOtherData(.cdtData$GalParams$ncdf.grid$file, .cdtData$GalParams$ncdf.grid$type)
     })
 
     tkgrid(chk.ncgrid, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frncgrid, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    tkgrid(txt.ncgrid, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.ncgrid, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.ncgrid, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.ncgrid, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ###################
 
     tkbind(chk.ncgrid, "<Button-1>", function(){
         statencgrid <- if(tclvalue(use.ncgrid) == '0') "normal" else "disabled"
-        tkconfigure(cb.ncgrid, state = statencgrid)
         tkconfigure(bt.ncgrid, state = statencgrid)
         tkconfigure(chk.matchvar, state = statencgrid)
 
@@ -313,11 +350,9 @@ AggregateNcdf_GetInfo <- function(){
         tkconfigure(grd_vlat3, state = stateDefGrid)
     })
 
-    tkbind(cb.ncgrid, "<<ComboboxSelected>>", function() infoOpenNC1(tclvalue(file.ncgrid)))
-
     ############################################
     tkgrid(frNCDF, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frNCGRID, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frNCGRID, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 3)
 
     ##############################################  RIGHT   ############################################
 
@@ -460,6 +495,23 @@ AggregateNcdf_GetInfo <- function(){
 
     ############################################
 
+    if(tclvalue(ncfiledir) != ""){
+        srcfile <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+        if(srcfile == "cdtnetcdf1"){
+            infoGridData(tclvalue(ncfiledir), "nc")
+        }
+
+        if(srcfile == "cdtnetcdfs" & tclvalue(ncsample) != ""){
+            infoGridData(tclvalue(ncsample), "nc")
+        }
+
+        if(srcfile == "cdtdataset"){
+            infoGridData(tclvalue(ncfiledir), "rds")
+        }
+    }
+
+    ############################################
+
     bt.prm.OK <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['1']])
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
@@ -470,7 +522,6 @@ AggregateNcdf_GetInfo <- function(){
         .cdtData$GalParams$ncdf$sample <- str_trim(tclvalue(ncsample))
 
         .cdtData$GalParams$ncdf.grid$use.ncgrid <- switch(tclvalue(use.ncgrid), '0' = FALSE, '1' = TRUE)
-        .cdtData$GalParams$ncdf.grid$file <- str_trim(tclvalue(file.ncgrid))
         .cdtData$GalParams$ncdf.grid$match.var <- switch(tclvalue(matchVar), '0' = FALSE, '1' = TRUE)
 
         .cdtData$GalParams$but <- BUTVAL[cbBUTVAL %in% str_trim(tclvalue(but))]

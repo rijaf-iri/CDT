@@ -33,9 +33,9 @@ tamsat3.0.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose 
 tamsat3.1.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1"
     vartime <- switch(GalParams$tstep,
-                      "daily" = ".daily/.rfe",
-                      "dekadal" = ".dekadal/.rfe",
-                      "monthly" = ".monthly/.rfe"
+                      "daily" = ".daily/.rfe_filled",
+                      "dekadal" = ".dekadal/.rfe_filled",
+                      "monthly" = ".monthly/.rfe_filled"
                      )
 
     rlon <- unlist(GalParams$bbox[c('minlon', 'maxlon')])

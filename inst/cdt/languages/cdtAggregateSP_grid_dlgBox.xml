@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Grid for Regridding </text>
+        <text lang="fr"> Grille pour Regridding </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> NetCDF file </text>
+                <text lang="fr"> Fichier NetCDF </text>
+            </option>
+            <option id="2">
+                <text lang="en"> CDT Gridded Dataset Format </text>
+                <text lang="fr"> Format Données Grille CDT </text>
+            </option>
+        </combobox>
+        <label id="1">
+            <text lang="en"> Grid from </text>
+            <text lang="fr"> Grille de </text>
+        </label>
+        <label id="2">
+            <text lang="en"> NetCDF data file </text>
+            <text lang="fr"> Fichier données NetCDF </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Path to the index file (*.rds) of the dataset </text>
+            <text lang="fr"> Chemin vers le fichier index (*.rds) de données </text>
+        </label>
+    </widget>
+</dialog_box>

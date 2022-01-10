@@ -580,3 +580,36 @@ reduced_ETcrop_fun <- function(WB, ETc, TWA, crops){
     return(etc_r)
 }
 
+##################################
+
+saturation_vapour_pressure <- function(tmp){
+    # tmp: temperature in degC
+    # es in mb or hPa
+    6.112 * exp((17.67 * tmp)/(tmp + 243.5))
+}
+
+relative_humidity <- function(tm, td){
+    # tm: temperature in degC
+    # td: dewpoint in degC
+    # relative humidity in %
+    es <- saturation_vapour_pressure(tm)
+    ea <- saturation_vapour_pressure(td)
+    100 * ea/es
+}
+
+specific_humidity <- function(td, pr){
+    # td: dewpoint in degC
+    # pr: surface pressure in mb or hPa
+    # specific humidity in kg/kg
+    ea <- saturation_vapour_pressure(td)
+    (0.622 * ea)/(pr - (0.378 * ea))
+}
+
+dewpoint_temperature <- function(tm, rh){
+    # tm: temperature in degC
+    # rh: relative humidity in %
+    # dewpoint in degC
+    es <- saturation_vapour_pressure(tm)
+    ea <- es * (rh/100)
+    (log(ea/6.112) * 243.5)/(17.67 - log(ea/6.112))
+}

@@ -4,7 +4,7 @@ computeSPIProcs <- function(GeneralParameters){
     freqData <- GeneralParameters$intstep
     input.file <- if(GeneralParameters$data.type == 'cdtstation') GeneralParameters$cdtstation else GeneralParameters$cdtdataset
 
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
 
     if(input.file %in% c("", "NA")){
         Insert.Messages.Out(message[['12']], TRUE, 'e')

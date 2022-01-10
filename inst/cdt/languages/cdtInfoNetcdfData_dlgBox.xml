@@ -21,18 +21,28 @@
                 <text lang="fr"> Fichier contenant un exemple des données NetCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> Browse file if not listed </text>
-                <text lang="fr"> Parcourir le fichier si non répertorié </text>
+                <text lang="en"> File containing a sample of the NetCDF data </text>
+                <text lang="fr"> Fichier contenant un exemple des données NetCDF </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
-                <text lang="en"> Enter the filename format of NetCDF data, example: </text>
-                <text lang="fr"> Entrez le format de nom de fichier des données NetCDF, exemple: </text>
+                <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of NetCDF data, example: </text>
-                <text lang="fr"> Entrez le format de nom de fichier des données NetCDF, exemple: </text>
+                <text lang="en"> Browse file if not listed </text>
+                <text lang="fr"> Parcourir le fichier si non répertorié </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the filename format of NetCDF data </text>
+                <text lang="fr"> Entrez le format de nom de fichier des données NetCDF </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the filename format of NetCDF data </text>
+                <text lang="fr"> Entrez le format de nom de fichier des données NetCDF </text>
             </tooltip>
         </content>
     </help>
@@ -40,10 +50,6 @@
         <content id="1">
             <text lang="en"> You have to provide a sample file </text>
             <text lang="fr"> Vous devez fournir un fichier exemple </text>
-        </content>
-        <content id="2">
-            <text lang="en"> Wrong filename format </text>
-            <text lang="fr"> Format de nom de fichier incorrect </text>
         </content>
     </message>
 </dialog_box>

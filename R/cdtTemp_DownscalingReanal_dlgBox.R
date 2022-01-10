@@ -109,9 +109,8 @@ Temp_reanalDownGetInfo <- function(){
     settingSNC <- .cdtData$GalParams$settingSNC
     tkconfigure(set.REANAL, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["REANAL"]] <- getInfoNetcdfData(tt, .cdtData$GalParams[["REANAL"]],
-                                                         str_trim(tclvalue(dir.REANAL)),
-                                                         str_trim(tclvalue(file.period)))
+        .cdtData$GalParams[["REANAL"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["REANAL"]],
+                                                            str_trim(tclvalue(dir.REANAL)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingSNC <<- 1
     })

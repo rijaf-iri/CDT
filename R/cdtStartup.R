@@ -322,7 +322,7 @@ startCDT <- function(wd = NA, lang = NA){
                       command = function()
                 {
                     refreshCDT(staterun = "normal")
-                    initialize.parameters('merge2CDT.stn', 'daily')
+                    initialize.parameters('combineCDT.stn', 'daily')
                     merge2CDTdata_getParams()
                 })
 
@@ -417,6 +417,30 @@ startCDT <- function(wd = NA, lang = NA){
                     download_Reanalysis()
                 })
 
+                ########
+                tkadd(menu.dataDown, "separator")
+
+                ##########
+                tkadd(menu.dataDown, "command", label = lang.menu[["data.preparation"]][["6-5"]],
+                      command = function()
+                {
+                    refreshCDT(staterun = "normal")
+                    initialize.parameters('exGRIB.JRA55.NRT')
+                    extractGRIB_JRA55NRT()
+                })
+
+                ########
+                tkadd(menu.dataDown, "separator")
+
+                ##########
+                tkadd(menu.dataDown, "command", label = lang.menu[["data.preparation"]][["6-6"]],
+                      command = function()
+                {
+                    refreshCDT(staterun = "disabled")
+                    initialize.parameters('downElv.Reanal')
+                    download_Elevation_Reanalysis()
+                })
+
             ##########
             tkadd(menu.dataprep, "separator")
 
@@ -457,17 +481,17 @@ startCDT <- function(wd = NA, lang = NA){
                     AggregateMWin_GetInfo()
                 })
 
-                ###########
-                tkadd(menu.AggrData, "separator")
+            ##########
+            tkadd(menu.dataprep, "separator")
 
-                ##########
-                tkadd(menu.AggrData, "command", label = lang.menu[["data.preparation"]][["7-2"]],
-                      command = function()
-                {
-                    refreshCDT(staterun = "normal")
-                    initialize.parameters('aggregate.nc')
-                    AggregateNcdf_GetInfo()
-                })
+            ##########
+            tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["7-2"]],
+                  command = function()
+            {
+                refreshCDT(staterun = "normal")
+                initialize.parameters('aggregate.nc')
+                AggregateNcdf_GetInfo()
+            })
 
             ##########
             tkadd(menu.dataprep, "separator")
@@ -500,12 +524,36 @@ startCDT <- function(wd = NA, lang = NA){
             tkadd(menu.dataprep, "separator")
 
             ##########
+            tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["13"]],
+                  command = function()
+            {
+                refreshCDT(staterun = "normal")
+                initialize.parameters('data.Operation')
+                dataOperation_GetInfo()
+            })
+
+            ##########
+            tkadd(menu.dataprep, "separator")
+
+            ##########
             tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["5"]],
                   command = function()
             {
                 refreshCDT(staterun = "normal")
                 initialize.parameters('split.NetCDF')
                 split_3d.netcdf_getParams()
+            })
+
+            ##########
+            tkadd(menu.dataprep, "separator")
+
+            ##########
+            tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["12"]],
+                  command = function()
+            {
+                refreshCDT(staterun = "normal")
+                initialize.parameters('combine.NetCDF')
+                combine.netcdf_getParams()
             })
 
             ##########
@@ -560,17 +608,17 @@ startCDT <- function(wd = NA, lang = NA){
                     grads_create.ctl_getParams()
                 })
 
-            ##########
-            tkadd(menu.dataprep, "separator")
+            # ##########
+            # tkadd(menu.dataprep, "separator")
 
-            ##########
-            tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["8"]],
-                  command = function()
-            {
-                refreshCDT(staterun = "normal")
-                initialize.parameters('fill.temp', 'dekadal')
-                fill_Miss_DekTemp()
-            })
+            # ##########
+            # tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["8"]],
+            #       command = function()
+            # {
+            #     refreshCDT(staterun = "normal")
+            #     initialize.parameters('fill.temp', 'dekadal')
+            #     fill_Miss_DekTemp()
+            # })
 
         ####################################
 
@@ -670,105 +718,317 @@ startCDT <- function(wd = NA, lang = NA){
             tkadd(menu.mrg, "separator")
 
             ###########
-            menu.mrg.rain <- tkmenu(top.menu, tearoff = FALSE)
-            tkadd(menu.mrg, "cascade", label = lang.menu[["merging.data"]][["2"]], menu = menu.mrg.rain)
+            menu.mrg.var <- tkmenu(top.menu, tearoff = FALSE)
+            tkadd(menu.mrg, "cascade", label = lang.menu[["merging.data"]][["2"]], menu = menu.mrg.var)
 
-                ##########
-                tkadd(menu.mrg.rain, "command", label = lang.menu[["merging.data"]][["2-1"]], background = 'lightblue',
-                      command = function()
-                {
-                    refreshCDT(staterun = "normal")
-                    initialize.parameters('coefbias.rain', 'dekadal')
-                    coefBiasGetInfoRain()
-                })
+                ###########
+                menu.mrg.rain <- tkmenu(menu.mrg, tearoff = FALSE)
+                tkadd(menu.mrg.var, "cascade", label = lang.menu[["merging.data"]][["2-1"]], menu = menu.mrg.rain)
 
-                ########
-                tkadd(menu.mrg.rain, "separator")
+                    ##########
+                    tkadd(menu.mrg.rain, "command", label = lang.menu[["merging.data"]][["3-2"]], background = 'lightblue',
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('coefbias.rain', 'dekadal')
+                        biasCoeffGetInfoClimData()
+                    })
 
-                ##########
-                tkadd(menu.mrg.rain, "command", label = lang.menu[["merging.data"]][["2-2"]],
-                      command = function()
-                {
+                    ########
+                    tkadd(menu.mrg.rain, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.rain, "command", label = lang.menu[["merging.data"]][["3-3"]],
+                          command = function()
+                    {
                         refreshCDT(staterun = "normal")
                         initialize.parameters('rmbias.rain', 'dekadal')
-                        rmvBiasGetInfoRain()
-                })
+                        removeBiasGetInfoClimData()
+                    })
 
-                 ########
-                tkadd(menu.mrg.rain, "separator")
+                     ########
+                    tkadd(menu.mrg.rain, "separator")
 
-                ##########
-                tkadd(menu.mrg.rain, "command", label = lang.menu[["merging.data"]][["2-3"]],
-                      command = function()
-                {
+                    ##########
+                    tkadd(menu.mrg.rain, "command", label = lang.menu[["merging.data"]][["3-4"]],
+                          command = function()
+                    {
                         refreshCDT(staterun = "normal")
                         initialize.parameters('merge.rain', 'dekadal')
-                        mergeGetInfoRain()
-                })
-
-            ##########
-            tkadd(menu.mrg, "separator")
-
-            ###########
-            menu.mrg.temp <- tkmenu(top.menu, tearoff = FALSE)
-            tkadd(menu.mrg, "cascade", label = lang.menu[["merging.data"]][["3"]], menu = menu.mrg.temp)
+                        mergeGetInfoClimData()
+                    })
 
                 ##########
-                tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-1"]], background = 'lightblue',
-                      command = function()
-                {
-                    refreshCDT(staterun = "normal")
-                    initialize.parameters('coefdown.temp', 'dekadal')
-                    Temp_coefDownGetInfo()
-                })
+                tkadd(menu.mrg.var, "separator")
 
-                ########
-                tkadd(menu.mrg.temp, "separator")
+                ###########
+                menu.mrg.temp <- tkmenu(menu.mrg, tearoff = FALSE)
+                tkadd(menu.mrg.var, "cascade", label = lang.menu[["merging.data"]][["2-2"]], menu = menu.mrg.temp)
+
+                    ##########
+                    tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["2-2-1"]], background = 'lightblue',
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('coefdown.temp', 'dekadal')
+                        Temp_coefDownGetInfo()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.temp, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-1"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('down.temp', 'dekadal')
+                        Temp_reanalDownGetInfo()
+                    })
+
+                     ########
+                    tkadd(menu.mrg.temp, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-2"]], background = 'lightblue',
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('coefbias.temp', 'dekadal')
+                        biasCoeffGetInfoClimData()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.temp, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-3"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('rmbias.temp', 'dekadal')
+                        removeBiasGetInfoClimData()
+                    })
+
+                     ########
+                    tkadd(menu.mrg.temp, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-4"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('merge.temp', 'dekadal')
+                        mergeGetInfoClimData()
+                    })
 
                 ##########
-                tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-2"]],
-                      command = function()
-                {
-                    refreshCDT(staterun = "normal")
-                    initialize.parameters('down.temp', 'dekadal')
-                    Temp_reanalDownGetInfo()
-                })
+                tkadd(menu.mrg.var, "separator")
 
-                 ########
-                tkadd(menu.mrg.temp, "separator")
+                ###########
+                menu.mrg.rh <- tkmenu(menu.mrg, tearoff = FALSE)
+                tkadd(menu.mrg.var, "cascade", label = lang.menu[["merging.data"]][["2-3"]], menu = menu.mrg.rh)
+
+                    ##########
+                    tkadd(menu.mrg.rh, "command", label = lang.menu[["merging.data"]][["3-1"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        # initialize.parameters('down.rh', 'dekadal')
+                        # down()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.rh, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.rh, "command", label = lang.menu[["merging.data"]][["3-2"]], background = 'lightblue',
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('coefbias.rh', 'daily')
+                        biasCoeffGetInfoClimData()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.rh, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.rh, "command", label = lang.menu[["merging.data"]][["3-3"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('rmbias.rh', 'daily')
+                        removeBiasGetInfoClimData()
+                    })
+
+                     ########
+                    tkadd(menu.mrg.rh, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.rh, "command", label = lang.menu[["merging.data"]][["3-4"]],
+                          command = function()
+                    {
+                            refreshCDT(staterun = "normal")
+                            initialize.parameters('merge.rh', 'daily')
+                            mergeGetInfoClimData()
+                    })
 
                 ##########
-                tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-3"]], background = 'lightblue',
-                      command = function()
-                {
-                    refreshCDT(staterun = "normal")
-                    initialize.parameters('coefbias.temp', 'dekadal')
-                    biasGetInfoTempDown()
-                })
+                tkadd(menu.mrg.var, "separator")
 
-                ########
-                tkadd(menu.mrg.temp, "separator")
+                ###########
+                menu.mrg.pres <- tkmenu(menu.mrg, tearoff = FALSE)
+                tkadd(menu.mrg.var, "cascade", label = lang.menu[["merging.data"]][["2-4"]], menu = menu.mrg.pres)
+
+                    ##########
+                    tkadd(menu.mrg.pres, "command", label = lang.menu[["merging.data"]][["3-1"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        # initialize.parameters('down.pres', 'daily')
+                        # down()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.pres, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.pres, "command", label = lang.menu[["merging.data"]][["3-2"]], background = 'lightblue',
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('coefbias.pres', 'daily')
+                        biasCoeffGetInfoClimData()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.pres, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.pres, "command", label = lang.menu[["merging.data"]][["3-3"]],
+                          command = function()
+                    {
+                            refreshCDT(staterun = "normal")
+                            initialize.parameters('rmbias.pres', 'daily')
+                            removeBiasGetInfoClimData()
+                    })
+
+                     ########
+                    tkadd(menu.mrg.pres, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.pres, "command", label = lang.menu[["merging.data"]][["3-4"]],
+                          command = function()
+                    {
+                            refreshCDT(staterun = "normal")
+                            initialize.parameters('merge.pres', 'daily')
+                            mergeGetInfoClimData()
+                    })
 
                 ##########
-                tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-4"]],
-                      command = function()
-                {
-                    refreshCDT(staterun = "normal")
-                    initialize.parameters('adjust.temp', 'dekadal')
-                    adjGetInfoTempDownReanal()
-                })
+                tkadd(menu.mrg.var, "separator")
 
-                 ########
-                tkadd(menu.mrg.temp, "separator")
+                ###########
+                menu.mrg.rad <- tkmenu(menu.mrg, tearoff = FALSE)
+                tkadd(menu.mrg.var, "cascade", label = lang.menu[["merging.data"]][["2-6"]], menu = menu.mrg.rad)
+
+                    ##########
+                    tkadd(menu.mrg.rad, "command", label = lang.menu[["merging.data"]][["3-1"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        # initialize.parameters('down.rad', 'dekadal')
+                        # down()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.rad, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.rad, "command", label = lang.menu[["merging.data"]][["3-2"]], background = 'lightblue',
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('coefbias.rad', 'daily')
+                        biasCoeffGetInfoClimData()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.rad, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.rad, "command", label = lang.menu[["merging.data"]][["3-3"]],
+                          command = function()
+                    {
+                            refreshCDT(staterun = "normal")
+                            initialize.parameters('rmbias.rad', 'daily')
+                            removeBiasGetInfoClimData()
+                    })
+
+                     ########
+                    tkadd(menu.mrg.rad, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.rad, "command", label = lang.menu[["merging.data"]][["3-4"]],
+                          command = function()
+                    {
+                            refreshCDT(staterun = "normal")
+                            initialize.parameters('merge.rad', 'daily')
+                            mergeGetInfoClimData()
+                    })
 
                 ##########
-                tkadd(menu.mrg.temp, "command", label = lang.menu[["merging.data"]][["3-5"]],
-                      command = function()
-                {
-                    refreshCDT(staterun = "normal")
-                    initialize.parameters('merge.temp', 'dekadal')
-                    mrgGetInfoTemp()
-                })
+                tkadd(menu.mrg.var, "separator")
+
+                ###########
+                menu.mrg.wind <- tkmenu(menu.mrg, tearoff = FALSE)
+                tkadd(menu.mrg.var, "cascade", label = lang.menu[["merging.data"]][["2-5"]], menu = menu.mrg.wind)
+
+                    ##########
+                    tkadd(menu.mrg.wind, "command", label = lang.menu[["merging.data"]][["3-1"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        # initialize.parameters('down.wind', 'dekadal')
+                        # down()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.wind, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.wind, "command", label = lang.menu[["merging.data"]][["3-2"]], background = 'lightblue',
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('coefbias.wind', 'daily')
+                        biasCoeffGetInfoWind()
+                    })
+
+                    ########
+                    tkadd(menu.mrg.wind, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.wind, "command", label = lang.menu[["merging.data"]][["3-3"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('rmbias.wind', 'daily')
+                        removeBiasGetInfoWind()
+                    })
+
+                     ########
+                    tkadd(menu.mrg.wind, "separator")
+
+                    ##########
+                    tkadd(menu.mrg.wind, "command", label = lang.menu[["merging.data"]][["3-4"]],
+                          command = function()
+                    {
+                        refreshCDT(staterun = "normal")
+                        initialize.parameters('merge.wind', 'daily')
+                        mergeGetInfoWind()
+                    })
 
             ##########
             tkadd(menu.mrg, "separator")
@@ -790,24 +1050,72 @@ startCDT <- function(wd = NA, lang = NA){
             tkadd(menu.mrg, "cascade", label = lang.menu[["merging.data"]][["6"]], menu = menu.mrg.loocv)
 
                 ########
-                tkadd(menu.mrg.loocv, "command", label = lang.menu[["merging.data"]][["6-1"]],
+                tkadd(menu.mrg.loocv, "command", label = lang.menu[["merging.data"]][["2-1"]],
                       command = function()
                 {
                     refreshCDT(staterun = "normal")
                     initialize.parameters('crossv.rain', 'dekadal')
-                    crossValidationInfoRain()
+                    crossValidationInfoClimData()
                 })
 
                 ########
                 tkadd( menu.mrg.loocv, "separator")
 
                 ########
-                tkadd(menu.mrg.loocv, "command", label = lang.menu[["merging.data"]][["6-2"]],
+                tkadd(menu.mrg.loocv, "command", label = lang.menu[["merging.data"]][["2-2"]],
                     command = function()
                 {
                     refreshCDT(staterun = "normal")
                     initialize.parameters('crossv.temp', 'dekadal')
-                    crossValidationInfoTemp()
+                    crossValidationInfoClimData()
+                })
+
+                ########
+                tkadd( menu.mrg.loocv, "separator")
+
+                ########
+                tkadd(menu.mrg.loocv, "command", label = lang.menu[["merging.data"]][["2-3"]],
+                    command = function()
+                {
+                    refreshCDT(staterun = "normal")
+                    initialize.parameters('crossv.rh', 'dekadal')
+                    crossValidationInfoClimData()
+                })
+
+                ########
+                tkadd( menu.mrg.loocv, "separator")
+
+                ########
+                tkadd(menu.mrg.loocv, "command", label = lang.menu[["merging.data"]][["2-4"]],
+                    command = function()
+                {
+                    refreshCDT(staterun = "normal")
+                    initialize.parameters('crossv.pres', 'dekadal')
+                    crossValidationInfoClimData()
+                })
+
+                ########
+                tkadd( menu.mrg.loocv, "separator")
+
+                ########
+                tkadd(menu.mrg.loocv, "command", label = lang.menu[["merging.data"]][["2-6"]],
+                    command = function()
+                {
+                    refreshCDT(staterun = "normal")
+                    initialize.parameters('crossv.rad', 'dekadal')
+                    crossValidationInfoClimData()
+                })
+
+                ########
+                tkadd( menu.mrg.loocv, "separator")
+
+                ########
+                tkadd(menu.mrg.loocv, "command", label = lang.menu[["merging.data"]][["2-5"]],
+                    command = function()
+                {
+                    refreshCDT(staterun = "normal")
+                    # initialize.parameters('crossv.wind', 'dekadal')
+                    # crossValidationInfoWind()
                 })
 
         ####################################
@@ -820,7 +1128,7 @@ startCDT <- function(wd = NA, lang = NA){
             tkadd(menu.valid, "cascade", label = lang.menu[["validation"]][["1"]], menu = menu.valid.spts)
 
                 ########
-                tkadd(menu.valid.spts, "command", label = lang.menu[["validation"]][["1-1"]],
+                tkadd(menu.valid.spts, "command", label = lang.menu[["validation"]][["4-1"]],
                       command = function()
                 {
                     refreshCDT(staterun = "disabled")
@@ -835,7 +1143,7 @@ startCDT <- function(wd = NA, lang = NA){
                 tkadd(menu.valid.spts, "separator")
 
                 ########
-                tkadd(menu.valid.spts, "command", label = lang.menu[["validation"]][["1-2"]],
+                tkadd(menu.valid.spts, "command", label = lang.menu[["validation"]][["4-2"]],
                       command = function()
                 {
                     refreshCDT(staterun = "disabled")
@@ -854,13 +1162,13 @@ startCDT <- function(wd = NA, lang = NA){
             tkadd(menu.valid, "cascade", label = lang.menu[["validation"]][["2"]], menu = menu.valid.grd)
 
                 ########
-                tkadd(menu.valid.grd, "command", label = lang.menu[["validation"]][["2-1"]],
+                tkadd(menu.valid.grd, "command", label = lang.menu[["validation"]][["4-1"]],
                       command = function()
                 {
                     refreshCDT(staterun = "disabled")
                     spinbox.state(state = 'normal')
                     if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-                        Validation.HOV.PanelCmd('RR')
+                        Validation.GriddedData.PanelCmd('RR')
                         .cdtEnv$tcl$data$lcmd.frame <- 1
                     }
                 })
@@ -869,16 +1177,50 @@ startCDT <- function(wd = NA, lang = NA){
                 tkadd(menu.valid.grd, "separator")
 
                 ########
-                tkadd(menu.valid.grd, "command", label = lang.menu[["validation"]][["2-2"]],
+                tkadd(menu.valid.grd, "command", label = lang.menu[["validation"]][["4-2"]],
                       command = function()
                 {
                     refreshCDT(staterun = "disabled")
                     spinbox.state(state = 'normal')
                     if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-                        Validation.HOV.PanelCmd('TT')
+                        Validation.GriddedData.PanelCmd('TT')
                         .cdtEnv$tcl$data$lcmd.frame <- 1
                     }
                 })
+
+            # ##########
+            # tkadd(menu.valid, "separator")
+
+            # ##########
+            # menu.valid.grd <- tkmenu(top.menu, tearoff = FALSE)
+            # tkadd(menu.valid, "cascade", label = lang.menu[["validation"]][["2-old"]], menu = menu.valid.grd)
+
+            #     ########
+            #     tkadd(menu.valid.grd, "command", label = lang.menu[["validation"]][["4-1"]],
+            #           command = function()
+            #     {
+            #         refreshCDT(staterun = "disabled")
+            #         spinbox.state(state = 'normal')
+            #         if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+            #             Validation.HOV.PanelCmd('RR')
+            #             .cdtEnv$tcl$data$lcmd.frame <- 1
+            #         }
+            #     })
+
+            #     ########
+            #     tkadd(menu.valid.grd, "separator")
+
+            #     ########
+            #     tkadd(menu.valid.grd, "command", label = lang.menu[["validation"]][["4-2"]],
+            #           command = function()
+            #     {
+            #         refreshCDT(staterun = "disabled")
+            #         spinbox.state(state = 'normal')
+            #         if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+            #             Validation.HOV.PanelCmd('TT')
+            #             .cdtEnv$tcl$data$lcmd.frame <- 1
+            #         }
+            #     })
 
             ##########
             tkadd(menu.valid, "separator")
@@ -888,7 +1230,7 @@ startCDT <- function(wd = NA, lang = NA){
             tkadd(menu.valid, "cascade", label = lang.menu[["validation"]][["3"]], menu = menu.valid.stats)
 
                 ########
-                tkadd(menu.valid.stats, "command", label = lang.menu[["validation"]][["3-1"]],
+                tkadd(menu.valid.stats, "command", label = lang.menu[["validation"]][["4-1"]],
                       command = function()
                 {
                     refreshCDT(staterun = "disabled")
@@ -903,7 +1245,7 @@ startCDT <- function(wd = NA, lang = NA){
                 tkadd(menu.valid.stats, "separator")
 
                 ########
-                tkadd(menu.valid.stats, "command", label = lang.menu[["validation"]][["3-2"]],
+                tkadd(menu.valid.stats, "command", label = lang.menu[["validation"]][["4-2"]],
                       command = function()
                 {
                     refreshCDT(staterun = "disabled")
@@ -955,8 +1297,8 @@ startCDT <- function(wd = NA, lang = NA){
                       command = function()
                 {
                     refreshCDT(staterun = "normal")
-                    initialize.parameters('compute.PET', 'daily')
-                    computePET_getParams()
+                    # initialize.parameters('compute.Wind', 'daily')
+                    # computeWind_getParams()
                 })
 
                 ########
@@ -967,21 +1309,33 @@ startCDT <- function(wd = NA, lang = NA){
                       command = function()
                 {
                     refreshCDT(staterun = "normal")
+                    initialize.parameters('compute.PET', 'daily')
+                    computePET_getParams()
+                })
+
+                ########
+                tkadd(menu.ClimVars, "separator")
+
+                ########
+                tkadd(menu.ClimVars, "command", label = lang.menu[["data.analysis"]][["2-4"]],
+                      command = function()
+                {
+                    refreshCDT(staterun = "normal")
                     initialize.parameters('compute.WB', 'daily')
                     computeWB_getParams()
                 })
 
-                # ########
-                # tkadd(menu.ClimVars, "separator")
+                ########
+                tkadd(menu.ClimVars, "separator")
 
-                # ########
-                # tkadd(menu.ClimVars, "command", label = "WRSI",
-                #       command = function()
-                # {
-                #     # refreshCDT(staterun = "normal")
-                #     # initialize.parameters('compute.WRSI', 'daily')
-                #     # computeWRSI_getParams()
-                # })
+                ########
+                tkadd(menu.ClimVars, "command", label = lang.menu[["data.analysis"]][["2-5"]],
+                      command = function()
+                {
+                    refreshCDT(staterun = "normal")
+                    # initialize.parameters('compute.WRSI', 'daily')
+                    # computeWRSI_getParams()
+                })
 
             ##########
             tkadd(menu.dataproc, "separator")

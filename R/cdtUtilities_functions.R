@@ -217,8 +217,7 @@ cdt.doparallel <- function(condition, dopar = TRUE, detect.cores = TRUE, nb.core
 
 ###########
 
-doparallel.cond <- function(condition,
-                            parll = .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')])
+doparallel.cond <- function(condition, parll = .cdtData$Config$parallel)
 {
     c(condition = condition, parll)
 }

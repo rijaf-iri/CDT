@@ -2,7 +2,7 @@
 filterCDTdata <- function(){
     GalParams <- .cdtData$GalParams
     if(GalParams$filein == ""){
-        Insert.Messages.Out(GalParams[['message']][['4']], format = TRUE)
+        Insert.Messages.Out(GalParams[['message']][['4']], TRUE, "e")
         return(NULL)
     }
 
@@ -14,12 +14,10 @@ filterCDTdata <- function(){
     capt <- donne[1:4, 1]
     if(is.null(donne)) return(NULL)
 
-    if(GalParams$all.period){
-        donne <- splitCDTData0(donne)
-        if(is.null(donne)) return(NULL)
-    }else{
-        donne <- splitCDTData(donne, GalParams$tstep)
-        if(is.null(donne)) return(NULL)
+    donne <- splitCDTData0(donne)
+    if(is.null(donne)) return(NULL)
+
+    if(!GalParams$all.period){
         dateRange <- get.range.date.time(GalParams$date.range, GalParams$tstep, GalParams$minhour)
         dates <- get.date.time.cdt.station(donne$dates, GalParams$tstep)
         idate <- dates >= dateRange$start & dates <= dateRange$end
@@ -49,10 +47,12 @@ filterCDTdata <- function(){
     xhead <- as.matrix(cbind(capt, xhead))
 
     donne <- rbind(xhead, cbind(donne$dates, donne$data))
-    write.table(donne, GalParams$file2save,
-                sep = donneInfo[[3]]$sepr,
-                na = donneInfo[[3]]$miss.val,
-                col.names = FALSE, row.names = FALSE, quote = FALSE)
+
+    writeFiles(donne, GalParams$file2save, na = donneInfo[[3]]$miss.val)
+    # write.table(donne, GalParams$file2save,
+    #             sep = donneInfo[[3]]$sepr,
+    #             na = donneInfo[[3]]$miss.val,
+    #             col.names = FALSE, row.names = FALSE, quote = FALSE)
 
     return(0)
 }

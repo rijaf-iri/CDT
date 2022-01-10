@@ -59,7 +59,7 @@ summarizeDataProcs <- function(GeneralParameters){
         ##########
         chunkfile <- sort(unique(don$colInfo$index))
         chunkcalc <- split(chunkfile, ceiling(chunkfile / don$chunkfac))
-        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+        cdtParallelCond <- .cdtData$Config$parallel
 
         ##########
         do.parChunk <- if(don$chunkfac > length(chunkcalc)) TRUE else FALSE

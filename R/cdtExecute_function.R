@@ -29,9 +29,9 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
-    ## Merge 2 CDTs station Data
-    if(.cdtData$GalParams$action == "merge2CDT.stn"){
-        ret <- try(merge2CDTdata(), silent = TRUE)
+    ## Merge CDTs station Data
+    if(.cdtData$GalParams$action == "combineCDT.stn"){
+        ret <- try(mergeCDTStationData(), silent = TRUE)
 
         msg0 <- .cdtData$GalParams[['message']][['2']]
         msg1 <- .cdtData$GalParams[['message']][['3']]
@@ -183,31 +183,7 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
-    ## Compute bias coefficients RR
-    if(.cdtData$GalParams$action == 'coefbias.rain'){
-        ret <- try(execBiasRain(), silent = TRUE)
-
-        msg0 <- .cdtData$GalParams[['message']][['5']]
-        msg1 <- .cdtData$GalParams[['message']][['6']]
-        Execute_end_msg(ret, msg0, msg1)
-    }
-
-    ## Adjust bias RFE
-    if(.cdtData$GalParams$action == 'rmbias.rain'){
-        ret <- try(execAdjBiasRain(), silent = TRUE)
-
-        msg0 <- .cdtData$GalParams[['message']][['5']]
-        msg1 <- .cdtData$GalParams[['message']][['6']]
-        Execute_end_msg(ret, msg0, msg1)
-    }
-
-    ## Merging
-    if(.cdtData$GalParams$action == 'merge.rain'){
-        ret <- try(execMergeRain(), silent = TRUE)
-        msg0 <- .cdtData$GalParams[['message']][['8']]
-        msg1 <- .cdtData$GalParams[['message']][['9']]
-        Execute_end_msg(ret, msg0, msg1)
-    }
+    ###############################
 
     ## Compute downscaling coefficients
     if(.cdtData$GalParams$action == 'coefdown.temp'){
@@ -227,31 +203,91 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
-    ## Compute mean bias coef
-    if(.cdtData$GalParams$action == 'coefbias.temp'){
-        ret <- try(execBiasTemp(), silent = TRUE)
+    ###############################
+
+    climData <- c('rain', 'temp', 'rh', 'pres', 'rad')
+
+    ## Compute bias coefficients
+    if(.cdtData$GalParams$action %in% paste0('coefbias.', climData))
+    {
+        ret <- try(computeBiasCoeffClimData(), silent = TRUE)
 
         msg0 <- .cdtData$GalParams[['message']][['5']]
         msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
-    ## bias correction
-    if(.cdtData$GalParams$action == 'adjust.temp'){
-        ret <- try(execAjdBiasDownTemp(), silent = TRUE)
+    # ## Wind
+    # if(.cdtData$GalParams$action == 'coefbias.wind'){
+    #     ret <- try(computeBiasCoeffWind(), silent = TRUE)
+
+    #     msg0 <- .cdtData$GalParams[['message']][['5']]
+    #     msg1 <- .cdtData$GalParams[['message']][['6']]
+    #     Execute_end_msg(ret, msg0, msg1)
+    # }
+
+    ###############################
+
+    ## Bias correction
+
+    if(.cdtData$GalParams$action %in% paste0('rmbias.', climData))
+    {
+        ret <- try(biasCorrectionClimData(), silent = TRUE)
 
         msg0 <- .cdtData$GalParams[['message']][['5']]
         msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
-    ## Merge temp data
-    if(.cdtData$GalParams$action == 'merge.temp'){
-        ret <- try(execMergeTemp(), silent = TRUE)
+    # ## wind
+    # if(.cdtData$GalParams$action == 'rmbias.wind'){
+    #     ret <- try(biasCorrectionWind(), silent = TRUE)
+
+    #     msg0 <- .cdtData$GalParams[['message']][['5']]
+    #     msg1 <- .cdtData$GalParams[['message']][['6']]
+    #     Execute_end_msg(ret, msg0, msg1)
+    # }
+
+    ###############################
+
+    ## Merging with station data
+
+    if(.cdtData$GalParams$action %in% paste0('merge.', climData))
+    {
+        ret <- try(mergingClimData(), silent = TRUE)
         msg0 <- .cdtData$GalParams[['message']][['8']]
         msg1 <- .cdtData$GalParams[['message']][['9']]
         Execute_end_msg(ret, msg0, msg1)
     }
+
+    # ## wind
+    # if(.cdtData$GalParams$action == 'merge.wind'){
+    #     ret <- try(mergingWind(), silent = TRUE)
+    #     msg0 <- .cdtData$GalParams[['message']][['8']]
+    #     msg1 <- .cdtData$GalParams[['message']][['9']]
+    #     Execute_end_msg(ret, msg0, msg1)
+    # }
+
+    ###############################
+
+    ## Merging cross-validation
+
+    if(.cdtData$GalParams$action %in% paste0('crossv.', climData))
+    {
+        ret <- try(crossValidationExecClimData(), silent = TRUE)
+        msg0 <- .cdtData$GalParams[['message']][['8']]
+        msg1 <- .cdtData$GalParams[['message']][['9']]
+        Execute_end_msg(ret, msg0, msg1)
+    }
+
+    # if(.cdtData$GalParams$action == 'crossv.wind'){
+    #     ret <- try(crossValidationExecWind(), silent = TRUE)
+    #     msg0 <- .cdtData$GalParams[['message']][['8']]
+    #     msg1 <- .cdtData$GalParams[['message']][['9']]
+    #     Execute_end_msg(ret, msg0, msg1)
+    # }
+
+    ###############################
 
     ## Scaling merged data
     if(.cdtData$GalParams$action == 'scale.merged'){
@@ -261,19 +297,13 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
-    ## Merging
-    if(.cdtData$GalParams$action == 'crossv.rain'){
-        ret <- try(execCrossValidRain(), silent = TRUE)
-        msg0 <- .cdtData$GalParams[['message']][['8']]
-        msg1 <- .cdtData$GalParams[['message']][['9']]
-        Execute_end_msg(ret, msg0, msg1)
-    }
+    ###############################
 
-    ## Merge temp data
-    if(.cdtData$GalParams$action == 'crossv.temp'){
-        ret <- try(execCrossValidTEMP(), silent = TRUE)
-        msg0 <- .cdtData$GalParams[['message']][['8']]
-        msg1 <- .cdtData$GalParams[['message']][['9']]
+    ## Extract GRIB JRA-55 NRT
+    if(.cdtData$GalParams$action == 'exGRIB.JRA55.NRT'){
+        ret <- try(jra55_nrt.extract.downloaded.grib(), silent = TRUE)
+        msg0 <- .cdtData$GalParams[['message']][['9']]
+        msg1 <- .cdtData$GalParams[['message']][['10']]
         Execute_end_msg(ret, msg0, msg1)
     }
 

@@ -102,9 +102,8 @@ computeTvars_getParams <- function(){
 
         tkconfigure(set.tmin, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
-                                                                        str_trim(tclvalue(input.Tmin)),
-                                                                        str_trim(tclvalue(timeSteps)))
+            .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
+                                                                        str_trim(tclvalue(input.Tmin)))
             settingTmin <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
@@ -137,9 +136,8 @@ computeTvars_getParams <- function(){
 
         tkconfigure(set.tmax, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
-                                                                        str_trim(tclvalue(input.Tmax)),
-                                                                        str_trim(tclvalue(timeSteps)))
+            .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
+                                                                        str_trim(tclvalue(input.Tmax)))
             settingTmax <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })

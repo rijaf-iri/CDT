@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Data Operation </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Add Data/Variables </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Remove </text>
+        </button>
+        <button id="3">
+            <text lang="en"> CDT dataset/NetCDF Variable Information </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Format of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Data/Variable </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing the CDT station data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Directory containing the NetCDF data </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Path to the index file (*.rds) of the dataset </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Formula to be used </text>
+        </label>
+        <label id="7">
+            <text lang="en"> File to save the result </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Directory to save the result </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Time step </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Formula to be used. The number of variables (X) must be \nthe same as of the number of the inputs data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Formula to be used. The number of variables (X) must be \nthe same as of the number of the inputs data </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Start computation ...... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Browse or enter the file to save the result </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Browse or enter the path to the folder to save the result </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Invalid data input </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Variable number </text>
+        </content>
+        <content id="6">
+            <text lang="en"> The number of input data and the number of the variables in the formula do not match </text>
+        </content>
+        <content id="7">
+            <text lang="en"> The variable information for the NetCDF or CDT dataset must be edited </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Wrong formula </text>
+        </content>
+    </message>
+</dialog_box>

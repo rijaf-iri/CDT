@@ -736,7 +736,7 @@ climdexCalc.TT <- function(GeneralParameters){
         do.parCALC <- if(do.parChunk) FALSE else TRUE
 
         GeneralParameters <- GeneralParameters
-        cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+        cdtParallelCond <- .cdtData$Config$parallel
 
         parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 10))
         ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,

@@ -70,9 +70,8 @@ Merging_ScaleDataInfo <- function(){
 
     tkconfigure(set.mrgData, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["mrg.data"]] <- getInfoNetcdfData(tt, .cdtData$GalParams[["mrg.data"]],
-                                                              str_trim(tclvalue(dir.mrgData)),
-                                                              str_trim(tclvalue(file.period)))
+        .cdtData$GalParams[["mrg.data"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["mrg.data"]],
+                                                              str_trim(tclvalue(dir.mrgData)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -105,9 +104,9 @@ Merging_ScaleDataInfo <- function(){
 
     tkconfigure(set.scaledata, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["scale.data"]] <- getInfoNetcdfData(tt, .cdtData$GalParams[["scale.data"]],
-                                                                str_trim(tclvalue(scale.dir)),
-                                                                str_trim(tclvalue(file.period)), scale = TRUE)
+        .cdtData$GalParams[["scale.data"]] <- getInfoNetCDFScale(tt, .cdtData$GalParams[["scale.data"]],
+                                                                 str_trim(tclvalue(scale.dir)),
+                                                                 str_trim(tclvalue(file.period)), scale = TRUE)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 

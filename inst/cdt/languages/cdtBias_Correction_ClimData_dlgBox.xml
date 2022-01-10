@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Bias Correction - Settings </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Multiplicative Bias Time Step Variable </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Multiplicative Bias for Each Month </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Quantile Mapping with Fitted Distribution </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Quantile Mapping with Empirical Distribution </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Set Date Range </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Bias method </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Directory of bias files </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Directory containing the NetCDF files </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Directory to save result </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Adjusted data filename format </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Set the start and end date of data to correct </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Set the start and end date of data to correct </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the method used to calculate the Bias Factors or Parameters </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the method used to calculate the Bias Factors or Parameters </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the bias files </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the bias files </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the NetCDF data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the NetCDF data </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Setting NetCDF data options </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Setting NetCDF data options </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Enter the full path to directory to save result </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save result </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> The NetCDF file names format of the bias corrected data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The NetCDF file names format of the bias corrected data </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Select or enter the directory containing the NetCDF files </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Enter the path to directory containing the Bias factors </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Browse or enter the path to directory to save results </text>
+        </content>
+        <content id="4">
+            <text lang="en"> You have to set the NetCDF files parameters </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Bias correction finished successfully </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Bias correction failed </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Bias correction ... </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No NetCDF sample found </text>
+        </content>
+        <content id="9">
+            <text lang="en"> NetCDF data not found </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Bias and the NetCDF data are in the different region </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Bias and the NetCDF data have different grid </text>
+        </content>
+    </message>
+</dialog_box>

@@ -21,7 +21,7 @@ PlotCDTStationCmd <- function(){
 
     GeneralParameters <- list(intstep = "dekadal", minhour = 1,
                               cdtstation = "",
-                              date = list(year = 2017, mon = 1, day = 1,
+                              date = list(year = 2021, mon = 1, day = 1,
                                           hour = 1, min = 0, other = ""))
     pointSizeI <- 1.0
     .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
@@ -34,14 +34,14 @@ PlotCDTStationCmd <- function(){
 
     .cdtData$EnvData$TSGraphOp <- list(
                                     bar = list(
-                                            xlim = list(is.min = FALSE, min = "1981-01-1", is.max = FALSE, max = "2017-12-3"),
+                                            xlim = list(is.min = FALSE, min = "1981-01-1", is.max = FALSE, max = "2021-12-3"),
                                             ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
                                             axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                             title = list(is.title = FALSE, title = '', position = 'top'),
                                             colors = list(col = "darkblue")
                                         ),
                                     line = list(
-                                            xlim = list(is.min = FALSE, min = "1981-01-1", is.max = FALSE, max = "2017-12-3"),
+                                            xlim = list(is.min = FALSE, min = "1981-01-1", is.max = FALSE, max = "2021-12-3"),
                                             ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 200),
                                             axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                             title = list(is.title = FALSE, title = '', position = 'top'),

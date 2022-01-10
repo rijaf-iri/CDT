@@ -63,9 +63,8 @@ cdtDataset_getParams <- function(){
     ######
     tkconfigure(set.NCDF, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["NCDF"]] <- getInfoNetcdfData(tt, .cdtData$GalParams[["NCDF"]],
-                                                          str_trim(tclvalue(dir.NCDF)),
-                                                          tclvalue(file.period))
+        .cdtData$GalParams[["NCDF"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["NCDF"]],
+                                                          str_trim(tclvalue(dir.NCDF)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 

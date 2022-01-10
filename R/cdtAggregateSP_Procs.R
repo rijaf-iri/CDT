@@ -7,10 +7,10 @@ AggregateSpNc_Execute <- function(){
         Insert.Messages.Out(.cdtData$GalParams[['message']][['4']], format = TRUE)
         return(NULL)
     }
-    outputNC <- file.path(outputdir, "Regrided_NetCDF")
+    outputNC <- file.path(outputdir, "Regrided_Data")
     dir.create(outputNC, showWarnings = FALSE, recursive = TRUE)
 
-    if(.cdtData$GalParams$nb.ncfile == "one"){
+    if(.cdtData$GalParams$nb.ncfile == "cdtnetcdf1"){
         ncDataInfo <- getNCDFSampleData(.cdtData$GalParams$ncdf$fileordir)
         if(is.null(ncDataInfo)){
             Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], format = TRUE)
@@ -18,7 +18,7 @@ AggregateSpNc_Execute <- function(){
         }
     }
 
-    if(.cdtData$GalParams$nb.ncfile == "several"){
+    if(.cdtData$GalParams$nb.ncfile == "cdtnetcdfs"){
         ncDataInfo <- getNCDFSampleData(.cdtData$GalParams$ncdf$sample)
         if(is.null(ncDataInfo)){
             Insert.Messages.Out(.cdtData$GalParams[['message']][['6']], format = TRUE)
@@ -26,17 +26,48 @@ AggregateSpNc_Execute <- function(){
         }
     }
 
+    if(.cdtData$GalParams$nb.ncfile == "cdtdataset"){
+        if(!file.exists(.cdtData$GalParams$ncdf$fileordir)){
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['6-1']], format = TRUE)
+            return(NULL)
+        }
+        oldIndex <- readRDS(.cdtData$GalParams$ncdf$fileordir)
+        ncDataInfo <- list(lon = oldIndex$coords$mat$x,
+                           lat = oldIndex$coords$mat$y)
+
+        dirOldCDTData <- file.path(dirname(.cdtData$GalParams$ncdf$fileordir), "DATA")
+        ## create new cdt dataset
+        indexOldCDTData <- basename(.cdtData$GalParams$ncdf$fileordir)
+        dirNewCDTData <- file.path(outputNC, tools::file_path_sans_ext(indexOldCDTData))
+        fileIndxNewCDTData <- file.path(dirNewCDTData, indexOldCDTData)
+        dirDataNewCDTData <- file.path(dirNewCDTData, "DATA")
+        dir.create(dirDataNewCDTData, showWarnings = FALSE, recursive = TRUE)
+    }
+
     ###########################################
 
     match.var <- FALSE
     if(.cdtData$GalParams$ncdf.grid$use.ncgrid){
-        ncDataNew <- getNCDFSampleData(.cdtData$GalParams$ncdf.grid$file)
-        if(is.null(ncDataNew)){
-            Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], format = TRUE)
-            return(NULL)
+        if(.cdtData$GalParams$ncdf.grid$type == "cdtnetcdf"){
+            ncDataNew <- getNCDFSampleData(.cdtData$GalParams$ncdf.grid$file)
+            if(is.null(ncDataNew)){
+                Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], format = TRUE)
+                return(NULL)
+            }
+
+            grd.lon <- ncDataNew$lon
+            grd.lat <- ncDataNew$lat
+        }else{
+            if(!file.exists(.cdtData$GalParams$ncdf.grid$file)){
+                Insert.Messages.Out(.cdtData$GalParams[['message']][['7-1']], format = TRUE)
+                return(NULL)
+            }
+
+            ncDataNew <- readRDS(.cdtData$GalParams$ncdf.grid$file)
+            grd.lon <- ncDataNew$coords$mat$x
+            grd.lat <- ncDataNew$coords$mat$y
         }
-        grd.lon <- ncDataNew$lon
-        grd.lat <- ncDataNew$lat
+
         match.var <- .cdtData$GalParams$ncdf.grid$match.var
     }else{
         X0 <- .cdtData$GalParams$res$minlon
@@ -59,20 +90,43 @@ AggregateSpNc_Execute <- function(){
     ###########################################
 
     if(match.var){
-        ncinfo0 <- ncDataNew[c('ilon', 'ilat', 'xo', 'yo')]
-
-        dx <- ncdim_def(ncDataNew$diminfo[1, 1], ncDataNew$diminfo[1, 3], grd.lon[ncDataNew$xo])
-        dy <- ncdim_def(ncDataNew$diminfo[2, 1], ncDataNew$diminfo[2, 3], grd.lat[ncDataNew$yo])
-        xydim <- if(ncDataNew$ilon < ncDataNew$ilat) list(dx, dy) else list(dy, dx)
+        if(.cdtData$GalParams$ncdf.grid$type == "cdtnetcdf"){
+            if(.cdtData$GalParams$nb.ncfile != "cdtdataset"){
+                ncinfo0 <- ncDataNew[c('ilon', 'ilat', 'xo', 'yo')]
+                dx <- ncdf4::ncdim_def(ncDataNew$diminfo[1, 1], ncDataNew$diminfo[1, 3], grd.lon[ncDataNew$xo])
+                dy <- ncdf4::ncdim_def(ncDataNew$diminfo[2, 1], ncDataNew$diminfo[2, 3], grd.lat[ncDataNew$yo])
+                xydim <- if(ncDataNew$ilon < ncDataNew$ilat) list(dx, dy) else list(dy, dx)
+            }else{
+               newIndex <- cdtdataset.new.index(oldIndex, list(lon = grd.lon, lat = grd.lat))
+            }
+        }else{
+            if(.cdtData$GalParams$nb.ncfile != "cdtdataset"){
+                ncinfo0 <- list(ilon = 1, ilat = 2,
+                                xo = seq_along(grd.lon),
+                                yo = seq_along(grd.lat))
+                dx <- ncdf4::ncdim_def("Lon", "degreeE", grd.lon)
+                dy <- ncdf4::ncdim_def("Lat", "degreeN", grd.lat)
+                xydim <- list(dx, dy)
+            }else{
+                newIndex <- ncDataNew 
+            }
+        }
     }else{
-        dx <- ncdim_def("Lon", "degreeE", grd.lon)
-        dy <- ncdim_def("Lat", "degreeN", grd.lat)
-        xydim <- list(dx, dy)
+        if(.cdtData$GalParams$nb.ncfile != "cdtdataset"){
+            dx <- ncdf4::ncdim_def("Lon", "degreeE", grd.lon)
+            dy <- ncdf4::ncdim_def("Lat", "degreeN", grd.lat)
+            xydim <- list(dx, dy)
+        }else{
+            newIndex <- cdtdataset.new.index(oldIndex, list(lon = grd.lon, lat = grd.lat))
+        }
     }
 
     ###########################################
 
-    ncinfo <- ncDataInfo[c('ilon', 'ilat', 'varid')]
+    if(.cdtData$GalParams$nb.ncfile != "cdtdataset"){
+        ncinfo <- ncDataInfo[c('ilon', 'ilat', 'varid')]
+    }
+
     old.grid <- defSpatialPixels(ncDataInfo[c('lon', 'lat')], regrid = TRUE)
 
     ###########################################
@@ -109,36 +163,37 @@ AggregateSpNc_Execute <- function(){
 
     ###########################################
 
-    if(.cdtData$GalParams$nb.ncfile == "one"){
+    if(.cdtData$GalParams$nb.ncfile == "cdtnetcdf1"){
         jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$ncdf$fileordir)
         ncfile <- .cdtData$OpenFiles$Data[[jfile]][[3]]
 
         #####################
 
-        nc <- nc_open(ncfile)
+        nc <- ncdf4::nc_open(ncfile)
         xlon <- nc$var[[ncinfo$varid]]$dim[[ncinfo$ilon]]$vals
         xlat <- nc$var[[ncinfo$varid]]$dim[[ncinfo$ilat]]$vals
-        zval <- ncvar_get(nc, varid = ncinfo$varid)
+        zval <- ncdf4::ncvar_get(nc, varid = ncinfo$varid)
 
         nc.name <- ncinfo$varid
         nc.longname <- nc$var[[nc.name]]$longname
         nc.units <- nc$var[[nc.name]]$units
         nc.missval <- nc$var[[nc.name]]$missval
         nc.prec <- nc$var[[nc.name]]$prec
-        nc_close(nc)
+        ncdf4::nc_close(nc)
 
         #####################
 
         if(match.var){
-            nc.name <- ncDataNew$varinfo$name
-            nc.longname <- ncDataNew$varinfo$longname
-            nc.units <- ncDataNew$varinfo$units
-            nc.prec <- ncDataNew$varinfo$prec
-            nc.missval <- ncDataNew$varinfo$missval
+            nomVar <- if(.cdtData$GalParams$ncdf.grid$type == "cdtnetcdf") "varinfo" else "varInfo"
+            nc.name <- ncDataNew[[nomVar]]$name
+            nc.longname <- ncDataNew[[nomVar]]$longname
+            nc.units <- ncDataNew[[nomVar]]$units
+            nc.prec <- ncDataNew[[nomVar]]$prec
+            nc.missval <- ncDataNew[[nomVar]]$missval
         }
 
-        grd.nc.out <- ncvar_def(nc.name, nc.units, xydim, nc.missval, prec = nc.prec,
-                                longname = nc.longname, compression = 9)
+        grd.nc.out <- ncdf4::ncvar_def(nc.name, nc.units, xydim, nc.missval, prec = nc.prec,
+                                       longname = nc.longname, compression = 9)
 
         #####################
 
@@ -164,14 +219,14 @@ AggregateSpNc_Execute <- function(){
         if(match.var) z.out <- transposeNCDFData.inv(z.out, ncinfo0)
 
         outfl <- file.path(outputNC, basename(ncfile))
-        nc2 <- nc_create(outfl, grd.nc.out)
-        ncvar_put(nc2, grd.nc.out, z.out)
-        nc_close(nc2)
+        nc2 <- ncdf4::nc_create(outfl, grd.nc.out)
+        ncdf4::ncvar_put(nc2, grd.nc.out, z.out)
+        ncdf4::nc_close(nc2)
     }
 
     ###########################################
 
-    if(.cdtData$GalParams$nb.ncfile == "several"){
+    if(.cdtData$GalParams$nb.ncfile == "cdtnetcdfs"){
         allncfiles <- list.files(.cdtData$GalParams$ncdf$fileordir, ".+\\.nc$", full.names = TRUE)
         if(length(allncfiles) == 0){
             Insert.Messages.Out(.cdtData$GalParams[['message']][['11']], format = TRUE)
@@ -180,7 +235,7 @@ AggregateSpNc_Execute <- function(){
 
         #####################
 
-        nc <- nc_open(allncfiles[1])
+        nc <- ncdf4::nc_open(allncfiles[1])
         xlon <- nc$var[[ncinfo$varid]]$dim[[ncinfo$ilon]]$vals
         xlat <- nc$var[[ncinfo$varid]]$dim[[ncinfo$ilat]]$vals
 
@@ -189,20 +244,21 @@ AggregateSpNc_Execute <- function(){
         nc.units <- nc$var[[nc.name]]$units
         nc.missval <- nc$var[[nc.name]]$missval
         nc.prec <- nc$var[[nc.name]]$prec
-        nc_close(nc)
+        ncdf4::nc_close(nc)
 
         #####################
 
         if(match.var){
-            nc.name <- ncDataNew$varinfo$name
-            nc.longname <- ncDataNew$varinfo$longname
-            nc.units <- ncDataNew$varinfo$units
-            nc.prec <- ncDataNew$varinfo$prec
-            nc.missval <- ncDataNew$varinfo$missval
+            nomVar <- if(.cdtData$GalParams$ncdf.grid$type == "cdtnetcdf") "varinfo" else "varInfo"
+            nc.name <- ncDataNew[[nomVar]]$name
+            nc.longname <- ncDataNew[[nomVar]]$longname
+            nc.units <- ncDataNew[[nomVar]]$units
+            nc.prec <- ncDataNew[[nomVar]]$prec
+            nc.missval <- ncDataNew[[nomVar]]$missval
         }
 
-        grd.nc.out <- ncvar_def(nc.name, nc.units, xydim, nc.missval, prec = nc.prec,
-                                longname = nc.longname, compression = 9)
+        grd.nc.out <- ncdf4::ncvar_def(nc.name, nc.units, xydim, nc.missval, prec = nc.prec,
+                                       longname = nc.longname, compression = 9)
 
         #####################
 
@@ -265,6 +321,110 @@ AggregateSpNc_Execute <- function(){
             ntab <- update.OpenTabs('ctxt', containertab)
             tkselect(.cdtEnv$tcl$main$tknotes, ntab)
         }
+    }
+
+    ###########################################
+
+    if(.cdtData$GalParams$nb.ncfile == "cdtdataset"){
+        if(.cdtData$GalParams$method == "bilinear"){
+            gridOld <- oldIndex$coords$mat
+            names(gridOld) <- c('lon', 'lat')
+            ixy <- interp.bilinear.pars(gridOld, gridInterp)
+
+            index_old <- split(ixy$index, row(ixy$index))
+            fac_old <- split(ixy$fac, row(ixy$fac))
+
+            grp_old <- oldIndex$colInfo$index[oldIndex$colInfo$order]
+            chunk_order <- split(seq_along(oldIndex$colInfo$index), oldIndex$colInfo$index)
+            chunk_order <- do.call(c, lapply(chunk_order, seq_along))
+            chunk_order <- chunk_order[oldIndex$colInfo$order]
+
+            Group <- split(seq_along(newIndex$colInfo$index), newIndex$colInfo$index)
+
+            for(ii in seq_along(Group)){
+                id <- as.character(newIndex$colInfo$id[Group[[ii]]])
+                index_old_g <- index_old[id]
+                fac_old_g <- fac_old[id]
+
+                z.out <- lapply(seq_along(index_old_g), function(j){
+                    id_ordered <- index_old_g[[j]]
+                    chk_fac <- fac_old_g[[j]]
+                    grp <- grp_old[id_ordered]
+                    chk <- chunk_order[id_ordered]
+                    xgrp <- split(seq_along(grp), grp)
+                    dat <- lapply(xgrp, function(i){
+                        ig <- grp[i][1]
+                        chunk_file <- file.path(dirOldCDTData, paste0(ig, '.rds'))
+                        chunk_data <- readRDS(chunk_file)
+                        chunk_data[, chk[i], drop = FALSE]
+                    })
+
+                    dat <- do.call(cbind, dat)
+                    dat <- sweep(dat, 2, chk_fac, '*')
+                    ina <- rowSums(!is.na(dat)) == 0
+                    dat <- rowSums(dat)
+                    dat[ina] <- NA
+
+                    dat
+                })
+
+                chunk_data <- do.call(cbind, z.out)
+                dimnames(chunk_data) <- NULL
+
+                ig <- newIndex$colInfo$index[Group[[ii]]][1]
+                file.rds <- file.path(dirDataNewCDTData, paste0(ig, '.rds'))
+                con <- gzfile(file.rds, compression = 7)
+                open(con, "wb")
+                saveRDS(chunk_data, con)
+                close(con)
+            }
+        }else{
+            id_ordered <- as.numeric(names(ixy))
+            grp_old <- oldIndex$colInfo$index[oldIndex$colInfo$order][id_ordered]
+            chunk_order <- split(seq_along(oldIndex$colInfo$index), oldIndex$colInfo$index)
+            chunk_order <- do.call(c, lapply(chunk_order, seq_along))
+            chunk_order <- chunk_order[oldIndex$colInfo$order][id_ordered]
+            ix_new <- split(seq_along(ixy), ixy)
+            Group <- split(seq_along(newIndex$colInfo$index), newIndex$colInfo$index)
+
+            for(ii in seq_along(Group)){
+                id <- as.character(newIndex$colInfo$id[Group[[ii]]])
+                ix_new_g <- ix_new[id]
+
+                z.out <- lapply(ix_new_g, function(ix){
+                    grp <- grp_old[ix]
+                    chko <- chunk_order[ix]
+                    xgrp <- split(seq_along(grp), grp)
+                    dat <- lapply(xgrp, function(i){
+                        ig <- grp[i][1]
+                        chunk_file <- file.path(dirOldCDTData, paste0(ig, '.rds'))
+                        chunk_data <- readRDS(chunk_file)
+                        chunk_data[, chko[i], drop = FALSE]
+                    })
+
+                    dat <- do.call(cbind, dat)
+                    dat <- rowMeans(dat, na.rm = TRUE)
+                    dat[is.nan(dat)] <- NA
+
+                    dat
+                })
+
+                chunk_data <- do.call(cbind, z.out)
+                dimnames(chunk_data) <- NULL
+
+                ig <- newIndex$colInfo$index[Group[[ii]]][1]
+                file.rds <- file.path(dirDataNewCDTData, paste0(ig, '.rds'))
+                con <- gzfile(file.rds, compression = 7)
+                open(con, "wb")
+                saveRDS(chunk_data, con)
+                close(con)
+            }
+        }
+
+        con <- gzfile(fileIndxNewCDTData, compression = 6)
+        open(con, "wb")
+        saveRDS(newIndex, con)
+        close(con)
     }
 
     return(0)

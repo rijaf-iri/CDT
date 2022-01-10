@@ -1,31 +1,58 @@
 
 reanal.product.source <- function(prod){
     data.source <- switch(prod,
-                          "jra55" = c("rda.ucar.edu"),
-                          "merra2" = c("iridl.ldeo.columbia.edu", "disc.gsfc.nasa.gov"),
-                          "era5" = c("cds.climate.copernicus.eu")
+                          "jra55" = c("rda.ucar.edu - ds628.0 - 3Hourly",
+                                      "rda.ucar.edu - ds628.8-NRT - 3Hourly"),
+                          "merra2" = c("disc.gsfc.nasa.gov - Hourly",
+                                       "disc.gsfc.nasa.gov - Land - Hourly",
+                                       "disc.gsfc.nasa.gov - Daily",
+                                       "iridl.ldeo.columbia.edu - Daily"),
+                          "era5" = c("cds.climate.copernicus.eu - ERA5 - Hourly",
+                                     "cds.climate.copernicus.eu - ERA5-Land - Hourly")
                         )
     return(data.source)
 }
 
 reanal.product.info <- function(prod, src){
     if(prod == "jra55"){
-        if(src == "rda.ucar.edu")
-            urls <- "https://rda.ucar.edu/datasets/ds628.0/"
+        urls <- switch(src,
+                    "rda.ucar.edu - ds628.0 - 3Hourly" = c("https://rda.ucar.edu/datasets/ds628.0/",
+                                                           "https://rda.ucar.edu/datasets/ds628.0/docs/JRA-55.handbook_TL319_en.pdf"),
+                    "rda.ucar.edu - ds628.8-NRT - 3Hourly" = c("https://rda.ucar.edu/datasets/ds628.8/",
+                                                               "https://rda.ucar.edu/datasets/ds628.0/docs/JRA-55.handbook_TL319_en.pdf")
+                )
     }
 
     if(prod == "merra2"){
         urls <- switch(src,
-                    "iridl.ldeo.columbia.edu" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NASA/.GSFC/.MERRA2/.Anl_MonoLev/",
-                                                  "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"),
-                    "disc.gsfc.nasa.gov" = c("https://disc.gsfc.nasa.gov/datasets/M2SDNXSLV_5.12.4/summary",
-                                             "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/")
+                    "disc.gsfc.nasa.gov - Hourly" = c("https://disc.gsfc.nasa.gov/datasets/M2T1NXSLV_5.12.4/summary",
+                                                      "https://disc.gsfc.nasa.gov/datasets/M2T1NXFLX_5.12.4/summary",
+                                                      "https://disc.gsfc.nasa.gov/datasets/M2I1NXASM_5.12.4/summary",
+                                                      "https://disc.gsfc.nasa.gov/datasets/M2T1NXRAD_5.12.4/summary",
+                                                      "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"),
+                    "disc.gsfc.nasa.gov - Land - Hourly" = c("https://disc.gsfc.nasa.gov/datasets/M2T1NXLND_5.12.4/summary",
+                                                             "https://daac.gsfc.nasa.gov/information/documents?title=MERRA-2%20Data%20Access%20%E2%80%93%20Quick%20Guide",
+                                                             "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"),
+                    "disc.gsfc.nasa.gov - Daily" = c("https://disc.gsfc.nasa.gov/datasets/M2SDNXSLV_5.12.4/summary",
+                                                     "https://daac.gsfc.nasa.gov/information/documents?title=MERRA-2%20Data%20Access%20%E2%80%93%20Quick%20Guide",
+                                                     "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"),
+                    "iridl.ldeo.columbia.edu - Daily" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NASA/.GSFC/.MERRA2/.Anl_MonoLev/",
+                                                           "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/")
                 )
     }
 
     if(prod == "era5"){
-        if(src == "cds.climate.copernicus.eu")
-            urls <- "https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview"
+        urls <- switch(src,
+                    "cds.climate.copernicus.eu - ERA5 - Hourly" = c(
+                           "https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview",
+                           "https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels-preliminary-back-extension?tab=overview",
+                           "https://confluence.ecmwf.int/display/CKB/ERA5%3A+data+documentation"
+                        ),
+                    "cds.climate.copernicus.eu - ERA5-Land - Hourly" = c(
+                           "https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview",
+                           "https://confluence.ecmwf.int/display/CKB/ERA5-Land%3A+data+documentation"
+                       )
+                )
     }
 
     tmpf <- tempfile(fileext = ".html")
@@ -47,12 +74,11 @@ reanal.need.usrpwd <- function(prod, src){
 
     if(prod == "jra55"){
         usrpwd <- TRUE
-        if(src == "rda.ucar.edu")
-            urllog <- "https://rda.ucar.edu"
+        urllog <- "https://rda.ucar.edu"
     }
 
     if(prod == "merra2"){
-        if(src == "disc.gsfc.nasa.gov"){
+        if(src != "iridl.ldeo.columbia.edu - Daily"){
             usrpwd <- TRUE
             urllog <- "https://urs.earthdata.nasa.gov"
         }
@@ -60,23 +86,10 @@ reanal.need.usrpwd <- function(prod, src){
 
     if(prod == "era5"){
         usrpwd <- TRUE
-        if(src == "cds.climate.copernicus.eu")
-            urllog <- "https://cds.climate.copernicus.eu"
+        urllog <- "https://cds.climate.copernicus.eu"
     }
 
     list(usrpwd = usrpwd, urllog = urllog)
-}
-
-reanal.need.extern <- function(prod, src){
-    ret <- list(state = "disabled",
-                text = "grads")
-    if(prod == "era5"){
-        if(src == "cds.climate.copernicus.eu"){
-            ret <- list(state = "normal",
-                        text = "python")
-        }
-    }
-    return(ret)
 }
 
 #######################################
@@ -118,14 +131,40 @@ download_Reanalysis <- function(){
     downVar <- tclVar()
 
     CbvarsVAL0 <- lang.dlg[['combobox']][['1']]
-    varsVAL0 <- c('tmax', 'tmin', 'tmean')
+
+    varsVAL0 <- c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres', 'prmsl',
+                  'cloud', 'rad_avg', 'rad_acc', 'prcp', 'evp', 'pet', 'runoff',
+                  'soilm', 'soilt', 'tsg', 'heat_avg', 'heat_acc', 'ghflx'
+                 )
 
     if(.cdtData$GalParams$prod == "jra55"){
-        CbvarsVAL <- CbvarsVAL0[1:2]
-        varsVAL <- varsVAL0[1:2]
+        excl_vr <- varsVAL0 %in% c('rad_acc', 'heat_acc')
+        CbvarsVAL <- CbvarsVAL0[!excl_vr]
+        varsVAL <- varsVAL0[!excl_vr]
+    }else if(.cdtData$GalParams$prod == "era5"){
+        if(.cdtData$GalParams$src == "cds.climate.copernicus.eu - ERA5 - Hourly"){
+            excl_vr <- varsVAL0 %in% c('ghflx')
+        }else{
+            excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'prmsl', 'cloud',
+                                       'rad_avg', 'heat_avg', 'ghflx')
+        }
+        CbvarsVAL <- CbvarsVAL0[!excl_vr]
+        varsVAL <- varsVAL0[!excl_vr]
     }else{
-        CbvarsVAL <- CbvarsVAL0
-        varsVAL <- varsVAL0
+        if(.cdtData$GalParams$src == "disc.gsfc.nasa.gov - Hourly"){
+            excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'rad_acc', 'evp', 'runoff',
+                                       'soilm', 'soilt', 'heat_acc')
+            CbvarsVAL <- CbvarsVAL0[!excl_vr]
+            varsVAL <- varsVAL0[!excl_vr]
+        }else if(.cdtData$GalParams$src == "disc.gsfc.nasa.gov - Land - Hourly"){
+            excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres',
+                                       'prmsl', 'cloud', 'evp', 'rad_acc', 'heat_acc')
+            CbvarsVAL <- CbvarsVAL0[!excl_vr]
+            varsVAL <- varsVAL0[!excl_vr]
+        }else{
+            CbvarsVAL <- CbvarsVAL0[1:3]
+            varsVAL <- varsVAL0[1:3]
+        }
     }
 
     tclvalue(downVar) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$var]
@@ -169,7 +208,16 @@ download_Reanalysis <- function(){
     ###########################
 
     tkconfigure(bt.range, command = function(){
-        tstep <- if(str_trim(tclvalue(reanalProd)) == CbprodVAL[2]) "daily" else "hourly"
+         tstep <- switch(str_trim(tclvalue(reanalSrc)),
+                         "rda.ucar.edu - ds628.0 - 3Hourly" = "hourly",
+                         "rda.ucar.edu - ds628.8-NRT - 3Hourly" = "hourly",
+                         "disc.gsfc.nasa.gov - Hourly" = "hourly",
+                         "disc.gsfc.nasa.gov - Land - Hourly" = "hourly",
+                         "disc.gsfc.nasa.gov - Daily" = "daily",
+                         "iridl.ldeo.columbia.edu - Daily" = "daily",
+                         "cds.climate.copernicus.eu - ERA5 - Hourly" = "hourly",
+                         "cds.climate.copernicus.eu - ERA5-Land - Hourly" = "hourly")
+
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -229,11 +277,33 @@ download_Reanalysis <- function(){
 
         ########
         if(prod == "jra55"){
-            CbvarsVAL <<- CbvarsVAL0[1:2]
-            varsVAL <<- varsVAL0[1:2]
+            excl_vr <- varsVAL0 %in% c('rad_acc', 'heat_acc')
+            CbvarsVAL <<- CbvarsVAL0[!excl_vr]
+            varsVAL <<- varsVAL0[!excl_vr]
+        }else if(prod == "era5"){
+            if(src == "cds.climate.copernicus.eu - ERA5 - Hourly"){
+                excl_vr <- varsVAL0 %in% c('ghflx')
+            }else{
+                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'prmsl', 'cloud',
+                                           'rad_avg', 'heat_avg', 'ghflx')
+            }
+            CbvarsVAL <<- CbvarsVAL0[!excl_vr]
+            varsVAL <<- varsVAL0[!excl_vr]
         }else{
-            CbvarsVAL <<- CbvarsVAL0
-            varsVAL <<- varsVAL0
+            if(src == "disc.gsfc.nasa.gov - Hourly"){
+                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'rad_acc', 'evp', 'runoff',
+                                           'soilm', 'soilt', 'heat_acc')
+                CbvarsVAL <<- CbvarsVAL0[!excl_vr]
+                varsVAL <<- varsVAL0[!excl_vr]
+            }else if(src == "disc.gsfc.nasa.gov - Land - Hourly"){
+                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres',
+                                           'prmsl', 'cloud', 'evp', 'rad_acc', 'heat_acc')
+                CbvarsVAL <<- CbvarsVAL0[!excl_vr]
+                varsVAL <<- varsVAL0[!excl_vr]
+            }else{
+                CbvarsVAL <<- CbvarsVAL0[1:3]
+                varsVAL <<- varsVAL0[1:3]
+            }
         }
 
         tkconfigure(cb.vars, values = CbvarsVAL)
@@ -247,11 +317,33 @@ download_Reanalysis <- function(){
 
         ########
         if(prod == "jra55"){
-            CbvarsVAL <<- CbvarsVAL0[1:2]
-            varsVAL <<- varsVAL0[1:2]
+            excl_vr <- varsVAL0 %in% c('rad_acc', 'heat_acc')
+            CbvarsVAL <<- CbvarsVAL0[!excl_vr]
+            varsVAL <<- varsVAL0[!excl_vr]
+        }else if(prod == "era5"){
+            if(src == "cds.climate.copernicus.eu - ERA5 - Hourly"){
+                excl_vr <- varsVAL0 %in% c('ghflx')
+            }else{
+                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'prmsl', 'cloud',
+                                           'rad_avg', 'heat_avg', 'ghflx')
+            }
+            CbvarsVAL <<- CbvarsVAL0[!excl_vr]
+            varsVAL <<- varsVAL0[!excl_vr]
         }else{
-            CbvarsVAL <<- CbvarsVAL0
-            varsVAL <<- varsVAL0
+            if(src == "disc.gsfc.nasa.gov - Hourly"){
+                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'rad_acc', 'evp', 'runoff',
+                                           'soilm', 'soilt', 'heat_acc')
+                CbvarsVAL <<- CbvarsVAL0[!excl_vr]
+                varsVAL <<- varsVAL0[!excl_vr]
+            }else if(src == "disc.gsfc.nasa.gov - Land - Hourly"){
+                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres',
+                                           'prmsl', 'cloud', 'evp', 'rad_acc', 'heat_acc')
+                CbvarsVAL <<- CbvarsVAL0[!excl_vr]
+                varsVAL <<- varsVAL0[!excl_vr]
+            }else{
+                CbvarsVAL <<- CbvarsVAL0[1:3]
+                varsVAL <<- varsVAL0[1:3]
+            }
         }
 
         tkconfigure(cb.vars, values = CbvarsVAL)

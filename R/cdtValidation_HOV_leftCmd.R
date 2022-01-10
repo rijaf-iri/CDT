@@ -35,7 +35,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
     date.range <- list(start.year = 1981, start.mon = 1, start.dek = 1,
                        start.pen = 1, start.day = 1,
                        start.hour = 0, start.min = 0,
-                       end.year = 2018, end.mon = 12, end.dek = 3,
+                       end.year = 2021, end.mon = 12, end.dek = 3,
                        end.pen = 6, end.day = 31,
                        end.hour = 23, end.min = 55)
 
@@ -43,7 +43,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
                               ncdf.file = list(dir = "", sample = "", format = "rr_mrg_%s%s%s.nc"),
                               type.select = "all",
                               shp.file = list(shp = "", attr = ""),
-                              date.range = list(start.year = 1981, start.month = 1, end.year = 2018, end.month = 12),
+                              date.range = list(start.year = 1981, start.month = 1, end.year = 2021, end.month = 12),
                               aggr.series = list(aggr.data = FALSE, aggr.fun = aggFun, opr.fun = ">=", opr.thres = 0,
                                                  min.frac = list(unique = TRUE, all = 0.95,
                                                                  month = rep(0.95, 12))),
@@ -51,8 +51,8 @@ Validation.HOV.PanelCmd <- function(clim.var){
                               dicho.fcst = list(fun = ">=", thres = trhesVal),
                               volume.stat = list(user = TRUE, one.thres = TRUE,
                                                  user.val = 80, user.file = '', from = 'obs', perc = 75,
-                                                 period = list(all.years = TRUE, start.year = 1981,
-                                                               end.year = 2010, min.year = 5)
+                                                 period = list(all.years = TRUE, start.year = 1991,
+                                                               end.year = 2020, min.year = 5)
                                                 ),
                               add.to.plot = list(add.shp = FALSE, shp.file = "", add.dem = FALSE, dem.file = ""),
                               outdir = "", clim.var = clim.var, statsVar = 'CORR', type.graph = "Scatter"
@@ -219,10 +219,9 @@ Validation.HOV.PanelCmd <- function(clim.var){
         })
 
         tkconfigure(set.dir.ncdf, command = function(){
-            GeneralParameters[["ncdf.file"]] <<- getInfoNetcdfData(.cdtEnv$tcl$main$win,
+            GeneralParameters[["ncdf.file"]] <<- getInfoNetCDFData(.cdtEnv$tcl$main$win,
                                                                    GeneralParameters[["ncdf.file"]],
-                                                                   str_trim(tclvalue(dirNetCDF)),
-                                                                   str_trim(tclvalue(file.period)))
+                                                                   str_trim(tclvalue(dirNetCDF)))
         })
 
         tkconfigure(bt.dir.ncdf, command = function(){

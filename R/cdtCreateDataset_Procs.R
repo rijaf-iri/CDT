@@ -432,7 +432,7 @@ cdtdataset.one.pixel <- function(cdtdataset, fileInfo, xloc, yloc, ...){
     }
     ixy <- ilo + length(xlon) * (ila - 1)
 
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
     don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, parllCond = cdtParallelCond, do.par = FALSE, ...)
     coords <- don$coords
     don <- don$data[cdtdataset$dateInfo$index, 1]
@@ -472,7 +472,7 @@ cdtdataset.pad.pixel <- function(cdtdataset, fileInfo, xloc, yloc, padx, pady, .
     }
     ixy <- ilo[ina] + length(xlon) * (ila[ina] - 1)
 
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
     don <- readCdtDatasetChunk.locations(ixy, fileInfo, cdtdataset, parllCond = cdtParallelCond, do.par = FALSE, ...)
     don <- rowMeans(don$data, na.rm = TRUE)
     don <- don[cdtdataset$dateInfo$index]
@@ -480,3 +480,42 @@ cdtdataset.pad.pixel <- function(cdtdataset, fileInfo, xloc, yloc, padx, pady, .
 
     list(data = don, date = daty)
 }
+
+###############
+
+## create new index file from new grid
+cdtdataset.new.index <- function(index, grid){
+    len.lon <- length(grid$lon)
+    len.lat <- length(grid$lat)
+
+    nxy.chunksize <- round(sqrt(index$chunksize))
+    seqlon <- seq_along(grid$lon)
+    seqlat <- seq_along(grid$lat)
+    seqcol <- cbind(id = seq(len.lon * len.lat), expand.grid(x = seqlon, y = seqlat))
+
+    split.lon <- split(seqlon, ceiling(seqlon / nxy.chunksize))
+    split.lat <- split(seqlat, ceiling(seqlat / nxy.chunksize))
+    xgrid <- expand.grid(x = seq_along(split.lon), y = seq_along(split.lat))
+
+    xarrg <- lapply(seq(nrow(xgrid)), function(j){
+        crd <- expand.grid(x = grid$lon[split.lon[[xgrid$x[j]]]],
+                           y = grid$lat[split.lat[[xgrid$y[j]]]])
+        id <- seqcol$id[(seqcol$x %in% split.lon[[xgrid$x[j]]]) &
+                        (seqcol$y %in% split.lat[[xgrid$y[j]]])]
+        list(coords = crd, id = id, grp = rep(j, length(id)))
+    })
+
+    col.idx <- lapply(xarrg, function(x) x$id)
+    col.id <- do.call(c, col.idx)
+    col.grp <- do.call(c, lapply(xarrg, function(x) x$grp))
+    col.order <- order(col.id)
+
+    index$chunksize <- nxy.chunksize * nxy.chunksize
+    index$coords$mat <- list(x = grid$lon, y = grid$lat)
+    index$colInfo <- list(id = col.id, index = col.grp, order = col.order)
+    index$coords$df <- do.call(rbind, lapply(xarrg, function(x) x$coords))
+    attr(index$coords$df, "out.attrs") <- NULL
+
+    return(index)
+}
+

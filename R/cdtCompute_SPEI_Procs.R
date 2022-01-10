@@ -5,7 +5,7 @@ computeSPEIProcs <- function(GeneralParameters){
     input.PREC <- if(GeneralParameters$data.type == 'cdtstation') GeneralParameters$cdtstation$prec else GeneralParameters$cdtdataset$prec
     input.ETP <- if(GeneralParameters$data.type == 'cdtstation') GeneralParameters$cdtstation$etp else GeneralParameters$cdtdataset$etp
 
-    cdtParallelCond <- .cdtData$Config[c('dopar', 'detect.cores', 'nb.cores')]
+    cdtParallelCond <- .cdtData$Config$parallel
 
     if(input.PREC %in% c("", "NA")){
         Insert.Messages.Out(message[['12']], TRUE, 'e')

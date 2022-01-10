@@ -1255,10 +1255,8 @@ qcTTOutlierCheckPanelCmd <- function(){
             periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
             timeSteps <- if(is.null(tstep)) TSTEPVAL0[1] else TSTEPVAL0[periodVAL %in% tstep]
 
-            .cdtData$EnvData$sat <- getInfoNetcdfData(.cdtEnv$tcl$main$win,
-                                                      .cdtData$EnvData$sat,
-                                                      str_trim(tclvalue(dir.plotSat)),
-                                                      timeSteps)
+            .cdtData$EnvData$sat <- getInfoNetCDFData(.cdtEnv$tcl$main$win, .cdtData$EnvData$sat,
+                                                      str_trim(tclvalue(dir.plotSat)))
 
             sdon <- getNCDFSampleData(.cdtData$EnvData$sat$sample)
             if(is.null(sdon)){

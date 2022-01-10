@@ -32,7 +32,7 @@ anomaliesCalcPanelCmd <- function(){
     date.range <- list(start.year = 1981, start.mon = 1, start.dek = 1,
                        start.pen = 1, start.day = 1,
                        start.hour = 0, start.min = 0,
-                       end.year = 2018, end.mon = 12, end.dek = 3,
+                       end.year = 2021, end.mon = 12, end.dek = 3,
                        end.pen = 6, end.day = 31,
                        end.hour = 23, end.min = 55)
 
@@ -44,7 +44,7 @@ anomaliesCalcPanelCmd <- function(){
                               aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 1,
                                                  min.frac = list(unique = TRUE, all = 0.95, month = rep(0.95, 12))),
                               climato = list(clim.exist = FALSE, clim.file = "",
-                                             all.years = TRUE, start.year = 1981, end.year = 2010,
+                                             all.years = TRUE, start.year = 1991, end.year = 2020,
                                              min.year = 20, window = 0),
                               anomaly = "Difference", outdir = list(update = FALSE, dir = ""))
 
@@ -60,14 +60,14 @@ anomaliesCalcPanelCmd <- function(){
     .cdtData$EnvData$TSGraphOp <- list(
                                         anomaly = list(
                                                     anom = NULL,
-                                                    xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-31"),
+                                                    xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2021-12-31"),
                                                     ylim = list(is.min = FALSE, min = -100, is.max = FALSE, max = 100),
                                                     axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                                     title = list(is.title = FALSE, title = '', position = 'top'),
                                                     colors = list(negative = "blue", positive = "red")
                                                   ),
                                         line = list(
-                                                xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2017-12-31"),
+                                                xlim = list(is.min = FALSE, min = "1981-1-1", is.max = FALSE, max = "2021-12-31"),
                                                 ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                                 axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                                 title = list(is.title = FALSE, title = '', position = 'top'),

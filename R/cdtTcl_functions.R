@@ -404,9 +404,10 @@ tk_get_SaveFile <- function(initialdir = getwd(), initialfile = "", filetypes = 
 
 ## File or directory to save result
 ## filedirVar tclVar
-fileORdir2Save <- function(filedirVar, initialdir = getwd(), isFile = TRUE){
+fileORdir2Save <- function(filedirVar, initialdir = getwd(), isFile = TRUE,
+                           filetypes = .cdtEnv$tcl$data$filetypes1)
+{
     if(isFile){
-        filetypes <- .cdtEnv$tcl$data$filetypes1
         if(WindowsOS()){
             file2save <- tclvalue(tkgetSaveFile(initialdir = initialdir,
                                                 initialfile = "",

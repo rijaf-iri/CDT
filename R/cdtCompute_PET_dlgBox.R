@@ -133,9 +133,8 @@ computePET_getParams <- function(){
 
         tkconfigure(set.tmin, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
-                                                                        str_trim(tclvalue(input.Tmin)),
-                                                                        tclvalue(timeSteps))
+            .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
+                                                                        str_trim(tclvalue(input.Tmin)))
             settingTmin <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
@@ -168,9 +167,8 @@ computePET_getParams <- function(){
 
         tkconfigure(set.tmax, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
-                                                                        str_trim(tclvalue(input.Tmax)),
-                                                                        tclvalue(timeSteps))
+            .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
+                                                                        str_trim(tclvalue(input.Tmax)))
             settingTmax <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
@@ -203,9 +201,8 @@ computePET_getParams <- function(){
 
         tkconfigure(set.prec, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            .cdtData$GalParams$cdtnetcdf[["prec"]] <- getInfoNetcdfData(tt, .cdtData$GalParams$cdtnetcdf[["prec"]],
-                                                                        str_trim(tclvalue(input.Prec)),
-                                                                        tclvalue(timeSteps))
+            .cdtData$GalParams$cdtnetcdf[["prec"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["prec"]],
+                                                                        str_trim(tclvalue(input.Prec)))
             settingPrec <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
