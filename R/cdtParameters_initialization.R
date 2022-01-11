@@ -84,7 +84,7 @@ cdt.init.params <- function(action, tstep){
     ## combine multiple NetCDF files
     if(action == 'combine.NetCDF'){
         ret.params <- list(action = action,
-                           tstep = "daily", minhour = 1,
+                           tstep = "daily", minhour = 1, date.range = date.range,
                            ncdf = list(dir = "", sample = "", format = "rr_mrg_%s%s%s.nc"),
                            file2save = "")
     }

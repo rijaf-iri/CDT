@@ -4,6 +4,9 @@
         <text lang="en"> Combine NetCDF Data </text>
     </title>
     <widget>
+        <button id="1">
+            <text lang="en"> Set Date-Time Range </text>
+        </button>
         <label id="1">
             <text lang="en"> Time step </text>
         </label>
@@ -17,6 +20,12 @@
     <message>
         <content id="1">
             <text lang="en"> Combine NetCDF data ................. </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Combining NetCDF data finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Combining NetCDF data failed </text>
         </content>
     </message>
 </dialog_box>

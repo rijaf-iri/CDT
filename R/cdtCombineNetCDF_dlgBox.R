@@ -1,10 +1,10 @@
 
 combine.netcdf_getParams <- function(){
     if(WindowsOS()){
-        largeur0 <- 23
+        largeur0 <- 15
         largeur1 <- 46
     }else{
-        largeur0 <- 23
+        largeur0 <- 15
         largeur1 <- 45
     }
 
@@ -35,12 +35,21 @@ combine.netcdf_getParams <- function(){
     txt.tstep <- tklabel(frTstep, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     cb.tstep <- ttkcombobox(frTstep, values = CbperiodVAL, textvariable = timeStep, justify = 'center', width = largeur0)
     cb.minhour <- ttkcombobox(frTstep, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
+    bt.range <- ttkbutton(frTstep, text = lang.dlg[['button']][['1']])
 
     tkgrid(txt.tstep, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.tstep, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.minhour, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.range, row = 0, column = 10, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
     ############
+
+    tkconfigure(bt.range, command = function(){
+        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+    })
 
     tkbind(cb.tstep, "<<ComboboxSelected>>", function(){
         intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]

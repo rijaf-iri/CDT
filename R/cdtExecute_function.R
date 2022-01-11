@@ -74,6 +74,15 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
+    ## Combine multiple NetCDF
+    if(.cdtData$GalParams$action == 'combine.NetCDF'){
+        ret <- try(combine.netcdf_writeNC(), silent = TRUE)
+
+        msg0 <- .cdtData$GalParams[['message']][['2']]
+        msg1 <- .cdtData$GalParams[['message']][['3']]
+        Execute_end_msg(ret, msg0, msg1)
+    }
+
     ## Blanking NetCDF grid
     if(.cdtData$GalParams$action == 'blank.NetCDF'){
         ret <- try(blankNcdf_Execute(), silent = TRUE)
