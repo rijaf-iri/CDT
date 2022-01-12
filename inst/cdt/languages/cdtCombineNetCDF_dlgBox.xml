@@ -27,5 +27,11 @@
         <content id="3">
             <text lang="en"> Combining NetCDF data failed </text>
         </content>
+        <content id="4">
+            <text lang="en"> No NetCDF files found </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Unable to open the NetCDF sample </text>
+        </content>
     </message>
 </dialog_box>
