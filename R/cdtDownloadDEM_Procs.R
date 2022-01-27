@@ -16,13 +16,13 @@ ExecDownload_DEM <- function(){
     ret <- try(utils::download.file(link, destfile, method = "auto", quiet = TRUE, mode = "wb", cacheOK = TRUE), silent = TRUE)
 
     if(inherits(ret, "try-error")){
-        Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], format = TRUE)
-        Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), format = TRUE)
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], TRUE, "e")
+        Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), TRUE, "e")
     }else{
         if(ret == 0)
             Insert.Messages.Out(.cdtData$GalParams[['message']][['4']], TRUE, "s")
         else
-            Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], format = TRUE)
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], TRUE, "e")
     }
 
     ## NOAA NGDC ETOPO1: ETOPO1 Grid Registered 1 Arc-Minute Global Relief Model
@@ -35,13 +35,14 @@ ExecDownload_DEM <- function(){
     ret1 <- try(utils::download.file(link1, destfile1, method = "auto", quiet = TRUE, mode = "wb", cacheOK = TRUE), silent = TRUE)
 
     if(inherits(ret1, "try-error")){
-        Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], format = TRUE)
-        Insert.Messages.Out(gsub('[\r\n]', '', ret1[1]), format = TRUE)
+        Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], TRUE, "e")
+        Insert.Messages.Out(gsub('[\r\n]', '', ret1[1]), TRUE, "e")
     }else{
         if(ret1 == 0)
             Insert.Messages.Out(.cdtData$GalParams[['message']][['6']], TRUE, "s")
         else
-            Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], format = TRUE)
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['7']], TRUE, "e")
     }
+
     return(0)
 }

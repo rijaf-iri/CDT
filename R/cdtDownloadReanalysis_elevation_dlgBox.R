@@ -126,9 +126,9 @@ download_Elevation_Reanalysis <- function(){
 
             if(testConnection()){
                 Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, "i")
-                # ExecDownload_DEM()
+                download_ReanalysisDEM()
             }else{
-                Insert.Messages.Out(lang.dlg[['message']][['2']], format = TRUE)
+                Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "e")
                 return(NULL)
             }
         }

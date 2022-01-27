@@ -39,10 +39,11 @@ readCDTStationData <- function(file, sep = ",", na.strings = "-99"){
 #' @param data CDT stations data objects.
 #' @param file character, full path to the file to save the CDT data
 #' @param na.strings character, the missing values flag to write to the file
+#' @param sep character, the column separator
 #' 
 #' @export
 
-writeCDTStationData <- function(data, file, na.strings = "-99"){
+writeCDTStationData <- function(data, file, na.strings = "-99", sep = " "){
     if(!inherits(data, "cdtstationdata"))
         stop("data is not a CDT stations data object")
 

@@ -4,7 +4,7 @@
 \alias{writeCDTStationData}
 \title{Write CDT station format to a file.}
 \usage{
-writeCDTStationData(data, file, na.strings = "-99")
+writeCDTStationData(data, file, na.strings = "-99", sep = " ")
 }
 \arguments{
 \item{data}{CDT stations data objects.}
@@ -12,6 +12,8 @@ writeCDTStationData(data, file, na.strings = "-99")
 \item{file}{character, full path to the file to save the CDT data}
 
 \item{na.strings}{character, the missing values flag to write to the file}
+
+\item{sep}{character, the column separator}
 }
 \description{
 Write CDT station format to a file.

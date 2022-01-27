@@ -121,5 +121,9 @@
             <text lang="en"> Download complete </text>
             <text lang="fr"> Téléchargement termininé </text>
         </content>
+        <content id="5">
+            <text lang="en"> Download failed </text>
+            <text lang="fr"> Téléchargement échoué </text>
+        </content>
     </message>
 </dialog_box>

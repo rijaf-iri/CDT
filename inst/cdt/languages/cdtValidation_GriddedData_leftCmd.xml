@@ -316,22 +316,28 @@
             <text lang="en"> Unable to load Validation data </text>
         </content>
         <content id="5">
-            <text lang="en"> Unable to read DEM data </text>
-        </content>
-        <content id="6">
             <text lang="en"> Directory to save results does not exist </text>
         </content>
+        <content id="6">
+            <text lang="en"> The two CDT datasets have different resolution or bbox </text>
+        </content>
         <content id="7">
-            <text lang="en"> IDs of the two stations data do not match </text>
+            <text lang="en"> The two CDT datasets have different chunk size </text>
         </content>
         <content id="8">
-            <text lang="en"> The dates of the two stations data do not match </text>
+            <text lang="en"> The dates of the two CDT datasets do not match </text>
         </content>
         <content id="9">
             <text lang="en"> No data found </text>
         </content>
         <content id="10">
             <text lang="en"> Aggregate data ... </text>
+        </content>
+        <content id="10-1">
+            <text lang="en"> Aggregate CDT dataset used to validate ... </text>
+        </content>
+        <content id="10-2">
+            <text lang="en"> Aggregate CDT dataset to be validated ... </text>
         </content>
         <content id="11">
             <text lang="en"> No aggregation, too much missing values </text>
@@ -343,16 +349,28 @@
             <text lang="en"> Calculate statistics ... </text>
         </content>
         <content id="14">
-            <text lang="en"> No threshold file found for volumetric statistics </text>
+            <text lang="en"> The netCDF file containing the threshold not found for volumetric statistics </text>
         </content>
         <content id="15">
-            <text lang="en"> IDs of the provided threshold do not match </text>
+            <text lang="en"> The netCDF file containing the threshold and two CDT datasets have different resolution or bbox </text>
         </content>
         <content id="16">
             <text lang="en"> No enough data to compute the percentile </text>
         </content>
         <content id="17">
             <text lang="en"> Statistics calculation done </text>
+        </content>
+        <content id="18-1">
+            <text lang="en"> Unable to read CDT dataset used to validate </text>
+        </content>
+        <content id="18-2">
+            <text lang="en"> CDT dataset used to validate is not </text>
+        </content>
+        <content id="19-1">
+            <text lang="en"> Unable to read CDT dataset to be validated </text>
+        </content>
+        <content id="19-2">
+            <text lang="en"> CDT dataset to be validated is not </text>
         </content>
     </message>
 </panel_cmd>

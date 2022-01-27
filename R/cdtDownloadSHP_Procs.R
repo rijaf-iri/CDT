@@ -11,16 +11,17 @@ ExecDownload_GADM <- function(){
     layer <- paste('gadm36', .cdtData$GalParams$cntr_iso3, .cdtData$GalParams$level, 'sp', sep = "_")
     urlfl <- paste0(baseURL, layer, '.rds')
     destfl <- paste0(tempfile(), '.rds')
-    ret <- try(utils::download.file(urlfl, destfl, method = "auto", quiet = TRUE, mode = "wb", cacheOK = TRUE), silent = TRUE)
+
+    # ret <- try(utils::download.file(urlfl, destfl, method = "auto", quiet = TRUE, mode = "wb", cacheOK = TRUE), silent = TRUE)
+
+    handle <- curl::new_handle()
+    curl::handle_setopt(handle, ssl_verifypeer = FALSE)
+    ret <- try(curl::curl_download(urlfl, destfl, handle = handle), silent = TRUE)
+
     if(inherits(ret, "try-error")){
         Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], format = TRUE)
         Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), format = TRUE)
         return(NULL)
-    }else{
-        if(ret != 0){
-            Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], format = TRUE)
-            return(NULL)
-        }
     }
 
     shp <- readRDS(destfl)
