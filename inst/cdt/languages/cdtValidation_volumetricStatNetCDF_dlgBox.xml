@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Volumetric Statistics - Settings </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Observed Data </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Estimated Data </text>
+            </option>
+        </combobox>
+        <button id="1">
+            <text lang="en"> Set Base Period </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> User specified values </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Use a unique threshold value </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Threshold value </text>
+        </label>
+        <label id="2">
+            <text lang="en"> NetCDF file containing the thresholds data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Compute percentile from </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Percentile </text>
+        </label>
+        <label id="5">
+            <text lang="en"> th </text>
+            <text lang="fr"> ème </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Uncheck this box if you want to compute the threshold from the input data by specifying a percentile </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Uncheck this box if you want to compute the threshold from the input data by specifying a percentile </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Provide the threshold to use </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Provide the threshold to use </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Select the netCDF file containing the threshold to use \n(the netCDF grid must the same as the inputs CDT dataset)\n It may be a percentiles data already computed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the netCDF file containing the threshold to use </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Or browse here </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Select the source of data to use to compute the percentile </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the source of data to use to compute the percentile </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Specify the percentile to be computed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Specify the percentile to be computed </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Click on this button to set the period to compute the percentile </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Click on this button to set the period to compute the percentile </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Provide the netCDF file containing the threshold data </text>
+        </content>
+    </message>
+</dialog_box>
