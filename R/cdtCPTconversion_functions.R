@@ -472,10 +472,8 @@ CPT.parse.Date.Filename <- function(dirNC, filename){
 
 CPT.convertGridData.Files <- function(ncInfo, output.file, cptInfo = NULL){
     cnpth.daty <- CPT.parse.Date.Filename(ncInfo$dir, ncInfo$format)
-    if(is.null(cnpth.daty)){
-        Insert.Messages.Out(.cdtData$GalParams[['message']][['8']], format = TRUE)
-        return(NULL)
-    }
+    if(is.null(cnpth.daty)) return(NULL)
+
     cat("xmlns:cpt=http://iri.columbia.edu/CPT/v10/\n", file = output.file, append = TRUE)
     cat("cpt:nfields=1\n", file = output.file, append = TRUE)
 

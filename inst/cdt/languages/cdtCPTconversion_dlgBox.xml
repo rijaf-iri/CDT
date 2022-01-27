@@ -11,8 +11,8 @@
                 <text lang="fr"> Format de données CDT de stations </text>
             </option>
             <option id="2">
-                <text lang="en"> NetCDF gridded data </text>
-                <text lang="fr"> Données NetCDF </text>
+                <text lang="en"> netCDF gridded data </text>
+                <text lang="fr"> Données netCDF </text>
             </option>
         </combobox>
         <label id="1">
@@ -24,8 +24,8 @@
             <text lang="fr"> Fichier contenant des données de stations </text>
         </label>
         <label id="3">
-            <text lang="en"> Directory of the NetCDF files </text>
-            <text lang="fr"> Répertoire des fichiers NetCDF </text>
+            <text lang="en"> Directory of the netCDF files </text>
+            <text lang="fr"> Répertoire des fichiers netCDF </text>
         </label>
         <label id="4">
             <text lang="en"> Field Name </text>
@@ -116,8 +116,8 @@
             <text lang="fr"> Fournir le fichier pour enregistrer les résultats </text>
         </content>
         <content id="3">
-            <text lang="en"> You have to set the netcdf files parameters </text>
-            <text lang="fr"> Vous devez définir les paramètres des fichiers netcdf </text>
+            <text lang="en"> You have to set the netCDF files parameters </text>
+            <text lang="fr"> Vous devez définir les paramètres des fichiers netCDF </text>
         </content>
         <content id="4">
             <text lang="en"> Converting data into CPT data format finished successfully </text>
@@ -132,12 +132,20 @@
             <text lang="fr"> Conversion au format de données CPT ...... </text>
         </content>
         <content id="7">
-            <text lang="en"> No netcdf data sample found </text>
-            <text lang="fr"> Aucun exemple de données netcdf trouvé </text>
+            <text lang="en"> No netCDF data sample found </text>
+            <text lang="fr"> Aucun exemple de données netCDF trouvé </text>
         </content>
         <content id="8">
-            <text lang="en"> No netcdf files found </text>
-            <text lang="fr"> Aucun fichier netcdf trouvé </text>
+            <text lang="en"> No netCDF files found </text>
+            <text lang="fr"> Aucun fichier netCDF trouvé </text>
+        </content>
+        <content id="9">
+            <text lang="en"> File containing the station data does not exist </text>
+            <text lang="fr"> Le fichier contenant les données n'existe pas </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Folder containing the netCDF files does not exist </text>
+            <text lang="fr"> Le dossier contenant les fichiers netCDF n'existe pas </text>
         </content>
     </message>
 </dialog_box>
