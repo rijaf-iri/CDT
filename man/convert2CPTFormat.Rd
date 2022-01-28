@@ -24,16 +24,6 @@ convert2CPTFormat(
 \item{\code{na.strings}: }{character, missing values flag}
 }}
 
-\item{netcdf.data}{named list, providing the input netCDF dataset to convert.
-\itemize{
-\item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
-\item{\code{format}: }{character, format of the netCDF file names}
-\item{\code{varid}: }{character, name of the variable to read from the netCDF data}
-\item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
-Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
-\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
-}}
-
 \item{cpt.varinfo}{named list, information about the field of the output CPT file.
 \itemize{
 \item{\code{name}: }{character, the field name}

@@ -512,6 +512,7 @@ CPT.convertGridData.Files <- function(ncInfo, output.file, cptInfo = NULL){
         xdon <- ncvar_get(nc, varid = ncInfo$varid)
         nc_close(nc)
         xdon <- transposeNCDFData(xdon, ncInfo)
+        xdon <- round(xdon, 5)
         xdon[is.na(xdon)] <- cptInfo$missval
         ncmax <- max(nchar(formatC(xdon)))
 
