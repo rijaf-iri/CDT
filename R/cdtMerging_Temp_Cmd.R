@@ -126,7 +126,7 @@ cdtMergingTempCMD <- function(time.step = "dekadal",
                               GUI = FALSE)
 {
     cdtLocalConfigData()
-    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_Merging_dlgBox.xml")
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtMerging_ClimData_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
     message <- lang.dlg[['message']]
 
