@@ -51,7 +51,7 @@ download_ReanalysisDEM <- function(){
                                longname = longname, compression = 6)
 
     nc <- ncdf4::nc_create(demfile, grddem)
-    ncdf4::ncvar_put(nc, grddem, geo)
+    ncdf4::ncvar_put(nc, grddem, dem)
     ncdf4::nc_close(nc)
 
     Insert.Messages.Out(.cdtData$GalParams[['message']][['4']], TRUE, "s")
