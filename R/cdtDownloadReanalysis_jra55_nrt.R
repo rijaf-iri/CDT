@@ -16,8 +16,16 @@ jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
 
     wgrib_exe <- file.path(.cdtDir$dirLocal, 'wgrib', 'wgrib')
     if(!file.exists(wgrib_exe)){
-        Insert.Messages.Out("wgrib not found", TRUE, "e", GUI)
-        return(-2)
+        if(WindowsOS()){
+            wgrib_exe <- file.path(.cdtDir$dirLocal, 'wgrib', 'wgrib.exe')
+            if(!file.exists(wgrib_exe)){
+                Insert.Messages.Out("wgrib not found", TRUE, "e", GUI)
+                return(-2)
+            }
+        }else{
+            Insert.Messages.Out("wgrib not found", TRUE, "e", GUI)
+            return(-2)
+        }
     }
 
     ######################
