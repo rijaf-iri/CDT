@@ -1,5 +1,5 @@
 
-read_ValidationMultipleData <- function(GeneralParameters){
+getData_Validation_MultipleData <- function(GeneralParameters){
     message <- .cdtData$EnvData$message
     inputInfo <- GeneralParameters[c('intstep', 'STN.file', 'VALID.files')]
     readstnData <- TRUE
@@ -180,7 +180,7 @@ read_ValidationMultipleData <- function(GeneralParameters){
     return(0)
 }
 
-ValidationMultipleDataProcs <- function(GeneralParameters){
+procs_Validation_MultipleData <- function(GeneralParameters){
     if(GeneralParameters$validExist){
         outValidation <- dirname(.cdtData$EnvData$file.hovd)
     }else{

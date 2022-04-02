@@ -1,5 +1,5 @@
 
-ValidationDataProcs <- function(GeneralParameters){
+procs_Validation_PointsData <- function(GeneralParameters){
     if(GeneralParameters$validExist){
         outValidation <- dirname(.cdtData$EnvData$file.hovd)
     }else{

@@ -1036,7 +1036,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
             tcl('update')
             ret <- tryCatch(
                 {
-                    ValidationDataProcs(GeneralParameters)
+                    procs_Validation_PointsData(GeneralParameters)
                 },
                 warning = function(w) warningFun(w),
                 error = function(e) errorFun(e),

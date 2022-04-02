@@ -521,6 +521,9 @@ Validation.MultiData.PanelCmd <- function(clim.var){
             tkconfigure(bt.stn.graph.prev, state = stateStnID)
             tkconfigure(bt.stn.graph.next, state = stateStnID)
 
+            tkconfigure(cb.rank.sel, state = stateStnID)
+            tkconfigure(bt.rank.prev, state = stateStnID)
+            tkconfigure(bt.rank.next, state = stateStnID)
 
             itype <- if(statsdata == 'all') 1:2 else 1:3
             CbTypeGRAPH <- typeGraphCombo[itype]
@@ -573,7 +576,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
                 ret <- tryCatch(
                     {
-                        read_ValidationMultipleData(parsInput)
+                        getData_Validation_MultipleData(parsInput)
                     },
                     warning = function(w) warningFun(w),
                     error = function(e) errorFun(e),
@@ -613,13 +616,15 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
             #####
 
-            assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
+            # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
+
+            #####
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
             ret <- tryCatch(
                 {
-                    ValidationMultipleDataProcs(GeneralParameters)
+                    procs_Validation_MultipleData(GeneralParameters)
                 },
                 warning = function(w) warningFun(w),
                 error = function(e) errorFun(e),
@@ -1021,9 +1026,9 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         STNIDRANK <- ""
         .cdtData$EnvData$stnIDRank <- tclVar()
 
-        bt.rank.prev <- ttkbutton(frameRankS, text = "<<", state = stateDispSTN, width = largeur7)
-        bt.rank.next <- ttkbutton(frameRankS, text = ">>", state = stateDispSTN, width = largeur7)
-        cb.rank.sel <- ttkcombobox(frameRankS, values = STNIDRANK, textvariable = .cdtData$EnvData$stnIDRank, width = largeur3, state = stateDispSTN,  justify = 'center')
+        bt.rank.prev <- ttkbutton(frameRankS, text = "<<", state = stateStnID, width = largeur7)
+        bt.rank.next <- ttkbutton(frameRankS, text = ">>", state = stateStnID, width = largeur7)
+        cb.rank.sel <- ttkcombobox(frameRankS, values = STNIDRANK, textvariable = .cdtData$EnvData$stnIDRank, width = largeur3, state = stateStnID,  justify = 'center')
 
         tkgrid(bt.rank.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(cb.rank.sel, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
