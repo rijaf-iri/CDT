@@ -7,7 +7,7 @@ Climate Data Tools `CDT` is a  set of utility functions for meteorological data 
 ### 1) Install `R`
 
 Go to the CRAN website [CRAN](https://CRAN.R-project.org).
-Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`. For example: [Download R 3.6.2 for Windows](https://cran.r-project.org/bin/windows/base/R-4.0.3-win.exe) (85 megabytes, 32/64 bit).
+Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`.
 Install the downloaded file (example: R-3.6.2-win.exe). Perform a default installation (Just click on **Next**).
 
 ```
@@ -351,7 +351,13 @@ startCDT()
 To only update `CDT` without updating all dependencies packages, enter the following command on `R` console
 
 ```r
-devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, upgrade_dependencies = FALSE, force = TRUE)
+if(packageVersion("devtools") >= "2.0.0"){
+    devtools::install_github("rijaf-iri/CDT", dependencies = FALSE,
+                              upgrade = FALSE, force = TRUE)
+}else{
+    devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, 
+                              upgrade_dependencies = FALSE, force = TRUE)
+}
 ```
 
 To update `CDT` and all dependencies packages, use 
