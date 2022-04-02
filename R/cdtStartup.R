@@ -1685,7 +1685,13 @@ startCDT <- function(wd = NA, lang = NA){
 
                 if(testConnection()){
                     if(Sys.getenv("TAR")[1] == "") Sys.setenv("TAR" = "internal")
-                    devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, upgrade_dependencies = FALSE, force = TRUE)
+                    if(packageVersion("devtools") >= "2.0.0"){
+                        devtools::install_github("rijaf-iri/CDT", dependencies = FALSE,
+                                                 upgrade = FALSE, force = TRUE)
+                    }else{
+                        devtools::install_github("rijaf-iri/CDT", dependencies = FALSE, 
+                                                  upgrade_dependencies = FALSE, force = TRUE)
+                    }
                     Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['12']], TRUE, 's')
                     Insert.Messages.Out(.cdtEnv$tcl$lang$global[['message']][['13']], TRUE, 'i')
                 }else{
