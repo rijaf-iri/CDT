@@ -160,6 +160,15 @@ split_3d.netcdf_writeNC <- function(){
     ret <- lapply(seq_along(ncfiles), function(jj){
         ncin <- ncdf4::nc_open(file.path(nc.dir, ncfiles[jj]))
         time.dim <- ncin$dim[[ncpars$dim[[3]]$name]]
+        if(is.null(time.dim$calendar)){
+            attr <- ncdf4::ncatt_get(ncin, 0, 'calendar')
+            if(attr$hasatt){
+                time.dim$calendar <- attr$value
+            }else{
+                time.dim$calendar <- "standard"
+            }
+        }
+
         daty <- format.netcdf.time(ncpars, time.dim)
 
         for(i in seq_along(daty)){
