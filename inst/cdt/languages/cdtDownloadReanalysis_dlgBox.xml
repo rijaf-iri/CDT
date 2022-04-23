@@ -92,8 +92,8 @@
             <text lang="fr"> Reanalysis Product </text>
         </label>
         <label id="3">
-            <text lang="en"> Source : </text>
-            <text lang="fr"> Source : </text>
+            <text lang="en"> Data Source </text>
+            <text lang="fr"> Data Source </text>
         </label>
         <label id="4">
             <text lang="en"> Login to : </text>

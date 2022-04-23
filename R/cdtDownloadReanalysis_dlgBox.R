@@ -98,18 +98,18 @@ download_Reanalysis <- function(){
     if(WindowsOS()){
         largeur0 <- 64
         largeur1 <- 27
-        largeur2 <- 40
-        largeur3 <- 15
-        largeur5 <- 30
-        largeur6 <- 25
+        largeur2 <- 37
+        largeur3 <- 20
+        largeur5 <- 42
+        largeur6 <- 30
         largeur7 <- 15
     }else{
         largeur0 <- 61
         largeur1 <- 27
-        largeur2 <- 40
-        largeur3 <- 15
-        largeur5 <- 30
-        largeur6 <- 25
+        largeur2 <- 37
+        largeur3 <- 20
+        largeur5 <- 42
+        largeur6 <- 30
         largeur7 <- 15
     }
 
@@ -186,22 +186,27 @@ download_Reanalysis <- function(){
 
     ###########################
 
-    txt.vars <- tklabel(frRFE, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-    cb.vars <- ttkcombobox(frRFE, values = CbvarsVAL, textvariable = downVar, width = largeur2)
-    txt.prod <- tklabel(frRFE, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-    cb.prod <- ttkcombobox(frRFE, values = CbprodVAL, textvariable = reanalProd, width = largeur3)
-    txt.src <- tklabel(frRFE, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
-    cb.src <- ttkcombobox(frRFE, values = CbsrcVAL, textvariable = reanalSrc, width = largeur5)
+    frREAN <- tkframe(frRFE)
+    txt.prod <- tklabel(frREAN, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
+    cb.prod <- ttkcombobox(frREAN, values = CbprodVAL, textvariable = reanalProd, width = largeur3)
+    txt.src <- tklabel(frREAN, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'right')
+    cb.src <- ttkcombobox(frREAN, values = CbsrcVAL, textvariable = reanalSrc, width = largeur5)
+
+    frVARDATE <- tkframe(frRFE)
+    txt.vars <- tklabel(frVARDATE, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
+    cb.vars <- ttkcombobox(frVARDATE, values = CbvarsVAL, textvariable = downVar, width = largeur2)
 
     bt.range <- ttkbutton(frRFE, text = lang.dlg[['button']][['3']])
 
-    txt.log1 <- tklabel(frRFE, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
-    txt.log2 <- tklabel(frRFE, text = tclvalue(url.log), textvariable = url.log, anchor = 'w', justify = 'left')
+    frLOGIN <- tkframe(frRFE)
+    txt.log1 <- tklabel(frLOGIN, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
+    txt.log2 <- tklabel(frLOGIN, text = tclvalue(url.log), textvariable = url.log, anchor = 'w', justify = 'left')
 
-    txt.usr <- tklabel(frRFE, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
-    en.usr <- tkentry(frRFE, textvariable = username, state = statepwd, width = largeur6, justify = "left")
-    txt.pwd <- tklabel(frRFE, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
-    en.pwd <- tkentry(frRFE, textvariable = password, show = "*", state = statepwd, width = largeur7, justify = "left")
+    frUSER <- tkframe(frRFE)
+    txt.usr <- tklabel(frUSER, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
+    en.usr <- tkentry(frUSER, textvariable = username, state = statepwd, width = largeur6, justify = "left")
+    txt.pwd <- tklabel(frUSER, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
+    en.pwd <- tkentry(frUSER, textvariable = password, show = "*", state = statepwd, width = largeur7, justify = "left")
 
     bt.info <- ttkbutton(frRFE, text = lang.dlg[['button']][['4']])
 
@@ -232,24 +237,29 @@ download_Reanalysis <- function(){
 
     ###########################
 
-    tkgrid(txt.vars, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.vars, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.prod, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.prod, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.prod, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.prod, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.src, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.src, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(txt.src, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.src, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.range, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.vars, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.vars, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(txt.log1, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(txt.log2, row = 4, column = 1, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(txt.log1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.log2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(txt.usr, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.usr, row = 5, column = 1, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.pwd, row = 5, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.pwd, row = 5, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.usr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.usr, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.pwd, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.pwd, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(bt.info, row = 6, column = 2, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(frREAN, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frVARDATE, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.range, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frLOGIN, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frUSER, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(bt.info, row = 4, column = 1, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     helpWidget(cb.vars, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(cb.prod, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
