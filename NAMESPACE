@@ -34,6 +34,8 @@ importFrom("sp", "over", "bbox", "CRS", "geometry",
 importFrom("stats", "sd", "var", "cor", "cov", "quantile", "lm",
            "glm", "update", "ecdf", "median", "residuals", "as.formula",
            "formula", "qnorm", "pnorm", "dnorm", "pgamma", "qgamma", "predict")
+#importFrom("fGarch", "dsnorm", "psnorm", "qsnorm", "rsnorm")
+#importFrom("evd", "dgumbel", "pgumbel", "qgumbel", "rgumbel")
 
 importFrom(latticeExtra, xyplot.list)
 

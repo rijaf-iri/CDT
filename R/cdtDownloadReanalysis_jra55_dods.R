@@ -145,6 +145,11 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     last_time <- origin + 24 * 3600 * last_incr/times_pars$fac
     if(end > last_time) end <- last_time
+    if(start > end){
+        lastT <- format(last_time, "%Y-%m-%d %H:%M:%S")
+        Insert.Messages.Out(paste("Last date of available data", lastT), TRUE, "e", GUI)
+        return(-2)
+    }
 
     seq_times <- seq(start, end, "3 hours")
     split_times <- split(seq_times, ceiling(seq_along(seq_times)/40))
