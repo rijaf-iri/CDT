@@ -90,7 +90,7 @@ getInfoDateRange <- function(parent.win, Parameters, tstep)
         "minute" = c(1:2, 5:7),
         NA)
 
-    if(!is.na(ix))
+    if(all(!is.na(ix)))
         state[c(dtstart[ix], dtend[ix])] <- "normal"
 
     ###################
