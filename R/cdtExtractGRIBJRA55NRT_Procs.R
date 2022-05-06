@@ -14,9 +14,18 @@ jra55_nrt.extract.downloaded.grib <- function(GUI = TRUE){
 
     wgrib_exe <- file.path(.cdtDir$dirLocal, 'wgrib', 'wgrib')
     if(!file.exists(wgrib_exe)){
-        Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], TRUE, "e", GUI)
-        return(-2)
+        if(WindowsOS()){
+            wgrib_exe <- file.path(.cdtDir$dirLocal, 'wgrib', 'wgrib.exe')
+            if(!file.exists(wgrib_exe)){
+                Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], TRUE, "e", GUI)
+                return(-2)
+            }
+        }else{
+            Insert.Messages.Out(.cdtData$GalParams[['message']][['5']], TRUE, "e", GUI)
+            return(-2)
+        }
     }
+
 
     ######################
 
