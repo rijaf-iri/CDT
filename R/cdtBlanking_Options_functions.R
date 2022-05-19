@@ -42,7 +42,7 @@ blanking.options <- function(...){
 
 .defaultBlankingOptions <- function(){
     list(
-         bufferOption = "default",
+         bufferOption = "user",
          bufferWidth = 0
         )
 }
