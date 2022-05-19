@@ -407,7 +407,7 @@ SpatialInterpPanelCmd <- function(){
                     )
 
             if(!is.null(ret)){
-                if(ret == 0){
+                if(ret %in% c(-1, 0)){
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "s")
 
                     if(GeneralParameters$intstep == "others"){

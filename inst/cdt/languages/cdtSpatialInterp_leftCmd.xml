@@ -24,7 +24,7 @@
             <text lang="en"> Set Date Range </text>
         </button>
         <button id="2">
-            <text lang="en"> Interpolations Parameters </text>
+            <text lang="en"> Interpolation Parameters </text>
         </button>
         <button id="3">
             <text lang="en"> Create Grid for Interpolation </text>
