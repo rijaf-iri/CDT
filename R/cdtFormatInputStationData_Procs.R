@@ -76,7 +76,7 @@ formatCDTDataMultiple.Files <- function(){
                                         sep = donneInfo[[3]]$sepr,
                                         skip = donneInfo[[3]]$skip - 1, 
                                         na.strings = donneInfo[[3]]$miss.val,
-                                        quote = "\"'", strip.white = TRUE,
+                                        quote = "\"", strip.white = TRUE,
                                         stringsAsFactors = FALSE,
                                         colClasses = "character", comment.char = ""
                                         ),

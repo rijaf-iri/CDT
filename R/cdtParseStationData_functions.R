@@ -23,7 +23,8 @@ readCDTStationData <- function(file, sep = ",", na.strings = "-99"){
     donne <- utils::read.table(file, sep = sep,
                                na.strings = na.strings,
                                colClasses = "character",
-                               stringsAsFactors = FALSE)
+                               stringsAsFactors = FALSE,
+                               quote = "\"")
     dat <- splitCDTData0(donne, GUI = FALSE)
     if(is.null(dat))
         stop("Station data is not in a standard CDT format")

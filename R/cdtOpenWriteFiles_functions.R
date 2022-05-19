@@ -14,7 +14,7 @@ openFiles <- function(parent, fileopen){
         delimter <- preview.data(parent, fileopen)
         if(!is.null(delimter)){
             dat.file <- try(read.table(fileopen, header = delimter$header, sep = delimter$sepr,
-                                    skip = delimter$skip-1, na.strings = delimter$miss.val, quote = "\"'",
+                                    skip = delimter$skip-1, na.strings = delimter$miss.val, quote = "\"",
                                     strip.white = TRUE, stringsAsFactors = FALSE,
                                     colClasses = "character", comment.char = ""), silent = TRUE)
             # dat.file <- try(data.table::fread(fileopen, header = delimter$header, sep = delimter$sepr,
