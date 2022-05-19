@@ -266,7 +266,7 @@ StnChkCoordsCorrect <- function(){
                         paste0('Checked_Coords_', .cdtData$EnvData$output$params$infile))
     don0 <- read.table(fileout, header = info[[3]]$header,
                        sep = info[[3]]$sepr, na.strings = info[[3]]$miss.val,
-                       stringsAsFactors = FALSE, colClasses = "character")
+                       stringsAsFactors = FALSE, colClasses = "character", quote = "\"")
     filemap <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', 'Display.rds')
     map.disp <- readRDS(filemap)
     nom1 <- names(map.disp)
