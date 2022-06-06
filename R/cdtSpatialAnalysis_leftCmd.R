@@ -371,23 +371,37 @@ spatialAnalysisPanelCmd <- function(){
             tkconfigure(cb.seasS, state = stateSeas)
             tkconfigure(cb.seasL, state = stateSeas)
 
-            seasdef <- ""
-            if(outstep == 'seasonal'){
-                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-                len <- as.numeric(str_trim(tclvalue(length.mon)))
-                mon1 <- (mon + len - 1) %% 12
-                mon1[mon1 == 0] <- 12
-                seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
-            }
-            if(outstep == 'annual'){
-                tclvalue(start.mon) <- MOIS[1]
-                tclvalue(length.mon) <- 12
-                seasdef <- paste(MOIS[1], "->", MOIS[12])
-            }
-            tclvalue(season.def) <- seasdef
+            tkdestroy(inMonthSeas)
 
-            stateMonth <- if(outstep == 'monthly') "normal" else "disabled" 
-            tkconfigure(bt.MonAnalyze, state = stateMonth)
+            if(outstep == 'monthly'){
+                inMonthSeas <<- ttkbutton(frDispSeas, text = lang.dlg[['button']][['3']])
+
+                helpWidget(inMonthSeas, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
+
+                tkconfigure(inMonthSeas, command = function(){
+                    GeneralParameters$use.month <<- getInfoMonths2Process(.cdtEnv$tcl$main$win,
+                                                                          GeneralParameters$use.month)
+                })
+            }else{
+                seasdef <- ""
+                if(outstep == 'seasonal'){
+                    mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
+                    len <- as.numeric(str_trim(tclvalue(length.mon)))
+                    mon1 <- (mon + len - 1) %% 12
+                    mon1[mon1 == 0] <- 12
+                    seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
+                }
+                if(outstep == 'annual'){
+                    tclvalue(start.mon) <- MOIS[1]
+                    tclvalue(length.mon) <- 12
+                    seasdef <- paste(MOIS[1], "->", MOIS[12])
+                }
+                tclvalue(season.def) <- seasdef
+
+                inMonthSeas <<- tklabel(frDispSeas, text = tclvalue(season.def), textvariable = season.def)
+            }
+
+            tkgrid(inMonthSeas, row = 0, column = 0, sticky = 'we')
 
             stateAggr <- if(outstep == 'monthly' & instep == 'monthly') "disabled" else "normal"
             tkconfigure(bt.AggrFun, state = stateAggr)
@@ -458,9 +472,20 @@ spatialAnalysisPanelCmd <- function(){
         seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
         season.def <- tclVar(seasdef)
 
-        txt.SeasD <- tklabel(frDispSeas, text = tclvalue(season.def), textvariable = season.def)
+        if(GeneralParameters$out.series$tstep == 'monthly'){
+            inMonthSeas <- ttkbutton(frDispSeas, text = lang.dlg[['button']][['3']])
 
-        tkgrid(txt.SeasD, row = 0, column = 0, sticky = 'we')
+            helpWidget(inMonthSeas, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
+
+            tkconfigure(inMonthSeas, command = function(){
+                GeneralParameters$use.month <<- getInfoMonths2Process(.cdtEnv$tcl$main$win,
+                                                                      GeneralParameters$use.month)
+            })
+        }else{
+            inMonthSeas <- tklabel(frDispSeas, text = tclvalue(season.def), textvariable = season.def)
+        }
+
+        tkgrid(inMonthSeas, row = 0, column = 0, sticky = 'we')
 
         ###############
 
@@ -468,21 +493,6 @@ spatialAnalysisPanelCmd <- function(){
         tkgrid(cb.outTS, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frDefSeas, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frDispSeas, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        #######################
-
-        stateMonth <- if(GeneralParameters$out.series$tstep == 'monthly') "normal" else "disabled" 
-
-        bt.MonAnalyze <- ttkbutton(subfr2, text = lang.dlg[['button']][['3']], state = stateMonth)
-
-        helpWidget(bt.MonAnalyze, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
-
-        ######
-
-        tkconfigure(bt.MonAnalyze, command = function(){
-            GeneralParameters$use.month <<- getInfoMonths2Process(.cdtEnv$tcl$main$win,
-                                                                  GeneralParameters$use.month)
-        })
 
         #######################
 
@@ -698,11 +708,10 @@ spatialAnalysisPanelCmd <- function(){
 
         ##############################################
         tkgrid(frameOut, row = 0, column = 0, sticky = 'we')
-        tkgrid(bt.MonAnalyze, row = 1, column = 0, sticky = 'we', pady = 3)
-        tkgrid(bt.YearAnalyze, row = 2, column = 0, sticky = 'we', pady = 1)
-        tkgrid(bt.AggrFun, row = 3, column = 0, sticky = 'we', pady = 3)
-        tkgrid(frameAnalysis, row = 4, column = 0, sticky = 'we', pady = 1)
-        tkgrid(AnalyzeBut, row = 5, column = 0, sticky = 'we', pady = 3)
+        tkgrid(bt.YearAnalyze, row = 1, column = 0, sticky = 'we', pady = 1)
+        tkgrid(bt.AggrFun, row = 2, column = 0, sticky = 'we', pady = 3)
+        tkgrid(frameAnalysis, row = 3, column = 0, sticky = 'we', pady = 1)
+        tkgrid(AnalyzeBut, row = 4, column = 0, sticky = 'we', pady = 3)
 
     #######################################################################################################
 
