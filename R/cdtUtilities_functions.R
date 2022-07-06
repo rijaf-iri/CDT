@@ -368,9 +368,28 @@ raster.slope.aspect <- function(dem){
 ###########################################
 
 ## gstat block size
+# createBlock <- function(blockSize = c(1, 0.5, 1, 0.5)){
+#     if(length(blockSize) != 4)
+#         stop("blockSize must be of length 4 in the form c(width_x, by_x, width_y, by_y)")
+
+#     sX <- blockSize[1]/2
+#     lX <- ceiling((blockSize[1]/blockSize[2]) + 1)
+#     dBX <- seq(-sX, sX, length.out = lX)
+#     sY <- blockSize[3]/2
+#     lY <- ceiling((blockSize[3]/blockSize[4]) + 1)
+#     dBY <- seq(-sY, sY, length.out = lY)
+#     bGrd <- expand.grid(x = dBX, y = dBY)
+
+#     return(bGrd)
+# }
+
 createBlock <- function(blockSize = c(1, 0.5, 1, 0.5)){
     if(length(blockSize) != 4)
         stop("blockSize must be of length 4 in the form c(width_x, by_x, width_y, by_y)")
+    if(blockSize[1] < blockSize[2])
+        stop("width_x must be greater than by_x")
+    if(blockSize[3] < blockSize[4])
+        stop("width_y must be greater than by_y")
 
     sX <- blockSize[1]/2
     lX <- ceiling((blockSize[1]/blockSize[2]) + 1)
@@ -379,6 +398,8 @@ createBlock <- function(blockSize = c(1, 0.5, 1, 0.5)){
     lY <- ceiling((blockSize[3]/blockSize[4]) + 1)
     dBY <- seq(-sY, sY, length.out = lY)
     bGrd <- expand.grid(x = dBX, y = dBY)
+    bGrd <- rbind(bGrd, c(0, 0))
+    bGrd <- bGrd[!duplicated(bGrd), ]
 
     return(bGrd)
 }
