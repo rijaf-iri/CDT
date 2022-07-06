@@ -78,7 +78,6 @@ merra2_iridl.format.data <- function(dest, ncfl){
     ncgrd <- ncdf4::ncvar_def(info$name, info$units, list(dx, dy), missval,
                               info$longname, "float", compression = 6)
 
-    val <- val - 273.15
     val[is.na(val)] <- missval
     nc <- ncdf4::nc_create(ncfl, ncgrd)
     ncdf4::ncvar_put(nc, ncgrd, val)
