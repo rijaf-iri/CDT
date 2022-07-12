@@ -183,6 +183,7 @@ merged_ScalingUpData <- function(ncInfoMrg, ncInfoScale, params, outdir, GUI = T
     #######
 
     scale.fun <- switch(params$scale.data$fun, "sum" = colSums, "mean" = colMeans)
+    scale.div <- switch(params$scale.data$fun, "sum" = 0.1, "mean" = 0.001)
 
     #######
 
@@ -227,7 +228,7 @@ merged_ScalingUpData <- function(ncInfoMrg, ncInfoScale, params, outdir, GUI = T
         mrg.aggr <- scale.fun(mrg.aggr)
         dim(mrg.aggr) <- ncdim0
 
-        scale.mat <- scl.don / (mrg.aggr + 0.1)
+        scale.mat <- scl.don / (mrg.aggr + scale.div)
         scale.mat[is.na(scale.mat) | is.nan(scale.mat) | is.infinite(scale.mat)] <- 1
 
         for(j in seq_along(mrg.don)){
