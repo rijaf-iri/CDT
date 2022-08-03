@@ -62,7 +62,7 @@ rfev2_sa.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose =
 ## toexport
 rfev2_af.download.cpc.noaa.tif <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    ftp.cpc <- "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2/geotiff"
+    ftp.cpc <- "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2/geotiff"
     filename <- sprintf("africa_rfe.%s%s%s.tif.zip", rdate[, 1], rdate[, 2], rdate[, 3])
     urls <- file.path(ftp.cpc, filename)
     ncfiles <- sprintf("rfev2_%s%s%s.nc", rdate[, 1], rdate[, 2], rdate[, 3])
@@ -87,7 +87,7 @@ rfev2_af.download.cpc.noaa.tif <- function(GalParams, nbfile = 3, GUI = TRUE, ve
 ## toexport
 rfev2_af.download.cpc.noaa.bin <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    ftp.cpc <- "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2/bin"
+    ftp.cpc <- "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2/bin"
     filename <- sprintf("all_products.bin.%s%s%s.gz", rdate[, 1], rdate[, 2], rdate[, 3])
     urls <- file.path(ftp.cpc, filename)
     ncfiles <- sprintf("rfev2_%s%s%s.nc", rdate[, 1], rdate[, 2], rdate[, 3])
@@ -112,7 +112,7 @@ rfev2_af.download.cpc.noaa.bin <- function(GalParams, nbfile = 3, GUI = TRUE, ve
 ## toexport
 rfev2_sa.download.cpc.noaa.bin <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    ftp.cpc <- "ftp://ftp.cpc.ncep.noaa.gov/fews/S.Asia/data"
+    ftp.cpc <- "https://ftp.cpc.ncep.noaa.gov/fews/S.Asia/data"
     filename <- sprintf("cpc_rfe_v2.0_sa_dly.bin.%s%s%s.gz", rdate[, 1], rdate[, 2], rdate[, 3])
     urls <- file.path(ftp.cpc, filename)
     ncfiles <- sprintf("rfev2_%s%s%s.nc", rdate[, 1], rdate[, 2], rdate[, 3])

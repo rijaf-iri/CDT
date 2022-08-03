@@ -34,7 +34,7 @@ arc2.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRU
 ## toexport
 arc2.download.cpc.noaa <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    ftp.cpc <- "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2/geotiff"
+    ftp.cpc <- "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2/geotiff"
     filename <- sprintf("africa_arc.%s%s%s.tif.zip", rdate[, 1], rdate[, 2], rdate[, 3])
     urls <- file.path(ftp.cpc, filename)
     ncfiles <- sprintf("arc2_%s%s%s.nc", rdate[, 1], rdate[, 2], rdate[, 3])

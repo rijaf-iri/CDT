@@ -178,7 +178,7 @@ cmorph.download.cpc.ncep <- function(GalParams, nbfile = 3, GUI = TRUE, verbose 
 
     #########
 
-    ftp.cpc <- "ftp://ftp.cpc.ncep.noaa.gov/precip"
+    ftp.cpc <- "https://ftp.cpc.ncep.noaa.gov/precip"
     urls <- file.path(ftp.cpc, ftp.dir, filename)
 
     #########
