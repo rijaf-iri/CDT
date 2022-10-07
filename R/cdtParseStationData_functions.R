@@ -33,6 +33,41 @@ readCDTStationData <- function(file, sep = ",", na.strings = "-99"){
     return(dat)
 }
 
+
+#' Read CDT station format file.
+#'
+#' Read CDT station format file.
+#' 
+#' @param file character, full path to the file containing the CDT data
+#' @param sep character, the column's separator of the data
+#' @param na.strings character, the missing values flag
+#'  
+#' @return A CDT stations data objects. It is a list object with elements
+#' \itemize{
+#'   \item{\strong{id}: }{Vector of the points/stations id}
+#'   \item{\strong{lon}: }{Vector of the points/stations longitude}
+#'   \item{\strong{lat}: }{Vector of the points/stations latitude}
+#'   \item{\strong{elv}: }{Vector of the points/stations elevation, NULL if there is no elevation data}
+#'   \item{\strong{dates}: }{Vector of the dates or times of the data}
+#'   \item{\strong{data}: }{Matrix of the data, row indicates the dates and column the stations}
+#' }
+#' 
+#' @export
+
+readCDTStationData_allFormat <- function(file, sep = ",", na.strings = "-99"){
+    donne <- utils::read.table(file, sep = sep,
+                               na.strings = na.strings,
+                               colClasses = "character",
+                               stringsAsFactors = FALSE,
+                               quote = "\"")
+    dat <- splitCDTData1(donne)
+    if(is.null(dat))
+        stop("Station data is not in a standard CDT format")
+
+    class(dat) <- append(class(dat), "cdtstationdata")
+    return(dat)
+}
+
 #' Write CDT station format to a file.
 #'
 #' Write CDT station format to a file.

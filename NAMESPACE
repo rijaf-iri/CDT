@@ -33,7 +33,7 @@ importFrom("sp", "over", "bbox", "CRS", "geometry",
            "SpatialPolygonsDataFrame")
 importFrom("stats", "sd", "var", "cor", "cov", "quantile", "lm",
            "glm", "update", "ecdf", "median", "residuals", "as.formula",
-           "formula", "qnorm", "pnorm", "dnorm", "pgamma", "qgamma", "predict")
+           "formula", "qnorm", "pnorm", "dnorm", "pgamma", "qgamma", "predict", "rnorm", "runif")
 #importFrom("fGarch", "dsnorm", "psnorm", "qsnorm", "rsnorm")
 #importFrom("evd", "dgumbel", "pgumbel", "qgumbel", "rgumbel")
 
