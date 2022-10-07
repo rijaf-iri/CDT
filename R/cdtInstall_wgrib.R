@@ -28,12 +28,22 @@ install_wgrib <- function(){
             stop('Unable to find Rtools.')
         }
 
+        r_version <- R.Version()
+        r_major <- r_version$major
+        r_minor <- gsub('\\.', '', r_version$minor)
+        r_version <- as.numeric(paste0(r_major, '.', r_minor))
+
         rtools_pth <- pkgbuild::rtools_path()
         rtools_pth <- rev(split_path(rtools_pth[1]))
         rtools_pth <- file.path(rtools_pth[1], rtools_pth[2])
 
-        r_arch <- switch(Sys.getenv("R_ARCH"), "/x64" = 64, "/i386" = 32)
-        gcc_comp <- file.path(rtools_pth, paste0('mingw', r_arch), 'bin', 'gcc.exe')
+        if(r_version >= 4.2){
+            gcc_comp <- file.path(rtools_pth, 'x86_64-w64-mingw32.static.posix', 'bin', 'gcc.exe')
+        }else{
+            r_arch <- switch(Sys.getenv("R_ARCH"), "/x64" = 64, "/i386" = 32)
+            gcc_comp <- file.path(rtools_pth, paste0('mingw', r_arch), 'bin', 'gcc.exe')
+        }
+
         error_msg <- "Unable to find gcc."
     }else{
         gcc_comp <- 'gcc'

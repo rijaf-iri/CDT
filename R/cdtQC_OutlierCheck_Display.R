@@ -186,7 +186,25 @@ qcPlot_Spatial.Check <- function(){
     ix4 <- seq_along(STNID)
     ix4 <- ix4[!ix4 %in% c(ix0, ix1, ix2, ix3)]
 
-    stndon <- lapply(list(ix0, ix1, ix2, ix3, ix4), function(ix){
+    #######
+
+    isp <- lapply(.cdtData$EnvData$outqc$res, '[[', 'date')
+    isp <- sapply(isp, function(x) daty %in% x)
+    ix5 <- integer(0)
+
+    if(any(isp)){
+        isp <- names(which(isp))
+        isp <- isp[!isp %in% stnid]
+        if(length(isp) > 0){
+            ix5 <- which(STNID %in% isp)
+            ix4 <- ix4[!ix4 %in% ix5]
+        }
+    }
+
+    ## text for x1, x2, x3 need to change, doublon
+    #######
+
+    stndon <- lapply(list(ix0, ix1, ix2, ix3, ix4, ix5), function(ix){
         x <- y <- z <- NA
         if(length(ix)){
             tmp <- don[ix, , drop = FALSE]
@@ -326,12 +344,14 @@ qcPlot_Spatial.Check <- function(){
 
     if(ptsOp$circle$draw) lines(xc, yc, lwd = ptsOp$circle$lwd, col = ptsOp$circle$col)
 
+    points(stndon[[6]]$x, stndon[[6]]$y, col = ptsOp$all$col, pch = ptsOp$all$pch, cex = ptsOp$all$cex)
     points(stndon[[5]]$x, stndon[[5]]$y, col = ptsOp$all$col, pch = ptsOp$all$pch, cex = ptsOp$all$cex)
     points(stndon[[4]]$x, stndon[[4]]$y, col = ptsOp$vois$col, pch = ptsOp$vois$pch, cex = ptsOp$vois$cex)
     points(stndon[[3]]$x, stndon[[3]]$y, col = ptsOp$sel$col, pch = ptsOp$sel$pch, cex = ptsOp$sel$cex)
     points(stndon[[2]]$x, stndon[[2]]$y, col = ptsOp$use$col, pch = ptsOp$use$pch, cex = ptsOp$use$cex)
     points(stndon[[1]]$x, stndon[[1]]$y, col = ptsOp$stn$col, bg = ptsOp$stn$txt.col, pch = ptsOp$stn$pch, cex = ptsOp$stn$cex)
 
+    text(stndon[[6]]$x, stndon[[6]]$y, labels = stndon[[6]]$z, pos = 1, cex = ptsOp$all$txt.cex, col = ptsOp$stn$txt.col)
     text(stndon[[5]]$x, stndon[[5]]$y, labels = stndon[[5]]$z, pos = 1, cex = ptsOp$all$txt.cex, col = ptsOp$all$txt.col)
     text(stndon[[4]]$x, stndon[[4]]$y, labels = stndon[[4]]$z, pos = 1, cex = ptsOp$vois$txt.cex, col = ptsOp$vois$txt.col)
     text(stndon[[3]]$x, stndon[[3]]$y, labels = stndon[[3]]$z, pos = 1, cex = ptsOp$sel$txt.cex, col = ptsOp$sel$txt.col)

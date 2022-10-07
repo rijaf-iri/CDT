@@ -47,10 +47,10 @@ CPT.convertProcs <- function(){
 #' \itemize{
 #' \item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
 #' \item{\code{format}: }{character, format of the netCDF file names.\cr
-#' Replace the year, month, dekad, pentad or day by Year: \code{%Y}; Month: \code{%M}; Dekad: \code{%T}; Pentad: \code{%P}; Day: \code{%D}.\cr
+#' Replace the year, month, dekad, pentad or day by Year: \code{\%Y}; Month: \code{\%M}; Dekad: \code{\%T}; Pentad: \code{\%P}; Day: \code{\%D}.\cr
 #' Example: \cr
-#' \code{outTS_1981-07_1982-06.nc => outTS_%Y-%M_%Y-%M.nc} \cr
-#' \code{onset_19830901.nc  => onset_%Y%M%D.nc}
+#' \code{outTS_1981-07_1982-06.nc => outTS_\%Y-\%M_\%Y-\%M.nc} \cr
+#' \code{onset_19830901.nc  => onset_\%Y\%M\%D.nc}
 #' }
 #' \item{\code{varid}: }{character, name of the variable to read from the netCDF data}
 #' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
