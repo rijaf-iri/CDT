@@ -176,7 +176,7 @@ spatialAnalysis.plotTSGraph <- function(){
         if(all(year1 == year2)){
             if(all(mon1 == mon2)) dateTS <- paste0(year1, mon1)
             else{
-                dateTS <- if(mon1 == "01" & mon2 == "12") year1 else dates
+                dateTS <- if(all(mon1 == "01") && all(mon2 == "12")) year1 else dates
             }
         }else dateTS <- dates
         ipos <- which(.cdtData$EnvData$statpars$stats == str_trim(tclvalue(.cdtData$EnvData$climDate)))
