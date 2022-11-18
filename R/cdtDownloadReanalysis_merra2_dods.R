@@ -1,7 +1,5 @@
 
 merra2_hourly.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
-    on.exit(curl::handle_reset(handle))
-
     xlon <- seq(-180., 180., 0.625)
     xlat <- seq(-90., 90., 0.5)
 
@@ -184,7 +182,7 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, 
 
     query_vars <- sapply(seq_along(query_urls), function(j){
         x <- sapply(merra2_var$var, function(v){
-            paste0(v, query_hours[j], query_lat, query_lon)
+            paste0(v, query_hours, query_lat, query_lon)
         })
         paste0(x, collapse = ",")
     })
@@ -208,25 +206,9 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, 
         rm_files <- file.path(outdir, paste0(GalParams$var, "_", rm_hours, ".nc"))
 
     ######################
-    login_url <- "https://urs.earthdata.nasa.gov"
-    # login_disc <- "https://disc.gsfc.nasa.gov/auth/log/in"
-    handle <- curl::new_handle()
-    curl::handle_setopt(handle, httpauth = 1,
-                        username = GalParams$login$usr,
-                        password = GalParams$login$pwd)
-    req <- curl::curl_fetch_memory(login_url, handle = handle)
-    # req <- curl::curl_fetch_memory(login_disc, handle = handle)
-    curl::handle_cookies(handle)
-
-    # handle <- curl::new_handle()
-    # curl::handle_setopt(handle,
-    #                     username = GalParams$login$usr,
-    #                     password = GalParams$login$pwd)
-
-    ######################
     ret <- cdt.download.data(urls, destfiles, destfiles, nbfile, GUI,
                              verbose, data.name, merra2_dods.download.data,
-                             handle = handle, pars = ncpars)
+                             login = GalParams$login, pars = ncpars)
 
     if(!is.null(rm_hours)) lapply(rm_files, unlink)
 
@@ -234,8 +216,6 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, 
 }
 
 merra2_land.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
-    on.exit(curl::handle_reset(handle))
-
     xlon <- seq(-180., 180., 0.625)
     xlat <- seq(-90., 90., 0.5)
 
@@ -371,7 +351,7 @@ merra2_land.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, ve
 
     query_vars <- sapply(seq_along(query_urls), function(j){
         x <- sapply(merra2_var$var, function(v){
-            paste0(v, query_hours[j], query_lat, query_lon)
+            paste0(v, query_hours, query_lat, query_lon)
         })
         paste0(x, collapse = ",")
     })
@@ -395,33 +375,28 @@ merra2_land.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, ve
         rm_files <- file.path(outdir, paste0(GalParams$var, "_", rm_hours, ".nc"))
 
     ######################
-    login_url <- "https://urs.earthdata.nasa.gov"
-    # login_disc <- "https://disc.gsfc.nasa.gov/auth/log/in"
-    handle <- curl::new_handle()
-    curl::handle_setopt(handle, httpauth = 1,
-                        username = GalParams$login$usr,
-                        password = GalParams$login$pwd)
-    req <- curl::curl_fetch_memory(login_url, handle = handle)
-    # req <- curl::curl_fetch_memory(login_disc, handle = handle)
-    curl::handle_cookies(handle)
-
-    ######################
     ret <- cdt.download.data(urls, destfiles, destfiles, nbfile, GUI,
                              verbose, data.name, merra2_dods.download.data,
-                             handle = handle, pars = ncpars)
+                             login = GalParams$login, pars = ncpars)
 
     if(!is.null(rm_hours)) lapply(rm_files, unlink)
 
     return(ret)
 }
 
-merra2_dods.download.data <- function(lnk, dest, ncfl, pars, handle){
-    on.exit(unlink(dest))
+merra2_dods.download.data <- function(lnk, dest, ncfl, pars, login){
+    on.exit({
+        unlink(dest)
+        curl::handle_reset(handle)
+    })
+
     xx <- basename(dest)
 
+    handle <- curl::new_handle()
+    curl::handle_setopt(handle,
+                        username = login$usr,
+                        password = login$pwd)
     dc <- try(curl::curl_download(lnk, dest, handle = handle), silent = TRUE)
-
-    # print(dc)
 
     if(!inherits(dc, "try-error")){
         ret <- merra2_dods.format.data(dest, pars)
