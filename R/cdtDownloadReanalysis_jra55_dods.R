@@ -1,7 +1,9 @@
 
-
 jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
-    on.exit(curl::handle_reset(handle))
+    on.exit({
+        curl::handle_reset(handle)
+        curl::handle_reset(handle_down)
+    })
 
     jracrd0 <- file.path(.cdtDir$Root, "data", "JRA55_Coords.rds")
     jra.crd <- readRDS(jracrd0)
@@ -28,6 +30,7 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     #############
 
+    ### login for xml parsing
     login_url <- "https://rda.ucar.edu/cgi-bin/login"
     postfields <- paste0("email=", GalParams$login$usr,
                          "&passwd=", GalParams$login$pwd,
@@ -37,6 +40,10 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     curl::handle_setopt(handle, postfields = postfields)
     res <- curl::curl_fetch_memory(login_url, handle)
     curl::handle_cookies(handle)
+
+    ### downloading
+    handle_down <- curl::new_handle()
+    curl::handle_setopt(handle_down, username = GalParams$login$usr, password = GalParams$login$pwd)
 
     #############
 
@@ -341,7 +348,7 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     ret <- cdt.download.data(urls, destfiles, ncfiles_time, nbfile, GUI,
                              verbose, data.name, jra55_dods.download.data,
-                             handle = handle, pars = pars)
+                             handle = handle_down, pars = pars)
 
     return(ret)
 }
