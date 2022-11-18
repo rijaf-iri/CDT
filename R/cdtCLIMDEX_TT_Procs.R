@@ -86,10 +86,15 @@ climdexCalc.TT <- function(GeneralParameters){
     jTmax <- !noTmax & noTmin
     jTmin <- noTmax & !noTmin
 
-    if((jTmaxmin & !any(is.indxTXN)) |
-        (jTmax & !any(is.indxTX)) |
-        (jTmin & !any(is.indxTN)))
-    {
+    # if((jTmaxmin & !any(is.indxTXN)) |
+    #     (jTmax & !any(is.indxTX)) |
+    #     (jTmin & !any(is.indxTN)))
+    # {
+    #     Insert.Messages.Out(message[['11']], TRUE, 'e')
+    #     return(0)
+    # }
+
+    if(!any(is.indxlst)){
         Insert.Messages.Out(message[['11']], TRUE, 'e')
         return(0)
     }
