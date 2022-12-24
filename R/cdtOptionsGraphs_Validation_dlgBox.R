@@ -1449,8 +1449,12 @@ Validation.GraphOptions.Rank <- function(GraphOpt, description, parent.win = .cd
     frameNames <- tkframe(frDialog, relief = 'groove', borderwidth = 2)
 
     validName <- ""
-    if(GraphOpt$validName$name != ""){
-       validName <- paste0(GraphOpt$validName$name, collapse = ", ")
+    if(length(GraphOpt$validName$name) > 1){
+        validNameOpt <- GraphOpt$validName$name
+        validNameOpt <- validNameOpt[validNameOpt != ""]
+        if(length(validNameOpt) > 0){
+           validName <- paste0(validNameOpt, collapse = ", ")
+        }
     }
     valid.name <- tclVar(validName)
 
@@ -2006,8 +2010,12 @@ Validation.GraphOptions1.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$
     frameNames <- tkframe(frDialog, relief = 'groove', borderwidth = 2)
 
     validName <- ""
-    if(GraphOpt$scatter$validName$name != ""){
-       validName <- paste0(GraphOpt$scatter$validName$name, collapse = ", ")
+    if(length(GraphOpt$scatter$validName$name) > 1){
+        validNameOpt <- GraphOpt$scatter$validName$name
+        validNameOpt <- validNameOpt[validNameOpt != ""]
+        if(length(validNameOpt) > 0){
+           validName <- paste0(validNameOpt, collapse = ", ")
+        }
     }
     valid.name <- tclVar(validName)
 
@@ -2733,8 +2741,12 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
     add.legend <- tclVar(GraphOpt$cdf$legend$add)
 
     validName <- ""
-    if(GraphOpt$cdf$validName$name != ""){
-       validName <- paste0(GraphOpt$cdf$validName$name, collapse = ", ")
+    if(length(GraphOpt$cdf$validName$name)){
+        validNameOpt <- GraphOpt$cdf$validName$name
+        validNameOpt <- validNameOpt[validNameOpt != ""]
+        if(length(validNameOpt) > 0){
+            validName <- paste0(validNameOpt, collapse = ", ")
+        }
     }
     valid.name <- tclVar(validName)
 
@@ -3477,8 +3489,12 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
     add.legend <- tclVar(GraphOpt$line$legend$add)
 
     validName <- ""
-    if(GraphOpt$line$validName$name != ""){
-       validName <- paste0(GraphOpt$line$validName$name, collapse = ", ")
+    if(length(GraphOpt$line$validName$name) > 1){
+        validNameOpt <- GraphOpt$line$validName$name
+        validNameOpt <- validNameOpt[validNameOpt != ""]
+        if(length(validNameOpt) > 0){
+           validName <- paste0(validNameOpt, collapse = ", ")
+        }
     }
     valid.name <- tclVar(validName)
 
