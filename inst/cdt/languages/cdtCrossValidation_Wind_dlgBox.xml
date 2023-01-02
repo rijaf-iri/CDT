@@ -37,6 +37,14 @@
                 <text lang="en"> CDT stations data format </text>
             </option>
         </combobox>
+        <combobox id="4">
+            <option id="1">
+                <text lang="en"> Speed </text>
+            </option>
+            <option id="2">
+                <text lang="en"> U and V components </text>
+            </option>
+        </combobox>
         <button id="1">
             <text lang="en"> Set Date Range </text>
         </button>
@@ -59,16 +67,28 @@
             <text lang="en"> Latitude </text>
         </checkbutton>
         <checkbutton id="6">
-            <text lang="en"> Apply Rain-no-Rain Mask </text>
+            <text lang="en"> U and V components are in one NetCDF file </text>
         </checkbutton>
-        <checkbutton id="7">
-            <text lang="en"> Smooth Rain-no-Rain Mask </text>
-        </checkbutton>
-        <label id="1">
-            <text lang="en"> Station data file </text>
+        <label id="1-1">
+            <text lang="en"> Station wind speed file </text>
         </label>
-        <label id="2">
-            <text lang="en"> Directory containing RFE data </text>
+        <label id="1-2">
+            <text lang="en"> Station U-component file </text>
+        </label>
+        <label id="1-3">
+            <text lang="en"> Station V-component file </text>
+        </label>
+        <label id="2-1">
+            <text lang="en"> Directory of the NetCDF wind speed files </text>
+        </label>
+        <label id="2-2">
+            <text lang="en"> Directory of the NetCDF U-component files </text>
+        </label>
+        <label id="2-3">
+            <text lang="en"> Directory of the NetCDF V-component files </text>
+        </label>
+        <label id="2-4">
+            <text lang="en"> Directory of the NetCDF U and V data files </text>
         </label>
         <label id="3">
             <text lang="en"> Directory to save result </text>
@@ -92,7 +112,7 @@
             <text lang="en"> Pass ratio </text>
         </label>
         <label id="11">
-            <text lang="en"> Rainy day threshold </text>
+            <text lang="en"> Rain threshold </text>
         </label>
         <label id="12">
             <text lang="en"> Cross-validation Stations </text>
@@ -109,14 +129,17 @@
         <label id="16">
             <text lang="en"> Minimum percentage of non-missing values </text>
         </label>
+        <label id="17">
+            <text lang="en"> Wind data </text>
+        </label>
     </widget>
     <help>
         <content id="1">
             <status>
-                <text lang="en"> Select the time step of the data </text>
+                <text lang="en"> Select the temporal resolution of the data </text>
             </status>
             <tooltip>
-                <text lang="en"> Select the time step of the data </text>
+                <text lang="en"> Select the temporal resolution of the data </text>
             </tooltip>
         </content>
         <content id="2">
@@ -127,9 +150,25 @@
                 <text lang="en"> Set the start and end date of data to merge </text>
             </tooltip>
         </content>
-        <content id="3">
+        <content id="3-1">
             <status>
-                <text lang="en"> Select the file containing the gauge data </text>
+                <text lang="en"> Select the file containing the wind speed data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file from the list </text>
+            </tooltip>
+        </content>
+        <content id="3-2">
+            <status>
+                <text lang="en"> Select the file containing the wind U-component data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file from the list </text>
+            </tooltip>
+        </content>
+        <content id="3-3">
+            <status>
+                <text lang="en"> Select the file containing the wind V-component data </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file from the list </text>
@@ -143,12 +182,44 @@
                 <text lang="en"> Browse file if not listed </text>
             </tooltip>
         </content>
-        <content id="5">
+        <content id="5-0">
             <status>
-                <text lang="en"> Enter the full path to directory containing the RFE or Adjusted RFE files </text>
+                <text lang="en"> Check the box if the zonal (U) and meridional (V) velocities are included in the same NeCDF file </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to directory containing the RFE or Adjusted RFE files </text>
+                <text lang="en"> Check the box if the zonal (U) and meridional (V) velocities are included in the same NeCDF file </text>
+            </tooltip>
+        </content>
+        <content id="5-1">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the wind speed data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the wind speed data </text>
+            </tooltip>
+        </content>
+        <content id="5-2">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the wind U-component data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the wind U-component data </text>
+            </tooltip>
+        </content>
+        <content id="5-3">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the wind V-component data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the wind V-component data </text>
+            </tooltip>
+        </content>
+        <content id="5-4">
+            <status>
+                <text lang="en"> Enter the full path to the directory containing the wind U and V components data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the directory containing the wind U and V components data </text>
             </tooltip>
         </content>
         <content id="6">
@@ -257,17 +328,32 @@
         </content>
     </help>
     <message>
-        <content id="1">
-            <text lang="en"> Select the file containing the station data </text>
+        <content id="1-1">
+            <text lang="en"> Select the file containing the wind speed station data </text>
         </content>
-        <content id="2">
-            <text lang="en"> Browse or enter the directory containing the RFE files </text>
+        <content id="1-2">
+            <text lang="en"> Select the file containing the zonal velocity (U) station data </text>
+        </content>
+        <content id="1-3">
+            <text lang="en"> Select the file containing the meridional velocity (V) station data </text>
+        </content>
+        <content id="2-1">
+            <text lang="en"> Browse or enter the directory containing the wind speed NetCDF files </text>
+        </content>
+        <content id="2-2">
+            <text lang="en"> Browse or enter the directory containing the wind data NetCDF files </text>
+        </content>
+        <content id="2-3">
+            <text lang="en"> Browse or enter the directory containing the zonal velocity (U) NetCDF files </text>
+        </content>
+        <content id="2-4">
+            <text lang="en"> Browse or enter the directory containing the meridional velocity (V) NetCDF files </text>
         </content>
         <content id="3">
             <text lang="en"> Browse or enter the path to directory to save results </text>
         </content>
-        <content id="4">
-            <text lang="en"> You have to set the NetCDF files parameters </text>
+        <content id="5">
+            <text lang="en"> Provide the file containing the stations for the cross-validation </text>
         </content>
         <content id="6">
             <text lang="en"> Number of run is not equal to the number of pass ratio </text>
@@ -276,22 +362,22 @@
             <text lang="en"> You have to provide DEM data in NetCDF format </text>
         </content>
         <content id="8">
-            <text lang="en"> Rainfall merging cross-validation finished successfully </text>
+            <text lang="en"> Wind data merging cross-validation finished successfully </text>
         </content>
         <content id="9">
-            <text lang="en"> Rainfall merging cross-validation failed </text>
+            <text lang="en"> Wind data merging cross-validation failed </text>
         </content>
         <content id="10">
             <text lang="en"> Start cross-validation ... </text>
         </content>
         <content id="12">
-            <text lang="en"> No RFE data sample found </text>
+            <text lang="en"> No netCDF data sample found </text>
         </content>
         <content id="13">
             <text lang="en"> No elevation data found </text>
         </content>
         <content id="14">
-            <text lang="en"> RFE data not found </text>
+            <text lang="en"> Wind data data not found </text>
         </content>
         <content id="15">
             <text lang="en"> No data on stations to use for cross-validation </text>
@@ -304,9 +390,6 @@
         </content>
         <content id="18">
             <text lang="en"> Cross-Validation done </text>
-        </content>
-        <content id="19">
-            <text lang="en"> Provide the file containing the stations for the cross-validation </text>
         </content>
         <content id="20">
             <text lang="en"> Stations to be used for cross-validation and containing the input data do not match </text>

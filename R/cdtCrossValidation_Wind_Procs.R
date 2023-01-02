@@ -14,7 +14,7 @@ crossValidationExecWind <- function(){
     }
 
     outdir <- file.path(.cdtData$GalParams$outdir,
-                         paste('CrossValidation_Precip_Data', xdeb, xfin, sep = '_'))
+                         paste('CrossValidation_Wind_Data', xdeb, xfin, sep = '_'))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     ##################
@@ -151,9 +151,11 @@ crossValidationExecWind <- function(){
 
     ##################
 
-    ret <- cdtMergingLOOCV(stnData = stnData, stnVID = stn.valid, ncInfo = ncInfo, xy.grid = xy.grid, 
-                           params = .cdtData$GalParams, variable = "rain", demData = demData,
-                           outdir = outdir)
+    # ret <- cdtMergingLOOCV(stnData = stnData, stnVID = stn.valid, ncInfo = ncInfo, xy.grid = xy.grid, 
+    #                        params = .cdtData$GalParams, variable = "rain", demData = demData,
+    #                        outdir = outdir)
+
+    ret <- 0
 
     if(!is.null(ret)){
         if(ret != 0){

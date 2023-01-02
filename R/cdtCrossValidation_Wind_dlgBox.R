@@ -31,6 +31,252 @@ crossValidationInfoWind <- function(){
     frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2, padx = 2, pady = 2)
     frMRG1 <- tkframe(tt)
 
+    cbLists <- new.env()
+    cbLists$cb <- list()
+
+    ####################################
+
+    getwindSpeed <- function(){
+        tkdestroy(fr.windVar)
+        fr.windVar <<- tkframe(frInputData)
+
+        txt.stnS <- tklabel(fr.windVar, text = lang.dlg[['label']][['1-1']], anchor = 'w', justify = 'left')
+        cb.stnS <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_S, width = largeur1)
+        bt.stnS <- tkbutton(fr.windVar, text = "...")
+        txt.ncS <- tklabel(fr.windVar, text = lang.dlg[['label']][['2-1']], anchor = 'w', justify = 'left')
+        set.ncS <- ttkbutton(fr.windVar, text = .cdtEnv$tcl$lang$global[['button']][['5']])
+        en.ncS <- tkentry(fr.windVar, textvariable = dir.NC_S, width = largeur2)
+        bt.ncS <- tkbutton(fr.windVar, text = "...")
+
+        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnS
+
+        tkgrid(txt.stnS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stnS, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnS, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(txt.ncS, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(set.ncS, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.ncS, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.ncS, row = 3, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        helpWidget(cb.stnS, lang.dlg[['tooltip']][['3-1']], lang.dlg[['status']][['3-1']])
+        helpWidget(bt.stnS, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        helpWidget(en.ncS, lang.dlg[['tooltip']][['5-1']], lang.dlg[['status']][['5-1']])
+        helpWidget(bt.ncS, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+        helpWidget(set.ncS, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+
+        ######
+
+        tkconfigure(bt.stnS, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            dat.opfiles <- getOpenFiles(tt)
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+            if(!is.null(dat.opfiles)){
+                update.OpenFiles('ascii', dat.opfiles)
+                tclvalue(file.STN_S) <- dat.opfiles[[1]]
+
+                lapply(cbLists$cb, function(x){
+                    if(as.integer(tkwinfo('exists', x)) == 1)
+                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
+                })
+            }
+        })
+
+        tkconfigure(set.ncS, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            .cdtData$GalParams[["INPUT.S"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.S"]],
+                                                                 str_trim(tclvalue(dir.NC_S)))
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+        })
+
+        tkconfigure(bt.ncS, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            dirnc <- tk_choose.dir(getwd(), "")
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+            tclvalue(dir.NC_S) <- if(!is.na(dirnc)) dirnc else ""
+        })
+
+        tkgrid(fr.windVar, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2)
+    }
+
+    getwindData <- function(){
+        getwindUVone <- function(){
+            tkdestroy(fr.windUV)
+            fr.windUV <<- tkframe(fr.windVar)
+
+            txt.ncUV <- tklabel(fr.windUV, text = lang.dlg[['label']][['2-4']], anchor = 'w', justify = 'left')
+            set.ncUV <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']])
+            en.ncUV <- tkentry(fr.windUV, textvariable = dir.NC_UV, width = largeur2)
+            bt.ncUV <- tkbutton(fr.windUV, text = "...")
+
+            tkgrid(txt.ncUV, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(set.ncUV, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(en.ncUV, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.ncUV, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+            helpWidget(en.ncUV, lang.dlg[['tooltip']][['5-4']], lang.dlg[['status']][['5-4']])
+            helpWidget(bt.ncUV, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+            helpWidget(set.ncUV, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+
+            #####
+
+            tkconfigure(set.ncUV, command = function(){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                .cdtData$GalParams[["INPUT.UV"]] <- getInfoNetCDFDataWind(tt, .cdtData$GalParams[["INPUT.UV"]],
+                                                                          str_trim(tclvalue(dir.NC_UV)))
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+            })
+
+            tkconfigure(bt.ncUV, command = function(){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                dirnc <- tk_choose.dir(getwd(), "")
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                tclvalue(dir.NC_UV) <- if(!is.na(dirnc)) dirnc else ""
+            })
+
+            tkgrid(fr.windUV, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 5)
+            tcl('update')
+        }
+
+        getwindUVsep <- function(){
+            tkdestroy(fr.windUV)
+            fr.windUV <<- tkframe(fr.windVar)
+
+            txt.ncU <- tklabel(fr.windUV, text = lang.dlg[['label']][['2-2']], anchor = 'w', justify = 'left')
+            set.ncU <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']])
+            en.ncU <- tkentry(fr.windUV, textvariable = dir.NC_U, width = largeur2)
+            bt.ncU <- tkbutton(fr.windUV, text = "...")
+
+            txt.ncV <- tklabel(fr.windUV, text = lang.dlg[['label']][['2-3']], anchor = 'w', justify = 'left')
+            set.ncV <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']])
+            en.ncV <- tkentry(fr.windUV, textvariable = dir.NC_V, width = largeur2)
+            bt.ncV <- tkbutton(fr.windUV, text = "...")
+
+            tkgrid(txt.ncU, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(set.ncU, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(en.ncU, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.ncU, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(txt.ncV, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(set.ncV, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(en.ncV, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(bt.ncV, row = 3, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+            helpWidget(en.ncU, lang.dlg[['tooltip']][['5-2']], lang.dlg[['status']][['5-2']])
+            helpWidget(bt.ncU, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+            helpWidget(set.ncU, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+            helpWidget(en.ncV, lang.dlg[['tooltip']][['5-3']], lang.dlg[['status']][['5-3']])
+            helpWidget(bt.ncV, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+            helpWidget(set.ncV, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+
+            #####
+
+            tkconfigure(set.ncU, command = function(){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                .cdtData$GalParams[["INPUT.U"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.U"]],
+                                                                     str_trim(tclvalue(dir.NC_U)))
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+            })
+
+            tkconfigure(bt.ncU, command = function(){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                dirnc <- tk_choose.dir(getwd(), "")
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                tclvalue(dir.NC_U) <- if(!is.na(dirnc)) dirnc else ""
+            })
+
+            tkconfigure(set.ncV, command = function(){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                .cdtData$GalParams[["INPUT.V"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.V"]],
+                                                                     str_trim(tclvalue(dir.NC_V)))
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+            })
+
+            tkconfigure(bt.ncV, command = function(){
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                dirnc <- tk_choose.dir(getwd(), "")
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+                tclvalue(dir.NC_V) <- if(!is.na(dirnc)) dirnc else ""
+            })
+
+            tkgrid(fr.windUV, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 5)
+            tcl('update')
+        }
+
+        ##########
+
+        tkdestroy(fr.windVar)
+        fr.windVar <<- tkframe(frInputData)
+
+        txt.stnU <- tklabel(fr.windVar, text = lang.dlg[['label']][['1-2']], anchor = 'w', justify = 'left')
+        cb.stnU <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_U, width = largeur1)
+        bt.stnU <- tkbutton(fr.windVar, text = "...")
+
+        txt.stnV <- tklabel(fr.windVar, text = lang.dlg[['label']][['1-3']], anchor = 'w', justify = 'left')
+        cb.stnV <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_V, width = largeur1)
+        bt.stnV <- tkbutton(fr.windVar, text = "...")
+
+        chk.windUV <- tkcheckbutton(fr.windVar, variable = windUV, text = lang.dlg[['checkbutton']][['6']], anchor = 'w', justify = 'left')
+        fr.windUV <- tkframe(fr.windVar)
+
+        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnU
+        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnV
+
+        #####
+        tkgrid(txt.stnU, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stnU, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnU, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.stnV, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stnV, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnV, row = 3, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.windUV, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        helpWidget(cb.stnU, lang.dlg[['tooltip']][['3-2']], lang.dlg[['status']][['3-2']])
+        helpWidget(cb.stnV, lang.dlg[['tooltip']][['3-3']], lang.dlg[['status']][['3-3']])
+        helpWidget(bt.stnU, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        helpWidget(bt.stnV, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+        helpWidget(chk.windUV, lang.dlg[['tooltip']][['5-0']], lang.dlg[['status']][['5-0']])
+
+        #####
+
+        if(tclvalue(windUV) == '1') getwindUVone() else getwindUVsep()
+
+        tkconfigure(bt.stnU, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            dat.opfiles <- getOpenFiles(tt)
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+            if(!is.null(dat.opfiles)){
+                update.OpenFiles('ascii', dat.opfiles)
+                tclvalue(file.STN_U) <- dat.opfiles[[1]]
+
+                lapply(cbLists$cb, function(x){
+                    if(as.integer(tkwinfo('exists', x)) == 1)
+                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
+                })
+            }
+        })
+
+        tkconfigure(bt.stnV, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            dat.opfiles <- getOpenFiles(tt)
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+            if(!is.null(dat.opfiles)){
+                update.OpenFiles('ascii', dat.opfiles)
+                tclvalue(file.STN_V) <- dat.opfiles[[1]]
+
+                lapply(cbLists$cb, function(x){
+                    if(as.integer(tkwinfo('exists', x)) == 1)
+                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
+                })
+            }
+        })
+
+        tkbind(chk.windUV, "<Button-1>", function(){
+            if(tclvalue(windUV) == '1') getwindUVsep() else getwindUVone()
+        })
+
+        tkgrid(fr.windVar, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2)
+    }
+
     ####################################
 
     frtimestep <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
@@ -64,60 +310,33 @@ crossValidationInfoWind <- function(){
 
     frInputData <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
-    file.stnfl <- tclVar(.cdtData$GalParams$STN.file)
-    dir.InNCDF <- tclVar(.cdtData$GalParams$INPUT$dir)
+    windVar <- tclVar()
+    cbWindVar <- lang.dlg[['combobox']][['4']]
+    valWindVar <- c('speed', 'uv-comp')
+    tclvalue(windVar) <- cbWindVar[valWindVar %in% .cdtData$GalParams$wvar]
 
-    txt.stnfl <- tklabel(frInputData, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-    cb.stnfl <- ttkcombobox(frInputData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
-    bt.stnfl <- tkbutton(frInputData, text = "...")
-    txt.InNCDF <- tklabel(frInputData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-    set.InNCDF <- ttkbutton(frInputData, text = .cdtEnv$tcl$lang$global[['button']][['5']])
-    en.InNCDF <- tkentry(frInputData, textvariable = dir.InNCDF, width = largeur2)
-    bt.InNCDF <- tkbutton(frInputData, text = "...")
+    file.STN_S <- tclVar(.cdtData$GalParams$STN.S)
+    dir.NC_S <- tclVar(.cdtData$GalParams$INPUT.S$dir)
 
-    ######
-    tkgrid(txt.stnfl, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(cb.stnfl, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(bt.stnfl, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+    windUV <- tclVar(.cdtData$GalParams$one.ncdf)
+    file.STN_U <- tclVar(.cdtData$GalParams$STN.U)
+    file.STN_V <- tclVar(.cdtData$GalParams$STN.V)
+    dir.NC_U <- tclVar(.cdtData$GalParams$INPUT.U$dir)
+    dir.NC_V <- tclVar(.cdtData$GalParams$INPUT.V$dir)
+    dir.NC_UV <- tclVar(.cdtData$GalParams$INPUT.UV$dir)
 
-    tkgrid(txt.InNCDF, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(set.InNCDF, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(en.InNCDF, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(bt.InNCDF, row = 3, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+    txt.windVar <- tklabel(frInputData, text = lang.dlg[['label']][['17']], anchor = 'e', justify = 'right')
+    cb.windVar <- ttkcombobox(frInputData, values = cbWindVar, textvariable = windVar, justify = 'center', width = largeur0)
+    fr.windVar <- tkframe(frInputData)
 
-    helpWidget(cb.stnfl, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
-    helpWidget(bt.stnfl, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
-    helpWidget(en.InNCDF, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
-    helpWidget(bt.InNCDF, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-    helpWidget(set.InNCDF, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
+    if(.cdtData$GalParams$wvar == "speed") getwindSpeed() else getwindData()
 
-    ######
-    tkconfigure(bt.stnfl, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        dat.opfiles <- getOpenFiles(tt)
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-        if(!is.null(dat.opfiles)){
-            update.OpenFiles('ascii', dat.opfiles)
-            listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-            tclvalue(file.stnfl) <- dat.opfiles[[1]]
-            lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
-        }
-    })
+    tkgrid(txt.windVar, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.windVar, row = 0, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    settingSNC <- .cdtData$GalParams$settingSNC
-    tkconfigure(set.InNCDF, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["INPUT"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT"]],
-                                                           str_trim(tclvalue(dir.InNCDF)))
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-        settingSNC <<- 1
-    })
-
-    tkconfigure(bt.InNCDF, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        dirnc <- tk_choose.dir(getwd(), "")
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-        tclvalue(dir.InNCDF) <- if(!is.na(dirnc)) dirnc else ""
+    tkbind(cb.windVar, "<<ComboboxSelected>>", function(){
+        wvar <- valWindVar[cbWindVar %in% str_trim(tclvalue(windVar))]
+        if(wvar == "speed") getwindSpeed() else getwindData()
     })
 
     ############################################
@@ -215,7 +434,7 @@ crossValidationInfoWind <- function(){
                         update.OpenFiles('netcdf', nc.opfiles)
                         listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                         tclvalue(demfile.var) <- nc.opfiles[[1]]
-                        lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
+                        lapply(list(cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
@@ -318,32 +537,6 @@ crossValidationInfoWind <- function(){
 
     ############################################
 
-    frRnoR <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
-
-    rnor.mask <- tclVar(.cdtData$GalParams$RnoR$use)
-    rnor.wet <- tclVar(.cdtData$GalParams$RnoR$wet)
-    rnor.smooth <- tclVar(.cdtData$GalParams$RnoR$smooth)
-
-    stateRnoR <- if(.cdtData$GalParams$RnoR$use) 'normal' else 'disabled'
-
-    chk.rnor.mask <- tkcheckbutton(frRnoR, variable = rnor.mask, text = lang.dlg[['checkbutton']][['6']], anchor = 'w', justify = 'left')
-    txt.rnor.wet <- tklabel(frRnoR, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
-    en.rnor.wet <- tkentry(frRnoR, textvariable = rnor.wet, width = 4, state = stateRnoR)
-    chk.rnor.smooth <- tkcheckbutton(frRnoR, variable = rnor.smooth, text = lang.dlg[['checkbutton']][['7']], anchor = 'w', justify = 'left', state = stateRnoR)
-
-    tkgrid(chk.rnor.mask, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.rnor.wet, row = 0, column = 3, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.rnor.wet, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(chk.rnor.smooth, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    tkbind(chk.rnor.mask, "<Button-1>", function(){
-        stateRnoR <- if(tclvalue(rnor.mask) == '0') 'normal' else 'disabled'
-        tkconfigure(en.rnor.wet, state = stateRnoR)
-        tkconfigure(chk.rnor.smooth, state = stateRnoR)
-    })
-
-    ############################################
-
         crossvalid.stations <- function(selstn){
             tkdestroy(frstnPar)
             frstnPar <<- tkframe(frSTN, relief = 'groove', borderwidth = 2)
@@ -389,7 +582,7 @@ crossValidationInfoWind <- function(){
                         update.OpenFiles('ascii', dat.opfiles)
                         listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(selstn.filestn) <- dat.opfiles[[1]]
-                        lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
+                        lapply(list(cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
@@ -451,8 +644,7 @@ crossValidationInfoWind <- function(){
     tkgrid(frSave, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frMerge, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.mrg.interp, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frRnoR, row = 5, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frSTN, row = 6, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frSTN, row = 5, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     ############################################
 
@@ -462,75 +654,107 @@ crossValidationInfoWind <- function(){
     #######
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl)) == ""){
-            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
-            tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir.InNCDF)) %in% c("", "NA")){
-            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
-            tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+
+        .cdtData$GalParams$outdir <- str_trim(tclvalue(dir2save))
+        if(.cdtData$GalParams$outdir %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(is.null(settingSNC)){
-            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
-            tkwait.window(tt)
-        }else{
-            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
-
-            .cdtData$GalParams$STN.file <- str_trim(tclvalue(file.stnfl))
-            .cdtData$GalParams$INPUT$dir <- str_trim(tclvalue(dir.InNCDF))
-            .cdtData$GalParams$outdir <- str_trim(tclvalue(dir2save))
-
-            .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
-            .cdtData$GalParams$MRG$nrun <- as.numeric(str_trim(tclvalue(nb.run)))
-             pass <- str_trim(strsplit(tclvalue(pass.ratio), ",")[[1]])
-            .cdtData$GalParams$MRG$pass <- as.numeric(pass[pass != ""])
-            if(.cdtData$GalParams$MRG$nrun != length(.cdtData$GalParams$MRG$pass)){
-                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
-                tkwait.window(tt)
-            }
-
-            .cdtData$GalParams$auxvar$dem <- switch(tclvalue(dem.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$slope <- switch(tclvalue(slope.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$aspect <- switch(tclvalue(aspect.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$lon <- switch(tclvalue(lon.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$lat <- switch(tclvalue(lat.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$demfile <- str_trim(tclvalue(demfile.var))
-
-            if(.cdtData$GalParams$MRG$method == "RK" &
-               (.cdtData$GalParams$auxvar$dem |
-                .cdtData$GalParams$auxvar$slope |
-                .cdtData$GalParams$auxvar$aspect) &
-               .cdtData$GalParams$auxvar$demfile == ""
-              )
-            {
-                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['7']], icon = "warning", type = "ok")
-                tkwait.window(tt)
-            }
-
-            .cdtData$GalParams$RnoR$use <- switch(tclvalue(rnor.mask), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$RnoR$smooth <- switch(tclvalue(rnor.smooth), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$RnoR$wet <- as.numeric(str_trim(tclvalue(rnor.wet)))
-
-            .cdtData$GalParams$selstn$from <- val.selectSTN[cb.selectSTN %in% str_trim(tclvalue(select.station))]
-            .cdtData$GalParams$selstn$file.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(selstn.filetype))]
-            .cdtData$GalParams$selstn$file.stn <- str_trim(tclvalue(selstn.filestn))
-            .cdtData$GalParams$selstn$min.perc <- as.numeric(str_trim(tclvalue(selstn.minperc)))
-
-            if(.cdtData$GalParams$selstn$from == "file" &
-               .cdtData$GalParams$selstn$file.stn == "")
-            {
-                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['19']], icon = "warning", type = "ok")
-                tkwait.window(tt)
-            }
-
-            .cdtData$GalParams$settingSNC <- settingSNC
-            .cdtData$GalParams$message <- lang.dlg[['message']]
-
-            tkgrab.release(tt)
-            tkdestroy(tt)
-            tkfocus(.cdtEnv$tcl$main$win)
         }
+
+        .cdtData$GalParams$wvar <- valWindVar[cbWindVar %in% str_trim(tclvalue(windVar))]
+        if(.cdtData$GalParams$wvar == "speed"){
+            .cdtData$GalParams$STN.S <- str_trim(tclvalue(file.STN_S))
+            .cdtData$GalParams$INPUT.S$dir <- str_trim(tclvalue(dir.NC_S))
+
+            if(.cdtData$GalParams$STN.S == ""){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-1']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }
+            if(.cdtData$GalParams$INPUT.S$dir %in% c("", "NA")){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-1']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }
+        }else{
+            .cdtData$GalParams$one.ncdf <- switch(tclvalue(windUV), '0' = FALSE, '1' = TRUE)
+            .cdtData$GalParams$STN.U <- str_trim(tclvalue(file.STN_U))
+            .cdtData$GalParams$STN.V <- str_trim(tclvalue(file.STN_V))
+
+            if(.cdtData$GalParams$STN.U == ""){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-2']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }
+            if(.cdtData$GalParams$STN.V == ""){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-3']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }
+
+            if(.cdtData$GalParams$one.ncdf){
+                .cdtData$GalParams$INPUT.UV$dir <- str_trim(tclvalue(dir.NC_UV))
+
+                if(.cdtData$GalParams$INPUT.UV$dir %in% c("", "NA")){
+                    cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-2']], icon = "warning", type = "ok")
+                    tkwait.window(tt)
+                }
+            }else{
+                .cdtData$GalParams$INPUT.U$dir <- str_trim(tclvalue(dir.NC_U))
+                .cdtData$GalParams$INPUT.V$dir <- str_trim(tclvalue(dir.NC_V))
+
+                if(.cdtData$GalParams$INPUT.U$dir %in% c("", "NA")){
+                    cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-3']], icon = "warning", type = "ok")
+                    tkwait.window(tt)
+                }
+                if(.cdtData$GalParams$INPUT.V$dir %in% c("", "NA")){
+                    cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-4']], icon = "warning", type = "ok")
+                    tkwait.window(tt)
+                }
+            }
+        }
+
+        .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
+        .cdtData$GalParams$MRG$nrun <- as.numeric(str_trim(tclvalue(nb.run)))
+         pass <- str_trim(strsplit(tclvalue(pass.ratio), ",")[[1]])
+        .cdtData$GalParams$MRG$pass <- as.numeric(pass[pass != ""])
+        if(.cdtData$GalParams$MRG$nrun != length(.cdtData$GalParams$MRG$pass)){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }
+
+        .cdtData$GalParams$auxvar$dem <- switch(tclvalue(dem.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$slope <- switch(tclvalue(slope.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$aspect <- switch(tclvalue(aspect.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$lon <- switch(tclvalue(lon.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$lat <- switch(tclvalue(lat.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$demfile <- str_trim(tclvalue(demfile.var))
+
+        if(.cdtData$GalParams$MRG$method == "RK" &
+           (.cdtData$GalParams$auxvar$dem |
+            .cdtData$GalParams$auxvar$slope |
+            .cdtData$GalParams$auxvar$aspect) &
+           .cdtData$GalParams$auxvar$demfile == ""
+          )
+        {
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['7']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }
+
+        .cdtData$GalParams$selstn$from <- val.selectSTN[cb.selectSTN %in% str_trim(tclvalue(select.station))]
+        .cdtData$GalParams$selstn$file.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(selstn.filetype))]
+        .cdtData$GalParams$selstn$file.stn <- str_trim(tclvalue(selstn.filestn))
+        .cdtData$GalParams$selstn$min.perc <- as.numeric(str_trim(tclvalue(selstn.minperc)))
+
+        if(.cdtData$GalParams$selstn$from == "file" &
+           .cdtData$GalParams$selstn$file.stn == "")
+        {
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }
+
+        .cdtData$GalParams$message <- lang.dlg[['message']]
+
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(.cdtEnv$tcl$main$win)
     })
 
     tkconfigure(bt.prm.CA, command = function(){

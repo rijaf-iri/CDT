@@ -123,7 +123,7 @@ cdtCrossValidationTempCMD <- function(time.step = "dekadal",
                                         GUI = FALSE)
 {
     cdtLocalConfigData()
-    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtTemp_CrossValidation_dlgBox.xml")
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCrossValidation_ClimData_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
     message <- lang.dlg[['message']]
 
