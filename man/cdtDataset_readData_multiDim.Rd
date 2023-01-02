@@ -10,6 +10,7 @@ cdtDataset_readData_multiDim(
   ncvar_info,
   extra_ncdim = NULL,
   conversion_fun = NULL,
+  bbox = NULL,
   chunk = list(size = 100, fac = 2)
 )
 }
@@ -40,6 +41,8 @@ latitude and time to be extracted if the netCDF data contains more than 3 dimens
 Default \code{NULL}, the data does not have extra dimension.}
 
 \item{conversion_fun}{a function to transform the data or to convert the units.}
+
+\item{bbox}{named list, providing the region to be extracted in the form list(minlon, maxlon, minlat, maxlat). Default \code{NULL}.}
 
 \item{chunk}{named list containing the size of the chunk \code{size} and the number of chunk to be used for each computation \code{fac}.}
 }

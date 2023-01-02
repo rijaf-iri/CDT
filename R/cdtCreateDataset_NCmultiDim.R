@@ -24,6 +24,7 @@
 #'latitude and time to be extracted if the netCDF data contains more than 3 dimensions.
 #' Default \code{NULL}, the data does not have extra dimension.
 #' @param conversion_fun a function to transform the data or to convert the units.
+#' @param bbox named list, providing the region to be extracted in the form list(minlon, maxlon, minlat, maxlat). Default \code{NULL}.
 #' @param chunk named list containing the size of the chunk \code{size} and the number of chunk to be used for each computation \code{fac}.
 #'
 #' @return A directory named after the element \code{name} of \code{cdtdata_info}, containing the CDT dataset.
@@ -48,7 +49,7 @@
 
 cdtDataset_readData_multiDim <- function(cdtdata_info, netcdf_data, ncvar_info,
                                          extra_ncdim = NULL, conversion_fun = NULL,
-                                         chunk = list(size = 100, fac = 2))
+                                         bbox = NULL, chunk = list(size = 100, fac = 2))
 {
     pattern <- get_ncfile_pattern(netcdf_data$format)
     ncfiles <- list.files(netcdf_data$dir, pattern)
@@ -74,6 +75,18 @@ cdtDataset_readData_multiDim <- function(cdtdata_info, netcdf_data, ncvar_info,
     len.lat <- length(nc.lat)
     ilon <- lola$ix
     ilat <- lola$iy
+
+    if(!is.null(bbox)){
+        ixlo <- nc.lon >= bbox$minlon & nc.lon <= bbox$maxlon
+        ixla <- nc.lat >= bbox$minlat & nc.lat <= bbox$maxlat
+
+        nc.lon <- nc.lon[ixlo]
+        nc.lat <- nc.lat[ixla]
+        len.lon <- length(nc.lon)
+        len.lat <- length(nc.lat)
+        ilon <- ilon[ixlo]
+        ilat <- ilat[ixla]
+    }
 
     ret_msg <- check_ncfiles_dim(netcdf_data$dir, ncfiles, ncvar_info)
     if(!is.null(ret_msg)){
@@ -129,6 +142,8 @@ cdtDataset_readData_multiDim <- function(cdtdata_info, netcdf_data, ncvar_info,
 
     #######
 
+    parsL <- doparallel.cond(length(col.idx) >= 20)
+
     for(j in seq_along(ncfiles)){
         nc <- ncdf4::nc_open(file.path(netcdf_data$dir, ncfiles[j]))
         vars <- ncdf4::ncvar_get(nc, varid = ncvar_info$varid)
@@ -172,7 +187,9 @@ cdtDataset_readData_multiDim <- function(cdtdata_info, netcdf_data, ncvar_info,
             vars <- conversion_fun(vars)
         }
 
-        ret <- lapply(seq_along(col.idx), function(l){
+        ret <- cdt.foreach(seq_along(col.idx), parsL = parsL, FUN = function(l)
+        {
+            # ret <- lapply(seq_along(col.idx), function(l){
             chk <- vars[col.idx[[l]], , drop = FALSE]
             chk <- t(chk)
 
@@ -367,7 +384,6 @@ get_netcdf_time <- function(time.dim){
 }
 
 format_netcdf_time <- function(nc, time.dim){
-    time.dim <- nc$dim[[ncvar_info$time_dim]]
     if(is.null(time.dim$calendar)){
         attr <- ncdf4::ncatt_get(nc, 0, 'calendar')
         if(attr$hasatt){
