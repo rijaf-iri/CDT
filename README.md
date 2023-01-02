@@ -38,7 +38,7 @@ install_github("rijaf-iri/CDT")
 ## `CDT` installation on MacOS X
 
 ### 1) Install `XQuartz`
-Type `XQuartz` in Apple's search, if you don't find it, it means, `XQuartz` is not already installed. It's better to update `XQuartz` to the latest version if it is already installed.
+Type `XQuartz` in Apple's search, if you don't find it, that means `XQuartz` is not installed yet. It's better to update `XQuartz` to the latest version if it is already installed.
 
 Download and install it from [https://www.xquartz.org](https://www.xquartz.org/).
 

@@ -15,6 +15,7 @@ export(cdtComputeSeasonal_cdtstn, cdtComputeSeasonal_netcdf)
 export(cdtENSOAnalysis_netcdf)
 export(install_wgrib)
 export(convert2CPTFormat)
+export(cdtDataset_readData_multiDim)
 
 importFrom("methods", "as", "is", "slot")
 importFrom("graphics", "abline", "arrows", "axTicks", "axis",
