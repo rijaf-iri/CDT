@@ -205,7 +205,7 @@ dataOperation_Execute <- function(){
             if(inherits(res, "try-error")) return(-2)
             if(is.null(evalOut)) return(-2)
 
-            evalOut[is.na(evalOut) | is.nan(evalOut)] <- GalParams$varinfo$missval
+            evalOut[is.na(evalOut) | is.nan(evalOut) | is.infinite(evalOut)] <- GalParams$varinfo$missval
 
             outfile <- file.path(outNCDIR, ncFiles[[1]][i])
             nc <- ncdf4::nc_create(outfile, grdNC)
@@ -243,7 +243,7 @@ dataOperation_Execute <- function(){
     }
 
     if(GalParams$datatype == "cdtdataset"){
-
+        ## to do
     }
 
     return(0)
