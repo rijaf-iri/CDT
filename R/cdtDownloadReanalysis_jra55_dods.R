@@ -370,7 +370,7 @@ jra55_dods.download.data <- function(lnk, dest, ncfl, handle, pars){
     if(all(unlist(dc) == 0)){
         ret <- jra55_dods.format.data(dest, ncfl, pars)
         if(ret == 0) xx <- NULL
-        xx <- NULL
+        # xx <- NULL
     }
 
     return(xx)

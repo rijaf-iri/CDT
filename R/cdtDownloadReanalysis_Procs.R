@@ -75,6 +75,11 @@ hourly.start.end.time <- function(x){
     as.POSIXct(x, tz = "UTC", format = "%Y-%m-%d-%H")
 }
 
+daily.start.end.time <- function(x){
+    x <- paste(unlist(x), collapse = "-")
+    as.Date(x,format = "%Y-%m-%d")
+}
+
 jra55.start.end.time <- function(x){
     div3 <- x[[4]] %% 3
     if(div3 != 0) x[[4]] <- x[[4]] - div3
