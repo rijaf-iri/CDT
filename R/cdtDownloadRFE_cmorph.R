@@ -1,7 +1,7 @@
 
 ## toexport
 cmorph_raw.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.CMORPH/.V0px/.RAW"
+    dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.CMORPH/.V0px/.RAW"
     vardir <- switch(GalParams$tstep,
                       "hourly" = ".3-hourly/.prcp",
                       "daily" = ".daily/.prcp"

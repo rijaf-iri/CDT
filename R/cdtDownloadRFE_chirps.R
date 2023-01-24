@@ -1,7 +1,7 @@
 
 ## toexport
 chirp.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0"
+    dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0"
     vartime <- switch(GalParams$tstep,
                       "daily" = ".daily/.prcp",
                       "dekadal" = ".dekad/.prcp",
@@ -35,7 +35,7 @@ chirp.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TR
 
 ## toexport
 chirps.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0"
+    dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0"
     vardir <- switch(GalParams$tstep,
                       "daily" = ".daily-improved/.global/.0p05/.prcp",
                       "dekadal" = ".dekad/.prcp",

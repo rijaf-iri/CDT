@@ -91,11 +91,14 @@ trmm3b42v7rt.download.dods <- function(GalParams, nbfile = 3, GUI = TRUE, verbos
     else if(GalParams$tstep == "hourly"){
         if(GalParams$minhour == 3){
             ncfiles <- sprintf("trmm3b42rt_%s%s%s%s.nc", rdate[, 1], rdate[, 2], rdate[, 3], rdate[, 4])
-            nc4files <- sprintf("3B42RT.%s%s%s%s.7.nc4.nc4", rdate[, 1], rdate[, 2], rdate[, 3], rdate[, 4])
             daty <- apply(rdate[, 1:4], 1, paste0, collapse = "")
             daty <- as.POSIXct(daty, tz = "UTC", format = "%Y%m%d%H") - 1
-            paths <- file.path("TRMM_RT", "TRMM_3B42RT.7", format(daty, "%Y"),
-                               strftime(daty, format = "%j", tz = "UTC"))
+            sep7Rdate <- as.POSIXct("2012110703", tz = "UTC", format = "%Y%m%d%H")
+            sep7R <- ifelse(daty <= sep7Rdate, "7R2", "7")
+            nc4format <- paste0("3B42RT.%s%s%s%s.", sep7R, ".nc4.nc4")
+            nc4files <- sprintf(nc4format, rdate[, 1], rdate[, 2], rdate[, 3], rdate[, 4])
+            doy <- strftime(daty, format = "%j", tz = "UTC")
+            paths <- file.path("TRMM_RT", "TRMM_3B42RT.7", format(daty, "%Y"), doy)
             longname <- "TMPA TRMM_3B42RT Near Real Time Precipitation"
             region <- "?precipitation%s%s,lat%s,lon%s"
             data.tres <- paste0(GalParams$minhour, GalParams$tstep)

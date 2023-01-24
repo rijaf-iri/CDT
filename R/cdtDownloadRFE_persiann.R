@@ -2,22 +2,24 @@
 ## toexport
 persiann.download.uci <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range, GalParams$minhour)
-    ftp.uci <- "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN"
+    ftp.uci <- "https://persiann.eng.uci.edu/CHRSdata/PERSIANN"
 
     if(GalParams$tstep == "hourly"){
         if(GalParams$minhour == 1){
             baseurl <- file.path("hrly", rdate[, 1])
             filename <- sprintf("m6s4rr%s%s%s.bin.gz", substr(rdate[, 1], 3, 4), rdate[, 5], rdate[, 4])
+            dirNom <- "1hourly"
         }
         else if(GalParams$minhour == 3){
             baseurl <- "3hrly"
-            baseurl <- ifelse(rdate[, 1] == "2019" & (as.numeric(rdate[, 5]) > 147),
-                              baseurl, file.path(baseurl, rdate[, 1]))
+            baseurl <- ifelse(as.numeric(rdate[, 1]) <= 2020, file.path(baseurl, rdate[, 1]), baseurl)
             filename <- sprintf("m6s4_3h%s%s%s.bin.gz", substr(rdate[, 1], 3, 4), rdate[, 5], rdate[, 4])
+            dirNom <- "3hourly"
         }
         else if(GalParams$minhour == 6){
             baseurl <- "6hrly"
             filename <- sprintf("m6s4_6h%s%s%s.bin.gz", substr(rdate[, 1], 3, 4), rdate[, 5], rdate[, 4])
+            dirNom <- "6hourly"
         }else return(-1)
 
         ncfiles <- sprintf("persiann_%s%s%s%s.nc", rdate[, 1], rdate[, 2], rdate[, 3], rdate[, 4])
@@ -26,17 +28,19 @@ persiann.download.uci <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
         baseurl <- "daily"
         filename <- sprintf("ms6s4_d%s%s.bin.gz", substr(rdate[, 1], 3, 4), rdate[, 4])
         ncfiles <- sprintf("persiann_%s%s%s.nc", rdate[, 1], rdate[, 2], rdate[, 3])
+        dirNom <- "daily"
     }
     else if(GalParams$tstep == "monthly"){
         baseurl <- "mthly"
         filename <- sprintf("ms6s4_m%s%s.bin.gz", substr(rdate[, 1], 3, 4), rdate[, 2])
         ncfiles <- sprintf("persiann_%s%s.nc", rdate[, 1], rdate[, 2])
+        dirNom <- "monthly"
     }else return(-1)
 
     urls <- file.path(ftp.uci, baseurl, filename)
 
     #########
-    data.name <- paste0("PERSIANN_", GalParams$tstep)
+    data.name <- paste0("PERSIANN_", dirNom)
     outdir <- file.path(GalParams$dir2save, data.name)
     extrdir <- file.path(outdir, "Extracted")
     dir.create(extrdir, showWarnings = FALSE, recursive = TRUE)
@@ -55,7 +59,7 @@ persiann.download.uci <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = T
 ## toexport
 persiann_cdr.download.uci <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range)
-    ftp.uci <- "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR"
+    ftp.uci <- "https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR"
 
     if(GalParams$tstep == "daily"){
         baseurl <- "daily"

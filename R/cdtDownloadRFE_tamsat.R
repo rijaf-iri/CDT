@@ -1,7 +1,7 @@
 
 ## toexport
 tamsat3.0.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0"
+    dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0"
     vartime <- switch(GalParams$tstep,
                       "daily" = c(".daily/.rfe", "time"),
                       "dekadal" = c(".dekadal/.rfe", "T"),
@@ -31,7 +31,7 @@ tamsat3.0.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose 
 
 ## toexport
 tamsat3.1.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1"
+    dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1"
     vartime <- switch(GalParams$tstep,
                       "daily" = ".daily/.rfe_filled",
                       "dekadal" = ".dekadal/.rfe_filled",
@@ -63,7 +63,7 @@ tamsat3.1.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose 
 ## toexport
 tamsatv3.1.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     # baseurl <- "http://gws-access.jasmin.ac.uk/public/tamsat/rfe/data/v3.1"
-    baseurl <- "http://www.tamsat.org.uk/public_data/data/v3.1"
+    baseurl <- "https://www.tamsat.org.uk/public_data/data/v3.1"
     fileformat <- switch(GalParams$tstep,
                          "daily" = "rfe%s_%s_%s.v3.1.nc", 
                          "pentad" = "rfe%s_%s-pt%s.v3.1.nc",
@@ -93,7 +93,7 @@ tamsatv3.1.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbo
 }
 
 tamsatv3.0.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    baseurl <- "http://www.tamsat.org.uk/public_data/TAMSAT3"
+    baseurl <- "https://www.tamsat.org.uk/public_data/TAMSAT3"
     fileformat <- switch(GalParams$tstep,
                          "daily" = "rfe%s_%s_%s.v3.nc", 
                          "pentad" = "rfe%s_%s-pt%s.v3.nc",

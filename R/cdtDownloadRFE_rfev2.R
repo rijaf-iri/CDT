@@ -32,7 +32,7 @@ rfev2_af.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose =
 
 ## toexport
 rfev2_sa.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.SAsia/.RFEv2/.DAILY/.est_prcp"
+    dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.SAsia/.RFEv2/.DAILY/.est_prcp"
 
     rlon <- unlist(GalParams$bbox[c('minlon', 'maxlon')])
     rlon <- paste(c('X', rlon, 'RANGE'), collapse = "/")

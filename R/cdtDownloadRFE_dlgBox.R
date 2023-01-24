@@ -95,13 +95,13 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
 
         if(minhour == 30){
             urls <- switch(src,
-                # "cmorphv1.0adj-gb" = c("ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/8km-30min",
-                #                        "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
-                "cmorphrtv0.xadj-gb" = c("ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/8km-30min",
-                                         "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
-                "cmorphv0.xrt-gb" = "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/GLOBE/data",
-                "cmorphv0.xraw-gb" = c("ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/8km-30min",
-                                       "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
+                # "cmorphv1.0adj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/8km-30min",
+                #                        "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
+                "cmorphrtv0.xadj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/8km-30min",
+                                         "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
+                "cmorphv0.xrt-gb" = "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/GLOBE/data",
+                "cmorphv0.xraw-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/8km-30min",
+                                       "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
                 "gpm.imerg.f-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_V06/summary?keywords=IMERG",
                                      "https://pmm.nasa.gov/data-access/downloads/gpm"),
                 "gpm.imerg.l-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_V06/summary?keywords=IMERG",
@@ -118,10 +118,10 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
         if(minhour == 1){
             urls <- switch(src,
                 "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                                  "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN/hrly",
-                                  "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN/hrly/readme.hrly"),
-                "cmorphrtv0.xadj-gb" = c("ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/0.25deg-HLY",
-                                         "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt")
+                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/hrly",
+                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/hrly/readme.hrly"),
+                "cmorphrtv0.xadj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/0.25deg-HLY",
+                                         "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt")
             )
         }
 
@@ -129,27 +129,27 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
         if(minhour == 3){
             urls <- switch(src,
                 "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                                  "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN/3hrly",
-                                  "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN/3hrly/readme.3hrly"),
+                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/3hrly",
+                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/3hrly/readme.3hrly"),
                 "trmm3b42v7-gb" = "https://disc.gsfc.nasa.gov/datasets/TRMM_3B42_V7/summary?keywords=TRMM_3B42",
                 "trmm3b42rtv7-gb" = "https://disc.gsfc.nasa.gov/datasets/TRMM_3B42RT_V7/summary?keywords=TRMM_3B42",
-                "cmorphv1.0adj-gb" = c("ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/0.25deg-3HLY",
-                                       "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
+                "cmorphv1.0adj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/0.25deg-3HLY",
+                                       "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
                 "cmorphv0.xraw-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.CMORPH/.V0px/.RAW/.3-hourly/.prcp",
-                                       "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/0.25deg-3HLY",
-                                       "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt")
+                                       "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/0.25deg-3HLY",
+                                       "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt")
             )
         }
 
         ## 6 hour
         if(minhour == 6){
             urls <- switch(src,
-                "chirpsv2-af" = c("ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly",
-                                  "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly/README.6-hourly.txt",
-                                  "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/africa_6-hourly/p1_bin/extra_step/readme_chirps6hrly.txt"
+                "chirpsv2-af" = c("https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly",
+                                  "https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly/README.6-hourly.txt",
+                                  "https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly/p1_bin/extra_step/readme_chirps6hrly.txt"
                                 ),
                 "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                                  "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN/6hrly")
+                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/6hrly")
             )
         }
     }
@@ -157,38 +157,38 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     ## daily
     if(tstep == "daily"){
         urls <- switch(src,
-            "tamsatv3.1-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.daily/.rfe",
-                                "http://www.tamsat.org.uk/sites/data-download/index.html"),
-            "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.daily/.rfe",
-                              "http://www.tamsat.org.uk/data"),
-            "chirp-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.daily/.prcp",
-                           "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRP/daily"),
-            "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.daily-improved/.global/.0p05/.prcp",
-                              "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_daily/tifs/p05"),
+            "tamsatv3.1-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.daily/.rfe",
+                                "https://www.tamsat.org.uk/sites/data-download/index.html"),
+            "tamsatv3-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.daily/.rfe",
+                              "https://www.tamsat.org.uk/data"),
+            "chirp-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.daily/.prcp",
+                           "https://data.chc.ucsb.edu/products/CHIRP/daily"),
+            "chirpsv2-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.daily-improved/.global/.0p05/.prcp",
+                              "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/tifs/p05"),
             "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.daily/.est_prcp",
-                          "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
+                          "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
             "rfev2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.RFEv2/.est_prcp",
-                           "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2",
-                           "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2/RFE_readme.txt"),
+                           "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2",
+                           "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2/RFE_readme.txt"),
             "rfev2-sa" = c("http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.SAsia/.RFEv2/.DAILY/.est_prcp",
-                           "ftp://ftp.cpc.ncep.noaa.gov/fews/S.Asia",
-                           "ftp://ftp.cpc.ncep.noaa.gov/fews/S.Asia/SOUTH_ASIA_README.txt"),
+                           "https://ftp.cpc.ncep.noaa.gov/fews/S.Asia",
+                           "https://ftp.cpc.ncep.noaa.gov/fews/S.Asia/SOUTH_ASIA_README.txt"),
             "persianncdr-gb" = c("https://chrsdata.eng.uci.edu",
-                                 "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR/daily"),
+                                 "https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR/daily"),
             "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                              "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN/daily"),
+                              "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/daily"),
             "trmm3b42v7-gb" = "https://disc.gsfc.nasa.gov/datasets/TRMM_3B42_Daily_V7/summary?keywords=TRMM_3B42",
             "trmm3b42rtv7-gb" = "https://disc.gsfc.nasa.gov/datasets/TRMM_3B42RT_Daily_V7/summary?keywords=TRMM_3B42",
-            "cmorphv1.0bld-gb" = c("ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/BLD/0.25deg-DLY_EOD/GLB",
-                                   "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
-            "cmorphrtv0.xbld-gb" = "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/BLD",
-            "cmorphv1.0adj-gb" = c("ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/0.25deg-DLY_00Z",
-                                   "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
-            "cmorphrtv0.xadj-gb" = c("ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/0.25deg-DLY_00Z",
-                                     "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
+            "cmorphv1.0bld-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/BLD/0.25deg-DLY_EOD/GLB",
+                                   "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
+            "cmorphrtv0.xbld-gb" = "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/BLD",
+            "cmorphv1.0adj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/0.25deg-DLY_00Z",
+                                   "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
+            "cmorphrtv0.xadj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/0.25deg-DLY_00Z",
+                                     "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
             "cmorphv0.xraw-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.CMORPH/.V0px/.RAW/.daily/.prcp",
-                                   "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/0.25deg-DLY_00Z",
-                                   "ftp://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
+                                   "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/0.25deg-DLY_00Z",
+                                   "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
             "gpm.imerg.f-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_V06/summary?keywords=IMERG",
                                  "https://pmm.nasa.gov/data-access/downloads/gpm"),
             "gpm.imerg.l-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDL_V06/summary?keywords=IMERG",
@@ -201,50 +201,50 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     ## pentad
     if(tstep == "pentad"){
         urls <- switch(src,
-            "tamsatv3.1-af" = "http://www.tamsat.org.uk/sites/data-download/index.html",
-            "tamsatv3-af" = "http://www.tamsat.org.uk/data",
-            "chirp-gb" = "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRP/pentads",
-            "chirpsv2-gb" = "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_pentad/tifs"
+            "tamsatv3.1-af" = "https://www.tamsat.org.uk/sites/data-download/index.html",
+            "tamsatv3-af" = "https://www.tamsat.org.uk/data",
+            "chirp-gb" = "https://data.chc.ucsb.edu/products/CHIRP/pentads",
+            "chirpsv2-gb" = "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_pentad/tifs"
         )
     }
 
     ## dekad
     if(tstep == "dekadal"){
         urls <- switch(src,
-            "tamsatv3.1-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.dekadal/.rfe",
-                                "http://www.tamsat.org.uk/sites/data-download/index.html"),
-            "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.dekadal/.rfe",
-                              "http://www.tamsat.org.uk/data"),
-            "chirp-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp",
-                           "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRP/dekads"),
-            "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.dekad/.prcp",
-                              "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_dekad/tifs"),
+            "tamsatv3.1-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.dekadal/.rfe",
+                                "https://www.tamsat.org.uk/sites/data-download/index.html"),
+            "tamsatv3-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.dekadal/.rfe",
+                              "https://www.tamsat.org.uk/data"),
+            "chirp-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp",
+                           "https://data.chc.ucsb.edu/products/CHIRP/dekads"),
+            "chirpsv2-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.dekad/.prcp",
+                              "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_dekad/tifs"),
             "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.TEN-DAY/.ARC2/.est_prcp",
-                          "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
+                          "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
             "rfev2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.TEN-DAY/.RFEv2/.est_prcp",
-                           "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa"),
-            "rfev2-sa" = c("http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.SAsia/.RFEv2/.DAILY/.est_prcp/1.0/dekadalAverage/T/differential_mul",
-                           "ftp://ftp.cpc.ncep.noaa.gov/fews/S.Asia")
+                           "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa"),
+            "rfev2-sa" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.SAsia/.RFEv2/.DAILY/.est_prcp/1.0/dekadalAverage/T/differential_mul",
+                           "https://ftp.cpc.ncep.noaa.gov/fews/S.Asia")
         )
     }
 
     ## monthly
     if(tstep == "monthly"){
         urls <- switch(src,
-            "tamsatv3.1-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.monthly/.rfe",
-                                "http://www.tamsat.org.uk/sites/data-download/index.html"),
-            "tamsatv3-af" = c("http://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.monthly/.rfe",
-                              "http://www.tamsat.org.uk/data"),
-            "chirp-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp/monthlyAverage/3.0/mul",
-                           "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRP/monthly"),
-            "chirpsv2-gb" = c("http://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.monthly/.global/.precipitation",
-                              "ftp://ftp.chc.ucsb.edu/pub/org/chg/products/CHIRPS-2.0/global_monthly/tifs"),
+            "tamsatv3.1-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.monthly/.rfe",
+                                "https://www.tamsat.org.uk/sites/data-download/index.html"),
+            "tamsatv3-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.monthly/.rfe",
+                              "https://www.tamsat.org.uk/data"),
+            "chirp-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp/monthlyAverage/3.0/mul",
+                           "https://data.chc.ucsb.edu/products/CHIRP/monthly"),
+            "chirpsv2-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.monthly/.global/.precipitation",
+                              "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_monthly/tifs"),
             "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.monthly/.est_prcp",
-                          "ftp://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
+                          "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
             "persianncdr-gb" = c("https://chrsdata.eng.uci.edu",
-                                 "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR/mthly"),
+                                 "https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR/mthly"),
             "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                              "ftp://persiann.eng.uci.edu/CHRSdata/PERSIANN/mthly"),
+                              "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/mthly"),
             "gpm.imerg.f-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGM_V06/summary?keywords=IMERG",
                                  "https://pmm.nasa.gov/data-access/downloads/gpm")
         )

@@ -1,7 +1,7 @@
 
 ## toexport
 arc2.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    dlpath <- "http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa"
+    dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa"
     vardir <- switch(GalParams$tstep,
                       "daily" = ".DAILY/.ARC2/.daily/.est_prcp",
                       "dekadal" = ".TEN-DAY/.ARC2/.est_prcp",
