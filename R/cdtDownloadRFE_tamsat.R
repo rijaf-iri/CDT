@@ -2,21 +2,18 @@
 ## toexport
 tamsat3.0.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     dlpath <- "https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0"
-    vartime <- switch(GalParams$tstep,
-                      "daily" = c(".daily/.rfe", "time"),
-                      "dekadal" = c(".dekadal/.rfe", "T"),
-                      "monthly" = c(".monthly/.rfe", "time")
-                     )
 
+    vartime <- paste0(".", GalParams$tstep, "/.rfe")
     rlon <- unlist(GalParams$bbox[c('minlon', 'maxlon')])
-    rlon <- paste(c('lon', rlon, 'RANGE'), collapse = "/")
+    rlon <- paste(c('X', rlon, 'RANGE'), collapse = "/")
     rlat <- unlist(GalParams$bbox[c('minlat', 'maxlat')])
-    rlat <- paste(c('lat', rlat, 'RANGE'), collapse = "/")
+    rlat <- paste(c('Y', rlat, 'RANGE'), collapse = "/")
 
     rdate <- iridl.format.date(GalParams$tstep, GalParams$date.range)
     urls <- urltools::url_encode(paste0("(", rdate$dates, ")"))
-    urls <- paste0(vartime[2], "/", urls, "/", "VALUE")
-    urls <- paste(dlpath, vartime[1], rlon, rlat, urls, 'data.nc', sep = "/")
+
+    urls <- paste0("T", "/", urls, "/", "VALUE")
+    urls <- paste(dlpath, vartime, rlon, rlat, urls, 'data.nc', sep = "/")
 
     #########
     data.name <- paste0("TAMSATv3_", GalParams$tstep)
@@ -62,7 +59,6 @@ tamsat3.1.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose 
 
 ## toexport
 tamsatv3.1.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    # baseurl <- "http://gws-access.jasmin.ac.uk/public/tamsat/rfe/data/v3.1"
     baseurl <- "https://www.tamsat.org.uk/public_data/data/v3.1"
     fileformat <- switch(GalParams$tstep,
                          "daily" = "rfe%s_%s_%s.v3.1.nc", 

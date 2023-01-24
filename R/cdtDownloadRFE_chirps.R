@@ -144,6 +144,31 @@ chirp.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRU
         urls <- file.path(ftp.ucsb, baseurl, filename)
         ncfiles <- sprintf("chirp_%s%s.nc", rdate[, 1], rdate[, 2])
         type <- "tif"
+
+        # if((bbx$minlon >= -19.975 && bbx$maxlon <= 54.975) &&
+        #    (bbx$minlat >= -39.975 && bbx$maxlat <= 39.975))
+        # {
+        #     ## starting from 2014-01,  before this date take global data
+        #     data.dir <- "africa"
+        #     baseurl <- "monthly/africa"
+        #     filename <- sprintf("CHIRP.%s.%s.tif", rdate[, 1], rdate[, 2])
+        # }
+        # else if((bbx$minlon >= -92.975 && bbx$maxlon <= -57.025) &&
+        #         (bbx$minlat >= 6.025 && bbx$maxlat <= 23.475))
+        # {
+        #     ## starting from 2014-01,  before this date take global data
+        #     data.dir <- "camer-carib"
+        #     baseurl <- "monthly/camer-carib"
+        #     filename <- sprintf("CHIRP.%s.%s.tif", rdate[, 1], rdate[, 2])
+        # }else{
+        #     data.dir <- "global"
+        #     baseurl <- "monthly"
+        #     filename <- sprintf("CHIRP.%s.%s.tif", rdate[, 1], rdate[, 2])
+        # }
+
+        # urls <- file.path(ftp.ucsb, baseurl, filename)
+        # ncfiles <- sprintf("chirp_%s%s.nc", rdate[, 1], rdate[, 2])
+        # type <- "tif"
     }else return(-1)
 
     #########
