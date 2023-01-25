@@ -158,11 +158,14 @@ dataOperation_Execute <- function(){
                 ix <- match(daty, ncDates[[i]])
                 ncFiles[[i]][ix]
             })
-        }
+            ncDates <- daty
+        }else ncDates <- ncDates[[1]]
 
         #########
         outNCDIR <- file.path(GalParams$output, "dataOperation_Output")
         dir.create(outNCDIR, showWarnings = FALSE, recursive = TRUE)
+
+        outNCFRMT <- .cdtData$GalParams$ncoutformat
 
         dx <- ncdf4::ncdim_def("Lon", "degreeE", ncsample[[1]]$lon)
         dy <- ncdf4::ncdim_def("Lat", "degreeN", ncsample[[1]]$lat)
@@ -207,7 +210,8 @@ dataOperation_Execute <- function(){
 
             evalOut[is.na(evalOut) | is.nan(evalOut) | is.infinite(evalOut)] <- GalParams$varinfo$missval
 
-            outfile <- file.path(outNCDIR, ncFiles[[1]][i])
+            outfile <- gsub('%S', ncDates[i], outNCFRMT)
+            outfile <- file.path(outNCDIR, outfile)
             nc <- ncdf4::nc_create(outfile, grdNC)
             ncdf4::ncvar_put(nc, grdNC, evalOut)
             ncdf4::nc_close(nc)

@@ -59,14 +59,18 @@ dataOperation_GetInfo <- function(){
             }
             fileORdir <- tclVar(txtSaveDir)
 
-            txt.file.save <- tklabel(frSaveIn, text = tclvalue(fileORdir), textvariable = fileORdir, anchor = 'w', justify = 'left')
-            en.file.save <- tkentry(frSaveIn, textvariable = file.save, width = largeur4)
-            bt.file.save <- tkbutton(frSaveIn, text = "...")
+            saveFrame <- tkframe(frSaveIn)
+
+            txt.file.save <- tklabel(saveFrame, text = tclvalue(fileORdir), textvariable = fileORdir, anchor = 'w', justify = 'left')
+            en.file.save <- tkentry(saveFrame, textvariable = file.save, width = largeur4)
+            bt.file.save <- tkbutton(saveFrame, text = "...")
 
             #########
             tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
             tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
             tkgrid(bt.file.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+            tkgrid(saveFrame)
 
             #########
 
@@ -75,6 +79,20 @@ dataOperation_GetInfo <- function(){
                 fileORdir2Save(file.save, isFile = isFile)
                 tcl('wm', 'attributes', tt, topmost = TRUE)
             })
+
+            #########
+            if(data.type == 'cdtnetcdf'){
+                ncoutFrame <- tkframe(frSaveIn)
+
+                txt.ncout.frmt <- tklabel(ncoutFrame, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
+                en.ncout.frmt <- tkentry(ncoutFrame, textvariable = ncout.format, width = largeur4)
+
+                #########
+                tkgrid(txt.ncout.frmt, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+                tkgrid(en.ncout.frmt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+
+                tkgrid(ncoutFrame, sticky = 'w')
+            }
 
             #########
             tkgrid(frSaveIn)
@@ -355,6 +373,7 @@ dataOperation_GetInfo <- function(){
     frSaveIn <- tkframe(frSave)
 
     file.save <- tclVar(.cdtData$GalParams$output)
+    ncout.format <- tclVar(.cdtData$GalParams$ncoutformat)
 
     saveFun(.cdtData$GalParams$datatype)
 
@@ -377,12 +396,15 @@ dataOperation_GetInfo <- function(){
         .cdtData$GalParams$datatype <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
 
         if(str_trim(tclvalue(file.save)) %in% c("", "NA")){
-            imsg <- if(.cdtData$GalParams$datatype == "cdtstation") "2" else 3
+            imsg <- if(.cdtData$GalParams$datatype == "cdtstation") "2" else "3"
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][[imsg]], icon = "warning", type = "ok")
             tkwait.window(tt)
         }
 
         .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
+        if(.cdtData$GalParams$datatype == "cdtnetcdf"){
+            .cdtData$GalParams$ncoutformat <- str_trim(tclvalue(ncout.format))
+        }
 
         inputFiles <- lapply(.cdtData$GalParams$DATASETs, function(don){
                 str_trim(tclvalue(don$tcl$input.file))

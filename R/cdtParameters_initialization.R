@@ -105,7 +105,7 @@ cdt.init.params <- function(action, tstep){
                            formula = "X1 - 273.15",
                            varinfo = list(name = "", units = "", missval = -9999,
                                           longname = "", prec = "float"),
-                           output = "")
+                           output = "", ncoutformat = "output_%S.nc")
     }
 
     #################################################################
@@ -313,18 +313,19 @@ cdt.init.params <- function(action, tstep){
 
     if(grepl('coefbias\\.', action)){
         input_format <- switch(action,
-                               'coefbias.rain' = "rfe_%s%s%s.nc",
-                               'coefbias.temp' = "tmax_down_%s%s%s.nc",
-                               'coefbias.rh' = "rh_down_%s%s%s.nc",
-                               'coefbias.pres' = "pres_down_%s%s%s.nc",
-                               'coefbias.rad' = "rad_down_%s%s%s.nc",
-                               'coefbias.wind' = "wind_down_%s%s%s.nc",
+                               'coefbias.rain' = c("rfe_%s%s%s.nc", 'berngamma'),
+                               'coefbias.temp' = c("tmax_down_%s%s%s.nc", 'norm'),
+                               'coefbias.rh' = c("rh_down_%s%s%s.nc", 'norm'),
+                               'coefbias.pres' = c("pres_down_%s%s%s.nc", 'norm'),
+                               'coefbias.rad' = c("rad_down_%s%s%s.nc", 'norm'),
+                               'coefbias.wind' = c("wind_down_%s%s%s.nc", 'gamma'),
                                NULL)
 
         ret.params <- list(action = action, period = tstep, STN.file = '',
                            base.period = list(all.years = TRUE, start.year = 1991, end.year = 2020, min.year = 15),
-                           INPUT = list(dir = "", sample = "", format = input_format),
-                           BIAS = list(method = "mbvar", stat.test = FALSE, min.length = 10,
+                           INPUT = list(dir = "", sample = "", format = input_format[1]),
+                           BIAS = list(method = "mbvar", min.length = 10,
+                                       distr.name = input_format[2],
                                        blon = 1, blat = 1),
                            interp = list(method = "idw", nmin = 3, nmax = 9, maxdist = 2.5,
                                          minstn = 10, use.block = TRUE, demfile = "",
