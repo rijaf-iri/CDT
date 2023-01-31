@@ -168,7 +168,8 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     })
 
     split_reftime <- lapply(range_times, function(x){
-        floor(as.numeric(x - origin, units = "days") * times_pars$fac) - 1
+        # floor(as.numeric(x - origin, units = "days") * times_pars$fac) - 1
+        floor(as.numeric(x - origin, units = "days") * times_pars$fac)
     })
 
     query_reftime <- lapply(split_reftime, function(x) paste0("[", x[1], ":", 1, ":", x[2], "]"))
@@ -370,7 +371,6 @@ jra55_dods.download.data <- function(lnk, dest, ncfl, handle, pars){
     if(all(unlist(dc) == 0)){
         ret <- jra55_dods.format.data(dest, ncfl, pars)
         if(ret == 0) xx <- NULL
-        # xx <- NULL
     }
 
     return(xx)
@@ -488,8 +488,12 @@ jra55_dods.parse.ascii <- function(filetxt, pars){
         if(pars$timetype == "vector"){
             vtimes <- format(times, "%Y%m%d%H")
         }else{
+            # vtimes <- sapply(don$index, function(i){
+            #     format(times[[i[1]]][i[2]], "%Y%m%d%H")
+            # })
             vtimes <- sapply(don$index, function(i){
-                format(times[[i[1]]][i[2]], "%Y%m%d%H")
+                # format(times[[i[1]]][i[2]] + don$timeOffset$data[[1]][i[2]] * 3600, "%Y%m%d%H")
+                format(times[[i[1]]][1] + don$timeOffset$data[[1]][i[2]] * 3600, "%Y%m%d%H")
             })
         }
 
@@ -532,9 +536,14 @@ jra55_dods.get.data <- function(x, vr){
     lat <- jra55_dods.get.var(x, vr, 'lat')
     lat <- as.numeric(trimws(lat$data[[1]]))
 
+    timeOffset <- jra55_dods.get.var(x, vr, 'timeOffset')
+    timeOffset$data[[1]] <- as.numeric(trimws(timeOffset$data[[1]]))
+
     list(dim = nvar, lon = lon, lat = lat,
          index = lapply(arr, '[[', 'index'),
-         data = lapply(arr, '[[', 'data'))
+         data = lapply(arr, '[[', 'data'),
+         timeOffset = timeOffset
+        )
 }
 
 jra55_dods.get.var <- function(x, vr, pr = NULL){
