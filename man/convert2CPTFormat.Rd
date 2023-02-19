@@ -7,8 +7,8 @@
 convert2CPTFormat(
   data.type = "cdtstation",
   station.data = list(file = "", sep = ",", na.strings = "-99"),
-  netcdf.data = list(dir = "", format = "onset_\%Y\%M\%D.nc", varid = "onset", ilon =
-    1, ilat = 2),
+  netcdf.data = list(dir = "", format = "onset_\%Y\%M\%D.nc", varid = "onset", ilon = 1,
+    ilat = 2),
   cpt.varinfo = list(name = "onset", units = "days since", missval = "-9999"),
   output.file = "",
   GUI = FALSE

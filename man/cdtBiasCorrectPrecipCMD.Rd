@@ -7,8 +7,8 @@
 cdtBiasCorrectPrecipCMD(
   time.step = "dekadal",
   dates = list(from = "range", pars = list(start = "2018011", end = "2018123")),
-  netcdf.data = list(dir = "", format = "rfe_\%s\%s\%s.nc", varid = "rfe", ilon = 1,
-    ilat = 2),
+  netcdf.data = list(dir = "", format = "rfe_\%s\%s\%s.nc", varid = "rfe", ilon = 1, ilat
+    = 2),
   bias.method = list(method = "mbvar", dir = "", format = "STN_GRID_Bias_\%s.nc"),
   output = list(dir = "", format = "rr_adj_\%s\%s\%s.nc"),
   GUI = FALSE

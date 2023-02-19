@@ -41,7 +41,7 @@
             <text lang="en"> Time step </text>
         </label>
         <label id="10">
-            <text lang="en"> NetCDF output filename format </text>
+            <text lang="en"> Output NetCDF filename format </text>
         </label>
     </widget>
     <help>
