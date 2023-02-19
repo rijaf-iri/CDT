@@ -17,9 +17,11 @@ reanal.product.info <- function(prod, src){
     if(prod == "jra55"){
         urls <- switch(src,
                     "rda.ucar.edu - ds628.0 - 3Hourly" = c("https://rda.ucar.edu/datasets/ds628.0/",
-                                                           "https://rda.ucar.edu/datasets/ds628.0/docs/JRA-55.handbook_TL319_en.pdf"),
+                                                           # "https://rda.ucar.edu/datasets/ds628.0/docs/JRA-55.handbook_TL319_en.pdf",
+                                                           "https://jra.kishou.go.jp/JRA-55/document/JRA-55_handbook_TL319_en.pdf"),
                     "rda.ucar.edu - ds628.8-NRT - 3Hourly" = c("https://rda.ucar.edu/datasets/ds628.8/",
-                                                               "https://rda.ucar.edu/datasets/ds628.0/docs/JRA-55.handbook_TL319_en.pdf")
+                                                               # "https://rda.ucar.edu/datasets/ds628.0/docs/JRA-55.handbook_TL319_en.pdf",
+                                                               "https://jra.kishou.go.jp/JRA-55/document/JRA-55_handbook_TL319_en.pdf")
                 )
     }
 

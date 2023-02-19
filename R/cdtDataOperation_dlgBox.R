@@ -87,7 +87,7 @@ dataOperation_GetInfo <- function(){
                 txt.ncout.frmt <- tklabel(ncoutFrame, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
                 en.ncout.frmt <- tkentry(ncoutFrame, textvariable = ncout.format, width = largeur4)
 
-                #########
+                # #########
                 tkgrid(txt.ncout.frmt, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
                 tkgrid(en.ncout.frmt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 0, ipadx = 1, ipady = 1)
 
