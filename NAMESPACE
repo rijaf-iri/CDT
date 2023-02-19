@@ -17,6 +17,18 @@ export(install_wgrib)
 export(convert2CPTFormat)
 export(cdtDataset_readData_multiDim)
 
+export(extraterrestrial_radiation_annual)
+export(extraterrestrial_radiation_daily)
+export(daylight_hours)
+
+export(saturation_vapour_pressure)
+export(relative_humidity)
+export(specific_humidity)
+export(dewpoint_temperature)
+
+export(extract_netcdf_file)
+
+
 importFrom("methods", "as", "is", "slot")
 importFrom("graphics", "abline", "arrows", "axTicks", "axis",
            "axis.Date", "barplot", "box", "layout", "legend", "lines",
@@ -35,6 +47,7 @@ importFrom("sp", "over", "bbox", "CRS", "geometry",
 importFrom("stats", "sd", "var", "cor", "cov", "quantile", "lm",
            "glm", "update", "ecdf", "median", "residuals", "as.formula",
            "formula", "qnorm", "pnorm", "dnorm", "pgamma", "qgamma", "predict", "rnorm", "runif")
+
 #importFrom("fGarch", "dsnorm", "psnorm", "qsnorm", "rsnorm")
 #importFrom("evd", "dgumbel", "pgumbel", "qgumbel", "rgumbel")
 

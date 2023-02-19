@@ -16,7 +16,6 @@ Author: Rija Faniriantsoa [aut, cre],
 Maintainer: Rija Faniriantsoa <rijaf@iri.columbia.com>
 License: GPL (>= 2)
 Encoding: UTF-8
-LazyData: true
 NeedsCompilation: yes
 Depends: 
     R (>= 3.5.0),
@@ -66,4 +65,4 @@ Imports:
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.3

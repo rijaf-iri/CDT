@@ -90,7 +90,7 @@ computePETProcs <- function(){
         }
 
         ##################
-        Ra <- Extraterrestrial.Radiation(stn.lat, .cdtData$GalParams$Tstep)
+        Ra <- extraterrestrial_radiation_annual(stn.lat, .cdtData$GalParams$Tstep)
         indx <- cdt.index.RA.PET(daty, .cdtData$GalParams$Tstep)
         Ra <- Ra[indx$index, , drop = FALSE]
         prec <- if(.cdtData$GalParams$method == "MHAR") prec else NULL
@@ -272,7 +272,7 @@ computePETProcs <- function(){
 
         ##################
 
-        Ra <- Extraterrestrial.Radiation(nc.lat, .cdtData$GalParams$Tstep)
+        Ra <- extraterrestrial_radiation_annual(nc.lat, .cdtData$GalParams$Tstep)
         indx <- cdt.index.RA.PET(tminInfo$dates, .cdtData$GalParams$Tstep)
 
         ##################
@@ -506,7 +506,7 @@ computePETProcs <- function(){
             }else rr <- NULL
 
             lat <- tmin$coords$df$y[tmin$colInfo$index %in% chunkcalc[[j]]]
-            Ra <- Extraterrestrial.Radiation(lat, GalParams$Tstep)
+            Ra <- extraterrestrial_radiation_annual(lat, GalParams$Tstep)
             Ra <- Ra[indx$index, , drop = FALSE]
             etp <- Ref.ET.Hargreaves(tx, tn, Ra, GalParams$Tstep, rr)
             etp <- indx$multi * etp
