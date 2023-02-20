@@ -6,8 +6,8 @@
 \usage{
 extract_netcdf_file(
   ncdf_data = list(file = "", varid = "z", ilon = 1, ilat = 2),
-  crd_points = list(type = "cdtStnData", file = "", sep = ",", na.strings = "-99", header
-    = TRUE)
+  crd_points = list(type = "cdtStnData", file = "", sep = ",", na.strings = "-99"),
+  out_file = NULL
 )
 }
 \arguments{
@@ -31,11 +31,13 @@ Example: if the variable "temp" has the dimension order [Lat, Lon] then \code{il
 \item{\code{file}: }{character, full path to the file containing the coordinates}
 \item{\code{sep}: }{character, column separator of the data}
 \item{\code{na.strings}: }{character, missing values flag}
-\item{\code{header}: }{logical, in the case of \code{"cdtCrdFile"}, \code{TRUE} if the data has a header}
 }}
+
+\item{out_file}{character, full path to the file in which the extracted data will be saved.
+Default \code{NULL}, the extracted data will be returned and not saved to a file.}
 }
 \value{
-Returns a data.frame, with the columns \code{id, lon, lat, value}.
+If out_file is \code{NULL}, returns a data.frame with columns \code{id}, \code{lon}, \code{lat} and \code{value}.
 }
 \description{
 Function to extract data over a set of points from one netCDF file.

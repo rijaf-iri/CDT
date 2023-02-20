@@ -34,6 +34,12 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
                                     longname = "Downscaled Pressure Reanalysis merged with station",
                                     prec = ncinfo$varinfo$prec
                                    ),
+                      "prmsl" = list(name = "prmsl",
+                                    units = "hPa",
+                                    missval = -99,
+                                    longname = "Downscaled MSL Reanalysis merged with station",
+                                    prec = ncinfo$varinfo$prec
+                                   ),
                       "rad" = list(name = "rad",
                                    units = "W/m2",
                                    missval = -99,
@@ -47,6 +53,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
                                 "temp" = c(-40, 50),
                                 "rh" = c(0, 100),
                                 "pres" = c(500, 1100),
+                                "prmsl" = c(500, 1100),
                                 "rad" = c(0, 1500),
                                 NULL)
 

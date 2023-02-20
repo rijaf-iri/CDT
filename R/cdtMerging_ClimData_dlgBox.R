@@ -427,6 +427,16 @@ mergeGetInfoClimData <- function(){
             })
         }
 
+        if(.cdtData$GalParams$action == "merge.pres"){
+            frPRMSL <- tkframe(frTab2, relief = 'sunken', borderwidth = 2)
+
+            prmsl <- tclVar(.cdtData$GalParams$prmsl)
+
+            chk.prmsl <- tkcheckbutton(frPRMSL, variable = prmsl, text = lang.dlg[['checkbutton']][['9']], anchor = 'w', justify = 'left')
+
+            tkgrid(chk.prmsl, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        }
+
         ############################################
         tkgrid(frMerge, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.mrg.interp, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -434,6 +444,8 @@ mergeGetInfoClimData <- function(){
         tkgrid(frBlank, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         if(.cdtData$GalParams$action == "merge.rain")
             tkgrid(frRnoR, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        if(.cdtData$GalParams$action == "merge.pres")
+            tkgrid(frPRMSL, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ####################################
 
@@ -504,6 +516,10 @@ mergeGetInfoClimData <- function(){
                 .cdtData$GalParams$RnoR$use <- switch(tclvalue(rnor.mask), '0' = FALSE, '1' = TRUE)
                 .cdtData$GalParams$RnoR$smooth <- switch(tclvalue(rnor.smooth), '0' = FALSE, '1' = TRUE)
                 .cdtData$GalParams$RnoR$wet <- as.numeric(str_trim(tclvalue(rnor.wet)))
+            }
+
+            if(.cdtData$GalParams$action == "merge.pres"){
+                .cdtData$GalParams$prmsl <- switch(tclvalue(prmsl), '0' = FALSE, '1' = TRUE)
             }
 
             .cdtData$GalParams$settingSNC <- settingSNC

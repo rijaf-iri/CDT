@@ -59,6 +59,9 @@
         <checkbutton id="8">
             <text lang="en"> Smooth Rain-no-Rain Mask </text>
         </checkbutton>
+        <checkbutton id="9">
+            <text lang="en"> Pressure reduced to mean sea level </text>
+        </checkbutton>
         <label id="1">
             <text lang="en"> Station data file </text>
         </label>

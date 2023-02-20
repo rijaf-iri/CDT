@@ -439,6 +439,10 @@ cdt.init.params <- function(action, tstep){
             ret.params$INPUT.V <- list(dir = "", sample = "", format = "vgrid_adj_%s%s%s.nc")
             ret.params$output$format.V <- "vgrid_mrg_%s%s%s.nc"
         }
+
+        if(action == 'merge.pres'){
+            ret.params$prmsl <- FALSE
+        }
     }
 
     if(grepl('crossv\\.', action)){
@@ -482,6 +486,9 @@ cdt.init.params <- function(action, tstep){
             ret.params$INPUT.U <- list(dir = "", sample = "", format = "ugrid_adj_%s%s%s.nc")
             ret.params$INPUT.V <- list(dir = "", sample = "", format = "vgrid_adj_%s%s%s.nc")
         }
+
+        if(action == 'crossv.pres')
+            ret.params$prmsl <- FALSE
     }
 
     #################################################################

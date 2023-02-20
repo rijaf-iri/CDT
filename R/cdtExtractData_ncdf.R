@@ -22,17 +22,19 @@
 #' \item{\code{file}: }{character, full path to the file containing the coordinates}
 #' \item{\code{sep}: }{character, column separator of the data}
 #' \item{\code{na.strings}: }{character, missing values flag}
-#' \item{\code{header}: }{logical, in the case of \code{"cdtCrdFile"}, \code{TRUE} if the data has a header}
 #' }
 #' 
-#' @return Returns a data.frame, with the columns \code{id, lon, lat, value}.
+#' @param out_file character, full path to the file in which the extracted data will be saved.
+#' Default \code{NULL}, the extracted data will be returned and not saved to a file.
+#' 
+#' @return If out_file is \code{NULL}, returns a data.frame with columns \code{id}, \code{lon}, \code{lat} and \code{value}.
 #' 
 #' @export
 
 extract_netcdf_file <- function(ncdf_data = list(file = "", varid = "z", ilon = 1, ilat = 2),
-                                crd_points = list(type = 'cdtStnData', file = '', sep = ",",
-                                              na.strings = "-99", header = TRUE)
-                                )
+                                crd_points = list(type = 'cdtStnData', file = '', sep = ",", na.strings = "-99"),
+                                out_file = NULL
+                               )
 {
     nc_pars <- list(file = "", varid = "z", ilon = 1, ilat = 2)
     ncdf_data <- init.default.list.args(ncdf_data, nc_pars)
@@ -51,7 +53,7 @@ extract_netcdf_file <- function(ncdf_data = list(file = "", varid = "z", ilon = 
     ncData$z <- if(ncdf_data$ilon < ncdf_data$ilat) ncData$z[xo, yo] else t(ncData$z)[xo, yo]
 
     crd_type <- crd_points$type
-    crd_pars <- list(file = "", sep = ",", na.strings = "-99", header = TRUE)
+    crd_pars <- list(file = "", sep = ",", na.strings = "-99", header = FALSE)
     crd_points <- init.default.list.args(crd_points, crd_pars)
     pars_read <- list(stringsAsFactors = FALSE, colClasses = "character")
 
@@ -63,6 +65,7 @@ extract_netcdf_file <- function(ncdf_data = list(file = "", varid = "z", ilon = 
                                 data.frame(id = crdData$id, lon = crdData$lon, lat = crdData$lat)
                             }),
                     'cdtCrdFile' = local({
+                                crd_points$header <- TRUE
                                 crdData <- do.call(read.table, c(crd_points, pars_read))
                                 data.frame(id = crdData[, 1], 
                                            lon = as.numeric(crdData[, 3]),
@@ -76,6 +79,13 @@ extract_netcdf_file <- function(ncdf_data = list(file = "", varid = "z", ilon = 
     ijs <- over(crd_sp, ncgrid)
     crds$value <- ncData$z[ijs]
 
-    return(crds)
+    if(!is.null(out_file)){
+        utils::write.table(crds, out_file, sep = ',', na = '',
+                           col.names = TRUE, row.names = FALSE,
+                           quote = FALSE)
+        return(0)
+    }else{
+        return(crds)
+    }
 }
 

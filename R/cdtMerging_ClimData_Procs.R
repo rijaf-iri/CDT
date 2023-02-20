@@ -14,6 +14,9 @@ mergingClimData <- function(){
     }
 
     varClim <- gsub("merge\\.", "", .cdtData$GalParams$action)
+    if(varClim == 'pres'){
+        if(.cdtData$GalParams$prmsl) varClim <- "prmsl"
+    }
 
     dirMRGClim <- paste('MERGED', toupper(varClim), 'Data', xdeb, xfin, sep = '_')
     outdir <- file.path(.cdtData$GalParams$output$dir, dirMRGClim)
