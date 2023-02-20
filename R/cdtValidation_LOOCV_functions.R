@@ -10,6 +10,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
                                 "temp" = c(-40, 50),
                                 "rh" = c(0, 100),
                                 "pres" = c(500, 1100),
+                                "prmsl" = c(500, 1100),
                                 "rad" = c(0, 1500),
                                 NULL)
 

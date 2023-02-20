@@ -344,6 +344,16 @@ crossValidationInfoClimData <- function(){
         })
     }
 
+    if(.cdtData$GalParams$action == "crossv.pres"){
+        frPRMSL <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
+
+        prmsl <- tclVar(.cdtData$GalParams$prmsl)
+
+        chk.prmsl <- tkcheckbutton(frPRMSL, variable = prmsl, text = lang.dlg[['checkbutton']][['8']], anchor = 'w', justify = 'left')
+
+        tkgrid(chk.prmsl, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    }
+
     ############################################
 
         crossvalid.stations <- function(selstn){
@@ -455,6 +465,8 @@ crossValidationInfoClimData <- function(){
     tkgrid(bt.mrg.interp, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     if(.cdtData$GalParams$action == "crossv.rain")
         tkgrid(frRnoR, row = 5, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    if(.cdtData$GalParams$action == "crossv.pres")
+        tkgrid(frPRMSL, row = 5, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frSTN, row = 6, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     ############################################
@@ -515,6 +527,9 @@ crossValidationInfoClimData <- function(){
                 .cdtData$GalParams$RnoR$use <- switch(tclvalue(rnor.mask), '0' = FALSE, '1' = TRUE)
                 .cdtData$GalParams$RnoR$smooth <- switch(tclvalue(rnor.smooth), '0' = FALSE, '1' = TRUE)
                 .cdtData$GalParams$RnoR$wet <- as.numeric(str_trim(tclvalue(rnor.wet)))
+            }
+            if(.cdtData$GalParams$action == "crossv.pres"){
+                .cdtData$GalParams$prmsl <- switch(tclvalue(prmsl), '0' = FALSE, '1' = TRUE)
             }
 
             .cdtData$GalParams$selstn$from <- val.selectSTN[cb.selectSTN %in% str_trim(tclvalue(select.station))]

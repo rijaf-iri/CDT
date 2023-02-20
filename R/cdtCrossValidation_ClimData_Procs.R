@@ -14,6 +14,9 @@ crossValidationExecClimData <- function(){
     }
 
     varClim <- gsub("crossv\\.", "", .cdtData$GalParams$action)
+    if(varClim == 'pres'){
+        if(.cdtData$GalParams$prmsl) varClim <- "prmsl"
+    }
 
     dirMRGClim <- paste('CrossValidation', toupper(varClim), 'Data', xdeb, xfin, sep = '_')
     outdir <- file.path(.cdtData$GalParams$outdir, dirMRGClim)
