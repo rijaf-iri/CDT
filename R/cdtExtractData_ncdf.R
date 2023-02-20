@@ -38,19 +38,7 @@ extract_netcdf_file <- function(ncdf_data = list(file = "", varid = "z", ilon = 
 {
     nc_pars <- list(file = "", varid = "z", ilon = 1, ilat = 2)
     ncdf_data <- init.default.list.args(ncdf_data, nc_pars)
-
-    ncData <- NULL
-    nc <- ncdf4::nc_open(ncdf_data$file)
-    ncData$lon <- nc$var[[ncdf_data$varid]]$dim[[ncdf_data$ilon]]$vals
-    ncData$lat <- nc$var[[ncdf_data$varid]]$dim[[ncdf_data$ilat]]$vals
-    ncData$z <- ncdf4::ncvar_get(nc, ncdf_data$varid)
-    ncdf4::nc_close(nc)
-
-    xo <- order(ncData$lon)
-    ncData$lon <- ncData$lon[xo]
-    yo <- order(ncData$lat)
-    ncData$lat <- ncData$lat[yo]
-    ncData$z <- if(ncdf_data$ilon < ncdf_data$ilat) ncData$z[xo, yo] else t(ncData$z)[xo, yo]
+    ncData <- get.ncData.value(ncdf_data)
 
     crd_type <- crd_points$type
     crd_pars <- list(file = "", sep = ",", na.strings = "-99", header = FALSE)

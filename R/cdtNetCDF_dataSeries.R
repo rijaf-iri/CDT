@@ -72,6 +72,23 @@ get.ncInfo.params <-function(netcdf.data, date.range, tstep){
     return(ncInfo)
 }
 
+get.ncData.value <- function(ncdf_data){
+    ncData <- NULL
+    nc <- ncdf4::nc_open(ncdf_data$file)
+    ncData$lon <- nc$var[[ncdf_data$varid]]$dim[[ncdf_data$ilon]]$vals
+    ncData$lat <- nc$var[[ncdf_data$varid]]$dim[[ncdf_data$ilat]]$vals
+    ncData$z <- ncdf4::ncvar_get(nc, ncdf_data$varid)
+    ncdf4::nc_close(nc)
+
+    xo <- order(ncData$lon)
+    ncData$lon <- ncData$lon[xo]
+    yo <- order(ncData$lat)
+    ncData$lat <- ncData$lat[yo]
+    ncData$z <- if(ncdf_data$ilon < ncdf_data$ilat) ncData$z[xo, yo] else t(ncData$z)[xo, yo]
+
+    return(ncData)
+}
+
 ##############################################
 
 ncOutput.Files <- function(output, date.range, tstep, minhour = NA){
