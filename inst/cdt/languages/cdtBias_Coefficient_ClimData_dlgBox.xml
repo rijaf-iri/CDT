@@ -18,6 +18,41 @@
                 <text lang="en"> Quantile Mapping with Empirical Distribution </text>
             </option>
         </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Normal </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Log-Normal </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Skew Normal </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Gamma </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Exponential </text>
+            </option>
+            <option id="6">
+                <text lang="en"> Weibull </text>
+            </option>
+            <option id="7">
+                <text lang="en"> Gumbel </text>
+            </option>
+            <option id="8">
+                <text lang="en"> Bernoulli-Gamma </text>
+            </option>
+            <option id="9">
+                <text lang="en"> Bernoulli-Exponential </text>
+            </option>
+            <option id="10">
+                <text lang="en"> Bernoulli-Log-Normal </text>
+            </option>
+            <option id="11">
+                <text lang="en"> Bernoulli-Weibull </text>
+            </option>
+        </combobox>
         <button id="1">
             <text lang="en"> Set Bias Base Period </text>
         </button>
@@ -27,15 +62,6 @@
         <button id="3">
             <text lang="en"> Create Grid for Interpolation </text>
         </button>
-        <checkbutton id="1">
-            <text lang="en"> Use Statistical Test </text>
-        </checkbutton>
-        <checkbutton id="1a">
-            <text lang="en"> Use Shapiro-Wilk Normality Test </text>
-        </checkbutton>
-        <checkbutton id="1b">
-            <text lang="en"> Use Anderson-Darling Test </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> Box dimension </text>
         </label>
@@ -60,6 +86,9 @@
         <label id="8">
             <text lang="en"> Minimum length of data </text>
         </label>
+        <label id="9">
+            <text lang="en"> Probability Distribution </text>
+        </label>
     </widget>
     <help>
         <content id="1">
@@ -72,10 +101,10 @@
         </content>
         <content id="2">
             <status>
-                <text lang="en"> Use statistical test (Shapiro-Wilk Normality or Anderson-Darling Test)\n to test if the data are compatible with a known theoretical distribution </text>
+                <text lang="en"> Selected the probability distribution function to be used to fit the data </text>
             </status>
             <tooltip>
-                <text lang="en"> Use statistical test (Shapiro-Wilk Normality or Anderson-Darling Test)\n to test if the data are compatible with a known theoretical distribution </text>
+                <text lang="en"> Selected the probability distribution function to be used to fit the data </text>
             </tooltip>
         </content>
         <content id="3">
