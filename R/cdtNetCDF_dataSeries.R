@@ -51,6 +51,27 @@ ncInfo.from.date.vector <- function(ncdf, dates, tstep){
     ncInfo.dates.table(ncdf, dates)
 }
 
+get.ncInfo.params <-function(netcdf.data, date.range, tstep){
+    ncInfo <- ncInfo.with.date.range(netcdf.data, date.range, tstep)
+    if(is.null(ncInfo)) return(NULL)
+
+    varid <- netcdf.data$varid
+    nc <- ncdf4::nc_open(ncInfo$ncfiles[ncInfo$exist][1])
+    lon <- nc$var[[varid]]$dim[[netcdf.data$ilon]]$vals
+    lat <- nc$var[[varid]]$dim[[netcdf.data$ilat]]$vals
+    varinfo <- nc$var[[varid]][c('name', 'prec', 'units', 'longname', 'missval')]
+    ncdf4::nc_close(nc)
+
+    xo <- order(lon)
+    lon <- lon[xo]
+    yo <- order(lat)
+    lat <- lat[yo]
+    ncInfo$ncinfo <- list(varid = varid, lon = lon, lat = lat,
+                          ilon = netcdf.data$ilon, ilat = netcdf.data$ilat,
+                          xo = xo, yo = yo, varinfo = varinfo)
+    return(ncInfo)
+}
+
 ##############################################
 
 ncOutput.Files <- function(output, date.range, tstep, minhour = NA){
@@ -221,7 +242,7 @@ readNetCDFData2Points <- function(ncInfo, lonlatpts, GUI = TRUE){
                            )
     
     # #%REMOVE
-    # transposeNCDFData <- transposeNCDFData
+    transposeNCDFData <- transposeNCDFData
     # #%REMOVE
 
     ncInfo <- ncInfo
@@ -262,7 +283,7 @@ readNetCDFData2AggrBox <- function(ncInfo, boxregion, GUI = TRUE){
                               normalizeWeights = TRUE, cellnumbers = TRUE)
 
     # #%REMOVE
-    # transposeNCDFData <- transposeNCDFData
+    transposeNCDFData <- transposeNCDFData
     # #%REMOVE
 
     ncInfo <- ncInfo
@@ -317,7 +338,7 @@ readNetCDFData2PtsAggrBox <- function(ncInfo, lonlatpts, boxregion, GUI = TRUE){
                               normalizeWeights = TRUE, cellnumbers = TRUE)
 
     # #%REMOVE
-    # transposeNCDFData <- transposeNCDFData
+    transposeNCDFData <- transposeNCDFData
     # #%REMOVE
 
     ncInfo <- ncInfo
