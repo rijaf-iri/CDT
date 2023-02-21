@@ -28,6 +28,9 @@ export(dewpoint_temperature)
 
 export(extract_netcdf_file)
 
+export(pressure_conversion_station)
+export(pressure_conversion_netcdf)
+
 
 importFrom("methods", "as", "is", "slot")
 importFrom("graphics", "abline", "arrows", "axTicks", "axis",
