@@ -30,6 +30,7 @@ export(extract_netcdf_file)
 
 export(pressure_conversion_station)
 export(pressure_conversion_netcdf)
+export(ET0_Penman_Monteith_FAO_netcdf)
 
 
 importFrom("methods", "as", "is", "slot")

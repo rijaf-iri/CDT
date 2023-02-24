@@ -32,7 +32,8 @@ pressure_conversion_netcdf(
 
 \item{end.date}{character, the end date of the data to be converted in the form \code{YYYY-MM-DD}.}
 
-\item{pres.data}{named list, providing the netCDF pressure dataset.
+\item{pres.data}{named list, providing the pressure netCDF dataset. Units: hPa. 
+Surface pressure or mean sea level pressure, depending on \code{convert}.
 \itemize{
 \item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
 \item{\code{format}: }{character, format of the netCDF file names}
@@ -49,18 +50,18 @@ Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{il
 }}
 
 \item{tmax.data}{named list, if \code{temp.data} is equal to \code{"maxmin"}, 
-providing the netCDF maximum temperature dataset. 
+providing the maximum temperature netCDF dataset. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
 \item{tmin.data}{named list, if \code{temp.data} is equal to \code{"maxmin"}, 
-providing the netCDF minimum temperature dataset. 
+providing the minimum temperature netCDF dataset. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
 \item{tmean.data}{named list, if \code{temp.data} is equal to \code{"mean"}, 
-providing the netCDF mean temperature dataset. 
+providing the mean temperature netCDF dataset. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
-\item{elev.data}{named list, providing the Digital Elevation Model in netCDF format,
+\item{elev.data}{named list, providing the Digital Elevation Model in netCDF format. Units: meters.
 \itemize{
 \item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
 \item{\code{varid}: }{character, name of the variable to read from the netCDF data.}

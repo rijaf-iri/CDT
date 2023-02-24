@@ -15,6 +15,12 @@ saturation_vapour_pressure <- function(tmp){
     6.112 * exp((17.67 * tmp)/(tmp + 243.5))
 }
 
+saturation_vapour_pressure_fao <- function(tmp){
+    # tmp: temperature in degC
+    # es in kPa
+    0.6108 * exp(17.27 * tmp/(tmp + 237.3))
+}
+
 #' Relative humidity.
 #'
 #' Compute the relative humidity from the air temperature and dewpoint temperature.

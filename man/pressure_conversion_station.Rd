@@ -23,7 +23,7 @@ pressure_conversion_station(
 \item{\code{"msl2sfc"}: }{conversion from mean sea level to surface pressure.}
 }}
 
-\item{pres.data}{named list, providing the pressure data in CDT station data format.
+\item{pres.data}{named list, providing the pressure data in CDT station data format. Units: hPa.
 \itemize{
 \item{\code{file}: }{character, full path to the file containing the stations data}
 \item{\code{sep}: }{character, column separator of the data}
@@ -37,15 +37,15 @@ pressure_conversion_station(
 }}
 
 \item{tmax.data}{named list, if \code{temp.data} is equal to \code{"maxmin"}, 
-providing the maximum temperature data in CDT station data format. 
+providing the maximum temperature data in CDT station data format. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
 \item{tmin.data}{named list, if \code{temp.data} is equal to \code{"maxmin"}, 
-providing the minimum temperature data in CDT station data format. 
+providing the minimum temperature data in CDT station data format. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
 \item{tmean.data}{named list, if \code{temp.data} is equal to \code{"mean"}, 
-providing the mean temperature data in CDT station data format. 
+providing the mean temperature data in CDT station data format. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
 \item{elev.from}{character, source of the elevation data. Valid options: \code{"inputPresData"} and \code{"cdtCrdFile"}.
@@ -55,7 +55,7 @@ See \code{pres.data} for the elements of the list.}
 }}
 
 \item{elev.data}{named list, if \code{elev.from} is equal to \code{"cdtCrdFile"},
-providing the CDT coordinate file containing the elevation data. 
+providing the CDT coordinate file containing the elevation data. Units: meters.
 \itemize{
 \item{\code{file}: }{character, full path to the CDT coordinate file}
 \item{\code{sep}: }{character, column separator of the data}

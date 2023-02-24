@@ -142,6 +142,11 @@ cdtDataset_readData_multiDim <- function(cdtdata_info, netcdf_data, ncvar_info,
 
     #######
 
+    cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
+    Config <- jsonlite::fromJSON(cdt.file.conf)
+    Config <- rapply(Config, trimws, classes = "character", how = "replace")
+    .cdtData$Config$parallel <- Config$parallel
+
     parsL <- doparallel.cond(length(col.idx) >= 20)
 
     for(j in seq_along(ncfiles)){
@@ -189,7 +194,6 @@ cdtDataset_readData_multiDim <- function(cdtdata_info, netcdf_data, ncvar_info,
 
         ret <- cdt.foreach(seq_along(col.idx), parsL = parsL, FUN = function(l)
         {
-            # ret <- lapply(seq_along(col.idx), function(l){
             chk <- vars[col.idx[[l]], , drop = FALSE]
             chk <- t(chk)
 

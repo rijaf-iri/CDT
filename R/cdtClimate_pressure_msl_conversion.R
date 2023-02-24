@@ -8,7 +8,7 @@
 #' \item{\code{"sfc2msl"}: }{conversion from surface to mean sea level pressure.}
 #' \item{\code{"msl2sfc"}: }{conversion from mean sea level to surface pressure.}
 #' }
-#' @param pres.data named list, providing the pressure data in CDT station data format.
+#' @param pres.data named list, providing the pressure data in CDT station data format. Units: hPa.
 #' \itemize{
 #' \item{\code{file}: }{character, full path to the file containing the stations data}
 #' \item{\code{sep}: }{character, column separator of the data}
@@ -20,13 +20,13 @@
 #' \item{\code{"mean"}: }{the temperature data is from a mean temperature data.}
 #' }
 #' @param tmax.data named list, if \code{temp.data} is equal to \code{"maxmin"}, 
-#' providing the maximum temperature data in CDT station data format. 
+#' providing the maximum temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
 #' @param tmin.data named list, if \code{temp.data} is equal to \code{"maxmin"}, 
-#' providing the minimum temperature data in CDT station data format. 
+#' providing the minimum temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
 #' @param tmean.data named list, if \code{temp.data} is equal to \code{"mean"}, 
-#' providing the mean temperature data in CDT station data format. 
+#' providing the mean temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
 #' @param elev.from character, source of the elevation data. Valid options: \code{"inputPresData"} and \code{"cdtCrdFile"}.
 #' \itemize{
@@ -34,7 +34,7 @@
 #' \item{\code{"cdtCrdFile"}: }{the elevation data is from a CDT coordinates file. The ID must be the same as the pressure data.}
 #' }
 #' @param elev.data named list, if \code{elev.from} is equal to \code{"cdtCrdFile"},
-#' providing the CDT coordinate file containing the elevation data. 
+#' providing the CDT coordinate file containing the elevation data. Units: meters.
 #' \itemize{
 #' \item{\code{file}: }{character, full path to the CDT coordinate file}
 #' \item{\code{sep}: }{character, column separator of the data}
@@ -198,7 +198,8 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
 #' }
 #' @param start.date character, the start date of the data to be converted in the form \code{YYYY-MM-DD}.
 #' @param end.date character, the end date of the data to be converted in the form \code{YYYY-MM-DD}.
-#' @param pres.data named list, providing the netCDF pressure dataset.
+#' @param pres.data named list, providing the pressure netCDF dataset. Units: hPa. 
+#' Surface pressure or mean sea level pressure, depending on \code{convert}.
 #' \itemize{
 #' \item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
 #' \item{\code{format}: }{character, format of the netCDF file names}
@@ -213,15 +214,15 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
 #' \item{\code{"mean"}: }{the temperature data is from a mean temperature data.}
 #' }
 #' @param tmax.data named list, if \code{temp.data} is equal to \code{"maxmin"}, 
-#' providing the netCDF maximum temperature dataset. 
+#' providing the maximum temperature netCDF dataset. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
 #' @param tmin.data named list, if \code{temp.data} is equal to \code{"maxmin"}, 
-#' providing the netCDF minimum temperature dataset. 
+#' providing the minimum temperature netCDF dataset. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
 #' @param tmean.data named list, if \code{temp.data} is equal to \code{"mean"}, 
-#' providing the netCDF mean temperature dataset. 
+#' providing the mean temperature netCDF dataset. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
-#' @param elev.data named list, providing the Digital Elevation Model in netCDF format,
+#' @param elev.data named list, providing the Digital Elevation Model in netCDF format. Units: meters.
 #' \itemize{
 #' \item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
 #' \item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
@@ -497,6 +498,11 @@ pressure_conversion_netcdf <- function(convert = 'sfc2msl',
                               longname = longname, compression = 9)
 
     ##########
+
+    cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
+    Config <- jsonlite::fromJSON(cdt.file.conf)
+    Config <- rapply(Config, trimws, classes = "character", how = "replace")
+    .cdtData$Config$parallel <- Config$parallel
 
     parsL <- doparallel.cond(length(pres_ncInfo$dates) >= 180)
 
