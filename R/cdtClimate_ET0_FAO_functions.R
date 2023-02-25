@@ -248,7 +248,7 @@ ET0_Penman_Monteith_FAO_netcdf <- function(start.date = '1991-01-01', end.date =
     longname <- "Reference evapotranspiration using FAO Penman-Monteith equation"
     ncmissval <- -99
 
-    grdncout <- ncdf4::ncvar_def(varname, 'hPa', xydim, ncmissval, prec = 'float',
+    grdncout <- ncdf4::ncvar_def(varname, 'mm/day', xydim, ncmissval, prec = 'float',
                               longname = longname, compression = 9)
     ##########
 
