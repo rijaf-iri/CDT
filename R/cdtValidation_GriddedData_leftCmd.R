@@ -383,7 +383,10 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
                     {
                         getData_Validation_GridData(parsInput)
                     },
-                    warning = function(w) warningFun(w),
+                    warning = function(w){
+                        warningFun(w)
+                        return(0)
+                    },
                     error = function(e) errorFun(e),
                     finally = {
                         tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
@@ -426,7 +429,10 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
             #     {
             #         procs_Validation_GridData(GeneralParameters)
             #     },
-            #     warning = function(w) warningFun(w),
+            #     warning = function(w){
+            #         warningFun(w)
+            #         return(0)
+            #     },
             #     error = function(e) errorFun(e),
             #     finally = {
             #         tkconfigure(.cdtEnv$tcl$main$win, cursor = '')

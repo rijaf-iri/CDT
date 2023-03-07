@@ -629,7 +629,10 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 {
                     HOV_DataExtraction(GeneralParameters)
                 },
-                warning = function(w) warningFun(w),
+                warning = function(w){
+                    warningFun(w)
+                    return(0)
+                },
                 error = function(e) errorFun(e),
                 finally = {
                     tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
@@ -1038,7 +1041,10 @@ Validation.HOV.PanelCmd <- function(clim.var){
                 {
                     procs_Validation_PointsData(GeneralParameters)
                 },
-                warning = function(w) warningFun(w),
+                warning = function(w){
+                    warningFun(w)
+                    return(0)
+                },
                 error = function(e) errorFun(e),
                 finally = {
                     tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
