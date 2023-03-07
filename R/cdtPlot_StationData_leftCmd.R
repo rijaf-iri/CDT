@@ -30,7 +30,7 @@ PlotCDTStationCmd <- function(){
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
                                        scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                       pointSize = pointSizeI)
+                                       pointSize = pointSizeI, bbox = .cdtData$Config$region)
 
     .cdtData$EnvData$TSGraphOp <- list(
                                     bar = list(
