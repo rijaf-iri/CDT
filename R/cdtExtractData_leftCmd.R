@@ -21,18 +21,19 @@ ExtractDataPanelCmd <- function(){
 
     MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
     
-    GeneralParameters <- list(intstep = "daily", minhour = 0, type.extract = "point",
+    GeneralParameters <- list(intstep = "daily", minhour = 0, season.len = 3,
+                              season.start = 1, type.extract = "point",
                               data.type = 'cdtnetcdf', cdtdataset = list(index = ""),
                               cdtnetcdf = list(dir = "", sample = "", format = "rr_mrg_%s%s%s.nc"),
                               shp.file = list(shp = "", attr = ""),
                               out.data = list(format = "cdt", sp.avrg = FALSE, outdir = ""),
                               months = list(start = 1, end = 12))
 
-    GeneralParameters$date.range <- list(start.year = 2017, start.mon = 1, start.dek = 1,
-                                         start.pen = 1, start.day = 1,
+    GeneralParameters$date.range <- list(start.year = 2021, start.mon = 1,
+                                         start.dek = 1, start.pen = 1, start.day = 1,
                                          start.hour = 0, start.min = 0,
-                                         end.year = 2018, end.mon = 12, end.dek = 3,
-                                         end.pen = 6, end.day = 31,
+                                         end.year = 2022, end.mon = 12,
+                                         end.dek = 3, end.pen = 6, end.day = 31,
                                          end.hour = 23, end.min = 55)
 
     GeneralParameters$Geom <- list(minlon = '', maxlon = '', minlat = '', maxlat = '',
@@ -142,8 +143,8 @@ ExtractDataPanelCmd <- function(){
         frameTimeS <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         timeSteps <- tclVar()
-        CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:6]
-        periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
+        CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:8]
+        periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly', 'annual', 'seasonal')
         tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$intstep]
 
         retminhr <- set.hour.minute(GeneralParameters$intstep, GeneralParameters$minhour)
@@ -158,6 +159,19 @@ ExtractDataPanelCmd <- function(){
         helpWidget(cb.fperiod, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
 
         #################
+
+        frameSeas <- tkframe(frameTimeS)
+
+        seas_mon <- GeneralParameters$season.start
+        seas_len <- GeneralParameters$season.len
+        seas_mon1 <- (seas_mon + seas_len - 1) %% 12
+        seas_mon1[seas_mon1 == 0] <- 12
+
+        seasStart.tclVar <- tclVar(MOIS[seas_mon])
+        seasLen.tclVar <- tclVar(seas_len)
+
+        #################
+
         tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
             intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
 
@@ -165,12 +179,77 @@ ExtractDataPanelCmd <- function(){
             retminhr <- set.hour.minute(intstep, minhour)
             tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
             tclvalue(minhour.tclVar) <- retminhr$val
+
+            tkdestroy(frameSeas)
+
+            if(intstep == 'seasonal'){
+                frameSeas <<- tkframe(frameTimeS)
+
+                frSeasDef <- tkframe(frameSeas)
+
+                txt.seasS <- tklabel(frSeasDef, text = lang.dlg[['label']][['21']], anchor = 'e', justify = 'right')
+                cb.seasS <- ttkcombobox(frSeasDef, values = MOIS, textvariable = seasStart.tclVar, width = 13)
+                txt.seasL <- tklabel(frSeasDef, text = lang.dlg[['label']][['22']])
+                cb.seasL <- ttkcombobox(frSeasDef, values = 2:12, textvariable = seasLen.tclVar, width = 3)
+
+                sepL.seasS <- tklabel(frSeasDef, text = '', width = 3)
+
+                tkgrid(txt.seasS, row = 0, column = 0, sticky = 'we')
+                tkgrid(cb.seasS, row = 0, column = 1, sticky = 'we')
+                tkgrid(sepL.seasS, row = 0, column = 2)
+                tkgrid(txt.seasL, row = 0, column = 3, sticky = 'we')
+                tkgrid(cb.seasL, row = 0, column = 4, sticky = 'we')
+
+                ######
+
+                frSeasDisp <- tkframe(frameSeas)
+
+                seasdef <- paste(MOIS[seas_mon], "->", MOIS[seas_mon1])
+                seasDef.tclVar <- tclVar(seasdef)
+
+                inMonthSeas <- tklabel(frSeasDisp, text = tclvalue(seasDef.tclVar), textvariable = seasDef.tclVar)
+
+                tkgrid(inMonthSeas, row = 0, column = 0, sticky = 'we')
+
+                ######
+                tkgrid(frSeasDef)
+                tkgrid(frSeasDisp)
+
+                tkgrid(frameSeas, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+
+                ######
+
+                tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
+                    mon <-  which(MOIS %in% str_trim(tclvalue(seasStart.tclVar)))
+                    len <- as.numeric(str_trim(tclvalue(seasLen.tclVar)))
+                    mon1 <- (mon + len - 1) %% 12
+                    mon1[mon1 == 0] <- 12
+                    seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
+                    tclvalue(seasDef.tclVar) <- seasdef
+                })
+
+                tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
+                    mon <-  which(MOIS %in% str_trim(tclvalue(seasStart.tclVar)))
+                    len <- as.numeric(str_trim(tclvalue(seasLen.tclVar)))
+                    mon1 <- (mon + len - 1) %% 12
+                    mon1[mon1 == 0] <- 12
+                    seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
+                    tclvalue(seasDef.tclVar) <- seasdef
+                })
+            }
+
+            if(intstep %in% c('seasonal', 'annual')){
+                tkconfigure(cb.startMonth, state = "disabled")
+                tkconfigure(cb.endMonth, state = "disabled")
+            }else{
+                tkconfigure(cb.startMonth, state = "normal")
+                tkconfigure(cb.endMonth, state = "normal")
+            }
         })
 
         #############################
 
         frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['2']], relief = 'groove')
-
 
         DataType <- tclVar()
         # CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][2:3]
@@ -1169,6 +1248,12 @@ ExtractDataPanelCmd <- function(){
         tkconfigure(bt.Extract.Data, command = function(){
             GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
             GeneralParameters$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+
+            if(GeneralParameters$intstep == 'seasonal'){
+                GeneralParameters$season.start <- which(MOIS %in% str_trim(tclvalue(seasStart.tclVar)))
+                GeneralParameters$season.len <- as.numeric(str_trim(tclvalue(seasLen.tclVar)))
+            }
+
             GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
 
             if(GeneralParameters$data.type == "") return(NULL)

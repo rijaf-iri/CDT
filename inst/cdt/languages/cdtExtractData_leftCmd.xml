@@ -110,6 +110,12 @@
         <label id="20">
             <text lang="en"> Directory to save extracted data </text>
         </label>
+        <label id="21">
+            <text lang="en"> Start Month </text>
+        </label>
+        <label id="22">
+            <text lang="en"> Length </text>
+        </label>
     </widget>
     <help>
         <content id="1">

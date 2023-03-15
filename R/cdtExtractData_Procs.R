@@ -249,21 +249,39 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
     }
 
     #####################################
-    startMonth <- GeneralParameters$months$start
-    endMonth <- GeneralParameters$months$end
 
-    seasonLength <- (endMonth - startMonth + 1) %% 12
-    seasonLength[seasonLength == 0] <- 12
-    monthtoExtr <- (startMonth:(startMonth + (seasonLength - 1))) %% 12
-    monthtoExtr[monthtoExtr == 0] <- 12
+    if(tstep == "seasonal"){
+        startMonth <- GeneralParameters$season.start
+        seasonLength <- GeneralParameters$season.len
+        dates <- table.format.date.seasonal(date.range, startMonth, seasonLength)
+    }else{
+        dates <- table.format.date.time(tstep, date.range, minhour)
+    }
 
-    dates <- table.format.date.time(tstep, date.range, minhour)
-    imois <- as.numeric(dates[, 2]) %in% monthtoExtr
-    dates <- dates[imois, , drop = FALSE]
+    if(!tstep %in% c("annual", "seasonal")){
+        startMonth <- GeneralParameters$months$start
+        endMonth <- GeneralParameters$months$end
+
+        seasonLength <- (endMonth - startMonth + 1) %% 12
+        seasonLength[seasonLength == 0] <- 12
+        monthtoExtr <- (startMonth:(startMonth + (seasonLength - 1))) %% 12
+        monthtoExtr[monthtoExtr == 0] <- 12
+
+        imois <- as.numeric(dates[, 2]) %in% monthtoExtr
+        dates <- dates[imois, , drop = FALSE]
+    }else{
+        imois <- rep(TRUE, nrow(dates))
+    }
 
     xdaty <- dates[, -ncol(dates), drop = FALSE]
     xdaty <- split(xdaty, col(xdaty))
-    dates <- do.call(paste0, xdaty)
+
+    if(tstep == "seasonal"){
+        dates <- paste0(xdaty[[1]], '-', xdaty[[2]], '_',
+                        xdaty[[3]], '-', xdaty[[4]])
+    }else{
+        dates <- do.call(paste0, xdaty)
+    }
 
     #####################################
 
@@ -637,7 +655,6 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
         }
 
         Insert.Messages.Out(lang.dlg[['message']][['21']], TRUE, "s", GUI)
-
     }else{
         ## cdtdataset
     }

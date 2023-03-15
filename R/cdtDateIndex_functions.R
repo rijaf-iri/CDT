@@ -493,7 +493,7 @@ cdt.index.aggregate <- function(dates, tstep.in = c("minute", "hourly", "daily",
         if(tstep.out == "seasonal"){
             seasMonth <- (startMonth:(startMonth + (seasonLength - 1))) %% 12
             seasMonth[seasMonth == 0] <- 12
-            mon <- str_pad(seasMonth[c(1, seasonLength)], width = 2, pad = "0")
+            mon <- stringr::str_pad(seasMonth[c(1, seasonLength)], width = 2, pad = "0")
             monseas <- lapply(strsplit(names(index), "_"), strsplit, split = '-')
             mon1 <- sapply(lapply(monseas, '[[', 1), '[[', 2)
             mon2 <- sapply(lapply(monseas, '[[', 2), '[[', 2)

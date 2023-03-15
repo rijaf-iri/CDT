@@ -260,6 +260,15 @@ get.range.date.time <- function(date.range, tstep, minhour = NA){
         pas <- if(tstep == "monthly") "month" else "day"
     }
 
+    if(tstep == "annual"){
+        start <- paste0(date.range$start.year, '-1-1')
+        start <- as.Date(start)
+        end <- paste0(date.range$end.year, '-12-31')
+        end <- as.Date(end)
+
+        pas <- "year"
+    }
+
     if(tstep == "hourly"){
         start <- date.range[c('start.year', 'start.mon', 'start.day', 'start.hour')]
         if(minhour > 1){
@@ -314,6 +323,7 @@ get.format.seq.date.time <- function(date.range, tstep, minhour = NA){
         daty <- paste0(format(daty, "%Y%m"), dek)[dek <= 3]
     }
     if(tstep == "monthly") daty <- format(daty, "%Y%m")
+    if(tstep == "annual") daty <- format(daty, "%Y")
 
     return(daty)
 }
@@ -355,6 +365,12 @@ table.format.date.time <- function(tstep, date.range, minhour = NA){
         dates <- do.call(rbind, strsplit(dates, "-"))
     }
 
+    if(tstep == "annual"){
+        dates <- format(dates, '%Y-%m-%d')
+        dates <- do.call(rbind, strsplit(dates, "-"))
+        dates <- dates[, 1:2, drop = FALSE]
+    }
+
     return(dates)
 }
 
@@ -389,12 +405,44 @@ table.format.date.time1 <- function(tstep, dates){
         dates <- cbind(dates[, 1:2, drop = FALSE], as.numeric(dates[, 3]), xx)
     }
 
-    if(tstep == "monthly"){
-        dates <- as.Date(paste0(dates, '15'), '%Y%m%d')
+    if(tstep %in% c("monthly", "annual")){
+        mmdd <- if(tstep == "monthly") '15' else '0101'
+        dates <- as.Date(paste0(dates, mmdd), '%Y%m%d')
         dates <- dates[!is.na(dates)]
         dates <- format(dates, '%Y-%m-%d')
         dates <- do.call(rbind, strsplit(dates, "-"))
     }
+
+    return(dates)
+}
+
+table.format.date.seasonal <- function(date.range, season.start, season.len){
+    start <- date.range[['start.year']]
+    end <- date.range[['end.year']]
+    years <- start:end
+
+    seasMonth <- (season.start:(season.start + (season.len - 1))) %% 12
+    seasMonth[seasMonth == 0] <- 12
+
+    dates <- lapply(years, function(yr){
+        daty <- as.Date(paste0(yr, '-01-01'))
+
+        seas1 <- addMonths(daty, seasMonth[1] - 1)
+        seas2 <- addMonths(daty, seasMonth[season.len] - 1)
+        if(seas2 < seas1){
+            seas2 <- addMonths(seas2, 12)
+        }
+
+        seas1 <- format(seas1, '%Y-%m')
+        seas1 <- strsplit(seas1, "-")[[1]]
+        seas2 <- format(seas2, '%Y-%m')
+        seas2 <- strsplit(seas2, "-")[[1]]
+
+        c(seas1, seas2)
+    })
+
+    dates <- do.call(rbind, dates)
+    dates <- cbind(dates, NA)
 
     return(dates)
 }

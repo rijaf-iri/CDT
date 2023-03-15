@@ -25,7 +25,7 @@
 
 startCDT <- function(wd = NA, lang = NA){
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
-    Config <- fromJSON(cdt.file.conf)
+    Config <- jsonlite::fromJSON(cdt.file.conf)
     Config <- rapply(Config, str_trim, classes = "character", how = "replace")
 
     if(!is.na(wd)){
@@ -45,6 +45,7 @@ startCDT <- function(wd = NA, lang = NA){
     .cdtData$Config <- Config
 
     .cdtEnv$tcl$dir <- tempdir()
+    .cdtEnv$tcl$GUI <- TRUE
 
     ##################
 
@@ -61,7 +62,7 @@ startCDT <- function(wd = NA, lang = NA){
         .Tcl("font delete cdtDefaultFont")
 
     tcl.file.conf <- file.path(.cdtDir$dirLocal, "config", "Tcl_config.json")
-    TclConfig <- fromJSON(tcl.file.conf)
+    TclConfig <- jsonlite::fromJSON(tcl.file.conf)
     TclConfig <- rapply(TclConfig, str_trim, classes = "character", how = "replace")
 
     fontSize <- switch(tools::toTitleCase(Sys.info()["sysname"]),
@@ -1114,8 +1115,8 @@ startCDT <- function(wd = NA, lang = NA){
                     command = function()
                 {
                     refreshCDT(staterun = "normal")
-                    # initialize.parameters('crossv.wind', 'dekadal')
-                    # crossValidationInfoWind()
+                    initialize.parameters('crossv.wind', 'dekadal')
+                    crossValidationInfoWind()
                 })
 
         ####################################
@@ -1685,7 +1686,7 @@ startCDT <- function(wd = NA, lang = NA){
 
                 if(testConnection()){
                     if(Sys.getenv("TAR")[1] == "") Sys.setenv("TAR" = "internal")
-                    if(packageVersion("devtools") >= "2.0.0"){
+                    if(utils::packageVersion("devtools") >= "2.0.0"){
                         devtools::install_github("rijaf-iri/CDT", dependencies = FALSE,
                                                  upgrade = FALSE, force = TRUE)
                     }else{

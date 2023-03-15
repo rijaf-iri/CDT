@@ -1,7 +1,9 @@
 
 format.input.InfoDate <- function(x, tstep){
-    if(tstep == "monthly"){
+    if(tstep %in% c("monthly", "seasonal")){
         paste(c(unlist(x), 1), collapse = "-")
+    }else if(tstep == "annual"){
+        paste(c(unlist(x), 1, 1), collapse = "-")
     }else{
         paste(unlist(x), collapse = "-")
     }
@@ -9,7 +11,7 @@ format.input.InfoDate <- function(x, tstep){
 
 check.input.InfoDate <- function(x, tstep){
     x <- format.input.InfoDate(x, tstep)
-    if(tstep %in% c("daily", "pentad", "dekadal", "monthly"))
+    if(tstep %in% c("daily", "pentad", "dekadal", "monthly", "seasonal", "annual"))
         x <- try(as.Date(x, format = "%Y-%m-%d"), silent = TRUE)
     if(tstep == "hourly")
         x <- try(as.POSIXct(x, format = "%Y-%m-%d-%H"), silent = TRUE)
@@ -18,7 +20,11 @@ check.input.InfoDate <- function(x, tstep){
 
     if(!inherits(x, "try-error")){
         ret <- if(is.na(x)) NULL else 0
-    }else ret <- NULL
+    }else{
+        ret <- NULL
+        errmsg <- gsub('[\r\n]', '', x)
+        Insert.Messages.Out(errmsg, TRUE, "e", .cdtEnv$tcl$GUI)
+    }
 
     return(ret)
 }
@@ -30,7 +36,9 @@ check.start.end.InfoDate <- function(tstep, date.range){
                     "daily" = c('year', 'mon', 'day'),
                     "pentad" = c('year', 'mon', 'pen'),
                     "dekadal" = c('year', 'mon', 'dek'),
-                    "monthly" = c('year', 'mon'))
+                    "monthly" = c('year', 'mon'),
+                    "seasonal" = c('year', 'mon'),
+                    "annual" = 'year')
     start <- date.range[paste0("start.", suffix)]
     end <- date.range[paste0("end.", suffix)]
     start <- check.input.InfoDate(start, tstep)
@@ -82,6 +90,7 @@ getInfoDateRange <- function(parent.win, Parameters, tstep)
 
     ix <- switch(tstep,
         "annual" = 1,
+        "seasonal" = 1:2,
         "monthly" = 1:2,
         "dekadal" = 1:3,
         "pentad" = c(1:2, 4),
@@ -163,7 +172,7 @@ getInfoDateRange <- function(parent.win, Parameters, tstep)
         tkgrid(pen2.v, row = 2, column = 4, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     }
 
-    if(tstep %in% c("minute", "hourly", "daily", "monthly", "annual")){
+    if(tstep %in% c("minute", "hourly", "daily", "monthly", "annual", "seasonal")){
         tkgrid(day.txt, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(day1.v, row = 1, column = 5, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(day2.v, row = 2, column = 5, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)

@@ -8,7 +8,7 @@ LinuxOS <- function() if(Sys.info()["sysname"] == "Linux") TRUE else FALSE
 .cdtData <- new.env()
 .cdtDir <- new.env()
 
-.cdtEnv$pkg$version <- packageVersion("CDT")
+.cdtEnv$pkg$version <- utils::packageVersion("CDT")
 .cdtDir$Root <- system.file("cdt", package = "CDT")
 local_dir <- if(WindowsOS()) '~/CDT_Local_Config' else '~/Documents/CDT_Local_Config'
 .cdtDir$dirLocal <- path.expand(local_dir)
@@ -198,6 +198,7 @@ assign("blanking.options", list(), envir = .cdtMRG)
 
     ### progress bar
     .cdtEnv$tcl$status$pbnmax <- tclVar(1)
+    .cdtEnv$tcl$GUI <- FALSE
 
     invisible()
 }
