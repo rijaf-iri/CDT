@@ -50,11 +50,13 @@ biasCoeffGetInfoClimData <- function(){
             helpWidget(en.boxla, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
         }
         if(biasmthd == "qmdist"){
-            chk.normtest <- tkcheckbutton(fr.biasOpts, variable = stat.test, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+            txt.distr <- tklabel(fr.biasOpts, text = lang.dlg[['label']][['9']])
+            cb.distr <- ttkcombobox(fr.biasOpts, values = cb.distrName, textvariable = distr.name, width = largeur0, justify = 'center')
 
-            tkgrid(chk.normtest, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(txt.distr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(cb.distr, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-            helpWidget(chk.normtest, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+            helpWidget(cb.distr, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
         }
 
         if(biasmthd %in% c("qmecdf", "qmdist"))
@@ -195,7 +197,12 @@ biasCoeffGetInfoClimData <- function(){
     min.length <- tclVar(.cdtData$GalParams$BIAS$min.length)
     box.lon <- tclVar(.cdtData$GalParams$BIAS$blon)
     box.lat <- tclVar(.cdtData$GalParams$BIAS$blat)
-    stat.test <- tclVar(.cdtData$GalParams$BIAS$stat.test)
+
+    cb.distrName <- lang.dlg[['combobox']][['2']]
+    val.distrName <- c('norm', 'lnorm', 'snorm', 'gamma', 'exp', 'weibull', 'gumbel',
+                       'berngamma', 'bernexp', 'bernlnorm', 'bernweibull')
+    distr.name <- tclVar()
+    tclvalue(distr.name) <- cb.distrName[val.distrName %in% .cdtData$GalParams$BIAS$distr.name]
 
     txt.bias <- tklabel(frameBias, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
     cb.bias <- ttkcombobox(frameBias, values = cb.biasMthd, textvariable = bias.method, width = largeur3)
@@ -294,7 +301,7 @@ biasCoeffGetInfoClimData <- function(){
             .cdtData$GalParams$BIAS$min.length <- as.numeric(str_trim(tclvalue(min.length)))
             .cdtData$GalParams$BIAS$blon <- as.numeric(str_trim(tclvalue(box.lon)))
             .cdtData$GalParams$BIAS$blat <- as.numeric(str_trim(tclvalue(box.lat)))
-            .cdtData$GalParams$BIAS$stat.test <- switch(tclvalue(stat.test), '0' = FALSE, '1' = TRUE)
+            .cdtData$GalParams$BIAS$distr.name <- val.distrName[cb.distrName %in% str_trim(tclvalue(distr.name))]
 
             .cdtData$GalParams$settingSNC <- settingSNC
             .cdtData$GalParams$message <- lang.dlg[['message']]

@@ -88,6 +88,16 @@ computeBiasCoeffClimData <- function(){
     ncInfoBias$ncinfo <- ncDataInfo
 
     ##################
+    ## Regrid NetCDF data
+
+    is.regridNC <- is.diffSpatialPixelsObj(defSpatialPixels(xy.grid),
+                                           defSpatialPixels(ncDataInfo),
+                                           tol = 1e-07)
+    ncInfoBias$ncgrid <- c(list(regrid = is.regridNC), xy.grid,
+                           list(nlon = length(xy.grid$lon),
+                                nlat = length(xy.grid$lat)))
+
+    ##################
 
     allyears <- .cdtData$GalParams$base.period$all.years
     year1 <- .cdtData$GalParams$base.period$start.year
