@@ -21,6 +21,18 @@ download_CountryShapefile <- function(){
     frGrd1 <- tkframe(tt)
 
     #####
+    frA0 <- tkframe(frGrd0, relief = 'sunken', bd = 2)
+
+    cbGADMVer <- c('3.6', '4.0', '4.1')
+    gadm_ver <- tclVar(.cdtData$GalParams$version)
+
+    txt.ver <- tklabel(frA0, text = "GADM Version", anchor = 'w', justify = 'right')
+    cb.ver <- ttkcombobox(frA0, values = cbGADMVer, textvariable = gadm_ver, width = 4)
+
+    tkgrid(txt.ver, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.ver, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####
     frA1 <- tkframe(frGrd0, relief = 'sunken', bd = 2)
 
     region <- tclVar()
@@ -137,8 +149,9 @@ download_CountryShapefile <- function(){
     helpWidget(bt.file.save, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
     ###
-    tkgrid(frA1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
-    tkgrid(frA2, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(frA0, row = 0, column = 0, rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 5)
+    tkgrid(frA1, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(frA2, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
 
     ###
     btOK <- ttkbutton(frGrd1, text = lang.dlg[['button']][['1']])
@@ -153,6 +166,8 @@ download_CountryShapefile <- function(){
             tkdestroy(tt)
             tkfocus(.cdtEnv$tcl$main$win)
             tcl('update')
+
+            .cdtData$GalParams$version <- str_trim(tclvalue(gadm_ver))
 
             .cdtData$GalParams$dir2save <- str_trim(tclvalue(dir2save))
             .cdtData$GalParams$region <- cbRegionVAL[cbRegionTXT %in% str_trim(tclvalue(region))]

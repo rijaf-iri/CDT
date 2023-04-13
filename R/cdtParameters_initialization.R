@@ -120,6 +120,7 @@ cdt.init.params <- function(action, tstep){
     ## Download SHP
     if(action == 'down.SHP'){
         ret.params <- list(action = action,
+                           version = '4.1',
                            region = "Africa",
                            country = "Madagascar",
                            level = 0,
@@ -350,6 +351,7 @@ cdt.init.params <- function(action, tstep){
             ret.params$INPUT.UV <- list(dir = "", sample = "", format = "wind_down_%s%s%s.nc", U = "", V = "")
             ret.params$INPUT.U <- list(dir = "", sample = "", format = "ugrid_down_%s%s%s.nc")
             ret.params$INPUT.V <- list(dir = "", sample = "", format = "vgrid_down_%s%s%s.nc")
+            # ret.params$BIAS$stat.test <- FALSE
         }
     }
 
