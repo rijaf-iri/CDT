@@ -25,8 +25,17 @@ merra2_daily.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, v
     month <- format(daty, "%m")
     daty <- format(daty, "%Y%m%d")
 
+    #######
+    ## assimilation stream version
+    streams <- cut(as.numeric(years), 
+        breaks = c(1980, 1992, 2001, 2011, 2100),
+        labels = c(100, 200, 300, 400), 
+        include.lowest = TRUE, right = FALSE)
+
+    #######
+
     opendap <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2/M2SDNXSLV.5.12.4"
-    nc4EndPt <- paste0("MERRA2_400.statD_2d_slv_Nx.", daty, ".nc4.nc4")
+    nc4EndPt <- paste0("MERRA2_", streams, ".statD_2d_slv_Nx.", daty, ".nc4.nc4")
     baseUrl <- paste(opendap, years, month, nc4EndPt, sep = "/")
 
     ######################
