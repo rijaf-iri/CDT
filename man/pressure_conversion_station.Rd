@@ -11,8 +11,8 @@ pressure_conversion_station(
   tmax.data = list(file = "", sep = ",", na.strings = "-99"),
   tmin.data = list(file = "", sep = ",", na.strings = "-99"),
   tmean.data = list(file = "", sep = ",", na.strings = "-99"),
-  elev.from = "inputPresData",
-  elev.data = list(file = "", sep = ",", na.strings = "-99"),
+  elev.from = "netcdfDEM",
+  elev.data = list(file = "", varid = "z", ilon = 1, ilat = 2),
   output = list(file = "", sep = ",", na.strings = "-99")
 )
 }
@@ -48,11 +48,13 @@ See \code{pres.data} for the elements of the list.}
 providing the mean temperature data in CDT station data format. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
-\item{elev.from}{character, source of the elevation data. Valid options: \code{"inputPresData"} and \code{"cdtCrdFile"}.
+\item{elev.from}{character, source of the elevation data. Valid options: \code{"inputPresData"}, \code{"cdtCrdFile"} and \code{"netcdfDEM"}.
 \itemize{
 \item{\code{"inputPresData"}: }{the elevation data is from the pressure data.}
 \item{\code{"cdtCrdFile"}: }{the elevation data is from a CDT coordinates file. The ID must be the same as the pressure data.}
-}}
+\item{\code{"netcdfDEM"}: }{the elevation data is from the pressure data.}
+}
+Default is \code{"netcdfDEM"}.}
 
 \item{elev.data}{named list, if \code{elev.from} is equal to \code{"cdtCrdFile"},
 providing the CDT coordinate file containing the elevation data. Units: meters.
@@ -60,6 +62,13 @@ providing the CDT coordinate file containing the elevation data. Units: meters.
 \item{\code{file}: }{character, full path to the CDT coordinate file}
 \item{\code{sep}: }{character, column separator of the data}
 \item{\code{na.strings}: }{character, missing values flag}
+}
+If \code{elev.from} is equal to \code{"netcdfDEM"} set the elements of the list providing the Digital Elevation Model in netCDF format. Units: meters.
+\itemize{
+\item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
+\item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
+\item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
+\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 }}
 
 \item{output}{named list, the elements of the list are

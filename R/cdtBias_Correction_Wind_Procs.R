@@ -14,7 +14,7 @@ biasCorrectionWind <- function(){
     }
 
     outdir <- file.path(.cdtData$GalParams$output$dir,
-                         paste('ADJUSTED_Precip_Data', xdeb, xfin, sep = '_'))
+                         paste('ADJUSTED_Wind_Data', xdeb, xfin, sep = '_'))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     ##################

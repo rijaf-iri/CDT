@@ -77,13 +77,13 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
     nmin.var <- tclVar(Parameters$nmin)
     nmax.var <- tclVar(Parameters$nmax)
     maxdist.var <- tclVar(Parameters$maxdist)
-    grid.var <- tclVar(Parameters$vargrd)
+    # grid.var <- tclVar(Parameters$vargrd)
 
     statemdst <- if(Parameters$vargrd) "disabled" else "normal"
 
     txt.mthd <- tklabel(frInterpMthd, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
     cb.mthd <- ttkcombobox(frInterpMthd, values = cb.interpMthd, textvariable = interp.method, width = largeur0, state = stateMethod)
-    chk.GRDVar <- tkcheckbutton(frInterpMthd, variable = grid.var, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+    # chk.GRDVar <- tkcheckbutton(frInterpMthd, variable = grid.var, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
 
     frNeigh <- tkframe(frInterpMthd, relief = 'groove', borderwidth = 2)
 
@@ -104,7 +104,7 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
     tkgrid(txt.mthd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.mthd, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frNeigh, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(chk.GRDVar, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    # tkgrid(chk.GRDVar, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     helpWidget(en.nmin, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(en.nmax, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -120,10 +120,10 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
         }
     })
 
-    tkbind(chk.GRDVar, "<Button-1>", function(){
-        statemdst <- if(tclvalue(grid.var) == "0") "disabled" else "normal"
-        tkconfigure(en.mdst, state = statemdst)
-    })
+    # tkbind(chk.GRDVar, "<Button-1>", function(){
+    #     statemdst <- if(tclvalue(grid.var) == "0") "disabled" else "normal"
+    #     tkconfigure(en.mdst, state = statemdst)
+    # })
 
     ################################
 
@@ -138,8 +138,26 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
 
     ################################
 
+    frInterpGrdVar <- tkframe(frGrd0)
+
+    grid.var <- tclVar(Parameters$vargrd)
+
+    chk.GRDVar <- tkcheckbutton(frInterpGrdVar, variable = grid.var, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+
+    tkgrid(chk.GRDVar, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ########
+
+    tkbind(chk.GRDVar, "<Button-1>", function(){
+        statemdst <- if(tclvalue(grid.var) == "0") "disabled" else "normal"
+        tkconfigure(en.mdst, state = statemdst)
+    })
+
+    ################################
+
     tkgrid(frInterpMthd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 5)
     tkgrid(frInterpPars, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frInterpGrdVar, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     ################################
 

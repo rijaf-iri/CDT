@@ -1,3 +1,305 @@
+#' Compute daily reference evapotranspiration for CDT station data format.
+#'
+#' Function to compute daily reference evapotranspiration using the FAO Penman-Monteith equation.
+#' @param tmax.data named list, providing the maximum temperature data in CDT station data format. Units: degree Celsius.
+#' \itemize{
+#' \item{\code{file}: }{character, full path to the file containing the stations data}
+#' \item{\code{sep}: }{character, column separator of the data}
+#' \item{\code{na.strings}: }{character, missing values flag}
+#' }
+#' @param tmin.data named list, providing the minimum temperature data in CDT station data format. Units: degree Celsius.
+#' See \code{tmax.data} for the elements of the list.
+#' @param rhmax.data named list, providing the maximum relative humidity data in CDT station data format. Units: percentage.
+#' See \code{tmax.data} for the elements of the list.
+#' @param rhmin.data named list, providing the minimum relative humidity data in CDT station data format. Units: percentage.
+#' See \code{tmax.data} for the elements of the list.
+#' @param wff10.data named list, providing the wind speed at 10 meters data in CDT station data format. Units: m/s.
+#' See \code{tmax.data} for the elements of the list.
+#' @param pres.data named list, providing the surface pressure data in CDT station data format. Units: hPa.
+#' See \code{tmax.data} for the elements of the list.
+#' @param rad.data named list, providing the solar radiation flux data in CDT station data format. Units: W/m^2.
+#' See \code{tmax.data} for the elements of the list.
+#' @param elev.from character, source of the elevation data. Valid options: \code{"inputPresData"}, \code{"cdtCrdFile"} and \code{"netcdfDEM"}.
+#' \itemize{
+#' \item{\code{"inputTmaxData"}: }{the elevation data is from the maximum temperature data.}
+#' \item{\code{"cdtCrdFile"}: }{the elevation data is from a CDT coordinates file. The ID must be the same as the maximum temperature data.}
+#' \item{\code{"netcdfDEM"}: }{the elevation data is from the pressure data.}
+#' }
+#' Default is \code{"netcdfDEM"}.
+#' @param elev.data named list, if \code{elev.from} is equal to \code{"cdtCrdFile"},
+#' set the elements of the list providing the CDT coordinate file containing the elevation data. Units: meters.
+#' \itemize{
+#' \item{\code{file}: }{character, full path to the CDT coordinate file}
+#' \item{\code{sep}: }{character, column separator of the data}
+#' \item{\code{na.strings}: }{character, missing values flag}
+#' }
+#' If \code{elev.from} is equal to \code{"netcdfDEM"} set the elements of the list providing the Digital Elevation Model in netCDF format. Units: meters.
+#' \itemize{
+#' \item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
+#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
+#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
+#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+#' }
+#' @param output named list, the elements of the list are
+#' \itemize{
+#' \item{\code{file}: }{character, full path to the file to save the calculated reference evapotranspiration}
+#' \item{\code{sep}: }{character, column separator of the data}
+#' \item{\code{na.strings}: }{character, missing values flag}
+#' }
+#' 
+#' @references 
+#' Allen, R.G., Pereira, L.S., Raes, D., and Smith, M. 1998. Crop evapotranspiration: Guidelines for computing crop requirements. Irrigation and Drainage PaperNo. 56, FAO, Rome, Italy 300 p.
+#' \url{https://www.fao.org/3/X0490E/x0490e00.htm}
+#' 
+#' @export
+
+ET0_Penman_Monteith_FAO_station <- function(
+       tmax.data = list(file = "", sep = ",", na.strings = "-99"),
+       tmin.data = list(file = "", sep = ",", na.strings = "-99"),
+       rhmax.data = list(file = "", sep = ",", na.strings = "-99"),
+       rhmin.data = list(file = "", sep = ",", na.strings = "-99"),
+       wff10.data = list(file = "", sep = ",", na.strings = "-99"),
+       pres.data = list(file = "", sep = ",", na.strings = "-99"),
+       rad.data = list(file = "", sep = ",", na.strings = "-99"),
+       elev.from = 'netcdfDEM',
+       elev.data = list(file = "", varid = "z", ilon = 1, ilat = 2),
+       output = list(file = '', sep = ",", na.strings = "-99")
+    )
+{
+    stnpars_read <- list(stringsAsFactors = FALSE, colClasses = "character")
+
+    tmax_pars <- list(file = "", sep = ",", na.strings = "-99")
+    tmax.data <- init.default.list.args(tmax.data, tmax_pars)
+    tmaxData <- do.call(read.table, c(tmax.data, stnpars_read))
+    tmaxData <- splitCDTData0(tmaxData, GUI = FALSE)
+    if(is.null(tmaxData)){
+        stop('Unable to read TMAX data')
+        # return(NULL)
+    }
+
+    tmin_pars <- list(file = "", sep = ",", na.strings = "-99")
+    tmin.data <- init.default.list.args(tmin.data, tmin_pars)
+    tminData <- do.call(read.table, c(tmin.data, stnpars_read))
+    tminData <- splitCDTData0(tminData, GUI = FALSE)
+    if(is.null(tminData)){
+        stop('Unable to read TMIN data')
+        # return(NULL)
+    }
+
+    idstn <- intersect(tmaxData$id, tminData$id)
+    if(length(idstn) == 0){
+        stop('Maximum and Minimum temperature data stations do not match')
+        # return(NULL)
+    }
+    dates <- intersect(tmaxData$dates, tminData$dates)
+    if(length(dates) == 0){
+        stop('Maximum and Minimum temperature dates do not overlap')
+        # return(NULL)
+    }
+
+    rhmax_pars <- list(file = "", sep = ",", na.strings = "-99")
+    rhmax.data <- init.default.list.args(rhmax.data, rhmax_pars)
+    rhmaxData <- do.call(read.table, c(rhmax.data, stnpars_read))
+    rhmaxData <- splitCDTData0(rhmaxData, GUI = FALSE)
+    if(is.null(rhmaxData)){
+        stop('Unable to read RHMAX data')
+        # return(NULL)
+    }
+
+    idstn <- intersect(idstn, rhmaxData$id)
+    if(length(idstn) == 0){
+        stop('Temperatures and RHMAX stations do not match')
+        # return(NULL)
+    }
+    dates <- intersect(dates, rhmaxData$dates)
+    if(length(dates) == 0){
+        stop('Temperatures and RHMAX dates do not overlap')
+        # return(NULL)
+    }
+
+    rhmin_pars <- list(file = "", sep = ",", na.strings = "-99")
+    rhmin.data <- init.default.list.args(rhmin.data, rhmin_pars)
+    rhminData <- do.call(read.table, c(rhmin.data, stnpars_read))
+    rhminData <- splitCDTData0(rhminData, GUI = FALSE)
+    if(is.null(rhminData)){
+        stop('Unable to read RHMIN data')
+        # return(NULL)
+    }
+
+    idstn <- intersect(idstn, rhminData$id)
+    if(length(idstn) == 0){
+        stop('Temperatures and RHMIN stations do not match')
+        # return(NULL)
+    }
+    dates <- intersect(dates, rhminData$dates)
+    if(length(dates) == 0){
+        stop('Temperatures and RHMIN dates do not overlap')
+        # return(NULL)
+    }
+
+    wff10_pars <- list(file = "", sep = ",", na.strings = "-99")
+    wff10.data <- init.default.list.args(wff10.data, wff10_pars)
+    wff10Data <- do.call(read.table, c(wff10.data, stnpars_read))
+    wff10Data <- splitCDTData0(wff10Data, GUI = FALSE)
+    if(is.null(wff10Data)){
+        stop('Unable to read wind speed data at 10 meters')
+        # return(NULL)
+    }
+
+    idstn <- intersect(idstn, wff10Data$id)
+    if(length(idstn) == 0){
+        stop('Temperatures and wind speed stations do not match')
+        # return(NULL)
+    }
+    dates <- intersect(dates, wff10Data$dates)
+    if(length(dates) == 0){
+        stop('Temperature and wind speed dates do not overlap')
+        # return(NULL)
+    }
+
+    pres_pars <- list(file = "", sep = ",", na.strings = "-99")
+    pres.data <- init.default.list.args(pres.data, pres_pars)
+    presData <- do.call(read.table, c(pres.data, stnpars_read))
+    presData <- splitCDTData0(presData, GUI = FALSE)
+    if(is.null(presData)){
+        stop('Unable to read pressure data')
+        # return(NULL)
+    }
+
+    idstn <- intersect(idstn, presData$id)
+    if(length(idstn) == 0){
+        stop('Temperatures and pressure stations do not match')
+        # return(NULL)
+    }
+    dates <- intersect(dates, presData$dates)
+    if(length(dates) == 0){
+        stop('Temperature and pressure dates do not overlap')
+        # return(NULL)
+    }
+
+    rad_pars <- list(file = "", sep = ",", na.strings = "-99")
+    rad.data <- init.default.list.args(rad.data, rad_pars)
+    radData <- do.call(read.table, c(rad.data, stnpars_read))
+    radData <- splitCDTData0(radData, GUI = FALSE)
+    if(is.null(radData)){
+        stop('Unable to read radiation data')
+        # return(NULL)
+    }
+
+    idstn <- intersect(idstn, radData$id)
+    if(length(idstn) == 0){
+        stop('Temperatures and radiation stations do not match')
+        # return(NULL)
+    }
+    dates <- intersect(dates, radData$dates)
+    if(length(dates) == 0){
+        stop('Temperature and radiation dates do not overlap')
+        # return(NULL)
+    }
+
+    ############
+
+    output_pars <- list(file = '', sep = ",", na.strings = "-99")
+    output <- init.default.list.args(output, output_pars)
+
+    if(trimws(output$file) == ''){
+        stop('No file to save the computed evapotranspiration')
+        # return(NULL)
+    }
+
+    ############
+    istn <- match(idstn, tmaxData$id)
+    out <- tmaxData
+    out$id <- idstn
+    out$lon <- tmaxData$lon[istn]
+    out$lat <- tmaxData$lat[istn]
+    out$elv <- tmaxData$elv[istn]
+    out$dates <- dates
+    out$data <- NA
+
+    #############
+    if(elev.from == 'inputTmaxData'){
+        if(is.null(out$elv)){
+            stop('No elevation data found from the maximum temperature data')
+            # return(NULL)
+        }
+        if(all(is.na(out$elv))){
+            stop('All elevation data from the maximum temperature data are missing')
+            # return(NULL)
+        }
+    }else if(elev.from == 'cdtCrdFile'){
+        elev_pars <- list(file = "", sep = ",", na.strings = "-99", header = TRUE)
+        elev.data <- init.default.list.args(elev.data, elev_pars)
+        elevData <- do.call(read.table, c(elev.data, stnpars_read))
+        idElev <- match(idstn, elevData[, 1])
+        if(length(idElev) == 0){
+            stop('Temperature data and coordinates file stations IDs do not match')
+            # return(NULL)
+        }
+        out$elv <- as.numeric(elevData[idElev, 5])
+        if(all(is.na(out$elv))){
+            stop('No elevation data found from the CDT coordinates file')
+            # return(NULL)
+        }
+    }else if(elev.from == 'netcdfDEM'){
+        if(file.exists(elev.data$file)){
+            elev_pars <- list(file = "", varid = "z", ilon = 1, ilat = 2)
+            elev.data <- init.default.list.args(elev.data, elev_pars)
+        }else{
+            stop("The netCDF file containing the elevation does not exist")
+            # return(NULL)
+        }
+
+        demData <- get.ncData.value(elev.data)
+        demData$z[demData$z < 0] <- 0
+        dem_grd <- defSpatialPixels(demData)
+        elv_loc <- do.call(data.frame, out[c('lon', 'lat')])
+        sp::coordinates(elv_loc) <- c('lon', 'lat')
+        out$elv <- demData$z[sp::over(elv_loc, dem_grd)]
+        if(all(is.na(out$elv))){
+            stop('All elevation data from DEM are missing')
+            # return(NULL)
+        }
+    }else{
+        stop('Unknown elevation data source')
+        # return(NULL)
+    }
+
+    ################
+    tmaxData <- tmaxData$data[match(dates, tmaxData$dates), match(idstn, tmaxData$id)]
+    tminData <- tminData$data[match(dates, tminData$dates), match(idstn, tminData$id)]
+    rhmaxData <- rhmaxData$data[match(dates, rhmaxData$dates), match(idstn, rhmaxData$id)]
+    rhminData <- rhminData$data[match(dates, rhminData$dates), match(idstn, rhminData$id)]
+    wff10Data <- wff10Data$data[match(dates, wff10Data$dates), match(idstn, wff10Data$id)]
+    presData <- presData$data[match(dates, presData$dates), match(idstn, presData$id)]
+    radData <- radData$data[match(dates, radData$dates), match(idstn, radData$id)]
+
+    elevData <- matrix(out$elv, nrow = length(out$dates), ncol = length(out$elv), byrow = TRUE)
+
+    ################
+
+    # daily extraterrestrial radiation W/m^2
+    Ra <- extraterrestrial_radiation_daily(out$lat, out$dates)
+    # convert to MJ m^-2 day^-1
+    Ra <- 0.0864 * Ra
+
+    ########
+
+    et0 <- ET0_FAO(tmaxData, tminData, rhmaxData, rhminData, wff10Data, presData, radData, Ra, elevData)
+    et0[is.nan(et0) | is.infinite(et0)] <- NA
+    out$data <- round(et0, 1)
+
+    ################
+
+    capt <- c('ID', 'LON', 'LAT', 'ELV')
+    dat <- do.call(rbind, out[c('id', 'lon', 'lat', 'elv', 'data')])
+    dat <- cbind(c(capt, out$dates), dat)
+
+    utils::write.table(dat, file = output$file, sep = output$sep, na = output$na.strings,
+                       row.names = FALSE, col.names = FALSE, quote = FALSE)
+    return(0)
+}
+
 #' Compute daily reference evapotranspiration for a netCDF dataset.
 #'
 #' Function to compute daily reference evapotranspiration using the FAO Penman-Monteith equation.
@@ -13,17 +315,17 @@
 #' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 #' }
 #' @param tmin.data named list, providing the minimum temperature netCDF dataset. Units: degree Celsius.
-#' See \code{pres.data} for the elements of the list.
+#' See \code{tmax.data} for the elements of the list.
 #' @param rhmax.data named list, providing the maximum relative humidity netCDF dataset. Units: percentage.
-#' See \code{pres.data} for the elements of the list.
+#' See \code{tmax.data} for the elements of the list.
 #' @param rhmin.data named list, providing the minimum relative humidity netCDF dataset. Units: percentage.
-#' See \code{pres.data} for the elements of the list.
+#' See \code{tmax.data} for the elements of the list.
 #' @param wff10.data named list, providing the wind speed at 10 meters netCDF dataset. Units: m/s.
-#' See \code{pres.data} for the elements of the list.
+#' See \code{tmax.data} for the elements of the list.
 #' @param pres.data named list, providing the surface pressure netCDF dataset. Units: hPa.
-#' See \code{pres.data} for the elements of the list.
+#' See \code{tmax.data} for the elements of the list.
 #' @param rad.data named list, providing the solar radiation flux netCDF dataset. Units: W/m^2.
-#' See \code{pres.data} for the elements of the list.
+#' See \code{tmax.data} for the elements of the list.
 #' @param elev.data named list, providing the Digital Elevation Model in netCDF format. Units: meters.
 #' \itemize{
 #' \item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}

@@ -564,7 +564,7 @@ graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
 
     if(is.null(proba$theoretical)) proba$theoretical <- FALSE
     if(is.null(proba$gof.c)) proba$gof.c <- 'ad'
-    if(is.null(proba$distr)) proba$distr <- c("norm", "snorm", "lnorm", "gamma", "weibull")
+    if(is.null(proba$distr)) proba$distr <- c("norm", "snorm", "lnorm", "gamma", "exp", "weibull", "gumbel")
 
     ####
     dat <- dat[!is.na(dat)]
@@ -671,6 +671,8 @@ graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
                 c(paste0("distr: ", selected.distr), sapply(seq_along(selected.pars),
                         function(j) paste0(names(selected.pars)[j], ": ", round(selected.pars[[j]], 5)))),
                 box.lwd = 0, box.col = "gray97", bg = "gray98", cex = 1.2)
+        }else{
+            Insert.Messages.Out("Unable to fit a distribution", TRUE, "w")
         }
     }
     if(!is.null(location))

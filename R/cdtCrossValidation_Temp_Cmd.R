@@ -1,8 +1,7 @@
-#' Cross-validation, merging stations observation and gridded climate data.
+#' Cross-validation, merging stations observation and reanalysis data.
 #'
-#' Function to perform a Leave-One-Out Cross-Validation for climate data merging.
+#' Function to perform a Leave-One-Out Cross-Validation for temperature merging.
 #' 
-#' @param var.clim character, the climate variable. Available options: \code{"rain"}, \code{"temp"}, \code{"rh"}, \code{"pres"}, \code{"prmsl"}, \code{"rad"}.
 #' @param time.step character, the time step of the data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}.
 #' @param dates named list, providing the dates to merge.
 #' The list includes an element \code{from} with available options \code{"range"}, \code{"file"} or \code{"dates"}, and 
@@ -103,31 +102,25 @@
 #' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
 #' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 #' }
-#' @param RnoR named list, specifying the rain-no-rain mask parameters in case of \code{var.clim} = \code{"rain"}.
-#' \itemize{
-#' \item{\code{use}: }{logical, apply rain-no-rain mask}
-#' \item{\code{wet}: }{numeric, threshold to be use to define the wet/dry event}
-#' \item{\code{smooth}: }{logical, smooth the rain-no-rain mask after interpolation}
-#' }
 #' @param output.dir character, full path to the directory to save the output.
 #' @param GUI logical, indicating whether or not the output message should be displayed on CDT GUI. If \code{TRUE}, CDT GUI must be open.
 #' 
 #' @export
 
-cdtCrossValidationCMD <- function(
-    var.clim = "temp",
-    time.step = "dekadal",
-    dates = list(from = "range", pars = list(start = "2018011", end = "2018123")),
-    station.data = list(file = "", sep = ",", na.strings = "-99"),
-    netcdf.data = list(dir = "", format = "tmax_adj_%s%s%s.nc", varid = "temp", ilon = 1, ilat = 2),
-    merge.method = list(method = "SBA", nrun = 3, pass = c(1, 0.75, 0.5)),
-    interp.method = list(method = "idw", nmin = 8, nmax = 16, maxdist = 2.5, use.block = TRUE, vargrd = FALSE, vgm.model = c("Sph", "Exp", "Gau", "Pen")),
-    crossv.station = list(from = "all", pars = NULL),
-    auxvar = list(dem = FALSE, slope = FALSE, aspect = FALSE, lon = FALSE, lat = FALSE),
-    dem.data = list(file = "", varid = "dem", ilon = 1, ilat = 2),
-    RnoR = list(use = FALSE, wet = 1.0, smooth = FALSE),
-    output.dir = "",
-    GUI = FALSE)
+cdtCrossValidationTempCMD <- function(time.step = "dekadal",
+                                      dates = list(from = "range", pars = list(start = "2018011", end = "2018123")),
+                                      station.data = list(file = "", sep = ",", na.strings = "-99"),
+                                      netcdf.data = list(dir = "", format = "tmax_adj_%s%s%s.nc",
+                                                         varid = "temp", ilon = 1, ilat = 2),
+                                      merge.method = list(method = "SBA", nrun = 3, pass = c(1, 0.75, 0.5)),
+                                      interp.method = list(method = "idw", nmin = 8, nmax = 16, maxdist = 2.5,
+                                                           use.block = TRUE, vargrd = FALSE,
+                                                           vgm.model = c("Sph", "Exp", "Gau", "Pen")),
+                                        crossv.station = list(from = "all", pars = NULL),
+                                        auxvar = list(dem = FALSE, slope = FALSE, aspect = FALSE, lon = FALSE, lat = FALSE),
+                                        dem.data = list(file = "", varid = "dem", ilon = 1, ilat = 2),
+                                        output.dir = "",
+                                        GUI = FALSE)
 {
     cdtLocalConfigData()
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCrossValidation_ClimData_dlgBox.xml")
@@ -205,13 +198,7 @@ cdtCrossValidationCMD <- function(
     dem_pars <- list(file = "", varid = "dem", ilon = 1, ilat = 2)
     dem.data <- init.default.list.args(dem.data, dem_pars)
 
-    #######
-    RnoR_pars <- list(use = FALSE, wet = 1.0, smooth = FALSE)
-    RnoR <- init.default.list.args(RnoR, RnoR_pars)
-
     ##################
-
-    outdir_name <- paste0('CrossValidation_', toupper(var.clim))
 
     if(is.null(dates$from)) dates$from <- "range"
 
@@ -225,7 +212,8 @@ cdtCrossValidationCMD <- function(
             daty <- read.table(dates$pars$file, stringsAsFactors = FALSE, colClasses = "character")
             daty <- daty[, 1]
 
-            dirMrg <- paste0(outdir_name, '_', tools::file_path_sans_ext(basename(dates$pars$file)))
+            dirMrg <- paste0('CrossValidation_Temp_Data_',
+                             tools::file_path_sans_ext(basename(dates$pars$file)))
         }else{
             daty <- dates$pars$dates
             if(is.null(daty)){
@@ -233,7 +221,7 @@ cdtCrossValidationCMD <- function(
                 return(NULL)
             }
 
-            dirMrg <- paste(outdir_name, daty[1], daty[length(daty)], sep = '_')
+            dirMrg <- paste('CrossValidation_Temp_Data', daty[1], daty[length(daty)], sep = '_')
         }
 
         ncInfo <- ncInfo.from.date.vector(netcdf.data, daty, time.step)
@@ -248,7 +236,7 @@ cdtCrossValidationCMD <- function(
             xfin <- paste0(as.numeric(format(daty$end, "%d")), format(daty$end, "%b%Y"))
         }
 
-        dirMrg <- paste(outdir_name, xdeb, xfin, sep = '_')
+        dirMrg <- paste('CrossValidation_Temp_Data', xdeb, xfin, sep = '_')
         ncInfo <- ncInfo.with.date.range(netcdf.data, date.range, time.step)
     }
 
@@ -269,7 +257,7 @@ cdtCrossValidationCMD <- function(
     if(is.null(stnData)) return(NULL)
 
     ##################
-    ## Get netCDF data info
+    ## Get RFE data info
 
     varid <- netcdf.data$varid
     nc <- nc_open(ncInfo$ncfiles[ncInfo$exist][1])
@@ -405,13 +393,14 @@ cdtCrossValidationCMD <- function(
 
     ##################
 
+    RnoR <- list(use = FALSE, wet = 1.0, smooth = FALSE)
     params <- list(period = time.step, MRG = merge.method,
                    interp = interp.method, auxvar = auxvar,
                    RnoR = RnoR)
 
     ret <- cdtMergingLOOCV(stnData = stnData, stnVID = stn.valid,
                            ncInfo = ncInfo, xy.grid = xy.grid, 
-                           params = params, variable = var.clim,
+                           params = params, variable = "temp",
                            demData = demData, outdir = outdir, GUI = GUI)
 
     if(!is.null(ret)){

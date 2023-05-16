@@ -256,6 +256,27 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
 
         biasData <- stnData[c('lon', 'lat')]
 
+        distrInfo <- switch(params$BIAS$distr.name,
+                            'norm' = list(pars = c('mean', 'sd'), longname = "Normal"),
+                            'lnorm' = list(pars = c('meanlog', 'sdlog'), longname = "Log-Normal"),
+                            'snorm' = list(pars = c('mean', 'sd', 'xi'), longname = "Skew Normal"),
+                            'gamma' = list(pars = c('shape', 'scale'), longname = "Gamma"),
+                            'exp' = list(pars = c('rate'), longname = "Exponential"),
+                            'weibull' = list(pars = c('shape', 'scale'), longname = "Weibull"),
+                            'gumbel' = list(pars = c('loc', 'scale'), longname = "Gumbel"),
+                            'berngamma' = list(pars = c('proba', 'shape', 'scale'), longname = "Bernoulli-Gamma"),
+                            'bernexp' = list(pars = c('proba', 'rate'), longname = "Bernoulli-Exponential"),
+                            'bernlnorm' = list(pars = c('proba', 'meanlog', 'sdlog'), longname = "Bernoulli-Log-Normal"),
+                            'bernweibull' = list(pars = c('proba', 'shape', 'scale'), longname = "Bernoulli-Weibull"))
+
+        distrInfo$name <- params$BIAS$distr.name
+        distrInfo$probThres <- NA
+        # distrP <- list(name = params$BIAS$distr.name, pars = distr_pars)
+        # probThres <- NA
+        if(params$BIAS$distr.name %in%
+           c('berngamma', 'bernexp', 'bernlnorm', 'bernweibull'))
+                distrInfo$probThres <- biasOpts$qmdistRainyDayThres
+
         # ptsData <- stnData[c('lon', 'lat')]
         # bx <- diff(sapply(ptsData, range))
         # dg <- sqrt(bx[1]^2 + bx[2]^2)
@@ -388,11 +409,13 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
         stnPars <- lapply(1:12, function(m){
             dat <- stnData$data[stn_index[[m]], , drop = FALSE]
 
-            ## check other variables
-            if(variable == "rain")
-                rain.berngamma.params(dat, min.length, biasOpts$qmdistRainyDayThres)
-            else
-                temp.normal.params(dat, min.length)
+            # ## check other variables
+            # if(variable == "rain")
+            #     berngamma_dist_params(dat, min.length, biasOpts$qmdistRainyDayThres)
+            # else
+            #     normal_dist_params(dat, min.length)
+
+            get_distr_parameters(dat, distrInfo, min.length, distrInfo$probThres)
         })
 
         grdPars <- lapply(1:12, function(m){
@@ -420,20 +443,29 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
             dat <- do.call(rbind, dat)
 
             ## check other variables
-            if(variable == "rain"){
-                pars <- rain.berngamma.params(dat, min.length, biasOpts$qmdistRainyDayThres)
-                nbvar <- 3
-            }else{
-                pars <- temp.normal.params(dat, min.length)
-                nbvar <- 2
-            }
+            # if(variable == "rain"){
+            #     pars <- berngamma_dist_params(dat, min.length, biasOpts$qmdistRainyDayThres)
+            #     nbvar <- 3
+            # }else{
+            #     pars <- normal_dist_params(dat, min.length)
+            #     nbvar <- 2
+            # }
 
-            for(j in 1:nbvar)
-                dim(pars[[j]]) <- c(ncInfo$ncgrid$nlon, ncInfo$ncgrid$nlat)
+            # for(j in 1:nbvar)
+            #     dim(pars[[j]]) <- c(ncInfo$ncgrid$nlon, ncInfo$ncgrid$nlat)
+
+            # return(pars)
+
+            pars <- get_distr_parameters(dat, distrInfo, min.length, distrInfo$probThres)
+            pars <- lapply(pars, function(x){
+                dim(x) <- c(ncInfo$ncgrid$nlon, ncInfo$ncgrid$nlat)
+                x
+            })
 
             return(pars)
         })
 
+        params$distrInfo <- distrInfo
         bias <- list(stn = stnPars, grd = grdPars)
         bias.pars <- list(method = "qmdist", bias = bias,
                           data = biasData, params = params)
@@ -750,6 +782,14 @@ InterpolateBiasCoefficients <- function(bias.pars, xy.grid, variable,
     }
 
     if(bias.method == "qmdist"){
+        ncoutPARS <- lapply(seq_along(bias.pars$params$distrInfo$pars), function(j){
+            ncdf4::ncvar_def(bias.pars$params$distrInfo$pars[j], "", list(dx, dy), NA,
+                             longname = paste(bias.pars$params$distrInfo$longname, "distribution :",
+                                              bias.pars$params$distrInfo$pars[j], "parameter"),
+                             prec = "float", compression = 9)
+            })
+
+
         if(variable == "rain"){
             PROB <- ncdf4::ncvar_def("prob", "", list(dx, dy), NA,
                                      longname = "Probability of non-zero event Bernoulli-Gamma distribution",

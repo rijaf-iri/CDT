@@ -102,6 +102,7 @@ create_grid_buffer <- function(locations.stn, newgrid,
     #####
 
     xgrd <- lapply(as.list(data.frame(coarsegrid@coords)), unique)
+    # change stn to any temporary variable with new values
     loc.stn <- cdt.as.image(locations.stn$stn, locations.stn@coords, xgrd, regrid = TRUE)
     loc.stn <- cbind(do.call(expand.grid, loc.stn[c('x', 'y')]), z = c(loc.stn$z))
     loc.stn <- loc.stn[!is.na(loc.stn$z), , drop = FALSE]

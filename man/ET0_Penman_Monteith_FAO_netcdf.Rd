@@ -41,22 +41,22 @@ Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{il
 }}
 
 \item{tmin.data}{named list, providing the minimum temperature netCDF dataset. Units: degree Celsius.
-See \code{pres.data} for the elements of the list.}
+See \code{tmax.data} for the elements of the list.}
 
 \item{rhmax.data}{named list, providing the maximum relative humidity netCDF dataset. Units: percentage.
-See \code{pres.data} for the elements of the list.}
+See \code{tmax.data} for the elements of the list.}
 
 \item{rhmin.data}{named list, providing the minimum relative humidity netCDF dataset. Units: percentage.
-See \code{pres.data} for the elements of the list.}
+See \code{tmax.data} for the elements of the list.}
 
 \item{wff10.data}{named list, providing the wind speed at 10 meters netCDF dataset. Units: m/s.
-See \code{pres.data} for the elements of the list.}
+See \code{tmax.data} for the elements of the list.}
 
 \item{pres.data}{named list, providing the surface pressure netCDF dataset. Units: hPa.
-See \code{pres.data} for the elements of the list.}
+See \code{tmax.data} for the elements of the list.}
 
 \item{rad.data}{named list, providing the solar radiation flux netCDF dataset. Units: W/m^2.
-See \code{pres.data} for the elements of the list.}
+See \code{tmax.data} for the elements of the list.}
 
 \item{elev.data}{named list, providing the Digital Elevation Model in netCDF format. Units: meters.
 \itemize{

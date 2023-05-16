@@ -3,9 +3,14 @@ useDynLib(CDT, .registration = TRUE)
 
 export(startCDT, cdtInterp, distance.Matrix)
 export(regression.Vector, regression.Matrix)
+
 export(download.oni.cpc.ncep.noaa, oni.cpc.ncep.noaa, oni.iridl.ldeo)
+
 export(cdtMergingPrecipCMD, cdtMergingTempCMD, cdtBiasCorrectPrecipCMD, cdtBiasCorrectTempCMD)
+
 export(cdtCrossValidationPrecipCMD, cdtCrossValidationTempCMD)
+export(cdtCrossValidationCMD)
+
 export(jra55.send.request, jra55.format.ncdf)
 export(merging.options, biascoeff.options, blanking.options)
 export(readCDTStationData, writeCDTStationData, matchCDTStationsData, matchCDTStationsIDs)
@@ -30,6 +35,7 @@ export(extract_netcdf_file)
 
 export(pressure_conversion_station)
 export(pressure_conversion_netcdf)
+export(ET0_Penman_Monteith_FAO_station)
 export(ET0_Penman_Monteith_FAO_netcdf)
 
 

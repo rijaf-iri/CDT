@@ -24,6 +24,15 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, 
     query_months <- format(seqDays, "%m")
     query_hours <- "[0:23]"
 
+    #######
+    ## assimilation stream version
+    query_stream <- cut(as.numeric(query_years), 
+        breaks = c(1980, 1992, 2001, 2011, 2100),
+        labels = c(100, 200, 300, 400), 
+        include.lowest = TRUE, right = FALSE)
+
+    ######
+
     startH <- as.numeric(format(start, '%H'))
     endH <- as.numeric(format(end, '%H'))
 
@@ -177,7 +186,8 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, 
     merra2_version <- "5.12.4"
 
     query_paths <- paste(merra2_var$pth[1], merra2_version, sep = ".")
-    query_endpoints <- paste("MERRA2_400", merra2_var$pth[2], query_dates, "nc4.nc4", sep = ".")
+    query_stream <- paste0("MERRA2_", query_stream)
+    query_endpoints <- paste(query_stream, merra2_var$pth[2], query_dates, "nc4.nc4", sep = ".")
     query_urls <- paste(opendap_url, query_paths, query_years, query_months, query_endpoints, sep = "/")
 
     query_vars <- sapply(seq_along(query_urls), function(j){
@@ -239,6 +249,15 @@ merra2_land.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, ve
     query_years <- format(seqDays, "%Y")
     query_months <- format(seqDays, "%m")
     query_hours <- "[0:23]"
+
+    #######
+    ## assimilation stream version
+    query_stream <- cut(as.numeric(query_years), 
+        breaks = c(1980, 1992, 2001, 2011, 2100),
+        labels = c(100, 200, 300, 400), 
+        include.lowest = TRUE, right = FALSE)
+
+    #######
 
     startH <- as.numeric(format(start, '%H'))
     endH <- as.numeric(format(end, '%H'))
@@ -346,7 +365,8 @@ merra2_land.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, ve
     merra2_version <- "5.12.4"
 
     query_paths <- paste(merra2_var$pth[1], merra2_version, sep = ".")
-    query_endpoints <- paste("MERRA2_400", merra2_var$pth[2], query_dates, "nc4.nc4", sep = ".")
+    query_stream <- paste0("MERRA2_", query_stream)
+    query_endpoints <- paste(query_stream, merra2_var$pth[2], query_dates, "nc4.nc4", sep = ".")
     query_urls <- paste(opendap_url, query_paths, query_years, query_months, query_endpoints, sep = "/")
 
     query_vars <- sapply(seq_along(query_urls), function(j){

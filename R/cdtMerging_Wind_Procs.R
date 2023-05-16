@@ -14,7 +14,7 @@ mergingWind <- function(){
     }
 
     outdir <- file.path(.cdtData$GalParams$output$dir,
-                        paste('Merged_Precip_Data', xdeb, xfin, sep = '_'))
+                        paste('MERGED_Wind_Data', xdeb, xfin, sep = '_'))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     ##################

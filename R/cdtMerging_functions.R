@@ -52,9 +52,9 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
                                 "rain" = c(0, 5000),
                                 "temp" = c(-40, 50),
                                 "rh" = c(0, 100),
-                                "pres" = c(500, 1100),
-                                "prmsl" = c(500, 1100),
-                                "rad" = c(0, 1500),
+                                "pres" = c(700, 1100),
+                                "prmsl" = c(850, 1100),
+                                "rad" = c(0, 1300),
                                 NULL)
 
     ##################

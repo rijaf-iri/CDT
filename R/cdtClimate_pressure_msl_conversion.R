@@ -28,17 +28,26 @@
 #' @param tmean.data named list, if \code{temp.data} is equal to \code{"mean"}, 
 #' providing the mean temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
-#' @param elev.from character, source of the elevation data. Valid options: \code{"inputPresData"} and \code{"cdtCrdFile"}.
+#' @param elev.from character, source of the elevation data. Valid options: \code{"inputPresData"}, \code{"cdtCrdFile"} and \code{"netcdfDEM"}.
 #' \itemize{
 #' \item{\code{"inputPresData"}: }{the elevation data is from the pressure data.}
 #' \item{\code{"cdtCrdFile"}: }{the elevation data is from a CDT coordinates file. The ID must be the same as the pressure data.}
+#' \item{\code{"netcdfDEM"}: }{the elevation data is from the pressure data.}
 #' }
+#' Default is \code{"netcdfDEM"}.
 #' @param elev.data named list, if \code{elev.from} is equal to \code{"cdtCrdFile"},
 #' providing the CDT coordinate file containing the elevation data. Units: meters.
 #' \itemize{
 #' \item{\code{file}: }{character, full path to the CDT coordinate file}
 #' \item{\code{sep}: }{character, column separator of the data}
 #' \item{\code{na.strings}: }{character, missing values flag}
+#' }
+#' If \code{elev.from} is equal to \code{"netcdfDEM"} set the elements of the list providing the Digital Elevation Model in netCDF format. Units: meters.
+#' \itemize{
+#' \item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
+#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
+#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
+#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 #' }
 #' @param output named list, the elements of the list are
 #' \itemize{
@@ -55,50 +64,19 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
                                         tmax.data = list(file = "", sep = ",", na.strings = "-99"),
                                         tmin.data = list(file = "", sep = ",", na.strings = "-99"),
                                         tmean.data = list(file = "", sep = ",", na.strings = "-99"),
-                                        elev.from = 'inputPresData', 
-                                        elev.data = list(file = '', sep = ",", na.strings = "-99"),
+                                        elev.from = 'netcdfDEM', 
+                                        elev.data = list(file = "", varid = "z", ilon = 1, ilat = 2),
                                         output = list(file = '', sep = ",", na.strings = "-99")
                                        )
 {
     stnpars_read <- list(stringsAsFactors = FALSE, colClasses = "character")
+
     pres_pars <- list(file = "", sep = ",", na.strings = "-99")
     pres.data <- init.default.list.args(pres.data, pres_pars)
     presData <- do.call(read.table, c(pres.data, stnpars_read))
     presData <- splitCDTData0(presData, GUI = FALSE)
     if(is.null(presData)){
         stop('Unable to read pressure data')
-        # return(NULL)
-    }
-
-    if(elev.from == 'inputPresData'){
-        if(is.null(presData$elv)){
-            stop('No elevation data found from the pressure data')
-            # return(NULL)
-        }
-        elev <- presData$elv
-    }else if(elev.from == 'cdtCrdFile'){
-        elev_pars <- list(file = "", sep = ",", na.strings = "-99", header = TRUE)
-        elev.data <- init.default.list.args(elev.data, elev_pars)
-        elevData <- do.call(read.table, c(elev.data, stnpars_read))
-        idElev <- elevData[, 1]
-        # elevData <- list(id = elevData[, 1],
-        #                  lon = as.numeric(elevData[, 3]),
-        #                  lat = as.numeric(elevData[, 4]),
-        #                  elv = as.numeric(elevData[, 5]))
-
-        if(length(presData$id) != length(idElev)){
-            stop('Pressure and elevation data stations do not match')
-            # return(NULL)
-        }
-
-        if(!all(presData$id == idElev)){
-            stop('Pressure and elevation data stations do not match')
-            # return(NULL)
-        }
-
-        elev <- as.numeric(elevData[, 5])
-    }else{
-        stop('Unknown elevation data source')
         # return(NULL)
     }
 
@@ -130,38 +108,109 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
             # return(NULL)
         }
 
-        if(length(tmaxData$id) != length(tminData$id)){
+        idstn <- intersect(tmaxData$id, tminData$id)
+        if(length(idstn) == 0){
             stop('Maximum and Minimum temperature data stations do not match')
             # return(NULL)
         }
-        if(!all(tmaxData$id == tminData$id)){
-            stop('Maximum and Minimum temperature data stations do not match')
+        dates <- intersect(tmaxData$dates, tminData$dates)
+        if(length(dates) == 0){
+            stop('Maximum and Minimum temperature dates do not overlap')
             # return(NULL)
         }
 
-        it <- match(tmaxData$dates, tminData$dates)
-        tminData$dates <- tminData$dates[it]
-        tminData$data <- tminData$data[it, , drop = FALSE]
+        ix1 <- match(idstn, tmaxData$id)
+        it1 <- match(dates, tmaxData$dates)
+        ix2 <- match(idstn, tminData$id)
+        it2 <- match(dates, tminData$dates)
+
         tempData <- tmaxData
-        tempData$data <- (tmaxData$data + tminData$data)/2
+        tempData$id <- tmaxData$id[ix1]
+        tempData$dates <- tmaxData$dates[it1]
+        tempData$data <- (tmaxData$data[it1, ix1] + tminData$data[it2, ix2])/2
     }else{
         stop('Unknown temperature data source')
         # return(NULL)
     }
 
-    if(length(presData$id) != length(tempData$id)){
+    ############
+
+    idstn <- intersect(presData$id, tempData$id)
+    if(length(idstn) == 0){
         stop('Pressure and temperature data stations do not match')
         # return(NULL)
     }
-
-    if(!all(presData$id == tempData$id)){
-        stop('Pressure and temperature data stations do not match')
+    dates <- intersect(presData$dates, tempData$dates)
+    if(length(dates) == 0){
+        stop('Pressure and temperature dates do not overlap')
         # return(NULL)
     }
 
-    it <- match(presData$dates, tempData$dates)
-    tempData$dates <- tempData$dates[it]
-    tempData$data <- tempData$data[it, , drop = FALSE]
+    ix1 <- match(idstn, presData$id)
+    it1 <- match(dates, presData$dates)
+
+    presData$id <- presData$id[ix1]
+    presData$lon <- presData$lon[ix1]
+    presData$lat <- presData$lat[ix1]
+    presData$elv <- presData$elv[ix1]
+    presData$dates <- dates
+    presData$data <- presData$data[it1, ix1]
+
+    ix2 <- match(idstn, tempData$id)
+    it2 <- match(dates, tempData$dates)
+    tempData$data <- tempData$data[it2, ix2]
+
+    ############
+
+    if(elev.from == 'inputPresData'){
+        if(is.null(presData$elv)){
+            stop('No elevation data found from the pressure data')
+            # return(NULL)
+        }
+        elev <- presData$elv
+        if(all(is.na(elev))){
+            stop('All elevation data from the maximum temperature data are missing')
+            # return(NULL)
+        }
+    }else if(elev.from == 'cdtCrdFile'){
+        elev_pars <- list(file = "", sep = ",", na.strings = "-99", header = TRUE)
+        elev.data <- init.default.list.args(elev.data, elev_pars)
+        elevData <- do.call(read.table, c(elev.data, stnpars_read))
+        idElev <- match(presData$id, elevData[, 1])
+        if(length(idElev) == 0){
+            stop('Temperature data and coordinates file stations IDs do not match')
+            # return(NULL)
+        }
+        elev <- as.numeric(elevData[idElev, 5])
+        if(all(is.na(elev))){
+            stop('No elevation data found from the CDT coordinates file')
+            # return(NULL)
+        }
+    }else if(elev.from == 'netcdfDEM'){
+        if(file.exists(elev.data$file)){
+            elev_pars <- list(file = "", varid = "z", ilon = 1, ilat = 2)
+            elev.data <- init.default.list.args(elev.data, elev_pars)
+        }else{
+            stop("The netCDF file containing the elevation does not exist")
+            # return(NULL)
+        }
+
+        demData <- get.ncData.value(elev.data)
+        demData$z[demData$z < 0] <- 0
+        dem_grd <- defSpatialPixels(demData)
+        elv_loc <- do.call(data.frame, presData[c('lon', 'lat')])
+        sp::coordinates(elv_loc) <- c('lon', 'lat')
+        elev <- demData$z[sp::over(elv_loc, dem_grd)]
+        if(all(is.na(elev))){
+            stop('All elevation data from DEM are missing')
+            # return(NULL)
+        }
+    }else{
+        stop('Unknown elevation data source')
+        # return(NULL)
+    }
+
+    ############
 
     mslData <- mSLP_checkDim(presData$data, tempData$data, elev, presData$lat)
     msl <- do.call(mSLP_corrections, mslData)
