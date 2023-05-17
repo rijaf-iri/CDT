@@ -8,10 +8,10 @@ Climate Data Tools `CDT` is a  set of utility functions for meteorological data 
 
 Go to the CRAN website [CRAN](https://CRAN.R-project.org).
 Then click on the link [Download R for Windows](https://cran.r-project.org/bin/windows/) and [base](https://cran.r-project.org/bin/windows/base/). Download the latest version of `R`.
-Install the downloaded file (example: R-4.2.1-win.exe). Perform a default installation (Just click on **Next**).
+Install the downloaded file (example: R-4.3.0-win.exe). Perform a default installation (Just click on **Next**).
 
 ```
-CDT requires R version 3.5.0 or higher. We recommend that you have the latest version of R.
+CDT requires R version 4.0.0 or higher. It is recommend to have the latest version of R.
 ```
 
 ### 2) Install `Rtools`
