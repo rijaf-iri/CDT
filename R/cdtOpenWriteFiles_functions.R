@@ -35,9 +35,8 @@ openFiles <- function(parent, fileopen){
     return(NULL)
 }
 
-getOpenFiles <- function(parent, filetype = 'txt', initialdir = getwd()){
-    if(filetype == 'txt') filetypes <- .cdtEnv$tcl$data$filetypes1
-    if(filetype == 'csv') filetypes <- .cdtEnv$tcl$data$filetypes2
+getOpenFiles <- function(parent, initialdir = getwd()){
+    filetypes <- .cdtEnv$tcl$data$filetypesA
     fileopen <- tclvalue(tkgetOpenFile(initialdir = initialdir, initialfile = "", filetypes = filetypes))
     if(fileopen == "") return(NULL)
     if(length(.cdtData$OpenFiles$Data) > 0){

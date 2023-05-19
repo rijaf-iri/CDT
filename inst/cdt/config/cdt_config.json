@@ -9,6 +9,8 @@
     "missval": "-99",
     // Anomaly missing value code
     "missval.anom": "-9999",
+    // Default file extension for ASCII file, options: "csv", "txt"
+    "ascii.file.ext": "csv",
     // full path to the working directory
     "wd": "",
     // region of interest

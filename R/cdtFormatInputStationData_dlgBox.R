@@ -111,7 +111,7 @@ Format_CDT_Input_Station_Data <- function(){
 
     tkconfigure(bt.file.save, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        file2save1 <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes1)
+        file2save1 <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypesA)
         tcl('wm', 'attributes', tt, topmost = TRUE)
         tclvalue(file.save1) <- if(is.na(file2save1)) .cdtData$GalParams$IO.files$File2Save else file2save1
     })
@@ -319,7 +319,7 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
 
     tkconfigure(bt.file.stn.info, command = function(){
         tcl('wm', 'attributes', tt1, topmost = FALSE)
-        dat.opfiles <- getOpenFiles(tt1, filetype = 'csv')
+        dat.opfiles <- getOpenFiles(tt1)
         tcl('wm', 'attributes', tt1, topmost = TRUE)
         if(!is.null(dat.opfiles)){
             update.OpenFiles('ascii', dat.opfiles)
@@ -466,7 +466,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     ######
     tkconfigure(bt.stnfl, command = function(){
         tcl('wm', 'attributes', tt1, topmost = FALSE)
-        dat.opfiles <- getOpenFiles(tt1, filetype = 'csv')
+        dat.opfiles <- getOpenFiles(tt1)
         tcl('wm', 'attributes', tt1, topmost = TRUE)
         if(!is.null(dat.opfiles)){
             update.OpenFiles('ascii', dat.opfiles)
@@ -478,7 +478,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
 
     tkconfigure(bt.coords, command = function(){
         tcl('wm', 'attributes', tt1, topmost = FALSE)
-        dat.opfiles <- getOpenFiles(tt1, filetype = 'csv')
+        dat.opfiles <- getOpenFiles(tt1)
         tcl('wm', 'attributes', tt1, topmost = TRUE)
         if(!is.null(dat.opfiles)){
             update.OpenFiles('ascii', dat.opfiles)

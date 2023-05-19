@@ -51,13 +51,19 @@ cdtConfiguration <- function(parent.win){
         miss.value <- tclVar(cdtConfig$missval)
         miss.value.anom <- tclVar(cdtConfig$missval.anom)
         work.dir <- tclVar(.cdtData$Config$wd)
+        file.exts <- tclVar()
+        CbfileExtVAL <- lang.dlg[['combobox']][['1']]
+        fileExtVAL <- c('csv', 'txt')
+        tclvalue(file.exts) <- CbfileExtVAL[fileExtVAL %in% cdtConfig$ascii.file.ext]
 
         txt.lang <- tklabel(frTab1, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
-        cb.lang <- ttkcombobox(frTab1, values = lang.name.list, textvariable = lang.select, width = largeur0, justify = 'right')
+        cb.lang <- ttkcombobox(frTab1, values = lang.name.list, textvariable = lang.select, width = largeur0, justify = 'center')
         txt.miss <- tklabel(frTab1, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
         en.miss <- tkentry(frTab1, textvariable = miss.value, width = 8)
         txt.amiss <- tklabel(frTab1, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
         en.amiss <- tkentry(frTab1, textvariable = miss.value.anom, width = 8)
+        txt.exts <- tklabel(frTab1, text = lang.dlg[['label']][['17']], anchor = 'e', justify = 'right')
+        cb.exts <- ttkcombobox(frTab1, values = CbfileExtVAL, textvariable = file.exts, width = largeur0, justify = 'center')
  
         ######
         frWd <- tkframe(frTab1, relief = 'groove', borderwidth = 2)
@@ -84,7 +90,9 @@ cdtConfiguration <- function(parent.win){
         tkgrid(en.miss, row = 1, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(txt.amiss, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(en.amiss, row = 2, column = 3, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frWd, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.exts, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.exts, row = 3, column = 3, sticky = 'w', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frWd, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(en.miss, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
         helpWidget(en.amiss, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -370,6 +378,7 @@ cdtConfiguration <- function(parent.win){
             cdtConfig$missval <- str_trim(tclvalue(miss.value))
             cdtConfig$missval.anom <- str_trim(tclvalue(miss.value.anom))
             cdtConfig$wd <- str_trim(tclvalue(work.dir))
+            cdtConfig$ascii.file.ext <- fileExtVAL[CbfileExtVAL %in% str_trim(tclvalue(file.exts))]
             cdtConfig$region$minlon <- as.numeric(str_trim(tclvalue(minLon)))
             cdtConfig$region$maxlon <- as.numeric(str_trim(tclvalue(maxLon)))
             cdtConfig$region$minlat <- as.numeric(str_trim(tclvalue(minLat)))
@@ -388,6 +397,7 @@ cdtConfiguration <- function(parent.win){
             .cdtData$Config$missval <- cdtConfig$missval
             .cdtData$Config$missval.anom <- cdtConfig$missval.anom
             .cdtData$Config$lang.iso <- cdtConfig$lang.iso
+            .cdtData$Config$ascii.file.ext <- cdtConfig$ascii.file.ext
             .cdtData$Config$region <- cdtConfig$region
             .cdtData$Config$cdtDataset.chunk <- cdtConfig$cdtDataset.chunk
             .cdtData$Config$parallel <- cdtConfig$parallel

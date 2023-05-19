@@ -142,7 +142,7 @@ filterCDTData_getParams <- function(){
 
     tkconfigure(btFileSave, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        file2save1 <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes1)
+        file2save1 <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypesA)
         tclvalue(file.save1) <- if(is.na(file2save1)) "" else file2save1
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })

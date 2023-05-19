@@ -113,6 +113,17 @@
         <label id="16">
             <text lang="en"> Number of cores to be used </text>
         </label>
+        <label id="17">
+            <text lang="en"> Default ASCII file extension </text>
+        </label>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> CSV File </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Text File </text>
+            </option>
+        </combobox>
     </widget>
     <help>
         <content id="1">

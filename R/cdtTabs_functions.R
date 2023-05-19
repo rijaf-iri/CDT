@@ -168,7 +168,7 @@ Save_Table_As <- function(){
         }
         tryCatch(
             {
-                file.to.save <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes2)
+                file.to.save <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypesA)
                 dat2sav <- tclArray2dataframe(Objarray)
                 
                 file.spec <- NULL
@@ -217,7 +217,7 @@ saveTable.arr.type <- function(dat2sav, tabid, rowcolnames){
         return(NULL)
     }
     if(length(.cdtData$OpenTab$Data[[tabid]]) == 2){
-        filetosave <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypes2)
+        filetosave <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypesA)
         writeFiles(dat2sav, filetosave, col.names = TRUE)
     }else{
         filetosave <- .cdtData$OpenTab$Data[[tabid]][[3]]

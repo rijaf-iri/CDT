@@ -168,6 +168,12 @@ startCDT <- function(wd = NA, lang = NA){
     .cdtEnv$tcl$data$filetypes5 <- "{{JPEG format} {.jpeg .JPEG}} {{PNG format} {.png .PNG}} {{All files} *}"
     .cdtEnv$tcl$data$filetypes6 <- "{{R Objects} {.rds .RDS .RData}} {{All files} *}"
 
+    if(.cdtData$Config$ascii.file.ext == "csv"){
+        .cdtEnv$tcl$data$filetypesA <- .cdtEnv$tcl$data$filetypes2
+    }else{
+        .cdtEnv$tcl$data$filetypesA <- .cdtEnv$tcl$data$filetypes1
+    }
+
     ## Initialization
     .cdtData$OpenFiles$Type <- list()
     .cdtData$OpenFiles$Data <- list()
