@@ -9,9 +9,19 @@
 #' }
 #' @param tmin.data named list, providing the minimum temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{tmax.data} for the elements of the list.
-#' @param rhmax.data named list, providing the maximum relative humidity data in CDT station data format. Units: percentage.
+#' @param rh.from character, source of relative humidity data. Valid options: \code{"minmax"} and \code{"mean"}.
+#' \itemize{
+#' \item{\code{"minmax"}: }{the humidity data are from the minimum and maximum relative humidity.}
+#' \item{\code{"mean"}: }{the humidity data is from a mean relative humidity data.}
+#' }
+#' @param rhmax.data named list, if \code{rh.from} is equal to \code{"minmax"},
+#' providing the maximum relative humidity data in CDT station data format. Units: percentage.
 #' See \code{tmax.data} for the elements of the list.
-#' @param rhmin.data named list, providing the minimum relative humidity data in CDT station data format. Units: percentage.
+#' @param rhmin.data named list, if \code{rh.from} is equal to \code{"minmax"},
+#' providing the minimum relative humidity data in CDT station data format. Units: percentage.
+#' See \code{tmax.data} for the elements of the list.
+#' @param rhmean.data named list, if \code{rh.from} is equal to \code{"mean"},
+#' providing the mean relative humidity data in CDT station data format. Units: percentage.
 #' See \code{tmax.data} for the elements of the list.
 #' @param wff10.data named list, providing the wind speed at 10 meters data in CDT station data format. Units: m/s.
 #' See \code{tmax.data} for the elements of the list.
@@ -56,8 +66,10 @@
 ET0_Penman_Monteith_FAO_station <- function(
        tmax.data = list(file = "", sep = ",", na.strings = "-99"),
        tmin.data = list(file = "", sep = ",", na.strings = "-99"),
+       rh.from = 'minmax',
        rhmax.data = list(file = "", sep = ",", na.strings = "-99"),
        rhmin.data = list(file = "", sep = ",", na.strings = "-99"),
+       rhmean.data = list(file = "", sep = ",", na.strings = "-99"),
        wff10.data = list(file = "", sep = ",", na.strings = "-99"),
        pres.data = list(file = "", sep = ",", na.strings = "-99"),
        rad.data = list(file = "", sep = ",", na.strings = "-99"),
@@ -97,43 +109,68 @@ ET0_Penman_Monteith_FAO_station <- function(
         # return(NULL)
     }
 
-    rhmax_pars <- list(file = "", sep = ",", na.strings = "-99")
-    rhmax.data <- init.default.list.args(rhmax.data, rhmax_pars)
-    rhmaxData <- do.call(read.table, c(rhmax.data, stnpars_read))
-    rhmaxData <- splitCDTData0(rhmaxData, GUI = FALSE)
-    if(is.null(rhmaxData)){
-        stop('Unable to read RHMAX data')
-        # return(NULL)
-    }
+    if(rh.from == 'minmax'){
+        rhmax_pars <- list(file = "", sep = ",", na.strings = "-99")
+        rhmax.data <- init.default.list.args(rhmax.data, rhmax_pars)
+        rhmaxData <- do.call(read.table, c(rhmax.data, stnpars_read))
+        rhmaxData <- splitCDTData0(rhmaxData, GUI = FALSE)
+        if(is.null(rhmaxData)){
+            stop('Unable to read RHMAX data')
+            # return(NULL)
+        }
 
-    idstn <- intersect(idstn, rhmaxData$id)
-    if(length(idstn) == 0){
-        stop('Temperatures and RHMAX stations do not match')
-        # return(NULL)
-    }
-    dates <- intersect(dates, rhmaxData$dates)
-    if(length(dates) == 0){
-        stop('Temperatures and RHMAX dates do not overlap')
-        # return(NULL)
-    }
+        idstn <- intersect(idstn, rhmaxData$id)
+        if(length(idstn) == 0){
+            stop('Temperatures and RHMAX stations do not match')
+            # return(NULL)
+        }
+        dates <- intersect(dates, rhmaxData$dates)
+        if(length(dates) == 0){
+            stop('Temperatures and RHMAX dates do not overlap')
+            # return(NULL)
+        }
 
-    rhmin_pars <- list(file = "", sep = ",", na.strings = "-99")
-    rhmin.data <- init.default.list.args(rhmin.data, rhmin_pars)
-    rhminData <- do.call(read.table, c(rhmin.data, stnpars_read))
-    rhminData <- splitCDTData0(rhminData, GUI = FALSE)
-    if(is.null(rhminData)){
-        stop('Unable to read RHMIN data')
-        # return(NULL)
-    }
+        rhmin_pars <- list(file = "", sep = ",", na.strings = "-99")
+        rhmin.data <- init.default.list.args(rhmin.data, rhmin_pars)
+        rhminData <- do.call(read.table, c(rhmin.data, stnpars_read))
+        rhminData <- splitCDTData0(rhminData, GUI = FALSE)
+        if(is.null(rhminData)){
+            stop('Unable to read RHMIN data')
+            # return(NULL)
+        }
 
-    idstn <- intersect(idstn, rhminData$id)
-    if(length(idstn) == 0){
-        stop('Temperatures and RHMIN stations do not match')
-        # return(NULL)
-    }
-    dates <- intersect(dates, rhminData$dates)
-    if(length(dates) == 0){
-        stop('Temperatures and RHMIN dates do not overlap')
+        idstn <- intersect(idstn, rhminData$id)
+        if(length(idstn) == 0){
+            stop('Temperatures and RHMIN stations do not match')
+            # return(NULL)
+        }
+        dates <- intersect(dates, rhminData$dates)
+        if(length(dates) == 0){
+            stop('Temperatures and RHMIN dates do not overlap')
+            # return(NULL)
+        }
+    }else if(rh.from == 'mean'){
+        rhmean_pars <- list(file = "", sep = ",", na.strings = "-99")
+        rhmean.data <- init.default.list.args(rhmean.data, rhmean_pars)
+        rhmeanData <- do.call(read.table, c(rhmean.data, stnpars_read))
+        rhmeanData <- splitCDTData0(rhmeanData, GUI = FALSE)
+        if(is.null(rhmeanData)){
+            stop('Unable to read RHMEAN data')
+            # return(NULL)
+        }
+
+        idstn <- intersect(idstn, rhmeanData$id)
+        if(length(idstn) == 0){
+            stop('Temperatures and RHMEAN stations do not match')
+            # return(NULL)
+        }
+        dates <- intersect(dates, rhmeanData$dates)
+        if(length(dates) == 0){
+            stop('Temperatures and RHMEAN dates do not overlap')
+            # return(NULL)
+        }
+    }else{
+        stop('Unknown humidity data source')
         # return(NULL)
     }
 
@@ -268,8 +305,12 @@ ET0_Penman_Monteith_FAO_station <- function(
     ################
     tmaxData <- tmaxData$data[match(dates, tmaxData$dates), match(idstn, tmaxData$id)]
     tminData <- tminData$data[match(dates, tminData$dates), match(idstn, tminData$id)]
-    rhmaxData <- rhmaxData$data[match(dates, rhmaxData$dates), match(idstn, rhmaxData$id)]
-    rhminData <- rhminData$data[match(dates, rhminData$dates), match(idstn, rhminData$id)]
+    if(rh.from == 'minmax'){
+        rhmaxData <- rhmaxData$data[match(dates, rhmaxData$dates), match(idstn, rhmaxData$id)]
+        rhminData <- rhminData$data[match(dates, rhminData$dates), match(idstn, rhminData$id)]
+    }else{
+        rhmeanData <- rhmeanData$data[match(dates, rhmeanData$dates), match(idstn, rhmeanData$id)]
+    }
     wff10Data <- wff10Data$data[match(dates, wff10Data$dates), match(idstn, wff10Data$id)]
     presData <- presData$data[match(dates, presData$dates), match(idstn, presData$id)]
     radData <- radData$data[match(dates, radData$dates), match(idstn, radData$id)]
@@ -284,8 +325,17 @@ ET0_Penman_Monteith_FAO_station <- function(
     Ra <- 0.0864 * Ra
 
     ########
+    if(rh.from == 'minmax'){
+        rhmeanData <- NA
+    }else{
+        rhmaxData <- NA
+        rhminData <- NA
+    }
 
-    et0 <- ET0_FAO(tmaxData, tminData, rhmaxData, rhminData, wff10Data, presData, radData, Ra, elevData)
+    et0 <- ET0_FAO(tmaxData, tminData, wff10Data,
+                   presData, radData, Ra, elevData, 
+                   rh.from, rhmaxData, rhminData, rhmeanData)
+
     et0[is.nan(et0) | is.infinite(et0)] <- NA
     out$data <- round(et0, 1)
 
@@ -316,9 +366,19 @@ ET0_Penman_Monteith_FAO_station <- function(
 #' }
 #' @param tmin.data named list, providing the minimum temperature netCDF dataset. Units: degree Celsius.
 #' See \code{tmax.data} for the elements of the list.
-#' @param rhmax.data named list, providing the maximum relative humidity netCDF dataset. Units: percentage.
+#' @param rh.from character, source of relative humidity data. Valid options: \code{"minmax"} and \code{"mean"}.
+#' \itemize{
+#' \item{\code{"minmax"}: }{the humidity data are from the minimum and maximum relative humidity.}
+#' \item{\code{"mean"}: }{the humidity data is from a mean relative humidity data.}
+#' }
+#' @param rhmax.data named list, if \code{rh.from} is equal to \code{"minmax"},
+#' providing the maximum relative humidity netCDF dataset. Units: percentage.
 #' See \code{tmax.data} for the elements of the list.
-#' @param rhmin.data named list, providing the minimum relative humidity netCDF dataset. Units: percentage.
+#' @param rhmin.data named list, if \code{rh.from} is equal to \code{"minmax"},
+#' providing the minimum relative humidity netCDF dataset. Units: percentage.
+#' See \code{tmax.data} for the elements of the list.
+#' @param rhmean.data named list, if \code{rh.from} is equal to \code{"mean"},
+#' providing the mean relative humidity netCDF dataset. Units: percentage.
 #' See \code{tmax.data} for the elements of the list.
 #' @param wff10.data named list, providing the wind speed at 10 meters netCDF dataset. Units: m/s.
 #' See \code{tmax.data} for the elements of the list.
@@ -348,8 +408,10 @@ ET0_Penman_Monteith_FAO_station <- function(
 ET0_Penman_Monteith_FAO_netcdf <- function(start.date = '1991-01-01', end.date = '2020-12-31',
        tmax.data = list(dir = "", format = "tmax_%s%s%s.nc", varid = "tmax", ilon = 1, ilat = 2),
        tmin.data = list(dir = "", format = "tmin_%s%s%s.nc", varid = "tmin", ilon = 1, ilat = 2),
+       rh.from = 'minmax',
        rhmax.data = list(dir = "", format = "rhmax_%s%s%s.nc", varid = "rhmax", ilon = 1, ilat = 2),
        rhmin.data = list(dir = "", format = "rhmin_%s%s%s.nc", varid = "rhmin", ilon = 1, ilat = 2),
+       rhmean.data = list(dir = "", format = "rhmean_%s%s%s.nc", varid = "rhmean", ilon = 1, ilat = 2),
        wff10.data = list(dir = "", format = "wff_%s%s%s.nc", varid = "wsp", ilon = 1, ilat = 2),
        pres.data = list(dir = "", format = "pres_%s%s%s.nc", varid = "pres", ilon = 1, ilat = 2),
        rad.data = list(dir = "", format = "rad_%s%s%s.nc", varid = "rad", ilon = 1, ilat = 2),
@@ -383,30 +445,49 @@ ET0_Penman_Monteith_FAO_netcdf <- function(start.date = '1991-01-01', end.date =
         stop("No folder containing the netCDF minimum temperature data provided")
         # return(NULL)
     }
-    if(!is.null(rhmax.data$dir)){
-        if(!dir.exists(rhmax.data$dir)){
-            msg <- paste("Folder containing the netCDF maximum relative humidity data does not exist", ":", rhmax.data$dir)
-            stop(msg)
-            # return(NULL)
+    if(rh.from == 'minmax'){
+        if(!is.null(rhmax.data$dir)){
+            if(!dir.exists(rhmax.data$dir)){
+                msg <- paste("Folder containing the netCDF maximum relative humidity data does not exist", ":", rhmax.data$dir)
+                stop(msg)
+                # return(NULL)
+            }else{
+                rhmax_pars <- list(dir = "", format = "rhmax_%s%s%s.nc", varid = "rhmax", ilon = 1, ilat = 2)
+                rhmax.data <- init.default.list.args(rhmax.data, rhmax_pars)
+            }
         }else{
-            rhmax_pars <- list(dir = "", format = "rhmax_%s%s%s.nc", varid = "rhmax", ilon = 1, ilat = 2)
-            rhmax.data <- init.default.list.args(rhmax.data, rhmax_pars)
+            stop("No folder containing the netCDF maximum relative humidity data provided")
+            # return(NULL)
+        }
+        if(!is.null(rhmin.data$dir)){
+            if(!dir.exists(rhmin.data$dir)){
+                msg <- paste("Folder containing the netCDF minimum relative humidity data does not exist", ":", rhmin.data$dir)
+                stop(msg)
+                # return(NULL)
+            }else{
+                rhmin_pars <- list(dir = "", format = "rhmin_%s%s%s.nc", varid = "rhmin", ilon = 1, ilat = 2)
+                rhmin.data <- init.default.list.args(rhmin.data, rhmin_pars)
+            }
+        }else{
+            stop("No folder containing the netCDF minimum relative humidity data provided")
+            # return(NULL)
+        }
+    }else if(rh.from == 'mean'){
+        if(!is.null(rhmean.data$dir)){
+            if(!dir.exists(rhmean.data$dir)){
+                msg <- paste("Folder containing the netCDF mean relative humidity data does not exist", ":", rhmean.data$dir)
+                stop(msg)
+                # return(NULL)
+            }else{
+                rhmean_pars <- list(dir = "", format = "rhmean_%s%s%s.nc", varid = "rhmean", ilon = 1, ilat = 2)
+                rhmean.data <- init.default.list.args(rhmean.data, rhmean_pars)
+            }
+        }else{
+            stop("No folder containing the netCDF mean relative humidity data provided")
+            # return(NULL)
         }
     }else{
-        stop("No folder containing the netCDF maximum relative humidity data provided")
-        # return(NULL)
-    }
-    if(!is.null(rhmin.data$dir)){
-        if(!dir.exists(rhmin.data$dir)){
-            msg <- paste("Folder containing the netCDF minimum relative humidity data does not exist", ":", rhmin.data$dir)
-            stop(msg)
-            # return(NULL)
-        }else{
-            rhmin_pars <- list(dir = "", format = "rhmin_%s%s%s.nc", varid = "rhmin", ilon = 1, ilat = 2)
-            rhmin.data <- init.default.list.args(rhmin.data, rhmin_pars)
-        }
-    }else{
-        stop("No folder containing the netCDF minimum relative humidity data provided")
+        stop('Unknown humidity data source')
         # return(NULL)
     }
     if(!is.null(wff10.data$dir)){
@@ -492,15 +573,23 @@ ET0_Penman_Monteith_FAO_netcdf <- function(start.date = '1991-01-01', end.date =
         stop("No netCDF minimum temperature files found")
         # return(NULL)
     }
-    rhmax_ncInfo <- get.ncInfo.params(rhmax.data, date.range, 'daily')
-    if(is.null(rhmax_ncInfo)){
-        stop("No netCDF maximum relative humidity files found")
-        # return(NULL)
-    }
-    rhmin_ncInfo <- get.ncInfo.params(rhmin.data, date.range, 'daily')
-    if(is.null(rhmin_ncInfo)){
-        stop("No netCDF minimum relative humidity files found")
-        # return(NULL)
+    if(rh.from == 'minmax'){
+        rhmax_ncInfo <- get.ncInfo.params(rhmax.data, date.range, 'daily')
+        if(is.null(rhmax_ncInfo)){
+            stop("No netCDF maximum relative humidity files found")
+            # return(NULL)
+        }
+        rhmin_ncInfo <- get.ncInfo.params(rhmin.data, date.range, 'daily')
+        if(is.null(rhmin_ncInfo)){
+            stop("No netCDF minimum relative humidity files found")
+            # return(NULL)
+        }
+    }else{
+        rhmean_ncInfo <- get.ncInfo.params(rhmean.data, date.range, 'daily')
+        if(is.null(rhmean_ncInfo)){
+            stop("No netCDF mean relative humidity files found")
+            # return(NULL)
+        }
     }
     wff10_ncInfo <- get.ncInfo.params(wff10.data, date.range, 'daily')
     if(is.null(wff10_ncInfo)){
@@ -522,8 +611,12 @@ ET0_Penman_Monteith_FAO_netcdf <- function(start.date = '1991-01-01', end.date =
 
     tmax_grd <- defSpatialPixels(tmax_ncInfo$ncinfo[c('lon', 'lat')])
     tmin_grd <- defSpatialPixels(tmin_ncInfo$ncinfo[c('lon', 'lat')])
-    rhmax_grd <- defSpatialPixels(rhmax_ncInfo$ncinfo[c('lon', 'lat')])
-    rhmin_grd <- defSpatialPixels(rhmin_ncInfo$ncinfo[c('lon', 'lat')])
+    if(rh.from == 'minmax'){
+        rhmax_grd <- defSpatialPixels(rhmax_ncInfo$ncinfo[c('lon', 'lat')])
+        rhmin_grd <- defSpatialPixels(rhmin_ncInfo$ncinfo[c('lon', 'lat')])
+    }else{
+        rhmean_grd <- defSpatialPixels(rhmean_ncInfo$ncinfo[c('lon', 'lat')])
+    }
     wff10_grd <- defSpatialPixels(wff10_ncInfo$ncinfo[c('lon', 'lat')])
     pres_grd <- defSpatialPixels(pres_ncInfo$ncinfo[c('lon', 'lat')])
     rad_grd <- defSpatialPixels(rad_ncInfo$ncinfo[c('lon', 'lat')])
@@ -574,15 +667,22 @@ ET0_Penman_Monteith_FAO_netcdf <- function(start.date = '1991-01-01', end.date =
         ncdf4::nc_close(nc)
         tmin <- transposeNCDFData(tmin, tmin_ncInfo$ncinfo)
 
-        nc <- ncdf4::nc_open(rhmax_ncInfo$ncfiles[jj])
-        rhmax <- ncdf4::ncvar_get(nc, varid = rhmax_ncInfo$ncinfo$varid)
-        ncdf4::nc_close(nc)
-        rhmax <- transposeNCDFData(rhmax, rhmax_ncInfo$ncinfo)
+        if(rh.from == 'minmax'){
+            nc <- ncdf4::nc_open(rhmax_ncInfo$ncfiles[jj])
+            rhmax <- ncdf4::ncvar_get(nc, varid = rhmax_ncInfo$ncinfo$varid)
+            ncdf4::nc_close(nc)
+            rhmax <- transposeNCDFData(rhmax, rhmax_ncInfo$ncinfo)
 
-        nc <- ncdf4::nc_open(rhmin_ncInfo$ncfiles[jj])
-        rhmin <- ncdf4::ncvar_get(nc, varid = rhmin_ncInfo$ncinfo$varid)
-        ncdf4::nc_close(nc)
-        rhmin <- transposeNCDFData(rhmin, rhmin_ncInfo$ncinfo)
+            nc <- ncdf4::nc_open(rhmin_ncInfo$ncfiles[jj])
+            rhmin <- ncdf4::ncvar_get(nc, varid = rhmin_ncInfo$ncinfo$varid)
+            ncdf4::nc_close(nc)
+            rhmin <- transposeNCDFData(rhmin, rhmin_ncInfo$ncinfo)
+        }else{
+            nc <- ncdf4::nc_open(rhmean_ncInfo$ncfiles[jj])
+            rhmean <- ncdf4::ncvar_get(nc, varid = rhmean_ncInfo$ncinfo$varid)
+            ncdf4::nc_close(nc)
+            rhmean <- transposeNCDFData(rhmean, rhmean_ncInfo$ncinfo)
+        }
 
         nc <- ncdf4::nc_open(wff10_ncInfo$ncfiles[jj])
         wff10 <- ncdf4::ncvar_get(nc, varid = wff10_ncInfo$ncinfo$varid)
@@ -607,8 +707,17 @@ ET0_Penman_Monteith_FAO_netcdf <- function(start.date = '1991-01-01', end.date =
         Ra <- matrix(Ra, nrow(tmax), ncol(tmax), byrow = TRUE)
 
         ########
+        if(rh.from == 'minmax'){
+            rhmean <- NA
+        }else{
+            rhmax <- NA
+            rhmin <- NA
+        }
 
-        et0 <- ET0_FAO(tmax, tmin, rhmax, rhmin, wff10, pres, rad, Ra, demData$z)
+        et0 <- ET0_FAO(tmax, tmin, wff10,
+                       pres, rad, Ra, demData$z,
+                       rh.from, rhmax, rhmin, rhmean)
+        
         et0[is.na(et0) | is.nan(et0) | is.infinite(et0)] <- ncmissval
 
         outfl <- file.path(output$dir, sprintf(output$format, tmax_ncInfo$dates[jj]))
@@ -624,8 +733,8 @@ SVP_FAO <- function(tmp){
     0.6108 * exp(17.27 * tmp/(tmp + 237.3))
 }
 
-ET0_FAO <- function(tmax, tmin, rhmax, rhmin,
-                    wff10, pres, rad, Ra, elev)
+ET0_FAO <- function(tmax, tmin, wff10, pres, rad, Ra, elev,
+                    rhfrom = 'minmax', rhmax = NA, rhmin = NA, rhmean = NA)
 {
     ## wind speed at 2m
     u2 <- wff10 * (4.87/log(67.8 * 10 - 5.42))
@@ -642,7 +751,16 @@ ET0_FAO <- function(tmax, tmin, rhmax, rhmin,
 
     ## Vapour pressure deficit
     es <- (SVP_FAO(tmax) + SVP_FAO(tmin))/2
-    ea <- (SVP_FAO(tmin) * rhmax * 0.01 + SVP_FAO(tmax) * rhmin * 0.01)/2
+
+    if(rhfrom == 'minmax'){
+        ## from rhmin and rhmax
+        ea <- (SVP_FAO(tmin) * rhmax * 0.01 + SVP_FAO(tmax) * rhmin * 0.01)/2
+    }else if(rhfrom == 'mean'){
+        ## from rhmean
+        ea <- rhmean * 0.01 * (SVP_FAO(tmin) + SVP_FAO(tmax))/2
+    }else{
+        return(NULL)
+    }
     vap_deficit = es - ea
 
     # Radiation

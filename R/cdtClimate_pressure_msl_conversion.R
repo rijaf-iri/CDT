@@ -14,18 +14,18 @@
 #' \item{\code{sep}: }{character, column separator of the data}
 #' \item{\code{na.strings}: }{character, missing values flag}
 #' }
-#' @param temp.data character, source of temperature data. Valid options: \code{"maxmin"} and \code{"mean"}.
+#' @param temp.from character, source of temperature data. Valid options: \code{"minmax"} and \code{"mean"}.
 #' \itemize{
-#' \item{\code{"maxmin"}: }{the mean temperature is computed from tme minimum and maximum temperature.}
+#' \item{\code{"minmax"}: }{the mean temperature is computed from the minimum and maximum temperature.}
 #' \item{\code{"mean"}: }{the temperature data is from a mean temperature data.}
 #' }
-#' @param tmax.data named list, if \code{temp.data} is equal to \code{"maxmin"}, 
+#' @param tmax.data named list, if \code{temp.from} is equal to \code{"minmax"}, 
 #' providing the maximum temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
-#' @param tmin.data named list, if \code{temp.data} is equal to \code{"maxmin"}, 
+#' @param tmin.data named list, if \code{temp.from} is equal to \code{"minmax"}, 
 #' providing the minimum temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
-#' @param tmean.data named list, if \code{temp.data} is equal to \code{"mean"}, 
+#' @param tmean.data named list, if \code{temp.from} is equal to \code{"mean"}, 
 #' providing the mean temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
 #' @param elev.from character, source of the elevation data. Valid options: \code{"inputPresData"}, \code{"cdtCrdFile"} and \code{"netcdfDEM"}.
@@ -60,7 +60,7 @@
 
 pressure_conversion_station <- function(convert = 'sfc2msl',
                                         pres.data = list(file = "", sep = ",", na.strings = "-99"),
-                                        temp.data = 'maxmin',
+                                        temp.from = 'minmax',
                                         tmax.data = list(file = "", sep = ",", na.strings = "-99"),
                                         tmin.data = list(file = "", sep = ",", na.strings = "-99"),
                                         tmean.data = list(file = "", sep = ",", na.strings = "-99"),
@@ -80,7 +80,7 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
         # return(NULL)
     }
 
-    if(temp.data == 'mean'){
+    if(temp.from == 'mean'){
         tmean_pars <- list(file = "", sep = ",", na.strings = "-99")
         tmean.data <- init.default.list.args(tmean.data, tmean_pars)
         tempData <- do.call(read.table, c(tmean.data, stnpars_read))
@@ -89,7 +89,7 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
             stop('Unable to read TMEAN data')
             # return(NULL)
         }
-    }else if(temp.data == 'maxmin'){
+    }else if(temp.from == 'minmax'){
         tmax_pars <- list(file = "", sep = ",", na.strings = "-99")
         tmax.data <- init.default.list.args(tmax.data, tmax_pars)
         tmaxData <- do.call(read.table, c(tmax.data, stnpars_read))
@@ -130,6 +130,14 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
         tempData$data <- (tmaxData$data[it1, ix1] + tminData$data[it2, ix2])/2
     }else{
         stop('Unknown temperature data source')
+        # return(NULL)
+    }
+
+    output_pars <- list(file = '', sep = ",", na.strings = "-99")
+    output <- init.default.list.args(output, output_pars)
+
+    if(trimws(output$file) == ''){
+        stop('No file to save the converted pressure')
         # return(NULL)
     }
 
@@ -257,18 +265,18 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
 #' Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
 #' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 #' }
-#' @param temp.data character, source of temperature data. Valid options: \code{"maxmin"} and \code{"mean"}.
+#' @param temp.from character, source of temperature data. Valid options: \code{"minmax"} and \code{"mean"}.
 #' \itemize{
-#' \item{\code{"maxmin"}: }{the mean temperature is computed from tme minimum and maximum temperature.}
+#' \item{\code{"minmax"}: }{the mean temperature is computed from tme minimum and maximum temperature.}
 #' \item{\code{"mean"}: }{the temperature data is from a mean temperature data.}
 #' }
-#' @param tmax.data named list, if \code{temp.data} is equal to \code{"maxmin"}, 
+#' @param tmax.data named list, if \code{temp.from} is equal to \code{"minmax"}, 
 #' providing the maximum temperature netCDF dataset. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
-#' @param tmin.data named list, if \code{temp.data} is equal to \code{"maxmin"}, 
+#' @param tmin.data named list, if \code{temp.from} is equal to \code{"minmax"}, 
 #' providing the minimum temperature netCDF dataset. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
-#' @param tmean.data named list, if \code{temp.data} is equal to \code{"mean"}, 
+#' @param tmean.data named list, if \code{temp.from} is equal to \code{"mean"}, 
 #' providing the mean temperature netCDF dataset. Units: degree Celsius.
 #' See \code{pres.data} for the elements of the list.
 #' @param elev.data named list, providing the Digital Elevation Model in netCDF format. Units: meters.
@@ -290,7 +298,7 @@ pressure_conversion_netcdf <- function(convert = 'sfc2msl',
                                        start.date = '1991-01-01', end.date = '2020-12-31', 
                                        pres.data = list(dir = "", format = "pres_%s%s%s.nc",
                                                         varid = "pres", ilon = 1, ilat = 2),
-                                       temp.data = 'maxmin',
+                                       temp.from = 'minmax',
                                        tmax.data = list(dir = "", format = "tmax_%s%s%s.nc",
                                                         varid = "tmax", ilon = 1, ilat = 2),
                                        tmin.data = list(dir = "", format = "tmin_%s%s%s.nc",
@@ -318,7 +326,7 @@ pressure_conversion_netcdf <- function(convert = 'sfc2msl',
 
     ##########
 
-    if(temp.data == 'mean'){
+    if(temp.from == 'mean'){
         if(!is.null(tmean.data$dir)){
             if(!dir.exists(tmean.data$dir)){
                 msg <- paste("Folder containing the netCDF TMEAN data does not exist", ":", tmean.data$dir)
@@ -333,7 +341,7 @@ pressure_conversion_netcdf <- function(convert = 'sfc2msl',
             stop("No folder containing the netCDF TMEAN data provided")
             # return(NULL)
         }
-    }else if(temp.data == 'maxmin'){
+    }else if(temp.from == 'minmax'){
         if(!is.null(tmax.data$dir)){
             if(!dir.exists(tmax.data$dir)){
                 msg <- paste("Folder containing the netCDF TMAX data does not exist", ":", tmax.data$dir)
@@ -413,7 +421,7 @@ pressure_conversion_netcdf <- function(convert = 'sfc2msl',
 
     ##########
 
-    if(temp.data == 'maxmin'){
+    if(temp.from == 'minmax'){
         tmax_ncInfo <- get.ncInfo.params(tmax.data, date.range, 'daily')
         if(is.null(tmax_ncInfo)){
             stop("No netCDF TMAX files found")
@@ -563,7 +571,7 @@ pressure_conversion_netcdf <- function(convert = 'sfc2msl',
         ncdf4::nc_close(nc)
         pres <- transposeNCDFData(pres, pres_ncInfo$ncinfo)
 
-        if(temp.data == 'maxmin'){
+        if(temp.from == 'minmax'){
             nc <- ncdf4::nc_open(tmax_ncInfo$ncfiles[jj])
             tmax <- ncdf4::ncvar_get(nc, varid = tmax_ncInfo$ncinfo$varid)
             ncdf4::nc_close(nc)

@@ -10,7 +10,7 @@ pressure_conversion_netcdf(
   end.date = "2020-12-31",
   pres.data = list(dir = "", format = "pres_\%s\%s\%s.nc", varid = "pres", ilon = 1, ilat
     = 2),
-  temp.data = "maxmin",
+  temp.from = "minmax",
   tmax.data = list(dir = "", format = "tmax_\%s\%s\%s.nc", varid = "tmax", ilon = 1, ilat
     = 2),
   tmin.data = list(dir = "", format = "tmin_\%s\%s\%s.nc", varid = "tmin", ilon = 1, ilat
@@ -43,21 +43,21 @@ Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{il
 \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
 }}
 
-\item{temp.data}{character, source of temperature data. Valid options: \code{"maxmin"} and \code{"mean"}.
+\item{temp.from}{character, source of temperature data. Valid options: \code{"minmax"} and \code{"mean"}.
 \itemize{
-\item{\code{"maxmin"}: }{the mean temperature is computed from tme minimum and maximum temperature.}
+\item{\code{"minmax"}: }{the mean temperature is computed from tme minimum and maximum temperature.}
 \item{\code{"mean"}: }{the temperature data is from a mean temperature data.}
 }}
 
-\item{tmax.data}{named list, if \code{temp.data} is equal to \code{"maxmin"}, 
+\item{tmax.data}{named list, if \code{temp.from} is equal to \code{"minmax"}, 
 providing the maximum temperature netCDF dataset. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
-\item{tmin.data}{named list, if \code{temp.data} is equal to \code{"maxmin"}, 
+\item{tmin.data}{named list, if \code{temp.from} is equal to \code{"minmax"}, 
 providing the minimum temperature netCDF dataset. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
-\item{tmean.data}{named list, if \code{temp.data} is equal to \code{"mean"}, 
+\item{tmean.data}{named list, if \code{temp.from} is equal to \code{"mean"}, 
 providing the mean temperature netCDF dataset. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 

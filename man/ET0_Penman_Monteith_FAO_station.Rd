@@ -7,8 +7,10 @@
 ET0_Penman_Monteith_FAO_station(
   tmax.data = list(file = "", sep = ",", na.strings = "-99"),
   tmin.data = list(file = "", sep = ",", na.strings = "-99"),
+  rh.from = "minmax",
   rhmax.data = list(file = "", sep = ",", na.strings = "-99"),
   rhmin.data = list(file = "", sep = ",", na.strings = "-99"),
+  rhmean.data = list(file = "", sep = ",", na.strings = "-99"),
   wff10.data = list(file = "", sep = ",", na.strings = "-99"),
   pres.data = list(file = "", sep = ",", na.strings = "-99"),
   rad.data = list(file = "", sep = ",", na.strings = "-99"),
@@ -28,10 +30,22 @@ ET0_Penman_Monteith_FAO_station(
 \item{tmin.data}{named list, providing the minimum temperature data in CDT station data format. Units: degree Celsius.
 See \code{tmax.data} for the elements of the list.}
 
-\item{rhmax.data}{named list, providing the maximum relative humidity data in CDT station data format. Units: percentage.
+\item{rh.from}{character, source of relative humidity data. Valid options: \code{"minmax"} and \code{"mean"}.
+\itemize{
+\item{\code{"minmax"}: }{the humidity data are from the minimum and maximum relative humidity.}
+\item{\code{"mean"}: }{the humidity data is from a mean relative humidity data.}
+}}
+
+\item{rhmax.data}{named list, if \code{rh.from} is equal to \code{"minmax"},
+providing the maximum relative humidity data in CDT station data format. Units: percentage.
 See \code{tmax.data} for the elements of the list.}
 
-\item{rhmin.data}{named list, providing the minimum relative humidity data in CDT station data format. Units: percentage.
+\item{rhmin.data}{named list, if \code{rh.from} is equal to \code{"minmax"},
+providing the minimum relative humidity data in CDT station data format. Units: percentage.
+See \code{tmax.data} for the elements of the list.}
+
+\item{rhmean.data}{named list, if \code{rh.from} is equal to \code{"mean"},
+providing the mean relative humidity data in CDT station data format. Units: percentage.
 See \code{tmax.data} for the elements of the list.}
 
 \item{wff10.data}{named list, providing the wind speed at 10 meters data in CDT station data format. Units: m/s.

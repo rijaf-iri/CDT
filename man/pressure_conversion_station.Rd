@@ -7,7 +7,7 @@
 pressure_conversion_station(
   convert = "sfc2msl",
   pres.data = list(file = "", sep = ",", na.strings = "-99"),
-  temp.data = "maxmin",
+  temp.from = "minmax",
   tmax.data = list(file = "", sep = ",", na.strings = "-99"),
   tmin.data = list(file = "", sep = ",", na.strings = "-99"),
   tmean.data = list(file = "", sep = ",", na.strings = "-99"),
@@ -30,21 +30,21 @@ pressure_conversion_station(
 \item{\code{na.strings}: }{character, missing values flag}
 }}
 
-\item{temp.data}{character, source of temperature data. Valid options: \code{"maxmin"} and \code{"mean"}.
+\item{temp.from}{character, source of temperature data. Valid options: \code{"minmax"} and \code{"mean"}.
 \itemize{
-\item{\code{"maxmin"}: }{the mean temperature is computed from tme minimum and maximum temperature.}
+\item{\code{"minmax"}: }{the mean temperature is computed from the minimum and maximum temperature.}
 \item{\code{"mean"}: }{the temperature data is from a mean temperature data.}
 }}
 
-\item{tmax.data}{named list, if \code{temp.data} is equal to \code{"maxmin"}, 
+\item{tmax.data}{named list, if \code{temp.from} is equal to \code{"minmax"}, 
 providing the maximum temperature data in CDT station data format. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
-\item{tmin.data}{named list, if \code{temp.data} is equal to \code{"maxmin"}, 
+\item{tmin.data}{named list, if \code{temp.from} is equal to \code{"minmax"}, 
 providing the minimum temperature data in CDT station data format. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 
-\item{tmean.data}{named list, if \code{temp.data} is equal to \code{"mean"}, 
+\item{tmean.data}{named list, if \code{temp.from} is equal to \code{"mean"}, 
 providing the mean temperature data in CDT station data format. Units: degree Celsius.
 See \code{pres.data} for the elements of the list.}
 

@@ -11,10 +11,13 @@ ET0_Penman_Monteith_FAO_netcdf(
     = 2),
   tmin.data = list(dir = "", format = "tmin_\%s\%s\%s.nc", varid = "tmin", ilon = 1, ilat
     = 2),
+  rh.from = "minmax",
   rhmax.data = list(dir = "", format = "rhmax_\%s\%s\%s.nc", varid = "rhmax", ilon = 1,
     ilat = 2),
   rhmin.data = list(dir = "", format = "rhmin_\%s\%s\%s.nc", varid = "rhmin", ilon = 1,
     ilat = 2),
+  rhmean.data = list(dir = "", format = "rhmean_\%s\%s\%s.nc", varid = "rhmean", ilon =
+    1, ilat = 2),
   wff10.data = list(dir = "", format = "wff_\%s\%s\%s.nc", varid = "wsp", ilon = 1, ilat
     = 2),
   pres.data = list(dir = "", format = "pres_\%s\%s\%s.nc", varid = "pres", ilon = 1, ilat
@@ -43,10 +46,22 @@ Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{il
 \item{tmin.data}{named list, providing the minimum temperature netCDF dataset. Units: degree Celsius.
 See \code{tmax.data} for the elements of the list.}
 
-\item{rhmax.data}{named list, providing the maximum relative humidity netCDF dataset. Units: percentage.
+\item{rh.from}{character, source of relative humidity data. Valid options: \code{"minmax"} and \code{"mean"}.
+\itemize{
+\item{\code{"minmax"}: }{the humidity data are from the minimum and maximum relative humidity.}
+\item{\code{"mean"}: }{the humidity data is from a mean relative humidity data.}
+}}
+
+\item{rhmax.data}{named list, if \code{rh.from} is equal to \code{"minmax"},
+providing the maximum relative humidity netCDF dataset. Units: percentage.
 See \code{tmax.data} for the elements of the list.}
 
-\item{rhmin.data}{named list, providing the minimum relative humidity netCDF dataset. Units: percentage.
+\item{rhmin.data}{named list, if \code{rh.from} is equal to \code{"minmax"},
+providing the minimum relative humidity netCDF dataset. Units: percentage.
+See \code{tmax.data} for the elements of the list.}
+
+\item{rhmean.data}{named list, if \code{rh.from} is equal to \code{"mean"},
+providing the mean relative humidity netCDF dataset. Units: percentage.
 See \code{tmax.data} for the elements of the list.}
 
 \item{wff10.data}{named list, providing the wind speed at 10 meters netCDF dataset. Units: m/s.
