@@ -13,16 +13,13 @@ exec.download_Reanalysis <- function(){
                                            # "rda.ucar.edu - ds628.0" = jra55_ncss.download.rda.ucar,
                                            "rda.ucar.edu - ds628.8-NRT - 3Hourly" = jra55_nrt.download.rda.ucar,
                                            NULL),
-                           "merra2" =  switch(.cdtData$GalParams$src,
-                                              "disc.gsfc.nasa.gov - Hourly" = merra2_hourly.download.earthdata,
-                                              "disc.gsfc.nasa.gov - Land - Hourly" = merra2_land.download.earthdata,
-                                              "disc.gsfc.nasa.gov - Daily" = merra2_daily.download.earthdata,
-                                              "iridl.ldeo.columbia.edu - Daily" = merra2.download.iridl,
-                                              NULL), 
-                           "era5" =  switch(.cdtData$GalParams$src,
-                                            "cds.climate.copernicus.eu - ERA5 - Hourly" = era5_singleLev.download.cds,
-                                            "cds.climate.copernicus.eu - ERA5-Land - Hourly" = era5_Land.download.cds,
-                                            NULL)
+                           "merra2" = switch(.cdtData$GalParams$src,
+                                             "disc.gsfc.nasa.gov - Hourly" = merra2_hourly.download.earthdata,
+                                             "disc.gsfc.nasa.gov - Land - Hourly" = merra2_land.download.earthdata,
+                                             "disc.gsfc.nasa.gov - Daily" = merra2_daily.download.earthdata,
+                                             "iridl.ldeo.columbia.edu - Daily" = merra2.download.iridl,
+                                             NULL),
+                           "era5" = era5.cds.download
                         )
     if(is.null(download.fun)){
         Insert.Messages.Out("Not available", TRUE, "w")
