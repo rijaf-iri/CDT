@@ -32,7 +32,7 @@ qcPlot_Outliers.Mon <- function(){
         outlier <- .cdtData$EnvData$outqc$res[[stnid]]$outliers
         iout <- as.character(outlier$OUT.TEMPORAL)
         iout <- as.character(outlier$DATE)[!is.na(iout) & iout != ""]
-        if(length(iout)){
+        if(length(iout) > 0){
             iout <- match(iout, daty)
             iout <- iout[!is.na(iout)]
             if(length(iout)) vout <- don[iout]
@@ -41,7 +41,11 @@ qcPlot_Outliers.Mon <- function(){
         idx.year <- split(seq_along(daty), substr(daty, 1, 4))
         at.labx <- sapply(idx.year, mean)
         labx <- as.numeric(names(idx.year))
-        at.tickx <- c(1, sapply(idx.year[-1], '[[', 1) + 0.5, length(daty))
+        if(length(idx.year) > 1){
+            at.tickx <- c(1, sapply(idx.year[-1], '[[', 1) + 0.5, length(daty))
+        }else{
+            at.tickx <- 1
+        }
     }else{
         iout <- integer(0)
         at.tickx <- 1
@@ -67,7 +71,7 @@ qcPlot_Outliers.Mon <- function(){
     mtext(.cdtData$EnvData$tab$ylabMon, side = 2, line = 2.5, cex = 1.2)
     title(main = paste(stnid, "-", MOIS[imois]))
 
-    if(length(iout)){
+    if(length(iout) > 0){
         lines(iout, vout, type = "h", lwd = 2, col = 2, lend = "butt")
         points(iout, vout, col = 2, pch = 6, cex = 1)
     }

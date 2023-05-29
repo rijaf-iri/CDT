@@ -106,22 +106,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     ###################
 
     don.qc <- don$data
-    index.date <- seq_along(don$dates)
-    index.mon <- split(seq_along(don$dates), substr(don$dates, 5, 6))
-
     don.len <- nrow(don.qc)
-
-    ###################
-
-    ## min non-missing
-    min.length <- switch(GeneralParameters$intstep,
-                            'daily' = 300,
-                            'pentad' = 60,
-                            'dekadal' = 30,
-                            'monthly' = 10
-                        )
-
-    Insert.Messages.Out(message[['15']], TRUE, "i")
 
     ###################
     # out bounds check
@@ -164,63 +149,79 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     ## convert to fraction (68–95–99.7 rule)
     alpha <- pnorm(params$sigma) - (1 - pnorm(params$sigma))
 
-    tmp <- don.qc
-    tmp[tmp < 0.0001] <- NA
-    tmp <- tmp^(1/3)
+    ## min non-missing
+    min.length <- switch(GeneralParameters$intstep,
+                            'daily' = 300,
+                            'pentad' = 60,
+                            'dekadal' = 30,
+                            'monthly' = 10
+                        )
 
-    outliers <- lapply(index.mon, function(it){
-        x <- tmp[it, , drop = FALSE]
-        nl <- colSums(!is.na(x))
-
-        istn <- which(nl >= min.length)
-        if(length(istn) == 0) return(NULL)
-        x <- x[, istn, drop = FALSE]
-        nl <- nl[istn]
-
-        sds <- matrixStats::colSds(x, na.rm = TRUE)
-        is <- which(sds > 0)
-        if(length(is) == 0) return(NULL)
-        istn <- istn[is]
-        nl <- nl[is]
-        sds <- sds[is]
-        x <- x[, is, drop = FALSE]
-
-        moy <- colMeans(x, na.rm = TRUE)
-        xs <- sds * sqrt(1 + (1/nl))
-        me <- stats::qt(alpha, df = nl - 1) * xs
-
-        xdon <- don.qc[it, istn, drop = FALSE]
-        xq <- matrixStats::colQuantiles(xdon, probs = thres.perc, na.rm = TRUE, type = 8)
-        xq <- sweep(xdon, 2, xq, FUN = '>')
-        xq[is.na(xq)] <- FALSE
-        stats <- sweep(xdon, 2, (moy + me)^3, FUN = '/')
-
-        istat <- which(!is.na(stats) & stats > 1 & xq, arr.ind = TRUE)
-        if(nrow(istat) == 0) return(NULL)
-        list(val = xdon[istat], stat = round(stats[istat], 4),
-             istn = istn[istat[, 2]], idate = it[istat[, 1]])
-    })
-
-    inull <- sapply(outliers, is.null)
-    outliers <- outliers[!inull]
-    tmp.date <- NULL
     outqc.outlier <- NULL
-    if(length(outliers)){
-        outqc.outlier$status.tmp <- "upper.outliers"
-        outqc.outlier$status.sp <- NA
-        outqc.outlier$stn.id <- don$id[do.call(c, lapply(outliers, '[[', 'istn'))]
-        outqc.outlier$dates <- don$dates[do.call(c, lapply(outliers, '[[', 'idate'))]
-        outqc.outlier$stn.val <- unname(do.call(c, lapply(outliers, '[[', 'val')))
-        outqc.outlier$stats.tmp <- unname(do.call(c, lapply(outliers, '[[', 'stat')))
-        outqc.outlier$stats.sp <- NA
+    tmp.date <- NULL
 
-        tmp.date <- split(outqc.outlier$dates, outqc.outlier$stn.id)
-        tmp.date <- lapply(tmp.date, function(x) which(don$dates %in% x))
+    if(don.len > min.length){
+        Insert.Messages.Out(message[['15']], TRUE, "i")
 
-        outqc.outlier <- data.frame(do.call(cbind, outqc.outlier), stringsAsFactors = FALSE)
+        tmp <- don.qc
+        tmp[tmp < 0.0001] <- NA
+        tmp <- tmp^(1/3)
+
+        index.mon <- split(seq_along(don$dates), substr(don$dates, 5, 6))
+
+        outliers <- lapply(index.mon, function(it){
+            x <- tmp[it, , drop = FALSE]
+            nl <- colSums(!is.na(x))
+
+            istn <- which(nl >= min.length)
+            if(length(istn) == 0) return(NULL)
+            x <- x[, istn, drop = FALSE]
+            nl <- nl[istn]
+
+            sds <- matrixStats::colSds(x, na.rm = TRUE)
+            is <- which(sds > 0)
+            if(length(is) == 0) return(NULL)
+            istn <- istn[is]
+            nl <- nl[is]
+            sds <- sds[is]
+            x <- x[, is, drop = FALSE]
+
+            moy <- colMeans(x, na.rm = TRUE)
+            xs <- sds * sqrt(1 + (1/nl))
+            me <- stats::qt(alpha, df = nl - 1) * xs
+
+            xdon <- don.qc[it, istn, drop = FALSE]
+            xq <- matrixStats::colQuantiles(xdon, probs = thres.perc, na.rm = TRUE, type = 8)
+            xq <- sweep(xdon, 2, xq, FUN = '>')
+            xq[is.na(xq)] <- FALSE
+            stats <- sweep(xdon, 2, (moy + me)^3, FUN = '/')
+
+            istat <- which(!is.na(stats) & stats > 1 & xq, arr.ind = TRUE)
+            if(nrow(istat) == 0) return(NULL)
+            list(val = xdon[istat], stat = round(stats[istat], 4),
+                 istn = istn[istat[, 2]], idate = it[istat[, 1]])
+        })
+
+        inull <- sapply(outliers, is.null)
+        outliers <- outliers[!inull]
+
+        if(length(outliers) > 0){
+            outqc.outlier$status.tmp <- "upper.outliers"
+            outqc.outlier$status.sp <- NA
+            outqc.outlier$stn.id <- don$id[do.call(c, lapply(outliers, '[[', 'istn'))]
+            outqc.outlier$dates <- don$dates[do.call(c, lapply(outliers, '[[', 'idate'))]
+            outqc.outlier$stn.val <- unname(do.call(c, lapply(outliers, '[[', 'val')))
+            outqc.outlier$stats.tmp <- unname(do.call(c, lapply(outliers, '[[', 'stat')))
+            outqc.outlier$stats.sp <- NA
+
+            tmp.date <- split(outqc.outlier$dates, outqc.outlier$stn.id)
+            tmp.date <- lapply(tmp.date, function(x) which(don$dates %in% x))
+
+            outqc.outlier <- data.frame(do.call(cbind, outqc.outlier), stringsAsFactors = FALSE)
+        }
+
+        Insert.Messages.Out(message[['16']], TRUE, "s")
     }
-
-    Insert.Messages.Out(message[['16']], TRUE, "s")
 
     ###################
     # spatial check
@@ -230,17 +231,21 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
 
     outqc.spatial <- NULL
     spatial.vois <- NULL
+
     if(length(voisin) > 0){
         Insert.Messages.Out(message[['17']], TRUE, "i")
+
+        index.date <- seq_along(don$dates)
 
         STNid <- lapply(voisin, "[[", "id")
         STNsp <- lapply(voisin, "[[", "stn")
 
         ## include temporal outliers
-        if(!is.null(tmp.date))
+        if(!is.null(tmp.date)){
             tmp.date <- tmp.date[match(unlist(STNid), names(tmp.date))]
-        else
+        }else{
             tmp.date <- vector(mode = "list", length = length(STNid))
+        }
 
         # parsL <- doparallel.cond(FALSE)
         parsL <- doparallel.cond(length(STNsp) >= 100)
@@ -290,7 +295,6 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
                 })
                 x <- do.call(rbind, lapply(xxm, '[[', 'x'))
                 VOIS <- lapply(xxm, '[[', 'v')
-                rm(xxm)
             }else{
                VOIS <- lapply(seq(nrow(x)), function(i){
                    ina <- !is.na(x[i, ])
@@ -470,7 +474,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             names(spatial.vois) <- STNid
             inull <- sapply(spatial.vois, is.null)
             spatial.vois <- spatial.vois[!inull]
-            if(length(spatial.vois)){
+            if(length(spatial.vois) > 0){
                 spatial.vois <- lapply(seq_along(spatial.vois), function(i){
                     x <- spatial.vois[[i]]
                     x$it <- don$dates[x$it]
@@ -549,52 +553,56 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     ## maximum threshold variance of diff
     max.var.diff <- 1.5
 
-    tmp <- don.qc
-    itmp <- !is.na(tmp) & tmp >= min.temp
-    tmp[!itmp] <- NA
-    tmp <- cdt.roll.fun(tmp, 5, "mean", na.rm = TRUE, min.data = 3, align = "right")
-    tmp <- rbind(diff(tmp), NA)
-    itmp <- itmp & !is.na(tmp) & tmp >= -10 & tmp <= 10
-
-    itmp <- lapply(seq(ncol(itmp)), function(j){
-        x <- itmp[, j]
-        x <- rle(x)
-        if(!any(x$lengths[x$values] >= min.seq)) return(NULL)
-        ie <- cumsum(x$lengths)
-        is <- c(1, ie[-length(ie)] + 1)
-        ie <- ie[x$values & x$lengths >= min.seq]
-        is <- is[x$values & x$lengths >= min.seq]
-
-        vx <- sapply(seq_along(is), function(i) var(diff(tmp[is[i]:ie[i], j])))
-        ix <- vx < max.var.diff
-        if(!any(ix)) return(NULL)
-
-        cbind(is[ix] - 2, ie[ix], vx[ix])
-    })
-
-    inull <- sapply(itmp, is.null)
-    itmp <- itmp[!inull]
     outqc.temp <- NULL
-    if(length(itmp) > 0){
-        istn <- which(!inull)
-        xtmp <- lapply(seq_along(itmp), function(j){
-            ix <- itmp[[j]]
-            xx <- lapply(seq(nrow(ix)), function(i){
-              is <- ix[i, 1]:ix[i, 2]
-              cbind(don$dates[is], don.qc[is, istn[j]])
-            })
-            xx <- do.call(rbind, xx)
-            id <- don$id[istn[j]]
-            tab <- data.frame(id, xx)
-            norep <- rep(NA, nrow(tab))
-            repval <- rep(NA, nrow(tab))
-            tab <- cbind.data.frame(tab, norep = norep, repval = repval)
-            names(tab) <- c("STN.ID", "DATE", "STN.VAL",
-                            "NOT.REPLACE", "REPLACE.VAL")
-            list(tab = tab, index = ix)
+    if(don.len >= min.seq){
+        tmp <- don.qc
+        itmp <- !is.na(tmp) & tmp >= min.temp
+        tmp[!itmp] <- NA
+
+        tmp <- cdt.roll.fun(tmp, 5, "mean", na.rm = TRUE, min.data = 3, align = "right")
+        tmp <- rbind(diff(tmp), NA)
+        itmp <- itmp & !is.na(tmp) & tmp >= -10 & tmp <= 10
+
+        itmp <- lapply(seq(ncol(itmp)), function(j){
+            x <- itmp[, j]
+            x <- rle(x)
+            if(!any(x$lengths[x$values] >= min.seq)) return(NULL)
+            ie <- cumsum(x$lengths)
+            is <- c(1, ie[-length(ie)] + 1)
+            ie <- ie[x$values & x$lengths >= min.seq]
+            is <- is[x$values & x$lengths >= min.seq]
+
+            vx <- sapply(seq_along(is), function(i) var(diff(tmp[is[i]:ie[i], j])))
+            ix <- vx < max.var.diff
+            if(!any(ix)) return(NULL)
+
+            cbind(is[ix] - 2, ie[ix], vx[ix])
         })
-        names(xtmp) <- don$id[istn]
-        outqc.temp <- list(res = xtmp, stn = don$id[istn])
+
+        inull <- sapply(itmp, is.null)
+        itmp <- itmp[!inull]
+
+        if(length(itmp) > 0){
+            istn <- which(!inull)
+            xtmp <- lapply(seq_along(itmp), function(j){
+                ix <- itmp[[j]]
+                xx <- lapply(seq(nrow(ix)), function(i){
+                  is <- ix[i, 1]:ix[i, 2]
+                  cbind(don$dates[is], don.qc[is, istn[j]])
+                })
+                xx <- do.call(rbind, xx)
+                id <- don$id[istn[j]]
+                tab <- data.frame(id, xx)
+                norep <- rep(NA, nrow(tab))
+                repval <- rep(NA, nrow(tab))
+                tab <- cbind.data.frame(tab, norep = norep, repval = repval)
+                names(tab) <- c("STN.ID", "DATE", "STN.VAL",
+                                "NOT.REPLACE", "REPLACE.VAL")
+                list(tab = tab, index = ix)
+            })
+            names(xtmp) <- don$id[istn]
+            outqc.temp <- list(res = xtmp, stn = don$id[istn])
+        }
     }
 
     ###################
@@ -602,47 +610,50 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
 
     min.len <- 5
 
-    tmp <- don.qc
-    tmp[is.na(tmp)] <- 0
-    tmp <- rbind(diff(tmp), 0)
-    tmp <- tmp == 1
-
-    iseq <- lapply(seq(ncol(tmp)), function(j){
-        x <- tmp[, j]
-        x <- rle(x)
-        if(!any(x$lengths[x$values] >= min.len)) return(NULL)
-        ie <- cumsum(x$lengths)
-        is <- c(1, ie[-length(ie)] + 1)
-        ie <- ie[x$values & x$lengths >= min.len]
-        is <- is[x$values & x$lengths >= min.len]
-        ie <- ie + 1
-        ie[ie > don.len] <- don.len
-        cbind(is, ie, 0)
-    })
-
-    inull <- sapply(iseq, is.null)
-    iseq <- iseq[!inull]
     outqc.seq <- NULL
-    if(length(iseq) > 0){
-        istn <- which(!inull)
-        xtmp <- lapply(seq_along(iseq), function(j){
-            ix <- iseq[[j]]
-            xx <- lapply(seq(nrow(ix)), function(i){
-              is <- ix[i, 1]:ix[i, 2]
-              cbind(don$dates[is], don.qc[is, istn[j]])
-            })
-            xx <- do.call(rbind, xx)
-            id <- don$id[istn[j]]
-            tab <- data.frame(id, xx)
-            norep <- rep(NA, nrow(tab))
-            repval <- rep(NA, nrow(tab))
-            tab <- cbind.data.frame(tab, norep = norep, repval = repval)
-            names(tab) <- c("STN.ID", "DATE", "STN.VAL",
-                            "NOT.REPLACE", "REPLACE.VAL")
-            list(tab = tab, index = ix)
+    if(don.len >= min.len){
+        tmp <- don.qc
+        tmp[is.na(tmp)] <- 0
+        tmp <- rbind(diff(tmp), 0)
+        tmp <- tmp == 1
+
+        iseq <- lapply(seq(ncol(tmp)), function(j){
+            x <- tmp[, j]
+            x <- rle(x)
+            if(!any(x$lengths[x$values] >= min.len)) return(NULL)
+            ie <- cumsum(x$lengths)
+            is <- c(1, ie[-length(ie)] + 1)
+            ie <- ie[x$values & x$lengths >= min.len]
+            is <- is[x$values & x$lengths >= min.len]
+            ie <- ie + 1
+            ie[ie > don.len] <- don.len
+            cbind(is, ie, 0)
         })
-        names(xtmp) <- don$id[istn]
-        outqc.seq <- list(res = xtmp, stn = don$id[istn])
+
+        inull <- sapply(iseq, is.null)
+        iseq <- iseq[!inull]
+
+        if(length(iseq) > 0){
+            istn <- which(!inull)
+            xtmp <- lapply(seq_along(iseq), function(j){
+                ix <- iseq[[j]]
+                xx <- lapply(seq(nrow(ix)), function(i){
+                  is <- ix[i, 1]:ix[i, 2]
+                  cbind(don$dates[is], don.qc[is, istn[j]])
+                })
+                xx <- do.call(rbind, xx)
+                id <- don$id[istn[j]]
+                tab <- data.frame(id, xx)
+                norep <- rep(NA, nrow(tab))
+                repval <- rep(NA, nrow(tab))
+                tab <- cbind.data.frame(tab, norep = norep, repval = repval)
+                names(tab) <- c("STN.ID", "DATE", "STN.VAL",
+                                "NOT.REPLACE", "REPLACE.VAL")
+                list(tab = tab, index = ix)
+            })
+            names(xtmp) <- don$id[istn]
+            outqc.seq <- list(res = xtmp, stn = don$id[istn])
+        }
     }
 
     ###################
