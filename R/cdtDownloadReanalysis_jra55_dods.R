@@ -39,6 +39,10 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     handle <- curl::new_handle()
     curl::handle_setopt(handle, postfields = postfields)
     res <- curl::curl_fetch_memory(login_url, handle)
+    if(res$status_code != 200){
+        Insert.Messages.Out("Unable to login to https://rda.ucar.edu", TRUE, "e", GUI)
+        return(-2)
+    }
     curl::handle_cookies(handle)
 
     ### downloading
@@ -151,10 +155,15 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     end <- jra55.start.end.time(end)
 
     last_time <- origin + 24 * 3600 * last_incr/times_pars$fac
-    if(end > last_time) end <- last_time
+    last_time <- last_time - 3 * 3600
+    lastT <- format(last_time, "%Y-%m-%d %H:%M:%S")
+    msg <- paste("Last date of available data", lastT)
+    if(end > last_time){
+        end <- last_time
+        Insert.Messages.Out(msg, TRUE, "i", GUI)
+    }
     if(start > end){
-        lastT <- format(last_time, "%Y-%m-%d %H:%M:%S")
-        Insert.Messages.Out(paste("Last date of available data", lastT), TRUE, "e", GUI)
+        Insert.Messages.Out(msg, TRUE, "e", GUI)
         return(-2)
     }
 
