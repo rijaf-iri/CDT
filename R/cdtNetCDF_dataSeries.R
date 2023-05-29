@@ -15,7 +15,8 @@ ncInfo.no.date.range <- function(ncdf, intstep){
     if(length(ncfiles) == 0) return(NULL)
 
     daty <- stringr::str_match(ncfiles, pattern)
-    daty <- apply(daty[, -1], 1, function(x) paste0(x, collapse = ""))
+    daty <- daty[, -1, drop = FALSE]
+    daty <- apply(daty, 1, function(x) paste0(x, collapse = ""))
 
     nc.path <- file.path(ncdf$dir, ncfiles)
     nc.exist <- file.exists(nc.path)
