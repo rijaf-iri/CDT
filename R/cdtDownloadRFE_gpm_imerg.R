@@ -129,6 +129,8 @@ gpm_imerg.download.dods <- function(GalParams, nbfile = 3, GUI = TRUE, verbose =
     return(ret)
 }
 
+# https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDL.06/2022/10/3B-DAY-L.MS.MRG.3IMERG.20221011-S000000-E235959.V06.nc4.nc4?precipitationCal[0:0][1799:1959][1009:1139],time,lon[1799:1959],lat[1009:1139]
+# https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDL.06/2022/10/3B-DAY-L.MS.MRG.3IMERG.20221011-S000000-E235959.V06.nc4.nc4
 
 #################################################################################
 

@@ -104,7 +104,8 @@ rfev2_af.download.cpc.noaa.bin <- function(GalParams, nbfile = 3, GUI = TRUE, ve
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI,
                              verbose, data.name, fews.download.data.bin,
-                             bbox = GalParams$bbox, region = "africa")
+                             bbox = GalParams$bbox, region = "africa",
+                             arc = FALSE)
 
     return(ret)
 }
@@ -129,7 +130,8 @@ rfev2_sa.download.cpc.noaa.bin <- function(GalParams, nbfile = 3, GUI = TRUE, ve
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI,
                              verbose, data.name, fews.download.data.bin,
-                             bbox = GalParams$bbox, region = "southasia")
+                             bbox = GalParams$bbox, region = "southasia",
+                             arc = FALSE)
 
     return(ret)
 }

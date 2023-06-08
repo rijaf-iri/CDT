@@ -67,7 +67,8 @@ exec.download_RFE <- function(){
                             url.down <- if(.cdtData$GalParams$iridl.src)
                                             arc2.download.iridl
                                         else
-                                            arc2.download.cpc.noaa
+                                            # arc2.download.cpc.noaa.tif
+                                            arc2.download.cpc.noaa.bin
 
                             switch(.cdtData$GalParams$tstep,
                                    "daily" = url.down,

@@ -63,7 +63,7 @@ fews.extract.data.tif <- function(tmpf, ncfl, bbox, arc){
     return(ret)
 }
 
-fews.download.data.bin <- function(lnk, dest, ncfl, bbox, region){
+fews.download.data.bin <- function(lnk, dest, ncfl, bbox, region, arc){
     xx <- basename(dest)
 
     link.exist <- try(readLines(lnk, 1), silent = TRUE)
@@ -75,7 +75,7 @@ fews.download.data.bin <- function(lnk, dest, ncfl, bbox, region){
         tmpf <- file.path(tmpdir, gsub("\\.gz$", "", basename(dest)))
         R.utils::gunzip(dest, tmpf, remove = FALSE, overwrite = TRUE)
 
-        ret <- fews.extract.data.bin(tmpf, ncfl, bbox, region)
+        ret <- fews.extract.data.bin(tmpf, ncfl, bbox, region, arc)
 
         unlink(tmpf)
         ##
@@ -88,7 +88,7 @@ fews.download.data.bin <- function(lnk, dest, ncfl, bbox, region){
     return(xx)
 }
 
-fews.extract.data.bin <- function(tmpf, ncfl, bbox, region){
+fews.extract.data.bin <- function(tmpf, ncfl, bbox, region, arc){
     on.exit(close(con))
 
     pars <- switch(region,
@@ -122,8 +122,16 @@ fews.extract.data.bin <- function(tmpf, ncfl, bbox, region){
         dx <- ncdf4::ncdim_def("lon", "degreeE", lon, longname = "Longitude")
         dy <- ncdf4::ncdim_def("lat", "degreeN", lat, longname = "Latitude")
         missval <- -999
-        longname <- "Estimated Precipitation RFEv2"
-        ncgrd <- ncdf4::ncvar_def("rfev2", "mm", list(dx, dy), missval,
+
+        if(arc){
+            name <- "arc2"
+            longname <- "Africa Rainfall Climatology version 2"
+        }else{
+            name <- "rfev2"
+            longname <- "Estimated Precipitation RFEv2"
+        }
+
+        ncgrd <- ncdf4::ncvar_def(name, "mm", list(dx, dy), missval,
                                   longname, "float", compression = 9)
         val[is.na(val)] <- missval
 

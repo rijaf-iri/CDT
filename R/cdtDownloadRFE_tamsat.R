@@ -59,7 +59,8 @@ tamsat3.1.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose 
 
 ## toexport
 tamsatv3.1.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    baseurl <- "https://www.tamsat.org.uk/public_data/data/v3.1"
+    # baseurl <- "https://www.tamsat.org.uk/public_data/data/v3.1"
+    baseurl <- "http://www.tamsat.org.uk/public_data/data/v3.1"
     fileformat <- switch(GalParams$tstep,
                          "daily" = "rfe%s_%s_%s.v3.1.nc", 
                          "pentad" = "rfe%s_%s-pt%s.v3.1.nc",
@@ -89,7 +90,8 @@ tamsatv3.1.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbo
 }
 
 tamsatv3.0.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
-    baseurl <- "https://www.tamsat.org.uk/public_data/TAMSAT3"
+    # baseurl <- "https://www.tamsat.org.uk/public_data/TAMSAT3"
+    baseurl <- "http://www.tamsat.org.uk/public_data/TAMSAT3"
     fileformat <- switch(GalParams$tstep,
                          "daily" = "rfe%s_%s_%s.v3.nc", 
                          "pentad" = "rfe%s_%s-pt%s.v3.nc",
