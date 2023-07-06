@@ -1,6 +1,9 @@
 
 jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
-    on.exit(curl::handle_reset(handle))
+    on.exit({
+        curl::handle_reset(handle)
+        curl::handle_reset(handle_down)
+    })
 
     xlon <- seq(-179.9997300, 179.4377600, length.out = 640)
     xlat <- seq(-89.5700900, 89.5700900, length.out = 320)
@@ -41,7 +44,8 @@ jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
 
     ######################
 
-    jra_nrt <- "https://rda.ucar.edu/data/ds628.8"
+    # jra_nrt <- "https://rda.ucar.edu/data/ds628.8"
+    jra_nrt <- "https://data.rda.ucar.edu/ds628.8"
     jra_pth <- switch(GalParams$var,
                       "tmax" = "minmax_surf",
                       "tmin" = "minmax_surf",
@@ -229,6 +233,7 @@ jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
 
     ######################
 
+    ### login (no needs just check if the is able to login)
     login_url <- "https://rda.ucar.edu/cgi-bin/login"
     postfields <- paste0("email=", GalParams$login$usr,
                          "&passwd=", GalParams$login$pwd,
@@ -237,11 +242,19 @@ jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
     handle <- curl::new_handle()
     curl::handle_setopt(handle, postfields = postfields)
     res <- curl::curl_fetch_memory(login_url, handle)
+    if(res$status_code != 200){
+        Insert.Messages.Out("Unable to login to https://rda.ucar.edu", TRUE, "e", GUI)
+        return(-2)
+    }
     curl::handle_cookies(handle)
+
+    ### downloading
+    handle_down <- curl::new_handle()
+    curl::handle_setopt(handle_down, username = GalParams$login$usr, password = GalParams$login$pwd)
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI,
                              verbose, data.name, jra55_nrt.download.data,
-                             handle = handle, ncpars = ncpars, gribpars = gribpars,
+                             handle = handle_down, ncpars = ncpars, gribpars = gribpars,
                              bbox = GalParams$bbox, pars = pars)
 
     return(ret)
@@ -334,6 +347,11 @@ jra55_nrt.format.grib <- function(dat, bbox, ncpars, ncfl){
 jra55_nrt.extract.grib <- function(grib_file, variable, level, wgrib_exe){
     var_lvl <- paste0(':', variable, ':', level, ':')
     inventory <- system(paste(wgrib_exe, grib_file, "-s"), intern = TRUE)
+
+    if(length(inventory) == 0){
+        msg <- paste("Unable to read GRIB file", grib_file)
+       return(list(data = NULL, msg = msg)) 
+    }
 
     inv.file <- file.path(tempdir(), 'invetory_file')
     out.file <- file.path(tempdir(), 'grib_text')

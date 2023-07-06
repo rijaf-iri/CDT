@@ -1,6 +1,9 @@
 
 jra55_ncss.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
-    on.exit(curl::handle_reset(handle))
+    on.exit({
+        curl::handle_reset(handle)
+        curl::handle_reset(handle_down)
+    })
 
     xlon <- seq(-179.9997300, 179.4377600, length.out = 640)
     xlat <- seq(-89.5700900, 89.5700900, length.out = 320)
@@ -33,7 +36,9 @@ jra55_ncss.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     ######################
 
-    jra_ncss <- "https://rda.ucar.edu/thredds/ncss/grid/aggregations/g/ds628.0"
+    # jra_ncss <- "https://rda.ucar.edu/thredds/ncss/grid/aggregations/g/ds628.0"
+    jra_ncss <- "https://thredds.rda.ucar.edu/thredds/ncss/grid/aggregations/g/ds628.0"
+
     query_add <- list(horizStride = 1, vertStride = 1,
                       accept = "netcdf4-classic", addLatLon = "true")
 
@@ -229,6 +234,7 @@ jra55_ncss.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     ##########
 
+    ### login (no needs just check if the is able to login)
     login_url <- "https://rda.ucar.edu/cgi-bin/login"
     postfields <- paste0("email=", GalParams$login$usr,
                          "&passwd=", GalParams$login$pwd,
@@ -237,13 +243,21 @@ jra55_ncss.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     handle <- curl::new_handle()
     curl::handle_setopt(handle, postfields = postfields)
     res <- curl::curl_fetch_memory(login_url, handle)
+    if(res$status_code != 200){
+        Insert.Messages.Out("Unable to login to https://rda.ucar.edu", TRUE, "e", GUI)
+        return(-2)
+    }
     curl::handle_cookies(handle)
+
+    ### downloading
+    handle_down <- curl::new_handle()
+    curl::handle_setopt(handle_down, username = GalParams$login$usr, password = GalParams$login$pwd)
 
     ##########
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI,
                              verbose, data.name, jra55_ncss.download.data,
-                             handle = handle, ncpars = ncpars)
+                             handle = handle_down, ncpars = ncpars)
 
     return(ret)
 }

@@ -131,7 +131,8 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     #############
 
-    jra_dods <- "https://rda.ucar.edu/thredds/dodsC/aggregations/g/ds628.0"
+    # jra_dods <- "https://rda.ucar.edu/thredds/dodsC/aggregations/g/ds628.0"
+    jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/aggregations/g/ds628.0"
 
     dods_page <- paste0(jra_dods, "/", jra_var$pth, ".html")
     dds <- xml2::read_html(dods_page)
@@ -213,6 +214,7 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
         sapply(seq_along(query_lon), function(i){
             dods <- paste0(jra_dods, "/", jra_var$pth, ".ascii")
             req_time <- paste0("time", query_reftime[[j]], query_times)
+            req_time <- utils::URLencode(req_time, reserved = TRUE)
             req_var <- sapply(jra_var$var, function(v){
                 if(v == "Water_run-off_bottom_of_model_3_Hour_Average")
                     query_height <- "[0:1:0]"
@@ -221,6 +223,7 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
                        query_lat, query_lon[[i]])
             })
             req_var <- paste(req_var, collapse = ",")
+            req_var <- utils::URLencode(req_var, reserved = TRUE)
             paste0(dods, "?", req_time, ",", req_var)
         })
     })
