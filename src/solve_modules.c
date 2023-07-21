@@ -6,7 +6,7 @@ void F77_SUB(dposv_solve)(double *a, double *b, int *n, int *nrhs, int *info)
     int lda = N, ldb = N;
 
     // Solve the equations A*X = B 
-    F77_CALL(dposv)("L", n, nrhs, a, &lda, b, &ldb, info);
+    F77_CALL(dposv)("L", n, nrhs, a, &lda, b, &ldb, info FCONE);
 }
 
 void F77_SUB(dsysv_solve)(double *a, double *b, int *n, int *nrhs, int *info)
@@ -19,11 +19,11 @@ void F77_SUB(dsysv_solve)(double *a, double *b, int *n, int *nrhs, int *info)
 
 	// Query and allocate the optimal workspace 
     lwork = -1;
-    F77_CALL(dsysv)("L", n, nrhs, a, &lda, ipiv, b, &ldb, &wkopt, &lwork, info);
+    F77_CALL(dsysv)("L", n, nrhs, a, &lda, ipiv, b, &ldb, &wkopt, &lwork, info FCONE);
     lwork = (int)wkopt;
     work = (double*) malloc(lwork * sizeof(double));
     // Solve the equations A*X = B 
-    F77_CALL(dsysv)("L", n, nrhs, a, &lda, ipiv, b, &ldb, work, &lwork, info);
+    F77_CALL(dsysv)("L", n, nrhs, a, &lda, ipiv, b, &ldb, work, &lwork, info FCONE);
     free((void*) work);
 }
 

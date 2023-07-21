@@ -18,7 +18,7 @@ License: GPL (>= 2)
 Encoding: UTF-8
 NeedsCompilation: yes
 Depends: 
-    R (>= 3.5.0),
+    R (>= 4.0.0),
 Imports: 
     devtools,
     pkgbuild,
