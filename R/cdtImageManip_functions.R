@@ -194,8 +194,8 @@ LatLonLabels <- function(xlon, xlat){
 ## Get name of polygon @x, y position
 getAdminLabel <- function(xyMouse, parPltCrd = NULL, shp, idField){
     xypts <- data.frame(x = xyMouse$x, y = xyMouse$y)
-    coordinates(xypts) <- ~x+y
-    admin_name <- over(xypts, shp)
+    sp::coordinates(xypts) <- ~x+y
+    admin_name <- sp::over(xypts, shp)
     admin_name <- c(t(admin_name[1, ]))
 
     if(tclvalue(tkwinfo('exists', idField$ID)) == "1"){

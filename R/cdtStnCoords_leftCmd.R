@@ -68,9 +68,9 @@ StnChkCoordsPanelCmd <- function(){
         tkgrid(cb.datatype, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['2']]
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['3']]
         })
 
@@ -161,11 +161,11 @@ StnChkCoordsPanelCmd <- function(){
         bt.checkCoords <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
         tkconfigure(bt.checkCoords, command = function(){
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-            GeneralParameters$infile <- str_trim(tclvalue(input.file))
-            GeneralParameters$shpfile <- str_trim(tclvalue(shp.file))
-            GeneralParameters$output <- str_trim(tclvalue(outdir))
-            GeneralParameters$buffer <- as.numeric(str_trim(tclvalue(buffer)))
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            GeneralParameters$infile <- trimws(tclvalue(input.file))
+            GeneralParameters$shpfile <- trimws(tclvalue(shp.file))
+            GeneralParameters$output <- trimws(tclvalue(outdir))
+            GeneralParameters$buffer <- as.numeric(trimws(tclvalue(buffer)))
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
@@ -243,8 +243,8 @@ StnChkCoordsPanelCmd <- function(){
             if(path.Idx %in% c("", "NA") | is.na(path.Idx)) return(NULL)
             tclvalue(file.Index) <- path.Idx
 
-            if(file.exists(str_trim(tclvalue(file.Index)))){
-                OutChkCrds <- try(readRDS(str_trim(tclvalue(file.Index))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.Index)))){
+                OutChkCrds <- try(readRDS(trimws(tclvalue(file.Index))), silent = TRUE)
                 if(inherits(OutChkCrds, "try-error")){
                     Insert.Messages.Out(gsub('[\r\n]', '', OutChkCrds[1]), format = TRUE)
                     Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
@@ -258,7 +258,7 @@ StnChkCoordsPanelCmd <- function(){
 
                 .cdtData$EnvData$okCorrect <- TRUE
                 .cdtData$EnvData$output <- OutChkCrds
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.Index)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.Index)))
 
                 dataOUT <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET')
                 file.table.rds <- file.path(dataOUT, 'Table.rds')
@@ -376,10 +376,10 @@ StnChkCoordsPanelCmd <- function(){
 
         tkconfigure(bt.dispCDT, command = function(){
             if(tclvalue(.cdtData$EnvData$DispCrd) == '1' &
-                str_trim(tclvalue(input.file)) != "")
+                trimws(tclvalue(input.file)) != "")
             {
-                GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-                GeneralParameters$infile <- str_trim(tclvalue(input.file))
+                GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+                GeneralParameters$infile <- trimws(tclvalue(input.file))
 
                 tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
                 tcl('update')
@@ -413,9 +413,9 @@ StnChkCoordsPanelCmd <- function(){
                 }
             }
 
-            if(str_trim(tclvalue(shp.file)) != "")
+            if(trimws(tclvalue(shp.file)) != "")
             {
-                shpofile <- getShpOpenData(str_trim(tclvalue(shp.file)))
+                shpofile <- getShpOpenData(trimws(tclvalue(shp.file)))
                 if(is.null(shpofile))
                     .cdtData$EnvData$shp$ocrds <- NULL
                 else
@@ -440,10 +440,10 @@ StnChkCoordsPanelCmd <- function(){
                 return(NULL)
             }
             if(tclvalue(.cdtData$EnvData$DispCrd) == '1' &
-                str_trim(tclvalue(input.file)) != "")
+                trimws(tclvalue(input.file)) != "")
             {
-                GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-                GeneralParameters$infile <- str_trim(tclvalue(input.file))
+                GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+                GeneralParameters$infile <- trimws(tclvalue(input.file))
 
                 tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
                 tcl('update')
@@ -606,7 +606,7 @@ StnChkCoordsPanelCmd <- function(){
 
         initXYval0 <- NA
         initializeButZoom <- function(){
-            initXYval0 <<- str_trim(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
+            initXYval0 <<- trimws(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
                                     tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
 
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
@@ -621,7 +621,7 @@ StnChkCoordsPanelCmd <- function(){
         }
 
         activateButRedraw <- function(){
-            initXYval1 <- str_trim(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
+            initXYval1 <- trimws(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
                                     tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
             if(!all(initXYval0 == initXYval1)) tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'red')
         }

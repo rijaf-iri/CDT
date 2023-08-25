@@ -195,7 +195,7 @@ computeWB_getParams <- function(){
     ###############
 
     tkbind(cb.datatyp, "<<ComboboxSelected>>", function(){
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
         inputDataFun(data.type)
         saveFun(data.type)
@@ -235,7 +235,7 @@ computeWB_getParams <- function(){
 
     frameDate <- tkframe(frWBalance)
 
-    imon <- as.numeric(str_trim(.cdtData$GalParams$hdate$start.month))
+    imon <- as.numeric(trimws(.cdtData$GalParams$hdate$start.month))
     start.month <- tclVar(MOIS[imon])
     start.day <- tclVar(.cdtData$GalParams$hdate$start.day)
     separate.year <- tclVar(.cdtData$GalParams$hdate$separate.year)
@@ -298,14 +298,14 @@ computeWB_getParams <- function(){
 
     ###############
     tkconfigure(bt.wb.1stday, command = function(){
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams$wb[["file"]] <- computeWB_get.WB.SWHC(tt, .cdtData$GalParams$wb[["file"]], data.type, "WB")
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
     tkconfigure(bt.wb.swhc, command = function(){
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams$swhc[["file"]] <- computeWB_get.WB.SWHC(tt, .cdtData$GalParams$swhc[["file"]], data.type, "SWHC")
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -344,39 +344,39 @@ computeWB_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(input.Etp)) %in% c("", "NA")){
+        if(trimws(tclvalue(input.Etp)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(input.Prec)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(input.Prec)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(tclvalue(file.save) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
             if(.cdtData$GalParams$data.type == 'cdtstation'){
-                .cdtData$GalParams$cdtstation$etp <- str_trim(tclvalue(input.Etp))
-                .cdtData$GalParams$cdtstation$prec <- str_trim(tclvalue(input.Prec))
+                .cdtData$GalParams$cdtstation$etp <- trimws(tclvalue(input.Etp))
+                .cdtData$GalParams$cdtstation$prec <- trimws(tclvalue(input.Prec))
             }
 
             if(.cdtData$GalParams$data.type == 'cdtdataset'){
-                .cdtData$GalParams$cdtdataset$etp <- str_trim(tclvalue(input.Etp))
-                .cdtData$GalParams$cdtdataset$prec <- str_trim(tclvalue(input.Prec))
+                .cdtData$GalParams$cdtdataset$etp <- trimws(tclvalue(input.Etp))
+                .cdtData$GalParams$cdtdataset$prec <- trimws(tclvalue(input.Prec))
             }
 
-            .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
+            .cdtData$GalParams$output <- trimws(tclvalue(file.save))
 
-            .cdtData$GalParams$hdate$start.month <- which(MOIS %in% str_trim(tclvalue(start.month)))
-            .cdtData$GalParams$hdate$start.day <- as.numeric(str_trim(tclvalue(start.day)))
+            .cdtData$GalParams$hdate$start.month <- which(MOIS %in% trimws(tclvalue(start.month)))
+            .cdtData$GalParams$hdate$start.day <- as.numeric(trimws(tclvalue(start.day)))
             .cdtData$GalParams$hdate$separate.year <- switch(tclvalue(separate.year), '0' = FALSE, '1' = TRUE)
 
             .cdtData$GalParams$wb$multi <- switch(tclvalue(use.multi.wb), '0' = FALSE, '1' = TRUE)
             .cdtData$GalParams$swhc$multi <- switch(tclvalue(use.multi.swhc), '0' = FALSE, '1' = TRUE)
 
-            .cdtData$GalParams$wb$wb1 <- as.numeric(str_trim(tclvalue(start.wb)))
-            .cdtData$GalParams$swhc$cap.max <- as.numeric(str_trim(tclvalue(capacity.max)))
+            .cdtData$GalParams$wb$wb1 <- as.numeric(trimws(tclvalue(start.wb)))
+            .cdtData$GalParams$swhc$cap.max <- as.numeric(trimws(tclvalue(capacity.max)))
 
             .cdtData$GalParams$message <- lang.dlg[['message']]
 
@@ -508,11 +508,11 @@ computeWB_get.WB.SWHC <- function(parent.win, Parameters, dataType, donne)
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(input.file)) %in% c("", "NA")){
+        if(trimws(tclvalue(input.file)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            Parameters <<- str_trim(tclvalue(input.file))
+            Parameters <<- trimws(tclvalue(input.file))
 
             tkgrab.release(tt)
             tkdestroy(tt)

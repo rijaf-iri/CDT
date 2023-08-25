@@ -128,8 +128,8 @@ SPICalcPanelCmd <- function(){
         ############
 
         tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
-            outval <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
-            tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            outval <- OutVAL[CbOutVAL %in% trimws(tclvalue(out.spifreq))]
+            tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             valSPIfreq <- if(tstep == 'monthly') CbOutVAL[2] else CbOutVAL
             tkconfigure(cb.SPIfreq, values = valSPIfreq)
@@ -217,7 +217,7 @@ SPICalcPanelCmd <- function(){
             tclvalue(input.file) <- ''
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['3']]
 
                 cb.en.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
@@ -237,7 +237,7 @@ SPICalcPanelCmd <- function(){
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['4']]
 
                 cb.en.infile <- tkentry(frameInData, textvariable = input.file, width = largeur2)
@@ -279,7 +279,7 @@ SPICalcPanelCmd <- function(){
         ###############
 
         tkconfigure(bt.DateRange, command = function(){
-            outval <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
+            outval <- OutVAL[CbOutVAL %in% trimws(tclvalue(out.spifreq))]
             outfreq <- switch(outval, "dekad" = "dekadal", "month" = "monthly")
 
             GeneralParameters[["date.range"]] <<- getInfoDateRange(.cdtEnv$tcl$main$win,
@@ -296,7 +296,7 @@ SPICalcPanelCmd <- function(){
         ###############
 
         tkbind(chk.Moni, "<Button-1>", function(){
-            outval <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
+            outval <- OutVAL[CbOutVAL %in% trimws(tclvalue(out.spifreq))]
 
             if(tclvalue(monitoring) == "0"){
                 if(tclvalue(spiDataExist) == '0'){
@@ -370,7 +370,7 @@ SPICalcPanelCmd <- function(){
 
         ########
         tkbind(cb.SPIfreq, "<<ComboboxSelected>>", function(){
-            outval <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
+            outval <- OutVAL[CbOutVAL %in% trimws(tclvalue(out.spifreq))]
 
             if(outval == 'dekad'){
                 stateTscale <- "disabled"
@@ -453,21 +453,21 @@ SPICalcPanelCmd <- function(){
         #################
 
         tkconfigure(calculateBut, command = function(){
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                GeneralParameters$cdtstation <- str_trim(tclvalue(input.file))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                GeneralParameters$cdtdataset <- str_trim(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                GeneralParameters$cdtstation <- trimws(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                GeneralParameters$cdtdataset <- trimws(tclvalue(input.file))
 
             GeneralParameters$monitoring <- switch(tclvalue(monitoring), '0' = FALSE, '1' = TRUE)
 
-            GeneralParameters$outfreq <- OutVAL[CbOutVAL %in% str_trim(tclvalue(out.spifreq))]
-            GeneralParameters$tscale <- as.numeric(str_trim(tclvalue(tkget(spin.Tscale))))
-            GeneralParameters$distr <- distrbVAL[CbdistrbVAL %in% str_trim(tclvalue(DistrbFun))]
+            GeneralParameters$outfreq <- OutVAL[CbOutVAL %in% trimws(tclvalue(out.spifreq))]
+            GeneralParameters$tscale <- as.numeric(trimws(tclvalue(tkget(spin.Tscale))))
+            GeneralParameters$distr <- distrbVAL[CbdistrbVAL %in% trimws(tclvalue(DistrbFun))]
 
-            GeneralParameters$outdir <- str_trim(tclvalue(outSPIdir))
+            GeneralParameters$outdir <- trimws(tclvalue(outSPIdir))
             GeneralParameters$Indices <- "SPI"
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
@@ -546,8 +546,8 @@ SPICalcPanelCmd <- function(){
             if(path.Stat %in% c("", "NA") | is.na(path.Stat)) return(NULL)
             tclvalue(file.dataIndex) <- path.Stat
 
-            if(file.exists(str_trim(tclvalue(file.dataIndex)))){
-                OutSPIdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.dataIndex)))){
+                OutSPIdata <- try(readRDS(trimws(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutSPIdata, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutSPIdata[1]), TRUE, 'e')
@@ -559,7 +559,7 @@ SPICalcPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutSPIdata
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -623,7 +623,7 @@ SPICalcPanelCmd <- function(){
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$dataMapOp$pointSize
         })
 
@@ -632,9 +632,9 @@ SPICalcPanelCmd <- function(){
         .cdtData$EnvData$tab$dataMap <- NULL
 
         tkconfigure(bt.spi.maps, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
-            if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != "" &
+            if(trimws(tclvalue(.cdtData$EnvData$spi.date)) != "" &
                 !is.null(.cdtData$EnvData$varData))
             {
                 get.Data.Map()
@@ -644,11 +644,11 @@ SPICalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.spi.Date.prev, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
-            if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$spi.date)) != ""){
                 donDates <- .cdtData$EnvData$varData$ts$dates
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$spi.date)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$spi.date)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
                 tclvalue(.cdtData$EnvData$spi.date) <- donDates[idaty]
@@ -659,11 +659,11 @@ SPICalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.spi.Date.next, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
-            if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$spi.date)) != ""){
                 donDates <- .cdtData$EnvData$varData$ts$dates
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$spi.date)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$spi.date)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
                 tclvalue(.cdtData$EnvData$spi.date) <- donDates[idaty]
@@ -695,7 +695,7 @@ SPICalcPanelCmd <- function(){
         ###############
 
         tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$spi.date)) != "")
+            if(trimws(tclvalue(.cdtData$EnvData$spi.date)) != "")
                 get.Data.Map()
         })
 
@@ -738,7 +738,7 @@ SPICalcPanelCmd <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
             if(!is.null(.cdtData$EnvData$varData)){
                 imgContainer <- CDT.Display.Graph(SPICalc.Plot.Graph, .cdtData$EnvData$tab$dataGraph, 'SPI - Time Series')
@@ -747,7 +747,7 @@ SPICalcPanelCmd <- function(){
         })
 
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
         })
 
         ##############################################
@@ -895,10 +895,10 @@ SPICalcPanelCmd <- function(){
 
             ######
             tkconfigure(bt.stnID.prev, command = function(){
-                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
                 if(!is.null(.cdtData$EnvData$varData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -909,10 +909,10 @@ SPICalcPanelCmd <- function(){
             })
 
             tkconfigure(bt.stnID.next, command = function(){
-                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
                 if(!is.null(.cdtData$EnvData$varData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -970,7 +970,7 @@ SPICalcPanelCmd <- function(){
             spi.tscales <- tools::file_path_sans_ext(spi.tscales)
 
         nch <- nchar(spi.tscales)
-        tsc <- str_pad(substr(spi.tscales, 5, nch - 3), 2, pad = "0")
+        tsc <- stringr::str_pad(substr(spi.tscales, 5, nch - 3), 2, pad = "0")
         scales <- substr(spi.tscales, nch - 2, nch)
 
         spi.tscalesF <- spi.tscales[order(paste0(scales, tsc))]
@@ -989,7 +989,7 @@ SPICalcPanelCmd <- function(){
 
     set.Data.Dates <- function(){
         path.data <- file.path(.cdtData$EnvData$PathData, "CDTDATASET")
-        spi_scale <- str_trim(tclvalue(.cdtData$EnvData$spi.tscale))
+        spi_scale <- trimws(tclvalue(.cdtData$EnvData$spi.tscale))
 
         ipos <- which(.cdtData$EnvData$varData$spi$disp %in% spi_scale)
         tscale.data <- .cdtData$EnvData$varData$spi$dataF[ipos]
@@ -1036,7 +1036,7 @@ SPICalcPanelCmd <- function(){
             tcl('update')
         })
 
-        this.daty <- str_trim(tclvalue(.cdtData$EnvData$spi.date))
+        this.daty <- trimws(tclvalue(.cdtData$EnvData$spi.date))
 
         readVarData <- TRUE
         if(!is.null(.cdtData$EnvData$varData))
@@ -1044,7 +1044,7 @@ SPICalcPanelCmd <- function(){
                 if(.cdtData$EnvData$varData$spi$this.daty == this.daty) readVarData <- FALSE
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             if(!readVarData)
                 if(.cdtData$EnvData$change.plot != change.plot) readVarData <- TRUE
@@ -1075,15 +1075,15 @@ SPICalcPanelCmd <- function(){
             }
         }else{
             if(readVarData){
-                ipos <- which(.cdtData$EnvData$varData$spi$disp %in% str_trim(tclvalue(.cdtData$EnvData$spi.tscale)))
+                ipos <- which(.cdtData$EnvData$varData$spi$disp %in% trimws(tclvalue(.cdtData$EnvData$spi.tscale)))
                 tscale.data <- .cdtData$EnvData$varData$spi$dataF[ipos]
 
                 nc.file <- file.path(.cdtData$EnvData$PathData, "DATA_NetCDF", tscale.data, paste0("spi_", this.daty, ".nc"))
-                nc <- nc_open(nc.file)
+                nc <- ncdf4::nc_open(nc.file)
                 .cdtData$EnvData$varData$map$x <- nc$dim[[1]]$vals
                 .cdtData$EnvData$varData$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$varData$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
+                .cdtData$EnvData$varData$map$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                ncdf4::nc_close(nc)
 
                 .cdtData$EnvData$varData$spi$this.daty <- this.daty
             }

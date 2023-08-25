@@ -68,7 +68,7 @@ getInfoNetCDFDataWind <- function(parent.win, Parameters, ncDIR)
     })
 
     tkbind(cb.ncsample, "<<ComboboxSelected>>", function(){
-        jfile <- getIndex.AllOpenFiles(str_trim(tclvalue(ncSample)))
+        jfile <- getIndex.AllOpenFiles(trimws(tclvalue(ncSample)))
         fileopen <- ""
         if(length(jfile) > 0){
             if(.cdtData$OpenFiles$Type[[jfile]] == "netcdf")
@@ -126,14 +126,14 @@ getInfoNetCDFDataWind <- function(parent.win, Parameters, ncDIR)
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(ncSample)) == ""){
+        if(trimws(tclvalue(ncSample)) == ""){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt1)
         }else{
-            Parameters$format <<- str_trim(tclvalue(inrfeff))
-            Parameters$sample <<- str_trim(tclvalue(ncSample))
-            Parameters$U <<- str_trim(tclvalue(uWind))
-            Parameters$V <<- str_trim(tclvalue(vWind))
+            Parameters$format <<- trimws(tclvalue(inrfeff))
+            Parameters$sample <<- trimws(tclvalue(ncSample))
+            Parameters$U <<- trimws(tclvalue(uWind))
+            Parameters$V <<- trimws(tclvalue(vWind))
             Parameters$varList <<- trimws(as.character(tkcget(cb.Ucomp, '-values')))
 
             tkgrab.release(tt1)

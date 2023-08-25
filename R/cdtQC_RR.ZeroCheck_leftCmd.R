@@ -116,8 +116,8 @@ qcRRZeroCheckPanelCmd <- function(){
         bt.checkZeros <- ttkbutton(subfr1, text = lang.dlg[['button']][['2']])
 
         tkconfigure(bt.checkZeros, command = function(){
-            GeneralParameters$infile <- str_trim(tclvalue(input.file))
-            GeneralParameters$outdir <- str_trim(tclvalue(dir.save))
+            GeneralParameters$infile <- trimws(tclvalue(input.file))
+            GeneralParameters$outdir <- trimws(tclvalue(dir.save))
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
@@ -204,8 +204,8 @@ qcRRZeroCheckPanelCmd <- function(){
             if(path.dataIdx %in% c("", "NA") | is.na(path.dataIdx)) return(NULL)
             tclvalue(file.dataIndex) <- path.dataIdx
 
-            if(file.exists(str_trim(tclvalue(file.dataIndex)))){
-                OutFZ <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.dataIndex)))){
+                OutFZ <- try(readRDS(trimws(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutFZ, "try-error")){
                     Insert.Messages.Out(gsub('[\r\n]', '', OutFZ[1]), TRUE, "e")
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "e")
@@ -217,7 +217,7 @@ qcRRZeroCheckPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutFZ
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
 
                 ###############
                 file.checkd <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', "FalseZerosResults.rds")
@@ -277,7 +277,7 @@ qcRRZeroCheckPanelCmd <- function(){
         tkconfigure(bt.stnID.prev, command = function(){
             if(!is.null(.cdtData$EnvData$outzeros)){
                 STNID <- .cdtData$EnvData$outzeros$stn
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$STN$stnID)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(STNID)
                 tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[istn]
@@ -290,7 +290,7 @@ qcRRZeroCheckPanelCmd <- function(){
         tkconfigure(bt.stnID.next, command = function(){
             if(!is.null(.cdtData$EnvData$outzeros)){
                 STNID <- .cdtData$EnvData$outzeros$stn
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$STN$stnID)))
                 istn <- istn + 1
                 if(istn > length(STNID)) istn <- 1
                 tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[istn]
@@ -312,7 +312,7 @@ qcRRZeroCheckPanelCmd <- function(){
         .cdtData$EnvData$tab$TableStat <- NULL
 
         tkconfigure(bt.display.FZ, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             donFZstat <- .cdtData$EnvData$outzeros$res[[stnid]]$stat
             tab.title <- paste0(stnid, "-False-Zeros-Check")
@@ -352,10 +352,10 @@ qcRRZeroCheckPanelCmd <- function(){
         .cdtData$EnvData$tab$TableNbrs <- NULL
 
         tkconfigure(bt.stnFZ.prev, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
-            idaty <- which(dateFZ == str_trim(tclvalue(.cdtData$EnvData$STN$dateFZ)))
+            idaty <- which(dateFZ == trimws(tclvalue(.cdtData$EnvData$STN$dateFZ)))
             idaty <- idaty - 1
             if(idaty < 1) idaty <- length(dateFZ)
             tclvalue(.cdtData$EnvData$STN$dateFZ) <- dateFZ[idaty]
@@ -364,10 +364,10 @@ qcRRZeroCheckPanelCmd <- function(){
         })
 
         tkconfigure(bt.stnFZ.next, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
-            idaty <- which(dateFZ == str_trim(tclvalue(.cdtData$EnvData$STN$dateFZ)))
+            idaty <- which(dateFZ == trimws(tclvalue(.cdtData$EnvData$STN$dateFZ)))
             idaty <- idaty + 1
             if(idaty > length(dateFZ)) idaty <- 1
             tclvalue(.cdtData$EnvData$STN$dateFZ) <- dateFZ[idaty]
@@ -376,7 +376,7 @@ qcRRZeroCheckPanelCmd <- function(){
         })
 
         tkconfigure(bt.stnFZ, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
 
             display.month.neighbors()
@@ -393,7 +393,7 @@ qcRRZeroCheckPanelCmd <- function(){
         tkconfigure(bt.replace.FZ, command = function(){
             if(is.null(.cdtData$EnvData$outzeros)) return(NULL)
 
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
 
             replace <- TRUE
             if(!is.null(.cdtData$EnvData$STN$toreplace))
@@ -402,7 +402,7 @@ qcRRZeroCheckPanelCmd <- function(){
             if(replace){
                 info <- .cdtData$EnvData$output$info[[3]]
                 file.stn <- file.path(.cdtData$EnvData$PathData, 'CDTSTATIONS', .cdtData$EnvData$output$info[[1]])
-                tmp <- read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
+                tmp <- utils::read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
 
                 daty <- .cdtData$EnvData$outzeros$res[[stnid]]$date
                 index.mon <- unlist(.cdtData$EnvData$output$index[daty])
@@ -413,7 +413,7 @@ qcRRZeroCheckPanelCmd <- function(){
                 replace0[!is.na(replace0) & replace0 == 0] <- info$miss.val
                 tmp[index.mon, istn] <- replace0
 
-                write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
+                utils::write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
                 rm(tmp); gc()
                 Insert.Messages.Out(paste(stnid, ':', lang.dlg[['message']][['7']]), TRUE, "s")
             }else{
@@ -437,7 +437,7 @@ qcRRZeroCheckPanelCmd <- function(){
     }
 
     set.date.false.zeros <- function(){
-        stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+        stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
         if(stnid == "") return(NULL)
         dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
         tkconfigure(.cdtData$EnvData$STN$cb.stnFZ, values = dateFZ)
@@ -446,8 +446,8 @@ qcRRZeroCheckPanelCmd <- function(){
     }
 
     display.month.neighbors <- function(){
-        stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
-        daty <- str_trim(tclvalue(.cdtData$EnvData$STN$dateFZ))
+        stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
+        daty <- trimws(tclvalue(.cdtData$EnvData$STN$dateFZ))
         index.mon <- .cdtData$EnvData$output$index[[daty]]
         dist <- c(0, .cdtData$EnvData$outzeros$res[[stnid]]$dist[[daty]])
         istn <- which(.cdtData$EnvData$stn.data$id == stnid)
@@ -478,12 +478,12 @@ qcRRZeroCheckPanelCmd <- function(){
     #######################################################################################################
 
     .cdtData$EnvData$qcRRZeroCheck$SaveEdit <- function(dat2sav){
-        stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+        stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
         .cdtData$EnvData$STN$toreplace <- stnid
 
         tout.null <- TRUE
         if(!is.null(dat2sav)){
-            daty <- str_trim(as.character(dat2sav$YYYYMM))
+            daty <- trimws(as.character(dat2sav$YYYYMM))
             ix <- !is.na(daty) & daty != ""
 
             if(any(ix)){
@@ -518,7 +518,7 @@ qcRRZeroCheckPanelCmd <- function(){
         }else{
             STNID <- .cdtData$EnvData$outzeros$stn
             tkconfigure(.cdtData$EnvData$STN$cb.stnID, values = STNID)
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             STN <- .cdtData$EnvData$stn.data$id
             while(!stnid %in% STNID){
                 is <- which(STN == stnid) + 1
@@ -529,7 +529,7 @@ qcRRZeroCheckPanelCmd <- function(){
 
             dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
             tkconfigure(.cdtData$EnvData$STN$cb.stnFZ, values = dateFZ)
-            idaty <- str_trim(tclvalue(.cdtData$EnvData$STN$dateFZ))
+            idaty <- trimws(tclvalue(.cdtData$EnvData$STN$dateFZ))
             if(!idaty %in% dateFZ) idaty <- dateFZ[1]
             tclvalue(.cdtData$EnvData$STN$dateFZ) <- idaty
         }

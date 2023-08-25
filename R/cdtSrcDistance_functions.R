@@ -20,10 +20,10 @@ distance.Matrix <- function(x, y, spheric = FALSE){
         class.x <- substr(class(x), 1, 7)
         class.y <- substr(class(y), 1, 7)
         if(class.x == "Spatial" && class.y == "Spatial"){
-            if(!identical(proj4string(x), proj4string(y)))
+            if(!identical(sp::proj4string(x), sp::proj4string(y)))
                 stop("x and y have different coordinate reference systems")
-            x <- as.matrix(coordinates(x))
-            y <- as.matrix(coordinates(y))
+            x <- as.matrix(sp::coordinates(x))
+            y <- as.matrix(sp::coordinates(y))
         }else{
             stop("x and y must be a matrix, data.frame or sp Spatial object")
         }

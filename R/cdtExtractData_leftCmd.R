@@ -102,7 +102,7 @@ ExtractDataPanelCmd <- function(){
 
     initXYval0 <- NA
     initializeButZoom <- function(){
-        initXYval0 <<- str_trim(c(tclvalue(.cdtData$EnvData$zoom$xx1),
+        initXYval0 <<- trimws(c(tclvalue(.cdtData$EnvData$zoom$xx1),
                                   tclvalue(.cdtData$EnvData$zoom$xx2),
                                   tclvalue(.cdtData$EnvData$zoom$yy1),
                                   tclvalue(.cdtData$EnvData$zoom$yy2)))
@@ -125,7 +125,7 @@ ExtractDataPanelCmd <- function(){
     }
 
     activateButRedraw <- function(){
-        initXYval1 <- str_trim(c(tclvalue(.cdtData$EnvData$zoom$xx1),
+        initXYval1 <- trimws(c(tclvalue(.cdtData$EnvData$zoom$xx1),
                                  tclvalue(.cdtData$EnvData$zoom$xx2),
                                  tclvalue(.cdtData$EnvData$zoom$yy1),
                                  tclvalue(.cdtData$EnvData$zoom$yy2)))
@@ -173,9 +173,9 @@ ExtractDataPanelCmd <- function(){
         #################
 
         tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
-            minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+            minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             retminhr <- set.hour.minute(intstep, minhour)
             tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
             tclvalue(minhour.tclVar) <- retminhr$val
@@ -220,8 +220,8 @@ ExtractDataPanelCmd <- function(){
                 ######
 
                 tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
-                    mon <-  which(MOIS %in% str_trim(tclvalue(seasStart.tclVar)))
-                    len <- as.numeric(str_trim(tclvalue(seasLen.tclVar)))
+                    mon <-  which(MOIS %in% trimws(tclvalue(seasStart.tclVar)))
+                    len <- as.numeric(trimws(tclvalue(seasLen.tclVar)))
                     mon1 <- (mon + len - 1) %% 12
                     mon1[mon1 == 0] <- 12
                     seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
@@ -229,8 +229,8 @@ ExtractDataPanelCmd <- function(){
                 })
 
                 tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
-                    mon <-  which(MOIS %in% str_trim(tclvalue(seasStart.tclVar)))
-                    len <- as.numeric(str_trim(tclvalue(seasLen.tclVar)))
+                    mon <-  which(MOIS %in% trimws(tclvalue(seasStart.tclVar)))
+                    len <- as.numeric(trimws(tclvalue(seasLen.tclVar)))
                     mon1 <- (mon + len - 1) %% 12
                     mon1[mon1 == 0] <- 12
                     seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
@@ -295,12 +295,12 @@ ExtractDataPanelCmd <- function(){
         tkconfigure(set.infile, command = function(){
             GeneralParameters[['cdtnetcdf']] <<- getInfoNetCDFData(.cdtEnv$tcl$main$win,
                                                                    GeneralParameters[['cdtnetcdf']],
-                                                                   str_trim(tclvalue(input.file)))
+                                                                   trimws(tclvalue(input.file)))
             settingINData <<- 1
         })
 
         tkconfigure(bt.infile, command = function(){
-            data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
             if(data.type == 'cdtnetcdf'){
                 dirnc <- tk_choose.dir(getwd(), "")
                 tclvalue(input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
@@ -314,7 +314,7 @@ ExtractDataPanelCmd <- function(){
 
         tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
             tclvalue(input.file) <- ''
-            data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
             setDT <- set.data.type.vars(data.type)
             tkconfigure(set.infile, state = setDT$state)
@@ -419,10 +419,10 @@ ExtractDataPanelCmd <- function(){
                 .cdtData$EnvData$shpf <- shpf
                 .cdtData$EnvData$ocrds <- getBoundaries(shpf)
 
-                lo1 <- round(bbox(shpf)[1, 1], 4)
-                lo2 <- round(bbox(shpf)[1, 2], 4)
-                la1 <- round(bbox(shpf)[2, 1], 4)
-                la2 <- round(bbox(shpf)[2, 2], 4)
+                lo1 <- round(sp::bbox(shpf)[1, 1], 4)
+                lo2 <- round(sp::bbox(shpf)[1, 2], 4)
+                la1 <- round(sp::bbox(shpf)[2, 1], 4)
+                la2 <- round(sp::bbox(shpf)[2, 2], 4)
                 ZoomXYval0 <<- c(lo1, lo2, la1, la2)
 
                 tclvalue(.cdtData$EnvData$zoom$xx1) <- lo1
@@ -832,8 +832,8 @@ ExtractDataPanelCmd <- function(){
             .cdtData$EnvData$selectedPolygon <- NULL
             OutFileFormat <- CbOutFileFormat
 
-            .cdtData$EnvData$type.extract <- typeEXTRACTV[typeEXTRACT %in% str_trim(tclvalue(type.extract))]
-            outfrmt <- str_trim(tclvalue(out.format))
+            .cdtData$EnvData$type.extract <- typeEXTRACTV[typeEXTRACT %in% trimws(tclvalue(type.extract))]
+            outfrmt <- trimws(tclvalue(out.format))
 
             if(.cdtData$EnvData$type.extract == "point")
             {
@@ -936,7 +936,7 @@ ExtractDataPanelCmd <- function(){
                     shpfopen <- getShpOpenData(shpFile)
                     shpf <- shpfopen[[2]]
                     ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
-                    nompoly <- str_trim(tclvalue(.cdtData$EnvData$namePoly))
+                    nompoly <- trimws(tclvalue(.cdtData$EnvData$namePoly))
                     .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == nompoly, ])
                 }
             }
@@ -1009,7 +1009,7 @@ ExtractDataPanelCmd <- function(){
                     shpfopen <- getShpOpenData(shpFile)
                     shpf <- shpfopen[[2]]
                     ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
-                    nompoly <- str_trim(tclvalue(.cdtData$EnvData$namePoly))
+                    nompoly <- trimws(tclvalue(.cdtData$EnvData$namePoly))
                     .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == nompoly, ])
                 }
             }
@@ -1102,7 +1102,7 @@ ExtractDataPanelCmd <- function(){
         #################
 
         tkconfigure(bt.daterange, command = function(){
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             GeneralParameters[["date.range"]] <<- getInfoDateRange(.cdtEnv$tcl$main$win,
                                                                     GeneralParameters[["date.range"]],
                                                                     intstep)
@@ -1145,7 +1145,7 @@ ExtractDataPanelCmd <- function(){
         #################
 
         tkbind(cb.outFormat, "<<ComboboxSelected>>", function(){
-            outfrmt <- str_trim(tclvalue(out.format))
+            outfrmt <- trimws(tclvalue(out.format))
 
             if(.cdtData$EnvData$type.extract %in% c('point', 'mpoint'))
             {
@@ -1246,42 +1246,42 @@ ExtractDataPanelCmd <- function(){
         bt.Extract.Data <- ttkbutton(subfr3, text = lang.dlg[['button']][['6']])
 
         tkconfigure(bt.Extract.Data, command = function(){
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            GeneralParameters$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            GeneralParameters$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
             if(GeneralParameters$intstep == 'seasonal'){
-                GeneralParameters$season.start <- which(MOIS %in% str_trim(tclvalue(seasStart.tclVar)))
-                GeneralParameters$season.len <- as.numeric(str_trim(tclvalue(seasLen.tclVar)))
+                GeneralParameters$season.start <- which(MOIS %in% trimws(tclvalue(seasStart.tclVar)))
+                GeneralParameters$season.len <- as.numeric(trimws(tclvalue(seasLen.tclVar)))
             }
 
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
             if(GeneralParameters$data.type == "") return(NULL)
 
             if(GeneralParameters$data.type == 'cdtnetcdf'){
-                GeneralParameters$cdtnetcdf$dir <- str_trim(tclvalue(input.file))
+                GeneralParameters$cdtnetcdf$dir <- trimws(tclvalue(input.file))
                 if(is.null(settingINData)){
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "w")
                     return(NULL)
                 }
-            }else GeneralParameters$cdtdataset$index <- str_trim(tclvalue(input.file))
+            }else GeneralParameters$cdtdataset$index <- trimws(tclvalue(input.file))
 
-            GeneralParameters$shp.file$shp <- str_trim(tclvalue(shpFile))
-            GeneralParameters$shp.file$attr <- str_trim(tclvalue(shpAttr))
+            GeneralParameters$shp.file$shp <- trimws(tclvalue(shpFile))
+            GeneralParameters$shp.file$attr <- trimws(tclvalue(shpAttr))
 
-            GeneralParameters$type.extract <- typeEXTRACTV[typeEXTRACT %in% str_trim(tclvalue(type.extract))]
+            GeneralParameters$type.extract <- typeEXTRACTV[typeEXTRACT %in% trimws(tclvalue(type.extract))]
 
-            GeneralParameters$Geom$minlon <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$minlonRect)))
-            GeneralParameters$Geom$maxlon <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$maxlonRect)))
-            GeneralParameters$Geom$minlat <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$minlatRect)))
-            GeneralParameters$Geom$maxlat <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$maxlatRect)))
-            GeneralParameters$Geom$padlon <- as.numeric(str_trim(tclvalue(padLon)))
-            GeneralParameters$Geom$padlat <- as.numeric(str_trim(tclvalue(padLat)))
-            GeneralParameters$Geom$namePoly <- str_trim(tclvalue(.cdtData$EnvData$namePoly))
+            GeneralParameters$Geom$minlon <- as.numeric(trimws(tclvalue(.cdtData$EnvData$minlonRect)))
+            GeneralParameters$Geom$maxlon <- as.numeric(trimws(tclvalue(.cdtData$EnvData$maxlonRect)))
+            GeneralParameters$Geom$minlat <- as.numeric(trimws(tclvalue(.cdtData$EnvData$minlatRect)))
+            GeneralParameters$Geom$maxlat <- as.numeric(trimws(tclvalue(.cdtData$EnvData$maxlatRect)))
+            GeneralParameters$Geom$padlon <- as.numeric(trimws(tclvalue(padLon)))
+            GeneralParameters$Geom$padlat <- as.numeric(trimws(tclvalue(padLat)))
+            GeneralParameters$Geom$namePoly <- trimws(tclvalue(.cdtData$EnvData$namePoly))
 
             if(GeneralParameters$type.extract %in% c('mpoint', 'mpoly')){
                 multiptspoly <- gsub("[\r]", "", .cdtData$EnvData$multiptspoly)
-                multiptspoly <- str_trim(strsplit(multiptspoly, "[\n]")[[1]])
+                multiptspoly <- trimws(strsplit(multiptspoly, "[\n]")[[1]])
                 multiptspoly <- multiptspoly[multiptspoly != ""]
 
                 if(GeneralParameters$type.extract == 'mpoint'){
@@ -1296,12 +1296,12 @@ ExtractDataPanelCmd <- function(){
                 GeneralParameters$Geom$multiObj <- multiptspoly
             }
 
-            GeneralParameters$months$start <- which(MOIS %in% str_trim(tclvalue(startMonth)))
-            GeneralParameters$months$end <- which(MOIS %in% str_trim(tclvalue(endMonth)))
+            GeneralParameters$months$start <- which(MOIS %in% trimws(tclvalue(startMonth)))
+            GeneralParameters$months$end <- which(MOIS %in% trimws(tclvalue(endMonth)))
 
-            GeneralParameters$out.data$format <- OutFileFormatV[CbOutFileFormat %in% str_trim(tclvalue(out.format))]
+            GeneralParameters$out.data$format <- OutFileFormatV[CbOutFileFormat %in% trimws(tclvalue(out.format))]
             GeneralParameters$out.data$sp.avrg <- switch(tclvalue(spatAverage), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$out.data$outdir <- str_trim(tclvalue(file2save))
+            GeneralParameters$out.data$outdir <- trimws(tclvalue(file2save))
             GeneralParameters$out.data$isFile <- switch(tclvalue(outputFD), '0' = FALSE, '1' = TRUE)
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)

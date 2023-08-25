@@ -69,7 +69,7 @@ SeasonAnalysis.plot.TSMaps <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, TSMapOp, .cdtData$EnvData$shp,
                                  legend.text = legend.texta,
                                  label.fun = legendLabel.SeasonAnalysis,
@@ -78,7 +78,7 @@ SeasonAnalysis.plot.TSMaps <- function(){
                                  start.date = .cdtData$EnvData$output$start.date
                                 )
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = TSMapOp,
@@ -91,7 +91,7 @@ SeasonAnalysis.plot.TSMaps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(TSMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -168,7 +168,7 @@ SeasonAnalysis.plot.ClimMaps <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, climMapOp, .cdtData$EnvData$shp,
                                  legend.text = legend.texta,
                                  label.fun = legendLabel.SeasonAnalysis1,
@@ -177,7 +177,7 @@ SeasonAnalysis.plot.ClimMaps <- function(){
                                  start.date = .cdtData$EnvData$output$start.date
                             )
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = climMapOp,
@@ -190,7 +190,7 @@ SeasonAnalysis.plot.ClimMaps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(climMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -205,7 +205,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
     cdtParallelCond <- .cdtData$Config$parallel
 
     if(.cdtData$EnvData$output$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['23']], TRUE, 'e')
             return(NULL)
@@ -243,8 +243,8 @@ SeasonAnalysis.plot.TSGraph <- function(){
         cdtdataset <- .cdtData$EnvData$cdtdataset
         xlon <- cdtdataset$coords$mat$x
         xlat <- cdtdataset$coords$mat$y
-        ilon <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        ilat <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        ilon <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        ilat <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
 
         iclo <- findInterval(ilon, xlon)
         ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])

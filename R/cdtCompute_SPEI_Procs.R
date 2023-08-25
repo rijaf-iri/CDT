@@ -442,7 +442,7 @@ computeSPEIProcs <- function(GeneralParameters){
         dates <- dtemps[iseq][1]
         if(GeneralParameters$outfreq == "month") out <- as.numeric(substr(dates, 5, 6))
         if(GeneralParameters$outfreq == "dekad"){
-            dek <- expand.grid(1:3, str_pad(1:12, 2, pad = "0"))
+            dek <- expand.grid(1:3, stringr::str_pad(1:12, 2, pad = "0"))
             out <- which(paste0(dek[, 2], dek[, 1]) == substr(dates, 5, 7))
         }
         return(out)
@@ -658,10 +658,10 @@ computeSPEIProcs <- function(GeneralParameters){
         y <- index.spi$coords$mat$y
         nx <- length(x)
         ny <- length(y)
-        dx <- ncdim_def("Lon", "degreeE", x)
-        dy <- ncdim_def("Lat", "degreeN", y)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
         xy.dim <- list(dx, dy)
-        nc.grd <- ncvar_def(index.spi$varInfo$name, index.spi$varInfo$units, xy.dim, -9999, index.spi$varInfo$longname, "float", compression = 9)
+        nc.grd <- ncdf4::ncvar_def(index.spi$varInfo$name, index.spi$varInfo$units, xy.dim, -9999, index.spi$varInfo$longname, "float", compression = 9)
 
         ######################
 

@@ -5,16 +5,16 @@ SeasonLengthCalc.plotSeasLenMaps <- function(){
 
     ## titre
     if(!dataMapOp$title$user){
-        .titre <- paste("Season length:", str_trim(tclvalue(.cdtData$EnvData$donDate)))
+        .titre <- paste("Season length:", trimws(tclvalue(.cdtData$EnvData$donDate)))
     }else .titre <- dataMapOp$title$title
 
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = dataMapOp,
@@ -27,7 +27,7 @@ SeasonLengthCalc.plotSeasLenMaps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -38,7 +38,7 @@ SeasonLengthCalc.plotSeasLenGraph <- function(){
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['12']], TRUE, 'e')
             return(NULL)
@@ -48,8 +48,8 @@ SeasonLengthCalc.plotSeasLenGraph <- function(){
         titre <- paste0("(", .cdtData$EnvData$output$data$id[ixy], ")")
     }else{
         cdtdataset <- .cdtData$EnvData$cdtdataset
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(cdtdataset, cdtdataset$fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         don <- as.numeric(xyloc$data)
@@ -63,7 +63,7 @@ SeasonLengthCalc.plotSeasLenGraph <- function(){
 
     #########
 
-    GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+    GRAPHTYPE <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
     if(GRAPHTYPE == "Line") optsgph <- TSGraphOp$line
     if(GRAPHTYPE == "Barplot") optsgph <- TSGraphOp$bar
 

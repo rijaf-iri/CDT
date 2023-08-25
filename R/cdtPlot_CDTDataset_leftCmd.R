@@ -229,7 +229,7 @@ PlotCDTDatasetCmd <- function(){
         #########
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            ptype <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            ptype <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
             suffix.fun <- switch(ptype, "bar" = "Bar", "line" = "Line")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
@@ -240,7 +240,7 @@ PlotCDTDatasetCmd <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
             if(!is.null(.cdtData$EnvData$cdtdataset)){
                 imgContainer <- CDT.Display.Graph(CDTdataset.Plot.Graph, .cdtData$EnvData$tab$dataGraph, "CDT Dataset - TS")
@@ -249,7 +249,7 @@ PlotCDTDatasetCmd <- function(){
         })
 
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
         })
 
         #################
@@ -312,7 +312,7 @@ PlotCDTDatasetCmd <- function(){
             tcl('update')
         })
 
-        file.CDT.Idx <- str_trim(tclvalue(file.index.data))
+        file.CDT.Idx <- trimws(tclvalue(file.index.data))
         if(file.CDT.Idx == "") return(NULL)
 
         read.cdt.dataIdx <- TRUE

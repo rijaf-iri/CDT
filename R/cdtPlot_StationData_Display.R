@@ -11,7 +11,7 @@ plotCDTStation.Maps <- function(){
     #################
 
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
 
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
@@ -25,7 +25,7 @@ plotCDTStation.Maps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -63,7 +63,7 @@ plotCDTStation.Graph <- function(){
     }else{
         if(optsgph$xlim$is.min){
             if(.cdtData$EnvData$others.frmt == 'numeric'){
-                xx <- str_trim(optsgph$xlim$min)
+                xx <- trimws(optsgph$xlim$min)
                 if(grepl("[^[:digit:]]", xx)){
                     Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, "e")
                     return(NULL)
@@ -78,7 +78,7 @@ plotCDTStation.Graph <- function(){
         }
         if(optsgph$xlim$is.max){
             if(.cdtData$EnvData$others.frmt == 'numeric'){
-                xx <- str_trim(optsgph$xlim$max)
+                xx <- trimws(optsgph$xlim$max)
                 if(grepl("[^[:digit:]]", xx)){
                     Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, "e")
                     return(NULL)

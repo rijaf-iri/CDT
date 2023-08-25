@@ -13,7 +13,7 @@ spatialInterp.plotMap <- function(){
     legend.texta <- NULL
     if(dataMapOp$colkeyLab$user){
         legend.texta <- dataMapOp$colkeyLab$label
-        if(str_trim(legend.texta) == "") legend.texta <- NULL
+        if(trimws(legend.texta) == "") legend.texta <- NULL
     }
 
 
@@ -43,32 +43,32 @@ spatialInterp.plotMap <- function(){
             legend.args <- if(!is.null(legend.texta)) list(text = legend.texta, cex = 1.0, side = 4, line = line) else NULL
         }
 
-        opar <- par(mar = mar)
+        opar <- graphics::par(mar = mar)
 
         plot(1, xlim = pars.x$usr, ylim = pars.y$usr, xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
-        axis(side = 1, at = pars.x$axp, labels = xylabs$xaxl, tcl = -0.2, cex.axis = 1.0)
-        axis(side = 2, at = pars.y$axp, labels = xylabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
-        title(main = titre, cex.main = 1.5, font.main = 2)
+        graphics::axis(side = 1, at = pars.x$axp, labels = xylabs$xaxl, tcl = -0.2, cex.axis = 1.0)
+        graphics::axis(side = 2, at = pars.y$axp, labels = xylabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
+        graphics::title(main = titre, cex.main = 1.5, font.main = 2)
 
         don$mapncdf$z <- don$mapncdf$z + 1e-15
         if(don$mapncdf$p == "Pixels")
-            image(don$mapncdf, breaks = brks$breaks, col = brks$colors, xaxt = 'n', yaxt = 'n', add = TRUE)
+            graphics::image(don$mapncdf, breaks = brks$breaks, col = brks$colors, xaxt = 'n', yaxt = 'n', add = TRUE)
         if(don$mapncdf$p == "FilledContour")
-            .filled.contour(don$mapncdf$x, don$mapncdf$y, don$mapncdf$z, levels = brks$breaks, col = brks$colors)
+            graphics::.filled.contour(don$mapncdf$x, don$mapncdf$y, don$mapncdf$z, levels = brks$breaks, col = brks$colors)
 
-        abline(h = pars.y$axp, v = pars.x$axp, col = "lightgray", lty = 3, lwd = 1.3)
-        lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
+        graphics::abline(h = pars.y$axp, v = pars.x$axp, col = "lightgray", lty = 3, lwd = 1.3)
+        graphics::lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
 
         kolor.p <- brks$colors[findInterval(don$mapstn$z + 1e-15, brks$breaks,
                                             rightmost.closed = TRUE, left.open = TRUE)]
-        points(don$mapstn$x, don$mapstn$y, bg = kolor.p, col = dataMapOp$pointCol, cex = dataMapOp$pointSize, pch = 21)
+        graphics::points(don$mapstn$x, don$mapstn$y, bg = kolor.p, col = dataMapOp$pointCol, cex = dataMapOp$pointSize, pch = 21)
 
         fields::image.plot(zlim = brks$legend.breaks$zlim, breaks = brks$legend.breaks$breaks,
                            col = brks$colors, horizontal = horizontal, legend.only = TRUE,
                            legend.mar = legend.mar, legend.width = legend.width, legend.args = legend.args,
                            axis.args = list(at = brks$legend.axis$at, labels = brks$legend.axis$labels,
                            cex.axis = 1.0, font = 2, tcl = -0.3, mgp = c(0, 0.5, 0)), legend.shrink = 0.8)
-        par(opar)
+        graphics::par(opar)
     }
 
     ###################################
@@ -109,7 +109,7 @@ spatialInterp.plotMap <- function(){
             }
 
             if(plot.type == "filledcontour"){
-                plot.new()
+                graphics::plot.new()
                 ret <- lattice::levelplot(z.val, row.values = obj$x, column.values = obj$y, at = brks$breaks,
                         prepanel = lattice::prepanel.default.levelplot,
                         panel = function(...){
@@ -168,7 +168,7 @@ spatialInterp.plotMap <- function(){
         lezandy[[place]]$fun <- grid::packGrob(frame = colorkey.Frame, grob = grob.Obj, side = pars.key$side, dynamic = TRUE)
 
         #######
-        print(update(Plot.Obj, col.regions = brks$colors, aspect = 'fill', as.table = TRUE,
+        print(stats::update(Plot.Obj, col.regions = brks$colors, aspect = 'fill', as.table = TRUE,
                     xlim = pars.x$usr, ylim = pars.y$usr, xlab = '', ylab = '', main = titre,
                     par.settings = par.Settings, par.strip.text = par.StripText, strip = par.stripCust,
                     scales = list(x = Xaxis, y = Yaxis), legend = lezandy))

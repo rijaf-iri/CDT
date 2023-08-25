@@ -123,9 +123,9 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
 
     miss.val <- -9999
 
-    dx <- ncdim_def("Lon", "degree_east", grd.lon)
-    dy <- ncdim_def("Lat", "degree_north", grd.lat)
-    grd.nc.out <- ncvar_def("var", "", list(dx, dy), miss.val,
+    dx <- ncdf4::ncdim_def("Lon", "degree_east", grd.lon)
+    dy <- ncdf4::ncdim_def("Lat", "degree_north", grd.lat)
+    grd.nc.out <- ncdf4::ncvar_def("var", "", list(dx, dy), miss.val,
                             longname = paste("Interpolated data from", stnFile),
                             prec = "float", compression = 9)
 
@@ -134,8 +134,8 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     xy.grid <- list(lon = grd.lon, lat = grd.lat)
     newgrid <- defSpatialPixels(xy.grid)
     locations.stn <- as.data.frame(don[c('lon', 'lat')])
-    coordinates(locations.stn) <- c('lon', 'lat')
-    ijs <- over(locations.stn, newgrid)
+    sp::coordinates(locations.stn) <- c('lon', 'lat')
+    ijs <- sp::over(locations.stn, newgrid)
     locations.stn$stn <- rep(NA, length(locations.stn))
 
     #####################
@@ -183,7 +183,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     if(interp$method == "ukr"){
         auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
         is.auxvar <- unlist(interp$auxvar[1:5])
-        formuleUK <- formula(paste0('stn', '~', paste(auxvar[is.auxvar], collapse = '+')))
+        formuleUK <- stats::formula(paste0('stn', '~', paste(auxvar[is.auxvar], collapse = '+')))
 
         if(is.auxvar['dem']) newgrid$dem <- c(demData$z)
         if(is.auxvar['slope'] | is.auxvar['aspect']){
@@ -199,8 +199,8 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     #####################
 
     if(interp$method == "nn3d"){
-        newgrid <- data.frame(coordinates(newgrid), elv = c(demData$z))
-        locations.stn <- data.frame(coordinates(locations.stn), elv = demData$z[ijs])
+        newgrid <- data.frame(sp::coordinates(newgrid), elv = c(demData$z))
+        locations.stn <- data.frame(sp::coordinates(locations.stn), elv = demData$z[ijs])
         locations.stn <- locations.stn[!is.na(locations.stn$elv), , drop = FALSE]
         if(nrow(locations.stn) == 0){
             Insert.Messages.Out(message[['15']], TRUE, "e")
@@ -253,7 +253,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
                 msg <- list(msg = message[['17']], status = NULL)
                 return(msg)
             }
-            if(var(locations.stn$stn) < 1e-15){
+            if(stats::var(locations.stn$stn) < 1e-15){
                 msg <- list(msg = paste(message[['18']], ':', 'variance null'), status = NULL)
                 return(msg)
             }

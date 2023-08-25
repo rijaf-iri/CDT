@@ -25,10 +25,10 @@ spatialAnalysis.plotStatMaps <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, climMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = climMapOp,
@@ -39,12 +39,12 @@ spatialAnalysis.plotStatMaps <- function(){
     par.plot <- do.call(cdt.plotmap.fun, map.args)
 
     ### Trend
-    if(str_trim(tclvalue(.cdtData$EnvData$climStat)) == "Trend"){
+    if(trimws(tclvalue(.cdtData$EnvData$climStat)) == "Trend"){
         if(.cdtData$EnvData$statpars$params$data.type == "cdtstation"){
             ipvl <- !is.na(don$p.value) & don$p.value < 0.05
             if(any(ipvl)){
                 # points(don$x0[ipvl], don$y0[ipvl], col = adjustcolor('gray40', alpha.f = 0.8))
-                points(don$x0[ipvl], don$y0[ipvl], pch = 'x', cex = 0.8)
+                graphics::points(don$x0[ipvl], don$y0[ipvl], pch = 'x', cex = 0.8)
             }
         }else{
             ipvl <- c(don$pval)
@@ -52,27 +52,27 @@ spatialAnalysis.plotStatMaps <- function(){
             if(any(ipvl)){
                 grd <- don$x[2] - don$x[1]
                 dd <- expand.grid(x = don$x, y = don$y)
-                coordinates(dd) <- ~x+y
+                sp::coordinates(dd) <- ~x+y
                 dd <- dd[ipvl, ]
                 buffer <- rgeos::gBuffer(dd, width = grd * 1.02)
 
                 dd <- sp::disaggregate(buffer)
-                centr <- coordinates(dd)
-                bbx <- lapply(seq_along(dd), function(i) bbox(dd[i]))
+                centr <- sp::coordinates(dd)
+                bbx <- lapply(seq_along(dd), function(i) sp::bbox(dd[i]))
                 esp <- if(grd > 0.25) 0.25 else grd * 5
                 esp <- if(esp > 0.25) 0.25 else esp
                 dd <- lapply(seq_along(bbx), function(i){   
                     xpt <- c(rev(seq(centr[i, 1], bbx[[i]][1, 1], -esp)[-1]), seq(centr[i, 1], bbx[[i]][1, 2], esp))
                     ypt <- c(rev(seq(centr[i, 2], bbx[[i]][2, 1], -esp)[-1]), seq(centr[i, 2], bbx[[i]][2, 2], esp))
                     xy <- expand.grid(x = xpt, y = ypt)
-                    coordinates(xy) <- ~x+y
-                    ij <- as.logical(over(xy, dd[i]))
+                    sp::coordinates(xy) <- ~x+y
+                    ij <- as.logical(sp::over(xy, dd[i]))
                     ij[is.na(ij)] <- FALSE
-                    coordinates(xy[ij, ])
+                    sp::coordinates(xy[ij, ])
                 })
                 dd <- do.call(rbind, dd)
                 # points(dd[, 1], dd[, 2], pch = 15, cex = 0.3, col = adjustcolor('gray20', alpha.f = 0.9))
-                points(dd[, 1], dd[, 2], pch = 15, cex = 0.3)
+                graphics::points(dd[, 1], dd[, 2], pch = 15, cex = 0.3)
             }
         }
     }
@@ -80,7 +80,7 @@ spatialAnalysis.plotStatMaps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(climMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -96,7 +96,7 @@ spatialAnalysis.plotTSMaps <- function(){
         don <- .cdtData$EnvData$anomData
 
     if(!TSMapOp$title$user){
-        if(str_trim(tclvalue(.cdtData$EnvData$TSData)) == "Data"){
+        if(trimws(tclvalue(.cdtData$EnvData$TSData)) == "Data"){
             params <- .cdtData$EnvData$statpars$params
             titre1 <- stringr::str_to_title(params$out.series$tstep)
             # c("sum", "mean", "median", "max", "min", "count")
@@ -110,7 +110,7 @@ spatialAnalysis.plotTSMaps <- function(){
             .titre <- paste(titre1, titre2, titre3, titre4)
         }
 
-        if(str_trim(tclvalue(.cdtData$EnvData$TSData)) == "Anomaly"){
+        if(trimws(tclvalue(.cdtData$EnvData$TSData)) == "Anomaly"){
             params <- don$params
             titre1 <- stringr::str_to_title(params$out.series$tstep)
             titre2 <- "anomaly"
@@ -123,10 +123,10 @@ spatialAnalysis.plotTSMaps <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, TSMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = TSMapOp,
@@ -139,7 +139,7 @@ spatialAnalysis.plotTSMaps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(TSMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -150,7 +150,7 @@ spatialAnalysis.plotTSGraph <- function(){
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
     if(.cdtData$EnvData$statpars$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$tsdata$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$tsdata$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['18']], TRUE, 'e')
             return(NULL)
@@ -161,8 +161,8 @@ spatialAnalysis.plotTSGraph <- function(){
         .cdtData$EnvData$location <- paste0("Station: ", .cdtData$EnvData$tsdata$id[ixy])
     }else{
         cdtdataset <- .cdtData$EnvData$cdtdataset
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(cdtdataset, cdtdataset$fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         don <- as.numeric(xyloc$data)
@@ -179,7 +179,7 @@ spatialAnalysis.plotTSGraph <- function(){
                 dateTS <- if(all(mon1 == "01") && all(mon2 == "12")) year1 else dates
             }
         }else dateTS <- dates
-        ipos <- which(.cdtData$EnvData$statpars$stats == str_trim(tclvalue(.cdtData$EnvData$climDate)))
+        ipos <- which(.cdtData$EnvData$statpars$stats == trimws(tclvalue(.cdtData$EnvData$climDate)))
         idaty <- dateTS %in% .cdtData$EnvData$statpars$timeseries[[ipos]][[2]]
         dates <- dateTS[idaty]
         don <- don[idaty]

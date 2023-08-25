@@ -44,7 +44,7 @@ getGridForRegriding <- function(parent.win, Parameters){
     tkbind(cb.gridtype, "<<ComboboxSelected>>", function(){
         tkdestroy(cb.ncfldir)
         tclvalue(inputFile) <- ''
-        srcfile <- gridFormat[cbGridFormat %in% str_trim(tclvalue(gridType))]
+        srcfile <- gridFormat[cbGridFormat %in% trimws(tclvalue(gridType))]
 
         if(srcfile == "cdtnetcdf"){
             tclvalue(fileINdir) <- lang.dlg[['label']][['2']]
@@ -110,7 +110,7 @@ getGridForRegriding <- function(parent.win, Parameters){
     tkgrid(bt.ncfldir, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
     tkconfigure(bt.ncfldir, command = function(){
-        srcfile <- gridFormat[cbGridFormat %in% str_trim(tclvalue(gridType))]
+        srcfile <- gridFormat[cbGridFormat %in% trimws(tclvalue(gridType))]
         if(srcfile == "cdtnetcdf"){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             nc.opfiles <- getOpenNetcdf(tt, initialdir = getwd())
@@ -140,8 +140,8 @@ getGridForRegriding <- function(parent.win, Parameters){
     bt.prm.CA <- ttkbutton(frGrd1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$type <<- gridFormat[cbGridFormat %in% str_trim(tclvalue(gridType))]
-        Parameters$file <<- str_trim(tclvalue(inputFile))
+        Parameters$type <<- gridFormat[cbGridFormat %in% trimws(tclvalue(gridType))]
+        Parameters$file <<- trimws(tclvalue(inputFile))
 
         tkgrab.release(tt)
         tkdestroy(tt)

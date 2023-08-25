@@ -121,7 +121,7 @@ extractGRIB_JRA55NRT <- function(){
 
     #########
     tkconfigure(bt.dirsave, command = function(){
-        initialdir <- if(str_trim(.cdtData$GalParams$dir2save) != "") .cdtData$GalParams$dir2save else getwd()
+        initialdir <- if(trimws(.cdtData$GalParams$dir2save) != "") .cdtData$GalParams$dir2save else getwd()
         tcl('wm', 'attributes', tt, topmost = FALSE)
         dir2savepth <- tk_choose.dir(initialdir, "")
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -156,22 +156,22 @@ extractGRIB_JRA55NRT <- function(){
 
     ####
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(dir.grib)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir.grib)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$dir.grib <- str_trim(tclvalue(dir.grib))
-            .cdtData$GalParams$dir2save <- str_trim(tclvalue(dir2save))
+            .cdtData$GalParams$dir.grib <- trimws(tclvalue(dir.grib))
+            .cdtData$GalParams$dir2save <- trimws(tclvalue(dir2save))
 
             .cdtData$GalParams$bbox$minlon <- as.numeric(tclvalue(minLon))
             .cdtData$GalParams$bbox$maxlon <- as.numeric(tclvalue(maxLon))
             .cdtData$GalParams$bbox$minlat <- as.numeric(tclvalue(minLat))
             .cdtData$GalParams$bbox$maxlat <- as.numeric(tclvalue(maxLat))
 
-            .cdtData$GalParams$var <- varsVAL[CbvarsVAL %in% str_trim(tclvalue(extractVar))]
+            .cdtData$GalParams$var <- varsVAL[CbvarsVAL %in% trimws(tclvalue(extractVar))]
 
             .cdtData$GalParams$message <- lang.dlg[['message']]
 

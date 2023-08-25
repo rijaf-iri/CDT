@@ -47,7 +47,7 @@ homogeneityTestProcs <- function(GeneralParameters){
         if(is.null(dat)) return(NULL)
         file.stn <- file.path(dataSTNdir, paste0(toupper(dat$tstep), '_', GeneralParameters$infile))
         don0 <- rbind(xhead, cbind(dat$date, round(dat$data, 1)))
-        write.table(don0, file = file.stn,
+        utils::write.table(don0, file = file.stn,
                     sep = don.info[[3]]$sepr, na = don.info[[3]]$miss.val,
                     col.names = FALSE, row.names = FALSE, quote = FALSE)
         rm(don0)
@@ -218,7 +218,7 @@ homogeneityTestProcs <- function(GeneralParameters){
                     return(list(refs = NULL, msg = paste(message[['19']], ':', 'few.data.refs')))
 
                 if(parSeries$weight == 1){
-                    rho <- as.vector(cor(x0, Y, use = "pairwise.complete.obs"))
+                    rho <- as.vector(stats::cor(x0, Y, use = "pairwise.complete.obs"))
                     if(all(is.na(rho)))
                         return(list(refs = NULL, msg = paste(message[['19']], ':', 'no.voisin.miss.rho')))
                     irh <- !is.na(rho) & rho >= parSeries$voisin$rho
@@ -267,7 +267,7 @@ homogeneityTestProcs <- function(GeneralParameters){
                 }
 
                 if(parSeries$weight == 3){
-                    vcov <- t(cov(x0, Y, use = "pairwise.complete.obs"))
+                    vcov <- t(stats::cov(x0, Y, use = "pairwise.complete.obs"))
                     icv <- as.vector(vcov)
                     if(all(is.na(icv)))
                         return(list(refs = NULL, msg = paste(message[['19']], ':', 'no.voisin.miss.cov')))
@@ -281,13 +281,13 @@ homogeneityTestProcs <- function(GeneralParameters){
                     stn$dist <- c(stn$dist[1], stn$dist[-1][icv])
 
                     ones <- matrix(1, ncol = 1, nrow = ncol(Y))
-                    covmat <- cov(Y, use = "pairwise.complete.obs")
+                    covmat <- stats::cov(Y, use = "pairwise.complete.obs")
                     detcov <- det(covmat)
                     if(is.na(detcov))
                         return(list(refs = NULL, msg = paste(message[['19']], ':', 'few.data.refs.cov')))
 
                     if(round(detcov, 10) == 0){
-                        rho <- as.vector(cor(x0, Y, use = "pairwise.complete.obs"))
+                        rho <- as.vector(stats::cor(x0, Y, use = "pairwise.complete.obs"))
                         ## get maximum rho
                         if(ncol(Y) > parSeries$voisin$max){
                             oY <- order(rho, decreasing = TRUE)

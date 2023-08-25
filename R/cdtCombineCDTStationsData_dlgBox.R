@@ -67,7 +67,7 @@ merge2CDTdata_getParams <- function(){
                         tkconfigure(x, values = unlist(openFile_ttkcomboList()))
                 })
 
-                .cdtData$GalParams$DATASETs[[jj]]$pars$file <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                .cdtData$GalParams$DATASETs[[jj]]$pars$file <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
             }
         })
 
@@ -150,7 +150,7 @@ merge2CDTdata_getParams <- function(){
 
     tkconfigure(bt.prm.OK, command = function(){
         inputFiles <- lapply(.cdtData$GalParams$DATASETs, function(don){
-                str_trim(tclvalue(don$tcl$input.file))
+                trimws(tclvalue(don$tcl$input.file))
         })
         numFiles <- seq_along(.cdtData$GalParams$DATASETs)
         nonFiles <- sapply(inputFiles, function(x) x %in% c("", "NA"))
@@ -163,14 +163,14 @@ merge2CDTdata_getParams <- function(){
         }else if(length(numFiles) < 2){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['11']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.save1)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(file.save1)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['10']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$inputs <- inputFiles
             names(.cdtData$GalParams$inputs) <- paste0("file", numFiles)
 
-            .cdtData$GalParams$file2save <- str_trim(tclvalue(file.save1))
+            .cdtData$GalParams$file2save <- trimws(tclvalue(file.save1))
             .cdtData$GalParams$message <- lang.dlg[['message']]
 
             for(jj in seq_along(.cdtData$GalParams$DATASETs))

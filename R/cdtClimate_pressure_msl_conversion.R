@@ -73,7 +73,7 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
 
     pres_pars <- list(file = "", sep = ",", na.strings = "-99")
     pres.data <- init.default.list.args(pres.data, pres_pars)
-    presData <- do.call(read.table, c(pres.data, stnpars_read))
+    presData <- do.call(utils::read.table, c(pres.data, stnpars_read))
     presData <- splitCDTData0(presData, GUI = FALSE)
     if(is.null(presData)){
         stop('Unable to read pressure data')
@@ -83,7 +83,7 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
     if(temp.from == 'mean'){
         tmean_pars <- list(file = "", sep = ",", na.strings = "-99")
         tmean.data <- init.default.list.args(tmean.data, tmean_pars)
-        tempData <- do.call(read.table, c(tmean.data, stnpars_read))
+        tempData <- do.call(utils::read.table, c(tmean.data, stnpars_read))
         tempData <- splitCDTData0(tempData, GUI = FALSE)
         if(is.null(tempData)){
             stop('Unable to read TMEAN data')
@@ -92,7 +92,7 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
     }else if(temp.from == 'minmax'){
         tmax_pars <- list(file = "", sep = ",", na.strings = "-99")
         tmax.data <- init.default.list.args(tmax.data, tmax_pars)
-        tmaxData <- do.call(read.table, c(tmax.data, stnpars_read))
+        tmaxData <- do.call(utils::read.table, c(tmax.data, stnpars_read))
         tmaxData <- splitCDTData0(tmaxData, GUI = FALSE)
         if(is.null(tmaxData)){
             stop('Unable to read TMAX data')
@@ -101,7 +101,7 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
 
         tmin_pars <- list(file = "", sep = ",", na.strings = "-99")
         tmin.data <- init.default.list.args(tmin.data, tmin_pars)
-        tminData <- do.call(read.table, c(tmin.data, stnpars_read))
+        tminData <- do.call(utils::read.table, c(tmin.data, stnpars_read))
         tminData <- splitCDTData0(tminData, GUI = FALSE)
         if(is.null(tminData)){
             stop('Unable to read TMIN data')
@@ -183,7 +183,7 @@ pressure_conversion_station <- function(convert = 'sfc2msl',
     }else if(elev.from == 'cdtCrdFile'){
         elev_pars <- list(file = "", sep = ",", na.strings = "-99", header = TRUE)
         elev.data <- init.default.list.args(elev.data, elev_pars)
-        elevData <- do.call(read.table, c(elev.data, stnpars_read))
+        elevData <- do.call(utils::read.table, c(elev.data, stnpars_read))
         idElev <- match(presData$id, elevData[, 1])
         if(length(idElev) == 0){
             stop('Temperature data and coordinates file stations IDs do not match')

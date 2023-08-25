@@ -90,15 +90,15 @@ getInfoNetCDFScale <- function(parent.win, Parameters, ncDIR,
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(rfesample)) == ""){
+        if(trimws(tclvalue(rfesample)) == ""){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt1)
         }else{
-            Parameters$format <<- str_trim(tclvalue(inrfeff))
-            Parameters$sample <<- str_trim(tclvalue(rfesample))
+            Parameters$format <<- trimws(tclvalue(inrfeff))
+            Parameters$sample <<- trimws(tclvalue(rfesample))
 
             if(scale){
-                Parameters$tstep <<- TSTEPVAL1[TSTEPVAL0 %in% str_trim(tclvalue(scale.tstep))]
+                Parameters$tstep <<- TSTEPVAL1[TSTEPVAL0 %in% trimws(tclvalue(scale.tstep))]
 
                 lenS <- length(gregexpr('%s', Parameters$format)[[1]])
                 if((Parameters$tstep %in% c('pentad', 'dekadal') & lenS != 3) |

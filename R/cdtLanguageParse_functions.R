@@ -7,9 +7,9 @@ get.lang.value0 <- function(obj.list, lang){
     lapply(obj.list, function(child){
         intxt <- sapply(child, "[[", "text")
         inlang <- sapply(child, "[[", ".attrs")
-        txt <- str_trim(intxt[inlang == "en"])
+        txt <- trimws(intxt[inlang == "en"])
         if(lang != "en"){
-            txt.o <- str_trim(intxt[inlang == lang])
+            txt.o <- trimws(intxt[inlang == lang])
             if(length(txt.o) == 1) txt <- txt.o
         }
         txt

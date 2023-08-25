@@ -395,11 +395,11 @@ readCdtDatasetChunk.locations <- function(loc, fileInfo, cdtData = NULL, chunkDi
 
 # cdtdataset <- .cdtData$EnvData$cdtdataset
 # fileInfo <- cdtdataset$fileInfo
-# xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-# yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+# xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+# yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
 
-# padx <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonPAD)))
-# pady <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latPAD)))
+# padx <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonPAD)))
+# pady <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latPAD)))
 
 cdtdataset.extarct.TS <- function(cdtdataset, fileInfo, xloc, yloc, padx = 0, pady = 0, ...){
     if(padx == 0 & pady == 0)

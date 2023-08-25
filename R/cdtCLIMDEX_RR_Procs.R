@@ -664,8 +664,8 @@ climdexCalc.RR <- function(GeneralParameters){
         y <- don$coords$mat$y
         nx <- length(x)
         ny <- length(y)
-        dx <- ncdim_def("Lon", "degreeE", x)
-        dy <- ncdim_def("Lat", "degreeN", y)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
         xy.dim <- list(dx, dy)
 
         ######################
@@ -678,7 +678,7 @@ climdexCalc.RR <- function(GeneralParameters){
                                 "Multiple R-squared", "Residual Standard Error"
                                 )
         trend.vars.grd <- lapply(seq_along(trend.vars.name), function(j){
-            grd <- ncvar_def(trend.vars.name[j], "", xy.dim, NA, longname = trend.vars.longname[j], prec = "float", compression = 9)
+            grd <- ncdf4::ncvar_def(trend.vars.name[j], "", xy.dim, NA, longname = trend.vars.longname[j], prec = "float", compression = 9)
             grd
         })
 
@@ -691,7 +691,7 @@ climdexCalc.RR <- function(GeneralParameters){
             dir.create(dir.trend, showWarnings = FALSE, recursive = TRUE)
 
             vars <- varInfo[[nom.idx]]
-            nc.grd <- ncvar_def(vars$name, vars$units, xy.dim, -99, vars$longname, vars$prec, compression = 9)
+            nc.grd <- ncdf4::ncvar_def(vars$name, vars$units, xy.dim, -99, vars$longname, vars$prec, compression = 9)
             data.year <- readCdtDatasetChunk.multi.dates.order(paths.index[[nom.idx]]$file.index.year, index.NS$year, cdtParallelCond)
             for(j in seq_along(index.NS$year)){
                 don.year <- data.year[j, ]
@@ -699,21 +699,21 @@ climdexCalc.RR <- function(GeneralParameters){
                 don.year[is.na(don.year)] <- -99
 
                 filenc <- file.path(dir.year, paste0(nom.idx, "_", index.NS$year[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, don.year)
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, don.year)
+                ncdf4::nc_close(nc)
             }
             rm(don.year, data.year)
 
             data.trend <- readCdtDatasetChunk.multi.dates.order(paths.index[[nom.idx]]$file.index.trend, trend.vars, cdtParallelCond)
             outfile <- file.path(dir.trend, paste0(nom.idx, ".nc"))
-            nc <- nc_create(outfile, trend.vars.grd)
+            nc <- ncdf4::nc_create(outfile, trend.vars.grd)
             for(j in seq_along(trend.vars.grd)){
                 trend.tmp <- data.trend[j, ]
                 dim(trend.tmp) <- c(nx, ny)
-                ncvar_put(nc, trend.vars.grd[[j]], trend.tmp)
+                ncdf4::ncvar_put(nc, trend.vars.grd[[j]], trend.tmp)
             }
-            nc_close(nc)
+            ncdf4::nc_close(nc)
             rm(trend.tmp, data.trend)
             return(0)
         })

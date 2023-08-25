@@ -62,11 +62,11 @@ getNetCDFvarInfo <- function(parent.win, Parameters){
 
     ####
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$name <<- str_trim(tclvalue(var.name))
-        Parameters$units <<- str_trim(tclvalue(var.unit))
-        Parameters$prec <<- str_trim(tclvalue(var.prec))
-        Parameters$missval <<- as.numeric(str_trim(tclvalue(var.miss)))
-        Parameters$longname <<- str_trim(tclvalue(var.long))
+        Parameters$name <<- trimws(tclvalue(var.name))
+        Parameters$units <<- trimws(tclvalue(var.unit))
+        Parameters$prec <<- trimws(tclvalue(var.prec))
+        Parameters$missval <<- as.numeric(trimws(tclvalue(var.miss)))
+        Parameters$longname <<- trimws(tclvalue(var.long))
 
         tkgrab.release(tt)
         tkdestroy(tt)

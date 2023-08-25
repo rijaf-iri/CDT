@@ -165,14 +165,14 @@ quantile.mapping.BGamma1 <- function(x, pars.stn, pars.rfe, thres){
     p.rfe <- 1 - pars.rfe$prob
     # ix <- !is.na(x) & x > 0
     ix <- !is.na(x) & (x > thres)
-    pgam <- pgamma(x[ix], scale = pars.rfe$scale[ix], shape = pars.rfe$shape[ix])
+    pgam <- stats::pgamma(x[ix], scale = pars.rfe$scale[ix], shape = pars.rfe$shape[ix])
     p.rfe[ix] <- 1 - pars.rfe$prob[ix] + pars.rfe$prob[ix] * pgam
 
     res <- rep(0, length(p.rfe))
     ip <- p.rfe > (1 - pars.stn$prob)
     ip[is.na(ip)] <- FALSE
     pp <- (pars.stn$prob[ip] + p.rfe[ip] - 1)/pars.stn$prob[ip]
-    res[ip] <- qgamma(pp, scale = pars.stn$scale[ip], shape = pars.stn$shape[ip])
+    res[ip] <- stats::qgamma(pp, scale = pars.stn$scale[ip], shape = pars.stn$shape[ip])
     dim(res) <- dim(x)
 
     miss <- is.na(res) | is.nan(res) | is.infinite(res)
@@ -187,10 +187,10 @@ quantile.mapping.BGamma1 <- function(x, pars.stn, pars.rfe, thres){
 quantile.mapping.Gauss <- function(x, pars.stn, pars.reanal){
     p.reanal <- x
     ix <- !is.na(x)
-    p.reanal[ix] <- pnorm(x[ix], mean = pars.reanal$mean[ix], sd = pars.reanal$sd[ix])
+    p.reanal[ix] <- stats::pnorm(x[ix], mean = pars.reanal$mean[ix], sd = pars.reanal$sd[ix])
     # p.reanal[ix][p.reanal[ix] < 0.001] <- 0.01
     # p.reanal[ix][p.reanal[ix] > 0.999] <- 0.99
-    res <- qnorm(p.reanal, mean = pars.stn$mean, sd = pars.stn$sd)
+    res <- stats::qnorm(p.reanal, mean = pars.stn$mean, sd = pars.stn$sd)
 
     miss <- is.na(res) | is.nan(res) | is.infinite(res)
     res[miss] <- x[miss]
@@ -330,7 +330,7 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
             xypts <- as.data.frame(stnData[c('lon', 'lat')])
             sp::coordinates(xypts) <- c('lon', 'lat')
             stn <- lapply(seq_along(grdData$spbox), function(j){
-                ix <- over(xypts, grdData$spbox[j])
+                ix <- sp::over(xypts, grdData$spbox[j])
                 ix <- which(!is.na(ix))
                 if(length(ix) == 0) return(NA)
                 rowMeans(stnData$data[, ix, drop = FALSE], na.rm = TRUE)
@@ -580,8 +580,8 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
             grd.ecdf <- vector(mode = 'list', length = nc)
 
             llstn <- seq(ncol(stn))
-            stn.ecdf[llnc] <- lapply(llstn, function(j) ecdf(stn[, j]))
-            grd.ecdf[llnc] <- lapply(llstn, function(j) ecdf(grd[, j]))
+            stn.ecdf[llnc] <- lapply(llstn, function(j) stats::ecdf(stn[, j]))
+            grd.ecdf[llnc] <- lapply(llstn, function(j) stats::ecdf(grd[, j]))
 
             list(stn = stn.ecdf, grd = grd.ecdf)
         })
@@ -1426,7 +1426,7 @@ applyBiasCorrection <- function(bias, ncInfo, outdir, params, variable, GUI = TR
                 wg <- bias$Wk[!inull, j]
                 ix <- c(arrayInd(j, mat.dim))
                 xv <- sapply(seq_along(fobs), function(i){
-                    foo <- function(t) quantile(fobs[[i]], t)
+                    foo <- function(t) stats::quantile(fobs[[i]], t)
                     foo(fgrd[[i]](xval[ix[1], ix[2]]))
                 })
                 xadj[ix[1], ix[2]] <- sum(wg * xv) / sum(wg)

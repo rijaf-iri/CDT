@@ -123,21 +123,21 @@ selectCDTData_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl1)) %in% c("", "NA")){
+        if(trimws(tclvalue(file.stnfl1)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.stnfl2)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(file.stnfl2)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['7']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.save1)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(file.save1)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['8']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$filein <- str_trim(tclvalue(file.stnfl1))
-            .cdtData$GalParams$filein1 <- str_trim(tclvalue(file.stnfl2))
-            .cdtData$GalParams$opfilter <- str_trim(tclvalue(filter.crt))
-            .cdtData$GalParams$valfilter <- as.numeric(str_trim(tclvalue(filter.val)))
-            .cdtData$GalParams$file2save <- str_trim(tclvalue(file.save1))
+            .cdtData$GalParams$filein <- trimws(tclvalue(file.stnfl1))
+            .cdtData$GalParams$filein1 <- trimws(tclvalue(file.stnfl2))
+            .cdtData$GalParams$opfilter <- trimws(tclvalue(filter.crt))
+            .cdtData$GalParams$valfilter <- as.numeric(trimws(tclvalue(filter.val)))
+            .cdtData$GalParams$file2save <- trimws(tclvalue(file.save1))
             .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)

@@ -49,7 +49,7 @@ Temp_reanalDownGetInfo <- function(){
     #######
 
     tkconfigure(bt.DateRange, command = function(){
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -59,7 +59,7 @@ Temp_reanalDownGetInfo <- function(){
 
     frameINPUT <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
-    file.coef <- tclVar(str_trim(.cdtData$GalParams$DownCoef.file))
+    file.coef <- tclVar(trimws(.cdtData$GalParams$DownCoef.file))
     dir.REANAL <- tclVar(.cdtData$GalParams$REANAL$dir)
     file.grddem <- tclVar(.cdtData$GalParams$DEM.file)
 
@@ -110,7 +110,7 @@ Temp_reanalDownGetInfo <- function(){
     tkconfigure(set.REANAL, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["REANAL"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["REANAL"]],
-                                                            str_trim(tclvalue(dir.REANAL)))
+                                                            trimws(tclvalue(dir.REANAL)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingSNC <<- 1
     })
@@ -209,29 +209,29 @@ Temp_reanalDownGetInfo <- function(){
     #########
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.coef)) == ""){
+        if(trimws(tclvalue(file.coef)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir.REANAL)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir.REANAL)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.grddem)) == ""){
+        }else if(trimws(tclvalue(file.grddem)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(is.null(settingSNC)){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$DownCoef.file <- str_trim(tclvalue(file.coef))
-            .cdtData$GalParams$DEM.file <- str_trim(tclvalue(file.grddem))
-            .cdtData$GalParams$REANAL$dir <- str_trim(tclvalue(dir.REANAL))
-            .cdtData$GalParams$output$dir <- str_trim(tclvalue(dir2save))
-            .cdtData$GalParams$output$format <- str_trim(tclvalue(outdownff))
+            .cdtData$GalParams$DownCoef.file <- trimws(tclvalue(file.coef))
+            .cdtData$GalParams$DEM.file <- trimws(tclvalue(file.grddem))
+            .cdtData$GalParams$REANAL$dir <- trimws(tclvalue(dir.REANAL))
+            .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
+            .cdtData$GalParams$output$format <- trimws(tclvalue(outdownff))
 
-            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
 
             .cdtData$GalParams$settingSNC <- settingSNC
 

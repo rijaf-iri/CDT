@@ -80,8 +80,8 @@ getInfoMonths2Process <- function(parent.win, Parameters)
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$start.month <<- which(MOIS %in% str_trim(tclvalue(startMon)))
-        Parameters$end.month <<- which(MOIS %in% str_trim(tclvalue(endMon)))
+        Parameters$start.month <<- which(MOIS %in% trimws(tclvalue(startMon)))
+        Parameters$end.month <<- which(MOIS %in% trimws(tclvalue(endMon)))
         Parameters$nseq.months <<- switch(tclvalue(nseqMon), '0' = FALSE, '1' = TRUE)
 
         tkgrab.release(tt)

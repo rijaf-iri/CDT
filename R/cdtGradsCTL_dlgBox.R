@@ -35,7 +35,7 @@ grads_create.ctl_getParams <- function(){
     bt.period <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
     tkconfigure(bt.period, command = function(){
-        tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
+        tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
         .cdtData$GalParams[["date"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date"]], tstep)
     })
 
@@ -60,7 +60,7 @@ grads_create.ctl_getParams <- function(){
     tkconfigure(set.indata, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["nc"]] <- grads.getInfoNetcdfData(tt, .cdtData$GalParams[["nc"]],
-                                                              str_trim(tclvalue(input.DataF)))
+                                                              trimws(tclvalue(input.DataF)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingNCF <<- 1
     })
@@ -127,7 +127,7 @@ grads_create.ctl_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(input.DataF)) %in% c("", "NA")){
+        if(trimws(tclvalue(input.DataF)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(tclvalue(file.save) %in% c("", "NA")){
@@ -137,10 +137,10 @@ grads_create.ctl_getParams <- function(){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
+            .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
 
-            .cdtData$GalParams$nc$dir <- str_trim(tclvalue(input.DataF))
-            .cdtData$GalParams$out.ctl <- str_trim(tclvalue(file.save))
+            .cdtData$GalParams$nc$dir <- trimws(tclvalue(input.DataF))
+            .cdtData$GalParams$out.ctl <- trimws(tclvalue(file.save))
 
             .cdtData$GalParams$settingNCF <- settingNCF
             .cdtData$GalParams$message <- lang.dlg[['message']]

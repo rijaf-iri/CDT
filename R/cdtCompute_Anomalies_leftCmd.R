@@ -133,7 +133,7 @@ anomaliesCalcPanelCmd <- function(){
         #######################
 
         tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
-            instep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            instep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             if(instep == 'daily'){
                 CbperiodVAL1 <<- CbOutVAL
@@ -153,13 +153,13 @@ anomaliesCalcPanelCmd <- function(){
             }
 
             tkconfigure(cb.outclim, values = CbperiodVAL1)
-            if(!str_trim(tclvalue(outSteps)) %in% CbperiodVAL1)
+            if(!trimws(tclvalue(outSteps)) %in% CbperiodVAL1)
                 tclvalue(outSteps) <- CbperiodVAL1[1]
 
-            stateAggr <- if(str_trim(tclvalue(timeSteps)) == str_trim(tclvalue(outSteps))) "disabled" else "normal"
+            stateAggr <- if(trimws(tclvalue(timeSteps)) == trimws(tclvalue(outSteps))) "disabled" else "normal"
             tkconfigure(bt.AggrFun, state = stateAggr)
 
-            statedayW <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[1]) "normal" else "disabled"
+            statedayW <- if(trimws(tclvalue(outSteps)) == CbOutVAL[1]) "normal" else "disabled"
             tkconfigure(en.daywin, state = statedayW)
         })
 
@@ -199,7 +199,7 @@ anomaliesCalcPanelCmd <- function(){
         ############
 
         tkbind(cb.outclim, "<<ComboboxSelected>>", function(){
-            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+            outstep <- OutVAL[CbOutVAL %in% trimws(tclvalue(outSteps))]
 
             statedayW <- if(outstep == 'daily') "normal" else "disabled"
             tkconfigure(en.daywin, state = statedayW)
@@ -208,7 +208,7 @@ anomaliesCalcPanelCmd <- function(){
             tkconfigure(cb.seasS, state = stateSeas)
             tkconfigure(cb.seasL, state = stateSeas)
 
-            stateAggr <- if(str_trim(tclvalue(timeSteps)) == str_trim(tclvalue(outSteps))) "disabled" else "normal"
+            stateAggr <- if(trimws(tclvalue(timeSteps)) == trimws(tclvalue(outSteps))) "disabled" else "normal"
             tkconfigure(bt.AggrFun, state = stateAggr)
 
             seasdef <- ""
@@ -218,8 +218,8 @@ anomaliesCalcPanelCmd <- function(){
                 seasdef <- paste(MOIS[1], "->", MOIS[12])
             }
             if(outstep == 'seasonal'){
-                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-                len <- as.numeric(str_trim(tclvalue(length.mon)))
+                mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+                len <- as.numeric(trimws(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
                 seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
@@ -233,8 +233,8 @@ anomaliesCalcPanelCmd <- function(){
 
         MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
         mois <- format(ISOdate(2014, 1:12, 1), "%b")
-        mon <- as.numeric(str_trim(GeneralParameters$seasonal$start.mon))
-        len <- as.numeric(str_trim(GeneralParameters$seasonal$length.mon))
+        mon <- as.numeric(trimws(GeneralParameters$seasonal$start.mon))
+        len <- as.numeric(trimws(GeneralParameters$seasonal$length.mon))
         mon1 <- (mon + len - 1) %% 12
         mon1[mon1 == 0] <- 12
 
@@ -266,12 +266,12 @@ anomaliesCalcPanelCmd <- function(){
         ##############
 
         tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
-            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+            outstep <- OutVAL[CbOutVAL %in% trimws(tclvalue(outSteps))]
 
             seasdef <- ""
             if(outstep == 'seasonal'){
-                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-                len <- as.numeric(str_trim(tclvalue(length.mon)))
+                mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+                len <- as.numeric(trimws(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
                 seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
@@ -282,12 +282,12 @@ anomaliesCalcPanelCmd <- function(){
         ##############
 
         tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
-            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+            outstep <- OutVAL[CbOutVAL %in% trimws(tclvalue(outSteps))]
 
             seasdef <- ""
             if(outstep == 'seasonal'){
-                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-                len <- as.numeric(str_trim(tclvalue(length.mon)))
+                mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+                len <- as.numeric(trimws(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
                 seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
@@ -379,7 +379,7 @@ anomaliesCalcPanelCmd <- function(){
             tclvalue(input.file) <- ''
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['3']]
 
                 cb.en.infile <<- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
@@ -399,7 +399,7 @@ anomaliesCalcPanelCmd <- function(){
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['4']]
 
                 cb.en.infile <<- tkentry(frameInData, textvariable = input.file, width = largeur2)
@@ -500,7 +500,7 @@ anomaliesCalcPanelCmd <- function(){
                 if(tclvalue(anomDataExist) == '0')
                     stateClim <- if(tclvalue(climDataExist) == '1') 'normal' else 'disabled'
                 stateBaseP <- if(tclvalue(climDataExist) == '1') 'disabled' else 'normal'
-                statedayW <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[1] & 
+                statedayW <- if(trimws(tclvalue(outSteps)) == CbOutVAL[1] & 
                                 tclvalue(climDataExist) == '0') "normal" else "disabled"
                 stateAnomC <- 'normal'
             }
@@ -574,7 +574,7 @@ anomaliesCalcPanelCmd <- function(){
                 if(tclvalue(anomDataExist) == '0')
                     stateClim <- if(tclvalue(climDataExist) == '1') 'disabled' else 'normal'
                 stateBaseP <- if(tclvalue(climDataExist) == '1') 'normal' else 'disabled'
-                statedayW <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[1] &
+                statedayW <- if(trimws(tclvalue(outSteps)) == CbOutVAL[1] &
                                 tclvalue(climDataExist) == '1') 'normal' else 'disabled'
             }
 
@@ -653,7 +653,7 @@ anomaliesCalcPanelCmd <- function(){
         btDateRange <- ttkbutton(subfr2, text = lang.dlg[['button']][['2']])
 
         tkconfigure(btDateRange, command = function(){
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             GeneralParameters[["date.range"]] <<- getInfoDateRange(.cdtEnv$tcl$main$win,
                                                                    GeneralParameters[["date.range"]],
                                                                    intstep)
@@ -668,26 +668,26 @@ anomaliesCalcPanelCmd <- function(){
         #################
 
         tkconfigure(calculateBut, command = function(){
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            GeneralParameters$outstep <- periodVAL1[CbperiodVAL1 %in% str_trim(tclvalue(outSteps))]
-            GeneralParameters$seasonal$start.mon <- which(MOIS %in% str_trim(tclvalue(start.mon)))
-            GeneralParameters$seasonal$length.mon <- as.numeric(str_trim(tclvalue(length.mon)))
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            GeneralParameters$outstep <- periodVAL1[CbperiodVAL1 %in% trimws(tclvalue(outSteps))]
+            GeneralParameters$seasonal$start.mon <- which(MOIS %in% trimws(tclvalue(start.mon)))
+            GeneralParameters$seasonal$length.mon <- as.numeric(trimws(tclvalue(length.mon)))
 
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                GeneralParameters$cdtstation$file <- str_trim(tclvalue(input.file))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                GeneralParameters$cdtdataset$index <- str_trim(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                GeneralParameters$cdtstation$file <- trimws(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                GeneralParameters$cdtdataset$index <- trimws(tclvalue(input.file))
 
             GeneralParameters$outdir$update <- switch(tclvalue(updateAnom), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$outdir$dir <- str_trim(tclvalue(outAnom))
+            GeneralParameters$outdir$dir <- trimws(tclvalue(outAnom))
 
             GeneralParameters$climato$clim.exist <- switch(tclvalue(climDataExist), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$climato$clim.file <- str_trim(tclvalue(file.ClimIndex))
-            GeneralParameters$climato$window <- if(GeneralParameters$outstep == 'daily') as.numeric(str_trim(tclvalue(dayWin))) else 0
+            GeneralParameters$climato$clim.file <- trimws(tclvalue(file.ClimIndex))
+            GeneralParameters$climato$window <- if(GeneralParameters$outstep == 'daily') as.numeric(trimws(tclvalue(dayWin))) else 0
 
-            GeneralParameters$anomaly <- AnomType[CbAnomType %in% str_trim(tclvalue(anomaly))]
+            GeneralParameters$anomaly <- AnomType[CbAnomType %in% trimws(tclvalue(anomaly))]
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
@@ -761,8 +761,8 @@ anomaliesCalcPanelCmd <- function(){
             if(path.Anom %in% c("", "NA") | is.na(path.Anom)) return(NULL)
             tclvalue(file.AnomIndex) <- path.Anom
 
-            if(file.exists(str_trim(tclvalue(file.AnomIndex)))){
-                OutAnomdata <- try(readRDS(str_trim(tclvalue(file.AnomIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.AnomIndex)))){
+                OutAnomdata <- try(readRDS(trimws(tclvalue(file.AnomIndex))), silent = TRUE)
                 if(inherits(OutAnomdata, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutAnomdata[1]), TRUE, 'e')
@@ -772,7 +772,7 @@ anomaliesCalcPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutAnomdata
-                .cdtData$EnvData$PathAnom <- dirname(str_trim(tclvalue(file.AnomIndex)))
+                .cdtData$EnvData$PathAnom <- dirname(trimws(tclvalue(file.AnomIndex)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -832,7 +832,7 @@ anomaliesCalcPanelCmd <- function(){
             }
             .cdtData$EnvData$anomMapOp <- MapGraph.MapOptions(.cdtData$EnvData$anomMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$anomMapOp$pointSize
         })
 
@@ -840,18 +840,18 @@ anomaliesCalcPanelCmd <- function(){
         .cdtData$EnvData$tab$AnomMap <- NULL
 
         tkconfigure(bt.anom.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$anomDate)) != "" &
+            if(trimws(tclvalue(.cdtData$EnvData$anomDate)) != "" &
                 !is.null(.cdtData$EnvData$anomdata))
                     anomaliesCalc.Display.Maps()
         })
 
         tkconfigure(bt.anom.Date.prev, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$anomDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$anomDate)) != ""){
                 if(.cdtData$EnvData$output$params$data.type == "cdtstation")
                     anomDates <- .cdtData$EnvData$output$data$dates
                 else anomDates <- .cdtData$EnvData$output$dates
 
-                idaty <- which(anomDates == str_trim(tclvalue(.cdtData$EnvData$anomDate)))
+                idaty <- which(anomDates == trimws(tclvalue(.cdtData$EnvData$anomDate)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(anomDates)
                 tclvalue(.cdtData$EnvData$anomDate) <- anomDates[idaty]
@@ -864,12 +864,12 @@ anomaliesCalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.anom.Date.next, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$anomDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$anomDate)) != ""){
                 if(.cdtData$EnvData$output$params$data.type == "cdtstation")
                     anomDates <- .cdtData$EnvData$output$data$dates
                 else anomDates <- .cdtData$EnvData$output$dates
 
-                idaty <- which(anomDates == str_trim(tclvalue(.cdtData$EnvData$anomDate)))
+                idaty <- which(anomDates == trimws(tclvalue(.cdtData$EnvData$anomDate)))
                 idaty <- idaty + 1
                 if(idaty > length(anomDates)) idaty <- 1
                 tclvalue(.cdtData$EnvData$anomDate) <- anomDates[idaty]
@@ -939,7 +939,7 @@ anomaliesCalcPanelCmd <- function(){
         #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            typeTSp <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+            typeTSp <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
             suffix.fun <- switch(typeTSp, "Bar" = "Anomaly", "Line" = "Line")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
@@ -1060,7 +1060,7 @@ anomaliesCalcPanelCmd <- function(){
             ########
             tkconfigure(bt.stnID.prev, command = function(){
                 if(!is.null(.cdtData$EnvData$anomdata)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn-1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1072,7 +1072,7 @@ anomaliesCalcPanelCmd <- function(){
 
             tkconfigure(bt.stnID.next, command = function(){
                 if(!is.null(.cdtData$EnvData$anomdata)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn+1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1139,7 +1139,7 @@ anomaliesCalcPanelCmd <- function(){
         })
 
         cdtdatatype <- .cdtData$EnvData$plot.maps$data.type
-        anomdate <- str_trim(tclvalue(.cdtData$EnvData$anomDate))
+        anomdate <- trimws(tclvalue(.cdtData$EnvData$anomDate))
 
         if(cdtdatatype == "cdtstation"){
             fileAnomdata <- file.path(.cdtData$EnvData$PathAnom, "CDTANOM/CDTANOM.rds")
@@ -1148,7 +1148,7 @@ anomaliesCalcPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
         }else{
             fileAnomdata <- file.path(.cdtData$EnvData$PathAnom, "DATA_NetCDF/CDTANOM",
                                       paste0("anomaly_", anomdate, ".nc"))
@@ -1170,11 +1170,11 @@ anomaliesCalcPanelCmd <- function(){
             if(cdtdatatype == "cdtstation"){
                 .cdtData$EnvData$anomdata$data <- readRDS(fileAnomdata)
             }else{
-                nc <- nc_open(fileAnomdata)
+                nc <- ncdf4::nc_open(fileAnomdata)
                 .cdtData$EnvData$anomdata$map$x <- nc$dim[[1]]$vals
                 .cdtData$EnvData$anomdata$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$anomdata$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
+                .cdtData$EnvData$anomdata$map$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                ncdf4::nc_close(nc)
             }
 
             .cdtData$EnvData$compAnomData <- compAnomData

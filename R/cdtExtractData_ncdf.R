@@ -48,13 +48,13 @@ extract_netcdf_file <- function(ncdf_data = list(file = "", varid = "z", ilon = 
     crds <- switch(crd_type,
                     'cdtStnData' = local({
                                 crd_points$header <- FALSE
-                                crdData <- do.call(read.table, c(crd_points, pars_read))
+                                crdData <- do.call(utils::read.table, c(crd_points, pars_read))
                                 crdData <- splitCDTData0(crdData, FALSE)
                                 data.frame(id = crdData$id, lon = crdData$lon, lat = crdData$lat)
                             }),
                     'cdtCrdFile' = local({
                                 crd_points$header <- TRUE
-                                crdData <- do.call(read.table, c(crd_points, pars_read))
+                                crdData <- do.call(utils::read.table, c(crd_points, pars_read))
                                 data.frame(id = crdData[, 1], 
                                            lon = as.numeric(crdData[, 3]),
                                            lat = as.numeric(crdData[, 4]))
@@ -64,7 +64,7 @@ extract_netcdf_file <- function(ncdf_data = list(file = "", varid = "z", ilon = 
     ncgrid <- defSpatialPixels(ncData)
     crd_sp <- crds
     sp::coordinates(crd_sp) <- c('lon', 'lat')
-    ijs <- over(crd_sp, ncgrid)
+    ijs <- sp::over(crd_sp, ncgrid)
     crds$value <- ncData$z[ijs]
 
     if(!is.null(out_file)){

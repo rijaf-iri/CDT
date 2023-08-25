@@ -23,7 +23,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     if(is.null(don$elv)) head <- head[1:3]
     don0 <- rbind(cbind(head, do.call(rbind, don[c('id', 'lon', 'lat', 'elv')])),
                   cbind(don$dates, don$data))
-    write.table(don0, file = file.stn,
+    utils::write.table(don0, file = file.stn,
                 sep = don.info[[3]]$sepr, na = don.info[[3]]$miss.val,
                 col.names = FALSE, row.names = FALSE, quote = FALSE)
 
@@ -147,7 +147,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     thres.perc <- 0.97
 
     ## convert to fraction (68–95–99.7 rule)
-    alpha <- pnorm(params$sigma) - (1 - pnorm(params$sigma))
+    alpha <- stats::pnorm(params$sigma) - (1 - stats::pnorm(params$sigma))
 
     ## min non-missing
     min.length <- switch(GeneralParameters$intstep,
@@ -572,7 +572,7 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
             ie <- ie[x$values & x$lengths >= min.seq]
             is <- is[x$values & x$lengths >= min.seq]
 
-            vx <- sapply(seq_along(is), function(i) var(diff(tmp[is[i]:ie[i], j])))
+            vx <- sapply(seq_along(is), function(i) stats::var(diff(tmp[is[i]:ie[i], j])))
             ix <- vx < max.var.diff
             if(!any(ix)) return(NULL)
 

@@ -24,7 +24,7 @@ StnChkCoordsFormatHtml <- function(){
         }
     }
     ###
-    don <- toJSON(crds, pretty = TRUE)
+    don <- jsonlite::toJSON(crds, pretty = TRUE)
     cat(don, file = jsonfile)
 
     lon.c <- mean(crds$LonX, na.rm = TRUE)

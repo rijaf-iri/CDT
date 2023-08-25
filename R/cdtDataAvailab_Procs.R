@@ -159,7 +159,7 @@ AssessDataAvailProcs <- function(GeneralParameters){
 ##############################################################################
 
 Distance.Correlation <- function(data.mat, lonlat){
-	corm <- suppressWarnings(cor(data.mat, use = 'pairwise.complete.obs'))
+	corm <- suppressWarnings(stats::cor(data.mat, use = 'pairwise.complete.obs'))
 	corm[lower.tri(corm, diag = TRUE)] <- NA
 
 	dist <- fields::rdist.earth(lonlat, miles = FALSE)
@@ -189,7 +189,7 @@ summary.Distance.Correlation <- function(x, y){
 		ys <- y[seq(k, k + win - 1, 1)]
 		ys <- ys[!is.na(ys)]
 		if(length(ys) < min.data) next
-		xquant[[k]] <- quantile(ys,  probs = probs)
+		xquant[[k]] <- stats::quantile(ys,  probs = probs)
 	}
 	xquant <- do.call(rbind, xquant)
 	return(unname(cbind(x[seq(nseq)], xquant)))

@@ -22,7 +22,7 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     #####################
 
     preview.canvasf1 <- function(rv){
-        funkol <- str_trim(tclvalue(preset.color))
+        funkol <- trimws(tclvalue(preset.color))
         funkol <- get(funkol, mode = "function")
         listCol <- funkol(10)
         if(tclvalue(reverse.color) == rv) listCol <- rev(listCol)
@@ -239,7 +239,7 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.opt.OK, command = function(){
-        climMapOpt$presetCol$color <<- str_trim(tclvalue(preset.color))
+        climMapOpt$presetCol$color <<- trimws(tclvalue(preset.color))
         climMapOpt$presetCol$reverse <<- switch(tclvalue(reverse.color), '0' = FALSE, '1' = TRUE)
         climMapOpt$userCol$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
         climMapOpt$userLvl$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
@@ -257,17 +257,17 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
             climMapOpt$userLvl$levels <<- as.numeric(vlevel)
         }
         climMapOpt$title$user <<- switch(tclvalue(user.title), '0' = FALSE, '1' = TRUE)
-        climMapOpt$title$title <<- str_trim(tclvalue(text.title))
+        climMapOpt$title$title <<- trimws(tclvalue(text.title))
         climMapOpt$colkeyLab$user <<- switch(tclvalue(user.clLab), '0' = FALSE, '1' = TRUE)
-        climMapOpt$colkeyLab$label <<- str_trim(tclvalue(text.clLab))
+        climMapOpt$colkeyLab$label <<- trimws(tclvalue(text.clLab))
 
         if(!is.null(climMapOpt$scalebar)){
             climMapOpt$scalebar$add <<- switch(tclvalue(add.scale), '0' = FALSE, '1' = TRUE)
-            climMapOpt$scalebar$pos <<- str_trim(tclvalue(pos.scale))
+            climMapOpt$scalebar$pos <<- trimws(tclvalue(pos.scale))
         }
 
         if(!is.null(climMapOpt$pointSize))
-            climMapOpt$pointSize <<- as.numeric(str_trim(tclvalue(tkget(spin.PointSz))))
+            climMapOpt$pointSize <<- as.numeric(trimws(tclvalue(tkget(spin.PointSz))))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -509,7 +509,7 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
     bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.opt.OK, command = function(){
-        climMapOpt$presetCol$color <<- str_trim(tclvalue(preset.color))
+        climMapOpt$presetCol$color <<- trimws(tclvalue(preset.color))
         climMapOpt$presetCol$reverse <<- switch(tclvalue(reverse.color), '0' = FALSE, '1' = TRUE)
         climMapOpt$userCol$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
         climMapOpt$userLvl$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
@@ -527,7 +527,7 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
             climMapOpt$userLvl$levels <<- as.numeric(vlevel)
         }
         climMapOpt$title$user <<- switch(tclvalue(user.title), '0' = FALSE, '1' = TRUE)
-        climMapOpt$title$title <<- str_trim(tclvalue(text.title))
+        climMapOpt$title$title <<- trimws(tclvalue(text.title))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -626,7 +626,7 @@ MapGraph.MultiDatasets <- function(mapOpt){
     if(mapOpt$map.type == "Points"){
         framePtSz <- tkframe(frDialog)
 
-        statePts <- if(str_trim(tclvalue(plot.type.var)) == "Points") 'normal' else 'disabled'
+        statePts <- if(trimws(tclvalue(plot.type.var)) == "Points") 'normal' else 'disabled'
 
         txt.PointSz <- tklabel(framePtSz, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
         spin.PointSz <- ttkspinbox(framePtSz, from = 0.3, to = 2.5, increment = 0.1, justify = 'center', width = 4, state = statePts)
@@ -635,7 +635,7 @@ MapGraph.MultiDatasets <- function(mapOpt){
         tkgrid(txt.PointSz, spin.PointSz)
 
         tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
-            statePts <- if(str_trim(tclvalue(plot.type.var)) == "Points") 'normal' else 'disabled'
+            statePts <- if(trimws(tclvalue(plot.type.var)) == "Points") 'normal' else 'disabled'
             tkconfigure(spin.PointSz, state = statePts)
         })
     }
@@ -653,11 +653,11 @@ MapGraph.MultiDatasets <- function(mapOpt){
     bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.opt.OK, command = function(){
-        mapOpt$title <<- str_trim(tclvalue(title.var))
-        mapOpt$plot.type <<- str_trim(tclvalue(plot.type.var))
+        mapOpt$title <<- trimws(tclvalue(title.var))
+        mapOpt$plot.type <<- trimws(tclvalue(plot.type.var))
 
         if(mapOpt$map.type == "Points")
-            mapOpt$point.size <<- as.numeric(str_trim(tclvalue(tkget(spin.PointSz))))
+            mapOpt$point.size <<- as.numeric(trimws(tclvalue(tkget(spin.PointSz))))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -750,7 +750,7 @@ MapGraph.ChkCoordsOptions <- function(CrdOpt, parent.win = .cdtEnv$tcl$main$win)
     ######
     tkconfigure(bt.blueC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(blue.col), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(blue.col), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.blueC, bg = loko)
@@ -783,7 +783,7 @@ MapGraph.ChkCoordsOptions <- function(CrdOpt, parent.win = .cdtEnv$tcl$main$win)
     ######
     tkconfigure(bt.orangeC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(orange.col), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(orange.col), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.orangeC, bg = loko)
@@ -816,7 +816,7 @@ MapGraph.ChkCoordsOptions <- function(CrdOpt, parent.win = .cdtEnv$tcl$main$win)
     ######
     tkconfigure(bt.redC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(red.col), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(red.col), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.redC, bg = loko)
@@ -844,7 +844,7 @@ MapGraph.ChkCoordsOptions <- function(CrdOpt, parent.win = .cdtEnv$tcl$main$win)
     ######
     tkconfigure(bt.pltLineC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
@@ -866,19 +866,19 @@ MapGraph.ChkCoordsOptions <- function(CrdOpt, parent.win = .cdtEnv$tcl$main$win)
 
     tkconfigure(bt.opt.OK, command = function(){
         CrdOpt$blue$col <<- tclvalue(blue.col)
-        CrdOpt$blue$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.blueT))))
-        CrdOpt$blue$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.blueS))))
+        CrdOpt$blue$pch <<- as.numeric(trimws(tclvalue(tkget(spin.blueT))))
+        CrdOpt$blue$cex <<- as.numeric(trimws(tclvalue(tkget(spin.blueS))))
 
         CrdOpt$orange$col <<- tclvalue(orange.col)
-        CrdOpt$orange$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.orangeT))))
-        CrdOpt$orange$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.orangeS))))
+        CrdOpt$orange$pch <<- as.numeric(trimws(tclvalue(tkget(spin.orangeT))))
+        CrdOpt$orange$cex <<- as.numeric(trimws(tclvalue(tkget(spin.orangeS))))
 
         CrdOpt$red$col <<- tclvalue(red.col)
-        CrdOpt$red$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.redT))))
-        CrdOpt$red$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.redS))))
+        CrdOpt$red$pch <<- as.numeric(trimws(tclvalue(tkget(spin.redT))))
+        CrdOpt$red$cex <<- as.numeric(trimws(tclvalue(tkget(spin.redS))))
 
         CrdOpt$shp$col <<- tclvalue(plot.col.line)
-        CrdOpt$shp$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        CrdOpt$shp$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -1167,7 +1167,7 @@ MapGraph.SpiVizOptions <- function(spiVizOpt, parent.win = .cdtEnv$tcl$main$win)
     bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.opt.OK, command = function(){
-        spiVizOpt$presetCol$color <<- str_trim(tclvalue(preset.color))
+        spiVizOpt$presetCol$color <<- trimws(tclvalue(preset.color))
         spiVizOpt$presetCol$reverse <<- switch(tclvalue(reverse.color), '0' = FALSE, '1' = TRUE)
         spiVizOpt$userCol$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
         spiVizOpt$userLvl$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
@@ -1185,14 +1185,14 @@ MapGraph.SpiVizOptions <- function(spiVizOpt, parent.win = .cdtEnv$tcl$main$win)
             spiVizOpt$userLvl$levels <<- as.numeric(vlevel)
         }
         spiVizOpt$title$user <<- switch(tclvalue(user.title), '0' = FALSE, '1' = TRUE)
-        spiVizOpt$title$title <<- str_trim(tclvalue(text.title))
+        spiVizOpt$title$title <<- trimws(tclvalue(text.title))
         spiVizOpt$colkeyLab$user <<- switch(tclvalue(user.clLab), '0' = FALSE, '1' = TRUE)
-        spiVizOpt$colkeyLab$label <<- str_trim(tclvalue(text.clLab))
+        spiVizOpt$colkeyLab$label <<- trimws(tclvalue(text.clLab))
 
         spiVizOpt$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         spiVizOpt$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        spiVizOpt$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        spiVizOpt$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        spiVizOpt$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        spiVizOpt$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -1287,7 +1287,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.STN1C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(stn.ptcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(stn.ptcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.STN1C, bg = loko)
@@ -1314,7 +1314,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.STN2C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(stn.txtcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(stn.txtcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.STN2C, bg = loko)
@@ -1354,7 +1354,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.USE1C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(use.ptcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(use.ptcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.USE1C, bg = loko)
@@ -1381,7 +1381,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.USE2C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(use.txtcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(use.txtcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.USE2C, bg = loko)
@@ -1421,7 +1421,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.SEL1C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(sel.ptcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(sel.ptcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.SEL1C, bg = loko)
@@ -1448,7 +1448,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.SEL2C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(sel.txtcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(sel.txtcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.SEL2C, bg = loko)
@@ -1488,7 +1488,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.VOIS1C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(vois.ptcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(vois.ptcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.VOIS1C, bg = loko)
@@ -1515,7 +1515,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.VOIS2C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(vois.txtcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(vois.txtcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.VOIS2C, bg = loko)
@@ -1554,7 +1554,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.ALL1C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(all.ptcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(all.ptcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.ALL1C, bg = loko)
@@ -1581,7 +1581,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.ALL2C, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(all.txtcol), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(all.txtcol), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.ALL2C, bg = loko)
@@ -1618,7 +1618,7 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
     ######
     tkconfigure(bt.pltLineC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.circle), title = lang.dlg[['label']][['1']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.circle), title = lang.dlg[['label']][['1']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
@@ -1648,37 +1648,37 @@ MapGraph.QCoutliersSP <- function(qcOpt, parent.win = .cdtEnv$tcl$main$win){
 
     tkconfigure(bt.opt.OK, command = function(){
         qcOpt$stn$col <<- tclvalue(stn.ptcol)
-        qcOpt$stn$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.STN1T))))
-        qcOpt$stn$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.STN1S))))
+        qcOpt$stn$pch <<- as.numeric(trimws(tclvalue(tkget(spin.STN1T))))
+        qcOpt$stn$cex <<- as.numeric(trimws(tclvalue(tkget(spin.STN1S))))
         qcOpt$stn$txt.col <<- tclvalue(stn.txtcol)
-        qcOpt$stn$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.STN2S))))
+        qcOpt$stn$txt.cex <<- as.numeric(trimws(tclvalue(tkget(spin.STN2S))))
 
         qcOpt$use$col <<- tclvalue(use.ptcol)
-        qcOpt$use$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.USE1T))))
-        qcOpt$use$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.USE1S))))
+        qcOpt$use$pch <<- as.numeric(trimws(tclvalue(tkget(spin.USE1T))))
+        qcOpt$use$cex <<- as.numeric(trimws(tclvalue(tkget(spin.USE1S))))
         qcOpt$use$txt.col <<- tclvalue(use.txtcol)
-        qcOpt$use$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.USE2S))))
+        qcOpt$use$txt.cex <<- as.numeric(trimws(tclvalue(tkget(spin.USE2S))))
 
         qcOpt$sel$col <<- tclvalue(sel.ptcol)
-        qcOpt$sel$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.SEL1T))))
-        qcOpt$sel$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.SEL1S))))
+        qcOpt$sel$pch <<- as.numeric(trimws(tclvalue(tkget(spin.SEL1T))))
+        qcOpt$sel$cex <<- as.numeric(trimws(tclvalue(tkget(spin.SEL1S))))
         qcOpt$sel$txt.col <<- tclvalue(sel.txtcol)
-        qcOpt$sel$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.SEL2S))))
+        qcOpt$sel$txt.cex <<- as.numeric(trimws(tclvalue(tkget(spin.SEL2S))))
 
         qcOpt$vois$col <<- tclvalue(vois.ptcol)
-        qcOpt$vois$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.VOIS1T))))
-        qcOpt$vois$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.VOIS1S))))
+        qcOpt$vois$pch <<- as.numeric(trimws(tclvalue(tkget(spin.VOIS1T))))
+        qcOpt$vois$cex <<- as.numeric(trimws(tclvalue(tkget(spin.VOIS1S))))
         qcOpt$vois$txt.col <<- tclvalue(vois.txtcol)
-        qcOpt$vois$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.VOIS2S))))
+        qcOpt$vois$txt.cex <<- as.numeric(trimws(tclvalue(tkget(spin.VOIS2S))))
 
         qcOpt$all$col <<- tclvalue(all.ptcol)
-        qcOpt$all$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.ALL1T))))
-        qcOpt$all$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.ALL1S))))
+        qcOpt$all$pch <<- as.numeric(trimws(tclvalue(tkget(spin.ALL1T))))
+        qcOpt$all$cex <<- as.numeric(trimws(tclvalue(tkget(spin.ALL1S))))
         qcOpt$all$txt.col <<- tclvalue(all.txtcol)
-        qcOpt$all$txt.cex <<- as.numeric(str_trim(tclvalue(tkget(spin.ALL2S))))
+        qcOpt$all$txt.cex <<- as.numeric(trimws(tclvalue(tkget(spin.ALL2S))))
 
         qcOpt$circle$col <<- tclvalue(col.circle)
-        qcOpt$circle$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        qcOpt$circle$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
         qcOpt$circle$draw <<- switch(tclvalue(draw.circle), '0' = FALSE, '1' = TRUE)
 
         tkgrab.release(tt)

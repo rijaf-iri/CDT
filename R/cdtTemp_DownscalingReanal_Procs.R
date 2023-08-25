@@ -19,7 +19,7 @@ Temp_execDownscaling <- function(){
     Insert.Messages.Out(message[['8']], TRUE, "i")
 
     ################
-    CoefFile <- str_trim(.cdtData$GalParams$DownCoef.file)
+    CoefFile <- trimws(.cdtData$GalParams$DownCoef.file)
     if(!file.exists(CoefFile)){
         Insert.Messages.Out(paste(CoefFile, message[['9']]), TRUE, 'e')
         return(NULL)
@@ -207,7 +207,7 @@ Temp_ReanalysisDownscaling <- function(){
             bGrd <- createBlock(c(1, 1, 1, 1))
 
         locations.reanl <- expand.grid(lon = lon.reanl, lat = lat.reanl)
-        coordinates(locations.reanl) <- ~lon+lat
+        sp::coordinates(locations.reanl) <- ~lon+lat
     }
 
     ###############
@@ -234,7 +234,7 @@ Temp_ReanalysisDownscaling <- function(){
             reanlTT <- (reanlTT - meanTT) / sdTT
         }
 
-        resid <- reanlTT - predict(downCoef$model[[mon]], newdata = data.reanal)
+        resid <- reanlTT - stats::predict(downCoef$model[[mon]], newdata = data.reanal)
 
         ############
         if(interp.method == 'blin'){
@@ -264,7 +264,7 @@ Temp_ReanalysisDownscaling <- function(){
 
         ############
         residInterp[is.na(residInterp)] <- 0
-        downTT <- predict(downCoef$model[[mon]], newdata = data.grid) + residInterp
+        downTT <- stats::predict(downCoef$model[[mon]], newdata = data.grid) + residInterp
         if(downCoef$standardize) downTT <- downTT * sdTT + meanTT
         downTT[is.na(downTT)] <- -99
 

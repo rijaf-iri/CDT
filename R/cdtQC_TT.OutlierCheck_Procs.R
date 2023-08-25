@@ -53,7 +53,7 @@ qcTTOutliersCheckProcs <- function(GeneralParameters){
     if(is.null(don$elv)) head <- head[1:3]
     don0 <- rbind(cbind(head, do.call(rbind, don[c('id', 'lon', 'lat', 'elv')])),
                   cbind(don$dates, don$data))
-    write.table(don0, file = file.stn,
+    utils::write.table(don0, file = file.stn,
                 sep = don.info[[3]]$sepr, na = don.info[[3]]$miss.val,
                 col.names = FALSE, row.names = FALSE, quote = FALSE)
 
@@ -228,8 +228,8 @@ qcTTOutliersCheckProcs <- function(GeneralParameters){
     # thres.perc <- 0.97
 
     ## convert to fraction (68–95–99.7 rule)
-    alpha <- pnorm(params$sigma) - (1 - pnorm(params$sigma))
-    mfactor <- qnorm(1 - ((1 - alpha) / 2))
+    alpha <- stats::pnorm(params$sigma) - (1 - stats::pnorm(params$sigma))
+    mfactor <- stats::qnorm(1 - ((1 - alpha) / 2))
 
     ## min non-missing
     min.length <- switch(GeneralParameters$intstep,

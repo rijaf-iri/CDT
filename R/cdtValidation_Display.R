@@ -5,7 +5,7 @@ Validation.plotStatMaps <- function(){
     don <- .cdtData$EnvData$Statistics$STN$statistics[istat, ]
 
     dataMapOp <- .cdtData$EnvData$statMapOp
-    typeMap <- str_trim(tclvalue(.cdtData$EnvData$typeMap))
+    typeMap <- trimws(tclvalue(.cdtData$EnvData$typeMap))
 
     if(!dataMapOp$title$user){
         titre <- .cdtData$EnvData$Statistics$STN$description[istat]
@@ -13,7 +13,7 @@ Validation.plotStatMaps <- function(){
 
     legend.texta <- NULL
     if(dataMapOp$colkeyLab$user){
-        if(str_trim(dataMapOp$colkeyLab$label) != "")
+        if(trimws(dataMapOp$colkeyLab$label) != "")
             legend.texta <- dataMapOp$colkeyLab$label
     }
 
@@ -86,18 +86,18 @@ Validation.plotStatMaps <- function(){
 
     #################
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     plot(1, xlim = xlim, ylim = ylim, xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
-    axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
-    axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 1.0)
-    axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
-    title(main = titre, cex.main = 1.5, font.main = 2)
+    axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
+    graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 1.0)
+    graphics::axis(side = 2, at = graphics::axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
+    graphics::title(main = titre, cex.main = 1.5, font.main = 2)
 
     if(add.dem){
         if(dem$Opt$add.hill)
-            image(dem$hill, col = hillsKol, add = TRUE)
+            graphics::image(dem$hill, col = hillsKol, add = TRUE)
 
-        image(dem.pars$don, breaks = dem.pars$breaks, col = demKol, xaxt = 'n', yaxt = 'n', add = TRUE)
+        graphics::image(dem.pars$don, breaks = dem.pars$breaks, col = demKol, xaxt = 'n', yaxt = 'n', add = TRUE)
 
         fields::image.plot(zlim = dem.pars$zlim, breaks = dem.pars$breaks2, col = dem.pars$kolor, horizontal = map.args$horizontal,
                            legend.only = TRUE, legend.mar = dem.legend.mar, legend.width = map.args$legend.width,
@@ -105,14 +105,14 @@ Validation.plotStatMaps <- function(){
                            cex.axis = 0.8, font = 2, tcl = -0.3, mgp = c(0, 0.5, 0)), legend.shrink = 0.8)
     }
 
-    abline(h = axTicks(2), v = axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
-    lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
+    graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
+    graphics::lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
 
     if(typeMap == "Points"){
         kolor.p <- map.args$kolor[findInterval(map.args$don$z, map.args$breaks, rightmost.closed = TRUE, left.open = TRUE)]
-        points(map.args$don$x, map.args$don$y, col = kolor.p, cex = dataMapOp$pointSize, pch = 20)
+        graphics::points(map.args$don$x, map.args$don$y, col = kolor.p, cex = dataMapOp$pointSize, pch = 20)
     }else{
-        image(map.args$don, breaks = map.args$breaks, col = map.args$kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
+        graphics::image(map.args$don, breaks = map.args$breaks, col = map.args$kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
     }
 
     fields::image.plot(zlim = map.args$zlim, breaks = map.args$breaks2, col = map.args$kolor, horizontal = map.args$horizontal,
@@ -120,10 +120,10 @@ Validation.plotStatMaps <- function(){
                        legend.args = legend.args, axis.args = list(at = map.args$breaks1, labels = map.args$labels,
                        cex.axis = 0.8, font = 2, tcl = -0.3, mgp = c(0, 0.5, 0)), legend.shrink = 0.8)
 
-    box()
-    plt <- par("plt")
-    usr <- par("usr")
-    par(opar)
+    graphics::box()
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(opar)
 
     return(list(par = c(plt, usr)))
 }
@@ -243,7 +243,7 @@ Validation.plotGraph <- function(){
 
     ##############
 
-    draw.title <- if(str_trim(titre) == "") FALSE else TRUE
+    draw.title <- if(trimws(titre) == "") FALSE else TRUE
 
     if(draw.title){
         if(GraphType == "Lines"){
@@ -289,87 +289,87 @@ Validation.plotGraph <- function(){
     ##############
 
     if(GraphType == "Scatter"){
-        layout(plot.position, widths = 1, heights = plot.heights, respect = FALSE)
+        graphics::layout(plot.position, widths = 1, heights = plot.heights, respect = FALSE)
 
-        op <- par(mar = par.plot)
+        op <- graphics::par(mar = par.plot)
         plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
 
-        xminTck <- axTicks(1)
+        xminTck <- graphics::axTicks(1)
         xminTck <- xminTck[-length(xminTck)] + diff(xminTck) / 2
-        xminTck <- c(min(axTicks(1)) - diff(xminTck)[1] / 2, xminTck, max(axTicks(1)) + diff(xminTck)[1] / 2)
-        yminTck <- axTicks(2)
+        xminTck <- c(min(graphics::axTicks(1)) - diff(xminTck)[1] / 2, xminTck, max(graphics::axTicks(1)) + diff(xminTck)[1] / 2)
+        yminTck <- graphics::axTicks(2)
         yminTck <- yminTck[-length(yminTck)] + diff(yminTck) / 2
-        yminTck <- c(min(axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(axTicks(2)) + diff(yminTck)[1] / 2)
+        yminTck <- c(min(graphics::axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(graphics::axTicks(2)) + diff(yminTck)[1] / 2)
 
-        abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
-        abline(h = yminTck, col = "lightgray", lty = "dotted")
-        abline(v = axTicks(1), col = "lightgray", lty = "solid", lwd = 0.8)
-        abline(v = xminTck, col = "lightgray", lty = "dotted")
+        graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
+        graphics::abline(h = yminTck, col = "lightgray", lty = "dotted")
+        graphics::abline(v = graphics::axTicks(1), col = "lightgray", lty = "solid", lwd = 0.8)
+        graphics::abline(v = xminTck, col = "lightgray", lty = "dotted")
 
-        axis(1, at = axTicks(1), font = 1)
-        axis(1, at = xminTck, labels = NA, tcl = par("tcl") * 0.5)
-        mtext(xlab, side = 1, line = 2.5, cex = 1.2)
-        axis(2, at = axTicks(2), las = 2, font = 1)
-        axis(2, at = yminTck, labels = NA, tcl = par("tcl") * 0.6)
-        mtext(ylab, side = 2, line = 3, cex = 1.2)
+        graphics::axis(1, at = graphics::axTicks(1), font = 1)
+        graphics::axis(1, at = xminTck, labels = NA, tcl = graphics::par("tcl") * 0.5)
+        graphics::mtext(xlab, side = 1, line = 2.5, cex = 1.2)
+        graphics::axis(2, at = graphics::axTicks(2), las = 2, font = 1)
+        graphics::axis(2, at = yminTck, labels = NA, tcl = graphics::par("tcl") * 0.6)
+        graphics::mtext(ylab, side = 2, line = 3, cex = 1.2)
 
-        if(optsgph$line$draw) abline(a = 0, b = 1, lwd = optsgph$line$lwd, col = optsgph$line$col)
-        points(x, y, pch = optsgph$point$pch, col = optsgph$point$col, cex = optsgph$point$cex)
-        box()
-        par(op)
+        if(optsgph$line$draw) graphics::abline(a = 0, b = 1, lwd = optsgph$line$lwd, col = optsgph$line$col)
+        graphics::points(x, y, pch = optsgph$point$pch, col = optsgph$point$col, cex = optsgph$point$cex)
+        graphics::box()
+        graphics::par(op)
 
-        op <- par(mar = par.title)
+        op <- graphics::par(mar = par.title)
         if(draw.title){
             plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlab = '', ylab = '')
-            bbx <- par("usr")
-            rect(bbx[1], bbx[3], bbx[2], bbx[4], col = "ghostwhite")
-            text(1, 1, titre, cex = 1.5, font = 2)
-        }else plot.new()
-        par(op)
+            bbx <- graphics::par("usr")
+            graphics::rect(bbx[1], bbx[3], bbx[2], bbx[4], col = "ghostwhite")
+            graphics::text(1, 1, titre, cex = 1.5, font = 2)
+        }else graphics::plot.new()
+        graphics::par(op)
     }
 
     if(GraphType == "CDF"){
-        layout(plot.position, widths = 1, heights = plot.heights, respect = FALSE)
+        graphics::layout(plot.position, widths = 1, heights = plot.heights, respect = FALSE)
 
-        op <- par(mar = par.plot)
+        op <- graphics::par(mar = par.plot)
         plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
 
-        xminTck <- axTicks(1)
+        xminTck <- graphics::axTicks(1)
         xminTck <- xminTck[-length(xminTck)] + diff(xminTck) / 2
-        xminTck <- c(min(axTicks(1)) - diff(xminTck)[1] / 2, xminTck, max(axTicks(1)) + diff(xminTck)[1] / 2)
-        yminTck <- axTicks(2)
+        xminTck <- c(min(graphics::axTicks(1)) - diff(xminTck)[1] / 2, xminTck, max(graphics::axTicks(1)) + diff(xminTck)[1] / 2)
+        yminTck <- graphics::axTicks(2)
         yminTck <- yminTck[-length(yminTck)] + diff(yminTck) / 2
-        yminTck <- c(min(axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(axTicks(2)) + diff(yminTck)[1] / 2)
+        yminTck <- c(min(graphics::axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(graphics::axTicks(2)) + diff(yminTck)[1] / 2)
 
-        abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
-        abline(h = yminTck, col = "lightgray", lty = "dotted")
-        abline(v = axTicks(1), col = "lightgray", lty = "solid", lwd = 0.8)
-        abline(v = xminTck, col = "lightgray", lty = "dotted")
+        graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
+        graphics::abline(h = yminTck, col = "lightgray", lty = "dotted")
+        graphics::abline(v = graphics::axTicks(1), col = "lightgray", lty = "solid", lwd = 0.8)
+        graphics::abline(v = xminTck, col = "lightgray", lty = "dotted")
 
-        axis(1, at = axTicks(1), font = 1)
-        axis(1, at = xminTck, labels = NA, tcl = par("tcl") * 0.5)
-        mtext(xlab, side = 1, line = 2.5, cex = 1.2)
-        axis(2, at = axTicks(2), las = 2, font = 1)
-        axis(2, at = yminTck, labels = NA, tcl = par("tcl") * 0.6)
-        mtext(ylab, side = 2, line = 3, cex = 1.2)
+        graphics::axis(1, at = graphics::axTicks(1), font = 1)
+        graphics::axis(1, at = xminTck, labels = NA, tcl = graphics::par("tcl") * 0.5)
+        graphics::mtext(xlab, side = 1, line = 2.5, cex = 1.2)
+        graphics::axis(2, at = graphics::axTicks(2), las = 2, font = 1)
+        graphics::axis(2, at = yminTck, labels = NA, tcl = graphics::par("tcl") * 0.6)
+        graphics::mtext(ylab, side = 2, line = 3, cex = 1.2)
 
         if(any(!is.na(x)) & any(!is.na(y))){
             xax <- seq(min(c(x, y), na.rm = TRUE), max(c(x, y), na.rm = TRUE), length.out = 1000)
-            fx <- ecdf(x)
-            fy <- ecdf(y)
+            fx <- stats::ecdf(x)
+            fy <- stats::ecdf(y)
 
             if(optsgph$plot$obs$type == 'both'){
-                lines(xax, fx(xax), type = 'o', col = optsgph$plot$obs$line, lwd = optsgph$plot$obs$lwd,
+                graphics::lines(xax, fx(xax), type = 'o', col = optsgph$plot$obs$line, lwd = optsgph$plot$obs$lwd,
                       pch = optsgph$plot$obs$pch, bg = optsgph$plot$obs$points, cex = optsgph$plot$obs$cex)
             }else{
-                lines(xax, fx(xax), type = 'l', col = optsgph$plot$obs$line, lwd = optsgph$plot$obs$lwd)
+                graphics::lines(xax, fx(xax), type = 'l', col = optsgph$plot$obs$line, lwd = optsgph$plot$obs$lwd)
             }
 
             if(optsgph$plot$est$type == 'both'){
-                lines(xax, fy(xax), type = 'o', col = optsgph$plot$est$line, lwd = optsgph$plot$est$lwd,
+                graphics::lines(xax, fy(xax), type = 'o', col = optsgph$plot$est$line, lwd = optsgph$plot$est$lwd,
                       pch = optsgph$plot$est$pch, bg = optsgph$plot$est$points, cex = optsgph$plot$est$cex)
             }else{
-                lines(xax, fy(xax), type = 'l', col = optsgph$plot$est$line, lwd = optsgph$plot$est$lwd)
+                graphics::lines(xax, fy(xax), type = 'l', col = optsgph$plot$est$line, lwd = optsgph$plot$est$lwd)
             }
 
             obs.pch <- if(optsgph$plot$obs$type == 'both') optsgph$plot$obs$pch else NA
@@ -378,30 +378,30 @@ Validation.plotGraph <- function(){
             est.bg <- if(optsgph$plot$est$type == 'both') optsgph$plot$est$points else NA
 
             if(optsgph$legend$add){
-                legend('bottomright',
+                graphics::legend('bottomright',
                        legend = c(optsgph$legend$obs, optsgph$legend$est),
                        col = c(optsgph$plot$obs$line, optsgph$plot$est$line),
                        pch = c(obs.pch, est.pch), pt.bg = c(obs.bg, est.bg),
                        pt.cex = 1, pt.lwd = 1, lwd = 3, cex = 1, bty = 'n')
             }
         }
-        par(op)
+        graphics::par(op)
 
-        op <- par(mar = par.title)
+        op <- graphics::par(mar = par.title)
         if(draw.title){
             plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlab = '', ylab = '')
-            bbx <- par("usr")
-            rect(bbx[1], bbx[3], bbx[2], bbx[4], col = "ghostwhite")
-            text(1, 1, titre, cex = 1.5, font = 2)
-        }else plot.new()
-        par(op)
+            bbx <- graphics::par("usr")
+            graphics::rect(bbx[1], bbx[3], bbx[2], bbx[4], col = "ghostwhite")
+            graphics::text(1, 1, titre, cex = 1.5, font = 2)
+        }else graphics::plot.new()
+        graphics::par(op)
     }
 
     if(GraphType == "Lines"){
         daty <- .cdtData$EnvData$opDATA$temps
-        layout(plot.position, widths = 1, heights = plot.heights, respect = FALSE)
+        graphics::layout(plot.position, widths = 1, heights = plot.heights, respect = FALSE)
 
-        op <- par(mar = par.plot)
+        op <- graphics::par(mar = par.plot)
         plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
 
         xTck <- axTicks.Date(daty, 1)
@@ -411,63 +411,63 @@ Validation.plotGraph <- function(){
             xminTck <- xminTck[!xminTck %in% xTck]
         }else xminTck <- NULL
 
-        yminTck <- axTicks(2)
+        yminTck <- graphics::axTicks(2)
         yminTck <- yminTck[-length(yminTck)] + diff(yminTck) / 2
-        yminTck <- c(min(axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(axTicks(2)) + diff(yminTck)[1] / 2)
+        yminTck <- c(min(graphics::axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(graphics::axTicks(2)) + diff(yminTck)[1] / 2)
 
-        abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
-        abline(h = yminTck, col = "lightgray", lty = "dotted")
-        abline(v = xTck, col = "lightgray", lty = "solid", lwd = 0.8)
+        graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "solid", lwd = 0.8)
+        graphics::abline(h = yminTck, col = "lightgray", lty = "dotted")
+        graphics::abline(v = xTck, col = "lightgray", lty = "solid", lwd = 0.8)
         if(!is.null(xminTck))
-            abline(v = xminTck, col = "lightgray", lty = "dotted")
+            graphics::abline(v = xminTck, col = "lightgray", lty = "dotted")
 
-        axis.Date(1, at = xTck, font = 1)
+        graphics::axis.Date(1, at = xTck, font = 1)
         if(!is.null(xminTck))
-            axis.Date(1, at = xminTck, labels = NA, tcl = par("tcl") * 0.5)
-        mtext(xlab, side = 1, line = 2.5, cex = 1)
-        axis(2, at = axTicks(2), las = 2, font = 1)
-        axis(2, at = yminTck, labels = NA, tcl = par("tcl") * 0.6)
-        mtext(ylab, side = 2, line = 3, cex = 1)
+            graphics::axis.Date(1, at = xminTck, labels = NA, tcl = graphics::par("tcl") * 0.5)
+        graphics::mtext(xlab, side = 1, line = 2.5, cex = 1)
+        graphics::axis(2, at = graphics::axTicks(2), las = 2, font = 1)
+        graphics::axis(2, at = yminTck, labels = NA, tcl = graphics::par("tcl") * 0.6)
+        graphics::mtext(ylab, side = 2, line = 3, cex = 1)
 
         if(optsgph$plot$obs$type == 'both'){
-            lines(daty, x, type = 'o', col = optsgph$plot$obs$line, lwd = optsgph$plot$obs$lwd,
+            graphics::lines(daty, x, type = 'o', col = optsgph$plot$obs$line, lwd = optsgph$plot$obs$lwd,
                   pch = optsgph$plot$obs$pch, bg = optsgph$plot$obs$points, cex = optsgph$plot$obs$cex)
         }else{
-            lines(daty, x, type = 'l', col = optsgph$plot$obs$line, lwd = optsgph$plot$obs$lwd)
+            graphics::lines(daty, x, type = 'l', col = optsgph$plot$obs$line, lwd = optsgph$plot$obs$lwd)
         }
 
         if(optsgph$plot$est$type == 'both'){
-            lines(daty, y, type = 'o', col = optsgph$plot$est$line, lwd = optsgph$plot$est$lwd,
+            graphics::lines(daty, y, type = 'o', col = optsgph$plot$est$line, lwd = optsgph$plot$est$lwd,
                   pch = optsgph$plot$est$pch, bg = optsgph$plot$est$points, cex = optsgph$plot$est$cex)
         }else{
-            lines(daty, y, type = 'l', col = optsgph$plot$est$line, lwd = optsgph$plot$est$lwd)
+            graphics::lines(daty, y, type = 'l', col = optsgph$plot$est$line, lwd = optsgph$plot$est$lwd)
         }
-        par(op)
+        graphics::par(op)
 
-        op <- par(mar = par.legend)
-        plot.new()
+        op <- graphics::par(mar = par.legend)
+        graphics::plot.new()
         if(optsgph$legend$add){
             obs.pch <- if(optsgph$plot$obs$type == 'both') optsgph$plot$obs$pch else NA
             est.pch <- if(optsgph$plot$est$type == 'both') optsgph$plot$est$pch else NA
             obs.bg <- if(optsgph$plot$obs$type == 'both') optsgph$plot$obs$points else NA
             est.bg <- if(optsgph$plot$est$type == 'both') optsgph$plot$est$points else NA
 
-            legend('top', 'groups', horiz = TRUE,
+            graphics::legend('top', 'groups', horiz = TRUE,
                    legend = c(optsgph$legend$obs, optsgph$legend$est),
                    col = c(optsgph$plot$obs$line, optsgph$plot$est$line),
                    pch = c(obs.pch, est.pch), pt.bg = c(obs.bg, est.bg),
                    pt.cex = 1, pt.lwd = 1, lwd = 3, cex = 1.5)
         }
-        par(op)
+        graphics::par(op)
 
-        op <- par(mar = par.title)
+        op <- graphics::par(mar = par.title)
         if(draw.title){
             plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlab = '', ylab = '')
-            bbx <- par("usr")
-            rect(bbx[1], bbx[3], bbx[2], bbx[4], col = "ghostwhite")
-            text(1, 1, titre, cex = 2, font = 2)
-        }else plot.new()
-        par(op)
+            bbx <- graphics::par("usr")
+            graphics::rect(bbx[1], bbx[3], bbx[2], bbx[4], col = "ghostwhite")
+            graphics::text(1, 1, titre, cex = 2, font = 2)
+        }else graphics::plot.new()
+        graphics::par(op)
     }
     return(0)
 }

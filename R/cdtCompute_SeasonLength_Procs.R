@@ -248,17 +248,17 @@ compute_SeasonLength_Procs <- function(GeneralParameters){
 
         x <- index.out$coords$mat$x
         y <- index.out$coords$mat$y
-        dx <- ncdim_def("Lon", "degreeE", x)
-        dy <- ncdim_def("Lat", "degreeN", y)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
 
         ret <- lapply(seq_along(start.date), function(j){
-            nc <- nc_open(file.path(onset.ncdir, paste0("onset_", start.date[j], ".nc")))
-            ons.data <- ncvar_get(nc, varid = "onset")
-            nc_close(nc)
+            nc <- ncdf4::nc_open(file.path(onset.ncdir, paste0("onset_", start.date[j], ".nc")))
+            ons.data <- ncdf4::ncvar_get(nc, varid = "onset")
+            ncdf4::nc_close(nc)
 
-            nc <- nc_open(file.path(cessa.ncdir, paste0("cessation_", cessa.date[j], ".nc")))
-            cess.data <- ncvar_get(nc, varid = "cessation")
-            nc_close(nc)
+            nc <- ncdf4::nc_open(file.path(cessa.ncdir, paste0("cessation_", cessa.date[j], ".nc")))
+            cess.data <- ncdf4::ncvar_get(nc, varid = "cessation")
+            ncdf4::nc_close(nc)
 
             ons.data <- ons.data + as.Date(start.date[j], "%Y%m%d")
             cess.data <- cess.data + as.Date(cessa.date[j], "%Y%m%d")
@@ -267,16 +267,16 @@ compute_SeasonLength_Procs <- function(GeneralParameters){
             seasonL[is.na(seasonL)] <- -99
 
             time0 <- as.integer(as.Date(start.date[j], "%Y%m%d"))
-            time <- ncdim_def("start", "days since 1970-1-1", time0)
+            time <- ncdf4::ncdim_def("start", "days since 1970-1-1", time0)
             xyt.dim <- list(dx, dy, time)
-            grdNC <- ncvar_def("seasLen", "days", xyt.dim, -99,
+            grdNC <- ncdf4::ncvar_def("seasLen", "days", xyt.dim, -99,
                                 longname = "Length of rainy season", prec = "short",
                                 shuffle = TRUE, compression = 9)
 
             filenc <- file.path(ncdfOUT, paste0("seasLen_", start.date[j], ".nc"))
-            nc <- nc_create(filenc, grdNC)
-            ncvar_put(nc, grdNC, seasonL)
-            nc_close(nc)
+            nc <- ncdf4::nc_create(filenc, grdNC)
+            ncdf4::ncvar_put(nc, grdNC, seasonL)
+            ncdf4::nc_close(nc)
 
             return(0)
         })

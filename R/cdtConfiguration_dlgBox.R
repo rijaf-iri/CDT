@@ -8,10 +8,10 @@ cdtConfiguration <- function(parent.win){
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
-    cdtConfig <- fromJSON(cdt.file.conf)
+    cdtConfig <- jsonlite::fromJSON(cdt.file.conf)
 
     tcl.file.conf <- file.path(.cdtDir$dirLocal, "config", "Tcl_config.json")
-    tclConfig <- fromJSON(tcl.file.conf)
+    tclConfig <- jsonlite::fromJSON(tcl.file.conf)
 
     ####################################
 
@@ -330,68 +330,68 @@ cdtConfiguration <- function(parent.win){
     tkconfigure(bt.prm.OK, command = function(){
         if(WindowsOS()){
             if(tclvalue(useOTcl) == "1" &
-                str_trim(tclvalue(Tclbin)) %in% c("", "NA"))
+                trimws(tclvalue(Tclbin)) %in% c("", "NA"))
             {
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
             if(tclvalue(useOTcl) == "1" &
-                !dir.exists(str_trim(tclvalue(Tclbin))))
+                !dir.exists(trimws(tclvalue(Tclbin))))
             {
                 cdt.tkmessageBox(tt, message = paste(tclvalue(Tclbin), lang.dlg[['message']][['3']]), icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
         }
         if(tclvalue(Tktable.auto) == "0" &
-            str_trim(tclvalue(Tktable.path)) %in% c("", "NA"))
+            trimws(tclvalue(Tktable.path)) %in% c("", "NA"))
         {
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(tclvalue(Tktable.auto) == "0" &
-            !dir.exists(str_trim(tclvalue(Tktable.path))))
+            !dir.exists(trimws(tclvalue(Tktable.path))))
         {
             cdt.tkmessageBox(tt, message = paste(tclvalue(Tktable.path), lang.dlg[['message']][['3']]), icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(tclvalue(Bwidget.auto) == "0" &
-            str_trim(tclvalue(Bwidget.path)) %in% c("", "NA"))
+            trimws(tclvalue(Bwidget.path)) %in% c("", "NA"))
         {
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(tclvalue(Bwidget.auto) == "0" &
-            !dir.exists(str_trim(tclvalue(Bwidget.path))))
+            !dir.exists(trimws(tclvalue(Bwidget.path))))
         {
             cdt.tkmessageBox(tt, message = paste(tclvalue(Bwidget.path), lang.dlg[['message']][['3']]), icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             if(WindowsOS()){
                 tclConfig[[ostype]]$UseOtherTclTk <- switch(tclvalue(useOTcl), '0' = FALSE, '1' = TRUE)
-                tclConfig[[ostype]]$Tclbin <- str_trim(tclvalue(Tclbin))
+                tclConfig[[ostype]]$Tclbin <- trimws(tclvalue(Tclbin))
             }
             tclConfig[[ostype]]$Tktable.auto <- switch(tclvalue(Tktable.auto), '0' = FALSE, '1' = TRUE)
-            tclConfig[[ostype]]$Tktable.path <- str_trim(tclvalue(Tktable.path))
+            tclConfig[[ostype]]$Tktable.path <- trimws(tclvalue(Tktable.path))
             tclConfig[[ostype]]$Bwidget.auto <- switch(tclvalue(Bwidget.auto), '0' = FALSE, '1' = TRUE)
-            tclConfig[[ostype]]$Bwidget.path <- str_trim(tclvalue(Bwidget.path))
+            tclConfig[[ostype]]$Bwidget.path <- trimws(tclvalue(Bwidget.path))
 
-            write_json(tclConfig, path = tcl.file.conf, auto_unbox = TRUE, pretty = TRUE)
+            jsonlite::write_json(tclConfig, path = tcl.file.conf, auto_unbox = TRUE, pretty = TRUE)
 
-            cdtConfig$lang.iso <- lang.iso.list[lang.name.list %in% str_trim(tclvalue(lang.select))]
-            cdtConfig$missval <- str_trim(tclvalue(miss.value))
-            cdtConfig$missval.anom <- str_trim(tclvalue(miss.value.anom))
-            cdtConfig$wd <- str_trim(tclvalue(work.dir))
-            cdtConfig$ascii.file.ext <- fileExtVAL[CbfileExtVAL %in% str_trim(tclvalue(file.exts))]
-            cdtConfig$region$minlon <- as.numeric(str_trim(tclvalue(minLon)))
-            cdtConfig$region$maxlon <- as.numeric(str_trim(tclvalue(maxLon)))
-            cdtConfig$region$minlat <- as.numeric(str_trim(tclvalue(minLat)))
-            cdtConfig$region$maxlat <- as.numeric(str_trim(tclvalue(maxLat)))
+            cdtConfig$lang.iso <- lang.iso.list[lang.name.list %in% trimws(tclvalue(lang.select))]
+            cdtConfig$missval <- trimws(tclvalue(miss.value))
+            cdtConfig$missval.anom <- trimws(tclvalue(miss.value.anom))
+            cdtConfig$wd <- trimws(tclvalue(work.dir))
+            cdtConfig$ascii.file.ext <- fileExtVAL[CbfileExtVAL %in% trimws(tclvalue(file.exts))]
+            cdtConfig$region$minlon <- as.numeric(trimws(tclvalue(minLon)))
+            cdtConfig$region$maxlon <- as.numeric(trimws(tclvalue(maxLon)))
+            cdtConfig$region$minlat <- as.numeric(trimws(tclvalue(minLat)))
+            cdtConfig$region$maxlat <- as.numeric(trimws(tclvalue(maxLat)))
 
-            cdtConfig$cdtDataset.chunk$chunksize <- as.integer(str_trim(tclvalue(chunkSize)))
-            cdtConfig$cdtDataset.chunk$chunkfac <- as.integer(str_trim(tclvalue(chunkFac)))
+            cdtConfig$cdtDataset.chunk$chunksize <- as.integer(trimws(tclvalue(chunkSize)))
+            cdtConfig$cdtDataset.chunk$chunkfac <- as.integer(trimws(tclvalue(chunkFac)))
 
             cdtConfig$parallel$dopar <- switch(tclvalue(doparVar), '0' = FALSE, '1' = TRUE)
             cdtConfig$parallel$detect.cores <- switch(tclvalue(coresVar), '0' = FALSE, '1' = TRUE)
-            cdtConfig$parallel$nb.cores <- as.integer(str_trim(tclvalue(nbCores)))
+            cdtConfig$parallel$nb.cores <- as.integer(trimws(tclvalue(nbCores)))
 
-            write_json(cdtConfig, path = cdt.file.conf, auto_unbox = TRUE, pretty = TRUE)
+            jsonlite::write_json(cdtConfig, path = cdt.file.conf, auto_unbox = TRUE, pretty = TRUE)
 
             .cdtData$Config$wd <- cdtConfig$wd
             .cdtData$Config$missval <- cdtConfig$missval

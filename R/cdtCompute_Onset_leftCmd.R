@@ -224,7 +224,7 @@ OnsetCalcPanelCmd <- function(){
             stateETP <- 'disabled'
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['3']]
                 tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['4']]
 
@@ -260,7 +260,7 @@ OnsetCalcPanelCmd <- function(){
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['5']]
                 tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['6']]
 
@@ -335,8 +335,8 @@ OnsetCalcPanelCmd <- function(){
             ########
 
             innerRegDef <<- tkframe(frameRegDef, relief = 'groove', borderwidth = 2)
-            if(str_trim(tclvalue(onset.region)) == CbregionDIV[2]){
-                if(str_trim(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
+            if(trimws(tclvalue(onset.region)) == CbregionDIV[2]){
+                if(trimws(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
                     txt.lat.sep <- tklabel(innerRegDef, text = '', width = largeur9)
 
                     ######
@@ -365,7 +365,7 @@ OnsetCalcPanelCmd <- function(){
                     tkbind(cb.lat.sub, "<<ComboboxSelected>>", function(){
                         for(i in seq_along(lat.subdiv)) tkdestroy(en.lat.div[[i]])
                         en.lat.div <<- NULL
-                        lat.subdiv <<- vector('list', length = as.numeric(str_trim(tclvalue(lat.nbdiv))) - 1)
+                        lat.subdiv <<- vector('list', length = as.numeric(trimws(tclvalue(lat.nbdiv))) - 1)
                         for(i in seq_along(lat.subdiv)) lat.subdiv[[i]] <<- tclVar()
                         for(i in seq_along(lat.subdiv)) en.lat.div[[i]] <<- tkentry(fr.lat.sub1, textvariable = lat.subdiv[[i]], width = 6)
                         for(i in seq_along(lat.subdiv)){
@@ -439,16 +439,16 @@ OnsetCalcPanelCmd <- function(){
 
                 ######
                 tkconfigure(bt.create.subdv, command = function(){
-                    if(str_trim(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
+                    if(trimws(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
                         lat <- rep(NA, length(lat.subdiv))
-                        for(i in seq_along(lat.subdiv)) lat[i] <- as.numeric(str_trim(tclvalue(lat.subdiv[[i]])))
+                        for(i in seq_along(lat.subdiv)) lat[i] <- as.numeric(trimws(tclvalue(lat.subdiv[[i]])))
                         lat <- ifelse(lat > 60 | lat < -60, NA, lat)
                         if(any(is.na(lat))){
                             lat0 <- sapply(lat.subdiv, tclvalue)
                             Insert.Messages.Out(paste(lang.dlg[['message']][['1']], paste0(lat0[is.na(lat)], collapse = " ")), TRUE, 'e')
                             subdiv <- NULL
                         }else{
-                            subdiv <- vector('character', as.numeric(str_trim(tclvalue(lat.nbdiv))))
+                            subdiv <- vector('character', as.numeric(trimws(tclvalue(lat.nbdiv))))
                             if(length(lat) == 1){
                                 subdiv[1] <- paste('Lat <=', lat[[1]])
                                 subdiv[2] <- paste('Lat >', lat[[1]])
@@ -488,7 +488,7 @@ OnsetCalcPanelCmd <- function(){
 
             #########
             onset.method <- tclVar(Parameters$method)
-            mon1 <- as.numeric(str_trim(Parameters$earliest$month))
+            mon1 <- as.numeric(trimws(Parameters$earliest$month))
             onset.start.mon <- tclVar(MOIS[mon1])
             onset.start.day <- tclVar(Parameters$earliest$day)
             thres.rain.day <- tclVar(Parameters$thres.rain.day)
@@ -498,7 +498,7 @@ OnsetCalcPanelCmd <- function(){
             min.rain.day <- tclVar(Parameters$min.rain.day)
             dryspell <- tclVar(Parameters$dryspell)
             dryspell.days <- tclVar(Parameters$dryspell.days)
-            mon2 <- as.numeric(str_trim(Parameters$latest$month))
+            mon2 <- as.numeric(trimws(Parameters$latest$month))
             onset.late.mon <- tclVar(MOIS[mon2])
             onset.late.day <- tclVar(Parameters$latest$day)
 
@@ -601,7 +601,7 @@ OnsetCalcPanelCmd <- function(){
                 tkdestroy(frDrySpell)
                 tkdestroy(frDrySpell1)
 
-                if(str_trim(tclvalue(onset.method)) == '2'){
+                if(trimws(tclvalue(onset.method)) == '2'){
                     frEvapo <<- tkframe(frameOnset)
                     txt.evapo1 <- tklabel(frEvapo, text = lang.dlg[['label']][['22']], anchor = 'w', justify = 'left')
                     en.evapo <- tkentry(frEvapo, textvariable = evapo.frac, width = 5)
@@ -610,8 +610,8 @@ OnsetCalcPanelCmd <- function(){
 
                     tkgrid(frEvapo, row = 4, sticky = 'we')
                 }
-                if(str_trim(tclvalue(onset.method)) %in% c('3', '4', '5')){
-                    if(str_trim(tclvalue(onset.method)) %in% c('3', '5')){
+                if(trimws(tclvalue(onset.method)) %in% c('3', '4', '5')){
+                    if(trimws(tclvalue(onset.method)) %in% c('3', '5')){
                         frMinDays <<- tkframe(frameOnset)
                         txt.minday1 <- tklabel(frMinDays, text = lang.dlg[['label']][['24']], anchor = 'w', justify = 'left')
                         en.minday <- tkentry(frMinDays, textvariable = min.rain.day, width = 4)
@@ -620,7 +620,7 @@ OnsetCalcPanelCmd <- function(){
 
                         tkgrid(frMinDays, row = 5, sticky = 'we')
                     }
-                    if(str_trim(tclvalue(onset.method)) %in% c('4', '5')){
+                    if(trimws(tclvalue(onset.method)) %in% c('4', '5')){
                         frDrySpell <<- tkframe(frameOnset)
                         txt.dryspl1 <- tklabel(frDrySpell, text = lang.dlg[['label']][['26']], anchor = 'w', justify = 'left')
                         en.dryspl <- tkentry(frDrySpell, textvariable = dryspell, width = 4)
@@ -688,7 +688,7 @@ OnsetCalcPanelCmd <- function(){
 
         ######
         tkbind(cb.reg, "<<ComboboxSelected>>", function(){
-            stateSubdv <- if(str_trim(tclvalue(onset.region)) == CbregionDIV[1]) "disabled" else "normal"
+            stateSubdv <- if(trimws(tclvalue(onset.region)) == CbregionDIV[1]) "disabled" else "normal"
             tkconfigure(cb.subdv, state = stateSubdv)
 
             OnsetDefinitionInput()
@@ -721,50 +721,50 @@ OnsetCalcPanelCmd <- function(){
         bt.CalcOnset <- ttkbutton(subfr2, text = lang.dlg[['button']][['3']])
 
         tkconfigure(bt.CalcOnset, command = function(){
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
-                GeneralParameters$cdtstation$prec <- str_trim(tclvalue(input.Prec))
-                GeneralParameters$cdtstation$etp <- str_trim(tclvalue(input.Etp))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
+                GeneralParameters$cdtstation$prec <- trimws(tclvalue(input.Prec))
+                GeneralParameters$cdtstation$etp <- trimws(tclvalue(input.Etp))
             }
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
-                GeneralParameters$cdtdataset$prec <- str_trim(tclvalue(input.Prec))
-                GeneralParameters$cdtdataset$etp <- str_trim(tclvalue(input.Etp))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
+                GeneralParameters$cdtdataset$prec <- trimws(tclvalue(input.Prec))
+                GeneralParameters$cdtdataset$etp <- trimws(tclvalue(input.Etp))
             }
 
-            GeneralParameters$output <- str_trim(tclvalue(dir.save))
+            GeneralParameters$output <- trimws(tclvalue(dir.save))
 
-            GeneralParameters$onset.reg$region <- str_trim(tclvalue(onset.region))
-            GeneralParameters$onset.reg$subdiv <- str_trim(tclvalue(onset.subdiv))
+            GeneralParameters$onset.reg$region <- trimws(tclvalue(onset.region))
+            GeneralParameters$onset.reg$subdiv <- trimws(tclvalue(onset.subdiv))
 
-            if(str_trim(tclvalue(onset.region)) == CbregionDIV[2]){
-                if(str_trim(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
-                    GeneralParameters$onset.reg$lat$nb <- as.numeric(str_trim(tclvalue(lat.nbdiv)))
-                    GeneralParameters$onset.reg$lat$div <- lapply(lat.subdiv, function(x) as.numeric(str_trim(tclvalue(x))))
+            if(trimws(tclvalue(onset.region)) == CbregionDIV[2]){
+                if(trimws(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
+                    GeneralParameters$onset.reg$lat$nb <- as.numeric(trimws(tclvalue(lat.nbdiv)))
+                    GeneralParameters$onset.reg$lat$div <- lapply(lat.subdiv, function(x) as.numeric(trimws(tclvalue(x))))
                 }
 
-                if(str_trim(tclvalue(onset.subdiv)) == CbregionSUBDIV[2]){
-                    GeneralParameters$onset.reg$shp$file <- str_trim(tclvalue(shp.file))
-                    GeneralParameters$onset.reg$shp$attr <- str_trim(tclvalue(shp.attr))
+                if(trimws(tclvalue(onset.subdiv)) == CbregionSUBDIV[2]){
+                    GeneralParameters$onset.reg$shp$file <- trimws(tclvalue(shp.file))
+                    GeneralParameters$onset.reg$shp$attr <- trimws(tclvalue(shp.attr))
                 }
             }
 
             GeneralParameters$onset.criteria <- lapply(ONSET.vars, function(x){
                                                         x <- x$onset.def
                                                         list(
-                                                            method = as.numeric(str_trim(tclvalue(x$method))),
-                                                            total.days = as.numeric(str_trim(tclvalue(x$total.days))),
-                                                            rain.total = as.numeric(str_trim(tclvalue(x$rain.total))),
-                                                            thres.rain.day = as.numeric(str_trim(tclvalue(x$thres.rain.day))),
-                                                            min.rain.day = as.numeric(str_trim(tclvalue(x$min.rain.day))),
-                                                            dryspell = as.numeric(str_trim(tclvalue(x$dryspell))),
-                                                            dryspell.days = as.numeric(str_trim(tclvalue(x$dryspell.days))),
-                                                            evapo.frac = as.numeric(str_trim(tclvalue(x$evapo.frac))),
-                                                            earliest = list(month = which(MOIS %in% str_trim(tclvalue(x$earliest$month))),
-                                                                            day = as.numeric(str_trim(tclvalue(x$earliest$day)))),
-                                                            latest = list(month = which(MOIS %in% str_trim(tclvalue(x$latest$month))),
-                                                                            day = as.numeric(str_trim(tclvalue(x$latest$day))))
+                                                            method = as.numeric(trimws(tclvalue(x$method))),
+                                                            total.days = as.numeric(trimws(tclvalue(x$total.days))),
+                                                            rain.total = as.numeric(trimws(tclvalue(x$rain.total))),
+                                                            thres.rain.day = as.numeric(trimws(tclvalue(x$thres.rain.day))),
+                                                            min.rain.day = as.numeric(trimws(tclvalue(x$min.rain.day))),
+                                                            dryspell = as.numeric(trimws(tclvalue(x$dryspell))),
+                                                            dryspell.days = as.numeric(trimws(tclvalue(x$dryspell.days))),
+                                                            evapo.frac = as.numeric(trimws(tclvalue(x$evapo.frac))),
+                                                            earliest = list(month = which(MOIS %in% trimws(tclvalue(x$earliest$month))),
+                                                                            day = as.numeric(trimws(tclvalue(x$earliest$day)))),
+                                                            latest = list(month = which(MOIS %in% trimws(tclvalue(x$latest$month))),
+                                                                            day = as.numeric(trimws(tclvalue(x$latest$day))))
                                                         )
                                                     })
 
@@ -866,8 +866,8 @@ OnsetCalcPanelCmd <- function(){
             if(path.dataIdx %in% c("", "NA") | is.na(path.dataIdx)) return(NULL)
             tclvalue(file.dataIndex) <- path.dataIdx
 
-            if(file.exists(str_trim(tclvalue(file.dataIndex)))){
-                OutIndexdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.dataIndex)))){
+                OutIndexdata <- try(readRDS(trimws(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutIndexdata, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['11']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), TRUE, 'e')
@@ -877,7 +877,7 @@ OnsetCalcPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutIndexdata
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -933,7 +933,7 @@ OnsetCalcPanelCmd <- function(){
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$dataMapOp$pointSize
         })
 
@@ -941,15 +941,15 @@ OnsetCalcPanelCmd <- function(){
         .cdtData$EnvData$tab$dataMap <- NULL
 
         tkconfigure(bt.data.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != "" &
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != "" &
                 !is.null(.cdtData$EnvData$varData))
                     OnsetCalc.Display.Maps()
         })
 
         tkconfigure(bt.data.Index.prev, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != ""){
                 donDates <- format(.cdtData$EnvData$output$start.date, "%Y")
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$donDate)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
                 tclvalue(.cdtData$EnvData$donDate) <- donDates[idaty]
@@ -962,9 +962,9 @@ OnsetCalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.data.Index.next, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != ""){
                 donDates <- format(.cdtData$EnvData$output$start.date, "%Y")
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$donDate)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
                 tclvalue(.cdtData$EnvData$donDate) <- donDates[idaty]
@@ -1037,7 +1037,7 @@ OnsetCalcPanelCmd <- function(){
         #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
+            suffix.fun <- switch(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
                                     "Barplot" = "Bar",
                                     "Line" = "Line")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
@@ -1160,7 +1160,7 @@ OnsetCalcPanelCmd <- function(){
             ######
             tkconfigure(bt.stnID.prev, command = function(){
                 if(!is.null(.cdtData$EnvData$varData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1172,7 +1172,7 @@ OnsetCalcPanelCmd <- function(){
 
             tkconfigure(bt.stnID.next, command = function(){
                 if(!is.null(.cdtData$EnvData$varData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1236,7 +1236,7 @@ OnsetCalcPanelCmd <- function(){
             tcl('update')
         })
 
-        this.daty <- str_trim(tclvalue(.cdtData$EnvData$donDate))
+        this.daty <- trimws(tclvalue(.cdtData$EnvData$donDate))
         idt <- which(format(.cdtData$EnvData$output$start.date, "%Y") == this.daty)
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
@@ -1246,7 +1246,7 @@ OnsetCalcPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             ########
             readVarData <- TRUE
@@ -1307,11 +1307,11 @@ OnsetCalcPanelCmd <- function(){
                     if(.cdtData$EnvData$filePathData == filePathData) readVarData <- FALSE
 
             if(readVarData){
-                nc <- nc_open(filePathData)
+                nc <- ncdf4::nc_open(filePathData)
                 .cdtData$EnvData$varData$map$x <- nc$dim[[1]]$vals
                 .cdtData$EnvData$varData$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$varData$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
+                .cdtData$EnvData$varData$map$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                ncdf4::nc_close(nc)
                 .cdtData$EnvData$filePathData <- filePathData
             }
 

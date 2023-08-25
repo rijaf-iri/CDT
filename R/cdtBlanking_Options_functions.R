@@ -51,7 +51,7 @@ blanking.options <- function(...){
 # ncgrid: named list(lon, lat)
 create.mask.grid <- function(shp, ncgrid){
     width <- mean(diff(sapply(ncgrid, range)) / (sapply(ncgrid, length) - 1))
-    shp <- as(shp, "SpatialPolygons")
+    shp <- methods::as(shp, "SpatialPolygons")
     shp <- rgeos::gUnaryUnion(shp)
     shp <- rgeos::gSimplify(shp, tol = width / 4, topologyPreserve = TRUE)
 
@@ -66,11 +66,11 @@ create.mask.grid <- function(shp, ncgrid){
         shp <- rgeos::gBuffer(shp, width = buffer)
     }
 
-    slot.shp <- slot(shp, "polygons")
+    slot.shp <- methods::slot(shp, "polygons")
     shp.df <- data.frame(vtmp = rep(1, length(slot.shp)))
-    row.names(shp.df) <- sapply(slot.shp, function(x) slot(x, "ID"))
-    shp <- SpatialPolygonsDataFrame(shp, shp.df)
-    mask <- over(defSpatialPixels(ncgrid), shp)[, 'vtmp']
+    row.names(shp.df) <- sapply(slot.shp, function(x) methods::slot(x, "ID"))
+    shp <- sp::SpatialPolygonsDataFrame(shp, shp.df)
+    mask <- sp::over(defSpatialPixels(ncgrid), shp)[, 'vtmp']
     dim(mask) <- sapply(ncgrid, length)
     return(mask)
 }

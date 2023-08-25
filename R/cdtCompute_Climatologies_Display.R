@@ -50,7 +50,7 @@ climatologiesCalc.plotClimMaps <- function(){
             }
         }
 
-        ipos <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$climDate)))
+        ipos <- as.numeric(trimws(tclvalue(.cdtData$EnvData$climDate)))
         titre5 <- seqtime[ipos]
         .titre <- paste(titre1, titre2, titre3, titre4, titre5)
     }else .titre <- climMapOp$title$title
@@ -58,10 +58,10 @@ climatologiesCalc.plotClimMaps <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, climMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = climMapOp,
@@ -74,7 +74,7 @@ climatologiesCalc.plotClimMaps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(climMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -85,7 +85,7 @@ climatologiesCalc.plotClimGraph <- function(){
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData[['message']][['12']], TRUE, 'e')
             return(NULL)
@@ -95,8 +95,8 @@ climatologiesCalc.plotClimGraph <- function(){
         .cdtData$EnvData$location <- paste0("Station: ", .cdtData$EnvData$output$data$id[ixy])
     }else{
         cdtdataset <- .cdtData$EnvData$cdtdataset
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(cdtdataset, cdtdataset$fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         don <- as.numeric(xyloc$data)
@@ -136,7 +136,7 @@ climatologiesCalc.plotClimGraph <- function(){
 
     #########
 
-    GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+    GRAPHTYPE <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
     if(GRAPHTYPE == "Line") optsgph <- TSGraphOp$line
     if(GRAPHTYPE == "Barplot") optsgph <- TSGraphOp$bar
 

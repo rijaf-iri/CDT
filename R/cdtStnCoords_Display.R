@@ -38,19 +38,19 @@ StnChkCoordsPlotMap <- function(){
 	}
 
 	#######
-	opar <- par(mar = c(4, 4, 2, 2))
+	opar <- graphics::par(mar = c(4, 4, 2, 2))
 	plot(1, xlim = c(xmin, xmax), ylim = c(ymin, ymax), xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
-	lines(ocrds[, 1], ocrds[, 2], lwd = MapOp$shp$lwd, col = MapOp$shp$col)
-	abline(h = axTicks(2), v = axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
-	axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
-	axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 1.0)
-	axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tck = -0.01, las = 1, cex.axis = 1.0)
+	graphics::lines(ocrds[, 1], ocrds[, 2], lwd = MapOp$shp$lwd, col = MapOp$shp$col)
+	graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
+	axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
+	graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 1.0)
+	graphics::axis(side = 2, at = graphics::axTicks(2), labels = axlabs$yaxl, tck = -0.01, las = 1, cex.axis = 1.0)
 
-	points(don$LonX, don$LatX, col = loko, pch = pch, cex = cex)
+	graphics::points(don$LonX, don$LatX, col = loko, pch = pch, cex = cex)
 
-	plt <- par("plt")
-	usr <- par("usr")
-	par(opar)
+	plt <- graphics::par("plt")
+	usr <- graphics::par("usr")
+	graphics::par(opar)
 
 	return(list(par = c(plt, usr)))
 }

@@ -49,11 +49,11 @@ CPT.convert_getParams <- function(){
         tclvalue(input.DataF) <- ''
 
         ###
-        stateSetNC <- if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]) "normal" else "disabled"
+        stateSetNC <- if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]) "normal" else "disabled"
         tkconfigure(set.indata, state = stateSetNC)
 
         ###
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
             tclvalue(txt.INDat.var) <- lang.dlg[['label']][['2']]
 
             cb.en.indata <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.DataF, width = largeur1)
@@ -77,7 +77,7 @@ CPT.convert_getParams <- function(){
         }
 
         ###
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
             tclvalue(txt.INDat.var) <- lang.dlg[['label']][['3']]
 
             cb.en.indata <- tkentry(frameInData, textvariable = input.DataF, width = largeur0)
@@ -87,7 +87,7 @@ CPT.convert_getParams <- function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
                 .cdtData$GalParams[["cdtnetcdf"]] <- CPT.getInfoNetcdfData(tt,
                                                             .cdtData$GalParams[["cdtnetcdf"]],
-                                                            str_trim(tclvalue(input.DataF)))
+                                                            trimws(tclvalue(input.DataF)))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
                 settingNCF <<- 1
             })
@@ -142,7 +142,7 @@ CPT.convert_getParams <- function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["cdtnetcdf"]] <- CPT.getInfoNetcdfData(tt,
                                                     .cdtData$GalParams[["cdtnetcdf"]],
-                                                    str_trim(tclvalue(input.DataF)))
+                                                    trimws(tclvalue(input.DataF)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingNCF <<- 1
     })
@@ -247,28 +247,28 @@ CPT.convert_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(input.DataF)) %in% c("", "NA")){
+        if(trimws(tclvalue(input.DataF)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(tclvalue(file.save) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2] & is.null(settingNCF)){
+        }else if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2] & is.null(settingNCF)){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
                 tkwait.window(tt)
         }else{
-            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                .cdtData$GalParams$cdtstation <- str_trim(tclvalue(input.DataF))
+            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                .cdtData$GalParams$cdtstation <- trimws(tclvalue(input.DataF))
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                .cdtData$GalParams$cdtnetcdf$dir <- str_trim(tclvalue(input.DataF))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                .cdtData$GalParams$cdtnetcdf$dir <- trimws(tclvalue(input.DataF))
 
-            .cdtData$GalParams$cptinfo$name <- str_trim(tclvalue(cptinfo.Name))
-            .cdtData$GalParams$cptinfo$units <- str_trim(tclvalue(cptinfo.Unit))
-            .cdtData$GalParams$cptinfo$missval <- str_trim(tclvalue(cptinfo.Miss))
+            .cdtData$GalParams$cptinfo$name <- trimws(tclvalue(cptinfo.Name))
+            .cdtData$GalParams$cptinfo$units <- trimws(tclvalue(cptinfo.Unit))
+            .cdtData$GalParams$cptinfo$missval <- trimws(tclvalue(cptinfo.Miss))
 
-            .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
+            .cdtData$GalParams$output <- trimws(tclvalue(file.save))
 
             .cdtData$GalParams$settingNCF <- settingNCF
             .cdtData$GalParams$message <- lang.dlg[['message']]

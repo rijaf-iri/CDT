@@ -48,7 +48,7 @@ removeBiasGetInfoClimData <- function(){
     ###########
 
     tkconfigure(bt.DateRange, command = function(){
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -120,7 +120,7 @@ removeBiasGetInfoClimData <- function(){
     tkconfigure(set.InNCDF, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["INPUT"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT"]],
-                                                           str_trim(tclvalue(dir.InNCDF)))
+                                                           trimws(tclvalue(dir.InNCDF)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingSNC <<- 1
     })
@@ -185,28 +185,28 @@ removeBiasGetInfoClimData <- function(){
     #######
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(dir.InNCDF)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir.InNCDF)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(bias.dir)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(bias.dir)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(is.null(settingSNC)){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
             
-            .cdtData$GalParams$BIAS$dir <- str_trim(tclvalue(bias.dir))
-            .cdtData$GalParams$BIAS$method  <- val.biasMthd[cb.biasMthd %in% str_trim(tclvalue(bias.method))]
+            .cdtData$GalParams$BIAS$dir <- trimws(tclvalue(bias.dir))
+            .cdtData$GalParams$BIAS$method  <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
 
-            .cdtData$GalParams$INPUT$dir <- str_trim(tclvalue(dir.InNCDF))
+            .cdtData$GalParams$INPUT$dir <- trimws(tclvalue(dir.InNCDF))
 
-            .cdtData$GalParams$output$dir <- str_trim(tclvalue(dir2save))
-            .cdtData$GalParams$output$format <- str_trim(tclvalue(outmrgff))
+            .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
+            .cdtData$GalParams$output$format <- trimws(tclvalue(outmrgff))
 
             .cdtData$GalParams$settingSNC <- settingSNC
             .cdtData$GalParams$message <- lang.dlg[['message']]

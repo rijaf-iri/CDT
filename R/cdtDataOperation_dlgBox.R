@@ -150,7 +150,7 @@ dataOperation_GetInfo <- function(){
         tkconfigure(set.Input, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams$DATASETs[[jj]]$pars <- getInfoNetCDFData(tt, .cdtData$GalParams$DATASETs[[jj]]$pars,
-                                                                        str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
+                                                                        trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
 
@@ -226,8 +226,8 @@ dataOperation_GetInfo <- function(){
     ############
 
     tkbind(cb.tstep, "<<ComboboxSelected>>", function(){
-        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
-        minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
         retminhr <- set.hour.minute(intstep, minhour)
         tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
         tclvalue(minhour.tclVar) <- retminhr$val
@@ -251,7 +251,7 @@ dataOperation_GetInfo <- function(){
     #############
 
     tkbind(cb.datatyp, "<<ComboboxSelected>>", function(){
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
         ######
         for(jj in seq_along(.cdtData$GalParams$DATASETs))
@@ -295,7 +295,7 @@ dataOperation_GetInfo <- function(){
     bt.AddData <- tkbutton(frameBas, text = lang.dlg[['button']][['1']], bg = 'lightgreen')
 
     tkconfigure(bt.AddData, command = function(){
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
         jj <- length(.cdtData$GalParams$DATASETs) + 1
         .cdtData$GalParams$DATASETs[[jj]] <- list()
@@ -327,8 +327,8 @@ dataOperation_GetInfo <- function(){
     bt.Varinfo <- tkbutton(frameBas, text = lang.dlg[['button']][['3']], bg = 'lightblue', state = stateVarinfo)
 
     tkconfigure(bt.Varinfo, command = function(){
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-        inputFile <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[1]]$tcl$input.file))
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+        inputFile <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[1]]$tcl$input.file))
 
         initVar <- .cdtData$GalParams$varinfo
         varInfo <- NULL
@@ -342,7 +342,7 @@ dataOperation_GetInfo <- function(){
         }
 
         if(data.type == "cdtdataset"){
-            inputFile <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[1]]$tcl$input.file))
+            inputFile <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[1]]$tcl$input.file))
             if(inputFile != "" & file.exists(inputFile)){
                 varInfo <- readRDS(inputFile)
                 varInfo <- varInfo$varInfo
@@ -391,23 +391,23 @@ dataOperation_GetInfo <- function(){
 
     ####
     tkconfigure(bt.prm.OK, command = function(){
-        .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
-        .cdtData$GalParams$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
-        .cdtData$GalParams$datatype <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        .cdtData$GalParams$datatype <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-        if(str_trim(tclvalue(file.save)) %in% c("", "NA")){
+        if(trimws(tclvalue(file.save)) %in% c("", "NA")){
             imsg <- if(.cdtData$GalParams$datatype == "cdtstation") "2" else "3"
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][[imsg]], icon = "warning", type = "ok")
             tkwait.window(tt)
         }
 
-        .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
+        .cdtData$GalParams$output <- trimws(tclvalue(file.save))
         if(.cdtData$GalParams$datatype == "cdtnetcdf"){
-            .cdtData$GalParams$ncoutformat <- str_trim(tclvalue(ncout.format))
+            .cdtData$GalParams$ncoutformat <- trimws(tclvalue(ncout.format))
         }
 
         inputFiles <- lapply(.cdtData$GalParams$DATASETs, function(don){
-                str_trim(tclvalue(don$tcl$input.file))
+                trimws(tclvalue(don$tcl$input.file))
         })
         numFiles <- seq_along(.cdtData$GalParams$DATASETs)
         nonFiles <- sapply(inputFiles, function(x) x %in% c("", "NA"))
@@ -428,7 +428,7 @@ dataOperation_GetInfo <- function(){
             }
         }
 
-        txtFormula <- str_trim(tclvalue(tkget(text.Formula, "0.0", "end")))
+        txtFormula <- trimws(tclvalue(tkget(text.Formula, "0.0", "end")))
         txtFormula <- gsub("[\t\r\n]", "", txtFormula)
         posVar <- gregexpr('X[0-9]+', txtFormula)
         valVar <- regmatches(txtFormula, posVar)

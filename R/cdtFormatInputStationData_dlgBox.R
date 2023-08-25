@@ -36,7 +36,7 @@ Format_CDT_Input_Station_Data <- function(){
     bt.period <- ttkbutton(frDate, text = lang.dlg[['button']][['1']], width = largeur2)
 
     tkconfigure(bt.period, command = function(){
-        tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
+        tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
         .cdtData$GalParams[["Date.Range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["Date.Range"]], tstep)
     })
 
@@ -139,15 +139,15 @@ Format_CDT_Input_Station_Data <- function(){
     #######
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.save1)) %in% c("" , "NA")){
+        if(trimws(tclvalue(file.save1)) %in% c("" , "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
-            .cdtData$GalParams$data.type <- FilesTYPEin[FilesTYPE %in% str_trim(tclvalue(data.type))]
+            .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
+            .cdtData$GalParams$data.type <- FilesTYPEin[FilesTYPE %in% trimws(tclvalue(data.type))]
 
-            .cdtData$GalParams$IO.files$File2Save <- str_trim(tclvalue(file.save1))
-            .cdtData$GalParams$min.perc <- as.numeric(str_trim(tclvalue(minperc)))
+            .cdtData$GalParams$IO.files$File2Save <- trimws(tclvalue(file.save1))
+            .cdtData$GalParams$min.perc <- as.numeric(trimws(tclvalue(minperc)))
 
             .cdtData$GalParams$message <- lang.dlg[['message']]
 
@@ -362,19 +362,19 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(dir.stn)) == "" | str_trim(tclvalue(dir.stn)) == "NA"){
+        if(trimws(tclvalue(dir.stn)) == "" | trimws(tclvalue(dir.stn)) == "NA"){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt1)
-        }else if(str_trim(tclvalue(file.sample)) == ""){
+        }else if(trimws(tclvalue(file.sample)) == ""){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt1)
-        }else if(str_trim(tclvalue(file.coords)) == ""){
+        }else if(trimws(tclvalue(file.coords)) == ""){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt1)
         }else{
-            .cdtData$GalParams$IO.files$STN.dir <- str_trim(tclvalue(dir.stn))
-            .cdtData$GalParams$IO.files$STN.sample.file <- str_trim(tclvalue(file.sample))
-            .cdtData$GalParams$IO.files$STN.coords.file <- str_trim(tclvalue(file.coords))
+            .cdtData$GalParams$IO.files$STN.dir <- trimws(tclvalue(dir.stn))
+            .cdtData$GalParams$IO.files$STN.sample.file <- trimws(tclvalue(file.sample))
+            .cdtData$GalParams$IO.files$STN.coords.file <- trimws(tclvalue(file.coords))
             .cdtData$GalParams$Multiple.File$file.format <- tclvalue(rbffrmt)
             .cdtData$GalParams$Multiple.File$date.format <- tclvalue(rbdtfrmt)
             .cdtData$GalParams$Multiple.File$include.elev <- switch(tclvalue(include.elv), '0' = FALSE, '1' = TRUE)
@@ -542,7 +542,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     nb.column <- tclVar()
     if(tstep == tstep.list[1]){
         cb.nbcolVAL <- c('1 column', '31 columns')
-        tclvalue(nb.column) <- switch(str_trim(.cdtData$GalParams$Single.File$nb.column),
+        tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
                                         '1' = cb.nbcolVAL[1],
                                         '31' = cb.nbcolVAL[2],
                                             cb.nbcolVAL[2])
@@ -551,7 +551,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     }
     if(tstep == tstep.list[2]){
         cb.nbcolVAL <- c('1 column', '3 columns', '36 columns')
-        tclvalue(nb.column) <- switch(str_trim(.cdtData$GalParams$Single.File$nb.column),
+        tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
                                         '1' = cb.nbcolVAL[1],
                                         '3' = cb.nbcolVAL[2],
                                         '36' = cb.nbcolVAL[3],
@@ -561,7 +561,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     }
     if(tstep == tstep.list[3]){
         cb.nbcolVAL <- c('1 column', '12 columns')
-        tclvalue(nb.column) <- switch(str_trim(.cdtData$GalParams$Single.File$nb.column),
+        tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
                                         '1' = cb.nbcolVAL[1],
                                         '12' = cb.nbcolVAL[2],
                                             cb.nbcolVAL[2])
@@ -673,35 +673,35 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl)) == ""){
+        if(trimws(tclvalue(file.stnfl)) == ""){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
-        }else if(tclvalue(coords.infile) == '0' & str_trim(tclvalue(file.coords)) == ""){
+        }else if(tclvalue(coords.infile) == '0' & trimws(tclvalue(file.coords)) == ""){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt1)
         }else{
-            .cdtData$GalParams$IO.files$STN.single.file <- str_trim(tclvalue(file.stnfl))
-            .cdtData$GalParams$IO.files$STN.coords.file <- str_trim(tclvalue(file.coords))
+            .cdtData$GalParams$IO.files$STN.single.file <- trimws(tclvalue(file.stnfl))
+            .cdtData$GalParams$IO.files$STN.coords.file <- trimws(tclvalue(file.coords))
             .cdtData$GalParams$Single.File$include.elev <- switch(tclvalue(include.elv), '0' = FALSE, '1' = TRUE)
             .cdtData$GalParams$Single.File$coords.included <- switch(tclvalue(coords.infile), '0' = FALSE, '1' = TRUE)
 
-            .cdtData$GalParams$Single.File$col.stn.id <- as.numeric(str_trim(tclvalue(stn.id)))
-            .cdtData$GalParams$Single.File$col.stn.lon <- as.numeric(str_trim(tclvalue(stn.lon)))
-            .cdtData$GalParams$Single.File$col.stn.lat <- as.numeric(str_trim(tclvalue(stn.lat)))
-            .cdtData$GalParams$Single.File$col.stn.elv <- as.numeric(str_trim(tclvalue(stn.elv)))
-            .cdtData$GalParams$Single.File$col.year <- as.numeric(str_trim(tclvalue(stn.year)))
-            .cdtData$GalParams$Single.File$col.month <- as.numeric(str_trim(tclvalue(stn.mon)))
-            .cdtData$GalParams$Single.File$col.day.dek <- as.numeric(str_trim(tclvalue(stn.day)))
-            .cdtData$GalParams$Single.File$col.start.data <- as.numeric(str_trim(tclvalue(stn.data)))
+            .cdtData$GalParams$Single.File$col.stn.id <- as.numeric(trimws(tclvalue(stn.id)))
+            .cdtData$GalParams$Single.File$col.stn.lon <- as.numeric(trimws(tclvalue(stn.lon)))
+            .cdtData$GalParams$Single.File$col.stn.lat <- as.numeric(trimws(tclvalue(stn.lat)))
+            .cdtData$GalParams$Single.File$col.stn.elv <- as.numeric(trimws(tclvalue(stn.elv)))
+            .cdtData$GalParams$Single.File$col.year <- as.numeric(trimws(tclvalue(stn.year)))
+            .cdtData$GalParams$Single.File$col.month <- as.numeric(trimws(tclvalue(stn.mon)))
+            .cdtData$GalParams$Single.File$col.day.dek <- as.numeric(trimws(tclvalue(stn.day)))
+            .cdtData$GalParams$Single.File$col.start.data <- as.numeric(trimws(tclvalue(stn.data)))
             if(tstep == tstep.list[1]){
-                .cdtData$GalParams$Single.File$nb.column <- switch(str_trim(tclvalue(nb.column)),
+                .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
                                                                 '1 column' = 1, '31 columns' = 31)
             }
             if(tstep == tstep.list[2]){
-                .cdtData$GalParams$Single.File$nb.column <- switch(str_trim(tclvalue(nb.column)),
+                .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
                                                                 '1 column' = 1, '3 columns' = 3, '36 columns' = 36)
             }
             if(tstep == tstep.list[3]){
-                .cdtData$GalParams$Single.File$nb.column <- switch(str_trim(tclvalue(nb.column)),
+                .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
                                                                 '1 column' = 1, '12 columns' = 12)
             }
 

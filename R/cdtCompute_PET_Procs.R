@@ -242,10 +242,10 @@ computePETProcs <- function(){
         }
 
         ##################
-        nc <- nc_open(tminInfo$nc.files[1])
+        nc <- ncdf4::nc_open(tminInfo$nc.files[1])
         nc.lon <- nc$var[[tminInfo$ncinfo$varid]]$dim[[tminInfo$ncinfo$xo]]$vals
         nc.lat <- nc$var[[tminInfo$ncinfo$varid]]$dim[[tminInfo$ncinfo$yo]]$vals
-        nc_close(nc)
+        ncdf4::nc_close(nc)
 
         xo.tn <- order(nc.lon)
         nc.lon <- nc.lon[xo.tn]
@@ -254,18 +254,18 @@ computePETProcs <- function(){
         len.lon <- length(nc.lon)
         len.lat <- length(nc.lat)
 
-        nc <- nc_open(tmaxInfo$nc.files[1])
+        nc <- ncdf4::nc_open(tmaxInfo$nc.files[1])
         nc.lon1 <- nc$var[[tmaxInfo$ncinfo$varid]]$dim[[tmaxInfo$ncinfo$xo]]$vals
         nc.lat1 <- nc$var[[tmaxInfo$ncinfo$varid]]$dim[[tmaxInfo$ncinfo$yo]]$vals
-        nc_close(nc)
+        ncdf4::nc_close(nc)
         xo.tx <- order(nc.lon1)
         yo.tx <- order(nc.lat1)
 
         if(.cdtData$GalParams$method == "MHAR"){
-            nc <- nc_open(precInfo$nc.files[1])
+            nc <- ncdf4::nc_open(precInfo$nc.files[1])
             nc.lon2 <- nc$var[[precInfo$ncinfo$varid]]$dim[[precInfo$ncinfo$xo]]$vals
             nc.lat2 <- nc$var[[precInfo$ncinfo$varid]]$dim[[precInfo$ncinfo$yo]]$vals
-            nc_close(nc)
+            ncdf4::nc_close(nc)
             xo.rr <- order(nc.lon2)
             yo.rr <- order(nc.lat2)
         }
@@ -276,15 +276,15 @@ computePETProcs <- function(){
         indx <- cdt.index.RA.PET(tminInfo$dates, .cdtData$GalParams$Tstep)
 
         ##################
-        dx <- ncdim_def("Lon", "degreeE", nc.lon)
-        dy <- ncdim_def("Lat", "degreeN", nc.lat)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", nc.lon)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", nc.lat)
         xy.dim <- list(dx, dy)
 
         if(.cdtData$GalParams$method == "MHAR")
             longname <- paste("Modified Hargreaves", .cdtData$GalParams$Tstep, "evapotranspiration")
         else
             longname <- paste("Hargreaves", .cdtData$GalParams$Tstep, "evapotranspiration")
-        grdNC <- ncvar_def("pet", 'mm', xy.dim, -99, longname = longname, prec = 'float', compression = 9)
+        grdNC <- ncdf4::ncvar_def("pet", 'mm', xy.dim, -99, longname = longname, prec = 'float', compression = 9)
 
         ##################
         ncdir <- paste0("PET_", .cdtData$GalParams$Tstep)

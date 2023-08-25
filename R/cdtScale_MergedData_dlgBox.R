@@ -42,7 +42,7 @@ Merging_ScaleDataInfo <- function(){
     helpWidget(bt.DateRange, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     tkconfigure(bt.DateRange, command = function(){
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -71,7 +71,7 @@ Merging_ScaleDataInfo <- function(){
     tkconfigure(set.mrgData, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["mrg.data"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["mrg.data"]],
-                                                              str_trim(tclvalue(dir.mrgData)))
+                                                              trimws(tclvalue(dir.mrgData)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -105,8 +105,8 @@ Merging_ScaleDataInfo <- function(){
     tkconfigure(set.scaledata, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["scale.data"]] <- getInfoNetCDFScale(tt, .cdtData$GalParams[["scale.data"]],
-                                                                 str_trim(tclvalue(scale.dir)),
-                                                                 str_trim(tclvalue(file.period)), scale = TRUE)
+                                                                 trimws(tclvalue(scale.dir)),
+                                                                 trimws(tclvalue(file.period)), scale = TRUE)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -174,22 +174,22 @@ Merging_ScaleDataInfo <- function(){
     #######
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(dir.mrgData)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir.mrgData)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(scale.dir)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(scale.dir)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$mrg.data$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+            .cdtData$GalParams$mrg.data$tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
 
-            .cdtData$GalParams$mrg.data$dir <- str_trim(tclvalue(dir.mrgData))
-            .cdtData$GalParams$scale.data$dir <- str_trim(tclvalue(scale.dir))
-            .cdtData$GalParams$scale.data$fun <- str_trim(tclvalue(scale.fun))
-            .cdtData$GalParams$outdir <- str_trim(tclvalue(dir2save))
+            .cdtData$GalParams$mrg.data$dir <- trimws(tclvalue(dir.mrgData))
+            .cdtData$GalParams$scale.data$dir <- trimws(tclvalue(scale.dir))
+            .cdtData$GalParams$scale.data$fun <- trimws(tclvalue(scale.fun))
+            .cdtData$GalParams$outdir <- trimws(tclvalue(dir2save))
 
             .cdtData$GalParams$message <- lang.dlg[['message']]
 

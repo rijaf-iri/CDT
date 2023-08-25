@@ -30,6 +30,8 @@ export(saturation_vapour_pressure)
 export(relative_humidity)
 export(specific_humidity)
 export(dewpoint_temperature)
+export(potential_temperature)
+export(temperature_from_theta)
 
 export(extract_netcdf_file)
 
@@ -38,35 +40,13 @@ export(pressure_conversion_netcdf)
 export(ET0_Penman_Monteith_FAO_station)
 export(ET0_Penman_Monteith_FAO_netcdf)
 
+###
+importFrom(latticeExtra, xyplot.list)
+importFrom(doParallel, registerDoParallel)
+importFrom(doSNOW, registerDoSNOW)
 
-importFrom("methods", "as", "is", "slot")
-importFrom("graphics", "abline", "arrows", "axTicks", "axis",
-           "axis.Date", "barplot", "box", "layout", "legend", "lines",
-           "mtext", "par", "plot.new", "points", "polygon", "curve",
-           ".filled.contour", "grconvertX", "grconvertY", "segments",
-           "image", "plot", "title", "axis.POSIXct", "rect", "text",
-           "plot.window")
-importFrom("grDevices", "colorRampPalette")
-importFrom("ncdf4", "ncdim_def", "nc_open", "ncvar_get", "nc_close",
-           "ncvar_def", "nc_create", "ncvar_put", "ncatt_get")
-importFrom("sp", "over", "bbox", "CRS", "geometry",
-           "SpatialPoints", "SpatialPixels",
-           "coordinates", "coordinates<-",
-           "proj4string", "proj4string<-",
-           "SpatialPolygonsDataFrame")
-importFrom("stats", "sd", "var", "cor", "cov", "quantile", "lm",
-           "glm", "update", "ecdf", "median", "residuals", "as.formula",
-           "formula", "qnorm", "pnorm", "dnorm", "pgamma", "qgamma", "predict", "rnorm", "runif")
-
+###
 #importFrom("fGarch", "dsnorm", "psnorm", "qsnorm", "rsnorm")
 #importFrom("evd", "dgumbel", "pgumbel", "qgumbel", "rgumbel")
 
-importFrom(latticeExtra, xyplot.list)
 
-importFrom(jsonlite, fromJSON, toJSON, write_json)
-importFrom(stringr, str_trim, str_pad, str_count, str_to_title)
-importFrom(utils, read.table, write.table)
-importFrom(qmap, startberngamma, pberngamma, dberngamma, qberngamma)
-importFrom(automap, autofitVariogram)
-importFrom(doParallel, registerDoParallel)
-importFrom(doSNOW, registerDoSNOW)

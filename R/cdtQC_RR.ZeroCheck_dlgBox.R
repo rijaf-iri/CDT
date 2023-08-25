@@ -65,11 +65,11 @@ getParams.RR.ZerosCheck <- function(Parameters)
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$min.nbrs <<- as.numeric(str_trim(tclvalue(min.nbrs)))
-        Parameters$max.nbrs <<- as.numeric(str_trim(tclvalue(max.nbrs)))
-        Parameters$min.days <<- as.numeric(str_trim(tclvalue(min.days)))
-        Parameters$max.dist <<- as.numeric(str_trim(tclvalue(max.dst)))
-        Parameters$min.thrs <<- as.numeric(str_trim(tclvalue(pct.trsh)))
+        Parameters$min.nbrs <<- as.numeric(trimws(tclvalue(min.nbrs)))
+        Parameters$max.nbrs <<- as.numeric(trimws(tclvalue(max.nbrs)))
+        Parameters$min.days <<- as.numeric(trimws(tclvalue(min.days)))
+        Parameters$max.dist <<- as.numeric(trimws(tclvalue(max.dst)))
+        Parameters$min.thrs <<- as.numeric(trimws(tclvalue(pct.trsh)))
 
         tkgrab.release(tt)
         tkdestroy(tt)

@@ -202,7 +202,7 @@ Validation.GraphOptions.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$m
     ######
     tkconfigure(bt.PtC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(point.Kol), title = lang.dlg[['label']][['10']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(point.Kol), title = lang.dlg[['label']][['10']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.PtC, bg = loko)
@@ -235,7 +235,7 @@ Validation.GraphOptions.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$m
     ######
     tkconfigure(bt.pltLineC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.XY), title = lang.dlg[['label']][['10']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.XY), title = lang.dlg[['label']][['10']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
@@ -268,30 +268,30 @@ Validation.GraphOptions.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$m
     tkconfigure(bt.opt.OK, command = function(){
         GraphOpt$scatter$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         GraphOpt$scatter$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$scatter$xlim$min <<- as.numeric(str_trim(tclvalue(min.xlim)))
-        GraphOpt$scatter$xlim$max <<- as.numeric(str_trim(tclvalue(max.xlim)))
+        GraphOpt$scatter$xlim$min <<- as.numeric(trimws(tclvalue(min.xlim)))
+        GraphOpt$scatter$xlim$max <<- as.numeric(trimws(tclvalue(max.xlim)))
 
         GraphOpt$scatter$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         GraphOpt$scatter$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$scatter$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        GraphOpt$scatter$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        GraphOpt$scatter$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        GraphOpt$scatter$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         GraphOpt$scatter$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         GraphOpt$scatter$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        GraphOpt$scatter$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        GraphOpt$scatter$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        GraphOpt$scatter$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        GraphOpt$scatter$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         GraphOpt$scatter$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$scatter$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        GraphOpt$scatter$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        GraphOpt$scatter$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        GraphOpt$scatter$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
         GraphOpt$scatter$point$col <<- tclvalue(point.Kol)
-        GraphOpt$scatter$point$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.PtT))))
-        GraphOpt$scatter$point$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.PtS))))
+        GraphOpt$scatter$point$pch <<- as.numeric(trimws(tclvalue(tkget(spin.PtT))))
+        GraphOpt$scatter$point$cex <<- as.numeric(trimws(tclvalue(tkget(spin.PtS))))
 
         GraphOpt$scatter$line$draw <<- switch(tclvalue(draw.XY), '0' = FALSE, '1' = TRUE)
         GraphOpt$scatter$line$col <<- tclvalue(col.XY)
-        GraphOpt$scatter$line$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        GraphOpt$scatter$line$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -575,7 +575,7 @@ Validation.GraphOptions.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$
     ########
     tkconfigure(bt.pltLineC1, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC1, bg = loko)
@@ -604,7 +604,7 @@ Validation.GraphOptions.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$
 
     tkconfigure(bt.pltPointC1, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointC1, bg = loko)
@@ -652,7 +652,7 @@ Validation.GraphOptions.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$
     ########
     tkconfigure(bt.pltLineC2, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line2), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line2), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC2, bg = loko)
@@ -681,7 +681,7 @@ Validation.GraphOptions.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$
 
     tkconfigure(bt.pltPointC2, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points2), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points2), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointC2, bg = loko)
@@ -712,40 +712,40 @@ Validation.GraphOptions.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$
     tkconfigure(bt.opt.OK, command = function(){
         GraphOpt$cdf$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         GraphOpt$cdf$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$xlim$min <<- as.numeric(str_trim(tclvalue(min.xlim)))
-        GraphOpt$cdf$xlim$max <<- as.numeric(str_trim(tclvalue(max.xlim)))
+        GraphOpt$cdf$xlim$min <<- as.numeric(trimws(tclvalue(min.xlim)))
+        GraphOpt$cdf$xlim$max <<- as.numeric(trimws(tclvalue(max.xlim)))
 
         GraphOpt$cdf$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         GraphOpt$cdf$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        GraphOpt$cdf$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        GraphOpt$cdf$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        GraphOpt$cdf$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         GraphOpt$cdf$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         GraphOpt$cdf$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        GraphOpt$cdf$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        GraphOpt$cdf$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        GraphOpt$cdf$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         GraphOpt$cdf$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        GraphOpt$cdf$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        GraphOpt$cdf$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        GraphOpt$cdf$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
-        GraphOpt$cdf$plot$obs$type <<- str_trim(tclvalue(plot.type1))
+        GraphOpt$cdf$plot$obs$type <<- trimws(tclvalue(plot.type1))
         GraphOpt$cdf$plot$obs$line <<- tclvalue(plot.col.line1)
-        GraphOpt$cdf$plot$obs$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW1))))
+        GraphOpt$cdf$plot$obs$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW1))))
         GraphOpt$cdf$plot$obs$points <<- tclvalue(plot.col.points1)
-        GraphOpt$cdf$plot$obs$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS1))))
-        GraphOpt$cdf$plot$obs$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointT1))))
+        GraphOpt$cdf$plot$obs$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS1))))
+        GraphOpt$cdf$plot$obs$pch <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointT1))))
 
-        GraphOpt$cdf$plot$est$type <<- str_trim(tclvalue(plot.type2))
+        GraphOpt$cdf$plot$est$type <<- trimws(tclvalue(plot.type2))
         GraphOpt$cdf$plot$est$line <<- tclvalue(plot.col.line2)
-        GraphOpt$cdf$plot$est$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW2))))
+        GraphOpt$cdf$plot$est$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW2))))
         GraphOpt$cdf$plot$est$points <<- tclvalue(plot.col.points2)
-        GraphOpt$cdf$plot$est$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS2))))
-        GraphOpt$cdf$plot$est$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointT2))))
+        GraphOpt$cdf$plot$est$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS2))))
+        GraphOpt$cdf$plot$est$pch <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointT2))))
 
         GraphOpt$cdf$legend$add <<- switch(tclvalue(add.legend), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$legend$obs <<- str_trim(tclvalue(obs.legend))
-        GraphOpt$cdf$legend$est <<- str_trim(tclvalue(est.legend))
+        GraphOpt$cdf$legend$obs <<- trimws(tclvalue(obs.legend))
+        GraphOpt$cdf$legend$est <<- trimws(tclvalue(est.legend))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -1032,7 +1032,7 @@ Validation.GraphOptions.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$mai
     ########
     tkconfigure(bt.pltLineC1, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC1, bg = loko)
@@ -1061,7 +1061,7 @@ Validation.GraphOptions.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$mai
 
     tkconfigure(bt.pltPointC1, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointC1, bg = loko)
@@ -1109,7 +1109,7 @@ Validation.GraphOptions.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$mai
     ########
     tkconfigure(bt.pltLineC2, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line2), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line2), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC2, bg = loko)
@@ -1138,7 +1138,7 @@ Validation.GraphOptions.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$mai
 
     tkconfigure(bt.pltPointC2, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points2), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points2), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointC2, bg = loko)
@@ -1169,40 +1169,40 @@ Validation.GraphOptions.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$mai
     tkconfigure(bt.opt.OK, command = function(){
         GraphOpt$line$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         GraphOpt$line$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$xlim$min <<- str_trim(tclvalue(min.xlim))
-        GraphOpt$line$xlim$max <<- str_trim(tclvalue(max.xlim))
+        GraphOpt$line$xlim$min <<- trimws(tclvalue(min.xlim))
+        GraphOpt$line$xlim$max <<- trimws(tclvalue(max.xlim))
 
         GraphOpt$line$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         GraphOpt$line$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        GraphOpt$line$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        GraphOpt$line$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        GraphOpt$line$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         GraphOpt$line$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         GraphOpt$line$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        GraphOpt$line$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        GraphOpt$line$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        GraphOpt$line$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         GraphOpt$line$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        GraphOpt$line$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        GraphOpt$line$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        GraphOpt$line$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
-        GraphOpt$line$plot$obs$type <<- str_trim(tclvalue(plot.type1))
+        GraphOpt$line$plot$obs$type <<- trimws(tclvalue(plot.type1))
         GraphOpt$line$plot$obs$line <<- tclvalue(plot.col.line1)
-        GraphOpt$line$plot$obs$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW1))))
+        GraphOpt$line$plot$obs$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW1))))
         GraphOpt$line$plot$obs$points <<- tclvalue(plot.col.points1)
-        GraphOpt$line$plot$obs$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS1))))
-        GraphOpt$line$plot$obs$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointT1))))
+        GraphOpt$line$plot$obs$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS1))))
+        GraphOpt$line$plot$obs$pch <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointT1))))
 
-        GraphOpt$line$plot$est$type <<- str_trim(tclvalue(plot.type2))
+        GraphOpt$line$plot$est$type <<- trimws(tclvalue(plot.type2))
         GraphOpt$line$plot$est$line <<- tclvalue(plot.col.line2)
-        GraphOpt$line$plot$est$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW2))))
+        GraphOpt$line$plot$est$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW2))))
         GraphOpt$line$plot$est$points <<- tclvalue(plot.col.points2)
-        GraphOpt$line$plot$est$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS2))))
-        GraphOpt$line$plot$est$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointT2))))
+        GraphOpt$line$plot$est$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS2))))
+        GraphOpt$line$plot$est$pch <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointT2))))
 
         GraphOpt$line$legend$add <<- switch(tclvalue(add.legend), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$legend$obs <<- str_trim(tclvalue(obs.legend))
-        GraphOpt$line$legend$est <<- str_trim(tclvalue(est.legend))
+        GraphOpt$line$legend$obs <<- trimws(tclvalue(obs.legend))
+        GraphOpt$line$legend$est <<- trimws(tclvalue(est.legend))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -1361,7 +1361,7 @@ Validation.GraphOptions.Rank <- function(GraphOpt, description, parent.win = .cd
     ###########
     tkconfigure(bt.TxtC1, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(text1.Kol), title = lang.dlg[['label']][['6']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(text1.Kol), title = lang.dlg[['label']][['6']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.TxtC1, bg = loko)
@@ -1371,7 +1371,7 @@ Validation.GraphOptions.Rank <- function(GraphOpt, description, parent.win = .cd
 
     tkconfigure(bt.TxtC2, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(text2.Kol), title = lang.dlg[['label']][['6']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(text2.Kol), title = lang.dlg[['label']][['6']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.TxtC2, bg = loko)
@@ -1381,7 +1381,7 @@ Validation.GraphOptions.Rank <- function(GraphOpt, description, parent.win = .cd
 
     tkconfigure(bt.TxtC3, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(text3.Kol), title = lang.dlg[['label']][['6']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(text3.Kol), title = lang.dlg[['label']][['6']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.TxtC3, bg = loko)
@@ -1501,17 +1501,17 @@ Validation.GraphOptions.Rank <- function(GraphOpt, description, parent.win = .cd
         GraphOpt$col$text[3] <<- tclvalue(text3.Kol)
 
         GraphOpt$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
+        GraphOpt$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
 
-        GraphOpt$key$title <<- str_trim(tclvalue(key.title))
-        GraphOpt$key$lab1 <<- str_trim(tclvalue(key.label1))
-        GraphOpt$key$lab2 <<- str_trim(tclvalue(key.label2))
+        GraphOpt$key$title <<- trimws(tclvalue(key.title))
+        GraphOpt$key$lab1 <<- trimws(tclvalue(key.label1))
+        GraphOpt$key$lab2 <<- trimws(tclvalue(key.label2))
 
         GraphOpt$validName$change <<- switch(tclvalue(valid.change), '0' = FALSE, '1' = TRUE)
         if(GraphOpt$validName$change){
-            validName <- str_trim(tclvalue(valid.name))
+            validName <- trimws(tclvalue(valid.name))
             validName <- strsplit(validName, ",")[[1]]
-            validName <- str_trim(validName)
+            validName <- trimws(validName)
             validName <- validName[validName != ""]
             if(length(validName) == 0) validName <- ""
             GraphOpt$validName$name <<- validName
@@ -1713,7 +1713,7 @@ Validation.GraphOptions1.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$
         ######
         tkconfigure(bt.PtC, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(point.Kol), title = lang.dlg[['label']][['10']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(point.Kol), title = lang.dlg[['label']][['10']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.PtC, bg = loko)
@@ -1940,7 +1940,7 @@ Validation.GraphOptions1.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$
     ############
 
     tkbind(cb.plotT, "<<ComboboxSelected>>", function(){
-        pltType <- plotTypeVAL[CbplotTypeVAL %in% str_trim(tclvalue(plot.type))]
+        pltType <- plotTypeVAL[CbplotTypeVAL %in% trimws(tclvalue(plot.type))]
         if(pltType == 'points') plotPoints() else plotHexbin()
     })
 
@@ -1987,7 +1987,7 @@ Validation.GraphOptions1.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$
     ######
     tkconfigure(bt.pltLineC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.XY), title = lang.dlg[['label']][['10']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.XY), title = lang.dlg[['label']][['10']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
@@ -2056,41 +2056,41 @@ Validation.GraphOptions1.Scatter <- function(GraphOpt, parent.win = .cdtEnv$tcl$
     tkconfigure(bt.opt.OK, command = function(){
         GraphOpt$scatter$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         GraphOpt$scatter$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$scatter$xlim$min <<- as.numeric(str_trim(tclvalue(min.xlim)))
-        GraphOpt$scatter$xlim$max <<- as.numeric(str_trim(tclvalue(max.xlim)))
+        GraphOpt$scatter$xlim$min <<- as.numeric(trimws(tclvalue(min.xlim)))
+        GraphOpt$scatter$xlim$max <<- as.numeric(trimws(tclvalue(max.xlim)))
 
         GraphOpt$scatter$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         GraphOpt$scatter$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$scatter$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        GraphOpt$scatter$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        GraphOpt$scatter$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        GraphOpt$scatter$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         GraphOpt$scatter$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         GraphOpt$scatter$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        GraphOpt$scatter$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        GraphOpt$scatter$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        GraphOpt$scatter$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        GraphOpt$scatter$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         GraphOpt$scatter$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$scatter$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
+        GraphOpt$scatter$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
 
-        GraphOpt$scatter$plot.type <<- plotTypeVAL[CbplotTypeVAL %in% str_trim(tclvalue(plot.type))]
+        GraphOpt$scatter$plot.type <<- plotTypeVAL[CbplotTypeVAL %in% trimws(tclvalue(plot.type))]
 
         if(GraphOpt$scatter$plot.type == 'points'){
             GraphOpt$scatter$point$col <<- tclvalue(point.Kol)
-            GraphOpt$scatter$point$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.PtT))))
-            GraphOpt$scatter$point$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.PtS))))
+            GraphOpt$scatter$point$pch <<- as.numeric(trimws(tclvalue(tkget(spin.PtT))))
+            GraphOpt$scatter$point$cex <<- as.numeric(trimws(tclvalue(tkget(spin.PtS))))
         }else{
             GraphOpt$scatter$hexbin$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
         }
 
         GraphOpt$scatter$line$draw <<- switch(tclvalue(draw.XY), '0' = FALSE, '1' = TRUE)
         GraphOpt$scatter$line$col <<- tclvalue(col.XY)
-        GraphOpt$scatter$line$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        GraphOpt$scatter$line$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
 
         GraphOpt$scatter$validName$change <<- switch(tclvalue(valid.change), '0' = FALSE, '1' = TRUE)
         if(GraphOpt$scatter$validName$change){
-            validName <- str_trim(tclvalue(valid.name))
+            validName <- trimws(tclvalue(valid.name))
             validName <- strsplit(validName, ",")[[1]]
-            validName <- str_trim(validName)
+            validName <- trimws(validName)
             validName <- validName[validName != ""]
             if(length(validName) == 0) validName <- ""
             GraphOpt$scatter$validName$name <<- validName
@@ -2209,7 +2209,7 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
         ########
         tkconfigure(bt.pltLineC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltLineC1, bg = loko)
@@ -2235,7 +2235,7 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
 
         tkconfigure(bt.pltPointC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltPointC1, bg = loko)
@@ -2279,7 +2279,7 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
         ########
         tkconfigure(bt.pltLineC2, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line2), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line2), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltLineC2, bg = loko)
@@ -2305,7 +2305,7 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
 
         tkconfigure(bt.pltPointC2, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points2), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points2), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltPointC2, bg = loko)
@@ -2415,7 +2415,7 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
         ########
         tkconfigure(bt.pltLineC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltLineC1, bg = loko)
@@ -2441,7 +2441,7 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
 
         tkconfigure(bt.pltPointC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltPointC1, bg = loko)
@@ -2720,7 +2720,7 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
     ############
 
     tkbind(cb.plotT, "<<ComboboxSelected>>", function(){
-        pltType <- plotTypeVAL[CbplotTypeVAL %in% str_trim(tclvalue(plot.type))]
+        pltType <- plotTypeVAL[CbplotTypeVAL %in% trimws(tclvalue(plot.type))]
         if(pltType == 'multi') plotMultiplePanel() else plotSinglePanel()
     })
 
@@ -2788,54 +2788,54 @@ Validation.GraphOptions1.CDF <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
     tkconfigure(bt.opt.OK, command = function(){
         GraphOpt$cdf$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         GraphOpt$cdf$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$xlim$min <<- as.numeric(str_trim(tclvalue(min.xlim)))
-        GraphOpt$cdf$xlim$max <<- as.numeric(str_trim(tclvalue(max.xlim)))
+        GraphOpt$cdf$xlim$min <<- as.numeric(trimws(tclvalue(min.xlim)))
+        GraphOpt$cdf$xlim$max <<- as.numeric(trimws(tclvalue(max.xlim)))
 
         GraphOpt$cdf$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         GraphOpt$cdf$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        GraphOpt$cdf$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        GraphOpt$cdf$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        GraphOpt$cdf$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         GraphOpt$cdf$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         GraphOpt$cdf$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        GraphOpt$cdf$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        GraphOpt$cdf$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        GraphOpt$cdf$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         GraphOpt$cdf$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
+        GraphOpt$cdf$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
 
-        GraphOpt$cdf$plot$obs$type <<- str_trim(tclvalue(plot.type1))
+        GraphOpt$cdf$plot$obs$type <<- trimws(tclvalue(plot.type1))
         GraphOpt$cdf$plot$obs$line <<- tclvalue(plot.col.line1)
-        GraphOpt$cdf$plot$obs$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW1))))
+        GraphOpt$cdf$plot$obs$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW1))))
         GraphOpt$cdf$plot$obs$points <<- tclvalue(plot.col.points1)
-        GraphOpt$cdf$plot$obs$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS1))))
-        GraphOpt$cdf$plot$obs$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointT1))))
+        GraphOpt$cdf$plot$obs$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS1))))
+        GraphOpt$cdf$plot$obs$pch <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointT1))))
 
         GraphOpt$cdf$legend$add <<- switch(tclvalue(add.legend), '0' = FALSE, '1' = TRUE)
-        GraphOpt$cdf$plot.type <<- plotTypeVAL[CbplotTypeVAL %in% str_trim(tclvalue(plot.type))]
+        GraphOpt$cdf$plot.type <<- plotTypeVAL[CbplotTypeVAL %in% trimws(tclvalue(plot.type))]
 
         GraphOpt$cdf$validName$change <<- switch(tclvalue(valid.change), '0' = FALSE, '1' = TRUE)
 
         if(GraphOpt$cdf$plot.type == 'multi'){
-            GraphOpt$cdf$plot$est$type <<- str_trim(tclvalue(plot.type2))
+            GraphOpt$cdf$plot$est$type <<- trimws(tclvalue(plot.type2))
             GraphOpt$cdf$plot$est$line <<- tclvalue(plot.col.line2)
-            GraphOpt$cdf$plot$est$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW2))))
+            GraphOpt$cdf$plot$est$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW2))))
             GraphOpt$cdf$plot$est$points <<- tclvalue(plot.col.points2)
-            GraphOpt$cdf$plot$est$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS2))))
-            GraphOpt$cdf$plot$est$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointT2))))
+            GraphOpt$cdf$plot$est$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS2))))
+            GraphOpt$cdf$plot$est$pch <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointT2))))
 
-            GraphOpt$cdf$legend$obs <<- str_trim(tclvalue(obs.legend))
-            GraphOpt$cdf$legend$est <<- str_trim(tclvalue(est.legend))
+            GraphOpt$cdf$legend$obs <<- trimws(tclvalue(obs.legend))
+            GraphOpt$cdf$legend$est <<- trimws(tclvalue(est.legend))
         }else{
             GraphOpt$cdf$plot1$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
             if(GraphOpt$cdf$validName$change)
-                GraphOpt$cdf$validName$obs <<- str_trim(tclvalue(valid.obsN))
+                GraphOpt$cdf$validName$obs <<- trimws(tclvalue(valid.obsN))
         }
 
         if(GraphOpt$cdf$validName$change){
-            validName <- str_trim(tclvalue(valid.name))
+            validName <- trimws(tclvalue(valid.name))
             validName <- strsplit(validName, ",")[[1]]
-            validName <- str_trim(validName)
+            validName <- trimws(validName)
             validName <- validName[validName != ""]
             if(length(validName) == 0) validName <- ""
             GraphOpt$cdf$validName$name <<- validName
@@ -2954,7 +2954,7 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
         ########
         tkconfigure(bt.pltLineC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltLineC1, bg = loko)
@@ -2980,7 +2980,7 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
 
         tkconfigure(bt.pltPointC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltPointC1, bg = loko)
@@ -3024,7 +3024,7 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
         ########
         tkconfigure(bt.pltLineC2, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line2), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line2), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltLineC2, bg = loko)
@@ -3050,7 +3050,7 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
 
         tkconfigure(bt.pltPointC2, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points2), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points2), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltPointC2, bg = loko)
@@ -3160,7 +3160,7 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
         ########
         tkconfigure(bt.pltLineC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltLineC1, bg = loko)
@@ -3186,7 +3186,7 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
 
         tkconfigure(bt.pltPointC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.pltPointC1, bg = loko)
@@ -3468,7 +3468,7 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
     ############
 
     tkbind(cb.plotT, "<<ComboboxSelected>>", function(){
-        pltType <- plotTypeVAL[CbplotTypeVAL %in% str_trim(tclvalue(plot.type))]
+        pltType <- plotTypeVAL[CbplotTypeVAL %in% trimws(tclvalue(plot.type))]
         if(pltType == 'multi') plotMultiplePanel() else plotSinglePanel()
     })
 
@@ -3536,54 +3536,54 @@ Validation.GraphOptions1.Lines <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
     tkconfigure(bt.opt.OK, command = function(){
         GraphOpt$line$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         GraphOpt$line$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$xlim$min <<- str_trim(tclvalue(min.xlim))
-        GraphOpt$line$xlim$max <<- str_trim(tclvalue(max.xlim))
+        GraphOpt$line$xlim$min <<- trimws(tclvalue(min.xlim))
+        GraphOpt$line$xlim$max <<- trimws(tclvalue(max.xlim))
 
         GraphOpt$line$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         GraphOpt$line$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        GraphOpt$line$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        GraphOpt$line$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        GraphOpt$line$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         GraphOpt$line$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         GraphOpt$line$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        GraphOpt$line$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        GraphOpt$line$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        GraphOpt$line$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         GraphOpt$line$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
+        GraphOpt$line$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
 
-        GraphOpt$line$plot$obs$type <<- str_trim(tclvalue(plot.type1))
+        GraphOpt$line$plot$obs$type <<- trimws(tclvalue(plot.type1))
         GraphOpt$line$plot$obs$line <<- tclvalue(plot.col.line1)
-        GraphOpt$line$plot$obs$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW1))))
+        GraphOpt$line$plot$obs$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW1))))
         GraphOpt$line$plot$obs$points <<- tclvalue(plot.col.points1)
-        GraphOpt$line$plot$obs$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS1))))
-        GraphOpt$line$plot$obs$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointT1))))
+        GraphOpt$line$plot$obs$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS1))))
+        GraphOpt$line$plot$obs$pch <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointT1))))
 
         GraphOpt$line$legend$add <<- switch(tclvalue(add.legend), '0' = FALSE, '1' = TRUE)
-        GraphOpt$line$plot.type <<- plotTypeVAL[CbplotTypeVAL %in% str_trim(tclvalue(plot.type))]
+        GraphOpt$line$plot.type <<- plotTypeVAL[CbplotTypeVAL %in% trimws(tclvalue(plot.type))]
 
         GraphOpt$line$validName$change <<- switch(tclvalue(valid.change), '0' = FALSE, '1' = TRUE)
 
         if(GraphOpt$line$plot.type == 'multi'){
-            GraphOpt$line$plot$est$type <<- str_trim(tclvalue(plot.type2))
+            GraphOpt$line$plot$est$type <<- trimws(tclvalue(plot.type2))
             GraphOpt$line$plot$est$line <<- tclvalue(plot.col.line2)
-            GraphOpt$line$plot$est$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW2))))
+            GraphOpt$line$plot$est$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW2))))
             GraphOpt$line$plot$est$points <<- tclvalue(plot.col.points2)
-            GraphOpt$line$plot$est$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS2))))
-            GraphOpt$line$plot$est$pch <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointT2))))
+            GraphOpt$line$plot$est$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS2))))
+            GraphOpt$line$plot$est$pch <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointT2))))
 
-            GraphOpt$line$legend$obs <<- str_trim(tclvalue(obs.legend))
-            GraphOpt$line$legend$est <<- str_trim(tclvalue(est.legend))
+            GraphOpt$line$legend$obs <<- trimws(tclvalue(obs.legend))
+            GraphOpt$line$legend$est <<- trimws(tclvalue(est.legend))
         }else{
             GraphOpt$line$plot1$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
             if(GraphOpt$line$validName$change)
-                GraphOpt$line$validName$obs <<- str_trim(tclvalue(valid.obsN))
+                GraphOpt$line$validName$obs <<- trimws(tclvalue(valid.obsN))
         }
 
         if(GraphOpt$line$validName$change){
-            validName <- str_trim(tclvalue(valid.name))
+            validName <- trimws(tclvalue(valid.name))
             validName <- strsplit(validName, ",")[[1]]
-            validName <- str_trim(validName)
+            validName <- trimws(validName)
             validName <- validName[validName != ""]
             if(length(validName) == 0) validName <- ""
             GraphOpt$line$validName$name <<- validName

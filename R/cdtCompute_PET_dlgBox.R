@@ -134,7 +134,7 @@ computePET_getParams <- function(){
         tkconfigure(set.tmin, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
-                                                                        str_trim(tclvalue(input.Tmin)))
+                                                                        trimws(tclvalue(input.Tmin)))
             settingTmin <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
@@ -168,7 +168,7 @@ computePET_getParams <- function(){
         tkconfigure(set.tmax, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
-                                                                        str_trim(tclvalue(input.Tmax)))
+                                                                        trimws(tclvalue(input.Tmax)))
             settingTmax <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
@@ -202,7 +202,7 @@ computePET_getParams <- function(){
         tkconfigure(set.prec, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams$cdtnetcdf[["prec"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["prec"]],
-                                                                        str_trim(tclvalue(input.Prec)))
+                                                                        trimws(tclvalue(input.Prec)))
             settingPrec <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
@@ -307,8 +307,8 @@ computePET_getParams <- function(){
     ############
 
     tkbind(cb.evap, "<<ComboboxSelected>>", function(){
-        pet.method <- evapVAL[cb.evapVAL %in% str_trim(tclvalue(ref.evap))]
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        pet.method <- evapVAL[cb.evapVAL %in% trimws(tclvalue(ref.evap))]
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
         statePrecip <- if(pet.method == 'HAR') "disabled" else "normal"
         tkconfigure(cb.en.prec, state = statePrecip)
@@ -337,8 +337,8 @@ computePET_getParams <- function(){
     ###############
 
     tkbind(cb.datatyp, "<<ComboboxSelected>>", function(){
-        pet.method <- evapVAL[cb.evapVAL %in% str_trim(tclvalue(ref.evap))]
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        pet.method <- evapVAL[cb.evapVAL %in% trimws(tclvalue(ref.evap))]
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
         inputDataFun(data.type, pet.method)
         saveFun(data.type)
@@ -401,17 +401,17 @@ computePET_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        .cdtData$GalParams$Tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(timeSteps))]
-        .cdtData$GalParams$method <- evapVAL[cb.evapVAL %in% str_trim(tclvalue(ref.evap))]
-        .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        .cdtData$GalParams$Tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(timeSteps))]
+        .cdtData$GalParams$method <- evapVAL[cb.evapVAL %in% trimws(tclvalue(ref.evap))]
+        .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-        if(str_trim(tclvalue(input.Tmin)) %in% c("", "NA")){
+        if(trimws(tclvalue(input.Tmin)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(input.Tmax)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(input.Tmax)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(input.Prec)) %in% c("", "NA") &
+        }else if(trimws(tclvalue(input.Prec)) %in% c("", "NA") &
                  .cdtData$GalParams$method == 'MHAR')
         {
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
@@ -436,27 +436,27 @@ computePET_getParams <- function(){
             tkwait.window(tt)
         }else{
             if(.cdtData$GalParams$data.type == 'cdtstation'){
-                .cdtData$GalParams$cdtstation$tmin <- str_trim(tclvalue(input.Tmin))
-                .cdtData$GalParams$cdtstation$tmax <- str_trim(tclvalue(input.Tmax))
+                .cdtData$GalParams$cdtstation$tmin <- trimws(tclvalue(input.Tmin))
+                .cdtData$GalParams$cdtstation$tmax <- trimws(tclvalue(input.Tmax))
                 if(.cdtData$GalParams$method == 'MHAR')
-                    .cdtData$GalParams$cdtstation$prec <- str_trim(tclvalue(input.Prec))
+                    .cdtData$GalParams$cdtstation$prec <- trimws(tclvalue(input.Prec))
             }
 
             if(.cdtData$GalParams$data.type == 'cdtdataset'){
-                .cdtData$GalParams$cdtdataset$tmin <- str_trim(tclvalue(input.Tmin))
-                .cdtData$GalParams$cdtdataset$tmax <- str_trim(tclvalue(input.Tmax))
+                .cdtData$GalParams$cdtdataset$tmin <- trimws(tclvalue(input.Tmin))
+                .cdtData$GalParams$cdtdataset$tmax <- trimws(tclvalue(input.Tmax))
                 if(.cdtData$GalParams$method == 'MHAR')
-                    .cdtData$GalParams$cdtdataset$prec <- str_trim(tclvalue(input.Prec))
+                    .cdtData$GalParams$cdtdataset$prec <- trimws(tclvalue(input.Prec))
             }
 
             if(.cdtData$GalParams$data.type == 'cdtnetcdf'){
-                .cdtData$GalParams$cdtnetcdf$tmin$dir <- str_trim(tclvalue(input.Tmin))
-                .cdtData$GalParams$cdtnetcdf$tmax$dir <- str_trim(tclvalue(input.Tmax))
+                .cdtData$GalParams$cdtnetcdf$tmin$dir <- trimws(tclvalue(input.Tmin))
+                .cdtData$GalParams$cdtnetcdf$tmax$dir <- trimws(tclvalue(input.Tmax))
                 if(.cdtData$GalParams$method == 'MHAR')
-                    .cdtData$GalParams$cdtnetcdf$prec$dir <- str_trim(tclvalue(input.Prec))
+                    .cdtData$GalParams$cdtnetcdf$prec$dir <- trimws(tclvalue(input.Prec))
             }
 
-            .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
+            .cdtData$GalParams$output <- trimws(tclvalue(file.save))
 
             .cdtData$GalParams$settingTmin <- settingTmin
             .cdtData$GalParams$settingTmax <- settingTmax

@@ -109,7 +109,7 @@ PlotOneNetCDFFileCmd <- function(){
         .cdtData$EnvData$tab$dataNCMap <- NULL
 
         tkconfigure(bt.nc.maps, command = function(){
-            if(str_trim(tclvalue(ncdf.file)) != ""){
+            if(trimws(tclvalue(ncdf.file)) != ""){
                 ret <- try(get.NCDF.DATA(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -235,14 +235,14 @@ PlotOneNetCDFFileCmd <- function(){
             tcl('update')
         })
 
-        loaded.nc <- list(str_trim(tclvalue(ncdf.file)), tclvalue(blankGrid))
+        loaded.nc <- list(trimws(tclvalue(ncdf.file)), tclvalue(blankGrid))
 
         getNCFiles <- TRUE
         if(!is.null(.cdtData$EnvData$loaded.nc))
             getNCFiles <- if(!isTRUE(all.equal(.cdtData$EnvData$loaded.nc, loaded.nc))) TRUE else FALSE
 
         if(getNCFiles){
-            ncdata <- getNcdfOpenData(str_trim(tclvalue(ncdf.file)))
+            ncdata <- getNcdfOpenData(trimws(tclvalue(ncdf.file)))
             .cdtData$EnvData$ncData$map$x <- ncdata[[2]]$x
             .cdtData$EnvData$ncData$map$y <- ncdata[[2]]$y
 

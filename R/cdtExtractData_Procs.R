@@ -26,10 +26,10 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
                 voisin <- defSpatialPixels(list(lon = xx, lat = yy))
             }else{
                 voisin <- data.frame(lon = xx, lat = yy)
-                coordinates(voisin) <- ~lon+lat
+                sp::coordinates(voisin) <- ~lon+lat
             }
 
-            ij2xtr <- over(voisin, spxycrd)
+            ij2xtr <- sp::over(voisin, spxycrd)
             if(!any(!is.na(ij2xtr))){
                 Insert.Messages.Out(lang.dlg[['message']][['19']], TRUE, "e", GUI)
                 return(NULL)
@@ -54,11 +54,11 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
                                 xy <- defSpatialPixels(list(lon = xx, lat = yy))
                             }else{
                                 xy <- data.frame(lon = xx, lat = yy)
-                                coordinates(xy) <- ~lon+lat
+                                sp::coordinates(xy) <- ~lon+lat
                             }
                             return(xy)
                         })
-            ij2xtr <- lapply(voisin, over, y = spxycrd)
+            ij2xtr <- lapply(voisin, sp::over, y = spxycrd)
             if(all(sapply(ij2xtr, function(x) !any(!is.na(x))))){
                 Insert.Messages.Out(lang.dlg[['message']][['19']], TRUE, "e", GUI)
                 return(NULL)
@@ -75,11 +75,11 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
             }
 
             if(GeneralParameters$type.extract == 'poly'){
-                idPoly <- str_trim(shpf.union@data$Group.1) == GeneralParameters$Geom$namePoly
+                idPoly <- trimws(shpf.union@data$Group.1) == GeneralParameters$Geom$namePoly
                 geomPoly <- shpf.union[idPoly, ]
                 namepoly <- gsub("[^[:alnum:]]", "", GeneralParameters$Geom$namePoly)
                 namepoly <- substr(namepoly, 1, 25)
-                headinfo <- cbind(namepoly, coordinates(geomPoly))
+                headinfo <- cbind(namepoly, sp::coordinates(geomPoly))
             }
 
             polyRas <- spxycrd
@@ -94,9 +94,9 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
         }
 
         if(GeneralParameters$type.extract == 'mpoly'){
-            idPoly <- str_trim(shpf.union@data$Group.1) %in% GeneralParameters$Geom$multiObj
+            idPoly <- trimws(shpf.union@data$Group.1) %in% GeneralParameters$Geom$multiObj
             shpf.regOI <- shpf.union[idPoly, ]
-            headinfo <- cbind(as.character(shpf.regOI@data$Group.1), round(coordinates(shpf.regOI), 5))
+            headinfo <- cbind(as.character(shpf.regOI@data$Group.1), round(sp::coordinates(shpf.regOI), 5))
             headinfo[, 1] <- substr(gsub("[^[:alnum:]]", "", headinfo[, 1]), 1, 25)
 
             polyRas <- spxycrd
@@ -242,10 +242,10 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
 
         iattr <- as.character(shpf@data[, GeneralParameters$shp.file$attr])
         shpf.union <- maptools::unionSpatialPolygons(shpf, iattr)
-        shpf.df <- stats::aggregate(as(shpf, "data.frame")[, 1], list(iattr), identity)
+        shpf.df <- stats::aggregate(methods::as(shpf, "data.frame")[, 1], list(iattr), identity)
         shpf.df$x <- seq(shpf.union)
-        row.names(shpf.df) <- sapply(slot(shpf.union, "polygons"), function(x) slot(x, "ID"))
-        shpf.union <- SpatialPolygonsDataFrame(shpf.union, shpf.df)
+        row.names(shpf.df) <- sapply(methods::slot(shpf.union, "polygons"), function(x) methods::slot(x, "ID"))
+        shpf.union <- sp::SpatialPolygonsDataFrame(shpf.union, shpf.df)
     }
 
     #####################################
@@ -319,13 +319,13 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
 
         varInfo <- NULL
         varInfo$name <- ncInfo$varid
-        nc <- nc_open(ncpath[1])
+        nc <- ncdf4::nc_open(ncpath[1])
         lon <- nc$var[[ncInfo$varid]]$dim[[ncInfo$ilon]]$vals
         lat <- nc$var[[ncInfo$varid]]$dim[[ncInfo$ilat]]$vals
         varInfo$longname <- nc$var[[ncInfo$varid]]$longname
         varInfo$units <- nc$var[[ncInfo$varid]]$units
         varInfo$prec <- nc$var[[ncInfo$varid]]$prec
-        nc_close(nc)
+        ncdf4::nc_close(nc)
 
         ncInfo$xo <- order(lon)
         lon <- lon[ncInfo$xo]

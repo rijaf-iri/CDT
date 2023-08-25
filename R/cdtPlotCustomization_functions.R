@@ -42,7 +42,7 @@ parAxisPlotFun <- function(x, factor = 0.04){
     bInf <- min(xtick[xtick >= min(xlim)])
     bSup <- max(xtick[xtick <= max(xlim)])
     intervl <- length(which(xtick >= bInf & xtick <= bSup)) - 1
-    ticks <- axTicks(side = 1, usr = xlim, axp = c(bInf, bSup, intervl))
+    ticks <- graphics::axTicks(side = 1, usr = xlim, axp = c(bInf, bSup, intervl))
     return(list(usr = xlim, axp = ticks))
 }
 
@@ -52,7 +52,7 @@ parAxisPlotFun <- function(x, factor = 0.04){
 # copy of axis.Date
 axTicks.Date <- function(x, side = 1){
     x <- as.Date(x)
-    range <- par("usr")[if(side %% 2) 1L:2L else 3:4L]
+    range <- graphics::par("usr")[if(side %% 2) 1L:2L else 3:4L]
     range[1L] <- ceiling(range[1L])
     range[2L] <- floor(range[2L])
     d <- range[2L] - range[1L]
@@ -92,7 +92,7 @@ axTicks.Date <- function(x, side = 1){
 # copy of axis.POSIXct
 axTicks.POSIXct <- function(x, side = 1){
     x <- as.POSIXct(x)
-    range <- par("usr")[if (side %% 2) 1L:2L else 3L:4L]
+    range <- graphics::par("usr")[if (side %% 2) 1L:2L else 3L:4L]
     d <- range[2L] - range[1L]
     z <- c(range, x[is.finite(x)])
     attr(z, "tzone") <- attr(x, "tzone")
@@ -291,8 +291,8 @@ format.xlim.date.range <- function(xlim, timestep, message)
     if(timestep == "monthly") x3 <- 1
 
     x1 <- as.numeric(xx[1])
-    x2 <- str_pad(as.numeric(xx[2]), 2, pad = "0")
-    x3 <- str_pad(x3, 2, pad = "0")
+    x2 <- stringr::str_pad(as.numeric(xx[2]), 2, pad = "0")
+    x3 <- stringr::str_pad(x3, 2, pad = "0")
     if(timestep %in% c('minute', 'hourly'))
         xx <- as.POSIXct(paste(x1, x2, x3, x4, x5, sep = "-"), format = "%Y-%m-%d-%H-%M")
     else
@@ -365,14 +365,14 @@ panel.filledcontour <- function(x, y, z, subscripts, at, col.regions, ...){
                 nrow = length(unique(x[subscripts])),
                 ncol = length(unique(y[subscripts])))
     if(!is.double(z)) storage.mode(z) <- "double"
-    opar <- par(no.readonly = TRUE)
-    on.exit(par(opar))
-    if(lattice::panel.number() > 1) par(new = TRUE)
-    par(fig = gridBase::gridFIG(), omi = c(0, 0, 0, 0), mai = c(0, 0, 0, 0))
+    opar <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(opar))
+    if(lattice::panel.number() > 1) graphics::par(new = TRUE)
+    graphics::par(fig = gridBase::gridFIG(), omi = c(0, 0, 0, 0), mai = c(0, 0, 0, 0))
     cpl <- lattice::current.panel.limits()
-    plot.window(xlim = cpl$xlim, ylim = cpl$ylim, log = "", xaxs = "i", yaxs = "i")
-    .filled.contour(as.double(lattice::do.breaks(cpl$xlim, nrow(z) - 1)),
-                    as.double(lattice::do.breaks(cpl$ylim, ncol(z) - 1)),
-                    z, as.double(at), col = col.regions)
+    graphics::plot.window(xlim = cpl$xlim, ylim = cpl$ylim, log = "", xaxs = "i", yaxs = "i")
+    graphics::.filled.contour(as.double(lattice::do.breaks(cpl$xlim, nrow(z) - 1)),
+                            as.double(lattice::do.breaks(cpl$ylim, ncol(z) - 1)),
+                            z, as.double(at), col = col.regions)
 }
 

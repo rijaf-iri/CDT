@@ -14,11 +14,11 @@ Climdex.plotMapTrend <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
 
     map.args$mar[3] <- map.args$mar[3] + 2
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = dataMapOp,
@@ -31,7 +31,7 @@ Climdex.plotMapTrend <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -119,11 +119,11 @@ Climdex.plotMapYear <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp, legend.text = legend.texta)
 
     map.args$mar[3] <- map.args$mar[3] + 2
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          # MapOp = dataMapOp,
@@ -136,7 +136,7 @@ Climdex.plotMapYear <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -148,7 +148,7 @@ Climdex.plotVarGraph <- function(){
     this.vars <- .cdtData$EnvData$anaVars
 
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['20']], TRUE, 'e')
             return(NULL)
@@ -159,8 +159,8 @@ Climdex.plotVarGraph <- function(){
         .cdtData$EnvData$location <- paste0("Station: ", .cdtData$EnvData$output$data$id[ixy])
         titre <- paste0("(", .cdtData$EnvData$output$data$id[ixy], ")")
     }else{
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(.cdtData$EnvData$cdtdataYear, .cdtData$EnvData$cdtdataYear$fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         don <- as.numeric(xyloc$data)

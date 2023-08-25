@@ -66,7 +66,7 @@ mergeGetInfoClimData <- function(){
         ###########
 
         tkconfigure(bt.DateRange, command = function(){
-            tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+            tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
             tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -120,7 +120,7 @@ mergeGetInfoClimData <- function(){
         tkconfigure(set.InNCDF, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams[["INPUT"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT"]],
-                                                               str_trim(tclvalue(dir.InNCDF)))
+                                                               trimws(tclvalue(dir.InNCDF)))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             settingSNC <<- 1
         })
@@ -328,7 +328,7 @@ mergeGetInfoClimData <- function(){
         ########
 
         tkbind(cb.mrg, "<<ComboboxSelected>>", function(){
-            mrgmethod <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
+            mrgmethod <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
             auxiliary.variables(mrgmethod)
         })
 
@@ -339,7 +339,7 @@ mergeGetInfoClimData <- function(){
         helpWidget(bt.mrg.interp, lang.dlg[['tooltip']][['19']], lang.dlg[['status']][['19']])
 
         tkconfigure(bt.mrg.interp, command = function(){
-            mrgmethod <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
+            mrgmethod <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
             stateMethod <- if(mrgmethod %in% c("CSc", "BSc")) "disabled" else "normal"
 
             tcl('wm', 'attributes', tt, topmost = FALSE)
@@ -459,32 +459,32 @@ mergeGetInfoClimData <- function(){
     #######
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl)) == ""){
+        if(trimws(tclvalue(file.stnfl)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir.InNCDF)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir.InNCDF)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(is.null(settingSNC)){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(tclvalue(blank.data) == "1" & str_trim(tclvalue(blank.shpf)) == ""){
+        }else if(tclvalue(blank.data) == "1" & trimws(tclvalue(blank.shpf)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
 
-            .cdtData$GalParams$STN.file <- str_trim(tclvalue(file.stnfl))
-            .cdtData$GalParams$INPUT$dir <- str_trim(tclvalue(dir.InNCDF))
-            .cdtData$GalParams$output$dir <- str_trim(tclvalue(dir2save))
-            .cdtData$GalParams$output$format <- str_trim(tclvalue(outmrgff))
+            .cdtData$GalParams$STN.file <- trimws(tclvalue(file.stnfl))
+            .cdtData$GalParams$INPUT$dir <- trimws(tclvalue(dir.InNCDF))
+            .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
+            .cdtData$GalParams$output$format <- trimws(tclvalue(outmrgff))
 
-            .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
-            .cdtData$GalParams$MRG$nrun <- as.numeric(str_trim(tclvalue(nb.run)))
-             pass <- str_trim(strsplit(tclvalue(pass.ratio), ",")[[1]])
+            .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
+            .cdtData$GalParams$MRG$nrun <- as.numeric(trimws(tclvalue(nb.run)))
+             pass <- trimws(strsplit(tclvalue(pass.ratio), ",")[[1]])
             .cdtData$GalParams$MRG$pass <- as.numeric(pass[pass != ""])
             if(.cdtData$GalParams$MRG$nrun != length(.cdtData$GalParams$MRG$pass)){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
@@ -496,7 +496,7 @@ mergeGetInfoClimData <- function(){
             .cdtData$GalParams$auxvar$aspect <- switch(tclvalue(aspect.auxvar), '0' = FALSE, '1' = TRUE)
             .cdtData$GalParams$auxvar$lon <- switch(tclvalue(lon.auxvar), '0' = FALSE, '1' = TRUE)
             .cdtData$GalParams$auxvar$lat <- switch(tclvalue(lat.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$demfile <- str_trim(tclvalue(demfile.var))
+            .cdtData$GalParams$auxvar$demfile <- trimws(tclvalue(demfile.var))
 
             if(.cdtData$GalParams$MRG$method == "RK" &
                (.cdtData$GalParams$auxvar$dem |
@@ -510,12 +510,12 @@ mergeGetInfoClimData <- function(){
             }
 
             .cdtData$GalParams$blank$data <- switch(tclvalue(blank.data), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$blank$shpf <- str_trim(tclvalue(blank.shpf))
+            .cdtData$GalParams$blank$shpf <- trimws(tclvalue(blank.shpf))
 
             if(.cdtData$GalParams$action == "merge.rain"){
                 .cdtData$GalParams$RnoR$use <- switch(tclvalue(rnor.mask), '0' = FALSE, '1' = TRUE)
                 .cdtData$GalParams$RnoR$smooth <- switch(tclvalue(rnor.smooth), '0' = FALSE, '1' = TRUE)
-                .cdtData$GalParams$RnoR$wet <- as.numeric(str_trim(tclvalue(rnor.wet)))
+                .cdtData$GalParams$RnoR$wet <- as.numeric(trimws(tclvalue(rnor.wet)))
             }
 
             if(.cdtData$GalParams$action == "merge.pres"){

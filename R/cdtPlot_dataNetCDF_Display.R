@@ -11,10 +11,10 @@ PlotNetCDFdataMaps <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = dataMapOp,
@@ -27,6 +27,6 @@ PlotNetCDFdataMaps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
     return(0)
 }

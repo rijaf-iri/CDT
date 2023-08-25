@@ -33,7 +33,7 @@ getInfo_AggregateFun <- function(parent.win, Parameters,
     opr.fun <- tclVar(Parameters$opr.fun)
     opr.thres <- tclVar(Parameters$opr.thres)
 
-    stateCount <- if(str_trim(Parameters$aggr.fun) == "count") 'normal' else 'disabled'
+    stateCount <- if(trimws(Parameters$aggr.fun) == "count") 'normal' else 'disabled'
 
     txt.aggfun <- tklabel(frameAggr, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     cb.aggfun <- ttkcombobox(frameAggr, values = FUN, textvariable = aggr.fun, width = largeur1)
@@ -130,15 +130,15 @@ getInfo_AggregateFun <- function(parent.win, Parameters,
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$aggr.fun <<- str_trim(tclvalue(aggr.fun))
-        Parameters$opr.fun <<- str_trim(tclvalue(opr.fun))
-        Parameters$opr.thres <<- as.numeric(str_trim(tclvalue(opr.thres)))
+        Parameters$aggr.fun <<- trimws(tclvalue(aggr.fun))
+        Parameters$opr.fun <<- trimws(tclvalue(opr.fun))
+        Parameters$opr.thres <<- as.numeric(trimws(tclvalue(opr.thres)))
 
         Parameters$min.frac$unique <<- switch(tclvalue(uniqueMinFr), '0' = FALSE, '1' = TRUE)
         if(Parameters$min.frac$unique)
-            Parameters$min.frac$all <<- as.numeric(str_trim(tclvalue(allMinFr)))
+            Parameters$min.frac$all <<- as.numeric(trimws(tclvalue(allMinFr)))
         else
-            Parameters$min.frac$month <<- as.numeric(str_trim(sapply(monthMinFr, tclvalue)))
+            Parameters$min.frac$month <<- as.numeric(trimws(sapply(monthMinFr, tclvalue)))
 
         tkgrab.release(tt)
         tkdestroy(tt)

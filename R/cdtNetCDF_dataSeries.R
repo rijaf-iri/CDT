@@ -116,7 +116,7 @@ ncFilesInfoSeq <- function(ncDir, ncFileFormat, error.msg){
     seq_order <- seq_along(seq_dat)
     if(all(nb_only)){
         nmax <- max(nchar(seq_dat))
-        seq_dat <- str_pad(seq_dat, nmax, pad = "0")
+        seq_dat <- stringr::str_pad(seq_dat, nmax, pad = "0")
         seq_order <- order(seq_dat)
     }else{
         nb_mixed <- gregexpr("[[:digit:]]+", seq_dat)
@@ -296,7 +296,7 @@ readNetCDFData2AggrBox <- function(ncInfo, boxregion, GUI = TRUE){
     spxygrd$z <- seq_along(spxygrd)
     spxygrd <- raster::raster(spxygrd)
     spxybox <- defSpatialPixels(list(lon = xlon, lat = xlat))
-    spxybox <- as(spxybox, "SpatialPolygons")
+    spxybox <- methods::as(spxybox, "SpatialPolygons")
     ij2xtr <- raster::extract(spxygrd, spxybox, weights = TRUE,
                               normalizeWeights = TRUE, cellnumbers = TRUE)
 
@@ -351,7 +351,7 @@ readNetCDFData2PtsAggrBox <- function(ncInfo, lonlatpts, boxregion, GUI = TRUE){
     spxygrd$z <- seq_along(spxygrd)
     spxygrd <- raster::raster(spxygrd)
     spxybox <- defSpatialPixels(list(lon = xlon, lat = xlat))
-    spxybox <- as(spxybox, "SpatialPolygons")
+    spxybox <- methods::as(spxybox, "SpatialPolygons")
     ij2xtr <- raster::extract(spxygrd, spxybox, weights = TRUE,
                               normalizeWeights = TRUE, cellnumbers = TRUE)
 

@@ -27,8 +27,8 @@ is.HelpServerRunning <- function(){
 ## Load local configuration file
 cdtLocalConfigData <- function(){
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
-    Config <- fromJSON(cdt.file.conf)
-    Config <- rapply(Config, str_trim, classes = "character", how = "replace")
+    Config <- jsonlite::fromJSON(cdt.file.conf)
+    Config <- rapply(Config, trimws, classes = "character", how = "replace")
     .cdtData$Config <- Config
 }
 
@@ -120,7 +120,7 @@ all.equal.elements.num <- function(x, tol = .Machine$double.eps ^ 0.5){
 ##############################################
 
 ## Define spatialPixels
-defSpatialPixels <- function(grd_Coords, projCRS = CRS(as.character(NA)), regrid = FALSE)
+defSpatialPixels <- function(grd_Coords, projCRS = sp::CRS(as.character(NA)), regrid = FALSE)
 {
     if(regrid){
         x <- grd_Coords$lon
@@ -137,13 +137,13 @@ defSpatialPixels <- function(grd_Coords, projCRS = CRS(as.character(NA)), regrid
         }
 
         grd0 <- expand.grid(lon = x, lat = y)
-        coordinates(grd0) <- ~lon+lat
-        grd <- SpatialPixels(points = grd0, tolerance = 0.0002, proj4string = projCRS)
+        sp::coordinates(grd0) <- ~lon+lat
+        grd <- sp::SpatialPixels(points = grd0, tolerance = 0.0002, proj4string = projCRS)
     }else{
         grd0 <- expand.grid(lon = grd_Coords$lon, lat = grd_Coords$lat)
-        coordinates(grd0) <- ~lon+lat
+        sp::coordinates(grd0) <- ~lon+lat
 
-        foo <- function(tol) SpatialPixels(points = grd0, tolerance = tol, proj4string = projCRS)
+        foo <- function(tol) sp::SpatialPixels(points = grd0, tolerance = tol, proj4string = projCRS)
         grd <- try(foo(sqrt(sqrt(.Machine$double.eps))), silent = TRUE)
         if(inherits(grd, "try-error")) grd <- foo(0.005)
     }
@@ -154,12 +154,14 @@ defSpatialPixels <- function(grd_Coords, projCRS = CRS(as.character(NA)), regrid
 ##############################################
 
 ## Get index of points at grid
-grid2pointINDEX <- function(pts_Coords, grd_Coords, projCRS = CRS(as.character(NA)), regrid = FALSE)
+grid2pointINDEX <- function(pts_Coords, grd_Coords,
+                            projCRS = sp::CRS(as.character(NA)),
+                            regrid = FALSE)
 {
     newgrid <- defSpatialPixels(grd_Coords, projCRS, regrid)
     pts.loc <- data.frame(lon = pts_Coords$lon, lat = pts_Coords$lat)
-    pts.loc <- SpatialPoints(pts.loc)
-    ijGrd <- unname(over(pts.loc, geometry(newgrid)))
+    pts.loc <- sp::SpatialPoints(pts.loc)
+    ijGrd <- unname(sp::over(pts.loc, sp::geometry(newgrid)))
     return(ijGrd)
 }
 
@@ -278,12 +280,12 @@ getBoundaries <- function(shpf){
     # shpf <- rgeos::gSimplify(shpf, 0.001, topologyPreserve = TRUE)
     ocrds <- matrix(NA, nrow = 1, ncol = 2)
     if(!is.null(shpf)){
-        retPolygon <- lapply(slot(shpf, "polygons"),
-                             function(i) slot(i, "Polygons"))
+        retPolygon <- lapply(methods::slot(shpf, "polygons"),
+                             function(i) methods::slot(i, "Polygons"))
         polys <- lapply(retPolygon, function(x){
             ret <- NULL
             for(i in seq_along(x)){
-                poly <- rbind(slot(x[[i]], "coords"), cbind(NA, NA))
+                poly <- rbind(methods::slot(x[[i]], "coords"), cbind(NA, NA))
                 ret <- rbind(ret, poly)
             }
             ret

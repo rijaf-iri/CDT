@@ -188,7 +188,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
             out.ncfiles <- file.path(outputDIR, outnc)
 
             #######
-            nc <- nc_open(donInfo$ncfiles[1])
+            nc <- ncdf4::nc_open(donInfo$ncfiles[1])
             varid0 <- ncINFO$varid
             xlon0 <- nc$var[[varid0]]$dim[[ncINFO$ilon]]$vals
             xlat0 <- nc$var[[varid0]]$dim[[ncINFO$ilat]]$vals
@@ -196,7 +196,7 @@ climatologiesCalcProcs <- function(GeneralParameters){
             prec0 <- nc$var[[varid0]]$prec
             missval0 <- nc$var[[varid0]]$missval
             longname0 <- nc$var[[varid0]]$longname
-            nc_close(nc)
+            ncdf4::nc_close(nc)
 
             ncINFO$xo <- order(xlon0)
             xlon0 <- xlon0[ncINFO$xo]
@@ -206,9 +206,9 @@ climatologiesCalcProcs <- function(GeneralParameters){
             xnlat0 <- length(xlat0)
 
             ########
-            dx <- ncdim_def("Lon", "degreeE", xlon0)
-            dy <- ncdim_def("Lat", "degreeN", xlat0)
-            grd.nc.out <- ncvar_def(varid0, units0, list(dx, dy), missval0,
+            dx <- ncdf4::ncdim_def("Lon", "degreeE", xlon0)
+            dy <- ncdf4::ncdim_def("Lat", "degreeN", xlat0)
+            grd.nc.out <- ncdf4::ncvar_def(varid0, units0, list(dx, dy), missval0,
                                     longname = longname0, prec = prec0, compression = 9)
 
             #######
@@ -411,10 +411,10 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
         x <- index.out$coords$mat$x
         y <- index.out$coords$mat$y
-        dx <- ncdim_def("Lon", "degreeE", x)
-        dy <- ncdim_def("Lat", "degreeN", y)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
         xy.dim <- list(dx, dy)
-        nc.grd <- ncvar_def(index.out$varInfo$name, index.out$varInfo$units, xy.dim, -99, index.out$varInfo$longname, "float", compression = 9)
+        nc.grd <- ncdf4::ncvar_def(index.out$varInfo$name, index.out$varInfo$units, xy.dim, -99, index.out$varInfo$longname, "float", compression = 9)
 
         ######################
 
@@ -426,17 +426,17 @@ climatologiesCalcProcs <- function(GeneralParameters){
             dat.moy <- dat.moy$z
             dat.moy[is.na(dat.moy)] <- -99
             filenc <- file.path(ncdfOUT1, paste0("clim_", id, ".nc"))
-            nc <- nc_create(filenc, nc.grd)
-            ncvar_put(nc, nc.grd, dat.moy)
-            nc_close(nc)
+            nc <- ncdf4::nc_create(filenc, nc.grd)
+            ncdf4::ncvar_put(nc, nc.grd, dat.moy)
+            ncdf4::nc_close(nc)
 
             dat.sds <- readCdtDatasetChunk.multi.dates.order(file.index2, id, cdtParallelCond, onedate = TRUE)
             dat.sds <- dat.sds$z
             dat.sds[is.na(dat.sds)] <- -99
             filenc <- file.path(ncdfOUT2, paste0("clim_", id, ".nc"))
-            nc <- nc_create(filenc, nc.grd)
-            ncvar_put(nc, nc.grd, dat.sds)
-            nc_close(nc)
+            nc <- ncdf4::nc_create(filenc, nc.grd)
+            ncdf4::ncvar_put(nc, nc.grd, dat.sds)
+            ncdf4::nc_close(nc)
 
             return(0)
         })
@@ -470,12 +470,12 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
         #####################################
 
-        nc <- nc_open(donInfo$ncfiles[1])
+        nc <- ncdf4::nc_open(donInfo$ncfiles[1])
         varid0 <- donInfo$ncinfo$varid
         nc.lon <- nc$var[[varid0]]$dim[[ncINFO$ilon]]$vals
         nc.lat <- nc$var[[varid0]]$dim[[ncINFO$ilat]]$vals
         varInfo <- nc$var[[varid0]][c('name', 'prec', 'units', 'longname')]
-        nc_close(nc)
+        ncdf4::nc_close(nc)
 
         ncINFO$xo <- order(nc.lon)
         nc.lon <- nc.lon[ncINFO$xo]
@@ -486,10 +486,10 @@ climatologiesCalcProcs <- function(GeneralParameters){
 
         #########################################
 
-        dx <- ncdim_def("Lon", "degreeE", nc.lon)
-        dy <- ncdim_def("Lat", "degreeN", nc.lat)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", nc.lon)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", nc.lat)
         xy.dim <- list(dx, dy)
-        nc.grd <- ncvar_def(varInfo$name, varInfo$units, xy.dim, -99, varInfo$longname, "float", compression = 9)
+        nc.grd <- ncdf4::ncvar_def(varInfo$name, varInfo$units, xy.dim, -99, varInfo$longname, "float", compression = 9)
 
         #########################################
 
@@ -544,9 +544,9 @@ climatologiesCalcProcs <- function(GeneralParameters){
             }else{
                 id2read <- index$index[[jj]]
                 dat.clim <- lapply(seq_along(id2read), function(j){
-                    nc <- nc_open(donInfo$ncfiles[id2read[j]])
-                    vars <- ncvar_get(nc, varid = varid0)
-                    nc_close(nc)
+                    nc <- ncdf4::nc_open(donInfo$ncfiles[id2read[j]])
+                    vars <- ncdf4::ncvar_get(nc, varid = varid0)
+                    ncdf4::nc_close(nc)
                     vars <- transposeNCDFData(vars, ncINFO)
                     c(vars)
                 })
@@ -564,17 +564,17 @@ climatologiesCalcProcs <- function(GeneralParameters){
             clim <- matrix(dat.moy, len.lon, len.lat)
             clim[is.na(clim)] <- -99
             filenc <- file.path(ncdfOUT1, paste0("clim_", index$id[jj], ".nc"))
-            nc <- nc_create(filenc, nc.grd)
-            ncvar_put(nc, nc.grd, clim)
-            nc_close(nc)
+            nc <- ncdf4::nc_create(filenc, nc.grd)
+            ncdf4::ncvar_put(nc, nc.grd, clim)
+            ncdf4::nc_close(nc)
             rm(clim)
 
             clim <- matrix(dat.sds, len.lon, len.lat)
             clim[is.na(clim)] <- -99
             filenc <- file.path(ncdfOUT2, paste0("clim_", index$id[jj], ".nc"))
-            nc <- nc_create(filenc, nc.grd)
-            ncvar_put(nc, nc.grd, clim)
-            nc_close(nc)
+            nc <- ncdf4::nc_create(filenc, nc.grd)
+            ncdf4::ncvar_put(nc, nc.grd, clim)
+            ncdf4::nc_close(nc)
             rm(clim)
 
             ret0 <- lapply(seq_along(col.idx), function(j){

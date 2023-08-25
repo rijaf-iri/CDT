@@ -2,15 +2,15 @@
 rain_no_rain.mask_log <- function(locations.stn, newgrid, nmax)
 {
     glm.binom <- tryCatch(
-            glm(rnr.stn ~ grd, data = locations.stn, family = stats::binomial(link = "logit")),
+            stats::glm(rnr.stn ~ grd, data = locations.stn, family = stats::binomial(link = "logit")),
             error=function(e) e, warning=function(w) w
         )
     if(inherits(glm.binom, "warning") | inherits(glm.binom, "error")) return(NULL)
 
     rnr <- NULL
     if(!is.na(glm.binom$coef[2])){
-        locations.stn$rnr.res <- residuals(glm.binom)
-        rnr.trend <- predict(glm.binom, newdata = newgrid, type = 'link')
+        locations.stn$rnr.res <- stats::residuals(glm.binom)
+        rnr.trend <- stats::predict(glm.binom, newdata = newgrid, type = 'link')
 
         rnr.res.grd <- gstat::krige(rnr.res~1, locations = locations.stn, newdata = newgrid,
                                     nmax = nmax, set = list(idp = 4.0), debug.level = 0)
@@ -87,7 +87,7 @@ create_grid_buffer <- function(locations.stn, newgrid,
 
     ixy <- expand.grid(ix, iy)
     icoarse <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
-    coarsegrid <- as(newgrid[icoarse, ], "SpatialPixels")
+    coarsegrid <- methods::as(newgrid[icoarse, ], "SpatialPixels")
 
     resx_c <- resx * rx
     resy_c <- resy * ry
@@ -106,7 +106,7 @@ create_grid_buffer <- function(locations.stn, newgrid,
     loc.stn <- cdt.as.image(locations.stn$stn, locations.stn@coords, xgrd, regrid = TRUE)
     loc.stn <- cbind(do.call(expand.grid, loc.stn[c('x', 'y')]), z = c(loc.stn$z))
     loc.stn <- loc.stn[!is.na(loc.stn$z), , drop = FALSE]
-    coordinates(loc.stn) <- c('x', 'y')
+    sp::coordinates(loc.stn) <- c('x', 'y')
 
     dst <- fields::rdist(locations.stn@coords, coarsegrid@coords)
     dst <- colSums(dst < 0.5 * radius) == 0

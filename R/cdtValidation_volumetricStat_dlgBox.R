@@ -210,8 +210,8 @@ getInfo_volumetricValid <- function(parent.win, statData, Parameters, obsOnly = 
     tkconfigure(bt.prm.OK, command = function(){
         Parameters$user <<- switch(tclvalue(userVal), '0' = FALSE, '1' = TRUE)
         Parameters$one.thres <<- switch(tclvalue(unique.thres), '0' = FALSE, '1' = TRUE)
-        Parameters$user.val <<- as.numeric(str_trim(tclvalue(user.thres)))
-        Parameters$user.file <<- str_trim(tclvalue(file.stnfl))
+        Parameters$user.val <<- as.numeric(trimws(tclvalue(user.thres)))
+        Parameters$user.file <<- trimws(tclvalue(file.stnfl))
 
         if(statData == "stn"){
             if(Parameters$user & !Parameters$one.thres){
@@ -222,9 +222,9 @@ getInfo_volumetricValid <- function(parent.win, statData, Parameters, obsOnly = 
             }
         }
 
-        Parameters$from <<- percDATA[CbpercDATA %in% str_trim(tclvalue(perc.data))]
+        Parameters$from <<- percDATA[CbpercDATA %in% trimws(tclvalue(perc.data))]
         if(Parameters$from == "") Parameters$from <<- "obs"
-        Parameters$perc <<- as.numeric(str_trim(tclvalue(percVal)))
+        Parameters$perc <<- as.numeric(trimws(tclvalue(percVal)))
 
         tkgrab.release(tt)
         tkdestroy(tt)

@@ -542,7 +542,7 @@ cdt.init.params <- function(action, tstep){
     # if(action == 'merge.dekrain'){
     #     ret.params <- fromJSON(file.path(.cdtDir$dirLocal, 'init_params', 'Precip_Update_dekadal.json'))
     #     ret.params <- c(list(action = action, period = tstep), ret.params)
-    #     if(str_trim(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
+    #     if(trimws(ret.params$output$dir) == "") ret.params$output$dir <- getwd()
     # }
 
     return(ret.params)

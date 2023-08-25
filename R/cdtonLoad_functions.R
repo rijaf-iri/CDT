@@ -117,7 +117,7 @@ assign("blanking.options", list(), envir = .cdtMRG)
 
     if(WindowsOS()){
         if(tcl.conf[[ostype]]$UseOtherTclTk){
-            tclbin <- stringr::str_trim(tcl.conf[[ostype]]$Tclbin)
+            tclbin <- trimws(tcl.conf[[ostype]]$Tclbin)
             if(!dir.exists(tclbin))
                 stop(paste0(tclbin, " does not exist", editcfg.msg("Tcl/Tk")))
             ### 
@@ -144,7 +144,7 @@ assign("blanking.options", list(), envir = .cdtMRG)
     }
 
     if(!tcl.conf[[ostype]]$Tktable.auto){
-        Tktable.path <- stringr::str_trim(tcl.conf[[ostype]]$Tktable.path)
+        Tktable.path <- trimws(tcl.conf[[ostype]]$Tktable.path)
         if(!dir.exists(Tktable.path)) stop(paste(Tktable.path, "does not found"))
         if(!WindowsOS()){
             Sys.setenv(TK_TABLE_LIBRARY = Tktable.path)
@@ -153,7 +153,7 @@ assign("blanking.options", list(), envir = .cdtMRG)
     }else Tktable.path <- NULL
 
     if(!tcl.conf[[ostype]]$Bwidget.auto){
-        Bwidget.path <- stringr::str_trim(tcl.conf[[ostype]]$Bwidget.path)
+        Bwidget.path <- trimws(tcl.conf[[ostype]]$Bwidget.path)
         if(!dir.exists(Bwidget.path)) warning(paste(Bwidget.path, "does not found"))
     }else Bwidget.path <- NULL
 

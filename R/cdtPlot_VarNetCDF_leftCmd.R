@@ -79,11 +79,11 @@ PlotVarNetCDFFilesCmd <- function(){
                 return(NULL)
             }
 
-            nc <- nc_open(fileopen)
+            nc <- ncdf4::nc_open(fileopen)
             ncdims <- sapply(nc$dim, '[[', 'name')
             var.name <- sapply(nc$var, '[[', 'name')
             var.lname <- sapply(nc$var, '[[', 'longname')
-            nc_close(nc)
+            ncdf4::nc_close(nc)
 
             ncvars <- paste0(var.name, '::', var.lname)
 
@@ -214,7 +214,7 @@ PlotVarNetCDFFilesCmd <- function(){
         })
 
         tkconfigure(bt.ncfl, command = function(){
-            initialdir <- if(file.exists(str_trim(tclvalue(ncDIR)))) str_trim(tclvalue(ncDIR)) else getwd()
+            initialdir <- if(file.exists(trimws(tclvalue(ncDIR)))) trimws(tclvalue(ncDIR)) else getwd()
             fileopen <- tclvalue(tkgetOpenFile(initialdir = initialdir, filetypes = .cdtEnv$tcl$data$filetypes3))
 
             ret <- selectVarsFun(fileopen)
@@ -231,7 +231,7 @@ PlotVarNetCDFFilesCmd <- function(){
         })
 
         tkbind(cb.ncfl, "<<ComboboxSelected>>", function(){
-            jfile <- getIndex.AllOpenFiles(str_trim(tclvalue(ncSample)))
+            jfile <- getIndex.AllOpenFiles(trimws(tclvalue(ncSample)))
             fileopen <- ""
             if(length(jfile) > 0){
                 if(.cdtData$OpenFiles$Type[[jfile]] == "netcdf")
@@ -303,7 +303,7 @@ PlotVarNetCDFFilesCmd <- function(){
             ret <- try(get.All.NCDF.Files(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-            if(str_trim(tclvalue(ncdf.date.file)) != ""){
+            if(trimws(tclvalue(ncdf.date.file)) != ""){
                 ret <- try(get.NCDF.DATA(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -317,9 +317,9 @@ PlotVarNetCDFFilesCmd <- function(){
             ret <- try(get.All.NCDF.Files(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-            if(str_trim(tclvalue(ncdf.date.file)) != ""){
+            if(trimws(tclvalue(ncdf.date.file)) != ""){
                 donDates <- .cdtData$EnvData$NcFiles2Plot
-                idaty <- which(donDates == str_trim(tclvalue(ncdf.date.file)))
+                idaty <- which(donDates == trimws(tclvalue(ncdf.date.file)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
                 tclvalue(ncdf.date.file) <- donDates[idaty]
@@ -337,9 +337,9 @@ PlotVarNetCDFFilesCmd <- function(){
             ret <- try(get.All.NCDF.Files(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-            if(str_trim(tclvalue(ncdf.date.file)) != ""){
+            if(trimws(tclvalue(ncdf.date.file)) != ""){
                 donDates <- .cdtData$EnvData$NcFiles2Plot
-                idaty <- which(donDates == str_trim(tclvalue(ncdf.date.file)))
+                idaty <- which(donDates == trimws(tclvalue(ncdf.date.file)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
                 tclvalue(ncdf.date.file) <- donDates[idaty]
@@ -460,9 +460,9 @@ PlotVarNetCDFFilesCmd <- function(){
             tcl('update')
         })
 
-        nc.dir <- str_trim(tclvalue(ncDIR))
-        nc.format <- str_trim(tclvalue(ncFormat))
-        nc.sample <- str_trim(tclvalue(ncSample))
+        nc.dir <- trimws(tclvalue(ncDIR))
+        nc.format <- trimws(tclvalue(ncFormat))
+        nc.sample <- trimws(tclvalue(ncSample))
 
         if(nc.dir == "" | nc.format == ""){
             tkconfigure(cb.nc.maps, values = "")
@@ -505,12 +505,12 @@ PlotVarNetCDFFilesCmd <- function(){
             tcl('update')
         })
 
-        nc.dir <- str_trim(tclvalue(ncDIR))
-        nc.file <- str_trim(tclvalue(ncdf.date.file))
+        nc.dir <- trimws(tclvalue(ncDIR))
+        nc.file <- trimws(tclvalue(ncdf.date.file))
         ncfile.path <- file.path(nc.dir, nc.file)
 
-        nlon <- str_trim(tclvalue(ncLON))
-        nlat <- str_trim(tclvalue(ncLAT))
+        nlon <- trimws(tclvalue(ncLON))
+        nlat <- trimws(tclvalue(ncLAT))
 
         nl <- length(.cdtData$EnvData$ncvar)
         .cdtData$EnvData$ncData$MapOp <- vector(mode = 'list', length = nl)
@@ -532,7 +532,7 @@ PlotVarNetCDFFilesCmd <- function(){
         if(readNCFILE){
             .cdtData$EnvData$ncData$map <- vector(mode = 'list', length = nl)
 
-            nc <- try(nc_open(ncfile.path), silent = TRUE)
+            nc <- try(ncdf4::nc_open(ncfile.path), silent = TRUE)
             if(inherits(nc, "try-error")){
                 Insert.Messages.Out(paste(lang.dlg[['message']][['6']], ncfile.path), TRUE, 'e')
                 .cdtData$EnvData$ncData$map <- NULL
@@ -549,7 +549,7 @@ PlotVarNetCDFFilesCmd <- function(){
                 }
                 xlon <- nc$var[[varid]]$dim[[idim[1]]]$vals
                 xlat <- nc$var[[varid]]$dim[[idim[2]]]$vals
-                ncdon <- ncvar_get(nc, varid = varid)
+                ncdon <- ncdf4::ncvar_get(nc, varid = varid)
                 xo <- order(xlon)
                 xlon <- xlon[xo]
                 yo <- order(xlat)
@@ -561,7 +561,7 @@ PlotVarNetCDFFilesCmd <- function(){
                 .cdtData$EnvData$ncData$map[[j]]$z <- ncdon
                 .cdtData$EnvData$ncData$map[[j]]$title <- varid
             }
-            nc_close(nc)
+            ncdf4::nc_close(nc)
 
             .cdtData$EnvData$ncData$file2plot <- nc.file
             .cdtData$EnvData$ncData$ncfile <- ncfile.path

@@ -39,7 +39,7 @@ split_3d.netcdf_getParams <- function(){
 
     ###########
     tkbind(cb.nbfile, "<<ComboboxSelected>>", function(){
-        nbfile <- str_trim(tclvalue(nb.file))
+        nbfile <- trimws(tclvalue(nb.file))
         if(nbfile == cb.nbfileVAL[1]){
             tclvalue(txt.NcFL.var) <- lang.dlg[['label']][['1']]
             stateFF <- 'disabled'
@@ -131,18 +131,18 @@ split_3d.netcdf_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(nc.file)) %in% c("", "NA")){
+        if(trimws(tclvalue(nc.file)) %in% c("", "NA")){
           cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
           tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir.save)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir.save)) %in% c("", "NA")){
           cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
           tkwait.window(tt)
         }else{
-          .cdtData$GalParams$nbfile <- nbfileVAL[cb.nbfileVAL %in% str_trim(tclvalue(nb.file))]
+          .cdtData$GalParams$nbfile <- nbfileVAL[cb.nbfileVAL %in% trimws(tclvalue(nb.file))]
 
-          .cdtData$GalParams$ncdf$file <- str_trim(tclvalue(nc.file))
-          .cdtData$GalParams$ncdf$format <- str_trim(tclvalue(nc.format))
-          .cdtData$GalParams$output <- str_trim(tclvalue(dir.save))
+          .cdtData$GalParams$ncdf$file <- trimws(tclvalue(nc.file))
+          .cdtData$GalParams$ncdf$format <- trimws(tclvalue(nc.format))
+          .cdtData$GalParams$output <- trimws(tclvalue(dir.save))
 
           .cdtData$GalParams$ncpars <- nc.params
           .cdtData$GalParams$message <- lang.dlg[['message']]

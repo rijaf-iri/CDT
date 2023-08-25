@@ -352,11 +352,11 @@ table.format.date.time <- function(tstep, date.range, minhour = NA){
         n <- switch(tstep, "pentad" = 6, "dekadal" = 3)
         xx <- as.numeric(dates[, 3])
         dates <- dates[xx <= n, , drop = FALSE]
-        xx <- cbind(str_pad(rep(1:12, each = n), 2, pad = "0"),
-                    str_pad(rep(1:n, 12), 2, pad = "0"))
+        xx <- cbind(stringr::str_pad(rep(1:12, each = n), 2, pad = "0"),
+                    stringr::str_pad(rep(1:n, 12), 2, pad = "0"))
         p1 <- paste(dates[, 2], dates[, 3], sep = "-")
         p2 <- paste(xx[, 1], xx[, 2], sep = "-")
-        xx <- str_pad(match(p1, p2), 2, pad = "0")
+        xx <- stringr::str_pad(match(p1, p2), 2, pad = "0")
         dates <- cbind(dates[, 1:2, drop = FALSE], as.numeric(dates[, 3]), xx)
     }
 
@@ -397,11 +397,11 @@ table.format.date.time1 <- function(tstep, dates){
         n <- switch(tstep, "pentad" = 6, "dekadal" = 3)
         xx <- as.numeric(dates[, 3])
         dates <- dates[xx <= n, , drop = FALSE]
-        xx <- cbind(str_pad(rep(1:12, each = n), 2, pad = "0"),
-                    str_pad(rep(1:n, 12), 2, pad = "0"))
+        xx <- cbind(stringr::str_pad(rep(1:12, each = n), 2, pad = "0"),
+                    stringr::str_pad(rep(1:n, 12), 2, pad = "0"))
         p1 <- paste(dates[, 2], dates[, 3], sep = "-")
         p2 <- paste(xx[, 1], xx[, 2], sep = "-")
-        xx <- str_pad(match(p1, p2), 2, pad = "0")
+        xx <- stringr::str_pad(match(p1, p2), 2, pad = "0")
         dates <- cbind(dates[, 1:2, drop = FALSE], as.numeric(dates[, 3]), xx)
     }
 

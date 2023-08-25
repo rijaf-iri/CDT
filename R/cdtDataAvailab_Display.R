@@ -9,33 +9,33 @@ assessData_plotStnAnnual <- function(){
     xlim <- range(year)
     ylim <- range(stn, na.rm = TRUE)
 
-    opar <- par(mar = c(3.5, 4, 3, 1.5))
+    opar <- graphics::par(mar = c(3.5, 4, 3, 1.5))
     plot(1, type = 'n', axes = FALSE, xlim = xlim, ylim = ylim, xlab = '', ylab = ylab, main = titre)
 
-    minTck <- axTicks(2)
+    minTck <- graphics::axTicks(2)
     minTck <- minTck[-length(minTck)] + diff(minTck) / 2
-    minTck <- c(min(axTicks(2)) - diff(minTck)[1] / 2, minTck, max(axTicks(2)) + diff(minTck)[1] / 2)
-    abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
-    abline(h = minTck, col = "lightgray", lty = "dotted", lwd = 1.3)
+    minTck <- c(min(graphics::axTicks(2)) - diff(minTck)[1] / 2, minTck, max(graphics::axTicks(2)) + diff(minTck)[1] / 2)
+    graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
+    graphics::abline(h = minTck, col = "lightgray", lty = "dotted", lwd = 1.3)
 
-    lines(year, stn[, 1], type = "h", lwd = 10, lend = "butt", col = 4)
-    points(year, stn[, 1], pch = 20, col = 2, cex = 0.7)
+    graphics::lines(year, stn[, 1], type = "h", lwd = 10, lend = "butt", col = 4)
+    graphics::points(year, stn[, 1], pch = 20, col = 2, cex = 0.7)
     ix <- stn[, 3] - stn[, 2] > 0
-    arrows(year[ix], stn[ix, 2], year[ix], stn[ix, 3], angle = 90, code = 3, length = 0.03, col = 2)
+    graphics::arrows(year[ix], stn[ix, 2], year[ix], stn[ix, 3], angle = 90, code = 3, length = 0.03, col = 2)
 
-    xTck <- axTicks(1)
+    xTck <- graphics::axTicks(1)
     xTck <- xTck[sapply(xTck, function(e) min(abs(c(e%%1, e%%1 - 1))) < 1e-10)]
     if(as.numeric(diff(xlim)) > 5){
         xminor <- seq(floor(xlim[1]), floor(xlim[2]), 1)
         xminor <- xminor[!xminor %in% xTck]
     }else xminor <- NULL
 
-    axis(1, at = xTck)
-    if(length(xminor) > 0) axis(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
-    axis(2, at = axTicks(2), las = 1)
-    box(bty = 'l')
-    box(bty = '7', col = 'gray')
-    par(opar)
+    graphics::axis(1, at = xTck)
+    if(length(xminor) > 0) graphics::axis(1, at = xminor, labels = NA, tcl = graphics::par("tcl") * 0.5)
+    graphics::axis(2, at = graphics::axTicks(2), las = 1)
+    graphics::box(bty = 'l')
+    graphics::box(bty = '7', col = 'gray')
+    graphics::par(opar)
 }
 
 ##############################
@@ -49,19 +49,19 @@ assessData_plotDistCor <- function(){
     xlim <- range(xys[, 1], na.rm = TRUE)
     ylim <- c(min(xys[, 2], na.rm = TRUE), max(xys[, 4], na.rm = TRUE))
 
-    op <- par(mar = c(3.5, 4, 2, 2))
+    op <- graphics::par(mar = c(3.5, 4, 2, 2))
     plot(1, type = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
-    polygon(c(rev(xys[, 1]), xys[, 1]), c(rev(xys[, 4]), xys[, 2]), col = "#97FFFF", border = NA)
-    lines(xys[, 1], xys[, 3], col = 'blue', lwd = 2)
-    lines(dstcor$loess$x, dstcor$loess$y, lwd = 2, col = 'red')
-    abline(v = axTicks(1), h = axTicks(2), col = 'lightgrey', lty = "dotted")
-    mtext(xlab, side = 1, line = 2)
-    mtext(ylab, side = 2, line = 2.5)
+    graphics::polygon(c(rev(xys[, 1]), xys[, 1]), c(rev(xys[, 4]), xys[, 2]), col = "#97FFFF", border = NA)
+    graphics::lines(xys[, 1], xys[, 3], col = 'blue', lwd = 2)
+    graphics::lines(dstcor$loess$x, dstcor$loess$y, lwd = 2, col = 'red')
+    graphics::abline(v = graphics::axTicks(1), h = graphics::axTicks(2), col = 'lightgrey', lty = "dotted")
+    graphics::mtext(xlab, side = 1, line = 2)
+    graphics::mtext(ylab, side = 2, line = 2.5)
 
-    legend(x = 'topright', legend = c("5/95th Percentile", "Median", 'Loess smooth'), bg = 'gray97',
+    graphics::legend(x = 'topright', legend = c("5/95th Percentile", "Median", 'Loess smooth'), bg = 'gray97',
             col = c("#97FFFF", 'blue', 'red'), lty = c(0, 1, 1), lwd = c(0, 2, 2),
             pch = c(22, NA, NA), pt.bg = c("#97FFFF", NA, NA), pt.cex = 2)
-    par(op)
+    graphics::par(op)
 }
 
 ##############################
@@ -77,12 +77,12 @@ assessData_plotActivities <- function(YLayoutDiv){
     col.work <- 'cyan1'
     col.legend <- c(col.work, col.avail)
 
-    layout(matrix(1:2, ncol = 1), widths = 1, heights = YLayoutDiv, respect = FALSE)
-    op <- par(mar = c(0, 0, 0, 0))
-    plot.new()
-    legend("center", "groups", legend = text.legend, fill = col.legend, horiz = TRUE)
-    par(op)
-    op <- par(mar = c(3.5, 4, 0, 2))
+    graphics::layout(matrix(1:2, ncol = 1), widths = 1, heights = YLayoutDiv, respect = FALSE)
+    op <- graphics::par(mar = c(0, 0, 0, 0))
+    graphics::plot.new()
+    graphics::legend("center", "groups", legend = text.legend, fill = col.legend, horiz = TRUE)
+    graphics::par(op)
+    op <- graphics::par(mar = c(3.5, 4, 0, 2))
     plot(stn$date, stn$work, type = 'n', xaxt = 'n', xlab = '', ylab = ylab, xlim = xlim, ylim = ylim)
 
     xTck <- axTicks.Date(stn$date, 1)
@@ -91,19 +91,19 @@ assessData_plotActivities <- function(YLayoutDiv){
                     as.Date(paste0(as.numeric(format(xlim[2], "%Y")) + 1, "-01-01")), "year")
         xminor <- xminor[!xminor %in% xTck]
     }else xminor <- NULL
-    axis.Date(1, at = xTck)
-    if(length(xminor) > 0) axis.Date(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
+    graphics::axis.Date(1, at = xTck)
+    if(length(xminor) > 0) graphics::axis.Date(1, at = xminor, labels = NA, tcl = graphics::par("tcl") * 0.5)
 
-    polygon(c(rev(stn$date), stn$date), c(rev(stn$avai), rep(0, length(stn$date))), col = col.avail, border = NA)
-    polygon(c(rev(stn$date), stn$date), c(rev(stn$work), stn$avai), col = col.work, border = NA)
+    graphics::polygon(c(rev(stn$date), stn$date), c(rev(stn$avai), rep(0, length(stn$date))), col = col.avail, border = NA)
+    graphics::polygon(c(rev(stn$date), stn$date), c(rev(stn$work), stn$avai), col = col.work, border = NA)
 
-    abline(h = axTicks(2), col = "lightgray", lty = "dotted")
-    abline(v = xTck, col = "lightgray", lty = "dotted")
+    graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "dotted")
+    graphics::abline(v = xTck, col = "lightgray", lty = "dotted")
 
-    box()
-    plt <- par("plt")
-    usr <- par("usr")
-    par(op)
+    graphics::box()
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(op)
     return(list(par = c(plt, usr)))
 }
 
@@ -121,10 +121,10 @@ assessData_plotAvailability <- function(){
     #################
 
     .data.type <- "Points"
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                         SHPOp = .cdtData$EnvData$SHPOp,
                         MapOp = dataMapOp,
@@ -137,7 +137,7 @@ assessData_plotAvailability <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -150,17 +150,17 @@ assessData_plotYearlyData <- function(){
 
     ## titre
     if(!dataMapOp$title$user){
-        this.daty <- str_trim(tclvalue(.cdtData$EnvData$availDate))
+        this.daty <- trimws(tclvalue(.cdtData$EnvData$availDate))
         .titre <- paste("Data Availability", this.daty, "(days)")
     }else .titre <- dataMapOp$title$title
 
     #################
 
     .data.type <- "Points"
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                         SHPOp = .cdtData$EnvData$SHPOp,
                         # MapOp = dataMapOp,
@@ -173,7 +173,7 @@ assessData_plotYearlyData <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -183,7 +183,7 @@ assessData_plotYearlyData <- function(){
 assessData_plotYearlyTS <- function(){
     optsgph <- .cdtData$EnvData$TSGraphOp
     IDSTN <- .cdtData$EnvData$output$data$id
-    ixy <- which(IDSTN == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+    ixy <- which(IDSTN == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
     if(length(ixy) == 0){
         Insert.Messages.Out(.cdtData$EnvData$message[[7]], format = TRUE)
         return(NULL)
@@ -203,21 +203,21 @@ assessData_plotYearlyTS <- function(){
     max.ylim <- switch(.cdtData$EnvData$output$params$intstep,
                     'daily' = 400, 'pentad' = 80, 'dekadal' = 40, 'monthly' = 14)
 
-    opar <- par(mar = c(3.5, 4, 3, 1.5))
-    barplot(don, space = 0, ylim = c(0, max.ylim), xaxt = 'n', yaxt = 'n',
+    opar <- graphics::par(mar = c(3.5, 4, 3, 1.5))
+    graphics::barplot(don, space = 0, ylim = c(0, max.ylim), xaxt = 'n', yaxt = 'n',
             col = optsgph$colors$col, main = titre)
-    axis(side = 2, at = axTicks(2))
-    axis(side = 1, at = at.tick - 1, labels = FALSE, tcl = par("tcl") * 0.7)
-    axis(side = 1, at = at.lab , tick = FALSE, labels = year)
-    abline(h = axTicks(2), col = "lightgray", lty = "dotted")
-    mtext(xlab, side = 1, line = 2)
-    mtext(ylab, side = 2, line = 2.5)
+    graphics::axis(side = 2, at = graphics::axTicks(2))
+    graphics::axis(side = 1, at = at.tick - 1, labels = FALSE, tcl = graphics::par("tcl") * 0.7)
+    graphics::axis(side = 1, at = at.lab , tick = FALSE, labels = year)
+    graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "dotted")
+    graphics::mtext(xlab, side = 1, line = 2)
+    graphics::mtext(ylab, side = 2, line = 2.5)
 
-    mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.6)
-    box()
-    plt <- par("plt")
-    usr <- par("usr")
-    par(opar)
+    graphics::mtext(location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 0.6)
+    graphics::box()
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(opar)
 
     return(list(par = c(plt, usr)))
 }
@@ -232,9 +232,9 @@ assessData_displayActivities <- function(notebookTab){
     YLayoutDiv <- c(0.1, 1)
 
     plotIt <- function(){
-        op <- par(bg = "white")
+        op <- graphics::par(bg = "white")
         pltusr <- assessData_plotActivities(YLayoutDiv)
-        par(op)
+        graphics::par(op)
         for(j in seq_along(varplot))
             tclvalue(parPltCrd[[varplot[j]]]) <- pltusr$par[j]
         return(0)
@@ -281,9 +281,9 @@ assessData_displayYearlyTS <- function(notebookTab, title.graph){
     parPltCrd <- stats::setNames(lapply(varplot, function(x) assign(x, tclVar(), envir = parent.frame())), varplot)
 
     plotIt <- function(){
-        op <- par(bg = "white")
+        op <- graphics::par(bg = "white")
         pltusr <- assessData_plotYearlyTS()
-        par(op)
+        graphics::par(op)
         for(j in seq_along(varplot))
             tclvalue(parPltCrd[[varplot[j]]]) <- pltusr$par[j]
         return(0)
@@ -338,13 +338,13 @@ assessData_displayAvailability <- function(title.map, title.graph){
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- xyid$crd
 
         if(xyid$plotTS){
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
                 if(is.null(.cdtData$EnvData$yearly)) return(NULL)
                 imgContainer1 <- assessData_displayYearlyTS(.cdtData$EnvData$tab$yearlyTS, title.graph)
                 .cdtData$EnvData$tab$yearlyTS <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$yearlyTS)
             }
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Table"){
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Table"){
                 if(is.null(.cdtData$EnvData$monthly)) return(NULL)
                 table.mon <- assessData_dataMonthly()
                 if(is.null(table.mon)) return(NULL)
@@ -368,13 +368,13 @@ assessData_displayYearlyData <- function(title.map, title.graph){
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- xyid$crd
 
         if(xyid$plotTS){
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
                 if(is.null(.cdtData$EnvData$yearly)) return(NULL)
                 imgContainer1 <- assessData_displayYearlyTS(.cdtData$EnvData$tab$yearlyTS, title.graph)
                 .cdtData$EnvData$tab$yearlyTS <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$yearlyTS)
             }
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Table"){
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Table"){
                 if(is.null(.cdtData$EnvData$monthly)) return(NULL)
                 table.mon <- assessData_dataMonthly()
                 if(is.null(table.mon)) return(NULL)
@@ -388,7 +388,7 @@ assessData_displayYearlyData <- function(title.map, title.graph){
 
 assessData_dataMonthly <- function(){
     IDSTN <- .cdtData$EnvData$output$data$id
-    ixy <- which(IDSTN == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+    ixy <- which(IDSTN == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
     if(length(ixy) == 0){
         Insert.Messages.Out(.cdtData$EnvData$message[[7]], format = TRUE)
         return(NULL)

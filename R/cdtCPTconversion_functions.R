@@ -8,7 +8,7 @@ CPT.convertCDTdates <- function(dates){
     if(ndate == 2){
         irang <- as.numeric(dates)
         if(any(irang > 36)){
-            mon <- rep(str_pad(1:12, 2, pad = "0"), each = 6)
+            mon <- rep(stringr::str_pad(1:12, 2, pad = "0"), each = 6)
             pen <- rep(1:6, 12)
             eom <- sapply(seq_along(mon), function(i){
                             daty <- as.Date(paste("2014", mon[i], 28:31, sep = '-'))
@@ -24,7 +24,7 @@ CPT.convertCDTdates <- function(dates){
             pendt <- paste(mon, pendt, sep = "-")
             cpt <- pendt[irang]
         }else if(any(irang > 12)){
-            mon <- rep(str_pad(1:12, 2, pad = "0"), each = 3)
+            mon <- rep(stringr::str_pad(1:12, 2, pad = "0"), each = 3)
             dek <- rep(1:3, 12)
             eom <- sapply(seq_along(mon), function(i){
                             daty <- as.Date(paste("2014", mon[i], 28:31, sep = '-'))
@@ -37,7 +37,7 @@ CPT.convertCDTdates <- function(dates){
             dekdt <- paste(mon, dekdt, sep = "-")
             cpt <- dekdt[irang]
         }else{
-            mon <- str_pad(1:12, 2, pad = "0")
+            mon <- stringr::str_pad(1:12, 2, pad = "0")
             cpt <- mon[irang]
         }
     }
@@ -214,7 +214,7 @@ CPT.getTAG.line <- function(cpt.tags){
 
 CPT.formatStationData <- function(date, z, width = 13, side = "both"){
     xout <- formatC(c(z))
-    xout <- str_pad(xout, width = width, side = side)
+    xout <- stringr::str_pad(xout, width = width, side = side)
     xout <- paste0("\t", xout)
     dim(xout) <- dim(z)
     xout <- cbind(date, xout)
@@ -245,7 +245,7 @@ CPT.convertStationData.Files <- function(cdtdata, output.file, cptInfo){
     if(is.null(data)) return(NULL)
 
     ncmax <- max(nchar(formatC(c(data$data))))
-    daty <- str_pad(data$dates, max(nchar(data$dates)), pad = "0")
+    daty <- stringr::str_pad(data$dates, max(nchar(data$dates)), pad = "0")
     daty <- CPT.convertCDTdates(daty)
 
     xmlns <- "xmlns:cpt=http://iri.columbia.edu/CPT/v10/\n"
@@ -272,7 +272,7 @@ CPT.arrangeDate <- function(date){
 CPT.formatGridData <- function(x, y, z, width = 13, side = "both"){
     z <- t(z)
     xout <- formatC(c(z))
-    xout <- str_pad(xout, width = width, side = side)
+    xout <- stringr::str_pad(xout, width = width, side = side)
     xout <- paste0("\t", xout)
     dim(xout) <- dim(z)
     xout <- cbind(round(y, 6), xout)
@@ -338,8 +338,8 @@ CPT.parse.Date.Filename <- function(dirNC, filename){
         if(temps %in% c("M", "T", "P", "D")){
             firstD <- substr(all.files, flpos, flpos)
             it <- switch(temps, "M" = list(1:12, 2), "T" = list(1:36, 2), "P" = list(1:72, 2), "D" = list(1:365, 3))
-            daty <- if(any(firstD == "0")) str_pad(it[[1]], it[[2]], pad = "0") else it[[1]]
-            daty0 <- str_pad(as.numeric(daty), it[[2]], pad = "0")
+            daty <- if(any(firstD == "0")) stringr::str_pad(it[[1]], it[[2]], pad = "0") else it[[1]]
+            daty0 <- stringr::str_pad(as.numeric(daty), it[[2]], pad = "0")
         }
         ffrmt <- gsub("%Y|%M|%D|%P|%T", "%s", filename)
         ncfiles <- sprintf(ffrmt, daty)
@@ -481,12 +481,12 @@ CPT.convertGridData.Files <- function(ncInfo, output.file, cptInfo = NULL){
     cpt.date <- CPT.arrangeDate(daty)
     cat(cpt.date, file = output.file, append = TRUE)
 
-    nc <- nc_open(cnpth.daty$ncpath[1])
+    nc <- ncdf4::nc_open(cnpth.daty$ncpath[1])
     lon <- nc$var[[ncInfo$varid]]$dim[[ncInfo$ilon]]$vals
     lat <- nc$var[[ncInfo$varid]]$dim[[ncInfo$ilat]]$vals
     nc.units <- nc$var[[ncInfo$varid]]$units
     nc.missval <- nc$var[[ncInfo$varid]]$missval
-    nc_close(nc)
+    ncdf4::nc_close(nc)
 
     ncInfo$xo <- order(lon)
     lon <- lon[ncInfo$xo]
@@ -508,9 +508,9 @@ CPT.convertGridData.Files <- function(ncInfo, output.file, cptInfo = NULL){
         cpt.tags <- CPT.getTAG.line(cpt.tags)
         cat(cpt.tags, file = output.file, append = TRUE)
 
-        nc <- nc_open(cnpth.daty$ncpath[jj])
-        xdon <- ncvar_get(nc, varid = ncInfo$varid)
-        nc_close(nc)
+        nc <- ncdf4::nc_open(cnpth.daty$ncpath[jj])
+        xdon <- ncdf4::ncvar_get(nc, varid = ncInfo$varid)
+        ncdf4::nc_close(nc)
         xdon <- transposeNCDFData(xdon, ncInfo)
         xdon <- round(xdon, 5)
         xdon[is.na(xdon)] <- cptInfo$missval

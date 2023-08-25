@@ -156,11 +156,11 @@ SpatialInterpPanelCmd <- function(){
     }
 
     set.dates.times <- function(incr, intstep){
-        yrs <- as.numeric(str_trim(tclvalue(date.year)))
-        mon <- as.numeric(str_trim(tclvalue(date.mon)))
-        dpk <- as.numeric(str_trim(tclvalue(date.day)))
-        hrs <- as.numeric(str_trim(tclvalue(date.hour)))
-        min <- as.numeric(str_trim(tclvalue(date.min)))
+        yrs <- as.numeric(trimws(tclvalue(date.year)))
+        mon <- as.numeric(trimws(tclvalue(date.mon)))
+        dpk <- as.numeric(trimws(tclvalue(date.day)))
+        hrs <- as.numeric(trimws(tclvalue(date.hour)))
+        min <- as.numeric(trimws(tclvalue(date.min)))
 
         todaty <- format.dates.times(intstep, yrs, mon, dpk, hrs, min)
         if(is.null(todaty)) return(NULL)
@@ -177,7 +177,7 @@ SpatialInterpPanelCmd <- function(){
             return(NULL)
         }
 
-        minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
         daty <- switch(intstep,
                        "minute" = daty + incr * minhour * 60,
                        "hourly" = daty + incr * minhour * 3600,
@@ -244,13 +244,13 @@ SpatialInterpPanelCmd <- function(){
             tkdestroy(frTS1)
             frTS1 <<- tkframe(frTS0)
 
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             date.time.selection(intstep, frTS1)
 
             tkgrid(frTS1, row = 0, column = 1, sticky = 'we', pady = 1, rowspan = 2, columnspan = 1)
 
             ##############
-            minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+            minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             retminhr <- set.hour.minute(intstep, minhour)
             tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
             tclvalue(minhour.tclVar) <- retminhr$val
@@ -276,7 +276,7 @@ SpatialInterpPanelCmd <- function(){
         ############
 
         tkconfigure(btDateRange, command = function(){
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             GeneralParameters[["date.range"]] <<- getInfoDateRange(.cdtEnv$tcl$main$win,
                                                                     GeneralParameters[["date.range"]],
                                                                     intstep)
@@ -380,13 +380,13 @@ SpatialInterpPanelCmd <- function(){
         btInterpolate <- ttkbutton(subfr1, text = lang.dlg[['button']][['4']])
 
         tkconfigure(btInterpolate, command = function(){
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             GeneralParameters$negative$set <- switch(tclvalue(set.neg.value), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$negative$value <- as.numeric(str_trim(tclvalue(val.neg.value)))
-            GeneralParameters$cdtstation <- str_trim(tclvalue(input.file))
-            GeneralParameters$outdir <- str_trim(tclvalue(dir.save))
+            GeneralParameters$negative$value <- as.numeric(trimws(tclvalue(val.neg.value)))
+            GeneralParameters$cdtstation <- trimws(tclvalue(input.file))
+            GeneralParameters$outdir <- trimws(tclvalue(dir.save))
             GeneralParameters$blank$blank <- switch(tclvalue(blankGrid), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$blank$shpf <- str_trim(tclvalue(file.blankShp))
+            GeneralParameters$blank$shpf <- trimws(tclvalue(file.blankShp))
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
@@ -467,7 +467,7 @@ SpatialInterpPanelCmd <- function(){
             if(path.Interp == "") return(NULL)
             tclvalue(file.interpData) <- path.Interp
 
-            path.Interp <- str_trim(tclvalue(file.interpData))
+            path.Interp <- trimws(tclvalue(file.interpData))
             if(file.exists(path.Interp)){
                 interp.data <- try(readRDS(path.Interp), silent = TRUE)
                 if(inherits(interp.data, "try-error")){
@@ -552,7 +552,7 @@ SpatialInterpPanelCmd <- function(){
         ##############
 
         tkbind(cb.Map.panel, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$map$panelMap <- panelNumber[panelMaps %in% str_trim(tclvalue(panelMapVar))]
+            .cdtData$EnvData$map$panelMap <- panelNumber[panelMaps %in% trimws(tclvalue(panelMapVar))]
 
             statetypeMapPLOT1 <- if(.cdtData$EnvData$map$panelMap == "one") "disabled" else "normal"
             tkconfigure(cb.Map.type1, state = statetypeMapPLOT1)
@@ -581,14 +581,14 @@ SpatialInterpPanelCmd <- function(){
         ##############
 
         tkbind(cb.Map.type1, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$map$typeMap1 <- str_trim(tclvalue(typeMap1Var))
+            .cdtData$EnvData$map$typeMap1 <- trimws(tclvalue(typeMap1Var))
             if(.cdtData$EnvData$map$typeMap1 == "Points"){
                 .cdtData$EnvData$dataMapOp$pointSize <- pointSizeI
             }else .cdtData$EnvData$dataMapOp$pointSize <- NULL
         })
 
         tkbind(cb.Map.type2, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$map$typeMap2 <- str_trim(tclvalue(typeMap2Var))
+            .cdtData$EnvData$map$typeMap2 <- trimws(tclvalue(typeMap2Var))
         })
 
         ##############
@@ -650,10 +650,10 @@ SpatialInterpPanelCmd <- function(){
 
         tkconfigure(bt.date.prev, command = function(){
             if(is.null(.cdtData$EnvData$stnData)) return(NULL) 
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             if(intstep == "others"){
-                idaty <- which(.cdtData$EnvData$stnData$dates == str_trim(tclvalue(date.other)))
+                idaty <- which(.cdtData$EnvData$stnData$dates == trimws(tclvalue(date.other)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(.cdtData$EnvData$stnData$dates)
                 tclvalue(date.other) <- .cdtData$EnvData$stnData$dates[idaty]
@@ -681,10 +681,10 @@ SpatialInterpPanelCmd <- function(){
 
         tkconfigure(bt.date.next, command = function(){
             if(is.null(.cdtData$EnvData$stnData)) return(NULL) 
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             if(intstep == "others"){
-                idaty <- which(.cdtData$EnvData$stnData$dates == str_trim(tclvalue(date.other)))
+                idaty <- which(.cdtData$EnvData$stnData$dates == trimws(tclvalue(date.other)))
                 idaty <- idaty + 1
                 if(idaty > length(.cdtData$EnvData$stnData$dates)) idaty <- 1
                 tclvalue(date.other) <- .cdtData$EnvData$stnData$dates[idaty]
@@ -795,16 +795,16 @@ SpatialInterpPanelCmd <- function(){
 
         typemap1 <- .cdtData$EnvData$map$typeMap1
         typemap2 <- .cdtData$EnvData$map$typeMap2
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
         if(tstep != "others"){
-            yrs <- as.numeric(str_trim(tclvalue(date.year)))
-            mon <- as.numeric(str_trim(tclvalue(date.mon)))
-            dpk <- as.numeric(str_trim(tclvalue(date.day)))
-            hrs <- as.numeric(str_trim(tclvalue(date.hour)))
-            min <- as.numeric(str_trim(tclvalue(date.min)))
+            yrs <- as.numeric(trimws(tclvalue(date.year)))
+            mon <- as.numeric(trimws(tclvalue(date.mon)))
+            dpk <- as.numeric(trimws(tclvalue(date.day)))
+            hrs <- as.numeric(trimws(tclvalue(date.hour)))
+            min <- as.numeric(trimws(tclvalue(date.min)))
             getSpat <- list(yrs, mon, dpk, hrs, min, typemap1)
-        }else getSpat <- list(str_trim(tclvalue(date.other)), typemap1)
+        }else getSpat <- list(trimws(tclvalue(date.other)), typemap1)
 
         if(tstep != "others"){
             if(tstep == "minute"){
@@ -827,7 +827,7 @@ SpatialInterpPanelCmd <- function(){
             }
             if(tstep == "monthly")
                 daty <- format(as.Date(paste(yrs, mon, dpk, sep = "-")), "%Y%m")
-        }else daty <- str_trim(tclvalue(date.other))
+        }else daty <- trimws(tclvalue(date.other))
 
         idaty <- which(.cdtData$EnvData$stnData$dates == daty)
 

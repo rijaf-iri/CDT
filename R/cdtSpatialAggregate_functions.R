@@ -69,7 +69,7 @@ cdt.aggregate.grid <- function(obj, grid.list, FUN = mean, ..., regrid = FALSE)
     names(grid.list) <- c('x', 'y')
     out <- c(grid.list, list(z = matrix(NA, dim.grid[1], dim.grid[2])))
 
-    ixy <- over(old.grid, new.grid)
+    ixy <- sp::over(old.grid, new.grid)
     z.out <- tapply(c(obj$z), ixy, FUN, ...)
     z.out[is.nan(z.out) | is.infinite(z.out)] <- NA
 

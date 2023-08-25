@@ -77,7 +77,7 @@ fill_Miss_DekTemp <- function(){
     tkconfigure(set.dir.rfe, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["NCDF"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["NCDF"]],
-                                                          str_trim(tclvalue(dir.rfe)))
+                                                          trimws(tclvalue(dir.rfe)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -158,20 +158,20 @@ fill_Miss_DekTemp <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl)) == ""){
+        if(trimws(tclvalue(file.stnfl)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
-        }else if(str_trim(tclvalue(dir.rfe)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir.rfe)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.save1)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(file.save1)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$STN.file <- str_trim(tclvalue(file.stnfl))
-            .cdtData$GalParams$NCDF$dir <- str_trim(tclvalue(dir.rfe))
-            .cdtData$GalParams$out.file <- str_trim(tclvalue(file.save1))
+            .cdtData$GalParams$STN.file <- trimws(tclvalue(file.stnfl))
+            .cdtData$GalParams$NCDF$dir <- trimws(tclvalue(dir.rfe))
+            .cdtData$GalParams$out.file <- trimws(tclvalue(file.save1))
 
-            .cdtData$GalParams$Fill.Params$min.length <- as.numeric(str_trim(tclvalue(min.len)))
+            .cdtData$GalParams$Fill.Params$min.length <- as.numeric(trimws(tclvalue(min.len)))
             .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)

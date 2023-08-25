@@ -162,7 +162,7 @@ multiValidation.plotGraph <- function(){
                             }
                         )
         }else{
-            kol.hexbin <- colorRampPalette(optsgph$hexbin$col)
+            kol.hexbin <- grDevices::colorRampPalette(optsgph$hexbin$col)
             pp <- hexbin::hexbinplot(y ~ x | name, don,
                             panel = function(x, y, ...){
                                 lattice::panel.abline(h = xyax, v = xyax, col = "lightgray", lty = "solid", lwd = 1.0)
@@ -175,9 +175,9 @@ multiValidation.plotGraph <- function(){
                         )
         }
 
-        if(str_trim(title) != "") pp <- update(pp, main = title)
+        if(trimws(title) != "") pp <- stats::update(pp, main = title)
 
-        pp <- update(pp, as.table = TRUE, par.settings = par.Settings,
+        pp <- stats::update(pp, as.table = TRUE, par.settings = par.Settings,
                      par.strip.text = par.StripText, strip = par.stripCust,
                      # scales = list(x = Xaxis, y = Yaxis),
                      index.cond = list(plot.order),
@@ -190,12 +190,12 @@ multiValidation.plotGraph <- function(){
     if(plotType == "CDF"){
         if(optsgph$plot.type == "multi"){
             xax <- seq(xmin0, xmax0, length.out = 1000)
-            fx <- ecdf(x)
+            fx <- stats::ecdf(x)
             # define "grp" to avoid "no visible binding for global variable" in R CMD check
             grp <- NULL
             don <- lapply(seq_along(y), function(i){
                 obs <- data.frame(x = xax, y = fx(xax), name = data.name[i], grp = 'obs')
-                fy <- ecdf(y[[i]])
+                fy <- stats::ecdf(y[[i]])
                 est <- data.frame(x = xax, y = fy(xax), name = data.name[i], grp = 'est')
                 rbind(obs, est)
             })
@@ -258,12 +258,12 @@ multiValidation.plotGraph <- function(){
                            divide = 1, padding.text = 8, between.columns = 1,
                            text = list(lab = c(optsgph$legend$obs, optsgph$legend$est), cex = 1)
                           )
-                pp <- update(pp, key = key)
+                pp <- stats::update(pp, key = key)
             }
 
-            if(str_trim(title) != "") pp <- update(pp, main = title)
+            if(trimws(title) != "") pp <- stats::update(pp, main = title)
 
-            pp <- update(pp, as.table = TRUE, par.settings = par.Settings,
+            pp <- stats::update(pp, as.table = TRUE, par.settings = par.Settings,
                          par.strip.text = par.StripText, strip = par.stripCust,
                          index.cond = list(plot.order),
                          xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab
@@ -273,26 +273,26 @@ multiValidation.plotGraph <- function(){
         }else{
             plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
 
-            xminTck <- axTicks(1)
+            xminTck <- graphics::axTicks(1)
             xminTck <- xminTck[-length(xminTck)] + diff(xminTck) / 2
-            xminTck <- c(min(axTicks(1)) - diff(xminTck)[1] / 2, xminTck, max(axTicks(1)) + diff(xminTck)[1] / 2)
-            yminTck <- axTicks(2)
+            xminTck <- c(min(graphics::axTicks(1)) - diff(xminTck)[1] / 2, xminTck, max(graphics::axTicks(1)) + diff(xminTck)[1] / 2)
+            yminTck <- graphics::axTicks(2)
             yminTck <- yminTck[-length(yminTck)] + diff(yminTck) / 2
-            yminTck <- c(min(axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(axTicks(2)) + diff(yminTck)[1] / 2)
+            yminTck <- c(min(graphics::axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(graphics::axTicks(2)) + diff(yminTck)[1] / 2)
 
-            abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
-            abline(h = yminTck, col = "lightgray", lty = "dotted")
-            abline(v = axTicks(1), col = "lightgray", lty = "solid", lwd = 1.0)
-            abline(v = xminTck, col = "lightgray", lty = "dotted")
+            graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
+            graphics::abline(h = yminTck, col = "lightgray", lty = "dotted")
+            graphics::abline(v = graphics::axTicks(1), col = "lightgray", lty = "solid", lwd = 1.0)
+            graphics::abline(v = xminTck, col = "lightgray", lty = "dotted")
 
-            axis(1, at = axTicks(1), font = 1)
-            axis(1, at = xminTck, labels = NA, tcl = par("tcl") * 0.5)
-            mtext(xlab, side = 1, line = 2.5, cex = 1)
-            axis(2, at = axTicks(2), las = 2, font = 1)
-            axis(2, at = yminTck, labels = NA, tcl = par("tcl") * 0.6)
-            mtext(ylab, side = 2, line = 3, cex = 1)
-            title(main = title, cex.main = 1.2)
-            box()
+            graphics::axis(1, at = graphics::axTicks(1), font = 1)
+            graphics::axis(1, at = xminTck, labels = NA, tcl = graphics::par("tcl") * 0.5)
+            graphics::mtext(xlab, side = 1, line = 2.5, cex = 1)
+            graphics::axis(2, at = graphics::axTicks(2), las = 2, font = 1)
+            graphics::axis(2, at = yminTck, labels = NA, tcl = graphics::par("tcl") * 0.6)
+            graphics::mtext(ylab, side = 2, line = 3, cex = 1)
+            graphics::title(main = title, cex.main = 1.2)
+            graphics::box()
 
             ########
 
@@ -304,25 +304,25 @@ multiValidation.plotGraph <- function(){
                                       ph = NA, px = NA, bg = NA)
                         )
 
-            kol.Est <- colorRampPalette(optsgph$plot1$est)(length(data.name))
+            kol.Est <- grDevices::colorRampPalette(optsgph$plot1$est)(length(data.name))
             legendlab <- c(optsgph$validName$obs, data.name)
 
             #########
 
             plotECDF <- any(!is.na(x)) & Reduce('&', lapply(y, function(x) any(!is.na(x))))
             if(plotECDF){
-                fx <- ecdf(x)
+                fx <- stats::ecdf(x)
                 xax <- seq(xmin0, xmax0, length.out = 1000)
-                lines(xax, fx(xax), type = obs$t, col = obs$lc, lwd = obs$lw, bg = obs$bg, pch = obs$ph, cex = obs$px)
+                graphics::lines(xax, fx(xax), type = obs$t, col = obs$lc, lwd = obs$lw, bg = obs$bg, pch = obs$ph, cex = obs$px)
                 for(j in seq_along(y)){
-                    fy <- ecdf(y[[j]])
-                    lines(xax, fy(xax), type = 'l', lwd = obs$lw, col = kol.Est[j])
+                    fy <- stats::ecdf(y[[j]])
+                    graphics::lines(xax, fy(xax), type = 'l', lwd = obs$lw, col = kol.Est[j])
                 }
             }
 
             if(optsgph$legend$add){
                 estNA <- rep(NA, length(kol.Est))
-                legend('bottomright', legendlab, col = c(obs$lc, kol.Est), pch = c(obs$ph, estNA), 
+                graphics::legend('bottomright', legendlab, col = c(obs$lc, kol.Est), pch = c(obs$ph, estNA), 
                        bg = c(obs$bg, estNA), pt.cex = 1, pt.lwd = 1, lwd = 3, cex = 1, bty = 'n')
             }
         }
@@ -400,12 +400,12 @@ multiValidation.plotGraph <- function(){
                             divide = 1, padding.text = 8, between.columns = 1,
                             text = list(lab = c(optsgph$legend$obs, optsgph$legend$est), cex = 1.0)
                           )
-                pp <- update(pp, key = key)
+                pp <- stats::update(pp, key = key)
             }
 
-            if(str_trim(title) != "") pp <- update(pp, main = title)
+            if(trimws(title) != "") pp <- stats::update(pp, main = title)
 
-            pp <- update(pp, as.table = TRUE, par.settings = par.Settings,
+            pp <- stats::update(pp, as.table = TRUE, par.settings = par.Settings,
                          par.strip.text = par.StripText, strip = par.stripCust,
                          index.cond = list(plot.order),
                          xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab
@@ -415,8 +415,8 @@ multiValidation.plotGraph <- function(){
         }else{
             legH <- if(optsgph$legend$add) 0.1 else 0.01
 
-            layout(matrix(1:2, ncol = 1), widths = 1, heights = c(0.9, legH), respect = FALSE)
-            op <- par(mar = c(4, 4.5, 2, 2))
+            graphics::layout(matrix(1:2, ncol = 1), widths = 1, heights = c(0.9, legH), respect = FALSE)
+            op <- graphics::par(mar = c(4, 4.5, 2, 2))
 
             plot(1, type = 'n', xaxt = 'n', yaxt = 'n', xlim = xlim, ylim = ylim, xlab = '', ylab = '')
 
@@ -427,25 +427,25 @@ multiValidation.plotGraph <- function(){
                 xminTck <- xminTck[!xminTck %in% xTck]
             }else xminTck <- NULL
 
-            yminTck <- axTicks(2)
+            yminTck <- graphics::axTicks(2)
             yminTck <- yminTck[-length(yminTck)] + diff(yminTck) / 2
-            yminTck <- c(min(axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(axTicks(2)) + diff(yminTck)[1] / 2)
+            yminTck <- c(min(graphics::axTicks(2)) - diff(yminTck)[1] / 2, yminTck, max(graphics::axTicks(2)) + diff(yminTck)[1] / 2)
 
-            abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
-            abline(h = yminTck, col = "lightgray", lty = "dotted")
-            abline(v = xTck, col = "lightgray", lty = "solid", lwd = 1.0)
+            graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
+            graphics::abline(h = yminTck, col = "lightgray", lty = "dotted")
+            graphics::abline(v = xTck, col = "lightgray", lty = "solid", lwd = 1.0)
             if(!is.null(xminTck))
-                abline(v = xminTck, col = "lightgray", lty = "dotted")
+                graphics::abline(v = xminTck, col = "lightgray", lty = "dotted")
 
-            axis.Date(1, at = xTck, font = 1)
+            graphics::axis.Date(1, at = xTck, font = 1)
             if(!is.null(xminTck))
-                axis.Date(1, at = xminTck, labels = NA, tcl = par("tcl") * 0.5)
-            mtext(xlab, side = 1, line = 2.5, cex = 1)
-            axis(2, at = axTicks(2), las = 2, font = 1)
-            axis(2, at = yminTck, labels = NA, tcl = par("tcl") * 0.6)
-            mtext(ylab, side = 2, line = 3, cex = 1)
-            title(main = title, cex.main = 1.2)
-            box()
+                graphics::axis.Date(1, at = xminTck, labels = NA, tcl = graphics::par("tcl") * 0.5)
+            graphics::mtext(xlab, side = 1, line = 2.5, cex = 1)
+            graphics::axis(2, at = graphics::axTicks(2), las = 2, font = 1)
+            graphics::axis(2, at = yminTck, labels = NA, tcl = graphics::par("tcl") * 0.6)
+            graphics::mtext(ylab, side = 2, line = 3, cex = 1)
+            graphics::title(main = title, cex.main = 1.2)
+            graphics::box()
 
             ########
 
@@ -457,24 +457,24 @@ multiValidation.plotGraph <- function(){
                                       ph = NA, px = NA, bg = NA)
                         )
 
-            kol.Est <- colorRampPalette(optsgph$plot1$est)(length(data.name))
+            kol.Est <- grDevices::colorRampPalette(optsgph$plot1$est)(length(data.name))
             legendlab <- c(optsgph$validName$obs, data.name)
 
             #########
 
-            lines(daty, x, type = obs$t, col = obs$lc, lwd = obs$lw, bg = obs$bg, pch = obs$ph, cex = obs$px)
+            graphics::lines(daty, x, type = obs$t, col = obs$lc, lwd = obs$lw, bg = obs$bg, pch = obs$ph, cex = obs$px)
             for(j in seq_along(y))
-                lines(daty, y[[j]], type = 'l', col = kol.Est[j], lwd = obs$lw)
-            par(op)
+                graphics::lines(daty, y[[j]], type = 'l', col = kol.Est[j], lwd = obs$lw)
+            graphics::par(op)
 
-            op <- par(mar = c(0, 4, 0, 2))
-            plot.new()
+            op <- graphics::par(mar = c(0, 4, 0, 2))
+            graphics::plot.new()
             if(optsgph$legend$add){
                 estNA <- rep(NA, length(kol.Est))
-                legend('top', 'groups', legend = legendlab, col = c(obs$lc, kol.Est), pch = c(obs$ph, estNA),
+                graphics::legend('top', 'groups', legend = legendlab, col = c(obs$lc, kol.Est), pch = c(obs$ph, estNA),
                        bg = c(obs$bg, estNA), lwd = 3, lty = 1, horiz = TRUE)
             }
-            par(op)
+            graphics::par(op)
         }
     }
     return(0)
@@ -484,7 +484,7 @@ multiValidation.plotGraph <- function(){
 
 multiValidation.plotStatMaps <- function(){
     dataMapOp <- .cdtData$EnvData$statMapOp
-    typeMap <- str_trim(tclvalue(.cdtData$EnvData$typeMap))
+    typeMap <- trimws(tclvalue(.cdtData$EnvData$typeMap))
 
     #######
 
@@ -611,7 +611,7 @@ multiValidation.plotStatMaps <- function(){
     lezandy[[place]]$fun <- grid::packGrob(frame = colorkey.Frame, grob = grob.Obj, side = pars.key$side, dynamic = TRUE)
 
     #######
-    print(update(Plot.Obj, col.regions = brks$colors,  as.table = TRUE,
+    print(stats::update(Plot.Obj, col.regions = brks$colors,  as.table = TRUE,
                 xlim = xlim, ylim = ylim, xlab = '', ylab = '', main = titre,
                 par.settings = par.Settings, par.strip.text = par.StripText, strip = par.stripCust,
                 scales = list(x = Xaxis, y = Yaxis), legend = lezandy))
@@ -647,7 +647,7 @@ image.foramtted.table <- function(X, rk, title = "",
         if(length(pars$col$fill) == 1 & is.character(pars$col$fill)){
             foo <- get(pars$col$fill, mode = "function")
         }else{
-            foo <- colorRampPalette(pars$col$fill)
+            foo <- grDevices::colorRampPalette(pars$col$fill)
         }
     }
     kolor <- foo(nbc)
@@ -678,22 +678,22 @@ image.foramtted.table <- function(X, rk, title = "",
     mar.bas <- max(nchar(mc)) * 0.4 + 1.8
 
     #########
-    op <- par(mar = c(mar.bas, 5.0, mar.top, 2.0))
+    op <- graphics::par(mar = c(mar.bas, 5.0, mar.top, 2.0))
     plot(1, xlim = xlim, ylim = ylim, xlab = "", ylab = "", type = "n",
          xaxt = 'n', yaxt = 'n', xaxs = "i", yaxs = "i")
 
-    if(draw.title) title(title, line = 4.5, cex.main = 1.5)
+    if(draw.title) graphics::title(title, line = 4.5, cex.main = 1.5)
 
-    axis(side = 1, at = x, tcl = -0.2, labels = FALSE)
-    text(x = x, y = par("usr")[3] + 0.4, srt = 50, adj = 1, labels = mc, cex = 1, xpd = TRUE)
-    mtext(mr, at = y, side = 2, las = 1, adj = 1.2, cex = 1)
+    graphics::axis(side = 1, at = x, tcl = -0.2, labels = FALSE)
+    graphics::text(x = x, y = graphics::par("usr")[3] + 0.4, srt = 50, adj = 1, labels = mc, cex = 1, xpd = TRUE)
+    graphics::mtext(mr, at = y, side = 2, las = 1, adj = 1.2, cex = 1)
 
-    image(x, y, t(rk), col = kolor, breaks = breaks, xaxt = 'n', yaxt = 'n', add = TRUE)
-    text(centers[, 2], centers[, 1], round(c(X), 3), cex = 1, col = text.kol)
-    abline(h = y + 0.5)
-    abline(v = x + 0.5)
+    graphics::image(x, y, t(rk), col = kolor, breaks = breaks, xaxt = 'n', yaxt = 'n', add = TRUE)
+    graphics::text(centers[, 2], centers[, 1], round(c(X), 3), cex = 1, col = text.kol)
+    graphics::abline(h = y + 0.5)
+    graphics::abline(v = x + 0.5)
 
-    plt <- par("plt")
+    plt <- graphics::par("plt")
     smallplot <- c((3 * plt[1] + plt[2])/4,
                    (plt[1] + 3 * plt[2])/4,
                     plt[4] + 0.04, plt[4] + 0.06)
@@ -705,7 +705,7 @@ image.foramtted.table <- function(X, rk, title = "",
                                           cex = 1.2, line = 0.2, font = 2),
                        smallplot = smallplot
                     )
-    par(op)
+    graphics::par(op)
 }
 
 ##################################

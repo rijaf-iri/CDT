@@ -27,7 +27,7 @@ split_3d.netcdf_selectVariable <- function(parent.win, ncfile){
 
     ##################################################################
 
-    nc <- try(nc_open(ncfile), silent = TRUE)
+    nc <- try(ncdf4::nc_open(ncfile), silent = TRUE)
     if(inherits(nc, "try-error")){
         Insert.Messages.Out(paste(lang.dlg[['message']][['1']], ncfile), format = TRUE)
         tkgrab.release(tt)
@@ -41,7 +41,7 @@ split_3d.netcdf_selectVariable <- function(parent.win, ncfile){
     var.info <- lapply(nc$var, function(v) v[c('name', 'ndims', 'size', 'dimids', 'prec', 'units', 'longname')])
     dim.info <- lapply(nc$dim, function(v) v[c('name', 'len', 'id', 'units', 'vals')])
     att.dim <- lapply(seq(ncdim), function(i){
-        att <- ncatt_get(nc, nc$dim[[i]]$name)
+        att <- ncdf4::ncatt_get(nc, nc$dim[[i]]$name)
         nom <- names(att)
         nameL <- grepl('name', nom, ignore.case = TRUE)
         ix0 <- which(grepl('long', nom, ignore.case = TRUE) & nameL)
@@ -62,10 +62,10 @@ split_3d.netcdf_selectVariable <- function(parent.win, ncfile){
         }
     })
     names(att.dim) <- sapply(dim.info, '[[', 'name')
-    calendar <- lapply(seq(ncdim), function(i) ncatt_get(nc, nc$dim[[i]]$name)$calendar)
+    calendar <- lapply(seq(ncdim), function(i) ncdf4::ncatt_get(nc, nc$dim[[i]]$name)$calendar)
     names(calendar) <- sapply(dim.info, '[[', 'name')
     calendar <- calendar[!sapply(calendar, is.null)]
-    nc_close(nc)
+    ncdf4::nc_close(nc)
 
     ##################################################################
 

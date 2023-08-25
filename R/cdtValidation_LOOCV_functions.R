@@ -28,7 +28,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
     stndat <- cbind(ncInfo$dates, stndat)
     stndat <- rbind(stnInfo, stndat)
     outstnf <- file.path(outdir, "STATIONS_DATA.csv")
-    write.table(stndat, outstnf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+    utils::write.table(stndat, outstnf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
 
     ##################
 
@@ -52,8 +52,8 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
     }
 
     locations.stn <- as.data.frame(stnData[c('lon', 'lat')])
-    coordinates(locations.stn) <- c('lon', 'lat')
-    ijs <- over(locations.stn, newgrid)
+    sp::coordinates(locations.stn) <- c('lon', 'lat')
+    ijs <- sp::over(locations.stn, newgrid)
     locations.stn$stn <- rep(NA,  length(locations.stn))
 
     xy.data <- defSpatialPixels(ncinfo[c('lon', 'lat')])
@@ -63,7 +63,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
 
     is.regridNCDF <- is.diffSpatialPixelsObj(newgrid, xy.data, tol = 1e-07)
     ijnc <- NULL
-    if(is.regridNCDF) ijnc <- over(newgrid, xy.data)
+    if(is.regridNCDF) ijnc <- sp::over(newgrid, xy.data)
 
     ##################
 
@@ -72,10 +72,10 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
         is.auxvar <- unlist(params$auxvar[1:5])
         if(any(is.auxvar)){
-            formuleRK <- formula(paste0('stn', '~', 'grd', '+',
+            formuleRK <- stats::formula(paste0('stn', '~', 'grd', '+',
                                  paste(auxvar[is.auxvar], collapse = '+')))
         }else{
-            formuleRK <- formula(paste0('stn', '~', 'grd'))
+            formuleRK <- stats::formula(paste0('stn', '~', 'grd'))
         }
 
         if(is.auxvar['dem']) newgrid$dem <- c(demData$z)
@@ -173,7 +173,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
 
         tmpf <- file.path(tmpdir, paste0(ncInfo$dates[jj], '.txt'))
         tmp <- matrix(c(ncInfo$dates[jj], out), nrow = 1)
-        write.table(tmp, tmpf, sep = ',', na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+        utils::write.table(tmp, tmpf, sep = ',', na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
 
         return(out)
     })
@@ -185,7 +185,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
     ret <- cbind(ncInfo$dates, ret)
     ret <- rbind(stnInfo, ret)
     outcvf <- file.path(outdir, "CROSS-VALIDATION_DATA.csv")
-    write.table(ret, outcvf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+    utils::write.table(ret, outcvf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
 
     unlink(tmpdir, recursive = TRUE)
 

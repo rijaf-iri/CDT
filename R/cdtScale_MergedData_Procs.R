@@ -173,10 +173,10 @@ merged_ScalingUpData <- function(ncInfoMrg, ncInfoScale, params, outdir, GUI = T
 
     #######
     ## Def ncdf
-    dx <- ncdim_def("Lon", "degreeE", ncInfoMrg$ncinfo$lon)
-    dy <- ncdim_def("Lat", "degreeN", ncInfoMrg$ncinfo$lat)
+    dx <- ncdf4::ncdim_def("Lon", "degreeE", ncInfoMrg$ncinfo$lon)
+    dy <- ncdf4::ncdim_def("Lat", "degreeN", ncInfoMrg$ncinfo$lat)
 
-    grd.nc.out <- ncvar_def(varinfo0$name, varinfo0$units, list(dx, dy),
+    grd.nc.out <- ncdf4::ncvar_def(varinfo0$name, varinfo0$units, list(dx, dy),
                             varinfo0$missval, varinfo0$longname,
                             varinfo0$prec, compression = 9)
 
@@ -209,17 +209,17 @@ merged_ScalingUpData <- function(ncInfoMrg, ncInfoScale, params, outdir, GUI = T
 
         #######
 
-        nc <- nc_open(ncInfoScale$ncfiles[ix])
-        scl.don <- ncvar_get(nc, varid = ncInfoScale$ncinfo$varid)
-        nc_close(nc)
+        nc <- ncdf4::nc_open(ncInfoScale$ncfiles[ix])
+        scl.don <- ncdf4::ncvar_get(nc, varid = ncInfoScale$ncinfo$varid)
+        ncdf4::nc_close(nc)
         scl.don <- transposeNCDFData(scl.don, ncInfoScale$ncinfo)
 
         #######
 
         mrg.don <- lapply(seq_along(nc.files), function(j){
-            nc <- nc_open(nc.files[j])
-            don <- ncvar_get(nc, varid = varinfo0$name)
-            nc_close(nc)
+            nc <- ncdf4::nc_open(nc.files[j])
+            don <- ncdf4::ncvar_get(nc, varid = varinfo0$name)
+            ncdf4::nc_close(nc)
             don <- transposeNCDFData(don, ncInfoMrg$ncinfo)
             don
         })

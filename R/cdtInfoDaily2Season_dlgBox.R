@@ -52,9 +52,9 @@ getInfoDaily2Season <- function(parent.win, Parameters)
     frameSeas <- tkframe(frMain)
 
     MOIS <- format(ISOdate(2014, 1:12, 1), "%b")
-    mon1 <- as.numeric(str_trim(Parameters$startMon))
+    mon1 <- as.numeric(trimws(Parameters$startMon))
     startMon <- tclVar(MOIS[mon1])
-    mon2 <- as.numeric(str_trim(Parameters$endMon))
+    mon2 <- as.numeric(trimws(Parameters$endMon))
     endMon <- tclVar(MOIS[mon2])
 
     txt.startMon <- tklabel(frameSeas, text = lang.dlg[['label']][['3']])
@@ -99,14 +99,14 @@ getInfoDaily2Season <- function(parent.win, Parameters)
 
     tkconfigure(bt.prm.OK, command = function(){
         Parameters$all.years <<- switch(tclvalue(allYears), '0' = FALSE, '1' = TRUE)
-        Parameters$startYear <<- as.numeric(str_trim(tclvalue(startYear)))
-        Parameters$endYear <<- as.numeric(str_trim(tclvalue(endYear)))
+        Parameters$startYear <<- as.numeric(trimws(tclvalue(startYear)))
+        Parameters$endYear <<- as.numeric(trimws(tclvalue(endYear)))
 
-        Parameters$startMon <<- which(MOIS %in% str_trim(tclvalue(startMon)))
-        Parameters$endMon <<- which(MOIS %in% str_trim(tclvalue(endMon)))
-        Parameters$startDay <<- as.numeric(str_trim(tclvalue(tkget(spin.startDay))))
-        Parameters$endDay <<- as.numeric(str_trim(tclvalue(tkget(spin.endDay))))
-        Parameters$min.frac <<- as.numeric(str_trim(tclvalue(min.frac)))
+        Parameters$startMon <<- which(MOIS %in% trimws(tclvalue(startMon)))
+        Parameters$endMon <<- which(MOIS %in% trimws(tclvalue(endMon)))
+        Parameters$startDay <<- as.numeric(trimws(tclvalue(tkget(spin.startDay))))
+        Parameters$endDay <<- as.numeric(trimws(tclvalue(tkget(spin.endDay))))
+        Parameters$min.frac <<- as.numeric(trimws(tclvalue(min.frac)))
 
         daty1 <- try(as.Date(paste(2020, Parameters$startMon, Parameters$startDay, sep = '-')), silent = TRUE)
         if(inherits(daty1, "try-error") | is.na(daty1)){

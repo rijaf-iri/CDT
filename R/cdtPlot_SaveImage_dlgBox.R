@@ -125,11 +125,11 @@ SavePlot <- function(){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            filename <- str_trim(tclvalue(fileImage))
-            units <- str_trim(tclvalue(uImage))
-            res <- as.numeric(str_trim(tclvalue(rImage)))
-            width <- as.numeric(str_trim(tclvalue(wImage)))
-            height <- as.numeric(str_trim(tclvalue(hImage)))
+            filename <- trimws(tclvalue(fileImage))
+            units <- trimws(tclvalue(uImage))
+            res <- as.numeric(trimws(tclvalue(rImage)))
+            width <- as.numeric(trimws(tclvalue(wImage)))
+            height <- as.numeric(trimws(tclvalue(hImage)))
 
             foo <- tolower(tools::file_ext(filename))
             if(is.na(foo) | foo == ""){

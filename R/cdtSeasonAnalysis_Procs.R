@@ -876,8 +876,8 @@ compute_RainySeasonData <- function(GeneralParameters){
         y <- index.out$coords$mat$y
         nx <- length(x)
         ny <- length(y)
-        dx <- ncdim_def("Lon", "degreeE", x)
-        dy <- ncdim_def("Lat", "degreeN", y)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
         xy.dim <- list(dx, dy)
 
         ######################
@@ -888,23 +888,23 @@ compute_RainySeasonData <- function(GeneralParameters){
         q95 <- do.call(cbind, q95)
         q95 <- q95[, index.out$colInfo$order]
         q95[is.na(q95)] <- -99
-        nc.grd <- ncvar_def("q95", "mm", xy.dim, -99, "95th percentile", "short", shuffle = TRUE, compression = 9)
+        nc.grd <- ncdf4::ncvar_def("q95", "mm", xy.dim, -99, "95th percentile", "short", shuffle = TRUE, compression = 9)
         filenc <- file.path(Percentile_95th.Nc, "data_95th_perc.nc")
-        nc <- nc_create(filenc, nc.grd)
-        ncvar_put(nc, nc.grd, matrix(q95, nx, ny))
-        nc_close(nc)
+        nc <- ncdf4::nc_create(filenc, nc.grd)
+        ncdf4::ncvar_put(nc, nc.grd, matrix(q95, nx, ny))
+        ncdf4::nc_close(nc)
 
         ######################
         ret <- lapply(chunkdate, function(dates){
 
             seasL <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Season_length.Dir, dates, cdtParallelCond)
             seasL[is.na(seasL)] <- -99
-            nc.grd <- ncvar_def("seas.len", "days", xy.dim, -99, "Length of the rainy season", "short", shuffle = TRUE, compression = 9)
+            nc.grd <- ncdf4::ncvar_def("seas.len", "days", xy.dim, -99, "Length of the rainy season", "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
                 filenc <- file.path(Season_length.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, matrix(seasL[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, matrix(seasL[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
             rm(seasL)
 
@@ -912,11 +912,11 @@ compute_RainySeasonData <- function(GeneralParameters){
             onsetD[is.na(onsetD)] <- -99
             for(j in seq_along(dates)){
                 units <- paste("days since", dates[j])
-                nc.grd <- ncvar_def("onset", units, xy.dim, -99, "Starting dates of the rainy season", "short", shuffle = TRUE, compression = 9)
+                nc.grd <- ncdf4::ncvar_def("onset", units, xy.dim, -99, "Starting dates of the rainy season", "short", shuffle = TRUE, compression = 9)
                 filenc <- file.path(Onset_days.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, matrix(onsetD[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, matrix(onsetD[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
             rm(onsetD)
 
@@ -924,66 +924,66 @@ compute_RainySeasonData <- function(GeneralParameters){
             cessaD[is.na(cessaD)] <- -99
             for(j in seq_along(dates)){
                 units <- paste("days since", dates[j])
-                nc.grd <- ncvar_def("cessation", units, xy.dim, -99, "Ending dates of the rainy season", "short", shuffle = TRUE, compression = 9)
+                nc.grd <- ncdf4::ncvar_def("cessation", units, xy.dim, -99, "Ending dates of the rainy season", "short", shuffle = TRUE, compression = 9)
                 filenc <- file.path(Cessation_days.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, matrix(cessaD[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, matrix(cessaD[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
             rm(cessaD)
 
             seasTot <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Seasonal_rain_amount.Dir, dates, cdtParallelCond)
             seasTot[is.na(seasTot)] <- -99
-            nc.grd <- ncvar_def("seas.precip", "mm", xy.dim, -99, "Seasonal rainfall amounts", "short", shuffle = TRUE, compression = 9)
+            nc.grd <- ncdf4::ncvar_def("seas.precip", "mm", xy.dim, -99, "Seasonal rainfall amounts", "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
                 filenc <- file.path(Seasonal_rain_amount.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, matrix(seasTot[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, matrix(seasTot[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
             rm(seasTot)
 
             nbDay <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Number_rainy_day.Dir, dates, cdtParallelCond)
             nbDay[is.na(nbDay)] <- -99
-            nc.grd <- ncvar_def("nb.rain", "days", xy.dim, -99, "Seasonal number of rainy days", "short", shuffle = TRUE, compression = 9)
+            nc.grd <- ncdf4::ncvar_def("nb.rain", "days", xy.dim, -99, "Seasonal number of rainy days", "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
                 filenc <- file.path(Number_rainy_day.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, matrix(nbDay[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, matrix(nbDay[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
             rm(nbDay)
 
             max24h <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Maximum_rain_daily.Dir, dates, cdtParallelCond)
             max24h[is.na(max24h)] <- -99
-            nc.grd <- ncvar_def("max24h", "mm", xy.dim, -99, 'Seasonal maximum of daily rainfall', "short", shuffle = TRUE, compression = 9)
+            nc.grd <- ncdf4::ncvar_def("max24h", "mm", xy.dim, -99, 'Seasonal maximum of daily rainfall', "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
                 filenc <- file.path(Maximum_rain_daily.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, matrix(max24h[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, matrix(max24h[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
             rm(max24h)
 
             nb95 <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Number_day_above_Perc95th.Dir, dates, cdtParallelCond)
             nb95[is.na(nb95)] <- -99
-            nc.grd <- ncvar_def("nbq95th", "days", xy.dim, -99, 'Seasonal count of days when RR > 95th percentile', "short", shuffle = TRUE, compression = 9)
+            nc.grd <- ncdf4::ncvar_def("nbq95th", "days", xy.dim, -99, 'Seasonal count of days when RR > 95th percentile', "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
                 filenc <- file.path(Number_day_above_Perc95th.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, matrix(nb95[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, matrix(nb95[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
             rm(nb95)
 
             tot95 <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Total_rain_above_Perc95th.Dir, dates, cdtParallelCond)
             tot95[is.na(tot95)] <- -99
-            nc.grd <- ncvar_def("totq95th", "mm", xy.dim, -99, 'Seasonal total of precipitation when RR > 95th percentile', "short", shuffle = TRUE, compression = 9)
+            nc.grd <- ncdf4::ncvar_def("totq95th", "mm", xy.dim, -99, 'Seasonal total of precipitation when RR > 95th percentile', "short", shuffle = TRUE, compression = 9)
             for(j in seq_along(dates)){
                 filenc <- file.path(Total_rain_above_Perc95th.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, matrix(tot95[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, matrix(tot95[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
             rm(tot95)
 
@@ -992,23 +992,23 @@ compute_RainySeasonData <- function(GeneralParameters){
             drySpell7 <- sapply(drySpell, function(x) sum(!is.na(x) & x >= 7))
             dim(drySpell7) <- dim(drySpell)
             drySpell7[is.na(drySpell7)] <- -99
-            nc.drySpell7 <- ncvar_def("dryspell7", "count", xy.dim, -99, 'Number of Dry Spells greater than 7 consecutive days', "short", shuffle = TRUE, compression = 9)
+            nc.drySpell7 <- ncdf4::ncvar_def("dryspell7", "count", xy.dim, -99, 'Number of Dry Spells greater than 7 consecutive days', "short", shuffle = TRUE, compression = 9)
 
             drySpellmax <- sapply(drySpell, function(x) if(all(is.na(x))) NA else max(x, na.rm = TRUE))
             dim(drySpellmax) <- dim(drySpell)
             drySpellmax[is.na(drySpellmax) | is.infinite(drySpellmax)] <- -99
-            nc.drySpellmax <- ncvar_def("dryspellmax", "days", xy.dim, -99, "Longest dry spell", "short", shuffle = TRUE, compression = 9)
+            nc.drySpellmax <- ncdf4::ncvar_def("dryspellmax", "days", xy.dim, -99, "Longest dry spell", "short", shuffle = TRUE, compression = 9)
 
             for(j in seq_along(dates)){
                 filenc <- file.path(Dry_Spell_7days.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.drySpell7)
-                ncvar_put(nc, nc.drySpell7, matrix(drySpell7[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.drySpell7)
+                ncdf4::ncvar_put(nc, nc.drySpell7, matrix(drySpell7[j, ], nx, ny))
+                ncdf4::nc_close(nc)
 
                 filenc <- file.path(Longest_dry_spell.Nc, paste0("data_", dates[j], ".nc"))
-                nc <- nc_create(filenc, nc.drySpellmax)
-                ncvar_put(nc, nc.drySpellmax, matrix(drySpellmax[j, ], nx, ny))
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.drySpellmax)
+                ncdf4::ncvar_put(nc, nc.drySpellmax, matrix(drySpellmax[j, ], nx, ny))
+                ncdf4::nc_close(nc)
             }
 
             return(0)

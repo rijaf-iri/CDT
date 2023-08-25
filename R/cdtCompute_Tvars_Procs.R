@@ -129,12 +129,12 @@ computeTvarsProcs <- function(){
         tmaxInfo$exist <- tmaxInfo$exist[txdaty]
 
         ##################
-        nc <- nc_open(tminInfo$nc.files[1])
+        nc <- ncdf4::nc_open(tminInfo$nc.files[1])
         tminvarid <- tminInfo$ncinfo$varid
         nc.lon <- nc$var[[tminvarid]]$dim[[tminInfo$ncinfo$xo]]$vals
         nc.lat <- nc$var[[tminvarid]]$dim[[tminInfo$ncinfo$yo]]$vals
         varInfo <- nc$var[[tminvarid]][c('prec', 'units', 'missval')]
-        nc_close(nc)
+        ncdf4::nc_close(nc)
 
         xo.tn <- order(nc.lon)
         nc.lon <- nc.lon[xo.tn]
@@ -143,17 +143,17 @@ computeTvarsProcs <- function(){
         len.lon <- length(nc.lon)
         len.lat <- length(nc.lat)
 
-        nc <- nc_open(tmaxInfo$nc.files[1])
+        nc <- ncdf4::nc_open(tmaxInfo$nc.files[1])
         tmaxvarid <- tmaxInfo$ncinfo$varid
         nc.lon1 <- nc$var[[tmaxvarid]]$dim[[tmaxInfo$ncinfo$xo]]$vals
         nc.lat1 <- nc$var[[tmaxvarid]]$dim[[tmaxInfo$ncinfo$yo]]$vals
-        nc_close(nc)
+        ncdf4::nc_close(nc)
         xo.tx <- order(nc.lon1)
         yo.tx <- order(nc.lat1)
 
         ##################
-        dx <- ncdim_def("Lon", "degreeE", nc.lon)
-        dy <- ncdim_def("Lat", "degreeN", nc.lat)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", nc.lon)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", nc.lat)
         xy.dim <- list(dx, dy)
 
         if(.cdtData$GalParams$variable == "Mean"){
@@ -164,7 +164,7 @@ computeTvarsProcs <- function(){
             ncname <- "range"
             longname <- paste(stringr::str_to_title(.cdtData$GalParams$Tstep), "temperature range")
         }
-        grdNC <- ncvar_def(ncname, varInfo$units, xy.dim, varInfo$missval, longname = longname, prec = varInfo$prec, compression = 6)
+        grdNC <- ncdf4::ncvar_def(ncname, varInfo$units, xy.dim, varInfo$missval, longname = longname, prec = varInfo$prec, compression = 6)
 
         ##################
         ncdir <- paste0("TEMP_", .cdtData$GalParams$variable, "_", .cdtData$GalParams$Tstep)

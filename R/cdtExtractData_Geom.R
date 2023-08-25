@@ -49,9 +49,9 @@ extractGeomPoints <- function(gridObj, points, padxy){
 extractGeomPolys <- function(gridObj, shpf, attr_name, attr_values){
     iattr <- as.character(shpf@data[, attr_name])
     shpf.union <- maptools::unionSpatialPolygons(shpf, iattr)
-    shpf.df <- stats::aggregate(as(shpf, "data.frame")[, 1], list(iattr), identity)
+    shpf.df <- stats::aggregate(methods::as(shpf, "data.frame")[, 1], list(iattr), identity)
     shpf.df$x <- seq(shpf.union)
-    row.names(shpf.df) <- sapply(slot(shpf.union, "polygons"), function(x) slot(x, "ID"))
+    row.names(shpf.df) <- sapply(methods::slot(shpf.union, "polygons"), function(x) methods::slot(x, "ID"))
 
     shpf.union <- sp::SpatialPolygonsDataFrame(shpf.union, shpf.df)
 

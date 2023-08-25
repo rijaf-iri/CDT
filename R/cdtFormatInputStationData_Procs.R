@@ -30,7 +30,7 @@ formatCDTDataMultiple.Files <- function(){
 
     xinfo <- getStnOpenData(STN.info)
     if(is.null(xinfo)) return(NULL)
-    xinfo <- apply(xinfo, 2, str_trim)
+    xinfo <- apply(xinfo, 2, trimws)
     xinfo[xinfo == ""] <- NA
     stn.id <- xinfo[, 1]
     stn.lon <- as.numeric(xinfo[, 3])
@@ -72,7 +72,7 @@ formatCDTDataMultiple.Files <- function(){
     donne <- lapply(stn.id, function(x){
         filext <- if(STN.ext == "") x else paste0(x, '.', STN.ext)
         filein <- file.path(STN.dir, filext)
-        donne <- try(read.table(filein, header = donneInfo[[3]]$header,
+        donne <- try(utils::read.table(filein, header = donneInfo[[3]]$header,
                                         sep = donneInfo[[3]]$sepr,
                                         skip = donneInfo[[3]]$skip - 1, 
                                         na.strings = donneInfo[[3]]$miss.val,
@@ -257,7 +257,7 @@ formatCDTDataSingle.File <- function(GeneralParameters){
     donne <- getStnOpenData(STN.file)
     if(is.null(donne)) return(NULL)
 
-    donne <- apply(donne, 2, str_trim)
+    donne <- apply(donne, 2, trimws)
     donne[donne == ""] <- NA
     donne <- donne[rowSums(!is.na(donne)) > 0, , drop = FALSE]
 
@@ -307,7 +307,7 @@ formatCDTDataSingle.File <- function(GeneralParameters){
         STN.info <- .cdtData$GalParams$IO.files$STN.coords.file
         xinfo <- getStnOpenData(STN.info)
         if(is.null(xinfo)) return(NULL)
-        xinfo <- apply(xinfo, 2, str_trim)
+        xinfo <- apply(xinfo, 2, trimws)
         if(is.null(dim(xinfo))) xinfo <- matrix(xinfo, nrow = 1)
         xinfo[xinfo == ""] <- NA
         stn.id <- xinfo[, 1]

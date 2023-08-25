@@ -305,7 +305,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
             out.cdt.aggregate <- file.path(datadir, paste0("Aggregated_data_", outstep, ".csv"))
 
             if(GeneralParameters$outdir$update & file.exists(out.cdt.aggregate)){
-                don0 <- try(read.table(out.cdt.aggregate, sep = ',', na.strings = miss.val,
+                don0 <- try(utils::read.table(out.cdt.aggregate, sep = ',', na.strings = miss.val,
                             colClasses = 'character', stringsAsFactors = FALSE), silent = TRUE)
                 if(inherits(don0, "try-error")){
                     Insert.Messages.Out(paste(.cdtData$EnvData[['message']][['7']], out.cdt.aggregate), TRUE, 'e')
@@ -658,7 +658,7 @@ anomaliesCalcProcs <- function(GeneralParameters){
             anom.file.csv <- file.path(outDIR, 'CDTSTATIONS', paste0(outstep, "_Anomaly.csv"))
 
             data.anom.rds <- readRDS(anom.file.rds)
-            data.anom.csv <- read.table(anom.file.csv, sep = ",", colClasses = "character", stringsAsFactors = FALSE)
+            data.anom.csv <- utils::read.table(anom.file.csv, sep = ",", colClasses = "character", stringsAsFactors = FALSE)
             infohead <- data.anom.csv[1:3, , drop = FALSE]
             data.anom.csv <- data.anom.csv[-(1:3), -1]
 

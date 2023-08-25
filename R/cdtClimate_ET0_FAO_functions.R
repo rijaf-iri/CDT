@@ -82,7 +82,7 @@ ET0_Penman_Monteith_FAO_station <- function(
 
     tmax_pars <- list(file = "", sep = ",", na.strings = "-99")
     tmax.data <- init.default.list.args(tmax.data, tmax_pars)
-    tmaxData <- do.call(read.table, c(tmax.data, stnpars_read))
+    tmaxData <- do.call(utils::read.table, c(tmax.data, stnpars_read))
     tmaxData <- splitCDTData0(tmaxData, GUI = FALSE)
     if(is.null(tmaxData)){
         stop('Unable to read TMAX data')
@@ -91,7 +91,7 @@ ET0_Penman_Monteith_FAO_station <- function(
 
     tmin_pars <- list(file = "", sep = ",", na.strings = "-99")
     tmin.data <- init.default.list.args(tmin.data, tmin_pars)
-    tminData <- do.call(read.table, c(tmin.data, stnpars_read))
+    tminData <- do.call(utils::read.table, c(tmin.data, stnpars_read))
     tminData <- splitCDTData0(tminData, GUI = FALSE)
     if(is.null(tminData)){
         stop('Unable to read TMIN data')
@@ -112,7 +112,7 @@ ET0_Penman_Monteith_FAO_station <- function(
     if(rh.from == 'minmax'){
         rhmax_pars <- list(file = "", sep = ",", na.strings = "-99")
         rhmax.data <- init.default.list.args(rhmax.data, rhmax_pars)
-        rhmaxData <- do.call(read.table, c(rhmax.data, stnpars_read))
+        rhmaxData <- do.call(utils::read.table, c(rhmax.data, stnpars_read))
         rhmaxData <- splitCDTData0(rhmaxData, GUI = FALSE)
         if(is.null(rhmaxData)){
             stop('Unable to read RHMAX data')
@@ -132,7 +132,7 @@ ET0_Penman_Monteith_FAO_station <- function(
 
         rhmin_pars <- list(file = "", sep = ",", na.strings = "-99")
         rhmin.data <- init.default.list.args(rhmin.data, rhmin_pars)
-        rhminData <- do.call(read.table, c(rhmin.data, stnpars_read))
+        rhminData <- do.call(utils::read.table, c(rhmin.data, stnpars_read))
         rhminData <- splitCDTData0(rhminData, GUI = FALSE)
         if(is.null(rhminData)){
             stop('Unable to read RHMIN data')
@@ -152,7 +152,7 @@ ET0_Penman_Monteith_FAO_station <- function(
     }else if(rh.from == 'mean'){
         rhmean_pars <- list(file = "", sep = ",", na.strings = "-99")
         rhmean.data <- init.default.list.args(rhmean.data, rhmean_pars)
-        rhmeanData <- do.call(read.table, c(rhmean.data, stnpars_read))
+        rhmeanData <- do.call(utils::read.table, c(rhmean.data, stnpars_read))
         rhmeanData <- splitCDTData0(rhmeanData, GUI = FALSE)
         if(is.null(rhmeanData)){
             stop('Unable to read RHMEAN data')
@@ -176,7 +176,7 @@ ET0_Penman_Monteith_FAO_station <- function(
 
     wff10_pars <- list(file = "", sep = ",", na.strings = "-99")
     wff10.data <- init.default.list.args(wff10.data, wff10_pars)
-    wff10Data <- do.call(read.table, c(wff10.data, stnpars_read))
+    wff10Data <- do.call(utils::read.table, c(wff10.data, stnpars_read))
     wff10Data <- splitCDTData0(wff10Data, GUI = FALSE)
     if(is.null(wff10Data)){
         stop('Unable to read wind speed data at 10 meters')
@@ -196,7 +196,7 @@ ET0_Penman_Monteith_FAO_station <- function(
 
     pres_pars <- list(file = "", sep = ",", na.strings = "-99")
     pres.data <- init.default.list.args(pres.data, pres_pars)
-    presData <- do.call(read.table, c(pres.data, stnpars_read))
+    presData <- do.call(utils::read.table, c(pres.data, stnpars_read))
     presData <- splitCDTData0(presData, GUI = FALSE)
     if(is.null(presData)){
         stop('Unable to read pressure data')
@@ -216,7 +216,7 @@ ET0_Penman_Monteith_FAO_station <- function(
 
     rad_pars <- list(file = "", sep = ",", na.strings = "-99")
     rad.data <- init.default.list.args(rad.data, rad_pars)
-    radData <- do.call(read.table, c(rad.data, stnpars_read))
+    radData <- do.call(utils::read.table, c(rad.data, stnpars_read))
     radData <- splitCDTData0(radData, GUI = FALSE)
     if(is.null(radData)){
         stop('Unable to read radiation data')
@@ -267,7 +267,7 @@ ET0_Penman_Monteith_FAO_station <- function(
     }else if(elev.from == 'cdtCrdFile'){
         elev_pars <- list(file = "", sep = ",", na.strings = "-99", header = TRUE)
         elev.data <- init.default.list.args(elev.data, elev_pars)
-        elevData <- do.call(read.table, c(elev.data, stnpars_read))
+        elevData <- do.call(utils::read.table, c(elev.data, stnpars_read))
         idElev <- match(idstn, elevData[, 1])
         if(length(idElev) == 0){
             stop('Temperature data and coordinates file stations IDs do not match')

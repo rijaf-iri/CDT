@@ -125,7 +125,7 @@ climatologiesCalcPanelCmd <- function(){
         ############
 
         tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
-            instep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            instep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             if(instep == 'daily'){
                 CbperiodVAL1 <<- CbOutVAL
@@ -145,13 +145,13 @@ climatologiesCalcPanelCmd <- function(){
             }
 
             tkconfigure(cb.outclim, values = CbperiodVAL1)
-            if(!str_trim(tclvalue(outSteps)) %in% CbperiodVAL1)
+            if(!trimws(tclvalue(outSteps)) %in% CbperiodVAL1)
                 tclvalue(outSteps) <- CbperiodVAL1[1]
 
-            stateAggr <- if(str_trim(tclvalue(timeSteps)) == str_trim(tclvalue(outSteps))) "disabled" else "normal"
+            stateAggr <- if(trimws(tclvalue(timeSteps)) == trimws(tclvalue(outSteps))) "disabled" else "normal"
             tkconfigure(bt.AggrFun, state = stateAggr)
 
-            statedayW <- if(str_trim(tclvalue(outSteps)) == CbOutVAL[1]) "normal" else "disabled"
+            statedayW <- if(trimws(tclvalue(outSteps)) == CbOutVAL[1]) "normal" else "disabled"
             tkconfigure(en.daywin, state = statedayW)
         })
 
@@ -191,7 +191,7 @@ climatologiesCalcPanelCmd <- function(){
         ############
 
         tkbind(cb.outclim, "<<ComboboxSelected>>", function(){
-            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+            outstep <- OutVAL[CbOutVAL %in% trimws(tclvalue(outSteps))]
 
             statedayW <- if(outstep == 'daily') "normal" else "disabled"
             tkconfigure(en.daywin, state = statedayW)
@@ -200,7 +200,7 @@ climatologiesCalcPanelCmd <- function(){
             tkconfigure(cb.seasS, state = stateSeas)
             tkconfigure(cb.seasL, state = stateSeas)
 
-            stateAggr <- if(str_trim(tclvalue(timeSteps)) == str_trim(tclvalue(outSteps))) "disabled" else "normal"
+            stateAggr <- if(trimws(tclvalue(timeSteps)) == trimws(tclvalue(outSteps))) "disabled" else "normal"
             tkconfigure(bt.AggrFun, state = stateAggr)
 
             stateMaps <- if(outstep %in% c('annual', 'seasonal')) 'disabled' else 'normal'
@@ -220,8 +220,8 @@ climatologiesCalcPanelCmd <- function(){
                 seasdef <- paste(MOIS[1], "->", MOIS[12])
             }
             if(outstep == 'seasonal'){
-                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-                len <- as.numeric(str_trim(tclvalue(length.mon)))
+                mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+                len <- as.numeric(trimws(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
                 seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
@@ -235,8 +235,8 @@ climatologiesCalcPanelCmd <- function(){
 
         MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
         mois <- format(ISOdate(2014, 1:12, 1), "%b")
-        mon <- as.numeric(str_trim(GeneralParameters$seasonal$start.mon))
-        len <- as.numeric(str_trim(GeneralParameters$seasonal$length.mon))
+        mon <- as.numeric(trimws(GeneralParameters$seasonal$start.mon))
+        len <- as.numeric(trimws(GeneralParameters$seasonal$length.mon))
         mon1 <- (mon + len - 1) %% 12
         mon1[mon1 == 0] <- 12
 
@@ -268,12 +268,12 @@ climatologiesCalcPanelCmd <- function(){
         ##############
 
         tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
-            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+            outstep <- OutVAL[CbOutVAL %in% trimws(tclvalue(outSteps))]
 
             seasdef <- ""
             if(outstep == 'seasonal'){
-                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-                len <- as.numeric(str_trim(tclvalue(length.mon)))
+                mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+                len <- as.numeric(trimws(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
                 seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
@@ -284,12 +284,12 @@ climatologiesCalcPanelCmd <- function(){
         ##############
 
         tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
-            outstep <- OutVAL[CbOutVAL %in% str_trim(tclvalue(outSteps))]
+            outstep <- OutVAL[CbOutVAL %in% trimws(tclvalue(outSteps))]
 
             seasdef <- ""
             if(outstep == 'seasonal'){
-                mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-                len <- as.numeric(str_trim(tclvalue(length.mon)))
+                mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+                len <- as.numeric(trimws(tclvalue(length.mon)))
                 mon1 <- (mon + len - 1) %% 12
                 mon1[mon1 == 0] <- 12
                 seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
@@ -373,7 +373,7 @@ climatologiesCalcPanelCmd <- function(){
         settingINData <- NULL
         tkconfigure(set.infile, command = function(){
             GeneralParameters$cdtnetcdf <<- getInfoNetCDFData(.cdtEnv$tcl$main$win, GeneralParameters$cdtnetcdf,
-                                                              str_trim(tclvalue(input.file)))
+                                                              trimws(tclvalue(input.file)))
             settingINData <<- 1
         })
 
@@ -402,11 +402,11 @@ climatologiesCalcPanelCmd <- function(){
             tclvalue(input.file) <- ''
 
             ###
-            stateSetNC <- if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]) "normal" else "disabled"
+            stateSetNC <- if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3]) "normal" else "disabled"
             tkconfigure(set.infile, state = stateSetNC)
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['3']]
 
                 cb.en.infile <<- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
@@ -426,7 +426,7 @@ climatologiesCalcPanelCmd <- function(){
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['4']]
 
                 cb.en.infile <<- tkentry(frameInData, textvariable = input.file, width = largeur2)
@@ -441,14 +441,14 @@ climatologiesCalcPanelCmd <- function(){
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3]){
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['5']]
 
                 cb.en.infile <<- tkentry(frameInData, textvariable = input.file, width = largeur2)
 
                 tkconfigure(set.infile, command = function(){
                     GeneralParameters$cdtnetcdf <<- getInfoNetCDFData(.cdtEnv$tcl$main$win, GeneralParameters$cdtnetcdf,
-                                                                      str_trim(tclvalue(input.file)))
+                                                                      trimws(tclvalue(input.file)))
                     settingINData <<- 1
                 })
 
@@ -534,24 +534,24 @@ climatologiesCalcPanelCmd <- function(){
         #################
 
         tkconfigure(calculateBut, command = function(){
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            GeneralParameters$outstep <- periodVAL1[CbperiodVAL1 %in% str_trim(tclvalue(outSteps))]
-            GeneralParameters$seasonal$start.mon <- which(MOIS %in% str_trim(tclvalue(start.mon)))
-            GeneralParameters$seasonal$length.mon <- as.numeric(str_trim(tclvalue(length.mon)))
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            GeneralParameters$outstep <- periodVAL1[CbperiodVAL1 %in% trimws(tclvalue(outSteps))]
+            GeneralParameters$seasonal$start.mon <- which(MOIS %in% trimws(tclvalue(start.mon)))
+            GeneralParameters$seasonal$length.mon <- as.numeric(trimws(tclvalue(length.mon)))
 
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                GeneralParameters$cdtstation$file <- str_trim(tclvalue(input.file))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                GeneralParameters$cdtdataset$index <- str_trim(tclvalue(input.file))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3])
-                GeneralParameters$cdtnetcdf$dir <- str_trim(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                GeneralParameters$cdtstation$file <- trimws(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                GeneralParameters$cdtdataset$index <- trimws(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3])
+                GeneralParameters$cdtnetcdf$dir <- trimws(tclvalue(input.file))
 
-            GeneralParameters$out.dir <- str_trim(tclvalue(dir.save))
-            GeneralParameters$climato$window <- if(GeneralParameters$intstep == 'daily') as.numeric(str_trim(tclvalue(dayWin))) else 0
+            GeneralParameters$out.dir <- trimws(tclvalue(dir.save))
+            GeneralParameters$climato$window <- if(GeneralParameters$intstep == 'daily') as.numeric(trimws(tclvalue(dayWin))) else 0
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingINData)){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingINData)){
                 Insert.Messages.Out(lang.dlg[['message']][['1']], format = TRUE)
                 return(NULL)
             }
@@ -583,7 +583,7 @@ climatologiesCalcPanelCmd <- function(){
                     .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                     ###################
                     set.climato.index()
-                    if(!str_trim(tclvalue(outSteps)) %in% CbOutVAL[5:6]) widgets.Station.Pixel()
+                    if(!trimws(tclvalue(outSteps)) %in% CbOutVAL[5:6]) widgets.Station.Pixel()
                     set.plot.type()
                     res <- try(read.Climatology.Map(), silent = TRUE)
                     if(inherits(res, "try-error") | is.null(res)) return(NULL)
@@ -634,8 +634,8 @@ climatologiesCalcPanelCmd <- function(){
             if(path.Clim %in% c("", "NA") | is.na(path.Clim)) return(NULL)
             tclvalue(file.ClimIndex) <- path.Clim
 
-            if(file.exists(str_trim(tclvalue(file.ClimIndex)))){
-                OutClimdata <- try(readRDS(str_trim(tclvalue(file.ClimIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.ClimIndex)))){
+                OutClimdata <- try(readRDS(trimws(tclvalue(file.ClimIndex))), silent = TRUE)
                 if(inherits(OutClimdata, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutClimdata[1]), TRUE, 'e')
@@ -645,7 +645,7 @@ climatologiesCalcPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutClimdata
-                .cdtData$EnvData$PathClim <- dirname(str_trim(tclvalue(file.ClimIndex)))
+                .cdtData$EnvData$PathClim <- dirname(trimws(tclvalue(file.ClimIndex)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -717,7 +717,7 @@ climatologiesCalcPanelCmd <- function(){
             }
             .cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtData$EnvData$climMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$climMapOp$pointSize
         })
 
@@ -725,15 +725,15 @@ climatologiesCalcPanelCmd <- function(){
         .cdtData$EnvData$tab$ClimMap <- NULL
 
         tkconfigure(bt.clim.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$climVar)) != "" &
-                str_trim(tclvalue(.cdtData$EnvData$climDate)) != "" &
+            if(trimws(tclvalue(.cdtData$EnvData$climVar)) != "" &
+                trimws(tclvalue(.cdtData$EnvData$climDate)) != "" &
                 !is.null(.cdtData$EnvData$climdata))
                     climatologiesCalc.Display.Maps()
         })
 
         tkconfigure(bt.clim.Date.prev, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$climDate)) != ""){
-                idaty <- which(.cdtData$EnvData$output$index == as.numeric(str_trim(tclvalue(.cdtData$EnvData$climDate))))
+            if(trimws(tclvalue(.cdtData$EnvData$climDate)) != ""){
+                idaty <- which(.cdtData$EnvData$output$index == as.numeric(trimws(tclvalue(.cdtData$EnvData$climDate))))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(.cdtData$EnvData$output$index)
                 tclvalue(.cdtData$EnvData$climDate) <- .cdtData$EnvData$output$index[idaty]
@@ -746,8 +746,8 @@ climatologiesCalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.clim.Date.next, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$climDate)) != ""){
-                idaty <- which(.cdtData$EnvData$output$index == as.numeric(str_trim(tclvalue(.cdtData$EnvData$climDate))))
+            if(trimws(tclvalue(.cdtData$EnvData$climDate)) != ""){
+                idaty <- which(.cdtData$EnvData$output$index == as.numeric(trimws(tclvalue(.cdtData$EnvData$climDate))))
                 idaty <- idaty + 1
                 if(idaty > length(.cdtData$EnvData$output$index)) idaty <- 1
                 tclvalue(.cdtData$EnvData$climDate) <- .cdtData$EnvData$output$index[idaty]
@@ -827,7 +827,7 @@ climatologiesCalcPanelCmd <- function(){
         #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            typeTSp <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+            typeTSp <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
             suffix.fun <- switch(typeTSp, "Barplot" = "Bar", "Line" = "Line")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
@@ -946,7 +946,7 @@ climatologiesCalcPanelCmd <- function(){
 
             tkconfigure(bt.stnID.prev, command = function(){
                 if(!is.null(.cdtData$EnvData$climdata)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -958,7 +958,7 @@ climatologiesCalcPanelCmd <- function(){
 
             tkconfigure(bt.stnID.next, command = function(){
                 if(!is.null(.cdtData$EnvData$climdata)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1025,8 +1025,8 @@ climatologiesCalcPanelCmd <- function(){
         })
 
         cdtdatatype <- .cdtData$EnvData$plot.maps$data.type
-        climdate <- str_trim(tclvalue(.cdtData$EnvData$climDate))
-        cilmdata.Var <- if(str_trim(tclvalue(.cdtData$EnvData$climVar)) == .cdtData$EnvData$CbClimSTAT[1]) "CDTMEAN" else "CDTSTD"
+        climdate <- trimws(tclvalue(.cdtData$EnvData$climDate))
+        cilmdata.Var <- if(trimws(tclvalue(.cdtData$EnvData$climVar)) == .cdtData$EnvData$CbClimSTAT[1]) "CDTMEAN" else "CDTSTD"
 
         if(cdtdatatype == "cdtstation"){
             fileClimdata <- file.path(.cdtData$EnvData$PathClim, cilmdata.Var, paste0(cilmdata.Var, ".rds"))
@@ -1035,7 +1035,7 @@ climatologiesCalcPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
         }else{
             fileClimdata <- file.path(.cdtData$EnvData$PathClim, "DATA_NetCDF", cilmdata.Var,
                                       paste0("clim_", as.numeric(climdate), ".nc"))
@@ -1057,11 +1057,11 @@ climatologiesCalcPanelCmd <- function(){
             if(cdtdatatype == "cdtstation"){
                 .cdtData$EnvData$climdata$data <- readRDS(fileClimdata)
             }else{
-                nc <- nc_open(fileClimdata)
+                nc <- ncdf4::nc_open(fileClimdata)
                 .cdtData$EnvData$climdata$map$x <- nc$dim[[1]]$vals
                 .cdtData$EnvData$climdata$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$climdata$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
+                .cdtData$EnvData$climdata$map$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                ncdf4::nc_close(nc)
                 .cdtData$EnvData$climdata$Var <- cilmdata.Var
             }
 

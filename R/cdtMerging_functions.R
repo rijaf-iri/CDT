@@ -88,8 +88,8 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
     }
 
     locations.stn <- as.data.frame(stnData[c('lon', 'lat')])
-    coordinates(locations.stn) <- c('lon', 'lat')
-    ijs <- over(locations.stn, newgrid)
+    sp::coordinates(locations.stn) <- c('lon', 'lat')
+    ijs <- sp::over(locations.stn, newgrid)
     locations.stn$stn <- rep(NA, length(locations.stn))
 
     ##################
@@ -98,7 +98,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
 
     is.regridNCDF <- is.diffSpatialPixelsObj(newgrid, xy.data, tol = 1e-07)
     ijnc <- NULL
-    if(is.regridNCDF) ijnc <- over(newgrid, xy.data)
+    if(is.regridNCDF) ijnc <- sp::over(newgrid, xy.data)
 
     ##################
 
@@ -108,10 +108,10 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
         auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
         is.auxvar <- unlist(params$auxvar[1:5])
         if(any(is.auxvar)){
-            formuleRK <- formula(paste0('stn', '~', 'grd', '+',
+            formuleRK <- stats::formula(paste0('stn', '~', 'grd', '+',
                                  paste(auxvar[is.auxvar], collapse = '+')))
         }else{
-            formuleRK <- formula(paste0('stn', '~', 'grd'))
+            formuleRK <- stats::formula(paste0('stn', '~', 'grd'))
         }
 
         if(is.auxvar['dem']) newgrid$dem <- c(demData$z)
@@ -296,7 +296,7 @@ merging.functions <- function(locations.stn, newgrid, params,
 
     for(pass in seq(params$MRG$nrun)){
         newdata0 <- newgrid[igrid, ]
-        locations.stn$grd <- over(locations.stn, newdata0)$grd
+        locations.stn$grd <- sp::over(locations.stn, newdata0)$grd
         locations.stn <- locations.stn[!is.na(locations.stn$grd), ]
 
         if(length(locations.stn) < mrgOpts$mrgMinNumberSTN){
@@ -314,18 +314,18 @@ merging.functions <- function(locations.stn, newgrid, params,
         xres <- locations.stn$stn - locations.stn$grd
 
         if(params$MRG$method == "RK"){
-            if(var(locations.stn$stn) < 1e-07 |
-               var(locations.stn$grd, na.rm = TRUE) < 1e-07)
+            if(stats::var(locations.stn$stn) < 1e-07 |
+               stats::var(locations.stn$grd, na.rm = TRUE) < 1e-07)
             {
                 cat(paste(nc.date, ":", paste("Zero variance @ GLM pass#", pass), "|",
                     "Simple Bias Adjustment", "\n"), file = log.file, append = TRUE)
             }else{
-                glm.stn <- glm(formuleRK, data = locations.stn, family = stats::gaussian)
+                glm.stn <- stats::glm(formuleRK, data = locations.stn, family = stats::gaussian)
                 if(any(is.na(glm.stn$coefficients[-1])) | glm.stn$coefficients[2] < 0){
                     cat(paste(nc.date, ":", paste("Invalid GLM coeffs pass#", pass), "|",
                         "Simple Bias Adjustment", "\n"), file = log.file, append = TRUE)
                 }else{
-                    sp.trend <- predict(glm.stn, newdata = newdata0)
+                    sp.trend <- stats::predict(glm.stn, newdata = newdata0)
                     # sp.trend <- predict(glm.stn, newdata = newgrid)
                     ina.out <- is.na(sp.trend)
                     sp.trend[ina.out] <- newdata0@data$grd[ina.out]
@@ -353,7 +353,7 @@ merging.functions <- function(locations.stn, newgrid, params,
         vgm <- NULL
         if(interp.method == "okr"){
             calc.vgm <- if(length(loc.stn$res) > mrgOpts$vgmMinNumberSTN &
-                           var(loc.stn$res) > 1e-15) TRUE else FALSE
+                           stats::var(loc.stn$res) > 1e-15) TRUE else FALSE
             if(calc.vgm){
                 exp.var <- gstat::variogram(res~1, locations = loc.stn, cressie = TRUE)
                 vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(params$interp$vgm.model)), silent = TRUE)
@@ -372,7 +372,7 @@ merging.functions <- function(locations.stn, newgrid, params,
             }else{
                 if(length(loc.stn$res) <= mrgOpts$vgmMinNumberSTN)
                     vmsg <- "not enough station data"
-                if(var(loc.stn$res) <= 1e-15)
+                if(stats::var(loc.stn$res) <= 1e-15)
                     vmsg <- "zero variance station data"
                 cat(paste(nc.date, ":", paste("Unable to compute variogram (", vmsg, ") pass#", pass), "|",
                     "Interpolation using IDW", "\n"), file = log.file, append = TRUE)

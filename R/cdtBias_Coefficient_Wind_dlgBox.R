@@ -114,7 +114,7 @@ biasCoeffGetInfoWind <- function(){
         tkconfigure(set.ncS, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams[["INPUT.S"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.S"]],
-                                                                 str_trim(tclvalue(dir.NC_S)))
+                                                                 trimws(tclvalue(dir.NC_S)))
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
 
@@ -152,7 +152,7 @@ biasCoeffGetInfoWind <- function(){
             tkconfigure(set.ncUV, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
                 .cdtData$GalParams[["INPUT.UV"]] <- getInfoNetCDFDataWind(tt, .cdtData$GalParams[["INPUT.UV"]],
-                                                                          str_trim(tclvalue(dir.NC_UV)))
+                                                                          trimws(tclvalue(dir.NC_UV)))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
             })
 
@@ -203,7 +203,7 @@ biasCoeffGetInfoWind <- function(){
             tkconfigure(set.ncU, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
                 .cdtData$GalParams[["INPUT.U"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.U"]],
-                                                                     str_trim(tclvalue(dir.NC_U)))
+                                                                     trimws(tclvalue(dir.NC_U)))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
             })
 
@@ -217,7 +217,7 @@ biasCoeffGetInfoWind <- function(){
             tkconfigure(set.ncV, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
                 .cdtData$GalParams[["INPUT.V"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.V"]],
-                                                                     str_trim(tclvalue(dir.NC_V)))
+                                                                     trimws(tclvalue(dir.NC_V)))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
             })
 
@@ -364,7 +364,7 @@ biasCoeffGetInfoWind <- function(){
     tkgrid(cb.windVar, row = 0, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     tkbind(cb.windVar, "<<ComboboxSelected>>", function(){
-        wvar <- valWindVar[cbWindVar %in% str_trim(tclvalue(windVar))]
+        wvar <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
         if(wvar == "speed") getwindSpeed() else getwindData()
     })
 
@@ -444,7 +444,7 @@ biasCoeffGetInfoWind <- function(){
     ########
 
     tkbind(cb.bias, "<<ComboboxSelected>>", function(){
-        bsmethod <- val.biasMthd[cb.biasMthd %in% str_trim(tclvalue(bias.method))]
+        bsmethod <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
 
         region.box(bsmethod)
 
@@ -491,19 +491,19 @@ biasCoeffGetInfoWind <- function(){
     #######
 
     tkconfigure(bt.prm.OK, command = function(){
-        .cdtData$GalParams$output$dir <- str_trim(tclvalue(dir2save))
+        .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
 
         if(.cdtData$GalParams$output$dir %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }
 
-        .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+        .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
 
-        .cdtData$GalParams$wvar <- valWindVar[cbWindVar %in% str_trim(tclvalue(windVar))]
+        .cdtData$GalParams$wvar <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
         if(.cdtData$GalParams$wvar == "speed"){
-            .cdtData$GalParams$STN.S <- str_trim(tclvalue(file.STN_S))
-            .cdtData$GalParams$INPUT.S$dir <- str_trim(tclvalue(dir.NC_S))
+            .cdtData$GalParams$STN.S <- trimws(tclvalue(file.STN_S))
+            .cdtData$GalParams$INPUT.S$dir <- trimws(tclvalue(dir.NC_S))
 
             if(.cdtData$GalParams$STN.S == ""){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-1']], icon = "warning", type = "ok")
@@ -515,8 +515,8 @@ biasCoeffGetInfoWind <- function(){
             }
         }else{
             .cdtData$GalParams$one.ncdf <- switch(tclvalue(windUV), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$STN.U <- str_trim(tclvalue(file.STN_U))
-            .cdtData$GalParams$STN.V <- str_trim(tclvalue(file.STN_V))
+            .cdtData$GalParams$STN.U <- trimws(tclvalue(file.STN_U))
+            .cdtData$GalParams$STN.V <- trimws(tclvalue(file.STN_V))
 
             if(.cdtData$GalParams$STN.U == ""){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-2']], icon = "warning", type = "ok")
@@ -528,15 +528,15 @@ biasCoeffGetInfoWind <- function(){
             }
 
             if(.cdtData$GalParams$one.ncdf){
-                .cdtData$GalParams$INPUT.UV$dir <- str_trim(tclvalue(dir.NC_UV))
+                .cdtData$GalParams$INPUT.UV$dir <- trimws(tclvalue(dir.NC_UV))
 
                 if(.cdtData$GalParams$INPUT.UV$dir %in% c("", "NA")){
                     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-2']], icon = "warning", type = "ok")
                     tkwait.window(tt)
                 }
             }else{
-                .cdtData$GalParams$INPUT.U$dir <- str_trim(tclvalue(dir.NC_U))
-                .cdtData$GalParams$INPUT.V$dir <- str_trim(tclvalue(dir.NC_V))
+                .cdtData$GalParams$INPUT.U$dir <- trimws(tclvalue(dir.NC_U))
+                .cdtData$GalParams$INPUT.V$dir <- trimws(tclvalue(dir.NC_V))
 
                 if(.cdtData$GalParams$INPUT.U$dir %in% c("", "NA")){
                     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-3']], icon = "warning", type = "ok")
@@ -549,10 +549,10 @@ biasCoeffGetInfoWind <- function(){
             }
         }
 
-        .cdtData$GalParams$BIAS$method <- val.biasMthd[cb.biasMthd %in% str_trim(tclvalue(bias.method))]
-        .cdtData$GalParams$BIAS$min.length <- as.numeric(str_trim(tclvalue(min.length)))
-        .cdtData$GalParams$BIAS$blon <- as.numeric(str_trim(tclvalue(box.lon)))
-        .cdtData$GalParams$BIAS$blat <- as.numeric(str_trim(tclvalue(box.lat)))
+        .cdtData$GalParams$BIAS$method <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
+        .cdtData$GalParams$BIAS$min.length <- as.numeric(trimws(tclvalue(min.length)))
+        .cdtData$GalParams$BIAS$blon <- as.numeric(trimws(tclvalue(box.lon)))
+        .cdtData$GalParams$BIAS$blat <- as.numeric(trimws(tclvalue(box.lat)))
         # .cdtData$GalParams$BIAS$stat.test <- switch(tclvalue(stat.test), '0' = FALSE, '1' = TRUE)
 
         .cdtData$GalParams$message <- lang.dlg[['message']]

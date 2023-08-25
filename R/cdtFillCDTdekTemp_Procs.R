@@ -112,7 +112,7 @@ fill_DekTemp_MissVal <- function(){
         Obj <- tofill[[j]]
         y <- data.stn.tmp[Obj$irow, Obj$id[2]]
         x <- data.adj.tmp[Obj$irow, Obj$id[2]]
-        m.glm <- glm(y~x)
+        m.glm <- stats::glm(y~x)
         round(m.glm$coef[2] * data.adj.tmp[Obj$id[1], Obj$id[2]] + m.glm$coef[1], 1)
     })
 

@@ -113,14 +113,14 @@ PlotMulitpleDataCmd <- function(){
 
         .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file <- tclVar(.cdtData$GalParams$DATASETs[[jj]]$pars$input$dir)
 
-        stateSetNC <- if(str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]) "disabled" else "normal"
+        stateSetNC <- if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]) "disabled" else "normal"
 
         cb.datatype <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, values = CbdatatypeVAL,
                                    textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$data.type, width = largeur0)
         bt.datatype <- ttkbutton(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame,
                                  text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
 
-        if(str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
+        if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
             cb.en.datafile <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, values = unlist(listOpenFiles),
                                           textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur1)
         }else{
@@ -137,25 +137,25 @@ PlotMulitpleDataCmd <- function(){
         tkconfigure(bt.datatype, command = function(){
             .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]] <- getInfoNetCDFData(.cdtEnv$tcl$main$win,
                                                                                    .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]],
-                                                                                   str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
+                                                                                   trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
         })
 
         ####
 
         tkconfigure(bt.datafile, command = function(){
-            if(str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
                 dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
                     listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- dat.opfiles[[1]]
                     tkconfigure(cb.en.datafile, values = unlist(openFile_ttkcomboList()))
-                    .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                    .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
                 }
             }else{
                 dirnc <- tk_choose.dir(getwd(), "")
                 tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-                .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
             }
         })
 
@@ -200,7 +200,7 @@ PlotMulitpleDataCmd <- function(){
         helpWidget(cb.datatype, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
         helpWidget(bt.datatype, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
-        if(str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
+        if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
             helpWidget(cb.en.datafile, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
         }else{
             helpWidget(cb.en.datafile, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
@@ -214,10 +214,10 @@ PlotMulitpleDataCmd <- function(){
             tkdestroy(cb.en.datafile)
             tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- ''
 
-            stateSetNC <- if(str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]) "disabled" else "normal"
+            stateSetNC <- if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]) "disabled" else "normal"
             tkconfigure(bt.datatype, state = stateSetNC)
 
-            if(str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
                 cb.en.datafile <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, values = unlist(listOpenFiles), textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur1)
 
                 tkconfigure(bt.datafile, command = function(){
@@ -227,7 +227,7 @@ PlotMulitpleDataCmd <- function(){
                         listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- dat.opfiles[[1]]
                         tkconfigure(cb.en.datafile, values = unlist(openFile_ttkcomboList()))
-                        .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                        .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
                     }
                 })
 
@@ -237,18 +237,18 @@ PlotMulitpleDataCmd <- function(){
                 .cdtData$GalParams$DATASETs[[jj]]$pars$map.type <- "Points"
             }
 
-            if(str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[2]){
+            if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[2]){
                 cb.en.datafile <- tkentry(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur2)
 
                 tkconfigure(bt.datatype, command = function(){
                     .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]] <- getInfoNetCDFData(.cdtEnv$tcl$main$win, .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]],
-                                                                                            str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
+                                                                                            trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
                 })
 
                 tkconfigure(bt.datafile, command = function(){
                     dirnc <- tk_choose.dir(getwd(), "")
                     tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-                    .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                    .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
                 })
 
                 helpWidget(cb.en.datafile, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
@@ -299,13 +299,13 @@ PlotMulitpleDataCmd <- function(){
             tkdestroy(frTS0)
             frTS0 <<- tkframe(framePlotMap)
 
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             date.time.selection(intstep, frTS0)
 
             tkgrid(frTS0, row = 0, column = 0, sticky = '', padx = 1, pady = 1, columnspan = 3)
 
             ##############
-            minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+            minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             retminhr <- set.hour.minute(intstep, minhour)
             tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
             tclvalue(minhour.tclVar) <- retminhr$val
@@ -386,7 +386,7 @@ PlotMulitpleDataCmd <- function(){
                 if(ix < 1) ix <- nl
 
                 date2plot <- .cdtData$GalParams$donnees$dates[ix]
-                intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+                intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
                 tclvalue(date.year) <- substr(date2plot, 1, 4)
                 tclvalue(date.mon) <- as.numeric(substr(date2plot, 5, 6))
@@ -414,7 +414,7 @@ PlotMulitpleDataCmd <- function(){
                 if(ix > nl) ix <- 1
 
                 date2plot <- .cdtData$GalParams$donnees$dates[ix]
-                intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+                intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
                 tclvalue(date.year) <- substr(date2plot, 1, 4)
                 tclvalue(date.mon) <- as.numeric(substr(date2plot, 5, 6))
@@ -473,11 +473,11 @@ PlotMulitpleDataCmd <- function(){
 
             ####
 
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             datasets <- lapply(seq_along(.cdtData$GalParams$DATASETs), function(j){
-                if(str_trim(tclvalue(.cdtData$GalParams$DATASETs[[j]]$tcl$data.type)) == CbdatatypeVAL[1]){
-                    filename <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[j]]$tcl$input.file))
+                if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[j]]$tcl$data.type)) == CbdatatypeVAL[1]){
+                    filename <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[j]]$tcl$input.file))
                 }else{
                     filename <- .cdtData$GalParams$DATASETs[[j]]$pars$input$sample
                 }
@@ -494,7 +494,7 @@ PlotMulitpleDataCmd <- function(){
 
             shp.data <- NULL
             if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1"){
-                nom <- str_trim(tclvalue(file.plotShp))
+                nom <- trimws(tclvalue(file.plotShp))
                 if(nom != "" & !is.null(.cdtData$EnvData$shp$ocrds)){
                     jfile <- getIndex.AllOpenFiles(nom)
                     Type <- .cdtData$OpenFiles$Type[[jfile]]
@@ -505,13 +505,13 @@ PlotMulitpleDataCmd <- function(){
                 }
             }
 
-            minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+            minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             dates <- list(
-                            year = as.numeric(str_trim(tclvalue(date.year))),
-                            mon = as.numeric(str_trim(tclvalue(date.mon))),
-                            day = as.numeric(str_trim(tclvalue(date.day))),
-                            hour = as.numeric(str_trim(tclvalue(date.hour))),
-                            min = as.numeric(str_trim(tclvalue(date.min)))
+                            year = as.numeric(trimws(tclvalue(date.year))),
+                            mon = as.numeric(trimws(tclvalue(date.mon))),
+                            day = as.numeric(trimws(tclvalue(date.day))),
+                            hour = as.numeric(trimws(tclvalue(date.hour))),
+                            min = as.numeric(trimws(tclvalue(date.min)))
                         )
 
             tosave <- list(type = "multiplot", intstep = intstep, minhour = minhour,
@@ -695,7 +695,7 @@ PlotMulitpleDataCmd <- function(){
 
     getDatasets <- function(){
         Infodata <- lapply(.cdtData$GalParams$DATASETs, function(don){
-            dir <- str_trim(tclvalue(don$tcl$input.file))
+            dir <- trimws(tclvalue(don$tcl$input.file))
             format <- don$pars$input$format
             list(dir = dir, format = format)
         })
@@ -705,10 +705,10 @@ PlotMulitpleDataCmd <- function(){
             if(isTRUE(all.equal(.cdtData$GalParams$Infodata, Infodata))) getdatasets <- FALSE
 
         if(getdatasets){
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             tmp.don <- lapply(.cdtData$GalParams$DATASETs, function(don){
-                input.file <- str_trim(tclvalue(don$tcl$input.file))
+                input.file <- trimws(tclvalue(don$tcl$input.file))
                 if(don$pars$data.type == "cdtstation"){
                     ret <- list(data = NULL, dates = NULL, msg = paste(lang.dlg[['message']][['10']], input.file))
 
@@ -790,13 +790,13 @@ PlotMulitpleDataCmd <- function(){
         ret <- try(getDatasets(), silent = TRUE)
         if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-        year <- str_trim(tclvalue(date.year))
-        mon <- str_pad(str_trim(tclvalue(date.mon)), 2, pad = "0")
-        day <- str_pad(str_trim(tclvalue(date.day)), 2, pad = "0")
-        hour <- str_pad(str_trim(tclvalue(date.hour)), 2, pad = "0")
-        min <- str_pad(str_trim(tclvalue(date.min)), 2, pad = "0")
+        year <- trimws(tclvalue(date.year))
+        mon <- stringr::str_pad(trimws(tclvalue(date.mon)), 2, pad = "0")
+        day <- stringr::str_pad(trimws(tclvalue(date.day)), 2, pad = "0")
+        hour <- stringr::str_pad(trimws(tclvalue(date.hour)), 2, pad = "0")
+        min <- stringr::str_pad(trimws(tclvalue(date.min)), 2, pad = "0")
 
-        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
         if(intstep == "minute")
             daty2plot <- paste0(year, mon, day, hour, min)
@@ -839,13 +839,13 @@ PlotMulitpleDataCmd <- function(){
                     return(list(obj = NULL, msg = msg))
                 }
 
-                nc <- try(nc_open(ncfile), silent = TRUE)
+                nc <- try(ncdf4::nc_open(ncfile), silent = TRUE)
                 if(inherits(nc, "try-error")){
                     msg <- paste(lang.dlg[['message']][['14']], ncfile)
                     return(list(obj = NULL, msg = msg))
                 }
-                zval <- ncvar_get(nc, varid = ncinfo$varid)
-                nc_close(nc)
+                zval <- ncdf4::ncvar_get(nc, varid = ncinfo$varid)
+                ncdf4::nc_close(nc)
                 zval <- if(ncinfo$ilon < ncinfo$ilat) zval[ncinfo$xo, ncinfo$yo] else t(zval)[ncinfo$xo, ncinfo$yo]
                 tmp <- list(x = ncinfo$lon, y = ncinfo$lat, z = zval)
             }

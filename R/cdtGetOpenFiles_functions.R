@@ -2,7 +2,7 @@
 ## Get index of selected file from .cdtData$OpenFiles$Data
 getIndex.AllOpenFiles <- function(nomfile){
     if(inherits(nomfile, "tclVar")){
-        fileio <- str_trim(tclvalue(nomfile))
+        fileio <- trimws(tclvalue(nomfile))
     }else if(is.character(nomfile)){
         fileio <- nomfile
     }else return(NULL)
@@ -46,7 +46,7 @@ getCDTdataAndDisplayMsg <- function(donne, tstep, filename){
 
     ###############
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
-    Config <- fromJSON(cdt.file.conf)
+    Config <- jsonlite::fromJSON(cdt.file.conf)
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtParseStationData_functions.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, Config$lang.iso)
 
@@ -90,7 +90,7 @@ getCDTTSdataAndDisplayMsg <- function(donne, period, filefrmt, datefrmt, filenam
 
     ###############
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
-    Config <- fromJSON(cdt.file.conf)
+    Config <- jsonlite::fromJSON(cdt.file.conf)
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtParseStationData_functions.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, Config$lang.iso)
 

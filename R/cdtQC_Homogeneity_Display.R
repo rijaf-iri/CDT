@@ -52,43 +52,43 @@ homPlot_AdjustedSeries <- function(){
 
     ############
 
-    layout(mlayout, widths = 1, heights = height, respect = FALSE)
+    graphics::layout(mlayout, widths = 1, heights = height, respect = FALSE)
 
 
-    op <- par(mar = c(0, 5.5, 0.1, 2))
-    plot.new()
-    legend("center", "groups", xtxt, lty = xlty, col = xcol, lwd = 3, cex = 1.5, horiz = TRUE)
-    par(op)
+    op <- graphics::par(mar = c(0, 5.5, 0.1, 2))
+    graphics::plot.new()
+    graphics::legend("center", "groups", xtxt, lty = xlty, col = xcol, lwd = 3, cex = 1.5, horiz = TRUE)
+    graphics::par(op)
 
     ############
 
     ret <- lapply(rev(seq(length(don))), function(j){
         xaxt <- if(j == 1) NULL else "n"
-        op <- par(mar = plot.pars[[j]]$mar)
+        op <- graphics::par(mar = plot.pars[[j]]$mar)
         plot(plot.pars[[j]]$date, don[[j]]$data[, 1], type = 'n', xaxt = xaxt, yaxt = 'n',
              xlab = '', ylab = '', xlim = xlim, ylim = plot.pars[[j]]$ylim)
-        abline(h = axTicks(2), col = "lightgray", lty = "dotted", lwd = 1.3)
-        abline(v = vgrid, col = "lightgray", lty = "dotted", lwd = 1.3)
-        axis(2, at = axTicks(2), las = 2, cex.axis = 1.3)
+        graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "dotted", lwd = 1.3)
+        graphics::abline(v = vgrid, col = "lightgray", lty = "dotted", lwd = 1.3)
+        graphics::axis(2, at = graphics::axTicks(2), las = 2, cex.axis = 1.3)
         if(j == 1)
-            axis.Date(1, at = vgrid, labels = NA, tcl = par("tcl") * 0.5)
+            graphics::axis.Date(1, at = vgrid, labels = NA, tcl = graphics::par("tcl") * 0.5)
 
-        mtext(plot.pars[[j]]$ylab, side = 2, line = 3.2, cex = 1.2)
+        graphics::mtext(plot.pars[[j]]$ylab, side = 2, line = 3.2, cex = 1.2)
 
-        if(plotBase) lines(plot.pars[[j]]$date, don[[j]]$data[, 1], lty = linetype[1], col = kolors[1], lwd = 1.5)
-        if(plotMean) lines(plot.pars[[j]]$date, don[[j]]$data[, 2], lty = linetype[2], col = kolors[2], lwd = 1.5)
-        if(plotQM) lines(plot.pars[[j]]$date, don[[j]]$data[, 3], lty = linetype[3], col = kolors[3], lwd = 1.5)
+        if(plotBase) graphics::lines(plot.pars[[j]]$date, don[[j]]$data[, 1], lty = linetype[1], col = kolors[1], lwd = 1.5)
+        if(plotMean) graphics::lines(plot.pars[[j]]$date, don[[j]]$data[, 2], lty = linetype[2], col = kolors[2], lwd = 1.5)
+        if(plotQM) graphics::lines(plot.pars[[j]]$date, don[[j]]$data[, 3], lty = linetype[3], col = kolors[3], lwd = 1.5)
 
-        plt <- par("plt")
-        usr <- par("usr")
-        par(op)
+        plt <- graphics::par("plt")
+        usr <- graphics::par("usr")
+        graphics::par(op)
         c(plt, usr)
     })
 }
 
 homPlot_BreakPoints <- function(){
     plotseries <- .cdtData$EnvData$plot$plotseries
-    stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+    stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
     STNID <- .cdtData$EnvData$output$data$id
     ids <- which(STNID == stnid)
 
@@ -115,10 +115,10 @@ homPlot_BreakPoints <- function(){
         if(is.null(x)) return(NULL)
         out <- x[[stnid]]
         if(is.null(out)) return(NULL)
-        daty <- str_trim(as.character(out$Breakpoints.Date))
+        daty <- trimws(as.character(out$Breakpoints.Date))
         valid.date <- !is.na(daty) & daty != ""
         if(!any(valid.date)) return(NULL)
-        signf <- str_trim(as.character(out$Signif.Test))
+        signf <- trimws(as.character(out$Signif.Test))
         daty <- daty[valid.date]
         signf <- signf[valid.date]
         isg <- signf %in% "****"
@@ -200,35 +200,35 @@ homPlot_BreakPoints <- function(){
     vgrid <- seq(xlim[1], xlim[2] + 365, 'year')
 
     ############
-    layout(mlayout, widths = 1, heights = height, respect = FALSE)
+    graphics::layout(mlayout, widths = 1, heights = height, respect = FALSE)
     ret <- lapply(rev(seq(length(don))), function(j){
         xaxt <- if(j == 1) NULL else "n"
-        op <- par(mar = plot.pars[[j]]$mar)
+        op <- graphics::par(mar = plot.pars[[j]]$mar)
         plot(plot.pars[[j]]$date, don[[j]]$data, type = 'n', xaxt = xaxt, yaxt = 'n', xlab = '', ylab = '', xlim = xlim)
-        abline(h = axTicks(2), col = "lightgray", lty = "dotted", lwd = 1.3)
-        abline(v = vgrid, col = "lightgray", lty = "dotted", lwd = 1.3)
-        axis(2, at = axTicks(2), las = 2, cex.axis = 1.3)
+        graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "dotted", lwd = 1.3)
+        graphics::abline(v = vgrid, col = "lightgray", lty = "dotted", lwd = 1.3)
+        graphics::axis(2, at = graphics::axTicks(2), las = 2, cex.axis = 1.3)
         if(j == 1)
-            axis.Date(1, at = vgrid, labels = NA, tcl = par("tcl") * 0.5)
-        mtext(plot.pars[[j]]$ylab, side = 2, line = 2.5, cex = 1.2)
+            graphics::axis.Date(1, at = vgrid, labels = NA, tcl = graphics::par("tcl") * 0.5)
+        graphics::mtext(plot.pars[[j]]$ylab, side = 2, line = 2.5, cex = 1.2)
 
         seg <- cpt.seg[[j]]
         v.breaks <- v.seg.breaks[[j]]
 
-        lines(plot.pars[[j]]$date, don[[j]]$data)
-        if(!is.null(seg)) lines(plot.pars[[j]]$date, seg, col = "red", lwd = 2)
+        graphics::lines(plot.pars[[j]]$date, don[[j]]$data)
+        if(!is.null(seg)) graphics::lines(plot.pars[[j]]$date, seg, col = "red", lwd = 2)
         for(i in 1:3){
             vbrks <- v.breaks[[i]]
             if(is.null(vbrks)) next
             pos <- which(plot.pars[[j]]$date %in% vbrks)
-            points(vbrks, seg[pos], col = breaks.color[[i]], cex = 1.5)
+            graphics::points(vbrks, seg[pos], col = breaks.color[[i]], cex = 1.5)
             vertic <- rep(-100, length(vbrks))
-            segments(vbrks, vertic, vbrks, seg[pos], col = breaks.color[[i]], lwd = 2, lty = '1373')
+            graphics::segments(vbrks, vertic, vbrks, seg[pos], col = breaks.color[[i]], lwd = 2, lty = '1373')
         }
 
-        plt <- par("plt")
-        usr <- par("usr")
-        par(op)
+        plt <- graphics::par("plt")
+        usr <- graphics::par("usr")
+        graphics::par(op)
         c(plt, usr)
     })
 
@@ -248,9 +248,9 @@ homDislpay_BreakPoints <- function(notebookTab, tab.title){
     })
 
     plotIt <- function(){
-        op <- par(bg = "white")
+        op <- graphics::par(bg = "white")
         pltusr <- homPlot_BreakPoints()
-        par(op)
+        graphics::par(op)
         for(i in seq(nb.plot))
             for(j in seq_along(varplot))
                 tclvalue(parPltCrd[[i]][[varplot[j]]]) <- pltusr[[i]][j]

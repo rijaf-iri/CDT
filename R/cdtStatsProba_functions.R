@@ -34,7 +34,7 @@ regression.Vector <- function(X, Y, min.len){
 
     mX <- mean(X, na.rm = TRUE)
     mY <- colMeans(Y, na.rm = TRUE)
-    vX <- var(X, na.rm = TRUE)
+    vX <- stats::var(X, na.rm = TRUE)
     vY <- matrixStats::colVars(Y, na.rm = TRUE)
 
     X1 <- X - mX
@@ -169,14 +169,14 @@ skewnessM <- function(mat){
 ## Normal
 startnorm <- function(x){
     m <- mean(x)
-    s <- sd(x)
+    s <- stats::sd(x)
     list(mean = m, sd = s)
 }
 
 ## Skew Normal
 startsnorm <- function(x){
     m <- mean(x)
-    s <- sd(x)
+    s <- stats::sd(x)
     xi <- 1
     # location: mean
     # scale: sd
@@ -187,7 +187,7 @@ startsnorm <- function(x){
 ## Log-normal
 startlnorm <- function(x){
     m <- mean(x)
-    v <- var(x)
+    v <- stats::var(x)
     slog2 <- log((v + m^2) / m^2)
     mlog <- log(m) - slog2 / 2
     slog <- sqrt(slog2)
@@ -197,7 +197,7 @@ startlnorm <- function(x){
 ## Gamma
 startgamma <- function(x){
     m <- mean(x)
-    v <- var(x)
+    v <- stats::var(x)
     shape <- m^2 / v
     scale <- v / m
     list(shape = shape, scale = scale)
@@ -213,7 +213,7 @@ startexp <- function(x){
 ## Weibull
 startweibull <- function(x){
     m <- mean(x)
-    s <- sd(x)
+    s <- stats::sd(x)
     # Ramírez and Carta (2005)
     # shape <- (m / s)^1.086
     shape <- (0.9874 / (s/m))^1.0983
@@ -224,7 +224,7 @@ startweibull <- function(x){
 ## Gumbel
 startgumbel <- function(x){
     m <- mean(x)
-    s <- sd(x)
+    s <- stats::sd(x)
     # euler <- 0.5772156649015323
 
     scale <- s * sqrt(6) / pi
@@ -583,12 +583,12 @@ fit.berngamma.rain <- function(x, min.len = 7, alpha = 0.05, method = 'mle',
     ret <- NULL
     if(length(x) > min.len){
         if(length(x[x > 0]) > 2){
-            if(var(x[x > 0]) == 0)
+            if(stats::var(x[x > 0]) == 0)
                 x[x > 0] <- x[x > 0] + stats::runif(length(x[x > 0]))
             if(length(which(x == 0)) == 0) x <- c(x, 0)
         }else return(NULL)
 
-        start.pars <- startberngamma(x)
+        start.pars <- qmap::startberngamma(x)
         fit.mod <- try(fitdistrplus::fitdist(x, "berngamma", method = method, start = start.pars,
                                              lower = lower, upper = upper, keepdata = keepdata,
                                              keepdata.nb = keepdata.nb, ...),
@@ -596,7 +596,7 @@ fit.berngamma.rain <- function(x, min.len = 7, alpha = 0.05, method = 'mle',
 
         if(!inherits(fit.mod, "try-error")){
             # Anderson-Darling Test
-            goftest <- ADGofTest::ad.test(x, pberngamma,
+            goftest <- ADGofTest::ad.test(x, qmap::pberngamma,
                                           prob = fit.mod$estimate['prob'],
                                           scale = fit.mod$estimate['scale'],
                                           shape = fit.mod$estimate['shape'])
@@ -621,7 +621,7 @@ fit.norm.temp <- function(x, min.len, alpha = 0.05, method = 'mle',
     ret <- NULL
     if(length(x) > min.len){
         xmoy <- mean(x)
-        xsd <- sd(x)
+        xsd <- stats::sd(x)
         fit.mod <- try(fitdistrplus::fitdist(x, "norm", method = method,
                                              start = list(mean = xmoy, sd = xsd),
                                              lower = lower, upper = upper,
@@ -682,7 +682,7 @@ psnorm <- function(q, mean = 0, sd = 1, xi = 1.5){
     Xi <- xi^sign(z)
     g <- 2 / (xi + 1/xi)
     
-    heaviside_fun(z) - sign(z) * g * Xi * pnorm(-abs(z)/Xi)
+    heaviside_fun(z) - sign(z) * g * Xi * stats::pnorm(-abs(z)/Xi)
 }
 
 qsnorm <- function(p, mean = 0, sd = 1, xi = 1.5){
@@ -694,16 +694,16 @@ qsnorm <- function(p, mean = 0, sd = 1, xi = 1.5){
     sig <- sign(p - 1/2)
     Xi <- xi^sig
     p <- (heaviside_fun(p - 1/2) - sig * p) / (g * Xi)
-    quant <- (-sig * qnorm(p = p, sd = Xi) - mu) / sigma
+    quant <- (-sig * stats::qnorm(p = p, sd = Xi) - mu) / sigma
 
     quant * sd + mean  
 }
 
 rsnorm <- function(n, mean = 0, sd = 1, xi = 1.5){
     weight <- xi / (xi + 1/xi)
-    z <- runif(n, -weight, 1 - weight)
+    z <- stats::runif(n, -weight, 1 - weight)
     Xi <- xi^sign(z)
-    rand <- -abs(rnorm(n))/Xi * sign(z)
+    rand <- -abs(stats::rnorm(n))/Xi * sign(z)
     m1 <- 2/sqrt(2 * pi)
     mu <- m1 * (xi - 1/xi)
     sigma <- sqrt((1-m1^2)*(xi^2+1/xi^2) + 2*m1^2 - 1)
@@ -716,7 +716,7 @@ rsnorm <- function(n, mean = 0, sd = 1, xi = 1.5){
 ###
 
 snormFit <- function(x, ...){
-    start <- c(mean = mean(x), sd = sqrt(var(x)), xi = 1)
+    start <- c(mean = mean(x), sd = sqrt(stats::var(x)), xi = 1)
     loglik <- function(x, y = x) -sum(log(dsnorm(y, x[1], x[2], x[3])))
     fit <- stats::nlminb(start = start, objective = loglik, 
                          lower = c(-Inf, 0, 0),

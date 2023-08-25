@@ -1,8 +1,8 @@
 
 qcPlot_Outliers.Mon <- function(){
     MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
-    imois <- which(MOIS == str_trim(tclvalue(.cdtData$EnvData$STN$month)))
-    stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+    imois <- which(MOIS == trimws(tclvalue(.cdtData$EnvData$STN$month)))
+    stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
     istn <- which(.cdtData$EnvData$stn.data$id == stnid)
     don <- .cdtData$EnvData$stn.data$data[, istn]
     daty <- .cdtData$EnvData$stn.data$dates
@@ -53,32 +53,32 @@ qcPlot_Outliers.Mon <- function(){
         labx <- 1
     }
 
-    opar <- par(mar = c(3.5, 4, 3, 1.5))
+    opar <- graphics::par(mar = c(3.5, 4, 3, 1.5))
     plot(1, xlim = xlim, ylim = ylim, type = 'n', xaxt = 'n', yaxt = 'n', xlab = '', ylab = '')
 
-    minTck <- axTicks(2)
+    minTck <- graphics::axTicks(2)
     minTck <- minTck[-length(minTck)] + diff(minTck) / 2
-    minTck <- c(min(axTicks(2)) - diff(minTck)[1] / 2, minTck, max(axTicks(2)) + diff(minTck)[1] / 2)
-    abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
-    abline(h = minTck, col = "lightgray", lty = "dotted", lwd = 1.3)
-    abline(v = at.tickx, col = "lightgray", lty = "dotted", lwd = 1.3)
+    minTck <- c(min(graphics::axTicks(2)) - diff(minTck)[1] / 2, minTck, max(graphics::axTicks(2)) + diff(minTck)[1] / 2)
+    graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "solid", lwd = 1.0)
+    graphics::abline(h = minTck, col = "lightgray", lty = "dotted", lwd = 1.3)
+    graphics::abline(v = at.tickx, col = "lightgray", lty = "dotted", lwd = 1.3)
 
-    axis(side = 2, at = axTicks(2))
-    axis(side = 1, at = at.tickx, labels = FALSE)
-    axis(side = 1, at = at.labx , tick = FALSE, labels = labx)
+    graphics::axis(side = 2, at = graphics::axTicks(2))
+    graphics::axis(side = 1, at = at.tickx, labels = FALSE)
+    graphics::axis(side = 1, at = at.labx , tick = FALSE, labels = labx)
 
-    lines(don, type = "h", lwd = 1, lend = "butt")
-    mtext(.cdtData$EnvData$tab$ylabMon, side = 2, line = 2.5, cex = 1.2)
-    title(main = paste(stnid, "-", MOIS[imois]))
+    graphics::lines(don, type = "h", lwd = 1, lend = "butt")
+    graphics::mtext(.cdtData$EnvData$tab$ylabMon, side = 2, line = 2.5, cex = 1.2)
+    graphics::title(main = paste(stnid, "-", MOIS[imois]))
 
     if(length(iout) > 0){
-        lines(iout, vout, type = "h", lwd = 2, col = 2, lend = "butt")
-        points(iout, vout, col = 2, pch = 6, cex = 1)
+        graphics::lines(iout, vout, type = "h", lwd = 2, col = 2, lend = "butt")
+        graphics::points(iout, vout, col = 2, pch = 6, cex = 1)
     }
 
-    plt <- par("plt")
-    usr <- par("usr")
-    par(opar)
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(opar)
 
     return(list(par = c(plt, usr), dates = daty))
 }
@@ -86,7 +86,7 @@ qcPlot_Outliers.Mon <- function(){
 #################################################################
 
 qcPlot_Mixed.Temp <- function(){
-    stnid <- str_trim(tclvalue(.cdtData$EnvData$MXD$STN$stnID))
+    stnid <- trimws(tclvalue(.cdtData$EnvData$MXD$STN$stnID))
     istn <- which(.cdtData$EnvData$stn.data$id == stnid)
     don <- .cdtData$EnvData$stn.data$data[, istn]
     daty <- .cdtData$EnvData$stn.data$dates
@@ -99,49 +99,49 @@ qcPlot_Mixed.Temp <- function(){
     xlim <- range(daty)
     ylim <- range(pretty(don))
 
-    opar <- par(mar = c(3.5, 4, 3, 1.5))
+    opar <- graphics::par(mar = c(3.5, 4, 3, 1.5))
     plot(daty, don, type = 'n', xlab = '', ylab = '', axes = FALSE, xlim = xlim, ylim = ylim)
 
-    minTck <- axTicks(2)
+    minTck <- graphics::axTicks(2)
     minTck <- minTck[-length(minTck)] + diff(minTck) / 2
-    minTck <- c(min(axTicks(2)) - diff(minTck)[1] / 2, minTck, max(axTicks(2)) + diff(minTck)[1] / 2)
+    minTck <- c(min(graphics::axTicks(2)) - diff(minTck)[1] / 2, minTck, max(graphics::axTicks(2)) + diff(minTck)[1] / 2)
 
     xTck <- axTicks.Date(daty, 1)
     xminor <- axTicks.minor.Date(c(xTck[1], xlim[2]))
     if(!is.null(xminor)) xminor <- xminor[!xminor %in% xTck]
     bar.width <- as.numeric(diff(range(xlim))) / min(as.numeric(diff(daty)), na.rm = TRUE)
 
-    abline(h = axTicks(2), col = "lightgray", lty = "solid", lwd = 1)
-    abline(h = minTck, col = "lightgray", lty = "dotted", lwd = 1.3)
-    abline(v = xTck, col = "lightgray", lty = "solid", lwd = 1)
-    abline(v = xminor, col = "lightgray", lty = "dotted", lwd = 1.3)
+    graphics::abline(h = graphics::axTicks(2), col = "lightgray", lty = "solid", lwd = 1)
+    graphics::abline(h = minTck, col = "lightgray", lty = "dotted", lwd = 1.3)
+    graphics::abline(v = xTck, col = "lightgray", lty = "solid", lwd = 1)
+    graphics::abline(v = xminor, col = "lightgray", lty = "dotted", lwd = 1.3)
 
     bar.width <- 80 * bar.width^(-0.508775)
     if(bar.width < 1) bar.width <- 1
-    lines(daty, don, type = "h", lwd = bar.width, lend = "butt", col = "darkblue")
+    graphics::lines(daty, don, type = "h", lwd = bar.width, lend = "butt", col = "darkblue")
 
     for(j in seq(nrow(index))){
-        segments(daty[index[j, 1]], moy[j], daty[index[j, 2]], moy[j], col = "red", lwd = 2)
-        points(daty[index[j, 1]], moy[j], col = "red")
-        points(daty[index[j, 2]], moy[j], col = "red")
+        graphics::segments(daty[index[j, 1]], moy[j], daty[index[j, 2]], moy[j], col = "red", lwd = 2)
+        graphics::points(daty[index[j, 1]], moy[j], col = "red")
+        graphics::points(daty[index[j, 2]], moy[j], col = "red")
     }
 
-    axis.Date(1, at = xTck, font = 1)
+    graphics::axis.Date(1, at = xTck, font = 1)
     if(length(xminor) > 0)
-        axis.Date(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
+        graphics::axis.Date(1, at = xminor, labels = NA, tcl = graphics::par("tcl") * 0.5)
 
-    axis(2, at = axTicks(2), font = 1, las = 1)
-    axis(2, at = minTck, labels = NA, tcl = par("tcl") * 0.5)
+    graphics::axis(2, at = graphics::axTicks(2), font = 1, las = 1)
+    graphics::axis(2, at = minTck, labels = NA, tcl = graphics::par("tcl") * 0.5)
 
-    mtext("Precipitation [mm]", side = 2, line = 2.5, cex = 1.2)
-    title(main = stnid)
+    graphics::mtext("Precipitation [mm]", side = 2, line = 2.5, cex = 1.2)
+    graphics::title(main = stnid)
 
-    box(bty = 'l', col = 'black')
-    box(bty = '7', col = 'black')
+    graphics::box(bty = 'l', col = 'black')
+    graphics::box(bty = '7', col = 'black')
 
-    plt <- par("plt")
-    usr <- par("usr")
-    par(opar)
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(opar)
 
     return(list(par = c(plt, usr), dates = daty))
 }
@@ -152,8 +152,8 @@ qcPlot_Spatial.Check <- function(){
     ptsOp <- .cdtData$EnvData$STN$Opt
 
     #######
-    stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
-    daty <- str_trim(tclvalue(.cdtData$EnvData$STN$dateSP))
+    stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
+    daty <- trimws(tclvalue(.cdtData$EnvData$STN$dateSP))
     idaty <- which(.cdtData$EnvData$stn.data$dates == daty)
     STNID <- .cdtData$EnvData$stn.data$id
 
@@ -266,9 +266,9 @@ qcPlot_Spatial.Check <- function(){
             ncfile <- file.path(sat.data$dir, ncfile)
             if(file.exists(ncfile)){
                 ncinfo <- sat.data$sat.data
-                nc <- nc_open(ncfile)
-                don.sat <- ncvar_get(nc, varid = ncinfo$varid)
-                nc_close(nc)
+                nc <- ncdf4::nc_open(ncfile)
+                don.sat <- ncdf4::ncvar_get(nc, varid = ncinfo$varid)
+                ncdf4::nc_close(nc)
                 don.sat <- transposeNCDFData(don.sat, ncinfo)
                 don.sat <- list(x = ncinfo$lon, y = ncinfo$lat, z = don.sat)
                 .cdtData$EnvData$sat$don.sat <- don.sat
@@ -323,18 +323,18 @@ qcPlot_Spatial.Check <- function(){
     }
 
     #######
-    opar <- par(mar = mar)
+    opar <- graphics::par(mar = mar)
     plot(1, xlim = c(xmin, xmax), ylim = c(ymin, ymax), xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
-    axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
-    axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 1.0)
-    axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tck = -0.01, las = 1, cex.axis = 1.0)
+    axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
+    graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 1.0)
+    graphics::axis(side = 2, at = graphics::axTicks(2), labels = axlabs$yaxl, tck = -0.01, las = 1, cex.axis = 1.0)
 
     if(plot.grid){
-        plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+        plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
         if(plot.type == "FilledContour")
-            .filled.contour(pars$don$x, pars$don$y, pars$don$z, levels = pars$breaks, col = pars$kolor)
+            graphics::.filled.contour(pars$don$x, pars$don$y, pars$don$z, levels = pars$breaks, col = pars$kolor)
         if(plot.type == "Pixels")
-            image(pars$don, breaks = pars$breaks, col = pars$kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
+            graphics::image(pars$don, breaks = pars$breaks, col = pars$kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
 
         fields::image.plot(zlim = pars$zlim, breaks = pars$breaks2, col = pars$kolor, horizontal = pars$horizontal,
                            legend.only = TRUE, legend.mar = pars$legend.mar, legend.width = pars$legend.width,
@@ -342,33 +342,33 @@ qcPlot_Spatial.Check <- function(){
                            cex.axis = 0.7, font = 2, tcl = -0.3, mgp = c(0, 0.5, 0)), legend.shrink = 0.8)
     }
 
-    abline(h = axTicks(2), v = axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
+    graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
 
-    lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
+    graphics::lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
 
-    if(ptsOp$circle$draw) lines(xc, yc, lwd = ptsOp$circle$lwd, col = ptsOp$circle$col)
+    if(ptsOp$circle$draw) graphics::lines(xc, yc, lwd = ptsOp$circle$lwd, col = ptsOp$circle$col)
 
-    points(stndon[[6]]$x, stndon[[6]]$y, col = ptsOp$all$col, pch = ptsOp$all$pch, cex = ptsOp$all$cex)
-    points(stndon[[5]]$x, stndon[[5]]$y, col = ptsOp$all$col, pch = ptsOp$all$pch, cex = ptsOp$all$cex)
-    points(stndon[[4]]$x, stndon[[4]]$y, col = ptsOp$vois$col, pch = ptsOp$vois$pch, cex = ptsOp$vois$cex)
-    points(stndon[[3]]$x, stndon[[3]]$y, col = ptsOp$sel$col, pch = ptsOp$sel$pch, cex = ptsOp$sel$cex)
-    points(stndon[[2]]$x, stndon[[2]]$y, col = ptsOp$use$col, pch = ptsOp$use$pch, cex = ptsOp$use$cex)
-    points(stndon[[1]]$x, stndon[[1]]$y, col = ptsOp$stn$col, bg = ptsOp$stn$txt.col, pch = ptsOp$stn$pch, cex = ptsOp$stn$cex)
+    graphics::points(stndon[[6]]$x, stndon[[6]]$y, col = ptsOp$all$col, pch = ptsOp$all$pch, cex = ptsOp$all$cex)
+    graphics::points(stndon[[5]]$x, stndon[[5]]$y, col = ptsOp$all$col, pch = ptsOp$all$pch, cex = ptsOp$all$cex)
+    graphics::points(stndon[[4]]$x, stndon[[4]]$y, col = ptsOp$vois$col, pch = ptsOp$vois$pch, cex = ptsOp$vois$cex)
+    graphics::points(stndon[[3]]$x, stndon[[3]]$y, col = ptsOp$sel$col, pch = ptsOp$sel$pch, cex = ptsOp$sel$cex)
+    graphics::points(stndon[[2]]$x, stndon[[2]]$y, col = ptsOp$use$col, pch = ptsOp$use$pch, cex = ptsOp$use$cex)
+    graphics::points(stndon[[1]]$x, stndon[[1]]$y, col = ptsOp$stn$col, bg = ptsOp$stn$txt.col, pch = ptsOp$stn$pch, cex = ptsOp$stn$cex)
 
-    text(stndon[[6]]$x, stndon[[6]]$y, labels = stndon[[6]]$z, pos = 1, cex = ptsOp$all$txt.cex, col = ptsOp$stn$txt.col)
-    text(stndon[[5]]$x, stndon[[5]]$y, labels = stndon[[5]]$z, pos = 1, cex = ptsOp$all$txt.cex, col = ptsOp$all$txt.col)
-    text(stndon[[4]]$x, stndon[[4]]$y, labels = stndon[[4]]$z, pos = 1, cex = ptsOp$vois$txt.cex, col = ptsOp$vois$txt.col)
-    text(stndon[[3]]$x, stndon[[3]]$y, labels = stndon[[3]]$z, pos = 1, cex = ptsOp$sel$txt.cex, col = ptsOp$sel$txt.col)
-    text(stndon[[2]]$x, stndon[[2]]$y, labels = stndon[[2]]$z, pos = 1, cex = ptsOp$use$txt.cex, col = ptsOp$use$txt.col)
-    text(stndon[[1]]$x, stndon[[1]]$y, labels = stndon[[1]]$z, pos = 1, cex = ptsOp$stn$txt.cex, col = ptsOp$stn$txt.col)
+    graphics::text(stndon[[6]]$x, stndon[[6]]$y, labels = stndon[[6]]$z, pos = 1, cex = ptsOp$all$txt.cex, col = ptsOp$stn$txt.col)
+    graphics::text(stndon[[5]]$x, stndon[[5]]$y, labels = stndon[[5]]$z, pos = 1, cex = ptsOp$all$txt.cex, col = ptsOp$all$txt.col)
+    graphics::text(stndon[[4]]$x, stndon[[4]]$y, labels = stndon[[4]]$z, pos = 1, cex = ptsOp$vois$txt.cex, col = ptsOp$vois$txt.col)
+    graphics::text(stndon[[3]]$x, stndon[[3]]$y, labels = stndon[[3]]$z, pos = 1, cex = ptsOp$sel$txt.cex, col = ptsOp$sel$txt.col)
+    graphics::text(stndon[[2]]$x, stndon[[2]]$y, labels = stndon[[2]]$z, pos = 1, cex = ptsOp$use$txt.cex, col = ptsOp$use$txt.col)
+    graphics::text(stndon[[1]]$x, stndon[[1]]$y, labels = stndon[[1]]$z, pos = 1, cex = ptsOp$stn$txt.cex, col = ptsOp$stn$txt.col)
 
 
-    title(main = paste('STN:', stnid, '- Date:', daty), cex.main = 1, font.main = 1)
-    box()
+    graphics::title(main = paste('STN:', stnid, '- Date:', daty), cex.main = 1, font.main = 1)
+    graphics::box()
 
-    plt <- par("plt")
-    usr <- par("usr")
-    par(opar)
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(opar)
 
     return(list(par = c(plt, usr)))
 }
@@ -382,9 +382,9 @@ qcDislpay_Outliers.Mon <- function(notebookTab, tab.title){
 
     daty <- NULL
     plotIt <- function(){
-        op <- par(bg = "white")
+        op <- graphics::par(bg = "white")
         pltusr <- qcPlot_Outliers.Mon()
-        par(op)
+        graphics::par(op)
         for(j in seq_along(varplot)) tclvalue(parPltCrd[[varplot[j]]]) <- pltusr$par[j]
         daty <<- pltusr$dates
         return(0)

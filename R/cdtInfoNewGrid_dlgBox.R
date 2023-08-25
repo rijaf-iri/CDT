@@ -67,12 +67,12 @@ getNewGridParams <- function(parent.win, Parameters){
     bt.prm.CA <- ttkbutton(frGrd1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$minlon <<- as.numeric(str_trim(tclvalue(minLon)))
-        Parameters$maxlon <<- as.numeric(str_trim(tclvalue(maxLon)))
-        Parameters$reslon <<- as.numeric(str_trim(tclvalue(resLon)))
-        Parameters$minlat <<- as.numeric(str_trim(tclvalue(minLat)))
-        Parameters$maxlat <<- as.numeric(str_trim(tclvalue(maxLat)))
-        Parameters$reslat <<- as.numeric(str_trim(tclvalue(resLat)))
+        Parameters$minlon <<- as.numeric(trimws(tclvalue(minLon)))
+        Parameters$maxlon <<- as.numeric(trimws(tclvalue(maxLon)))
+        Parameters$reslon <<- as.numeric(trimws(tclvalue(resLon)))
+        Parameters$minlat <<- as.numeric(trimws(tclvalue(minLat)))
+        Parameters$maxlat <<- as.numeric(trimws(tclvalue(maxLat)))
+        Parameters$reslat <<- as.numeric(trimws(tclvalue(resLat)))
 
         tkgrab.release(tt)
         tkdestroy(tt)

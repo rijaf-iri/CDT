@@ -94,7 +94,7 @@ MapGraph.GraphOptions.Assess <- function(assessOp, parent.win = .cdtEnv$tcl$main
     #########
     tkconfigure(bt.colBar, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.bar), title = lang.dlg[['label']][['4']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.bar), title = lang.dlg[['label']][['4']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.colBar, bg = loko)
@@ -115,11 +115,11 @@ MapGraph.GraphOptions.Assess <- function(assessOp, parent.win = .cdtEnv$tcl$main
     tkconfigure(bt.opt.OK, command = function(){
         assessOp$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         assessOp$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        assessOp$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        assessOp$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        assessOp$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        assessOp$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         assessOp$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        assessOp$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
+        assessOp$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
 
         assessOp$colors$col <<- tclvalue(color.bar)
 
@@ -212,7 +212,7 @@ MapGraph.GraphOptions.LineSHP <- function(shpLineOpt, parent.win = .cdtEnv$tcl$m
     ########
     tkconfigure(bt.pltLineC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['4']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['4']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
@@ -230,7 +230,7 @@ MapGraph.GraphOptions.LineSHP <- function(shpLineOpt, parent.win = .cdtEnv$tcl$m
 
     tkconfigure(bt.opt.OK, command = function(){
         shpLineOpt$col <<- tclvalue(plot.col.line)
-        shpLineOpt$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        shpLineOpt$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -460,7 +460,7 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
     #########
     tkconfigure(bt.colBar, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.bar), title = lang.dlg[['label']][['7']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.bar), title = lang.dlg[['label']][['7']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.colBar, bg = loko)
@@ -482,22 +482,22 @@ MapGraph.GraphOptions.Bar <- function(climGraphOpt, parent.win = .cdtEnv$tcl$mai
     tkconfigure(bt.opt.OK, command = function(){
         climGraphOpt$bar$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$bar$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$bar$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$bar$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$bar$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$bar$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$bar$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$bar$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$bar$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$bar$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$bar$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$bar$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$bar$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$bar$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$bar$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$bar$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
         climGraphOpt$bar$colors$col <<- tclvalue(color.bar)
 
@@ -793,7 +793,7 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
     #########
     tkconfigure(bt.colMoins, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.moins), title = lang.dlg[['label']][['12']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.moins), title = lang.dlg[['label']][['12']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.colMoins, bg = loko)
@@ -803,7 +803,7 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
     tkconfigure(bt.colPlus, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.plus), title = lang.dlg[['label']][['12']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.plus), title = lang.dlg[['label']][['12']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.colPlus, bg = loko)
@@ -829,28 +829,28 @@ MapGraph.GraphOptions.Anomaly <- function(climGraphOpt, parent.win = .cdtEnv$tcl
         if(!is.null(climGraphOpt$anomaly$anom)){
             climGraphOpt$anomaly$anom$perc.anom <<- switch(tclvalue(perc.anom), '0' = FALSE, '1' = TRUE)
             climGraphOpt$anomaly$anom$basePeriod <<- switch(tclvalue(basePeriod), '0' = FALSE, '1' = TRUE)
-            climGraphOpt$anomaly$anom$startYr.anom <<- as.numeric(str_trim(tclvalue(startYr.anom)))
-            climGraphOpt$anomaly$anom$endYr.anom <<- as.numeric(str_trim(tclvalue(endYr.anom)))
+            climGraphOpt$anomaly$anom$startYr.anom <<- as.numeric(trimws(tclvalue(startYr.anom)))
+            climGraphOpt$anomaly$anom$endYr.anom <<- as.numeric(trimws(tclvalue(endYr.anom)))
         }
 
         climGraphOpt$anomaly$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$anomaly$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$anomaly$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$anomaly$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$anomaly$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$anomaly$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$anomaly$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$anomaly$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$anomaly$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$anomaly$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$anomaly$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$anomaly$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$anomaly$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$anomaly$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$anomaly$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$anomaly$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$anomaly$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$anomaly$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$anomaly$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$anomaly$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$anomaly$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$anomaly$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$anomaly$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
         climGraphOpt$anomaly$colors$negative <<- tclvalue(color.moins)
         climGraphOpt$anomaly$colors$positive <<- tclvalue(color.plus)
@@ -1102,7 +1102,7 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
     ########
     tkconfigure(bt.pltLineC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
@@ -1128,7 +1128,7 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
 
     tkconfigure(bt.pltPointC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points), title = lang.dlg[['label']][['13']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointC, bg = loko)
@@ -1165,7 +1165,7 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
 
         tkconfigure(bt.lezMeanC, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezMean), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezMean), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.lezMeanC, bg = loko)
@@ -1202,7 +1202,7 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
 
         tkconfigure(bt.lezLinC, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezLin), title = "Colors")))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezLin), title = "Colors")))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.lezLinC, bg = loko)
@@ -1245,7 +1245,7 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
 
         tkconfigure(bt.lezTerC1, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezTer1), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezTer1), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.lezTerC1, bg = loko)
@@ -1255,7 +1255,7 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
 
         tkconfigure(bt.lezTerC2, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezTer2), title = lang.dlg[['label']][['13']])))
+            loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezTer2), title = lang.dlg[['label']][['13']])))
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(nchar(loko) > 0){
                 tkconfigure(bt.lezTerC2, bg = loko)
@@ -1299,46 +1299,46 @@ MapGraph.GraphOptions.Line <- function(climGraphOpt, parent.win = .cdtEnv$tcl$ma
     tkconfigure(bt.opt.OK, command = function(){
         climGraphOpt$line$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$line$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$line$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$line$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$line$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$line$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$line$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$line$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$line$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$line$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$line$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$line$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$line$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$line$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$line$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$line$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
-        climGraphOpt$line$plot$type <<- str_trim(tclvalue(plot.type))
+        climGraphOpt$line$plot$type <<- trimws(tclvalue(plot.type))
         climGraphOpt$line$plot$col$line <<- tclvalue(plot.col.line)
-        climGraphOpt$line$plot$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        climGraphOpt$line$plot$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
         climGraphOpt$line$plot$col$points <<- tclvalue(plot.col.points)
-        climGraphOpt$line$plot$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS))))
+        climGraphOpt$line$plot$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS))))
 
         if(!is.null(climGraphOpt$line$legend)){
             climGraphOpt$line$legend$is$mean <<- switch(tclvalue(is.lezMean), '0' = FALSE, '1' = TRUE)
             climGraphOpt$line$legend$col$mean <<- tclvalue(col.lezMean)
-            climGraphOpt$line$legend$lwd$mean <<- as.numeric(str_trim(tclvalue(tkget(spin.lezMeanW))))
-            climGraphOpt$line$legend$text$mean <<- str_trim(tclvalue(text.lezMean))
+            climGraphOpt$line$legend$lwd$mean <<- as.numeric(trimws(tclvalue(tkget(spin.lezMeanW))))
+            climGraphOpt$line$legend$text$mean <<- trimws(tclvalue(text.lezMean))
 
             climGraphOpt$line$legend$is$linear <<- switch(tclvalue(is.lezLin), '0' = FALSE, '1' = TRUE)
             climGraphOpt$line$legend$col$linear <<- tclvalue(col.lezLin)
-            climGraphOpt$line$legend$lwd$linear <<- as.numeric(str_trim(tclvalue(tkget(spin.lezLinW))))
-            climGraphOpt$line$legend$text$linear <<- str_trim(tclvalue(text.lezLin))
+            climGraphOpt$line$legend$lwd$linear <<- as.numeric(trimws(tclvalue(tkget(spin.lezLinW))))
+            climGraphOpt$line$legend$text$linear <<- trimws(tclvalue(text.lezLin))
 
             climGraphOpt$line$legend$is$tercile <<- switch(tclvalue(is.lezTer), '0' = FALSE, '1' = TRUE)
             climGraphOpt$line$legend$col$tercile1 <<- tclvalue(col.lezTer1)
             climGraphOpt$line$legend$col$tercile2 <<- tclvalue(col.lezTer2)
-            climGraphOpt$line$legend$lwd$tercile <<- as.numeric(str_trim(tclvalue(tkget(spin.lezTerW))))
-            climGraphOpt$line$legend$text$tercile1 <<- str_trim(tclvalue(text.lezTer1))
-            climGraphOpt$line$legend$text$tercile2 <<- str_trim(tclvalue(text.lezTer2))
+            climGraphOpt$line$legend$lwd$tercile <<- as.numeric(trimws(tclvalue(tkget(spin.lezTerW))))
+            climGraphOpt$line$legend$text$tercile1 <<- trimws(tclvalue(text.lezTer1))
+            climGraphOpt$line$legend$text$tercile2 <<- trimws(tclvalue(text.lezTer2))
         }
 
         tkgrab.release(tt)
@@ -1589,7 +1589,7 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
 
     #######
     tkconfigure(bt.pltLineC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['13']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
             tclvalue(plot.col.line) <- loko
@@ -1612,7 +1612,7 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
 
     #######
     tkconfigure(bt.pltPointC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points), title = lang.dlg[['label']][['13']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointC, bg = loko)
             tclvalue(plot.col.points) <- loko
@@ -1643,7 +1643,7 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
 
     #######
     tkconfigure(bt.probaTheoC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.probaTheo), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.probaTheo), title = lang.dlg[['label']][['13']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.probaTheoC, bg = loko)
             tclvalue(col.probaTheo) <- loko
@@ -1664,32 +1664,32 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
     tkconfigure(bt.opt.OK, command = function(){
         climGraphOpt$proba$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$proba$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$proba$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$proba$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$proba$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$proba$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$proba$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$proba$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$proba$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$proba$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$proba$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$proba$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$proba$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$proba$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$proba$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$proba$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$proba$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$proba$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$proba$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
-        climGraphOpt$proba$plot$type <<- str_trim(tclvalue(plot.type))
+        climGraphOpt$proba$plot$type <<- trimws(tclvalue(plot.type))
         climGraphOpt$proba$plot$col$line <<- tclvalue(plot.col.line)
-        climGraphOpt$proba$plot$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        climGraphOpt$proba$plot$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
         climGraphOpt$proba$plot$col$points <<- tclvalue(plot.col.points)
-        climGraphOpt$proba$plot$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS))))
+        climGraphOpt$proba$plot$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS))))
 
         climGraphOpt$proba$proba$theoretical <<- switch(tclvalue(is.probaTheo), '0' = FALSE, '1' = TRUE)
         climGraphOpt$proba$proba$col <<- tclvalue(col.probaTheo)
-        climGraphOpt$proba$proba$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.probaTheoW))))
+        climGraphOpt$proba$proba$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.probaTheoW))))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -1932,7 +1932,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #########
     tkconfigure(bt.pltLineC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['20']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['20']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
             tclvalue(plot.col.line) <- loko
@@ -1960,7 +1960,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #########
     tkconfigure(bt.pltPointNa, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.nina), title = lang.dlg[['label']][['20']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.nina), title = lang.dlg[['label']][['20']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointNa, bg = loko)
             tclvalue(plot.col.nina) <- loko
@@ -1968,7 +1968,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
     })
 
     tkconfigure(bt.pltPointNe, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.neutre), title = lang.dlg[['label']][['20']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.neutre), title = lang.dlg[['label']][['20']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointNe, bg = loko)
             tclvalue(plot.col.neutre) <- loko
@@ -1976,7 +1976,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
     })
 
     tkconfigure(bt.pltPointNo, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.nino), title = lang.dlg[['label']][['20']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.nino), title = lang.dlg[['label']][['20']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointNo, bg = loko)
             tclvalue(plot.col.nino) <- loko
@@ -2011,7 +2011,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####
     tkconfigure(bt.lezMeanC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezMean), title = lang.dlg[['label']][['20']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezMean), title = lang.dlg[['label']][['20']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.lezMeanC, bg = loko)
             tclvalue(col.lezMean) <- loko
@@ -2046,7 +2046,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####
     tkconfigure(bt.lezLinC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezLin), title = lang.dlg[['label']][['20']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezLin), title = lang.dlg[['label']][['20']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.lezLinC, bg = loko)
             tclvalue(col.lezLin) <- loko
@@ -2090,7 +2090,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####
     tkconfigure(bt.lezTerC1, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezTer1), title = lang.dlg[['label']][['20']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezTer1), title = lang.dlg[['label']][['20']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.lezTerC1, bg = loko)
             tclvalue(col.lezTer1) <- loko
@@ -2098,7 +2098,7 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
     })
 
     tkconfigure(bt.lezTerC2, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezTer2), title = lang.dlg[['label']][['20']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezTer2), title = lang.dlg[['label']][['20']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.lezTerC2, bg = loko)
             tclvalue(col.lezTer2) <- loko
@@ -2135,44 +2135,44 @@ MapGraph.GraphOptions.LineENSO <- function(climGraphOpt, parent.win = .cdtEnv$tc
     tkconfigure(bt.opt.OK, command = function(){
         climGraphOpt$line.enso$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line.enso$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line.enso$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$line.enso$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$line.enso$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$line.enso$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$line.enso$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line.enso$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line.enso$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$line.enso$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$line.enso$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$line.enso$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$line.enso$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line.enso$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line.enso$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$line.enso$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$line.enso$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$line.enso$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$line.enso$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line.enso$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$line.enso$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$line.enso$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$line.enso$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
         climGraphOpt$line.enso$plot$col$line <<- tclvalue(plot.col.line)
-        climGraphOpt$line.enso$plot$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        climGraphOpt$line.enso$plot$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
         climGraphOpt$line.enso$plot$col$points <<- c(tclvalue(plot.col.nina), tclvalue(plot.col.neutre), tclvalue(plot.col.nino))
-        climGraphOpt$line.enso$plot$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS))))
+        climGraphOpt$line.enso$plot$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS))))
 
         climGraphOpt$line.enso$legend$is$mean <<- switch(tclvalue(is.lezMean), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line.enso$legend$col$mean <<- tclvalue(col.lezMean)
-        climGraphOpt$line.enso$legend$lwd$mean <<- as.numeric(str_trim(tclvalue(tkget(spin.lezMeanW))))
-        climGraphOpt$line.enso$legend$text$mean <<- str_trim(tclvalue(text.lezMean))
+        climGraphOpt$line.enso$legend$lwd$mean <<- as.numeric(trimws(tclvalue(tkget(spin.lezMeanW))))
+        climGraphOpt$line.enso$legend$text$mean <<- trimws(tclvalue(text.lezMean))
 
         climGraphOpt$line.enso$legend$is$linear <<- switch(tclvalue(is.lezLin), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line.enso$legend$col$linear <<- tclvalue(col.lezLin)
-        climGraphOpt$line.enso$legend$lwd$linear <<- as.numeric(str_trim(tclvalue(tkget(spin.lezLinW))))
-        climGraphOpt$line.enso$legend$text$linear <<- str_trim(tclvalue(text.lezLin))
+        climGraphOpt$line.enso$legend$lwd$linear <<- as.numeric(trimws(tclvalue(tkget(spin.lezLinW))))
+        climGraphOpt$line.enso$legend$text$linear <<- trimws(tclvalue(text.lezLin))
 
         climGraphOpt$line.enso$legend$is$tercile <<- switch(tclvalue(is.lezTer), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line.enso$legend$col$tercile1 <<- tclvalue(col.lezTer1)
         climGraphOpt$line.enso$legend$col$tercile2 <<- tclvalue(col.lezTer2)
-        climGraphOpt$line.enso$legend$lwd$tercile <<- as.numeric(str_trim(tclvalue(tkget(spin.lezTerW))))
-        climGraphOpt$line.enso$legend$text$tercile1 <<- str_trim(tclvalue(text.lezTer1))
-        climGraphOpt$line.enso$legend$text$tercile2 <<- str_trim(tclvalue(text.lezTer2))
+        climGraphOpt$line.enso$legend$lwd$tercile <<- as.numeric(trimws(tclvalue(tkget(spin.lezTerW))))
+        climGraphOpt$line.enso$legend$text$tercile1 <<- trimws(tclvalue(text.lezTer1))
+        climGraphOpt$line.enso$legend$text$tercile2 <<- trimws(tclvalue(text.lezTer2))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -2409,7 +2409,7 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
 
     #########
     tkconfigure(bt.colBarNa, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.nina), title = lang.dlg[['label']][['9']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.nina), title = lang.dlg[['label']][['9']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.colBarNa, bg = loko)
             tclvalue(color.nina) <- loko
@@ -2417,7 +2417,7 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
     })
 
     tkconfigure(bt.colBarNe, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.neutre), title = lang.dlg[['label']][['9']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.neutre), title = lang.dlg[['label']][['9']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.colBarNe, bg = loko)
             tclvalue(color.neutre) <- loko
@@ -2425,7 +2425,7 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
     })
 
     tkconfigure(bt.colBarNo, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.nino), title = lang.dlg[['label']][['9']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.nino), title = lang.dlg[['label']][['9']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.colBarNo, bg = loko)
             tclvalue(color.nino) <- loko
@@ -2446,22 +2446,22 @@ MapGraph.GraphOptions.BarENSO <- function(climGraphOpt, parent.win = .cdtEnv$tcl
     tkconfigure(bt.opt.OK, command = function(){
         climGraphOpt$bar.enso$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar.enso$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar.enso$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$bar.enso$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$bar.enso$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$bar.enso$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$bar.enso$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar.enso$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar.enso$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$bar.enso$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$bar.enso$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$bar.enso$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$bar.enso$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar.enso$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar.enso$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$bar.enso$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$bar.enso$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$bar.enso$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$bar.enso$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar.enso$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$bar.enso$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$bar.enso$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$bar.enso$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
         climGraphOpt$bar.enso$colors$col <<- c(tclvalue(color.nina), tclvalue(color.neutre), tclvalue(color.nino))
 
@@ -2744,7 +2744,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     #####
 
     tkconfigure(bt.pltLineAl, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.lineAl), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.lineAl), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineAl, bg = loko)
             tclvalue(plot.col.lineAl) <- loko
@@ -2752,7 +2752,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     })
 
     tkconfigure(bt.pltLineNa, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.lineNa), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.lineNa), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineNa, bg = loko)
             tclvalue(plot.col.lineNa) <- loko
@@ -2760,7 +2760,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     })
 
     tkconfigure(bt.pltLineNe, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.lineNe), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.lineNe), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineNe, bg = loko)
             tclvalue(plot.col.lineNe) <- loko
@@ -2768,7 +2768,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     })
 
     tkconfigure(bt.pltLineNo, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.lineNo), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.lineNo), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineNo, bg = loko)
             tclvalue(plot.col.lineNo) <- loko
@@ -2796,7 +2796,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     #####
 
     tkconfigure(bt.pltPointAl, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.pointsAl), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.pointsAl), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointAl, bg = loko)
             tclvalue(plot.col.pointsAl) <- loko
@@ -2804,7 +2804,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     })
 
     tkconfigure(bt.pltPointNa, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.pointsNa), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.pointsNa), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointNa, bg = loko)
             tclvalue(plot.col.pointsNa) <- loko
@@ -2812,7 +2812,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     })
 
     tkconfigure(bt.pltPointNe, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.pointsNe), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.pointsNe), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointNe, bg = loko)
             tclvalue(plot.col.pointsNe) <- loko
@@ -2820,7 +2820,7 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     })
 
     tkconfigure(bt.pltPointNo, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.pointsNo), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.pointsNo), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointNo, bg = loko)
             tclvalue(plot.col.pointsNo) <- loko
@@ -2846,26 +2846,26 @@ MapGraph.GraphOptions.ProbaENSO <- function(climGraphOpt, parent.win = .cdtEnv$t
     tkconfigure(bt.opt.OK, command = function(){
         climGraphOpt$proba.enso$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$proba.enso$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba.enso$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$proba.enso$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$proba.enso$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$proba.enso$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$proba.enso$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$proba.enso$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba.enso$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$proba.enso$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$proba.enso$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$proba.enso$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$proba.enso$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$proba.enso$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba.enso$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$proba.enso$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$proba.enso$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$proba.enso$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$proba.enso$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba.enso$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$proba.enso$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$proba.enso$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$proba.enso$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
-        climGraphOpt$proba.enso$plot$type <<- str_trim(tclvalue(plot.type))
-        climGraphOpt$proba.enso$plot$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
-        climGraphOpt$proba.enso$plot$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS))))
+        climGraphOpt$proba.enso$plot$type <<- trimws(tclvalue(plot.type))
+        climGraphOpt$proba.enso$plot$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
+        climGraphOpt$proba.enso$plot$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS))))
 
         climGraphOpt$proba.enso$plot$all$line <<- tclvalue(plot.col.lineAl)
         climGraphOpt$proba.enso$plot$all$points <<- tclvalue(plot.col.pointsAl)
@@ -3156,7 +3156,7 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #########
     tkconfigure(bt.colMoins, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.moins), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.moins), title = lang.dlg[['label']][['13']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.colMoins, bg = loko)
             tclvalue(color.moins) <- loko
@@ -3164,7 +3164,7 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
     })
 
     tkconfigure(bt.colPlus, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.plus), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(color.plus), title = lang.dlg[['label']][['13']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.colPlus, bg = loko)
             tclvalue(color.plus) <- loko
@@ -3190,7 +3190,7 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
     #####
     tkconfigure(bt.plotLineC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.plotline), title = lang.dlg[['label']][['13']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.plotline), title = lang.dlg[['label']][['13']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.plotLineC, bg = loko)
             tclvalue(col.plotline) <- loko
@@ -3226,13 +3226,13 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
     tkconfigure(bt.opt.OK, command = function(){
         climGraphOpt$bar.line$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar.line$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar.line$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$bar.line$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$bar.line$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$bar.line$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$bar.line$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar.line$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar.line$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$bar.line$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$bar.line$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$bar.line$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$bar.line$userYTcks$custom <<- switch(tclvalue(custom.ticks), '0' = FALSE, '1' = TRUE)
         if(climGraphOpt$bar.line$userYTcks$custom){
@@ -3250,20 +3250,20 @@ MapGraph.GraphOptions.Bar.Line <- function(climGraphOpt, parent.win = .cdtEnv$tc
 
         climGraphOpt$bar.line$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar.line$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar.line$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$bar.line$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$bar.line$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$bar.line$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$bar.line$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$bar.line$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$bar.line$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$bar.line$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$bar.line$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
-        climGraphOpt$bar.line$colors$y0 <<- as.numeric(str_trim(tclvalue(color.Y0)))
+        climGraphOpt$bar.line$colors$y0 <<- as.numeric(trimws(tclvalue(color.Y0)))
         climGraphOpt$bar.line$colors$negative <<- tclvalue(color.moins)
         climGraphOpt$bar.line$colors$positive <<- tclvalue(color.plus)
 
         climGraphOpt$bar.line$line$plot <<- switch(tclvalue(is.plotline), '0' = FALSE, '1' = TRUE)
         climGraphOpt$bar.line$line$col <<- tclvalue(col.plotline)
-        climGraphOpt$bar.line$line$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.plotLineW))))
+        climGraphOpt$bar.line$line$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.plotLineW))))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -3517,7 +3517,7 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
 
     #########
     tkconfigure(bt.pltLineC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltLineC, bg = loko)
             tclvalue(plot.col.line) <- loko
@@ -3541,7 +3541,7 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
 
     #########
     tkconfigure(bt.pltPointC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.points), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.pltPointC, bg = loko)
             tclvalue(plot.col.points) <- loko
@@ -3580,7 +3580,7 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
 
     #########
     tkconfigure(bt.lezLinC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezLin), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezLin), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.lezLinC, bg = loko)
             tclvalue(col.lezLin) <- loko
@@ -3609,7 +3609,7 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
 
     #########
     tkconfigure(bt.lezLowessC, command = function(){
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezLowess), title = lang.dlg[['label']][['16']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.lezLowess), title = lang.dlg[['label']][['16']])))
         if(nchar(loko) > 0){
             tkconfigure(bt.lezLowessC, bg = loko)
             tclvalue(col.lezLowess) <- loko
@@ -3636,38 +3636,38 @@ MapGraph.GraphOptions.LineCLIMDEX <- function(climGraphOpt, parent.win = .cdtEnv
     tkconfigure(bt.opt.OK, command = function(){
         climGraphOpt$line$xlim$is.min <<- switch(tclvalue(is.min.xlim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line$xlim$is.max <<- switch(tclvalue(is.max.xlim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line$xlim$min <<- str_trim(tclvalue(min.xlim))
-        climGraphOpt$line$xlim$max <<- str_trim(tclvalue(max.xlim))
+        climGraphOpt$line$xlim$min <<- trimws(tclvalue(min.xlim))
+        climGraphOpt$line$xlim$max <<- trimws(tclvalue(max.xlim))
 
         climGraphOpt$line$ylim$is.min <<- switch(tclvalue(is.min.ylim), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line$ylim$is.max <<- switch(tclvalue(is.max.ylim), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line$ylim$min <<- as.numeric(str_trim(tclvalue(min.ylim)))
-        climGraphOpt$line$ylim$max <<- as.numeric(str_trim(tclvalue(max.ylim)))
+        climGraphOpt$line$ylim$min <<- as.numeric(trimws(tclvalue(min.ylim)))
+        climGraphOpt$line$ylim$max <<- as.numeric(trimws(tclvalue(max.ylim)))
 
         climGraphOpt$line$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         climGraphOpt$line$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        climGraphOpt$line$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        climGraphOpt$line$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        climGraphOpt$line$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         climGraphOpt$line$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$line$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
-        climGraphOpt$line$title$position <<- posTitleVAL[CbposTitleVAL %in% str_trim(tclvalue(pos.title))]
+        climGraphOpt$line$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
+        climGraphOpt$line$title$position <<- posTitleVAL[CbposTitleVAL %in% trimws(tclvalue(pos.title))]
 
-        climGraphOpt$line$plot$type <<- str_trim(tclvalue(plot.type))
+        climGraphOpt$line$plot$type <<- trimws(tclvalue(plot.type))
         climGraphOpt$line$plot$col$line <<- tclvalue(plot.col.line)
-        climGraphOpt$line$plot$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.pltLineW))))
+        climGraphOpt$line$plot$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
         climGraphOpt$line$plot$col$points <<- tclvalue(plot.col.points)
-        climGraphOpt$line$plot$cex <<- as.numeric(str_trim(tclvalue(tkget(spin.pltPointS))))
+        climGraphOpt$line$plot$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS))))
 
         climGraphOpt$line$legend$col$linear <<- tclvalue(col.lezLin)
-        climGraphOpt$line$legend$lwd$linear <<- as.numeric(str_trim(tclvalue(tkget(spin.lezLinW))))
-        climGraphOpt$line$legend$lty$linear <<- as.numeric(str_trim(tclvalue(tkget(spin.lezLinY))))
-        climGraphOpt$line$legend$text$linear <<- str_trim(tclvalue(text.lezLin))
+        climGraphOpt$line$legend$lwd$linear <<- as.numeric(trimws(tclvalue(tkget(spin.lezLinW))))
+        climGraphOpt$line$legend$lty$linear <<- as.numeric(trimws(tclvalue(tkget(spin.lezLinY))))
+        climGraphOpt$line$legend$text$linear <<- trimws(tclvalue(text.lezLin))
 
         climGraphOpt$line$legend$col$lowess <<- tclvalue(col.lezLowess)
-        climGraphOpt$line$legend$lwd$lowess <<- as.numeric(str_trim(tclvalue(tkget(spin.lezLowessW))))
-        climGraphOpt$line$legend$lty$lowess <<- as.numeric(str_trim(tclvalue(tkget(spin.lezLowessY))))
-        climGraphOpt$line$legend$text$lowess <<- str_trim(tclvalue(text.lezLowess))
+        climGraphOpt$line$legend$lwd$lowess <<- as.numeric(trimws(tclvalue(tkget(spin.lezLowessW))))
+        climGraphOpt$line$legend$lty$lowess <<- as.numeric(trimws(tclvalue(tkget(spin.lezLowessY))))
+        climGraphOpt$line$legend$text$lowess <<- trimws(tclvalue(text.lezLowess))
 
         tkgrab.release(tt)
         tkdestroy(tt)

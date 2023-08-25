@@ -160,7 +160,7 @@ plotMultipleData <- function(dataObj, shp = NULL, xlim = NULL, ylim = NULL,
 
     #######
     
-    print(update(Plot.Obj, col.regions = brks$colors, aspect = 'fill', as.table = TRUE,
+    print(stats::update(Plot.Obj, col.regions = brks$colors, aspect = 'fill', as.table = TRUE,
                 xlim = pars.x$usr, ylim = pars.y$usr, xlab = '', ylab = '', main = plotTitle,
                 par.settings = par.Settings, par.strip.text = par.StripText, strip = par.stripCust,
                 scales = list(x = Xaxis, y = Yaxis), legend = lezandy))

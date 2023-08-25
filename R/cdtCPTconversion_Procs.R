@@ -102,7 +102,7 @@ convert2CPTFormat <- function(data.type = "cdtstation",
         }
 
         stnpars_read <- list(stringsAsFactors = FALSE, colClasses = "character")
-        cdtdata <- do.call(read.table, c(station.data, stnpars_read))
+        cdtdata <- do.call(utils::read.table, c(station.data, stnpars_read))
         ret <- CPT.convertStationData.Files(cdtdata, output.file, cpt.varinfo)
     }
 

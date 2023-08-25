@@ -220,7 +220,7 @@ dailyRainAnalysisPanelCmd <- function(){
             tclvalue(input.Prec) <- ''
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['2']]
 
                 cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
@@ -242,7 +242,7 @@ dailyRainAnalysisPanelCmd <- function(){
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['3']]
 
                 cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
@@ -379,19 +379,19 @@ dailyRainAnalysisPanelCmd <- function(){
         ###################
 
         tkbind(cb.StatYear, "<<ComboboxSelected>>", function(){
-            stateProba <- if(str_trim(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]) 'normal' else 'disabled'
+            stateProba <- if(trimws(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]) 'normal' else 'disabled'
             tkconfigure(en.Proba, state = stateProba)
 
-            if(str_trim(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]){
-                tclvalue(units.thres) <- UNIT.TXT[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
-                tclvalue(proba.thres) <- INITIAL.VAL[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
+            if(trimws(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]){
+                tclvalue(units.thres) <- UNIT.TXT[CbDailyStatsVAL %in% trimws(tclvalue(daily.Stats))]
+                tclvalue(proba.thres) <- INITIAL.VAL[CbDailyStatsVAL %in% trimws(tclvalue(daily.Stats))]
             }
         })
 
         tkbind(cb.StatDay, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]){
-                tclvalue(units.thres) <- UNIT.TXT[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
-                tclvalue(proba.thres) <- INITIAL.VAL[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
+            if(trimws(tclvalue(yearly.Stats)) == CbYearlyStatsVAL[4]){
+                tclvalue(units.thres) <- UNIT.TXT[CbDailyStatsVAL %in% trimws(tclvalue(daily.Stats))]
+                tclvalue(proba.thres) <- INITIAL.VAL[CbDailyStatsVAL %in% trimws(tclvalue(daily.Stats))]
             }
         })
 
@@ -400,27 +400,27 @@ dailyRainAnalysisPanelCmd <- function(){
         bt.CalcDaily <- ttkbutton(subfr2, text = lang.dlg[['button']][['2']])
 
         tkconfigure(bt.CalcDaily, command = function(){
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                GeneralParameters$cdtstation <- str_trim(tclvalue(input.Prec))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                GeneralParameters$cdtstation <- trimws(tclvalue(input.Prec))
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                GeneralParameters$cdtdataset <- str_trim(tclvalue(input.Prec))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                GeneralParameters$cdtdataset <- trimws(tclvalue(input.Prec))
 
-            GeneralParameters$output <- str_trim(tclvalue(dir.save))
+            GeneralParameters$output <- trimws(tclvalue(dir.save))
 
-            GeneralParameters$stats$daily <- DailyStatsVAL[CbDailyStatsVAL %in% str_trim(tclvalue(daily.Stats))]
-            GeneralParameters$stats$yearly <- YearlyStatsVAL[CbYearlyStatsVAL %in% str_trim(tclvalue(yearly.Stats))]
+            GeneralParameters$stats$daily <- DailyStatsVAL[CbDailyStatsVAL %in% trimws(tclvalue(daily.Stats))]
+            GeneralParameters$stats$yearly <- YearlyStatsVAL[CbYearlyStatsVAL %in% trimws(tclvalue(yearly.Stats))]
 
-            GeneralParameters$def$drywet.day <- as.numeric(str_trim(tclvalue(drywet.day)))
-            GeneralParameters$def$drywet.spell <- as.numeric(str_trim(tclvalue(drywet.spell)))
-            GeneralParameters$def$proba.thres <- as.numeric(str_trim(tclvalue(proba.thres)))
+            GeneralParameters$def$drywet.day <- as.numeric(trimws(tclvalue(drywet.day)))
+            GeneralParameters$def$drywet.spell <- as.numeric(trimws(tclvalue(drywet.spell)))
+            GeneralParameters$def$proba.thres <- as.numeric(trimws(tclvalue(proba.thres)))
 
             ##########
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
-            analysis.method <- paste(str_trim(tclvalue(daily.Stats)), ":", str_trim(tclvalue(yearly.Stats)))
+            analysis.method <- paste(trimws(tclvalue(daily.Stats)), ":", trimws(tclvalue(yearly.Stats)))
             Insert.Messages.Out(paste(lang.dlg[['message']][['1']], analysis.method, "......."), TRUE, "i")
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
@@ -498,8 +498,8 @@ dailyRainAnalysisPanelCmd <- function(){
             if(path.dataIdx %in% c("", "NA") | is.na(path.dataIdx)) return(NULL)
             tclvalue(file.dataIndex) <- path.dataIdx
 
-            if(file.exists(str_trim(tclvalue(file.dataIndex)))){
-                OutIndexdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.dataIndex)))){
+                OutIndexdata <- try(readRDS(trimws(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutIndexdata, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), TRUE, 'e')
@@ -514,7 +514,7 @@ dailyRainAnalysisPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutIndexdata
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -571,7 +571,7 @@ dailyRainAnalysisPanelCmd <- function(){
             }
             .cdtData$EnvData$varstatMapOp <- MapGraph.MapOptions(.cdtData$EnvData$varstatMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize.MapStat <- .cdtData$EnvData$varstatMapOp$pointSize
         })
 
@@ -580,8 +580,8 @@ dailyRainAnalysisPanelCmd <- function(){
         .cdtData$EnvData$tab$dataMapStat <- NULL
 
         tkconfigure(bt.varstat.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$anaVars)) != "" &
-                str_trim(tclvalue(.cdtData$EnvData$anaStat)) != "")
+            if(trimws(tclvalue(.cdtData$EnvData$anaVars)) != "" &
+                trimws(tclvalue(.cdtData$EnvData$anaStat)) != "")
             {
                 ret <- try(read.Data.MapVarStat(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
@@ -592,7 +592,7 @@ dailyRainAnalysisPanelCmd <- function(){
         ###################
 
         tkbind(cb.varstat.var, "<<ComboboxSelected>>", function(){
-            vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
+            vars <- trimws(tclvalue(.cdtData$EnvData$anaVars))
             if(vars == "") return(NULL)
             varstats <- .cdtData$EnvData$output$exist.vars.dates
             statsval <- varstats[[varsname$name[which(varsname$longname == vars)]]]
@@ -606,11 +606,11 @@ dailyRainAnalysisPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$donDate) <- statsval$date[length(statsval$date)]
 
             ##############
-            vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
+            vars <- trimws(tclvalue(.cdtData$EnvData$anaVars))
             this.vars <- varsname$name[which(varsname$longname == vars)]
             .cdtData$EnvData$now$this.vars <- this.vars
 
-            stats <- str_trim(tclvalue(.cdtData$EnvData$anaStat))
+            stats <- trimws(tclvalue(.cdtData$EnvData$anaStat))
             this.stats <- statsname$name[which(statsname$longname == stats)]
             .cdtData$EnvData$now$this.stats <- this.stats
 
@@ -618,11 +618,11 @@ dailyRainAnalysisPanelCmd <- function(){
         })
 
         tkbind(cb.varstat.stat, "<<ComboboxSelected>>", function(){
-            vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
+            vars <- trimws(tclvalue(.cdtData$EnvData$anaVars))
             this.vars <- varsname$name[which(varsname$longname == vars)]
             .cdtData$EnvData$now$this.vars <- this.vars
 
-            stats <- str_trim(tclvalue(.cdtData$EnvData$anaStat))
+            stats <- trimws(tclvalue(.cdtData$EnvData$anaStat))
             this.stats <- statsname$name[which(statsname$longname == stats)]
             .cdtData$EnvData$now$this.stats <- this.stats
         })
@@ -659,7 +659,7 @@ dailyRainAnalysisPanelCmd <- function(){
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize.MapTS <- .cdtData$EnvData$dataMapOp$pointSize
         })
 
@@ -668,7 +668,7 @@ dailyRainAnalysisPanelCmd <- function(){
         .cdtData$EnvData$tab$dataMapTS <- NULL
 
         tkconfigure(bt.data.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != ""){
                 ret <- try(read.Data.MapVarTS(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -677,11 +677,11 @@ dailyRainAnalysisPanelCmd <- function(){
         })
 
         tkconfigure(bt.data.Index.prev, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
-                vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != ""){
+                vars <- trimws(tclvalue(.cdtData$EnvData$anaVars))
                 this.vars <- varsname$name[which(varsname$longname == vars)]
                 donDates <- .cdtData$EnvData$output$exist.vars.dates[[this.vars]]$date
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$donDate)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
                 tclvalue(.cdtData$EnvData$donDate) <- donDates[idaty]
@@ -694,11 +694,11 @@ dailyRainAnalysisPanelCmd <- function(){
         })
 
         tkconfigure(bt.data.Index.next, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
-                vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != ""){
+                vars <- trimws(tclvalue(.cdtData$EnvData$anaVars))
                 this.vars <- varsname$name[which(varsname$longname == vars)]
                 donDates <- .cdtData$EnvData$output$exist.vars.dates[[this.vars]]$date
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$donDate)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
                 tclvalue(.cdtData$EnvData$donDate) <- donDates[idaty]
@@ -734,8 +734,8 @@ dailyRainAnalysisPanelCmd <- function(){
         ###############
 
         tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$anaVars)) != "" &
-                str_trim(tclvalue(.cdtData$EnvData$anaStat)) != "")
+            if(trimws(tclvalue(.cdtData$EnvData$anaVars)) != "" &
+                trimws(tclvalue(.cdtData$EnvData$anaStat)) != "")
             {
                 ret1 <- try(read.Data.MapVarStat(), silent = TRUE)
                 if(inherits(ret1, "try-error") | is.null(ret1)) return(NULL)
@@ -797,7 +797,7 @@ dailyRainAnalysisPanelCmd <- function(){
         #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            vtypeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            vtypeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
             suffix.fun <- switch(vtypeTSp,
                                  "anom" = "Anomaly",
                                  "bar" = "Bar",
@@ -812,7 +812,7 @@ dailyRainAnalysisPanelCmd <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
 
             if(!is.null(.cdtData$EnvData$tsData)){
                 imgContainer <- CDT.Display.Graph(dailyRainAnalysis.plotVarGraph, .cdtData$EnvData$tab$dataGraph, 'Analysis-Graph')
@@ -823,7 +823,7 @@ dailyRainAnalysisPanelCmd <- function(){
         #################
 
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
 
             stateType <- if(.cdtData$EnvData$plot.maps$typeTSp == "line") "normal" else "disabled"
             tkconfigure(chk.meanTSp, state = stateType)
@@ -955,10 +955,10 @@ dailyRainAnalysisPanelCmd <- function(){
             tkgrid(bt.stnID.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
             tkconfigure(bt.stnID.prev, command = function(){
-                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
 
                 if(!is.null(.cdtData$EnvData$tsData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -969,10 +969,10 @@ dailyRainAnalysisPanelCmd <- function(){
             })
 
             tkconfigure(bt.stnID.next, command = function(){
-                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
 
                 if(!is.null(.cdtData$EnvData$tsData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1053,8 +1053,8 @@ dailyRainAnalysisPanelCmd <- function(){
             tcl('update')
         })
 
-        vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
-        stats <- str_trim(tclvalue(.cdtData$EnvData$anaStat))
+        vars <- trimws(tclvalue(.cdtData$EnvData$anaVars))
+        stats <- trimws(tclvalue(.cdtData$EnvData$anaStat))
         this.vars <- varsname$name[which(varsname$longname == vars)]
         this.stats <- statsname$name[which(statsname$longname == stats)]
         
@@ -1067,7 +1067,7 @@ dailyRainAnalysisPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             readVarData <- TRUE
             if(!is.null(.cdtData$EnvData$statData))
@@ -1115,11 +1115,11 @@ dailyRainAnalysisPanelCmd <- function(){
                     if(.cdtData$EnvData$statData$filePathData == filePathData) readVarData <- FALSE
 
             if(readVarData){
-                nc <- nc_open(filePathData)
+                nc <- ncdf4::nc_open(filePathData)
                 .cdtData$EnvData$statData$map$x <- nc$dim[[1]]$vals
                 .cdtData$EnvData$statData$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$statData$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
+                .cdtData$EnvData$statData$map$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                ncdf4::nc_close(nc)
                 .cdtData$EnvData$statData$filePathData <- filePathData
             }
         }
@@ -1140,9 +1140,9 @@ dailyRainAnalysisPanelCmd <- function(){
             tcl('update')
         })
 
-        vars <- str_trim(tclvalue(.cdtData$EnvData$anaVars))
+        vars <- trimws(tclvalue(.cdtData$EnvData$anaVars))
         this.vars <- varsname$name[which(varsname$longname == vars)]
-        this.daty <- str_trim(tclvalue(.cdtData$EnvData$donDate))
+        this.daty <- trimws(tclvalue(.cdtData$EnvData$donDate))
 
         if(vars == "" | this.daty == "") return(NULL)
 
@@ -1153,7 +1153,7 @@ dailyRainAnalysisPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             ########
             readVarData <- TRUE
@@ -1214,11 +1214,11 @@ dailyRainAnalysisPanelCmd <- function(){
                     if(.cdtData$EnvData$tsData$filePathData == filePathData) readVarData <- FALSE
 
             if(readVarData){
-                nc <- nc_open(filePathData)
+                nc <- ncdf4::nc_open(filePathData)
                 .cdtData$EnvData$tsData$map$x <- nc$dim[[1]]$vals
                 .cdtData$EnvData$tsData$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$tsData$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
+                .cdtData$EnvData$tsData$map$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                ncdf4::nc_close(nc)
                 .cdtData$EnvData$tsData$filePathData <- filePathData
             }
 
@@ -1238,7 +1238,7 @@ dailyRainAnalysisPanelCmd <- function(){
             }
         }
 
-        stats <- str_trim(tclvalue(.cdtData$EnvData$anaStat))
+        stats <- trimws(tclvalue(.cdtData$EnvData$anaStat))
         this.stats <- statsname$name[which(statsname$longname == stats)]
 
         .cdtData$EnvData$now$this.vars <- this.vars

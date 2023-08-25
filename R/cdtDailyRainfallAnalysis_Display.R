@@ -47,10 +47,10 @@ dailyRainAnalysis.plotMapVarStats <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = dataMapOp,
@@ -63,7 +63,7 @@ dailyRainAnalysis.plotMapVarStats <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -79,7 +79,7 @@ dailyRainAnalysis.plotMapVarTS <- function(){
         varstats <- .cdtData$EnvData$output$exist.vars.dates
         this.var <- .cdtData$EnvData$now$this.vars
         this.stat <- .cdtData$EnvData$now$this.stats
-        this.daty <- str_trim(tclvalue(.cdtData$EnvData$donDate))
+        this.daty <- trimws(tclvalue(.cdtData$EnvData$donDate))
 
         infos <- varstats[[this.var]][[this.stat]]
 
@@ -103,10 +103,10 @@ dailyRainAnalysis.plotMapVarTS <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = dataMapOp,
@@ -119,7 +119,7 @@ dailyRainAnalysis.plotMapVarTS <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -134,7 +134,7 @@ dailyRainAnalysis.plotVarGraph <- function(){
     infos <- varstats[[this.var]][[this.stat]]
 
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['14']], TRUE, 'e')
             return(NULL)
@@ -143,8 +143,8 @@ dailyRainAnalysis.plotVarGraph <- function(){
         .cdtData$EnvData$location <- paste0("Station: ", .cdtData$EnvData$output$data$id[ixy])
     }else{
         cdtdataset <- .cdtData$EnvData$cdtdataset
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(cdtdataset, cdtdataset$fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         don <- as.numeric(xyloc$data)

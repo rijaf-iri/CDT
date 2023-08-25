@@ -67,7 +67,7 @@ cdt.changepoints <- function(x, obj, pars){
     cpt <- tobj$cpt.index
     ncpt <- length(cpt)
     mbic.curve <- numeric(ncpt + 1)
-    mbic.curve[1] <- n/2 * log(var(x, na.rm = TRUE))
+    mbic.curve[1] <- n/2 * log(stats::var(x, na.rm = TRUE))
     for(i in ncpt:1){
         xc <- cpt[1:i]
         mncpt <- sum((x - cdt.mean.cpts(x, xc))^2, na.rm = TRUE)
@@ -79,7 +79,7 @@ cdt.changepoints <- function(x, obj, pars){
 
         mbic.curve[i + 1] <- (n/2) * log(mncpt / n) + slog
     }
-    pmin <- as.integer(median(which.min(mbic.curve)))
+    pmin <- as.integer(stats::median(which.min(mbic.curve)))
 
     changepoints <- NULL
     if(pmin > 1){
@@ -267,12 +267,12 @@ AdjustM.byQM <- function(x, cpt, min.adj, SegAdj = 0){
     st <- ints[1:(nt - 1)]
     ed <- ints[2:nt] - 1
     res <- numeric(n)
-    for(i in 1:(nt - 1)) assign(paste0('F', i), ecdf(x[st[i]:ed[i]]))
+    for(i in 1:(nt - 1)) assign(paste0('F', i), stats::ecdf(x[st[i]:ed[i]]))
     if(SegAdj == 0){
         xlen <- x[st[nt - 1]:ed[nt - 1]]
         xlen <- xlen[!is.na(xlen)]
         if(length(xlen) >= min.adj){
-            fy <- function(t) quantile(get(paste0('F', nt - 1), mode = "function"), t)
+            fy <- function(t) stats::quantile(get(paste0('F', nt - 1), mode = "function"), t)
             for(i in 1:(nt - 1)){
                 ix <- st[i]:ed[i]
                 res[ix] <- fy(get(paste0('F', i), mode = "function")(x[ix]))
@@ -287,7 +287,7 @@ AdjustM.byQM <- function(x, cpt, min.adj, SegAdj = 0){
         xlen <- x[st[SegAdj]:ed[SegAdj]]
         xlen <- xlen[!is.na(xlen)]
         if(length(xlen) >= min.adj){
-            fy <- function(t) quantile(get(paste0('F', SegAdj), mode = "function"), t)
+            fy <- function(t) stats::quantile(get(paste0('F', SegAdj), mode = "function"), t)
             for(i in 1:(nt - 1)){
                 ix <- st[i]:ed[i]
                 res[ix] <- fy(get(paste0('F', i), mode = "function")(x[ix]))
@@ -330,12 +330,12 @@ AdjustT.byQM <- function(x, cpt, min.adj, SegAdj = 0){
     }
     xt <- x - trend
 
-    for(i in 1:(nt - 1)) assign(paste0('F', i), ecdf(xt[st[i]:ed[i]]))
+    for(i in 1:(nt - 1)) assign(paste0('F', i), stats::ecdf(xt[st[i]:ed[i]]))
     if(SegAdj == 0){
         xlen <- x[st[nt - 1]:ed[nt - 1]]
         xlen <- xlen[!is.na(xlen)]
         if(length(xlen) >= min.adj){
-            fy <- function(t) quantile(get(paste0('F', nt - 1), mode = "function"), t)
+            fy <- function(t) stats::quantile(get(paste0('F', nt - 1), mode = "function"), t)
             for(i in 1:(nt - 1)){
                 ix <- st[i]:ed[i]
                 res[ix] <- fy(get(paste0('F', i), mode = "function")(xt[ix]))
@@ -351,7 +351,7 @@ AdjustT.byQM <- function(x, cpt, min.adj, SegAdj = 0){
         xlen <- x[st[SegAdj]:ed[SegAdj]]
         xlen <- xlen[!is.na(xlen)]
         if(length(xlen) >= min.adj){
-            fy <- function(t) quantile(get(paste0('F', SegAdj), mode = "function"), t)
+            fy <- function(t) stats::quantile(get(paste0('F', SegAdj), mode = "function"), t)
             for(i in 1:(nt - 1)){
                 ix <- st[i]:ed[i]
                 res[ix] <- fy(get(paste0('F', i), mode = "function")(xt[ix]))

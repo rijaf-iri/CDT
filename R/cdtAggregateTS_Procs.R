@@ -145,7 +145,7 @@ AggregateTS_Execute <- function(){
         out.ncfiles <- file.path(outputDIR, outnc)
 
         ########
-        nc <- nc_open(ncPATH[1])
+        nc <- ncdf4::nc_open(ncPATH[1])
         varid0 <- ncINFO$varid
         xlon0 <- nc$var[[varid0]]$dim[[ncINFO$ilon]]$vals
         xlat0 <- nc$var[[varid0]]$dim[[ncINFO$ilat]]$vals
@@ -153,7 +153,7 @@ AggregateTS_Execute <- function(){
         prec0 <- nc$var[[varid0]]$prec
         missval0 <- nc$var[[varid0]]$missval
         longname0 <- nc$var[[varid0]]$longname
-        nc_close(nc)
+        ncdf4::nc_close(nc)
 
         ncINFO$xo <- order(xlon0)
         xlon0 <- xlon0[ncINFO$xo]
@@ -163,9 +163,9 @@ AggregateTS_Execute <- function(){
         xnlat0 <- length(xlat0)
 
         #######
-        dx <- ncdim_def("Lon", "degreeE", xlon0)
-        dy <- ncdim_def("Lat", "degreeN", xlat0)
-        grd.nc.out <- ncvar_def(varid0, units0, list(dx, dy), missval0,
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", xlon0)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", xlat0)
+        grd.nc.out <- ncdf4::ncvar_def(varid0, units0, list(dx, dy), missval0,
                                 longname = longname0, prec = prec0, compression = 9)
 
         #######

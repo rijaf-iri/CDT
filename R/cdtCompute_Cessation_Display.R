@@ -5,20 +5,20 @@ CessationCalc.plotCessationMaps <- function(){
 
     ## titre
     if(!dataMapOp$title$user){
-        .titre <- paste("Ending dates of the rainy season:", str_trim(tclvalue(.cdtData$EnvData$donDate)))
+        .titre <- paste("Ending dates of the rainy season:", trimws(tclvalue(.cdtData$EnvData$donDate)))
     }else .titre <- dataMapOp$title$title
 
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp,
                                  label.fun = legendLabel.plotOnsetMaps,
-                                 donDate = str_trim(tclvalue(.cdtData$EnvData$donDate)),
+                                 donDate = trimws(tclvalue(.cdtData$EnvData$donDate)),
                                  start.date = .cdtData$EnvData$output$start.date
                             )
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = dataMapOp,
@@ -31,7 +31,7 @@ CessationCalc.plotCessationMaps <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -42,7 +42,7 @@ CessationCalc.plotCessationGraph <- function(){
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData[['message']][['13']], TRUE, 'e')
             return(NULL)
@@ -52,8 +52,8 @@ CessationCalc.plotCessationGraph <- function(){
         titre <- paste0("(", .cdtData$EnvData$output$data$id[ixy], ")")
     }else{
         cdtdataset <- .cdtData$EnvData$cdtdataset
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(cdtdataset, cdtdataset$fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         don <- as.Date(xyloc$data, origin = "1970-1-1")
@@ -69,7 +69,7 @@ CessationCalc.plotCessationGraph <- function(){
 
     #########
 
-    GRAPHTYPE <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+    GRAPHTYPE <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
     if(GRAPHTYPE == "Line") optsgph <- TSGraphOp$line
     if(GRAPHTYPE == "Barplot") optsgph <- TSGraphOp$bar
 

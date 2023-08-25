@@ -101,7 +101,7 @@ Summary.GraphOptions.Boxplot <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
     ######
     tkconfigure(bt.boxC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(box.Kol), title = lang.dlg[['label']][['7']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(box.Kol), title = lang.dlg[['label']][['7']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.boxC, bg = loko)
@@ -111,7 +111,7 @@ Summary.GraphOptions.Boxplot <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
 
     tkconfigure(bt.medC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(med.Kol), title = lang.dlg[['label']][['7']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(med.Kol), title = lang.dlg[['label']][['7']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.medC, bg = loko)
@@ -121,7 +121,7 @@ Summary.GraphOptions.Boxplot <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
 
     tkconfigure(bt.outC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(out.Kol), title = lang.dlg[['label']][['7']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(out.Kol), title = lang.dlg[['label']][['7']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.outC, bg = loko)
@@ -142,11 +142,11 @@ Summary.GraphOptions.Boxplot <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
     tkconfigure(bt.opt.OK, command = function(){
         GraphOpt$boxplot$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         GraphOpt$boxplot$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        GraphOpt$boxplot$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        GraphOpt$boxplot$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        GraphOpt$boxplot$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        GraphOpt$boxplot$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         GraphOpt$boxplot$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$boxplot$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
+        GraphOpt$boxplot$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
 
         GraphOpt$boxplot$col$col <<- tclvalue(box.Kol)
         GraphOpt$boxplot$col$medcol <<- tclvalue(med.Kol)
@@ -300,7 +300,7 @@ Summary.GraphOptions.Histogram <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
     ######
     tkconfigure(bt.innerC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(inner.Kol), title = lang.dlg[['label']][['7']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(inner.Kol), title = lang.dlg[['label']][['7']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.innerC, bg = loko)
@@ -310,7 +310,7 @@ Summary.GraphOptions.Histogram <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
 
     tkconfigure(bt.borderC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(border.Kol), title = lang.dlg[['label']][['7']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(border.Kol), title = lang.dlg[['label']][['7']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.borderC, bg = loko)
@@ -358,7 +358,7 @@ Summary.GraphOptions.Histogram <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
 
     tkconfigure(bt.bwC, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        loko <- str_trim(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(bwd.Kol), title = lang.dlg[['label']][['7']])))
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(bwd.Kol), title = lang.dlg[['label']][['7']])))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(nchar(loko) > 0){
             tkconfigure(bt.bwC, bg = loko)
@@ -406,26 +406,26 @@ Summary.GraphOptions.Histogram <- function(GraphOpt, parent.win = .cdtEnv$tcl$ma
     tkconfigure(bt.opt.OK, command = function(){
         GraphOpt$histogram$axislabs$is.xlab <<- switch(tclvalue(is.xaxis.lab), '0' = FALSE, '1' = TRUE)
         GraphOpt$histogram$axislabs$is.ylab <<- switch(tclvalue(is.yaxis.lab), '0' = FALSE, '1' = TRUE)
-        GraphOpt$histogram$axislabs$xlab <<- gsub('\\\\n', '\n', str_trim(tclvalue(xaxis.lab)))
-        GraphOpt$histogram$axislabs$ylab <<- gsub('\\\\n', '\n', str_trim(tclvalue(yaxis.lab)))
+        GraphOpt$histogram$axislabs$xlab <<- gsub('\\\\n', '\n', trimws(tclvalue(xaxis.lab)))
+        GraphOpt$histogram$axislabs$ylab <<- gsub('\\\\n', '\n', trimws(tclvalue(yaxis.lab)))
 
         GraphOpt$histogram$title$is.title <<- switch(tclvalue(is.title), '0' = FALSE, '1' = TRUE)
-        GraphOpt$histogram$title$title <<- gsub('\\\\n', '\n', str_trim(tclvalue(text.title)))
+        GraphOpt$histogram$title$title <<- gsub('\\\\n', '\n', trimws(tclvalue(text.title)))
 
         GraphOpt$histogram$hist$col <<- tclvalue(inner.Kol)
         GraphOpt$histogram$hist$border <<- tclvalue(border.Kol)
 
         GraphOpt$histogram$bw$add <<- switch(tclvalue(bwd.Add), '0' = FALSE, '1' = TRUE)
-        GraphOpt$histogram$bw$bw <<- as.numeric(str_trim(tclvalue(bwd.Val)))
+        GraphOpt$histogram$bw$bw <<- as.numeric(trimws(tclvalue(bwd.Val)))
         GraphOpt$histogram$bw$col <<- tclvalue(bwd.Kol)
-        GraphOpt$histogram$bw$lwd <<- as.numeric(str_trim(tclvalue(tkget(spin.bwL))))
+        GraphOpt$histogram$bw$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.bwL))))
 
         GraphOpt$histogram$hist$user.break <<- switch(tclvalue(edit.breaks), '0' = FALSE, '1' = TRUE)
 
         if(GraphOpt$histogram$hist$user.break){
-            breaksV <- str_trim(tclvalue(breaks.Vect))
+            breaksV <- trimws(tclvalue(breaks.Vect))
             breaksV <- strsplit(breaksV, ",")[[1]]
-            breaksV <- str_trim(breaksV)
+            breaksV <- trimws(breaksV)
             breaksV <- breaksV[breaksV != ""]
             breaksV <- if(length(breaksV) > 0) as.numeric(breaksV) else NULL
             if(length(breaksV) == 0){

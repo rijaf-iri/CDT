@@ -27,7 +27,7 @@ rasterData.convert_Proc <- function(){
         if(inherits(don.raster, "try-error")) return(NULL)
 
         raster::crs(don.raster) <- NA
-        raster::crs(don.raster) <- CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
+        raster::crs(don.raster) <- sp::CRS("+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0")
 
         don.raster[is.nan(don.raster) | is.infinite(don.raster)] <- NA
         if(.cdtData$GalParams$type.out == "nc")

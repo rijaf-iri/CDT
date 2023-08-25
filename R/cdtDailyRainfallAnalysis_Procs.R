@@ -236,10 +236,10 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
             ######################
             x <- index.out$coords$mat$x
             y <- index.out$coords$mat$y
-            dx <- ncdim_def("Lon", "degreeE", x)
-            dy <- ncdim_def("Lat", "degreeN", y)
+            dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+            dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
             xy.dim <- list(dx, dy)
-            nc.grd <- ncvar_def(index.out$varInfo$name, index.out$varInfo$units, xy.dim, -99, index.out$varInfo$longname, "float", compression = 9)
+            nc.grd <- ncdf4::ncvar_def(index.out$varInfo$name, index.out$varInfo$units, xy.dim, -99, index.out$varInfo$longname, "float", compression = 9)
 
             ######################
 
@@ -251,9 +251,9 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
                 ncdat.seas[is.na(ncdat.seas)] <- -99
 
                 filenc <- file.path(ncdfOUT.seas, paste0('Seas_', out.daty[j], '.nc'))
-                nc <- nc_create(filenc, nc.grd)
-                ncvar_put(nc, nc.grd, ncdat.seas)
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, nc.grd)
+                ncdf4::ncvar_put(nc, nc.grd, ncdat.seas)
+                ncdf4::nc_close(nc)
             }
         }
 
@@ -348,10 +348,10 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 
         x <- index.out$coords$mat$x
         y <- index.out$coords$mat$y
-        dx <- ncdim_def("Lon", "degreeE", x)
-        dy <- ncdim_def("Lat", "degreeN", y)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
         xy.dim <- list(dx, dy)
-        nc.grd <- ncvar_def(nom, unite, xy.dim, -99, nom_long, "float", compression = 9)
+        nc.grd <- ncdf4::ncvar_def(nom, unite, xy.dim, -99, nom_long, "float", compression = 9)
 
         ######################
 
@@ -359,9 +359,9 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
         dat.yearly[is.na(dat.yearly)] <- -99
 
         filenc <- file.path(ncdfOUT, paste0(stats.directory, '_', pars.stat$yearly, '.nc'))
-        nc <- nc_create(filenc, nc.grd)
-        ncvar_put(nc, nc.grd, dat.yearly)
-        nc_close(nc)
+        nc <- ncdf4::nc_create(filenc, nc.grd)
+        ncdf4::ncvar_put(nc, nc.grd, dat.yearly)
+        ncdf4::nc_close(nc)
     }
 
     Insert.Messages.Out(message[['13']], TRUE, "s")

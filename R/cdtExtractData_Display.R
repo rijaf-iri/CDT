@@ -23,19 +23,19 @@ plotMap4Extraction <- function(){
     }
 
     #######
-    opar <- par(mar = c(4, 4, 2, 2))
-    plot(1, xlim = c(xmin, xmax), ylim = c(ymin, ymax), xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
-    lines(.cdtData$EnvData$ocrds)
+    opar <- graphics::par(mar = c(4, 4, 2, 2))
+    graphics::plot(1, xlim = c(xmin, xmax), ylim = c(ymin, ymax), xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
+    graphics::lines(.cdtData$EnvData$ocrds)
     if(!is.null(.cdtData$EnvData$selectedPolygon))
-        lines(.cdtData$EnvData$selectedPolygon, col = 'red', lwd = 2)
+        graphics::lines(.cdtData$EnvData$selectedPolygon, col = 'red', lwd = 2)
 
-    abline(h = axTicks(2), v = axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
-    axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
-    axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 1.0)
-    axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tck = -0.01, las = 1, cex.axis = 1.0)
-    plt <- par("plt")
-    usr <- par("usr")
-    par(opar)
+    graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1) , col = "lightgray", lty = 3, lwd = 1.3)
+    axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
+    graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 1.0)
+    graphics::axis(side = 2, at = graphics::axTicks(2), labels = axlabs$yaxl, tck = -0.01, las = 1, cex.axis = 1.0)
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(opar)
 
     return(list(par = c(plt, usr)))
 }
@@ -55,9 +55,9 @@ displayMap4Extraction <- function(notebookTab){
             tcl('update')
         })
 
-        op <- par(bg = "white")
+        op <- graphics::par(bg = "white")
         pltusr <- plotMap4Extraction()
-        par(op)
+        graphics::par(op)
         for(j in seq_along(varplot))
             tclvalue(parPltCrd[[varplot[j]]]) <- pltusr$par[j]
         return(0)
@@ -146,8 +146,8 @@ displayMap4Extraction <- function(notebookTab){
             ##
             if(.cdtData$EnvData$type.extract == "poly"){
                 xypts <- data.frame(x = ret$xc, y = ret$yc)
-                coordinates(xypts) <- ~x+y
-                admin_name <- over(xypts, shpf)
+                sp::coordinates(xypts) <- ~x+y
+                admin_name <- sp::over(xypts, shpf)
                 admin_name <- c(t(admin_name[1, ]))
 
                 ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
@@ -173,8 +173,8 @@ displayMap4Extraction <- function(notebookTab){
             ##
             if(.cdtData$EnvData$type.extract == 'mpoly'){
                 xypts <- data.frame(x = ret$xc, y = ret$yc)
-                coordinates(xypts) <- ~x+y
-                admin_name <- over(xypts, shpf)
+                sp::coordinates(xypts) <- ~x+y
+                admin_name <- sp::over(xypts, shpf)
                 admin_name <- c(t(admin_name[1, ]))
 
                 ids <- as.numeric(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1

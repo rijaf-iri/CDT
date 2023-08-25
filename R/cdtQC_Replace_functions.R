@@ -24,7 +24,7 @@ FalseZerosCheck_replaceAll <- function(file.index, action = c("all", "percentage
     output <- readRDS(file.index)
     info <- output$info[[3]]
     file.stn <- file.path(PathData, 'CDTSTATIONS', output$info[[1]])
-    tmp <- read.table(file.stn, header = FALSE, sep = info$sepr,
+    tmp <- utils::read.table(file.stn, header = FALSE, sep = info$sepr,
                       stringsAsFactors = FALSE, colClasses = "character")
 
     action <- action[1]
@@ -55,7 +55,7 @@ FalseZerosCheck_replaceAll <- function(file.index, action = c("all", "percentage
         tmp[index.mon, istn] <- replace0
     }
 
-    write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val,
+    utils::write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val,
                 row.names = FALSE, col.names = FALSE, quote = FALSE)
     cat('Replacement done!\n')
 }
@@ -87,7 +87,7 @@ QC.RR_replaceAll <- function(file.index, action = c("all", "partial"))
     output <- readRDS(file.index)
     info <- output$info[[3]]
     file.stn <- file.path(PathData, 'CDTSTATIONS', output$info[[1]])
-    tmp <- read.table(file.stn, header = FALSE, sep = info$sepr,
+    tmp <- utils::read.table(file.stn, header = FALSE, sep = info$sepr,
                       stringsAsFactors = FALSE, colClasses = "character")
 
     action <- action[1]
@@ -96,7 +96,7 @@ QC.RR_replaceAll <- function(file.index, action = c("all", "partial"))
         istn <- which(stn.data$id == stnid) + 1
         outliers <- outqc$res[[stnid]]$outliers
 
-        daty <- str_trim(as.character(outliers$DATE))
+        daty <- trimws(as.character(outliers$DATE))
         nonNA <- !is.na(daty) & daty != ""
         outliers <- outliers[nonNA, , drop = FALSE]
         daty <- daty[nonNA]
@@ -118,7 +118,7 @@ QC.RR_replaceAll <- function(file.index, action = c("all", "partial"))
         tmp[idaty, istn] <- stn.val
     }
 
-    write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val,
+    utils::write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val,
                 row.names = FALSE, col.names = FALSE, quote = FALSE)
     cat('Replacement done!\n')
 }
@@ -150,7 +150,7 @@ QC.TT_replaceAll <- function(file.index, action = c("all", "partial", "estimated
     output <- readRDS(file.index)
     info <- output$info[[3]]
     file.stn <- file.path(PathData, 'CDTSTATIONS', output$info[[1]])
-    tmp <- read.table(file.stn, header = FALSE, sep = info$sepr,
+    tmp <- utils::read.table(file.stn, header = FALSE, sep = info$sepr,
                       stringsAsFactors = FALSE, colClasses = "character")
 
     action <- action[1]
@@ -159,7 +159,7 @@ QC.TT_replaceAll <- function(file.index, action = c("all", "partial", "estimated
         istn <- which(stn.data$id == stnid) + 1
         outliers <- outqc$res[[stnid]]$outliers
 
-        daty <- str_trim(as.character(outliers$DATE))
+        daty <- trimws(as.character(outliers$DATE))
         nonNA <- !is.na(daty) & daty != ""
         outliers <- outliers[nonNA, , drop = FALSE]
         daty <- daty[nonNA]
@@ -193,7 +193,7 @@ QC.TT_replaceAll <- function(file.index, action = c("all", "partial", "estimated
         tmp[idaty, istn] <- stn.val
     }
 
-    write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val,
+    utils::write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val,
                 row.names = FALSE, col.names = FALSE, quote = FALSE)
     cat('Replacement done!\n')
 }

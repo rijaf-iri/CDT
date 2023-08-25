@@ -38,7 +38,7 @@ cdtDataset_getParams <- function(){
 
     tkconfigure(bt.period, command = function(){
         months <- .cdtData$GalParams$date.range$Months
-        tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
+        tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
         .cdtData$GalParams$date.range$Months <- months
     })
@@ -64,7 +64,7 @@ cdtDataset_getParams <- function(){
     tkconfigure(set.NCDF, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["NCDF"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["NCDF"]],
-                                                          str_trim(tclvalue(dir.NCDF)))
+                                                          trimws(tclvalue(dir.NCDF)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -187,23 +187,23 @@ cdtDataset_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(dir.NCDF)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir.NCDF)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if((tclvalue(update.data) == "1") & str_trim(tclvalue(file.dataRDS)) %in% c("", "NA")){
+        }else if((tclvalue(update.data) == "1") & trimws(tclvalue(file.dataRDS)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if((tclvalue(update.data) == "0") & str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        }else if((tclvalue(update.data) == "0") & trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% str_trim(tclvalue(file.period))]
-            .cdtData$GalParams$NCDF$dir <- str_trim(tclvalue(dir.NCDF))
+            .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
+            .cdtData$GalParams$NCDF$dir <- trimws(tclvalue(dir.NCDF))
 
             .cdtData$GalParams$Update <- switch(tclvalue(update.data), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$cdtDataSet <- str_trim(tclvalue(file.dataRDS))
-            .cdtData$GalParams$output$dir <- str_trim(tclvalue(dir2save))
-            .cdtData$GalParams$output$data.name <- str_trim(tclvalue(nom.data))
+            .cdtData$GalParams$cdtDataSet <- trimws(tclvalue(file.dataRDS))
+            .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
+            .cdtData$GalParams$output$data.name <- trimws(tclvalue(nom.data))
 
             .cdtData$GalParams$message <- lang.dlg[['message']]
 

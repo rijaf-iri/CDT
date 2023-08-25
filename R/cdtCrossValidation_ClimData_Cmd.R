@@ -222,7 +222,7 @@ cdtCrossValidationCMD <- function(
                 Insert.Messages.Out(msg, TRUE, "e", GUI)
                 return(NULL)
             }
-            daty <- read.table(dates$pars$file, stringsAsFactors = FALSE, colClasses = "character")
+            daty <- utils::read.table(dates$pars$file, stringsAsFactors = FALSE, colClasses = "character")
             daty <- daty[, 1]
 
             dirMrg <- paste0(outdir_name, '_', tools::file_path_sans_ext(basename(dates$pars$file)))
@@ -264,7 +264,7 @@ cdtCrossValidationCMD <- function(
     ## Station data
 
     stnpars_read <- list(stringsAsFactors = FALSE, colClasses = "character")
-    stnData <- do.call(read.table, c(station.data, stnpars_read))
+    stnData <- do.call(utils::read.table, c(station.data, stnpars_read))
     stnData <- splitCDTData0(stnData, GUI)
     if(is.null(stnData)) return(NULL)
 
@@ -272,11 +272,11 @@ cdtCrossValidationCMD <- function(
     ## Get netCDF data info
 
     varid <- netcdf.data$varid
-    nc <- nc_open(ncInfo$ncfiles[ncInfo$exist][1])
+    nc <- ncdf4::nc_open(ncInfo$ncfiles[ncInfo$exist][1])
     lon <- nc$var[[varid]]$dim[[netcdf.data$ilon]]$vals
     lat <- nc$var[[varid]]$dim[[netcdf.data$ilat]]$vals
     varinfo <- nc$var[[varid]][c('name', 'prec', 'units', 'longname', 'missval')]
-    nc_close(nc)
+    ncdf4::nc_close(nc)
 
     xo <- order(lon)
     lon <- lon[xo]
@@ -298,11 +298,11 @@ cdtCrossValidationCMD <- function(
             Insert.Messages.Out(message[['13']], TRUE, "e", GUI)
             return(NULL)
         }
-        nc <- nc_open(dem.data$file)
+        nc <- ncdf4::nc_open(dem.data$file)
         demData$x <- nc$var[[dem.data$varid]]$dim[[dem.data$ilon]]$vals
         demData$y <- nc$var[[dem.data$varid]]$dim[[dem.data$ilat]]$vals
-        demData$z <- ncvar_get(nc, dem.data$varid)
-        nc_close(nc)
+        demData$z <- ncdf4::ncvar_get(nc, dem.data$varid)
+        ncdf4::nc_close(nc)
 
         xo <- order(demData$x)
         demData$x <- demData$x[xo]
@@ -346,7 +346,7 @@ cdtCrossValidationCMD <- function(
     if(crossv.station$from == "file"){
         cv_pars <- crossv.station$pars[!names(crossv.station$pars) %in% "type"]
         cvpars_read <- list(stringsAsFactors = FALSE, colClasses = "character")
-        df <- do.call(read.table, c(cv_pars, cvpars_read))
+        df <- do.call(utils::read.table, c(cv_pars, cvpars_read))
 
         if(crossv.station$pars$type == 'cdtstation'){
             df <- splitCDTData0(df, GUI)

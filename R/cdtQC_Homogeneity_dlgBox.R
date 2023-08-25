@@ -85,12 +85,12 @@ getParams.HomogMethod <- function(Parameters, CONF.LEV,
 
     tkconfigure(bt.prm.OK, command = function(){
         Parameters$crop <<- switch(tclvalue(crop.bound), '0' = FALSE, '1' = TRUE)
-        Parameters$h <<- as.numeric(str_trim(tclvalue(crop.perc)))
-        Parameters$kmax <<- as.numeric(str_trim(tclvalue(Kmax)))
-        Parameters$min.len <<- as.numeric(str_trim(tclvalue(minSeg)))
-        Parameters$conf.lev <<- as.numeric(str_trim(tclvalue(conf.lev)))
-        Parameters$min.year <<- as.numeric(str_trim(tclvalue(minYear)))
-        Parameters$min.frac <<- as.numeric(str_trim(tclvalue(minFrac)))
+        Parameters$h <<- as.numeric(trimws(tclvalue(crop.perc)))
+        Parameters$kmax <<- as.numeric(trimws(tclvalue(Kmax)))
+        Parameters$min.len <<- as.numeric(trimws(tclvalue(minSeg)))
+        Parameters$conf.lev <<- as.numeric(trimws(tclvalue(conf.lev)))
+        Parameters$min.year <<- as.numeric(trimws(tclvalue(minYear)))
+        Parameters$min.frac <<- as.numeric(trimws(tclvalue(minFrac)))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -210,13 +210,13 @@ getParams.HomogAdjust <- function(Parameters, label = "Day",
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$min.mon <<- as.numeric(str_trim(tclvalue(min.mon)))
-        Parameters$min.dek <<- as.numeric(str_trim(tclvalue(min.dek)))
-        Parameters$min.dyp <<- as.numeric(str_trim(tclvalue(min.dyp)))
+        Parameters$min.mon <<- as.numeric(trimws(tclvalue(min.mon)))
+        Parameters$min.dek <<- as.numeric(trimws(tclvalue(min.dek)))
+        Parameters$min.dyp <<- as.numeric(trimws(tclvalue(min.dyp)))
 
-        Parameters$seg.mon <<- as.numeric(str_trim(tclvalue(seg.mon)))
-        Parameters$seg.dek <<- as.numeric(str_trim(tclvalue(seg.dek)))
-        Parameters$seg.dyp <<- as.numeric(str_trim(tclvalue(seg.dyp)))
+        Parameters$seg.mon <<- as.numeric(trimws(tclvalue(seg.mon)))
+        Parameters$seg.dek <<- as.numeric(trimws(tclvalue(seg.dek)))
+        Parameters$seg.dyp <<- as.numeric(trimws(tclvalue(seg.dyp)))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -508,19 +508,19 @@ getParams.HomoRefSeries <- function(Parameters, parent.win = .cdtEnv$tcl$main$wi
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$diff.ratio <<- as.numeric(str_trim(tclvalue(diff.ratio)))
-        Parameters$weight <<- as.numeric(str_trim(tclvalue(weight.fac)))
+        Parameters$diff.ratio <<- as.numeric(trimws(tclvalue(diff.ratio)))
+        Parameters$weight <<- as.numeric(trimws(tclvalue(weight.fac)))
         Parameters$use.climato <<- switch(tclvalue(use.climato), '0' = FALSE, '1' = TRUE)
 
-        Parameters$voisin$min <<- as.numeric(str_trim(tclvalue(min.nbrs)))
-        Parameters$voisin$max <<- as.numeric(str_trim(tclvalue(max.nbrs)))
-        Parameters$voisin$dist <<- as.numeric(str_trim(tclvalue(max.dst)))
-        Parameters$voisin$elv <<- as.numeric(str_trim(tclvalue(elv.diff)))
-        Parameters$voisin$rho <<- as.numeric(str_trim(tclvalue(min.rho)))
+        Parameters$voisin$min <<- as.numeric(trimws(tclvalue(min.nbrs)))
+        Parameters$voisin$max <<- as.numeric(trimws(tclvalue(max.nbrs)))
+        Parameters$voisin$dist <<- as.numeric(trimws(tclvalue(max.dst)))
+        Parameters$voisin$elv <<- as.numeric(trimws(tclvalue(elv.diff)))
+        Parameters$voisin$rho <<- as.numeric(trimws(tclvalue(min.rho)))
 
         Parameters$elv$use <<- switch(tclvalue(use.elev), '0' = FALSE, '1' = TRUE)
         Parameters$user$refs <<- switch(tclvalue(user.ref), '0' = FALSE, '1' = TRUE)
-        Parameters$user$file <<- str_trim(tclvalue(user.file))
+        Parameters$user$file <<- trimws(tclvalue(user.file))
 
         tkgrab.release(tt)
         tkdestroy(tt)

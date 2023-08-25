@@ -116,12 +116,12 @@ CPT.getInfoNetcdfData <- function(parent.win, Parameters, ncDIR){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(rfesample)) == ""){
+        if(trimws(tclvalue(rfesample)) == ""){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt1)
         }else{
-            Parameters$format <<- str_trim(tclvalue(inrfeff))
-            Parameters$sample <<- str_trim(tclvalue(rfesample))
+            Parameters$format <<- trimws(tclvalue(inrfeff))
+            Parameters$sample <<- trimws(tclvalue(rfesample))
 
             tkgrab.release(tt1)
             tkdestroy(tt1)

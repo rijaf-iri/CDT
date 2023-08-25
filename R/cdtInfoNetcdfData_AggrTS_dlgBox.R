@@ -86,12 +86,12 @@ AggregateTS_ncdfData <- function(parent.win, ncDIR,
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(rfesample)) == ""){
+        if(trimws(tclvalue(rfesample)) == ""){
             cdt.tkmessageBox(tt1, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt1)
         }else{
-            .cdtData$GalParams$cdtnetcdf$format <- str_trim(tclvalue(inrfeff))
-            .cdtData$GalParams$cdtnetcdf$sample <- str_trim(tclvalue(rfesample))
+            .cdtData$GalParams$cdtnetcdf$format <- trimws(tclvalue(inrfeff))
+            .cdtData$GalParams$cdtnetcdf$sample <- trimws(tclvalue(rfesample))
 
             lenS <- length(gregexpr('%s', .cdtData$GalParams$cdtnetcdf$format)[[1]])
             if( (tstep == TSTEPVAL0[1] & lenS != 5) |

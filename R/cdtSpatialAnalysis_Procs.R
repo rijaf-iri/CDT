@@ -478,12 +478,12 @@ spatialAnalysisProcs <- function(GeneralParameters){
         iorder <- AggrData$colInfo$order
         nx <- length(lon)
         ny <- length(lat)
-        dx <- ncdim_def("Lon", "degreeE", lon)
-        dy <- ncdim_def("Lat", "degreeN", lat)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", lon)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", lat)
         xy.dim <- list(dx, dy)
 
         if(analysis$method != "anomaly"){
-            grdNA <- ncvar_def("nonNA", "", xy.dim, NA, longname = "Fraction of the available data", prec = "float", compression = 9)
+            grdNA <- ncdf4::ncvar_def("nonNA", "", xy.dim, NA, longname = "Fraction of the available data", prec = "float", compression = 9)
 
             if(analysis$method == "trend"){
                 if(pars.trend$unit == 1)
@@ -493,10 +493,10 @@ spatialAnalysisProcs <- function(GeneralParameters){
                 if(pars.trend$unit == 3)
                     trend.longname <- "change or trend/average (in %)"
 
-                grd.slp <- ncvar_def("trend", "", xy.dim, NA, longname = trend.longname, prec = "float", compression = 9)
-                grd.std.slp <- ncvar_def("std.slope", "", xy.dim, NA, longname = "Slope error", prec = "float", compression = 9)
-                grd.pvalue <- ncvar_def("pvalue", "", xy.dim, NA, longname = "P-value", prec = "float", compression = 9)
-                grd.r2 <- ncvar_def("r2", "", xy.dim, NA, longname = "Coefficient of determination R2", prec = "float", compression = 9)
+                grd.slp <- ncdf4::ncvar_def("trend", "", xy.dim, NA, longname = trend.longname, prec = "float", compression = 9)
+                grd.std.slp <- ncdf4::ncvar_def("std.slope", "", xy.dim, NA, longname = "Slope error", prec = "float", compression = 9)
+                grd.pvalue <- ncdf4::ncvar_def("pvalue", "", xy.dim, NA, longname = "P-value", prec = "float", compression = 9)
+                grd.r2 <- ncdf4::ncvar_def("r2", "", xy.dim, NA, longname = "Coefficient of determination R2", prec = "float", compression = 9)
 
                 out.vars <- list(grd.slp, grd.std.slp, grd.pvalue, grd.r2, grdNA)
             }else{
@@ -525,7 +525,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
                     longname.mon <- "Frequency, number of event every 10 years"
                 }
  
-                grdOut <- ncvar_def(nc.var, "", xy.dim, NA, longname = longname.mon, prec = "float", compression = 9)
+                grdOut <- ncdf4::ncvar_def(nc.var, "", xy.dim, NA, longname = longname.mon, prec = "float", compression = 9)
 
                 out.vars <- list(grdOut, grdNA)
             }
@@ -547,7 +547,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
 
                 outAna.dates[jj] <- dateAna
                 outfile <- file.path(outAnaDIR, paste0(analysis$method, "_", dateAna, ".nc"))
-                nc <- nc_create(outfile, out.vars)
+                nc <- ncdf4::nc_create(outfile, out.vars)
                 if(analysis$method == "trend"){
                     mat.slp <- as.numeric(AnalysData[[jj]][1, ])
                     mat.slp <- matrix(mat.slp[iorder], ncol = ny, nrow = nx)
@@ -560,26 +560,26 @@ spatialAnalysisProcs <- function(GeneralParameters){
                     mat.na <- as.numeric(AggrNA[[jj]])
                     mat.na <- matrix(mat.na[iorder], ncol = ny, nrow = nx)
                     
-                    ncvar_put(nc, out.vars[[1]], mat.slp)
-                    ncvar_put(nc, out.vars[[2]], mat.std.slp)
-                    ncvar_put(nc, out.vars[[3]], mat.pval)
-                    ncvar_put(nc, out.vars[[4]], mat.r2)
-                    ncvar_put(nc, out.vars[[5]], mat.na)
+                    ncdf4::ncvar_put(nc, out.vars[[1]], mat.slp)
+                    ncdf4::ncvar_put(nc, out.vars[[2]], mat.std.slp)
+                    ncdf4::ncvar_put(nc, out.vars[[3]], mat.pval)
+                    ncdf4::ncvar_put(nc, out.vars[[4]], mat.r2)
+                    ncdf4::ncvar_put(nc, out.vars[[5]], mat.na)
                 }else{
                     mat.out <- as.numeric(AnalysData[jj, ])
                     mat.out <- matrix(mat.out[iorder], ncol = ny, nrow = nx)
                     mat.na <- as.numeric(AggrNA[[jj]])
                     mat.na <- matrix(mat.na[iorder], ncol = ny, nrow = nx)
-                    ncvar_put(nc, out.vars[[1]], mat.out)
-                    ncvar_put(nc, out.vars[[2]], mat.na)
+                    ncdf4::ncvar_put(nc, out.vars[[1]], mat.out)
+                    ncdf4::ncvar_put(nc, out.vars[[2]], mat.na)
                 }
-                nc_close(nc)
+                ncdf4::nc_close(nc)
             }
         }
 
         if(analysis$method == "anomaly"){
             longname <- paste("Anomaly", if(pars.anom$perc) "in percentage of mean" else NULL)
-            grdAnom <- ncvar_def("anom", "", xy.dim, NA, longname = longname, prec = "float", compression = 9)
+            grdAnom <- ncdf4::ncvar_def("anom", "", xy.dim, NA, longname = longname, prec = "float", compression = 9)
             for(jj in seq_along(ixm)){
                 tsdaty <- odaty[[jj]]
                 AnalysData <- readCdtDatasetChunk.sepdir.dates.order(AggrData$file, outChunkAnom, tsdaty, cdtParallelCond)
@@ -599,9 +599,9 @@ spatialAnalysisProcs <- function(GeneralParameters){
 
                     outTSdaty[ii] <- dateTS
                     outfile <- file.path(outAnaDIR, paste0(analysis$method, "_", dateTS, ".nc"))
-                    nc <- nc_create(outfile, grdAnom)
-                    ncvar_put(nc, grdAnom, matrix(as.numeric(AnalysData[ii, ]), ncol = ny, nrow = nx))
-                    nc_close(nc)
+                    nc <- ncdf4::nc_create(outfile, grdAnom)
+                    ncdf4::ncvar_put(nc, grdAnom, matrix(as.numeric(AnalysData[ii, ]), ncol = ny, nrow = nx))
+                    ncdf4::nc_close(nc)
                 }
 
                 #####
@@ -625,7 +625,7 @@ spatialAnalysisProcs <- function(GeneralParameters){
 
         ## Time series
         if(!notAggr & aggregatData){
-            grdTS <- ncvar_def("ts", "", xy.dim, NA, longname = "Time series", prec = "float", compression = 9)
+            grdTS <- ncdf4::ncvar_def("ts", "", xy.dim, NA, longname = "Time series", prec = "float", compression = 9)
 
             for(jj in seq_along(ixm)){
                 tsdaty <- odaty[[jj]]
@@ -646,9 +646,9 @@ spatialAnalysisProcs <- function(GeneralParameters){
 
                     outTSdaty[ii] <- dateTS
                     outfile <- file.path(outTSDIR, paste0("outTS", "_", dateTS, ".nc"))
-                    nc <- nc_create(outfile, grdTS)
-                    ncvar_put(nc, grdTS, matrix(as.numeric(aggrdatTS[ii, ]), ncol = ny, nrow = nx))
-                    nc_close(nc)
+                    nc <- ncdf4::nc_create(outfile, grdTS)
+                    ncdf4::ncvar_put(nc, grdTS, matrix(as.numeric(aggrdatTS[ii, ]), ncol = ny, nrow = nx))
+                    ncdf4::nc_close(nc)
                 }
                 outTS.dates[[jj]] <- list(outAna.dates[jj], outTSdaty)
             }

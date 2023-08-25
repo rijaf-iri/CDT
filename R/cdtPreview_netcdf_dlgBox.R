@@ -22,7 +22,7 @@ preview.data.nc <- function(parent.win, openncf){
 
     ####################################
 
-    nc <- try(nc_open(openncf), silent = TRUE)
+    nc <- try(ncdf4::nc_open(openncf), silent = TRUE)
     if(inherits(nc, "try-error")){
         Insert.Messages.Out(paste(lang.dlg[['message']][['1']], openncf), format = TRUE)
         tkgrab.release(tt)
@@ -139,10 +139,10 @@ preview.data.nc <- function(parent.win, openncf){
 
     retval <- NULL
     tkconfigure(OK.but, command = function(){
-        if(str_trim(tclvalue(X.dim)) == ""){
+        if(trimws(tclvalue(X.dim)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(Y.dim)) == ""){
+        }else if(trimws(tclvalue(Y.dim)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
@@ -152,15 +152,15 @@ preview.data.nc <- function(parent.win, openncf){
                 v.ndims <- var.info[ivar, 2]
                 d.dim.info <- var.dim.info[[ivar]][1:v.ndims, , drop = FALSE]
                 d.dim <- var.dim.info[[ivar]][1:v.ndims, 1]
-                idx <- which(d.dim == str_trim(tclvalue(X.dim)))
-                idy <- which(d.dim == str_trim(tclvalue(Y.dim)))
+                idx <- which(d.dim == trimws(tclvalue(X.dim)))
+                idy <- which(d.dim == trimws(tclvalue(Y.dim)))
                 lon <- var.dim.val[[ivar]][[idx]]
                 lat <- var.dim.val[[ivar]][[idy]]
                 varid <- as.character(var.info[ivar, 1])
 
                 d.dim.info <- d.dim.info[c(idx, idy), , drop = FALSE]
 
-                dat <- ncvar_get(nc, varid = varid)
+                dat <- ncdf4::ncvar_get(nc, varid = varid)
                 varinfo <- nc$var[[varid]][c('name', 'prec', 'units', 'longname', 'missval')]
 
                 xo <- order(lon)
@@ -182,7 +182,7 @@ preview.data.nc <- function(parent.win, openncf){
             tkgrab.release(tt)
             tkdestroy(tt)
             tkfocus(parent.win)
-            nc_close(nc)
+            ncdf4::nc_close(nc)
         }
     })
 
@@ -191,7 +191,7 @@ preview.data.nc <- function(parent.win, openncf){
         tkgrab.release(tt)
         tkdestroy(tt)
         tkfocus(parent.win)
-        nc_close(nc)
+        ncdf4::nc_close(nc)
     })
 
     #####

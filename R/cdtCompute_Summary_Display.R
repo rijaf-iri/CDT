@@ -19,23 +19,23 @@ SummaryData.Initial.Map <- function(){
         ylim <- range(range(don$y, na.rm = TRUE), range(ocrds[, 2], na.rm = TRUE))
     }
 
-    opar <- par(mar = c(4, 4, 2.5, 2.5))
+    opar <- graphics::par(mar = c(4, 4, 2.5, 2.5))
     plot(1, xlim = xlim, ylim = ylim, xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
-    axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
-    axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 1.0)
-    axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
+    axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
+    graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 1.0)
+    graphics::axis(side = 2, at = graphics::axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
 
     if(.cdtData$EnvData$plot.maps$data.type == "cdtstation")
-        image(don, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
+        graphics::image(don, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
     else
-        .filled.contour(don$x, don$y, don$z, levels = breaks, col = kolor)
+        graphics::.filled.contour(don$x, don$y, don$z, levels = breaks, col = kolor)
 
-    abline(h = axTicks(2), v = axTicks(1), col = "lightgray", lty = 3)
-    lines(ocrds[, 1], ocrds[, 2], lwd = .cdtData$EnvData$SHPOp$lwd, col = .cdtData$EnvData$SHPOp$col)
+    graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1), col = "lightgray", lty = 3)
+    graphics::lines(ocrds[, 1], ocrds[, 2], lwd = .cdtData$EnvData$SHPOp$lwd, col = .cdtData$EnvData$SHPOp$col)
 
-    plt <- par("plt")
-    usr <- par("usr")
-    par(opar)
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(opar)
     return(list(par = c(plt, usr)))
 }
 
@@ -43,7 +43,7 @@ SummaryData.Initial.Map <- function(){
 
 SummaryData.Plot.Graph <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['10']], TRUE, 'e')
             return(NULL)
@@ -55,8 +55,8 @@ SummaryData.Plot.Graph <- function(){
     }else{
         cdtdataset <- .cdtData$EnvData$output$data
         fileInfo <- .cdtData$EnvData$output$index.file
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(cdtdataset, fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         stn <- "Pixel"
@@ -150,7 +150,7 @@ SummaryData.Display.Map <- function(){
 
 SummaryData.Get.Table <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['10']], TRUE, 'e')
             return(NULL)
@@ -161,8 +161,8 @@ SummaryData.Get.Table <- function(){
     }else{
         cdtdataset <- .cdtData$EnvData$output$data
         fileInfo <- .cdtData$EnvData$output$index.file
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(cdtdataset, fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         stn <- "Pixel"
@@ -186,8 +186,8 @@ SummaryData.Get.Table <- function(){
     mdon <- cbind(mdon, adon)
     mdon <- round(mdon, 4)
 
-    std <- sapply(index, function(ix) sd(don[ix], na.rm = TRUE))
-    std <- c(std, sd(don, na.rm = TRUE))
+    std <- sapply(index, function(ix) stats::sd(don[ix], na.rm = TRUE))
+    std <- c(std, stats::sd(don, na.rm = TRUE))
     std <- round(std, 4)
 
     mdon <- rbind(mdon[1:6, ], std, mdon[7, ])

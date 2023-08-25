@@ -40,14 +40,14 @@ download_CountryShapefile <- function(){
     cbRegionVAL <- c("Africa", "Asia", "America")
     tclvalue(region) <- cbRegionTXT[cbRegionVAL %in% .cdtData$GalParams$region]
 
-    cbCountry <- str_trim(cntr$NAME_0[cntr$REG %in% .cdtData$GalParams$region])
+    cbCountry <- trimws(cntr$NAME_0[cntr$REG %in% .cdtData$GalParams$region])
     country <- tclVar(.cdtData$GalParams$country)
 
-    selCntr <- cntr[cntr$NAME_0 %in% str_trim(tclvalue(country)), , drop = FALSE]
+    selCntr <- cntr[cntr$NAME_0 %in% trimws(tclvalue(country)), , drop = FALSE]
     cbLevel <- 0:(selCntr$max_lev - 1)
     level_sub <- tclVar(.cdtData$GalParams$level)
 
-    ilev <- as.numeric(str_trim(tclvalue(level_sub)))
+    ilev <- as.numeric(trimws(tclvalue(level_sub)))
     if(ilev > 0){
         type_sub <- as.character(selCntr[1, paste0("TYPE_", ilev)])
         entype_sub <- as.character(selCntr[1, paste0("ENGTYPE_", ilev)])
@@ -82,14 +82,14 @@ download_CountryShapefile <- function(){
 
     ###
     tkbind(cb.reg, "<<ComboboxSelected>>", function(){
-        reg <- cbRegionVAL[cbRegionTXT %in% str_trim(tclvalue(region))]
-        cbCountry <- str_trim(cntr$NAME_0[cntr$REG %in% reg])
+        reg <- cbRegionVAL[cbRegionTXT %in% trimws(tclvalue(region))]
+        cbCountry <- trimws(cntr$NAME_0[cntr$REG %in% reg])
 
         tkconfigure(cb.cntr, values = cbCountry)
-        if(!any(cbCountry %in% str_trim(tclvalue(country))))
+        if(!any(cbCountry %in% trimws(tclvalue(country))))
             tclvalue(country) <- cbCountry[1]
 
-        selLevel <- cntr[cntr$NAME_0 %in% str_trim(tclvalue(country)), "max_lev"]
+        selLevel <- cntr[cntr$NAME_0 %in% trimws(tclvalue(country)), "max_lev"]
         cbLevel <- 0:(selLevel - 1)
         tkconfigure(cb.lev, values = cbLevel)
         tclvalue(level_sub) <- 0
@@ -98,7 +98,7 @@ download_CountryShapefile <- function(){
     })
 
     tkbind(cb.cntr, "<<ComboboxSelected>>", function(){
-        selLevel <- cntr[cntr$NAME_0 %in% str_trim(tclvalue(country)), "max_lev"]
+        selLevel <- cntr[cntr$NAME_0 %in% trimws(tclvalue(country)), "max_lev"]
         cbLevel <- 0:(selLevel - 1)
         tkconfigure(cb.lev, values = cbLevel)
         tclvalue(level_sub) <- 0
@@ -107,8 +107,8 @@ download_CountryShapefile <- function(){
     })
 
     tkbind(cb.lev, "<<ComboboxSelected>>", function(){
-        selCntr <- cntr[cntr$NAME_0 %in% str_trim(tclvalue(country)), , drop = FALSE]
-        ilev <- as.numeric(str_trim(tclvalue(level_sub)))
+        selCntr <- cntr[cntr$NAME_0 %in% trimws(tclvalue(country)), , drop = FALSE]
+        ilev <- as.numeric(trimws(tclvalue(level_sub)))
         if(ilev > 0){
             tclvalue(level_type) <- as.character(selCntr[1, paste0("TYPE_", ilev)])
             tclvalue(level_entype) <- as.character(selCntr[1, paste0("ENGTYPE_", ilev)])
@@ -158,7 +158,7 @@ download_CountryShapefile <- function(){
     btCA <- ttkbutton(frGrd1, text = lang.dlg[['button']][['2']])
 
     tkconfigure(btOK, command = function(){
-        if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
@@ -167,14 +167,14 @@ download_CountryShapefile <- function(){
             tkfocus(.cdtEnv$tcl$main$win)
             tcl('update')
 
-            .cdtData$GalParams$version <- str_trim(tclvalue(gadm_ver))
+            .cdtData$GalParams$version <- trimws(tclvalue(gadm_ver))
 
-            .cdtData$GalParams$dir2save <- str_trim(tclvalue(dir2save))
-            .cdtData$GalParams$region <- cbRegionVAL[cbRegionTXT %in% str_trim(tclvalue(region))]
-            .cdtData$GalParams$country <- str_trim(tclvalue(country))
-            .cdtData$GalParams$level <- as.numeric(str_trim(tclvalue(level_sub)))
+            .cdtData$GalParams$dir2save <- trimws(tclvalue(dir2save))
+            .cdtData$GalParams$region <- cbRegionVAL[cbRegionTXT %in% trimws(tclvalue(region))]
+            .cdtData$GalParams$country <- trimws(tclvalue(country))
+            .cdtData$GalParams$level <- as.numeric(trimws(tclvalue(level_sub)))
             
-            cntr_iso <- as.character(cntr[cntr$NAME_0 %in% str_trim(tclvalue(country)), "GID_0"])
+            cntr_iso <- as.character(cntr[cntr$NAME_0 %in% trimws(tclvalue(country)), "GID_0"])
             .cdtData$GalParams$cntr_iso3 <- cntr_iso
             .cdtData$GalParams$message <- lang.dlg[['message']]
 

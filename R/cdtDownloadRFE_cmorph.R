@@ -22,7 +22,7 @@ cmorph_raw.download.iridl <- function(GalParams, nbfile = 3, GUI = TRUE, verbose
         rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range, GalParams$minhour)
         mois <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
                   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
-        endh <- str_pad(as.numeric(rdate[, 4]) + GalParams$minhour, 2, pad = "0")
+        endh <- stringr::str_pad(as.numeric(rdate[, 4]) + GalParams$minhour, 2, pad = "0")
         hours <- paste0(paste0(rdate[, 4], "00"), "-", paste0(endh, "00"))
         date.out <- paste0(rdate[, 1], rdate[, 2], rdate[, 3], rdate[, 4])
         rdate <- paste(hours, rdate[, 3], mois[as.numeric(rdate[, 2])], rdate[, 1])

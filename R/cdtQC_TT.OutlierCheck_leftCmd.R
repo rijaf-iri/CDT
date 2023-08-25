@@ -227,10 +227,10 @@ qcTTOutlierCheckPanelCmd <- function(){
         bt.doQC <- ttkbutton(subfr1, text = lang.dlg[['button']][['2']])
 
         tkconfigure(bt.doQC, command = function(){
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            GeneralParameters$infile1 <- str_trim(tclvalue(input.file1))
-            GeneralParameters$infile2 <- str_trim(tclvalue(input.file2))
-            GeneralParameters$outdir <- str_trim(tclvalue(dir.save))
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            GeneralParameters$infile1 <- trimws(tclvalue(input.file1))
+            GeneralParameters$infile2 <- trimws(tclvalue(input.file2))
+            GeneralParameters$outdir <- trimws(tclvalue(dir.save))
             GeneralParameters$qc.tmax <- switch(tclvalue(vartxtn), '0' = FALSE, '1' = TRUE)
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
@@ -316,8 +316,8 @@ qcTTOutlierCheckPanelCmd <- function(){
             if(path.dataIdx %in% c("", "NA") | is.na(path.dataIdx)) return(NULL)
             tclvalue(file.dataIndex) <- path.dataIdx
 
-            if(file.exists(str_trim(tclvalue(file.dataIndex)))){
-                OutQC <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.dataIndex)))){
+                OutQC <- try(readRDS(trimws(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutQC, "try-error")){
                     Insert.Messages.Out(gsub('[\r\n]', '', OutQC[1]), format = TRUE)
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "e")
@@ -329,7 +329,7 @@ qcTTOutlierCheckPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutQC
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
 
                 ###############
                 file.checkd <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', "QCResults.rds")
@@ -393,7 +393,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         tkconfigure(bt.stnID.prev, command = function(){
             if(!is.null(.cdtData$EnvData$outqc)){
                 STNID <- .cdtData$EnvData$outqc$stn
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$STN$stnID)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(STNID)
                 tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[istn]
@@ -406,7 +406,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         tkconfigure(bt.stnID.next, command = function(){
             if(!is.null(.cdtData$EnvData$outqc)){
                 STNID <- .cdtData$EnvData$outqc$stn
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$STN$stnID)))
                 istn <- istn + 1
                 if(istn > length(STNID)) istn <- 1
                 tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[istn]
@@ -428,7 +428,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         .cdtData$EnvData$tab$TableStat <- NULL
 
         tkconfigure(bt.display.QC, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             donQCstat <- .cdtData$EnvData$outqc$res[[stnid]]$outliers
             tab.title <- paste0(stnid, "QC-Output")
@@ -482,12 +482,12 @@ qcTTOutlierCheckPanelCmd <- function(){
         .cdtData$EnvData$tab$PlotMon <- NULL
 
         tkconfigure(bt.Mon.prev, command = function(){
-            imois <- which(MOIS == str_trim(tclvalue(.cdtData$EnvData$STN$month)))
+            imois <- which(MOIS == trimws(tclvalue(.cdtData$EnvData$STN$month)))
             imois <- imois - 1
             if(imois < 1) imois <- 12
             tclvalue(.cdtData$EnvData$STN$month) <- MOIS[imois]
 
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             tab.title <- paste0(stnid, "-Outliers")
 
@@ -496,12 +496,12 @@ qcTTOutlierCheckPanelCmd <- function(){
         })
 
         tkconfigure(bt.Mon.next, command = function(){
-            imois <- which(MOIS == str_trim(tclvalue(.cdtData$EnvData$STN$month)))
+            imois <- which(MOIS == trimws(tclvalue(.cdtData$EnvData$STN$month)))
             imois <- imois + 1
             if(imois > 12) imois <- 1
             tclvalue(.cdtData$EnvData$STN$month) <- MOIS[imois]
 
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             tab.title <- paste0(stnid, "-Outliers")
 
@@ -510,7 +510,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         })
 
         tkconfigure(bt.Mon, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             tab.title <- paste0(stnid, "-Outliers")
 
@@ -554,9 +554,9 @@ qcTTOutlierCheckPanelCmd <- function(){
         .cdtData$EnvData$tab$spoutliers <- NULL
 
         tkconfigure(bt.QCSP.prev, command = function(){
-            idaty <- str_trim(tclvalue(.cdtData$EnvData$STN$dateSP))
+            idaty <- trimws(tclvalue(.cdtData$EnvData$STN$dateSP))
             if(idaty == "") return(NULL)
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
 
             dateSP <- .cdtData$EnvData$outqc$res[[stnid]]$date
@@ -571,9 +571,9 @@ qcTTOutlierCheckPanelCmd <- function(){
         })
 
         tkconfigure(bt.QCSP.next, command = function(){
-            idaty <- str_trim(tclvalue(.cdtData$EnvData$STN$dateSP))
+            idaty <- trimws(tclvalue(.cdtData$EnvData$STN$dateSP))
             if(idaty == "") return(NULL)
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
 
             dateSP <- .cdtData$EnvData$outqc$res[[stnid]]$date
@@ -588,9 +588,9 @@ qcTTOutlierCheckPanelCmd <- function(){
         })
 
         tkconfigure(bt.QCSP.plot, command = function(){
-            idaty <- str_trim(tclvalue(.cdtData$EnvData$STN$dateSP))
+            idaty <- trimws(tclvalue(.cdtData$EnvData$STN$dateSP))
             if(idaty == "") return(NULL)
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
 
             tab.title <- paste0(stnid, "-Spatial.Check")
@@ -610,13 +610,13 @@ qcTTOutlierCheckPanelCmd <- function(){
             info <- .cdtData$EnvData$output$info[[3]]
 
             file.stn <- file.path(.cdtData$EnvData$PathData, 'CDTSTATIONS', .cdtData$EnvData$output$info[[1]])
-            tmp <- read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
+            tmp <- utils::read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
 
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             istn <- which(.cdtData$EnvData$stn.data$id == stnid) + 1
             outliers <- .cdtData$EnvData$outqc$res[[stnid]]$outliers
 
-            daty <- str_trim(as.character(outliers$DATE))
+            daty <- trimws(as.character(outliers$DATE))
             nonNA <- !is.na(daty) & daty != ""
             outliers <- outliers[nonNA, , drop = FALSE]
             daty <- daty[nonNA]
@@ -633,7 +633,7 @@ qcTTOutlierCheckPanelCmd <- function(){
             stn.val[nna] <- to.replace[nna]
             tmp[idaty, istn] <- stn.val
 
-            write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
+            utils::write.table(tmp, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
             rm(tmp); gc()
             Insert.Messages.Out(paste(stnid, ':',  lang.dlg[['message']][['10']]), TRUE, "s")
         })
@@ -674,7 +674,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         tkconfigure(bt.EqstnID.prev, command = function(){
             if(!is.null(.cdtData$EnvData$outqc$equal)){
                 STNID <- .cdtData$EnvData$outqc$equal$stn
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$EQL$STN$stnID)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(STNID)
                 tclvalue(.cdtData$EnvData$EQL$STN$stnID) <- STNID[istn]
@@ -684,7 +684,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         tkconfigure(bt.EqstnID.next, command = function(){
             if(!is.null(.cdtData$EnvData$outqc$equal)){
                 STNID <- .cdtData$EnvData$outqc$equal$stn
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$EQL$STN$stnID)))
                 istn <- istn + 1
                 if(istn > length(STNID)) istn <- 1
                 tclvalue(.cdtData$EnvData$EQL$STN$stnID) <- STNID[istn]
@@ -695,7 +695,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         .cdtData$EnvData$tab$TableEQL <- NULL
 
         tkconfigure(bt.display.EQL, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$EQL$STN$stnID))
             if(stnid == "") return(NULL)
             donEQL <- .cdtData$EnvData$outqc$equal$res[[stnid]]$tab
             tab.title <- paste0(stnid, "-Data-Invalid")
@@ -720,7 +720,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         #####
         tkconfigure(bt.replace.EQL, command = function(){
             if(is.null(.cdtData$EnvData$outqc)) return(NULL)
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$EQL$STN$stnID))
             if(stnid == "") return(NULL)
             tmpqc <- .cdtData$EnvData$outqc$equal$res[[stnid]]$tab
 
@@ -730,9 +730,9 @@ qcTTOutlierCheckPanelCmd <- function(){
             info <- .cdtData$EnvData$output$info[[3]]
 
             file.stn <- file.path(.cdtData$EnvData$PathData, 'CDTSTATIONS', .cdtData$EnvData$output$info[[1]])
-            tmpstn <- read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
+            tmpstn <- utils::read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
 
-            daty <- str_trim(as.character(tmpqc$DATE))
+            daty <- trimws(as.character(tmpqc$DATE))
             nonNA <- !is.na(daty) & daty != ""
             tmpqc <- tmpqc[nonNA, , drop = FALSE]
             daty <- daty[nonNA]
@@ -747,7 +747,7 @@ qcTTOutlierCheckPanelCmd <- function(){
             stn.val[nna] <- to.replace[nna]
             tmpstn[idaty, istn] <- stn.val
 
-            write.table(tmpstn, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
+            utils::write.table(tmpstn, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
             rm(tmpstn); gc()
             Insert.Messages.Out(paste(stnid, ':',  lang.dlg[['message']][['10']]), TRUE, "s")
         })
@@ -775,7 +775,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         tkconfigure(bt.SqstnID.prev, command = function(){
             if(!is.null(.cdtData$EnvData$outqc$sequence)){
                 STNID <- .cdtData$EnvData$outqc$sequence$stn
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$SEQ$STN$stnID)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(STNID)
                 tclvalue(.cdtData$EnvData$SEQ$STN$stnID) <- STNID[istn]
@@ -785,7 +785,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         tkconfigure(bt.SqstnID.next, command = function(){
             if(!is.null(.cdtData$EnvData$outqc$sequence)){
                 STNID <- .cdtData$EnvData$outqc$sequence$stn
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$SEQ$STN$stnID)))
                 istn <- istn + 1
                 if(istn > length(STNID)) istn <- 1
                 tclvalue(.cdtData$EnvData$SEQ$STN$stnID) <- STNID[istn]
@@ -796,7 +796,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         .cdtData$EnvData$tab$TableSEQ <- NULL
 
         tkconfigure(bt.display.SEQ, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
             if(stnid == "") return(NULL)
             donSEQ <- .cdtData$EnvData$outqc$sequence$res[[stnid]]$tab
             tab.title <- paste0(stnid, "-Data-Invalid")
@@ -821,7 +821,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         #####
         tkconfigure(bt.replace.SEQ, command = function(){
             if(is.null(.cdtData$EnvData$outqc)) return(NULL)
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
             if(stnid == "") return(NULL)
             tmpqc <- .cdtData$EnvData$outqc$sequence$res[[stnid]]$tab
 
@@ -831,9 +831,9 @@ qcTTOutlierCheckPanelCmd <- function(){
             info <- .cdtData$EnvData$output$info[[3]]
 
             file.stn <- file.path(.cdtData$EnvData$PathData, 'CDTSTATIONS', .cdtData$EnvData$output$info[[1]])
-            tmpstn <- read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
+            tmpstn <- utils::read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
 
-            daty <- str_trim(as.character(tmpqc$DATE))
+            daty <- trimws(as.character(tmpqc$DATE))
             nonNA <- !is.na(daty) & daty != ""
             tmpqc <- tmpqc[nonNA, , drop = FALSE]
             daty <- daty[nonNA]
@@ -848,7 +848,7 @@ qcTTOutlierCheckPanelCmd <- function(){
             stn.val[nna] <- to.replace[nna]
             tmpstn[idaty, istn] <- stn.val
 
-            write.table(tmpstn, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
+            utils::write.table(tmpstn, file.stn, sep = info$sepr, na = info$miss.val, row.names = FALSE, col.names = FALSE, quote = FALSE)
             rm(tmpstn); gc()
             Insert.Messages.Out(paste(stnid, ':',  lang.dlg[['message']][['10']]), TRUE, "s")
         })
@@ -964,7 +964,7 @@ qcTTOutlierCheckPanelCmd <- function(){
 
         initXYval0 <- NA
         initializeButZoom <- function(){
-            initXYval0 <<- str_trim(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
+            initXYval0 <<- trimws(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
                                     tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
 
             tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
@@ -979,7 +979,7 @@ qcTTOutlierCheckPanelCmd <- function(){
         }
 
         activateButRedraw <- function(){
-            initXYval1 <- str_trim(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
+            initXYval1 <- trimws(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
                                     tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
             if(!all(initXYval0 == initXYval1)) tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'red')
         }
@@ -1173,13 +1173,13 @@ qcTTOutlierCheckPanelCmd <- function(){
                 tclvalue(file.plotDem) <- nc.opfiles[[1]]
                 tkconfigure(cb.adddem, values = unlist(listOpenFiles))
 
-                demInfo <- getNCDFSampleData(str_trim(tclvalue(file.plotDem)))
+                demInfo <- getNCDFSampleData(trimws(tclvalue(file.plotDem)))
                 if(is.null(demInfo)){
                     Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
                     tclvalue(file.plotDem) <- ""
                     .cdtData$EnvData$dem$dem <- NULL
                 }else{
-                    jfile <- getIndex.AllOpenFiles(str_trim(tclvalue(file.plotDem)))
+                    jfile <- getIndex.AllOpenFiles(trimws(tclvalue(file.plotDem)))
                     ncdata <- .cdtData$OpenFiles$Data[[jfile]][[2]]
                     .cdtData$EnvData$dem$dem <- ncdata[c('x', 'y', 'z')]
                 }
@@ -1202,12 +1202,12 @@ qcTTOutlierCheckPanelCmd <- function(){
 
         ########
         tkbind(cb.adddem, "<<ComboboxSelected>>", function(){
-            demInfo <- getNCDFSampleData(str_trim(tclvalue(file.plotDem)))
+            demInfo <- getNCDFSampleData(trimws(tclvalue(file.plotDem)))
             if(is.null(demInfo)){
                 Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
                 .cdtData$EnvData$dem$dem <- NULL
             }else{
-                jfile <- getIndex.AllOpenFiles(str_trim(tclvalue(file.plotDem)))
+                jfile <- getIndex.AllOpenFiles(trimws(tclvalue(file.plotDem)))
                 ncdata <- .cdtData$OpenFiles$Data[[jfile]][[2]]
                 .cdtData$EnvData$dem$dem <- ncdata[c('x', 'y', 'z')]
             }
@@ -1249,7 +1249,7 @@ qcTTOutlierCheckPanelCmd <- function(){
             dirnc <- tk_choose.dir(getwd(), "")
             tclvalue(dir.plotSat) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
 
-            .cdtData$EnvData$sat$dir <- str_trim(tclvalue(dir.plotSat))
+            .cdtData$EnvData$sat$dir <- trimws(tclvalue(dir.plotSat))
         })
 
         tkconfigure(bt.addSatSet, command = function(){
@@ -1259,7 +1259,7 @@ qcTTOutlierCheckPanelCmd <- function(){
             timeSteps <- if(is.null(tstep)) TSTEPVAL0[1] else TSTEPVAL0[periodVAL %in% tstep]
 
             .cdtData$EnvData$sat <- getInfoNetCDFData(.cdtEnv$tcl$main$win, .cdtData$EnvData$sat,
-                                                      str_trim(tclvalue(dir.plotSat)))
+                                                      trimws(tclvalue(dir.plotSat)))
 
             sdon <- getNCDFSampleData(.cdtData$EnvData$sat$sample)
             if(is.null(sdon)){
@@ -1332,7 +1332,7 @@ qcTTOutlierCheckPanelCmd <- function(){
     }
 
     set.date.outliers <- function(){
-        stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+        stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
         if(stnid == "") return(NULL)
         dateOUT <- .cdtData$EnvData$outqc$res[[stnid]]$date
         tkconfigure(.cdtData$EnvData$STN$cb.QCSP, values = dateOUT)
@@ -1368,19 +1368,19 @@ qcTTOutlierCheckPanelCmd <- function(){
                 writeData <- TRUE
                 tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
                 if(.cdtData$OpenTab$Data.Type[[tabid]] == 'qc.outliers.data'){
-                    stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+                    stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
                     .cdtData$EnvData$outqc$res[[stnid]]$outliers <- dat2sav
                 }
                 else if(.cdtData$OpenTab$Data.Type[[tabid]] == 'qc.mixed.data'){
-                    stnid <- str_trim(tclvalue(.cdtData$EnvData$MXD$STN$stnID))
+                    stnid <- trimws(tclvalue(.cdtData$EnvData$MXD$STN$stnID))
                     .cdtData$EnvData$outqc$mixed$res[[stnid]]$tab <- dat2sav
                 }
                 else if(.cdtData$OpenTab$Data.Type[[tabid]] == 'qc.sequence.data'){
-                    stnid <- str_trim(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
+                    stnid <- trimws(tclvalue(.cdtData$EnvData$SEQ$STN$stnID))
                     .cdtData$EnvData$outqc$sequence$res[[stnid]]$tab <- dat2sav
                 }
                 else if(.cdtData$OpenTab$Data.Type[[tabid]] == 'qc.equal.data'){
-                    stnid <- str_trim(tclvalue(.cdtData$EnvData$EQL$STN$stnID))
+                    stnid <- trimws(tclvalue(.cdtData$EnvData$EQL$STN$stnID))
                     .cdtData$EnvData$outqc$equal$res[[stnid]]$tab <- dat2sav
                 }
                 else writeData <- FALSE

@@ -103,7 +103,7 @@ computeTvars_getParams <- function(){
         tkconfigure(set.tmin, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams$cdtnetcdf[["tmin"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["tmin"]],
-                                                                        str_trim(tclvalue(input.Tmin)))
+                                                                        trimws(tclvalue(input.Tmin)))
             settingTmin <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
@@ -137,7 +137,7 @@ computeTvars_getParams <- function(){
         tkconfigure(set.tmax, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams$cdtnetcdf[["tmax"]] <- getInfoNetCDFData(tt, .cdtData$GalParams$cdtnetcdf[["tmax"]],
-                                                                        str_trim(tclvalue(input.Tmax)))
+                                                                        trimws(tclvalue(input.Tmax)))
             settingTmax <<- 1
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
@@ -260,7 +260,7 @@ computeTvars_getParams <- function(){
     ###############
 
     tkbind(cb.datatyp, "<<ComboboxSelected>>", function(){
-        data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+        data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
         inputDataFun(data.type)
         saveFun(data.type)
@@ -315,14 +315,14 @@ computeTvars_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        .cdtData$GalParams$Tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-        .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-        .cdtData$GalParams$variable <- varsVAL[CbvarsVAL %in% str_trim(tclvalue(temp.variable))]
+        .cdtData$GalParams$Tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+        .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+        .cdtData$GalParams$variable <- varsVAL[CbvarsVAL %in% trimws(tclvalue(temp.variable))]
 
-        if(str_trim(tclvalue(input.Tmin)) %in% c("", "NA")){
+        if(trimws(tclvalue(input.Tmin)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(input.Tmax)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(input.Tmax)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(tclvalue(file.save) %in% c("", "NA")){
@@ -336,21 +336,21 @@ computeTvars_getParams <- function(){
             tkwait.window(tt)
         }else{
             if(.cdtData$GalParams$data.type == 'cdtstation'){
-                .cdtData$GalParams$cdtstation$tmin <- str_trim(tclvalue(input.Tmin))
-                .cdtData$GalParams$cdtstation$tmax <- str_trim(tclvalue(input.Tmax))
+                .cdtData$GalParams$cdtstation$tmin <- trimws(tclvalue(input.Tmin))
+                .cdtData$GalParams$cdtstation$tmax <- trimws(tclvalue(input.Tmax))
             }
 
             if(.cdtData$GalParams$data.type == 'cdtdataset'){
-                .cdtData$GalParams$cdtdataset$tmin <- str_trim(tclvalue(input.Tmin))
-                .cdtData$GalParams$cdtdataset$tmax <- str_trim(tclvalue(input.Tmax))
+                .cdtData$GalParams$cdtdataset$tmin <- trimws(tclvalue(input.Tmin))
+                .cdtData$GalParams$cdtdataset$tmax <- trimws(tclvalue(input.Tmax))
             }
 
             if(.cdtData$GalParams$data.type == 'cdtnetcdf'){
-                .cdtData$GalParams$cdtnetcdf$tmin$dir <- str_trim(tclvalue(input.Tmin))
-                .cdtData$GalParams$cdtnetcdf$tmax$dir <- str_trim(tclvalue(input.Tmax))
+                .cdtData$GalParams$cdtnetcdf$tmin$dir <- trimws(tclvalue(input.Tmin))
+                .cdtData$GalParams$cdtnetcdf$tmax$dir <- trimws(tclvalue(input.Tmax))
             }
 
-            .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
+            .cdtData$GalParams$output <- trimws(tclvalue(file.save))
 
             .cdtData$GalParams$settingTmin <- settingTmin
             .cdtData$GalParams$settingTmax <- settingTmax

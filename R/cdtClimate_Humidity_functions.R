@@ -79,3 +79,33 @@ dewpoint_temperature <- function(tm, rh){
     ea <- es * (rh/100)
     (log(ea/6.112) * 243.5)/(17.67 - log(ea/6.112))
 }
+
+#' Potential temperature.
+#'
+#' Compute the potential temperature from the air temperature and surface pressure using the Poisson equation.
+#' 
+#' @param tm numeric, a vector or matrix of the air temperature in degree Celsius.
+#' @param pr numeric, a vector or matrix of the surface pressure in hPa.
+#' 
+#' @return Returns a vector or matrix, the units are in degree Celsius.
+#' 
+#' @export
+
+potential_temperature <- function(tm, pr){
+    tm / (pr / 1000)^0.286
+}
+
+#' Air temperature.
+#'
+#' Compute the air temperature from the potential temperature and surface pressure using the Poisson equation.
+#' 
+#' @param theta numeric, a vector or matrix of the potential temperature in degree Celsius.
+#' @param pr numeric, a vector or matrix of the surface pressure in hPa.
+#' 
+#' @return Returns a vector or matrix, the units are in degree Celsius.
+#' 
+#' @export
+
+temperature_from_theta <- function(theta, pr){
+    theta * (pr / 1000)^0.286
+}

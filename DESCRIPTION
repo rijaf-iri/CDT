@@ -61,8 +61,6 @@ Imports:
     httr,
     rvest,
     abind,
-    fGarch,
-    evd,
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues

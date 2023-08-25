@@ -70,7 +70,7 @@ spatialAnalysisEditYrsMon <- function(parent.win, vedit, is.year){
     tkconfigure(bt.opt.OK, command = function(){
         tmp <- tclvalue(tkget(text.Edit, "0.0", "end"))
         tmp <- gsub("[\r\n]", "", tmp)
-        tmp <- str_trim(strsplit(tmp, ",")[[1]])
+        tmp <- trimws(strsplit(tmp, ",")[[1]])
         tmp <- tmp[tmp != ""]
         tmp <- as.numeric(tmp)
         if(length(tmp) == 0){

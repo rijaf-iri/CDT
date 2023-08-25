@@ -151,9 +151,9 @@ SeasonLengthCalcPanelCmd <- function(){
         bt.CalcOnset <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
         tkconfigure(bt.CalcOnset, command = function(){
-            GeneralParameters$onset <- str_trim(tclvalue(input.Onset))
-            GeneralParameters$cessation <- str_trim(tclvalue(input.Cessation))
-            GeneralParameters$output <- str_trim(tclvalue(dir.save))
+            GeneralParameters$onset <- trimws(tclvalue(input.Onset))
+            GeneralParameters$cessation <- trimws(tclvalue(input.Cessation))
+            GeneralParameters$output <- trimws(tclvalue(dir.save))
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
@@ -225,8 +225,8 @@ SeasonLengthCalcPanelCmd <- function(){
             if(path.dataIdx %in% c("", "NA") | is.na(path.dataIdx)) return(NULL)
             tclvalue(file.dataIndex) <- path.dataIdx
 
-            if(file.exists(str_trim(tclvalue(file.dataIndex)))){
-                OutIndexdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.dataIndex)))){
+                OutIndexdata <- try(readRDS(trimws(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutIndexdata, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), TRUE, 'e')
@@ -236,7 +236,7 @@ SeasonLengthCalcPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutIndexdata
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -292,7 +292,7 @@ SeasonLengthCalcPanelCmd <- function(){
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$dataMapOp$pointSize
         })
 
@@ -300,15 +300,15 @@ SeasonLengthCalcPanelCmd <- function(){
         .cdtData$EnvData$tab$dataMap <- NULL
 
         tkconfigure(bt.data.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != "" &
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != "" &
                 !is.null(.cdtData$EnvData$varData))
                     SeasonLengthCalc.Display.Maps()
         })
 
         tkconfigure(bt.data.Index.prev, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != ""){
                 donDates <- format(.cdtData$EnvData$output$start.date, "%Y")
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$donDate)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
                 tclvalue(.cdtData$EnvData$donDate) <- donDates[idaty]
@@ -321,9 +321,9 @@ SeasonLengthCalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.data.Index.next, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$donDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != ""){
                 donDates <- format(.cdtData$EnvData$output$start.date, "%Y")
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$donDate)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$donDate)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
                 tclvalue(.cdtData$EnvData$donDate) <- donDates[idaty]
@@ -396,7 +396,7 @@ SeasonLengthCalcPanelCmd <- function(){
         #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            suffix.fun <- switch(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
+            suffix.fun <- switch(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)),
                                     "Barplot" = "Bar",
                                     "Line" = "Line")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
@@ -518,7 +518,7 @@ SeasonLengthCalcPanelCmd <- function(){
             ######
             tkconfigure(bt.stnID.prev, command = function(){
                 if(!is.null(.cdtData$EnvData$varData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -530,7 +530,7 @@ SeasonLengthCalcPanelCmd <- function(){
 
             tkconfigure(bt.stnID.next, command = function(){
                 if(!is.null(.cdtData$EnvData$varData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -594,7 +594,7 @@ SeasonLengthCalcPanelCmd <- function(){
             tcl('update')
         })
 
-        this.daty <- str_trim(tclvalue(.cdtData$EnvData$donDate))
+        this.daty <- trimws(tclvalue(.cdtData$EnvData$donDate))
         idt <- which(format(.cdtData$EnvData$output$start.date, "%Y") == this.daty)
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
@@ -604,7 +604,7 @@ SeasonLengthCalcPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             ########
             readVarData <- TRUE
@@ -665,11 +665,11 @@ SeasonLengthCalcPanelCmd <- function(){
                     if(.cdtData$EnvData$filePathData == filePathData) readVarData <- FALSE
 
             if(readVarData){
-                nc <- nc_open(filePathData)
+                nc <- ncdf4::nc_open(filePathData)
                 .cdtData$EnvData$varData$map$x <- nc$dim[[1]]$vals
                 .cdtData$EnvData$varData$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$varData$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
+                .cdtData$EnvData$varData$map$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                ncdf4::nc_close(nc)
                 .cdtData$EnvData$filePathData <- filePathData
             }
 

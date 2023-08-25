@@ -11,7 +11,7 @@ PlotNetCDFVarsMaps <- function(){
     #################
     ## draw box
     draw.box <- if(tclvalue(.cdtData$EnvData$plot.maps$draw.box) == "0") FALSE else TRUE
-    PlotType <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    PlotType <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     shpf <- .cdtData$EnvData$shp
     SHPOp <- .cdtData$EnvData$SHPOp
 
@@ -24,12 +24,12 @@ PlotNetCDFVarsMaps <- function(){
     })
     mat.layout <- manageLayout(nbPlot)
 
-    layout(matrix(mat.layout$order, mat.layout$dim[1], mat.layout$dim[2]))
+    graphics::layout(matrix(mat.layout$order, mat.layout$dim[1], mat.layout$dim[2]))
     ret <- lapply(seq(nbPlot), function(j){
-        opar <- par(mar = map.args[[j]]$mar)
+        opar <- graphics::par(mar = map.args[[j]]$mar)
         par.plot <- do.call(cdt.plotmap.fun, map.args[[j]]$map.args)
-        par(opar)
-        if(draw.box) box("figure")
+        graphics::par(opar)
+        if(draw.box) graphics::box("figure")
         return(par.plot)
     })
 

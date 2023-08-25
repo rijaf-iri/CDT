@@ -106,8 +106,8 @@ getInfoYears2Analyze <- function(parent.win, Parameters)
 
     tkconfigure(bt.prm.OK, command = function(){
         Parameters$all.years <<- switch(tclvalue(allYears), '0' = FALSE, '1' = TRUE)
-        Parameters$start.year <<- as.numeric(str_trim(tclvalue(startYear)))
-        Parameters$end.year <<- as.numeric(str_trim(tclvalue(endYear)))
+        Parameters$start.year <<- as.numeric(trimws(tclvalue(startYear)))
+        Parameters$end.year <<- as.numeric(trimws(tclvalue(endYear)))
         Parameters$nseq.years <<- switch(tclvalue(nseqYears), '0' = FALSE, '1' = TRUE)
 
         tkgrab.release(tt)

@@ -16,26 +16,26 @@ CDTdataset.Plot.Map <- function(){
         ylim <- range(range(don$y, na.rm = TRUE), range(ocrds[, 2], na.rm = TRUE))
     }
 
-    opar <- par(mar = c(4, 4, 2.5, 2.5))
+    opar <- graphics::par(mar = c(4, 4, 2.5, 2.5))
     plot(1, xlim = xlim, ylim = ylim, xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
-    axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
-    axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 0.8)
-    axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 0.8)
+    axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
+    graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 0.8)
+    graphics::axis(side = 2, at = graphics::axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 0.8)
 
     if(!is.null(don)){
         breaks <- pretty(don$z, n = 10, min.n = 5)
         breaks <- if(length(breaks) > 0) breaks else c(0, 1) 
         kolor <- tim.colors(length(breaks) - 1)
         # image(don, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
-        .filled.contour(don$x, don$y, don$z, levels = breaks, col = kolor)
+        graphics::.filled.contour(don$x, don$y, don$z, levels = breaks, col = kolor)
     }
 
-    abline(h = axTicks(2), v = axTicks(1), col = "lightgray", lty = 3)
-    if(!is.null(ocrds)) lines(ocrds[, 1], ocrds[, 2], lwd = 1, col = "black")
+    graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1), col = "lightgray", lty = 3)
+    if(!is.null(ocrds)) graphics::lines(ocrds[, 1], ocrds[, 2], lwd = 1, col = "black")
 
-    plt <- par("plt")
-    usr <- par("usr")
-    par(opar)
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
+    graphics::par(opar)
     return(list(par = c(plt, usr)))
 }
 
@@ -45,10 +45,10 @@ CDTdataset.Plot.Graph <- function(){
     cdtdataset <- .cdtData$EnvData$cdtdataset
     fileInfo <- cdtdataset$fileInfo
 
-    xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-    yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
-    padx <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonPAD)))
-    pady <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latPAD)))
+    xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+    yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+    padx <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonPAD)))
+    pady <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latPAD)))
 
     xyloc <- cdtdataset.extarct.TS(cdtdataset, fileInfo, xloc, yloc, padx, pady)
     if(is.null(xyloc)) return(NULL)
@@ -141,7 +141,7 @@ CDTdataset.Plot.Graph <- function(){
     }else{
         if(optsgph$xlim$is.min){
             if(others.frmt == 'numeric'){
-                xx <- str_trim(optsgph$xlim$min)
+                xx <- trimws(optsgph$xlim$min)
                 if(grepl("[^[:digit:]]", xx)){
                     Insert.Messages.Out(.cdtData$EnvData$message[['7']], TRUE, "e")
                     return(NULL)
@@ -156,7 +156,7 @@ CDTdataset.Plot.Graph <- function(){
         }
         if(optsgph$xlim$is.max){
             if(others.frmt == 'numeric'){
-                xx <- str_trim(optsgph$xlim$max)
+                xx <- trimws(optsgph$xlim$max)
                 if(grepl("[^[:digit:]]", xx)){
                     Insert.Messages.Out(.cdtData$EnvData$message[['7']], TRUE, "e")
                     return(NULL)

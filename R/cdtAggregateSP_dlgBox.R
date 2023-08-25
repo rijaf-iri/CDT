@@ -146,7 +146,7 @@ AggregateNcdf_GetInfo <- function(){
     ###################
 
     tkconfigure(bt.ncfldir, command = function(){
-        srcfile <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+        srcfile <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
         if(srcfile == "cdtnetcdf1"){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             nc.opfiles <- getOpenNetcdf(tt, initialdir = getwd())
@@ -215,7 +215,7 @@ AggregateNcdf_GetInfo <- function(){
     tkbind(cb.nbncf, "<<ComboboxSelected>>", function(){
         tkdestroy(cb.ncfldir)
         tclvalue(ncfiledir) <- ''
-        srcfile <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+        srcfile <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
 
         if(srcfile == "cdtnetcdf1"){
             tclvalue(fileINdir) <- lang.dlg[['label']][['2']]
@@ -453,7 +453,7 @@ AggregateNcdf_GetInfo <- function(){
     #####
 
     tkconfigure(bt.dir2save, command = function(){
-        initialdir <- if(str_trim(.cdtData$GalParams$output) != "") .cdtData$GalParams$output else getwd()
+        initialdir <- if(trimws(.cdtData$GalParams$output) != "") .cdtData$GalParams$output else getwd()
         tcl('wm', 'attributes', tt, topmost = FALSE)
         dir2savepth <- tk_choose.dir(initialdir, "")
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -496,7 +496,7 @@ AggregateNcdf_GetInfo <- function(){
     ############################################
 
     if(tclvalue(ncfiledir) != ""){
-        srcfile <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+        srcfile <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
         if(srcfile == "cdtnetcdf1"){
             infoGridData(tclvalue(ncfiledir), "nc")
         }
@@ -516,25 +516,25 @@ AggregateNcdf_GetInfo <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        .cdtData$GalParams$nb.ncfile <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+        .cdtData$GalParams$nb.ncfile <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
 
-        .cdtData$GalParams$ncdf$fileordir <- str_trim(tclvalue(ncfiledir))
-        .cdtData$GalParams$ncdf$sample <- str_trim(tclvalue(ncsample))
+        .cdtData$GalParams$ncdf$fileordir <- trimws(tclvalue(ncfiledir))
+        .cdtData$GalParams$ncdf$sample <- trimws(tclvalue(ncsample))
 
         .cdtData$GalParams$ncdf.grid$use.ncgrid <- switch(tclvalue(use.ncgrid), '0' = FALSE, '1' = TRUE)
         .cdtData$GalParams$ncdf.grid$match.var <- switch(tclvalue(matchVar), '0' = FALSE, '1' = TRUE)
 
-        .cdtData$GalParams$but <- BUTVAL[cbBUTVAL %in% str_trim(tclvalue(but))]
-        .cdtData$GalParams$method <- str_trim(tclvalue(method))
+        .cdtData$GalParams$but <- BUTVAL[cbBUTVAL %in% trimws(tclvalue(but))]
+        .cdtData$GalParams$method <- trimws(tclvalue(method))
 
-        .cdtData$GalParams$res$minlon <- as.numeric(str_trim(tclvalue(minLon)))
-        .cdtData$GalParams$res$maxlon <- as.numeric(str_trim(tclvalue(maxLon)))
-        .cdtData$GalParams$res$reslon <- as.numeric(str_trim(tclvalue(resLon)))
-        .cdtData$GalParams$res$minlat <- as.numeric(str_trim(tclvalue(minLat)))
-        .cdtData$GalParams$res$maxlat <- as.numeric(str_trim(tclvalue(maxLat)))
-        .cdtData$GalParams$res$reslat <- as.numeric(str_trim(tclvalue(resLat)))
+        .cdtData$GalParams$res$minlon <- as.numeric(trimws(tclvalue(minLon)))
+        .cdtData$GalParams$res$maxlon <- as.numeric(trimws(tclvalue(maxLon)))
+        .cdtData$GalParams$res$reslon <- as.numeric(trimws(tclvalue(resLon)))
+        .cdtData$GalParams$res$minlat <- as.numeric(trimws(tclvalue(minLat)))
+        .cdtData$GalParams$res$maxlat <- as.numeric(trimws(tclvalue(maxLat)))
+        .cdtData$GalParams$res$reslat <- as.numeric(trimws(tclvalue(resLat)))
 
-        .cdtData$GalParams$output <- str_trim(tclvalue(dir2save))
+        .cdtData$GalParams$output <- trimws(tclvalue(dir2save))
         .cdtData$GalParams$message <- lang.dlg[['message']]
 
         tkgrab.release(tt)

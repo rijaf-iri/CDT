@@ -311,8 +311,8 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
 
         x <- index.out$coords$mat$x
         y <- index.out$coords$mat$y
-        dx <- ncdim_def("Lon", "degreeE", x)
-        dy <- ncdim_def("Lat", "degreeN", y)
+        dx <- ncdf4::ncdim_def("Lon", "degreeE", x)
+        dy <- ncdf4::ncdim_def("Lat", "degreeN", y)
 
         ret <- lapply(chunkdate, function(dates){
             dat <- readCdtDatasetChunk.multi.dates.order(datafileIdx, dates, cdtParallelCond)
@@ -321,16 +321,16 @@ compute_SeasonOnset_Procs <- function(GeneralParameters){
                 don <- dat[j, ] - time0
                 don <- matrix(don, length(x), length(y))
                 don[is.na(don)] <- -99
-                time <- ncdim_def("start", "days since 1970-1-1", time0)
+                time <- ncdf4::ncdim_def("start", "days since 1970-1-1", time0)
                 xyt.dim <- list(dx, dy, time)
-                grdNC <- ncvar_def("onset", paste("days since", dates[j]), xyt.dim, -99,
+                grdNC <- ncdf4::ncvar_def("onset", paste("days since", dates[j]), xyt.dim, -99,
                                     longname = "Onset date of rainy season", prec = "short",
                                     shuffle = TRUE, compression = 9)
 
                 filenc <- file.path(ncdfOUT, paste0("onset_", dates[j], ".nc"))
-                nc <- nc_create(filenc, grdNC)
-                ncvar_put(nc, grdNC, don)
-                nc_close(nc)
+                nc <- ncdf4::nc_create(filenc, grdNC)
+                ncdf4::ncvar_put(nc, grdNC, don)
+                ncdf4::nc_close(nc)
             }
             return(0)
         })

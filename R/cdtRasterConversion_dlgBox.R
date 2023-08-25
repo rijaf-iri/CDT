@@ -62,7 +62,7 @@ rasterData.convert_getParams <- function(){
     tkgrid(cb.out.data, row = 0, column = 10, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     tkbind(cb.in.data, "<<ComboboxSelected>>", function(){
-        FORMAT.CONV2 <- switch(str_trim(tclvalue(OriginData)),
+        FORMAT.CONV2 <- switch(trimws(tclvalue(OriginData)),
                                "NetCDF" = c("GeoTiff", "ESRI .hdr Labelled"),
                                "GeoTiff" = c("NetCDF", "ESRI .hdr Labelled"),
                                "ESRI .hdr Labelled" = c("NetCDF", "GeoTiff"))
@@ -71,21 +71,21 @@ rasterData.convert_getParams <- function(){
         tclvalue(ConvertData) <- if(tclvalue(ConvertData) == tclvalue(OriginData)) FORMAT.CONV2[1] else tclvalue(ConvertData)
 
         ###
-        stateNC <- if(str_trim(tclvalue(ConvertData)) == "NetCDF") "normal" else "disabled"
+        stateNC <- if(trimws(tclvalue(ConvertData)) == "NetCDF") "normal" else "disabled"
         tkconfigure(en.nc.name,state = stateNC)
         tkconfigure(en.nc.unit,state = stateNC)
         tkconfigure(en.nc.miss,state = stateNC)
         tkconfigure(en.nc.lname,state = stateNC)
 
         ###
-        tclvalue(textINdir) <- switch(str_trim(tclvalue(OriginData)), 
+        tclvalue(textINdir) <- switch(trimws(tclvalue(OriginData)), 
                                       "NetCDF" = lang.dlg[['label']][['5']],
                                       "GeoTiff" = lang.dlg[['label']][['6']],
                                       "ESRI .hdr Labelled" = lang.dlg[['label']][['7']])
     })
 
     tkbind(cb.out.data, "<<ComboboxSelected>>", function(){
-        stateNC <- if(str_trim(tclvalue(ConvertData)) == "NetCDF") "normal" else "disabled"
+        stateNC <- if(trimws(tclvalue(ConvertData)) == "NetCDF") "normal" else "disabled"
         tkconfigure(en.nc.name,state = stateNC)
         tkconfigure(en.nc.unit,state = stateNC)
         tkconfigure(en.nc.miss,state = stateNC)
@@ -174,30 +174,30 @@ rasterData.convert_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(dir.input)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir.input)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(dir.output)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(dir.output)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$type.in <- switch(str_trim(tclvalue(OriginData)),
+            .cdtData$GalParams$type.in <- switch(trimws(tclvalue(OriginData)),
                                                  "NetCDF" = "nc",
                                                  "GeoTiff" = "tif",
                                                  "ESRI .hdr Labelled" = "bil")
 
-            .cdtData$GalParams$type.out <- switch(str_trim(tclvalue(ConvertData)),
+            .cdtData$GalParams$type.out <- switch(trimws(tclvalue(ConvertData)),
                                                   "NetCDF" = "nc",
                                                   "GeoTiff" = "tif",
                                                   "ESRI .hdr Labelled" = "bil")
 
-            .cdtData$GalParams$dir.in <- str_trim(tclvalue(dir.input))
-            .cdtData$GalParams$dir.out <- str_trim(tclvalue(dir.output))
+            .cdtData$GalParams$dir.in <- trimws(tclvalue(dir.input))
+            .cdtData$GalParams$dir.out <- trimws(tclvalue(dir.output))
 
-            .cdtData$GalParams$nc.opts$varname <- str_trim(tclvalue(nc.name))
-            .cdtData$GalParams$nc.opts$varunit <- str_trim(tclvalue(nc.unit))
-            .cdtData$GalParams$nc.opts$missval <- as.numeric(str_trim(tclvalue(nc.missval)))
-            .cdtData$GalParams$nc.opts$longname <- str_trim(tclvalue(nc.lname))
+            .cdtData$GalParams$nc.opts$varname <- trimws(tclvalue(nc.name))
+            .cdtData$GalParams$nc.opts$varunit <- trimws(tclvalue(nc.unit))
+            .cdtData$GalParams$nc.opts$missval <- as.numeric(trimws(tclvalue(nc.missval)))
+            .cdtData$GalParams$nc.opts$longname <- trimws(tclvalue(nc.lname))
 
             .cdtData$GalParams$message <- lang.dlg[['message']]
 

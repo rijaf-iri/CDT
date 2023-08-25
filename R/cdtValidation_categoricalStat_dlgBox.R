@@ -46,8 +46,8 @@ getInfo_categoricalValid <- function(parent.win, Parameters){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$fun <<- str_trim(tclvalue(dicho.opr))
-        Parameters$thres <<- as.numeric(str_trim(tclvalue(dicho.thres)))
+        Parameters$fun <<- trimws(tclvalue(dicho.opr))
+        Parameters$thres <<- as.numeric(trimws(tclvalue(dicho.thres)))
 
         tkgrab.release(tt)
         tkdestroy(tt)

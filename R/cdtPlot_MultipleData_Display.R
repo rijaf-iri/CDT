@@ -113,7 +113,7 @@ MultipleData.Plot.Map <- function(){
     lezandy[[place]]$fun <- grid::packGrob(frame = colorkey.Frame, grob = grob.Obj, side = pars.key$side, dynamic = TRUE)
 
     #######
-    print(update(Plot.Obj, col.regions = brks$colors, aspect = 'fill', as.table = TRUE,
+    print(stats::update(Plot.Obj, col.regions = brks$colors, aspect = 'fill', as.table = TRUE,
                 xlim = pars.x$usr, ylim = pars.y$usr, xlab = '', ylab = '', main = titre,
                 par.settings = par.Settings, par.strip.text = par.StripText, strip = par.stripCust,
                 scales = list(x = Xaxis, y = Yaxis), legend = lezandy))

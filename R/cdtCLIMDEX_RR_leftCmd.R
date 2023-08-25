@@ -192,7 +192,7 @@ climdexPanelCmd.RR <- function(){
             tclvalue(input.Prec) <- ''
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['2']]
 
                 cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
@@ -214,7 +214,7 @@ climdexPanelCmd.RR <- function(){
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['3']]
 
                 cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
@@ -352,15 +352,15 @@ climdexPanelCmd.RR <- function(){
         ##############################################
 
         tkconfigure(bt.CalcIndices, command = function(){
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                GeneralParameters$cdtstation <- str_trim(tclvalue(input.Prec))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                GeneralParameters$cdtstation <- trimws(tclvalue(input.Prec))
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                GeneralParameters$cdtdataset <- str_trim(tclvalue(input.Prec))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                GeneralParameters$cdtdataset <- trimws(tclvalue(input.Prec))
 
-            GeneralParameters$output <- str_trim(tclvalue(dir.save))
+            GeneralParameters$output <- trimws(tclvalue(dir.save))
 
             GeneralParameters$Indices$Rx1day <- switch(tclvalue(is.Rx1day), '0' = FALSE, '1' = TRUE)
             GeneralParameters$Indices$Rx5day <- switch(tclvalue(is.Rx5day), '0' = FALSE, '1' = TRUE)
@@ -368,7 +368,7 @@ climdexPanelCmd.RR <- function(){
             GeneralParameters$Indices$R10mm <- switch(tclvalue(is.R10mm), '0' = FALSE, '1' = TRUE)
             GeneralParameters$Indices$R20mm <- switch(tclvalue(is.R20mm), '0' = FALSE, '1' = TRUE)
             GeneralParameters$Indices$Rnnmm <- switch(tclvalue(is.Rnnmm), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$Indices$thres.Rnnmm <- as.numeric(str_trim(tclvalue(val.Rnnmm)))
+            GeneralParameters$Indices$thres.Rnnmm <- as.numeric(trimws(tclvalue(val.Rnnmm)))
             GeneralParameters$Indices$CDD <- switch(tclvalue(is.CDD), '0' = FALSE, '1' = TRUE)
             GeneralParameters$Indices$CWD <- switch(tclvalue(is.CWD), '0' = FALSE, '1' = TRUE)
             GeneralParameters$Indices$R95pTOT <- switch(tclvalue(is.R95pTOT), '0' = FALSE, '1' = TRUE)
@@ -451,8 +451,8 @@ climdexPanelCmd.RR <- function(){
             if(path.dataIdx %in% c("", "NA") | is.na(path.dataIdx)) return(NULL)
             tclvalue(file.dataIndex) <- path.dataIdx
 
-            if(file.exists(str_trim(tclvalue(file.dataIndex)))){
-                OutIndexdata <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.dataIndex)))){
+                OutIndexdata <- try(readRDS(trimws(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutIndexdata, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutIndexdata[1]), TRUE, 'e')
@@ -467,7 +467,7 @@ climdexPanelCmd.RR <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutIndexdata
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 .cdtData$EnvData$indices.data <- "RR"
@@ -540,7 +540,7 @@ climdexPanelCmd.RR <- function(){
             }
             .cdtData$EnvData$varstatMapOp <- MapGraph.MapOptions(.cdtData$EnvData$varstatMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize.MapStat <- .cdtData$EnvData$varstatMapOp$pointSize
         })
 
@@ -549,9 +549,9 @@ climdexPanelCmd.RR <- function(){
         .cdtData$EnvData$tab$dataMapStat <- NULL
 
         tkconfigure(bt.varstat.maps, command = function(){
-            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
-            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% trimws(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% trimws(tclvalue(anaStat))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
             if(length(.cdtData$EnvData$anaVars) > 0 &
                length(.cdtData$EnvData$anaStat) > 0)
@@ -565,8 +565,8 @@ climdexPanelCmd.RR <- function(){
         ###################
 
         tkbind(cb.varstat.var, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
-            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% trimws(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% trimws(tclvalue(anaStat))]
 
             if(length(.cdtData$EnvData$anaVars) > 0 &
                length(.cdtData$EnvData$anaStat) > 0)
@@ -616,7 +616,7 @@ climdexPanelCmd.RR <- function(){
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize.MapTS <- .cdtData$EnvData$dataMapOp$pointSize
         })
 
@@ -625,23 +625,23 @@ climdexPanelCmd.RR <- function(){
         .cdtData$EnvData$tab$dataMapTS <- NULL
 
         tkconfigure(bt.data.maps, command = function(){
-            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
-            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% trimws(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% trimws(tclvalue(anaStat))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
-            if(str_trim(tclvalue(donDateVar)) != "" &
+            if(trimws(tclvalue(donDateVar)) != "" &
                !is.null(.cdtData$EnvData$YearData))
                     Climdex.Display.MapYear()
         })
 
         tkconfigure(bt.data.Index.prev, command = function(){
-            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
-            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% trimws(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% trimws(tclvalue(anaStat))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
-            if(str_trim(tclvalue(donDateVar)) != ""){
+            if(trimws(tclvalue(donDateVar)) != ""){
                 donDates <- .cdtData$EnvData$output$year
-                idaty <- which(donDates == str_trim(tclvalue(donDateVar)))
+                idaty <- which(donDates == trimws(tclvalue(donDateVar)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
                 tclvalue(donDateVar) <- donDates[idaty]
@@ -654,13 +654,13 @@ climdexPanelCmd.RR <- function(){
         })
 
         tkconfigure(bt.data.Index.next, command = function(){
-            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
-            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% trimws(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% trimws(tclvalue(anaStat))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
-            if(str_trim(tclvalue(donDateVar)) != ""){
+            if(trimws(tclvalue(donDateVar)) != ""){
                 donDates <- .cdtData$EnvData$output$year
-                idaty <- which(donDates == str_trim(tclvalue(donDateVar)))
+                idaty <- which(donDates == trimws(tclvalue(donDateVar)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
                 tclvalue(donDateVar) <- donDates[idaty]
@@ -675,8 +675,8 @@ climdexPanelCmd.RR <- function(){
         ###############
 
         tkbind(cb.data.Index, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
-            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% trimws(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% trimws(tclvalue(anaStat))]
 
             if(!is.null(.cdtData$EnvData$YearData)){
                 ret <- try(get.data.Year(), silent = TRUE)
@@ -699,8 +699,8 @@ climdexPanelCmd.RR <- function(){
         ###############
 
         tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% str_trim(tclvalue(anaVars))]
-            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% str_trim(tclvalue(anaStat))]
+            .cdtData$EnvData$anaVars <- anaVarsVAL[CbanaVarsVAL %in% trimws(tclvalue(anaVars))]
+            .cdtData$EnvData$anaStat <- anaStatVAL[CbanaStatVAL %in% trimws(tclvalue(anaStat))]
 
             if(length(.cdtData$EnvData$anaVars) > 0 &
                length(.cdtData$EnvData$anaStat) > 0)
@@ -749,7 +749,7 @@ climdexPanelCmd.RR <- function(){
         #################
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            vtypeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            vtypeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
             suffix.fun <- switch(vtypeTSp, "bar" = "Bar", "line" = "LineCLIMDEX")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
@@ -760,7 +760,7 @@ climdexPanelCmd.RR <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
             if(!is.null(.cdtData$EnvData$YearData)){
                 imgContainer <- CDT.Display.Graph(Climdex.plotVarGraph, .cdtData$EnvData$tab$dataGraph, 'Climdex-Graph')
@@ -769,7 +769,7 @@ climdexPanelCmd.RR <- function(){
         })
 
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
         })
 
         ##############################################
@@ -876,10 +876,10 @@ climdexPanelCmd.RR <- function(){
 
             ###########
             tkconfigure(bt.stnID.prev, command = function(){
-                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
                 if(!is.null(.cdtData$EnvData$YearData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -890,10 +890,10 @@ climdexPanelCmd.RR <- function(){
             })
 
             tkconfigure(bt.stnID.next, command = function(){
-                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
                 if(!is.null(.cdtData$EnvData$YearData)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1003,7 +1003,7 @@ climdexPanelCmd.RR <- function(){
             }
 
             #####
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             getTrend <- TRUE
             if(!is.null(.cdtData$EnvData$TrendData$this.trend))
@@ -1043,9 +1043,9 @@ climdexPanelCmd.RR <- function(){
                     return(NULL)
                 }
 
-                nc <- nc_open(filetrend)
-                .cdtData$EnvData$TrendData$data <- lapply(anaStatVAL, function(varid) ncvar_get(nc, varid = varid))
-                nc_close(nc)
+                nc <- ncdf4::nc_open(filetrend)
+                .cdtData$EnvData$TrendData$data <- lapply(anaStatVAL, function(varid) ncdf4::ncvar_get(nc, varid = varid))
+                ncdf4::nc_close(nc)
                 .cdtData$EnvData$TrendData$this.vars <- this.vars
             }
 
@@ -1081,7 +1081,7 @@ climdexPanelCmd.RR <- function(){
         })
 
         this.vars <- .cdtData$EnvData$anaVars
-        this.year <- str_trim(tclvalue(donDateVar))
+        this.year <- trimws(tclvalue(donDateVar))
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
             fileyear <- file.path(.cdtData$EnvData$PathData, "CDTDATASET", this.vars,
@@ -1103,7 +1103,7 @@ climdexPanelCmd.RR <- function(){
             }
 
             #####
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             getYEAR <- TRUE
             if(!is.null(.cdtData$EnvData$YearData$this.year))
@@ -1151,11 +1151,11 @@ climdexPanelCmd.RR <- function(){
                     return(NULL)
                 }
 
-                nc <- nc_open(fileyear)
+                nc <- ncdf4::nc_open(fileyear)
                 .cdtData$EnvData$YearData$map$x <- nc$dim[[1]]$vals
                 .cdtData$EnvData$YearData$map$y <- nc$dim[[2]]$vals
-                .cdtData$EnvData$YearData$map$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                nc_close(nc)
+                .cdtData$EnvData$YearData$map$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                ncdf4::nc_close(nc)
 
                 .cdtData$EnvData$YearData$fileyear <- fileyear
             }

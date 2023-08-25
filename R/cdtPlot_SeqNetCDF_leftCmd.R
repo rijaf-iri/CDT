@@ -99,7 +99,7 @@ PlotSeqNetCDFFilesCmd <- function(){
         })
 
         tkconfigure(bt.ncfl, command = function(){
-            initialdir <- if(file.exists(str_trim(tclvalue(ncDIR)))) str_trim(tclvalue(ncDIR)) else getwd()
+            initialdir <- if(file.exists(trimws(tclvalue(ncDIR)))) trimws(tclvalue(ncDIR)) else getwd()
             nc.opfiles <- getOpenNetcdf(.cdtEnv$tcl$main$win, initialdir = initialdir)
             if(!is.null(nc.opfiles)){
                 update.OpenFiles('netcdf', nc.opfiles)
@@ -152,7 +152,7 @@ PlotSeqNetCDFFilesCmd <- function(){
             ret <- try(get.All.NCDF.Files(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-            if(str_trim(tclvalue(ncdf.date.file)) != ""){
+            if(trimws(tclvalue(ncdf.date.file)) != ""){
                 ret <- try(get.NCDF.DATA(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -166,9 +166,9 @@ PlotSeqNetCDFFilesCmd <- function(){
             ret <- try(get.All.NCDF.Files(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-            if(str_trim(tclvalue(ncdf.date.file)) != ""){
+            if(trimws(tclvalue(ncdf.date.file)) != ""){
                 donDates <- .cdtData$EnvData$NcFiles2Plot
-                idaty <- which(donDates == str_trim(tclvalue(ncdf.date.file)))
+                idaty <- which(donDates == trimws(tclvalue(ncdf.date.file)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
                 tclvalue(ncdf.date.file) <- donDates[idaty]
@@ -186,9 +186,9 @@ PlotSeqNetCDFFilesCmd <- function(){
             ret <- try(get.All.NCDF.Files(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-            if(str_trim(tclvalue(ncdf.date.file)) != ""){
+            if(trimws(tclvalue(ncdf.date.file)) != ""){
                 donDates <- .cdtData$EnvData$NcFiles2Plot
-                idaty <- which(donDates == str_trim(tclvalue(ncdf.date.file)))
+                idaty <- which(donDates == trimws(tclvalue(ncdf.date.file)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
                 tclvalue(ncdf.date.file) <- donDates[idaty]
@@ -299,8 +299,8 @@ PlotSeqNetCDFFilesCmd <- function(){
             tcl('update')
         })
 
-        nc.dir <- str_trim(tclvalue(ncDIR))
-        nc.format <- str_trim(tclvalue(ncFormat))
+        nc.dir <- trimws(tclvalue(ncDIR))
+        nc.format <- trimws(tclvalue(ncFormat))
 
         if(nc.dir == "" | nc.format == ""){
             tkconfigure(cb.nc.maps, values = "")
@@ -326,7 +326,7 @@ PlotSeqNetCDFFilesCmd <- function(){
                 return(NULL)
             }
 
-            rfeDataInfo <- getNCDFSampleData(str_trim(tclvalue(ncSample)))
+            rfeDataInfo <- getNCDFSampleData(trimws(tclvalue(ncSample)))
             if(is.null(rfeDataInfo)){
                 Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, 'e')
                 return(NULL)
@@ -335,10 +335,10 @@ PlotSeqNetCDFFilesCmd <- function(){
             ncinfo <- list(xo = rfeDataInfo$ilon, yo = rfeDataInfo$ilat, varid = rfeDataInfo$varid)
 
             ncfileInit <- file.path(nc.dir, nc.files[1])
-            nc <- nc_open(ncfileInit)
+            nc <- ncdf4::nc_open(ncfileInit)
             xlon <- nc$var[[ncinfo$varid]]$dim[[ncinfo$xo]]$vals
             xlat <- nc$var[[ncinfo$varid]]$dim[[ncinfo$yo]]$vals
-            nc_close(nc)
+            ncdf4::nc_close(nc)
             xo <- order(xlon)
             xlon <- xlon[xo]
             yo <- order(xlat)
@@ -364,8 +364,8 @@ PlotSeqNetCDFFilesCmd <- function(){
             tcl('update')
         })
 
-        nc.dir <- str_trim(tclvalue(ncDIR))
-        nc.file <- str_trim(tclvalue(ncdf.date.file))
+        nc.dir <- trimws(tclvalue(ncDIR))
+        nc.file <- trimws(tclvalue(ncdf.date.file))
         ncfile.path <- file.path(nc.dir, nc.file)
 
         readNCFILE <- TRUE
@@ -381,10 +381,10 @@ PlotSeqNetCDFFilesCmd <- function(){
             ix <- .cdtData$EnvData$ncInfo$coords$ix
             iy <- .cdtData$EnvData$ncInfo$coords$iy
 
-            nc <- try(nc_open(ncfile.path), silent = TRUE)
+            nc <- try(ncdf4::nc_open(ncfile.path), silent = TRUE)
             if(inherits(nc, "try-error")) return(NULL)
-            ncdon <- ncvar_get(nc, varid = ncinfo$varid)
-            nc_close(nc)
+            ncdon <- ncdf4::ncvar_get(nc, varid = ncinfo$varid)
+            ncdf4::nc_close(nc)
             ncdon <- if(ncinfo$xo < ncinfo$yo) ncdon[ix, iy] else t(ncdon)[ix, iy]
             .cdtData$EnvData$ncData$map$z <- ncdon
 

@@ -92,7 +92,7 @@ writeCDTStationData <- function(data, file, na.strings = "-99", sep = " "){
     dat <- do.call(rbind, data[c('id', 'lon', 'lat', 'elv', 'data')])
     dat <- cbind(c(capt, data$dates), dat)
 
-    write.table(dat, file = file, sep = sep, na = na.strings,
+    utils::write.table(dat, file = file, sep = sep, na = na.strings,
                 row.names = FALSE, col.names = FALSE, quote = FALSE)
 }
 
@@ -213,7 +213,7 @@ matchCDTStationsDates <- function(...){
 
 splitCDTData0 <- function(donne, GUI = TRUE){
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
-    Config <- fromJSON(cdt.file.conf)
+    Config <- jsonlite::fromJSON(cdt.file.conf)
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtParseStationData_functions.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, Config$lang.iso)
 
@@ -278,7 +278,7 @@ splitCDTData1 <- function(donne){
 
 splitCDTData <- function(donne, tstep, GUI = TRUE){
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
-    Config <- fromJSON(cdt.file.conf)
+    Config <- jsonlite::fromJSON(cdt.file.conf)
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtParseStationData_functions.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, Config$lang.iso)
 
@@ -525,7 +525,7 @@ splitCDTData <- function(donne, tstep, GUI = TRUE){
 
 splitTsData <- function(donne, tstep, filefrmt, datefrmt, GUI = TRUE){
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
-    Config <- fromJSON(cdt.file.conf)
+    Config <- jsonlite::fromJSON(cdt.file.conf)
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtParseStationData_functions.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, Config$lang.iso)
 

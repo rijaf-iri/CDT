@@ -133,7 +133,7 @@ testHomogeneityPanelCmd <- function(){
 
         ######
         tkconfigure(bt.hom.mthd, command = function(){
-            if(str_trim(tclvalue(hom.method)) == CbMETHOD.MTH[2])
+            if(trimws(tclvalue(hom.method)) == CbMETHOD.MTH[2])
                 CONF.LEV <- c('90.0', '92.0', '94.0', '95.0', '97.5', '99.0')
             else
                 CONF.LEV <- c('90.0', '92.0', '95.0', '97.5', '99.0', '99.9')
@@ -206,11 +206,11 @@ testHomogeneityPanelCmd <- function(){
         bt.HomogTest <- ttkbutton(subfr1, text = lang.dlg[['button']][['2']])
 
         tkconfigure(bt.HomogTest, command = function(){
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            GeneralParameters$infile <- str_trim(tclvalue(input.file))
-            GeneralParameters$outdir <- str_trim(tclvalue(dir.save))
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            GeneralParameters$infile <- trimws(tclvalue(input.file))
+            GeneralParameters$outdir <- trimws(tclvalue(dir.save))
 
-            GeneralParameters$stats$mthd <- METHOD.MTH[CbMETHOD.MTH %in% str_trim(tclvalue(hom.method))]
+            GeneralParameters$stats$mthd <- METHOD.MTH[CbMETHOD.MTH %in% trimws(tclvalue(hom.method))]
             GeneralParameters$series$use <- switch(tclvalue(use.RefS), '0' = FALSE, '1' = TRUE)
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
@@ -279,8 +279,8 @@ testHomogeneityPanelCmd <- function(){
             if(path.dataIdx %in% c("", "NA") | is.na(path.dataIdx)) return(NULL)
             tclvalue(file.dataIndex) <- path.dataIdx
 
-            if(file.exists(str_trim(tclvalue(file.dataIndex)))){
-                OutQC <- try(readRDS(str_trim(tclvalue(file.dataIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.dataIndex)))){
+                OutQC <- try(readRDS(trimws(tclvalue(file.dataIndex))), silent = TRUE)
                 if(inherits(OutQC, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutQC[1]), TRUE, 'e')
@@ -290,7 +290,7 @@ testHomogeneityPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutQC
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.dataIndex)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
 
                 ###############
                 file.table <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', "BreaksPointsTable.rds")
@@ -366,7 +366,7 @@ testHomogeneityPanelCmd <- function(){
         tkconfigure(bt.stnID.prev, command = function(){
             if(!is.null(.cdtData$EnvData$output$data)){
                 STNID <- .cdtData$EnvData$output$data$id
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$STN$stnID)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(STNID)
                 tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[istn]
@@ -376,7 +376,7 @@ testHomogeneityPanelCmd <- function(){
         tkconfigure(bt.stnID.next, command = function(){
             if(!is.null(.cdtData$EnvData$output$data)){
                 STNID <- .cdtData$EnvData$output$data$id
-                istn <- which(STNID == str_trim(tclvalue(.cdtData$EnvData$STN$stnID)))
+                istn <- which(STNID == trimws(tclvalue(.cdtData$EnvData$STN$stnID)))
                 istn <- istn + 1
                 if(istn > length(STNID)) istn <- 1
                 tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[istn]
@@ -403,7 +403,7 @@ testHomogeneityPanelCmd <- function(){
 
         tkconfigure(bt.undo.Hom, command = function(){
             if(is.null(.cdtData$EnvData$cpt.table)) return(NULL)
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             for(j in 1:3){
                 if(is.null(.cdtData$EnvData$cpt.table0[[j]])) next
@@ -442,7 +442,7 @@ testHomogeneityPanelCmd <- function(){
         .cdtData$EnvData$tab$breakpts <- NULL
 
         tkconfigure(bt.Plot.Hom, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             tab.title <- paste0(stnid, "-BreakPoints")
 
@@ -454,7 +454,7 @@ testHomogeneityPanelCmd <- function(){
         .cdtData$EnvData$plot$plotseries <- GeneralParameters$plotSeries
 
         tkbind(cb.Plot.Hom, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot$plotseries <- plotSeriesVAL[CbplotSeriesVAL %in% str_trim(tclvalue(plotseries))]
+            .cdtData$EnvData$plot$plotseries <- plotSeriesVAL[CbplotSeriesVAL %in% trimws(tclvalue(plotseries))]
         })
 
         #######################
@@ -487,13 +487,13 @@ testHomogeneityPanelCmd <- function(){
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
 
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             if(is.null(.cdtData$EnvData$cpt.table)) return(NULL)
 
             STNID <- .cdtData$EnvData$output$data$id
             ids <- which(STNID == stnid)
-            adj.mthd <- adjSeriesVAL[CbadjSeriesVAL %in% str_trim(tclvalue(adjseries))]
+            adj.mthd <- adjSeriesVAL[CbadjSeriesVAL %in% trimws(tclvalue(adjseries))]
 
             .cdtData$EnvData$output$params[['adj']] <- GeneralParameters[["adj"]]
             parsAdj <- .cdtData$EnvData$output$params[['adj']]
@@ -531,10 +531,10 @@ testHomogeneityPanelCmd <- function(){
             ret <- lapply(.cdtData$EnvData$adjS, function(don){
                 if(is.null(don)) return(NULL)
                 file.stn <- file.path(.cdtData$EnvData$PathData, 'CDTSTATIONS', paste0(toupper(don$tstep), '_', .cdtData$EnvData$output$info[[1]]))
-                tmp <- read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
+                tmp <- utils::read.table(file.stn, header = FALSE, sep = info$sepr, stringsAsFactors = FALSE, colClasses = "character")
                 idaty <- seq(nrow(tmp))[-(1:is.elv)]
                 tmp[idaty, istn] <- as.character(round(don$data[, idon], 1))
-                write.table(tmp, file = file.stn, quote = FALSE, sep = info$sepr, row.names = FALSE, col.names = FALSE, na = info$miss.val)
+                utils::write.table(tmp, file = file.stn, quote = FALSE, sep = info$sepr, row.names = FALSE, col.names = FALSE, na = info$miss.val)
             })
 
             Insert.Messages.Out(paste(stnid, ':', lang.dlg[['message']][['6']]), TRUE, "s")
@@ -546,7 +546,7 @@ testHomogeneityPanelCmd <- function(){
                            dek = c('Day', 'disabled', 'normal'),
                            mon = c('Day', 'disabled', 'disabled'))
 
-            states <- unlist(states[CbperiodVAL %in% str_trim(tclvalue(timeSteps))])
+            states <- unlist(states[CbperiodVAL %in% trimws(tclvalue(timeSteps))])
             label <- states[1]
             state.dyp <- states[2]
             state.dek <- states[3]
@@ -585,7 +585,7 @@ testHomogeneityPanelCmd <- function(){
                 Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, 'e')
                 return(NULL)
             }
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
 
             imgContainer <- CDT.Display.Graph(homPlot_AdjustedSeries, .cdtData$EnvData$tab$adjGraph, paste0(stnid, '-Adjusted-Series'))
             .cdtData$EnvData$tab$adjGraph<- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$adjGraph)
@@ -598,7 +598,7 @@ testHomogeneityPanelCmd <- function(){
         .cdtData$EnvData$tab$infoHom <- NULL
 
         tkconfigure(bt.display.Info, command = function(){
-            stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             STNID <- .cdtData$EnvData$output$data$id
             ids <- which(STNID == stnid)
@@ -664,7 +664,7 @@ testHomogeneityPanelCmd <- function(){
     }
 
     display.cpt.output <- function(){
-        stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+        stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
         if(stnid == "") return(NULL)
 
         cpt.table <- lapply(seq_along(.cdtData$EnvData$cpt.table), function(j){
@@ -711,7 +711,7 @@ testHomogeneityPanelCmd <- function(){
     }
 
     .cdtData$EnvData$HomTest$SaveEdit <- function(dat2sav){
-        stnid <- str_trim(tclvalue(.cdtData$EnvData$STN$stnID))
+        stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
 
         for(j in 1:3){
             if(is.null(.cdtData$EnvData$cpt.table[[j]])) next
@@ -735,11 +735,11 @@ testHomogeneityPanelCmd <- function(){
 
             res <- lapply(seq_along(s), function(i){
                 x <- dat2sav[s[i]:e[i], , drop = FALSE]
-                idt <- str_trim(as.character(x$Breakpoints.Date))
+                idt <- trimws(as.character(x$Breakpoints.Date))
                 ix <- is.na(idt) | idt == ""
                 if(all(ix)) return(NULL)
                 x <- x[!ix, , drop = FALSE]
-                tstep <- str_trim(as.character(x$Time.Step))
+                tstep <- trimws(as.character(x$Time.Step))
                 tstep <- unique(tstep[!is.na(tstep) & tstep != ""])
                 don <- data.frame(x[, -1, drop = FALSE], stringsAsFactors = FALSE)
                 list(tstep = tstep, don = don)

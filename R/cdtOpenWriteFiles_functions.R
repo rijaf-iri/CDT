@@ -13,7 +13,7 @@ openFiles <- function(parent, fileopen){
     if(nchar(fileopen)){
         delimter <- preview.data(parent, fileopen)
         if(!is.null(delimter)){
-            dat.file <- try(read.table(fileopen, header = delimter$header, sep = delimter$sepr,
+            dat.file <- try(utils::read.table(fileopen, header = delimter$header, sep = delimter$sepr,
                                     skip = delimter$skip-1, na.strings = delimter$miss.val, quote = "\"",
                                     strip.white = TRUE, stringsAsFactors = FALSE,
                                     colClasses = "character", comment.char = ""), silent = TRUE)
@@ -60,10 +60,10 @@ writeFiles <- function(data2save, file2save,
                        row.names = FALSE, col.names = FALSE,
                        quote = FALSE, append = FALSE, sep = " ", ...)
 {
-    extFl <- tolower(tools::file_ext(str_trim(basename(file2save))))
+    extFl <- tolower(tools::file_ext(trimws(basename(file2save))))
     sep <- if(extFl == "csv") ',' else sep
     if(sep == "") sep <- " "
-    write.table(data2save, file = file2save,
+    utils::write.table(data2save, file = file2save,
                 row.names = row.names, col.names = col.names,
                 quote = quote, sep = sep, append = append, ...)
 }
@@ -118,7 +118,7 @@ getOpenShp <- function(parent){
         return(NULL)
     }else{
         tkinsert(.cdtEnv$tcl$main$Openfiles, "end", basename(fileopen))
-        proj4string(shp.opfiles) <- CRS(as.character(NA))
+        sp::proj4string(shp.opfiles) <- sp::CRS(as.character(NA))
         return(list(basename(fileopen), shp.opfiles, fileopen))
     }
 }

@@ -68,7 +68,7 @@ blankNcdf_GetInfo <- function(){
     ###################
 
     tkconfigure(bt.ncfldir, command = function(){
-        nbnc <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+        nbnc <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
         if(nbnc == 'one'){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             nc.opfiles <- getOpenNetcdf(tt, initialdir = getwd())
@@ -98,7 +98,7 @@ blankNcdf_GetInfo <- function(){
             listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
             tclvalue(ncsample) <- nc.opfiles[[1]]
 
-            nbnc <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+            nbnc <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
             setCB <- list(cb.ncfldir, cb.ncsample, cb.blank)
             if(nbnc == 'several') setCB <- setCB[-1]
             lapply(setCB, tkconfigure, values = unlist(listOpenFiles))
@@ -108,7 +108,7 @@ blankNcdf_GetInfo <- function(){
     tkbind(cb.nbncf, "<<ComboboxSelected>>", function(){
         tkdestroy(cb.ncfldir)
         tclvalue(ncfiledir) <- ''
-        nbnc <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+        nbnc <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
 
         if(nbnc == 'one'){
             tclvalue(fileINdir) <- lang.dlg[['label']][['1']]
@@ -185,7 +185,7 @@ blankNcdf_GetInfo <- function(){
             tclvalue(blank.shpf) <- shp.opfiles[[1]]
             listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
 
-            nbnc <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
+            nbnc <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
             setCB <- list(cb.ncfldir, cb.ncsample, cb.blank)
             if(nbnc == 'several') setCB <- setCB[-1]
             lapply(setCB, tkconfigure, values = unlist(listOpenFiles))
@@ -212,7 +212,7 @@ blankNcdf_GetInfo <- function(){
     #####
 
     tkconfigure(bt.dir2save, command = function(){
-        initialdir <- if(str_trim(.cdtData$GalParams$output) != "") .cdtData$GalParams$output else getwd()
+        initialdir <- if(trimws(.cdtData$GalParams$output) != "") .cdtData$GalParams$output else getwd()
         tcl('wm', 'attributes', tt, topmost = FALSE)
         dir2savepth <- tk_choose.dir(initialdir, "")
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -236,11 +236,11 @@ blankNcdf_GetInfo <- function(){
 
     ####
     tkconfigure(bt.prm.OK, command = function(){
-        .cdtData$GalParams$nbnc <- NBNC[NBNCF %in% str_trim(tclvalue(nbcnfile))]
-        .cdtData$GalParams$dirnc <- str_trim(tclvalue(ncfiledir))
-        .cdtData$GalParams$sample <- str_trim(tclvalue(ncsample))
-        .cdtData$GalParams$shpf <- str_trim(tclvalue(blank.shpf))
-        .cdtData$GalParams$output <- str_trim(tclvalue(dir2save))
+        .cdtData$GalParams$nbnc <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
+        .cdtData$GalParams$dirnc <- trimws(tclvalue(ncfiledir))
+        .cdtData$GalParams$sample <- trimws(tclvalue(ncsample))
+        .cdtData$GalParams$shpf <- trimws(tclvalue(blank.shpf))
+        .cdtData$GalParams$output <- trimws(tclvalue(dir2save))
 
         .cdtData$GalParams$message <- lang.dlg[['message']]
 

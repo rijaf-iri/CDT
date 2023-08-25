@@ -84,7 +84,7 @@ getParams.QC.Elevation <- function(Parameters, parent.win = .cdtEnv$tcl$main$win
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$file <<- str_trim(tclvalue(input.file))
+        Parameters$file <<- trimws(tclvalue(input.file))
         Parameters$dem <<- switch(tclvalue(elevfrom), '0' = FALSE, '1' = TRUE)
 
         tkgrab.release(tt)

@@ -148,9 +148,9 @@ AssessDataPanelCmd <- function(){
         assesDataBut <- ttkbutton(subfr1, text = lang.dlg[['button']][['1']])
 
         tkconfigure(assesDataBut, command = function(){
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            GeneralParameters$infile <- str_trim(tclvalue(input.file))
-            GeneralParameters$outdir <- str_trim(tclvalue(dir.save))
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            GeneralParameters$infile <- trimws(tclvalue(input.file))
+            GeneralParameters$outdir <- trimws(tclvalue(dir.save))
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
 
@@ -225,8 +225,8 @@ AssessDataPanelCmd <- function(){
             if(path.Stat %in% c("", "NA") | is.na(path.Stat)) return(NULL)
             tclvalue(file.Index) <- path.Stat
 
-            if(file.exists(str_trim(tclvalue(file.Index)))){
-                Outdata <- try(readRDS(str_trim(tclvalue(file.Index))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.Index)))){
+                Outdata <- try(readRDS(trimws(tclvalue(file.Index))), silent = TRUE)
                 if(inherits(Outdata, "try-error")){
                     Insert.Messages.Out(gsub('[\r\n]', '', Outdata[1]), TRUE, "e")
                     Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, "e")
@@ -242,7 +242,7 @@ AssessDataPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- Outdata
-                .cdtData$EnvData$PathData <- dirname(str_trim(tclvalue(file.Index)))
+                .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.Index)))
                 .cdtData$EnvData$plot.maps$data.type <- "cdtstation"
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -315,7 +315,7 @@ AssessDataPanelCmd <- function(){
             if(is.null(.cdtData$EnvData$output)) return(NULL)
             get.DataAvailable.Map()
 
-            typeTSp <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+            typeTSp <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
             titre.graph <- if(typeTSp == "Chart") lang.dlg[['label']][['7']] else lang.dlg[['label']][['8']]
             assessData_displayAvailability(lang.dlg[['label']][['9']], titre.graph)
         })
@@ -366,42 +366,42 @@ AssessDataPanelCmd <- function(){
         .cdtData$EnvData$tab$yearMap <- NULL
 
         tkconfigure(bt.year.maps, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$availDate)) != "" &
+            if(trimws(tclvalue(.cdtData$EnvData$availDate)) != "" &
                 !is.null(.cdtData$EnvData$yearly))
             {
                 get.DataYearly.Map()
 
-                typeTSp <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+                typeTSp <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
                 titre.graph <- if(typeTSp == "Chart") lang.dlg[['label']][['7']] else lang.dlg[['label']][['8']]
                 assessData_displayYearlyData(lang.dlg[['label']][['10']], titre.graph)
             }
         })
 
         tkconfigure(bt.year.Date.prev, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$availDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$availDate)) != ""){
                 donDates <- as.character(.cdtData$EnvData$yearly$year)
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$availDate)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$availDate)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(donDates)
                 tclvalue(.cdtData$EnvData$availDate) <- donDates[idaty]
                 get.DataYearly.Map()
 
-                typeTSp <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+                typeTSp <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
                 titre.graph <- if(typeTSp == "Chart") lang.dlg[['label']][['7']] else lang.dlg[['label']][['8']]
                 assessData_displayYearlyData(lang.dlg[['label']][['10']], titre.graph)
             }
         })
 
         tkconfigure(bt.year.Date.next, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$availDate)) != ""){
+            if(trimws(tclvalue(.cdtData$EnvData$availDate)) != ""){
                 donDates <- as.character(.cdtData$EnvData$yearly$year)
-                idaty <- which(donDates == str_trim(tclvalue(.cdtData$EnvData$availDate)))
+                idaty <- which(donDates == trimws(tclvalue(.cdtData$EnvData$availDate)))
                 idaty <- idaty + 1
                 if(idaty > length(donDates)) idaty <- 1
                 tclvalue(.cdtData$EnvData$availDate) <- donDates[idaty]
                 get.DataYearly.Map()
 
-                typeTSp <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
+                typeTSp <- trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp))
                 titre.graph <- if(typeTSp == "Chart") lang.dlg[['label']][['7']] else lang.dlg[['label']][['8']]
                 assessData_displayYearlyData(lang.dlg[['label']][['10']], titre.graph)
             }
@@ -481,7 +481,7 @@ AssessDataPanelCmd <- function(){
         .cdtData$EnvData$tab$Table <- NULL
 
         tkconfigure(bt.stn.plot, command = function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
                 if(is.null(.cdtData$EnvData$yearly)) return(NULL)
                 imgContainer1 <- assessData_displayYearlyTS(.cdtData$EnvData$tab$yearlyTS, lang.dlg[['label']][['7']])
                 .cdtData$EnvData$tab$yearlyTS <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$yearlyTS)
@@ -495,12 +495,12 @@ AssessDataPanelCmd <- function(){
 
         tkconfigure(bt.stn.prev, command = function(){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
-            istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+            istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
             istn <- istn - 1
             if(istn < 1) istn <- length(stnIDTSPLOT)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
                 if(is.null(.cdtData$EnvData$yearly)) return(NULL)
                 imgContainer1 <- assessData_displayYearlyTS(.cdtData$EnvData$tab$yearlyTS, lang.dlg[['label']][['7']])
                 .cdtData$EnvData$tab$yearlyTS <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$yearlyTS)
@@ -514,12 +514,12 @@ AssessDataPanelCmd <- function(){
 
         tkconfigure(bt.stn.next, command = function(){
             stnIDTSPLOT <- .cdtData$EnvData$output$data$id
-            istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+            istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
             istn <- istn + 1
             if(istn > length(stnIDTSPLOT)) istn <- 1
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
                 if(is.null(.cdtData$EnvData$yearly)) return(NULL)
                 imgContainer1 <- assessData_displayYearlyTS(.cdtData$EnvData$tab$yearlyTS, lang.dlg[['label']][['7']])
                 .cdtData$EnvData$tab$yearlyTS <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$yearlyTS)
@@ -534,7 +534,7 @@ AssessDataPanelCmd <- function(){
         ###############
 
         tkbind(cb.stn.table, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$typeTSp)) == "Chart"){
                 tkconfigure(bt.stn.plot, text = .cdtEnv$tcl$lang$global[['button']][['3']])
                 tkconfigure(bt.stn.opt, state = "normal")
             }else{
@@ -675,7 +675,7 @@ AssessDataPanelCmd <- function(){
             tcl('update')
         })
 
-        change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+        change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
         formatData <- TRUE
         if(!is.null(.cdtData$EnvData$change.plotA))
@@ -713,8 +713,8 @@ AssessDataPanelCmd <- function(){
             tcl('update')
         })
 
-        change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
-        this.daty <- str_trim(tclvalue(.cdtData$EnvData$availDate))
+        change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+        this.daty <- trimws(tclvalue(.cdtData$EnvData$availDate))
 
         formatData <- TRUE
         if(!is.null(.cdtData$EnvData$DataYear))

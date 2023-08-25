@@ -5,7 +5,7 @@ SPICalc.Plot.Map <- function(){
 
     ## titre
     if(!dataMapOp$title$user){
-        scales <- str_trim(tclvalue(.cdtData$EnvData$spi.tscale))
+        scales <- trimws(tclvalue(.cdtData$EnvData$spi.tscale))
         this.daty <- .cdtData$EnvData$varData$spi$this.daty
         if(.cdtData$EnvData$output$params$Indices == "Decile"){
             yy <- substr(this.daty, 1, 4)
@@ -30,10 +30,10 @@ SPICalc.Plot.Map <- function(){
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
     map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
 
-    opar <- par(mar = map.args$mar)
+    opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
                          SHPOp = .cdtData$EnvData$SHPOp,
                          MapOp = dataMapOp,
@@ -46,7 +46,7 @@ SPICalc.Plot.Map <- function(){
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
 
-    par(opar)
+    graphics::par(opar)
 
     return(par.plot)
 }
@@ -55,7 +55,7 @@ SPICalc.Plot.Map <- function(){
 
 SPICalc.Plot.Graph <- function(){
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, 'e')
             return(NULL)
@@ -67,8 +67,8 @@ SPICalc.Plot.Graph <- function(){
         titre <- paste0("(", .cdtData$EnvData$output$data$id[ixy], ")")
     }else{
         cdtdataset <- .cdtData$EnvData$cdtdataset
-        xloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        yloc <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        yloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
         xyloc <- cdtdataset.extarct.TS(cdtdataset, cdtdataset$fileInfo, xloc, yloc)
         if(is.null(xyloc)) return(NULL)
         don <- as.numeric(xyloc$data)
@@ -86,7 +86,7 @@ SPICalc.Plot.Graph <- function(){
 
     #########
 
-    titre <- paste(str_trim(tclvalue(.cdtData$EnvData$spi.tscale)), titre)
+    titre <- paste(trimws(tclvalue(.cdtData$EnvData$spi.tscale)), titre)
 
     #########
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
@@ -165,10 +165,10 @@ SPICalc.Plot.VizTS <- function(){
 
     cdtParallelCond <- .cdtData$Config$parallel
 
-    op <- par(bg = "white")
+    op <- graphics::par(bg = "white")
 
     if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['8']], TRUE, 'e')
             return(NULL)
@@ -197,8 +197,8 @@ SPICalc.Plot.VizTS <- function(){
             xlat <- cdtdataset$prec$coords$mat$y
         }
 
-        ilon <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
-        ilat <- as.numeric(str_trim(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
+        ilon <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
+        ilat <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$latLOC)))
 
         iclo <- findInterval(ilon, xlon)
         ilo <- iclo + (2 * ilon > xlon[iclo] + xlon[iclo + 1])
@@ -228,7 +228,7 @@ SPICalc.Plot.VizTS <- function(){
     #################
 
     spiVizOpt <- .cdtData$EnvData$spiVizOp
-    tscales <- 1:as.numeric(str_trim(tclvalue(.cdtData$EnvData$spiViz$max.tscale)))
+    tscales <- 1:as.numeric(trimws(tclvalue(.cdtData$EnvData$spiViz$max.tscale)))
 
     #################
 
@@ -312,11 +312,11 @@ SPICalc.Plot.VizTS <- function(){
 
     #################
 
-    opar <- par(mar = mar)
+    opar <- graphics::par(mar = mar)
     plot(1, xlim = xlim, ylim = ylim, xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n', xaxs = "i")
 
     xTck <- axTicks.Date(daty, 1)
-    yTck <- axTicks(2)
+    yTck <- graphics::axTicks(2)
 
     if(as.numeric(diff(xlim)) > 1095){
         xminor <- seq(as.Date(paste0(format(xlim[1], "%Y"), "-01-01")),
@@ -329,28 +329,28 @@ SPICalc.Plot.VizTS <- function(){
         yminor <- yminor[!yminor %in% yTck]
     }else yminor <- NULL
 
-    axis.Date(1, at = xTck, cex.axis = 1.0)
-    if(length(xminor) > 0) axis.Date(1, at = xminor, labels = NA, tcl = par("tcl") * 0.5)
-    axis(2, at = yTck, las = 1, cex.axis = 1.0)
-    if(length(yminor) > 0) axis(2, at = yminor, labels = NA, tcl = par("tcl") * 0.5)
+    graphics::axis.Date(1, at = xTck, cex.axis = 1.0)
+    if(length(xminor) > 0) graphics::axis.Date(1, at = xminor, labels = NA, tcl = graphics::par("tcl") * 0.5)
+    graphics::axis(2, at = yTck, las = 1, cex.axis = 1.0)
+    if(length(yminor) > 0) graphics::axis(2, at = yminor, labels = NA, tcl = graphics::par("tcl") * 0.5)
 
-    mtext(xlab, side = 1, line = 2.1)
-    mtext(ylab, side = 2, line = 2.1)
-    mtext(.cdtData$EnvData$location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1.0)
-    title(main = titre, cex.main = 1.5, font.main = 2)
+    graphics::mtext(xlab, side = 1, line = 2.1)
+    graphics::mtext(ylab, side = 2, line = 2.1)
+    graphics::mtext(.cdtData$EnvData$location, side = 3, outer = FALSE, adj = 1, line = 0, cex = 1.0)
+    graphics::title(main = titre, cex.main = 1.5, font.main = 2)
 
-    # image(daty, tscales, spi.mat, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
-    .filled.contour(daty, tscales, spi.mat, levels = breaks, col = kolor)
+    # graphics::image(daty, tscales, spi.mat, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
+    graphics::.filled.contour(daty, tscales, spi.mat, levels = breaks, col = kolor)
     fields::image.plot(zlim = zlim, breaks = breaks2, col = kolor, horizontal = horizontal,
                        legend.only = TRUE, legend.mar = legend.mar, legend.width = legend.width,
                        legend.args = legend.args, axis.args = list(at = breaks1, labels = legendLabel,
                        cex.axis = 0.9, font = 2, tcl = -0.3, mgp = c(0, 0.5, 0)), legend.shrink = 0.8)
 
-    abline(h = yTck, v = xTck, col = "lightgray", lty = 3)
-    box()
-    par(opar)
+    graphics::abline(h = yTck, v = xTck, col = "lightgray", lty = 3)
+    graphics::box()
+    graphics::par(opar)
 
-    par(op)
+    graphics::par(op)
     return(0)
 }
 

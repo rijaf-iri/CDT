@@ -120,15 +120,15 @@ getParams.RR.OutlierCheck <- function(Parameters)
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$precip.max <<- as.numeric(str_trim(tclvalue(precip.max)))
-        Parameters$sigma <<- as.numeric(str_trim(tclvalue(mul.sigma)))
+        Parameters$precip.max <<- as.numeric(trimws(tclvalue(precip.max)))
+        Parameters$sigma <<- as.numeric(trimws(tclvalue(mul.sigma)))
 
         Parameters$elv$use <<- switch(tclvalue(use.elev), '0' = FALSE, '1' = TRUE)
 
-        Parameters$voisin$min <<- as.numeric(str_trim(tclvalue(min.nbrs)))
-        Parameters$voisin$max <<- as.numeric(str_trim(tclvalue(max.nbrs)))
-        Parameters$voisin$dist <<- as.numeric(str_trim(tclvalue(max.dst)))
-        Parameters$voisin$elv <<- as.numeric(str_trim(tclvalue(elv.diff)))
+        Parameters$voisin$min <<- as.numeric(trimws(tclvalue(min.nbrs)))
+        Parameters$voisin$max <<- as.numeric(trimws(tclvalue(max.nbrs)))
+        Parameters$voisin$dist <<- as.numeric(trimws(tclvalue(max.dst)))
+        Parameters$voisin$elv <<- as.numeric(trimws(tclvalue(elv.diff)))
 
         tkgrab.release(tt)
         tkdestroy(tt)

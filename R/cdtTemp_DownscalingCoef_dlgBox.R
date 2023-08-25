@@ -151,20 +151,20 @@ Temp_coefDownGetInfo <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl)) == ""){
+        if(trimws(tclvalue(file.stnfl)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
-        }else if(str_trim(tclvalue(file.grddem)) == "" ){
+        }else if(trimws(tclvalue(file.grddem)) == "" ){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.save1)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(file.save1)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
 
-            .cdtData$GalParams$IO.files$STN.file <- str_trim(tclvalue(file.stnfl))
-            .cdtData$GalParams$IO.files$DEM.file <- str_trim(tclvalue(file.grddem))
-            .cdtData$GalParams$IO.files$dir2save <- str_trim(tclvalue(file.save1))
+            .cdtData$GalParams$IO.files$STN.file <- trimws(tclvalue(file.stnfl))
+            .cdtData$GalParams$IO.files$DEM.file <- trimws(tclvalue(file.grddem))
+            .cdtData$GalParams$IO.files$dir2save <- trimws(tclvalue(file.save1))
 
             .cdtData$GalParams$message <- lang.dlg[['message']]
 

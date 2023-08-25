@@ -234,15 +234,15 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
             if(path.hovd == "") return(NULL)
             tclvalue(file.hovd) <- path.hovd
 
-            if(file.exists(str_trim(tclvalue(file.hovd)))){
-                hovd.data <- try(readRDS(str_trim(tclvalue(file.hovd))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.hovd)))){
+                hovd.data <- try(readRDS(trimws(tclvalue(file.hovd))), silent = TRUE)
                 if(inherits(hovd.data, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', hovd.data[1]), TRUE, 'e')
                     return(NULL)
                 }
 
-                .cdtData$EnvData$file.hovd <- str_trim(tclvalue(file.hovd))
+                .cdtData$EnvData$file.hovd <- trimws(tclvalue(file.hovd))
                 .cdtData$EnvData$GeneralParameters <- hovd.data$GeneralParameters
                 .cdtData$EnvData$cdtData <- hovd.data$cdtData
 
@@ -297,8 +297,8 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
         ##############
         fr.seas <- ttklabelframe(frameSeason, text = lang.dlg[['label']][['8']], relief = 'sunken', labelanchor = "n", borderwidth = 2)
 
-        mon1 <- as.numeric(str_trim(GeneralParameters$date.range$start.month))
-        mon2 <- as.numeric(str_trim(GeneralParameters$date.range$end.month))
+        mon1 <- as.numeric(trimws(GeneralParameters$date.range$start.month))
+        mon2 <- as.numeric(trimws(GeneralParameters$date.range$end.month))
         start.mois <- tclVar(MOIS[mon1])
         end.mois <- tclVar(MOIS[mon2])
 
@@ -404,16 +404,16 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
                 }
             }
 
-            GeneralParameters$date.range$start.month <- which(MOIS %in% str_trim(tclvalue(start.mois)))
-            GeneralParameters$date.range$end.month <- which(MOIS %in% str_trim(tclvalue(end.mois)))
-            GeneralParameters$date.range$start.year <- as.numeric(str_trim(tclvalue(start.year)))
-            GeneralParameters$date.range$end.year <- as.numeric(str_trim(tclvalue(end.year)))
+            GeneralParameters$date.range$start.month <- which(MOIS %in% trimws(tclvalue(start.mois)))
+            GeneralParameters$date.range$end.month <- which(MOIS %in% trimws(tclvalue(end.mois)))
+            GeneralParameters$date.range$start.year <- as.numeric(trimws(tclvalue(start.year)))
+            GeneralParameters$date.range$end.year <- as.numeric(trimws(tclvalue(end.year)))
 
             GeneralParameters$aggr.series$aggr.data <- switch(tclvalue(aggr.data), '0' = FALSE, '1' = TRUE)
 
             #####
-            GeneralParameters$outdir <- str_trim(tclvalue(dir2save))
-            GeneralParameters$CDT.index <- str_trim(tclvalue(file.rds2))
+            GeneralParameters$outdir <- trimws(tclvalue(dir2save))
+            GeneralParameters$CDT.index <- trimws(tclvalue(file.rds2))
             GeneralParameters$validExist <- switch(tclvalue(validExist), '0' = FALSE, '1' = TRUE)
 
             ####
@@ -520,7 +520,7 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stats.Opt, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                mapstat <- ValStatNAMES[CbStatNAMES %in% str_trim(tclvalue(statsVAR))]
+                mapstat <- ValStatNAMES[CbStatNAMES %in% trimws(tclvalue(statsVAR))]
                 istat <- which(.cdtData$EnvData$Statistics$STN$statNames == mapstat)
 
                 don <- .cdtData$EnvData$Statistics$STN$statistics[istat, ]
@@ -534,7 +534,7 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
             }
             .cdtData$EnvData$Options$statMapOp <- MapGraph.MapOptions(.cdtData$EnvData$Options$statMapOp)
 
-            # if(str_trim(tclvalue(.cdtData$EnvData$allTcl$typeMap)) == "Points")
+            # if(trimws(tclvalue(.cdtData$EnvData$allTcl$typeMap)) == "Points")
             #     pointSizeI <<- .cdtData$EnvData$Options$statMapOp$pointSize
         })
 
@@ -544,7 +544,7 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stats.maps, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                .cdtData$EnvData$statVAR <- ValStatNAMES[CbStatNAMES %in% str_trim(tclvalue(statsVAR))]
+                .cdtData$EnvData$statVAR <- ValStatNAMES[CbStatNAMES %in% trimws(tclvalue(statsVAR))]
                 # .cdtData$EnvData$plot.maps$data.type <- "cdtstation"
                 .cdtData$EnvData$plot.maps$data.type <- "grid"
                 .cdtData$EnvData$plot.maps$lon <- .cdtData$EnvData$opDATA$lon
@@ -611,7 +611,7 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
         .cdtData$EnvData$tab$Graph <- NULL
 
         tkconfigure(bt.stats.graph, command = function(){
-            .cdtData$EnvData$type.graph <- ValTypeGRAPH[CbTypeGRAPH %in% str_trim(tclvalue(type.graph))]
+            .cdtData$EnvData$type.graph <- ValTypeGRAPH[CbTypeGRAPH %in% trimws(tclvalue(type.graph))]
             if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 imgContainer <- CDT.Display.Graph(Validation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
                 .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
@@ -620,7 +620,7 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
 
         ##############
         tkconfigure(bt.Opt.graph, command = function(){
-            typeGraph <- ValTypeGRAPH[CbTypeGRAPH %in% str_trim(tclvalue(type.graph))]
+            typeGraph <- ValTypeGRAPH[CbTypeGRAPH %in% trimws(tclvalue(type.graph))]
             plot.fun <- get(paste0("Validation.GraphOptions.", typeGraph), mode = "function")
             .cdtData$EnvData$Options$GraphOp <- plot.fun(.cdtData$EnvData$Options$GraphOp)
         })
@@ -633,7 +633,7 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
                 
                 ### change lon & lat here
                 # don <- .cdtData$EnvData$Statistics$STN
-                # istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(stn.stat.tab)))
+                # istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
                 # dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
                 # titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
                 titleTab <- "Titre ici"
@@ -720,11 +720,11 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
     #######################################################################################################
 
     getInputInfos <- function(){
-        GeneralParameters$Tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+        GeneralParameters$Tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
 
-        GeneralParameters$CDT.index1 <- str_trim(tclvalue(file.rds1))
-        GeneralParameters$CDT.index2 <- str_trim(tclvalue(file.rds2))
-        GeneralParameters$outdir <- str_trim(tclvalue(dir2save))
+        GeneralParameters$CDT.index1 <- trimws(tclvalue(file.rds1))
+        GeneralParameters$CDT.index2 <- trimws(tclvalue(file.rds2))
+        GeneralParameters$outdir <- trimws(tclvalue(dir2save))
 
         return(GeneralParameters)
     }

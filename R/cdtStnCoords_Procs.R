@@ -45,7 +45,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
     don.info <- getStnOpenDataInfo(GeneralParameters$infile)
     sep <- don.info[[3]]$sepr
     if(sep == "") sep <- " "
-    write.table(don0, file = fileout, sep = sep, na = don.info[[3]]$miss.val,
+    utils::write.table(don0, file = fileout, sep = sep, na = don.info[[3]]$miss.val,
                 col.names = don.info[[3]]$header, row.names = FALSE, quote = FALSE)
     rm(don0)
 
@@ -64,7 +64,7 @@ StnChkCoordsProcs <- function(GeneralParameters){
             Insert.Messages.Out(message[['11']], TRUE, "w")
             shpd <- NULL
         }else{
-            shpd <- as(shpd[[2]], "SpatialPolygons")
+            shpd <- methods::as(shpd[[2]], "SpatialPolygons")
             shpd <- rgeos::gUnaryUnion(shpd)
             shpd <- rgeos::gSimplify(shpd, tol = 0.05, topologyPreserve = TRUE)
             shpd <- rgeos::gBuffer(shpd, width = GeneralParameters$buffer/111)
@@ -120,8 +120,8 @@ StnChkCoordsProcs <- function(GeneralParameters){
     ## Coordinates outside boundaries
     if(!is.null(shpd)){
         spcoords <- coords
-        coordinates(spcoords) <- ~lon+lat
-        iout <- is.na(over(spcoords, geometry(shpd)))
+        sp::coordinates(spcoords) <- ~lon+lat
+        iout <- is.na(sp::over(spcoords, sp::geometry(shpd)))
         if(any(iout)){
             don.table$out <- data.frame(State = message[['17']], don.disp[iout, , drop = FALSE])
             don.table$out <- don.table$out[order(coords$id[iout]), , drop = FALSE]
@@ -264,7 +264,7 @@ StnChkCoordsCorrect <- function(){
     info <- .cdtData$EnvData$output$info
     fileout <- file.path(.cdtData$EnvData$PathData,
                         paste0('Checked_Coords_', .cdtData$EnvData$output$params$infile))
-    don0 <- read.table(fileout, header = info[[3]]$header,
+    don0 <- utils::read.table(fileout, header = info[[3]]$header,
                        sep = info[[3]]$sepr, na.strings = info[[3]]$miss.val,
                        stringsAsFactors = FALSE, colClasses = "character", quote = "\"")
     filemap <- file.path(.cdtData$EnvData$PathData, 'CDTDATASET', 'Display.rds')
@@ -362,7 +362,7 @@ StnChkCoordsCorrect <- function(){
     ######
     sep <- info[[3]]$sepr
     if(sep == "") sep <- " "
-    write.table(don0, file = fileout, sep = sep, na = info[[3]]$miss.val,
+    utils::write.table(don0, file = fileout, sep = sep, na = info[[3]]$miss.val,
                 col.names = info[[3]]$header, row.names = FALSE, quote = FALSE)
     saveRDS(map.disp, filemap)
 

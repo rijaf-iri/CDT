@@ -55,9 +55,9 @@ AggregateMWin_GetInfo <- function(){
 
     #################
     tkbind(cb.fperiod, "<<ComboboxSelected>>", function(){
-        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
-        minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
         retminhr <- set.hour.minute(intstep, minhour)
         tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
         tclvalue(minhour.tclVar) <- retminhr$val
@@ -124,7 +124,7 @@ AggregateMWin_GetInfo <- function(){
 
     tkconfigure(set.datatype, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        AggregateTS_ncdfData(tt, str_trim(tclvalue(file.stnfl)), tclvalue(timeSteps))
+        AggregateTS_ncdfData(tt, trimws(tclvalue(file.stnfl)), tclvalue(timeSteps))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingdone <<- 1
     })
@@ -160,7 +160,7 @@ AggregateMWin_GetInfo <- function(){
         tclvalue(file.stnfl) <- ''
 
         ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
             tclvalue(fileINdir) <- lang.dlg[['label']][['3']]
             tclvalue(fileORdir) <- lang.dlg[['label']][['11']]
 
@@ -192,7 +192,7 @@ AggregateMWin_GetInfo <- function(){
         }
 
         ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
             tclvalue(fileINdir) <- lang.dlg[['label']][['4']]
             tclvalue(fileORdir) <- lang.dlg[['label']][['12']]
 
@@ -220,7 +220,7 @@ AggregateMWin_GetInfo <- function(){
         }
 
         ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]){
+        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3]){
             tclvalue(fileINdir) <- lang.dlg[['label']][['5']]
             tclvalue(fileORdir) <- lang.dlg[['label']][['12']]
 
@@ -236,7 +236,7 @@ AggregateMWin_GetInfo <- function(){
 
             tkconfigure(set.datatype, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
-                AggregateTS_ncdfData(tt, str_trim(tclvalue(file.stnfl)), tclvalue(timeSteps))
+                AggregateTS_ncdfData(tt, trimws(tclvalue(file.stnfl)), tclvalue(timeSteps))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
                 settingdone <<- 1
             })
@@ -348,34 +348,34 @@ AggregateMWin_GetInfo <- function(){
 
     #######
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl)) == ""){
+        if(trimws(tclvalue(file.stnfl)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.save)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(file.save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingdone)){
+        }else if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingdone)){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            .cdtData$GalParams$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+            .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
-            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                .cdtData$GalParams$cdtstation <- str_trim(tclvalue(file.stnfl))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                .cdtData$GalParams$cdtdataset <- str_trim(tclvalue(file.stnfl))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3])
-                .cdtData$GalParams$cdtnetcdf$dir <- str_trim(tclvalue(file.stnfl))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                .cdtData$GalParams$cdtstation <- trimws(tclvalue(file.stnfl))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                .cdtData$GalParams$cdtdataset <- trimws(tclvalue(file.stnfl))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3])
+                .cdtData$GalParams$cdtnetcdf$dir <- trimws(tclvalue(file.stnfl))
 
-            .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
+            .cdtData$GalParams$output <- trimws(tclvalue(file.save))
 
-            .cdtData$GalParams$aggr.series$fun <- str_trim(tclvalue(aggr.fun))
-            .cdtData$GalParams$aggr.series$win <- as.numeric(str_trim(tclvalue(time.win)))
-            .cdtData$GalParams$aggr.series$min.data <- as.numeric(str_trim(tclvalue(min.data)))
-            .cdtData$GalParams$aggr.series$align <- str_trim(tclvalue(align.data))
+            .cdtData$GalParams$aggr.series$fun <- trimws(tclvalue(aggr.fun))
+            .cdtData$GalParams$aggr.series$win <- as.numeric(trimws(tclvalue(time.win)))
+            .cdtData$GalParams$aggr.series$min.data <- as.numeric(trimws(tclvalue(min.data)))
+            .cdtData$GalParams$aggr.series$align <- trimws(tclvalue(align.data))
 
             .cdtData$GalParams$settingdone <- settingdone
             .cdtData$GalParams$message <- lang.dlg[['message']]

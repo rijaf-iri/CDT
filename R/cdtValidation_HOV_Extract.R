@@ -49,8 +49,8 @@ HOV_DataExtraction <- function(GeneralParameters){
             shp.dat <- getShpOpenData(GeneralParameters$shp.file$shp)[[2]]
             shp <- shp.dat[as.character(shp.dat@data[, GeneralParameters$shp.file$attr]) == GeneralParameters$Geom$namePoly, ]
             pts.dat <- data.frame(x = .cdtData$EnvData$stnData$lon, y = .cdtData$EnvData$stnData$lat)
-            coordinates(pts.dat)<- ~x+y
-            ixy <- unname(!is.na(over(pts.dat, geometry(shp))))
+            sp::coordinates(pts.dat)<- ~x+y
+            ixy <- unname(!is.na(sp::over(pts.dat, sp::geometry(shp))))
         }
 
         if(!any(ixy)){

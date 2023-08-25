@@ -320,7 +320,7 @@ SeasonAnalysisPanelCmd <- function(){
             stateSEAS <- if(tclvalue(useTotal) == '1') 'normal' else 'disabled'
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['5']]
 
                 cb.en.INPrec <- ttkcombobox(frameSeasTot, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur2, state = stateSEAS)
@@ -342,7 +342,7 @@ SeasonAnalysisPanelCmd <- function(){
             }
 
             ###
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['6']]
 
                 cb.en.INPrec <- tkentry(frameSeasTot, textvariable = input.Prec, width = largeur0, state = stateSEAS)
@@ -429,23 +429,23 @@ SeasonAnalysisPanelCmd <- function(){
         bt.CalcPICSA <- ttkbutton(subfr2, text = lang.dlg[['button']][['1']])
 
         tkconfigure(bt.CalcPICSA, command = function(){
-            GeneralParameters$onset <- str_trim(tclvalue(input.Onset))
-            GeneralParameters$cessation <- str_trim(tclvalue(input.Cessation))
-            GeneralParameters$output <- str_trim(tclvalue(dir.save))
+            GeneralParameters$onset <- trimws(tclvalue(input.Onset))
+            GeneralParameters$cessation <- trimws(tclvalue(input.Cessation))
+            GeneralParameters$output <- trimws(tclvalue(dir.save))
 
-            GeneralParameters$min.frac <- as.numeric(str_trim(tclvalue(min.frac)))
-            GeneralParameters$dryday <- as.numeric(str_trim(tclvalue(drywet.day)))
+            GeneralParameters$min.frac <- as.numeric(trimws(tclvalue(min.frac)))
+            GeneralParameters$dryday <- as.numeric(trimws(tclvalue(drywet.day)))
 
             GeneralParameters$seastot$useTotal <- switch(tclvalue(useTotal), '0' = FALSE, '1' = TRUE)
             if(tclvalue(useTotal) == "1"){
-                GeneralParameters$seastot$Tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-                GeneralParameters$seastot$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+                GeneralParameters$seastot$Tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+                GeneralParameters$seastot$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-                if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                    GeneralParameters$seastot$cdtstation$prec <- str_trim(tclvalue(input.Prec))
+                if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                    GeneralParameters$seastot$cdtstation$prec <- trimws(tclvalue(input.Prec))
 
-                if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                    GeneralParameters$seastot$cdtdataset$prec <- str_trim(tclvalue(input.Prec))
+                if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                    GeneralParameters$seastot$cdtdataset$prec <- trimws(tclvalue(input.Prec))
             }
 
             # assign('GeneralParameters', GeneralParameters, envir = .GlobalEnv)
@@ -521,8 +521,8 @@ SeasonAnalysisPanelCmd <- function(){
             if(path.Stat %in% c("", "NA") | is.na(path.Stat)) return(NULL)
             tclvalue(file.PICSAIndex) <- path.Stat
 
-            if(file.exists(str_trim(tclvalue(file.PICSAIndex)))){
-                OutPicsa <- try(readRDS(str_trim(tclvalue(file.PICSAIndex))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.PICSAIndex)))){
+                OutPicsa <- try(readRDS(trimws(tclvalue(file.PICSAIndex))), silent = TRUE)
                 if(inherits(OutPicsa, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutPicsa[1]), TRUE, 'e')
@@ -530,7 +530,7 @@ SeasonAnalysisPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutPicsa
-                .cdtData$EnvData$PathPicsa <- dirname(str_trim(tclvalue(file.PICSAIndex)))
+                .cdtData$EnvData$PathPicsa <- dirname(trimws(tclvalue(file.PICSAIndex)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -617,7 +617,7 @@ SeasonAnalysisPanelCmd <- function(){
             }
             .cdtData$EnvData$TSMapOp <- MapGraph.MapOptions(.cdtData$EnvData$TSMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize.TSMap <- .cdtData$EnvData$TSMapOp$pointSize
         })
 
@@ -781,7 +781,7 @@ SeasonAnalysisPanelCmd <- function(){
             }
             .cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtData$EnvData$climMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
                 .cdtData$EnvData$tab$pointSize.climMap <- .cdtData$EnvData$climMapOp$pointSize
         })
 
@@ -801,7 +801,7 @@ SeasonAnalysisPanelCmd <- function(){
         #################
 
         tkbind(cb.ClimMap.mth, "<<ComboboxSelected>>", function(){
-            analysis.method <- AnalysisVAL[CbAnalysisVAL %in% str_trim(tclvalue(analysisMethod))]
+            analysis.method <- AnalysisVAL[CbAnalysisVAL %in% trimws(tclvalue(analysisMethod))]
             funClimMapStat(analysis.method)
         })
 
@@ -891,7 +891,7 @@ SeasonAnalysisPanelCmd <- function(){
         #################
 
         tkconfigure(bt.TsGraph.Opt, command = function(){
-            vtypeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
+            vtypeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
             suffix.fun <- switch(vtypeTSp,
                                  'anom' = "Anomaly",
                                  'bar' = "Bar",
@@ -909,8 +909,8 @@ SeasonAnalysisPanelCmd <- function(){
         .cdtData$EnvData$tab$Tsplot <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
-            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
             if(!is.null(.cdtData$EnvData$output)){
                 imgContainer <- CDT.Display.Graph(SeasonAnalysis.plot.TSGraph, .cdtData$EnvData$tab$Tsplot, 'Time-Series-Plot')
@@ -921,8 +921,8 @@ SeasonAnalysisPanelCmd <- function(){
         #################
 
         tkbind(cb.varTSp, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
-            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
             stateTsp <- if(.cdtData$EnvData$plot.maps$varTSp == "maps") "normal" else "disabled"
             tkconfigure(cb.typeTSp, state = stateTsp)
@@ -936,8 +936,8 @@ SeasonAnalysisPanelCmd <- function(){
         })
 
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
-            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
             stateType <- if(.cdtData$EnvData$plot.maps$typeTSp %in% c('line', 'eline') &&
                             .cdtData$EnvData$plot.maps$varTSp == "maps") "normal" else "disabled"
@@ -1071,11 +1071,11 @@ SeasonAnalysisPanelCmd <- function(){
 
             #######
             tkconfigure(bt.stnID.prev, command = function(){
-                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
-                .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
                 if(!is.null(.cdtData$EnvData$output)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1086,11 +1086,11 @@ SeasonAnalysisPanelCmd <- function(){
             })
 
             tkconfigure(bt.stnID.next, command = function(){
-                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% str_trim(tclvalue(typeTSp))]
-                .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% str_trim(tclvalue(varTSp))]
+                .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
+                .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
                 if(!is.null(.cdtData$EnvData$output)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -1139,16 +1139,16 @@ SeasonAnalysisPanelCmd <- function(){
     #####################
 
     get.analysis.method <- function(){
-        .cdtData$EnvData$plotVar$varPICSA <- varPICSAVAL[CbvarPICSAVAL %in% str_trim(tclvalue(varPICSA))]
-        .cdtData$EnvData$plotVar$dryspell <- as.numeric(str_trim(tclvalue(tkget(spin.TsMap.dryspell))))
-        .cdtData$EnvData$plotVar$yearseas <- str_trim(tclvalue(var.TsMap.year))
+        .cdtData$EnvData$plotVar$varPICSA <- varPICSAVAL[CbvarPICSAVAL %in% trimws(tclvalue(varPICSA))]
+        .cdtData$EnvData$plotVar$dryspell <- as.numeric(trimws(tclvalue(tkget(spin.TsMap.dryspell))))
+        .cdtData$EnvData$plotVar$yearseas <- trimws(tclvalue(var.TsMap.year))
 
-        .cdtData$EnvData$analysis$method <- AnalysisVAL[CbAnalysisVAL %in% str_trim(tclvalue(analysisMethod))]
-        .cdtData$EnvData$analysis$trend <- trendAnalVAL[CbtrendAnalVAL %in% str_trim(tclvalue(trendClimAna))]
-        .cdtData$EnvData$analysis$mth.perc <- as.numeric(str_trim(tclvalue(percentClimAna)))
+        .cdtData$EnvData$analysis$method <- AnalysisVAL[CbAnalysisVAL %in% trimws(tclvalue(analysisMethod))]
+        .cdtData$EnvData$analysis$trend <- trendAnalVAL[CbtrendAnalVAL %in% trimws(tclvalue(trendClimAna))]
+        .cdtData$EnvData$analysis$mth.perc <- as.numeric(trimws(tclvalue(percentClimAna)))
 
-        xlow <- str_trim(tclvalue(freqLowClimAna))
-        xup <- str_trim(tclvalue(freqUpClimAna))
+        xlow <- trimws(tclvalue(freqLowClimAna))
+        xup <- trimws(tclvalue(freqUpClimAna))
 
         # if(.cdtData$EnvData$plotVar$varPICSA %in% c("onset", "cessation")){
         #     dlo <- try(as.POSIXlt(as.Date(paste(2015, xlow, sep = '-'))), silent = TRUE)
@@ -1241,7 +1241,7 @@ SeasonAnalysisPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             ########
             readTsData <- TRUE
@@ -1338,11 +1338,11 @@ SeasonAnalysisPanelCmd <- function(){
                     rm(nval, zval)
                     .cdtData$EnvData$oldDryspell <- dryspl
                 }else{
-                    nc <- nc_open(filetsdata)
+                    nc <- ncdf4::nc_open(filetsdata)
                     .cdtData$EnvData$tsdata$x <- nc$dim[[1]]$vals
                     .cdtData$EnvData$tsdata$y <- nc$dim[[2]]$vals
-                    .cdtData$EnvData$tsdata$z <- ncvar_get(nc, varid = nc$var[[1]]$name)
-                    nc_close(nc)
+                    .cdtData$EnvData$tsdata$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                    ncdf4::nc_close(nc)
                 }
                 .cdtData$EnvData$filetsdata <- filetsdata
             }
@@ -1396,7 +1396,7 @@ SeasonAnalysisPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
 
             ########
             calcClim <- TRUE
@@ -1482,7 +1482,7 @@ SeasonAnalysisPanelCmd <- function(){
                     if(.cdtData$EnvData$filetsdata1 == filetsdata)
                         if(.cdtData$EnvData$StatCalc == .cdtData$EnvData$analysis$method) calcClim <- FALSE
 
-            trendUnit <- str_trim(tclvalue(.cdtData$EnvData$trend))
+            trendUnit <- trimws(tclvalue(.cdtData$EnvData$trend))
             if(.cdtData$EnvData$analysis$method == "trend")
                 if(!is.null(.cdtData$EnvData$trendUnit))
                     if(.cdtData$EnvData$trendUnit != trendUnit & !calcClim) calcClim <- TRUE

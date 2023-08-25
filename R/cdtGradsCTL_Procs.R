@@ -71,7 +71,7 @@ grads_create.ctl_Procs <- function(){
         return(NULL)
     }
 
-    nc <- nc_open(ncpath[ncexist][1])
+    nc <- ncdf4::nc_open(ncpath[ncexist][1])
     nc.varid <- ncdataInfo$varid
     lon <- nc$var[[nc.varid]]$dim[[ncdataInfo$ilon]]$vals
     lat <- nc$var[[nc.varid]]$dim[[ncdataInfo$ilat]]$vals
@@ -79,7 +79,7 @@ grads_create.ctl_Procs <- function(){
     # nc.prec <- nc$var[[nc.varid]]$prec
     nc.missval <- nc$var[[nc.varid]]$missval
     nc.longname <- nc$var[[nc.varid]]$longname
-    nc_close(nc)
+    ncdf4::nc_close(nc)
 
     TITLE <- paste("TITLE", nc.longname)
     UNDEF <- paste("UNDEF", nc.missval)

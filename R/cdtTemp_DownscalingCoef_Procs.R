@@ -68,7 +68,7 @@ Temp_CoefDownscaling <- function(){
     coef <- Coeff.downscaling.LapseRate(stnData, useClimato = FALSE, standardize = TRUE)
 
     outfile <- file.path(paramsGlmCoef$outdir, 'STN_DEM_GLM_COEF.txt')
-    write.table(coef$coeff, file = outfile, col.names = TRUE, row.names = FALSE, quote = FALSE)
+    utils::write.table(coef$coeff, file = outfile, col.names = TRUE, row.names = FALSE, quote = FALSE)
 
     outfile.rds <- file.path(paramsGlmCoef$outdir, 'STN_DEM_GLM_COEF.rds')
     saveRDS(coef, file = outfile.rds)
@@ -130,7 +130,7 @@ Coeff.downscaling.LapseRate <- function(stnData, useClimato = TRUE, aspect.slope
 
         data.lm <- data.lm[ina, , drop = FALSE]
         ## skip if variance null or too small
-        sds <- sd(data.lm$v)
+        sds <- stats::sd(data.lm$v)
         if(!is.na(sds) & sds < 1e-9) return(NULL)
 
         #####
@@ -152,7 +152,7 @@ Coeff.downscaling.LapseRate <- function(stnData, useClimato = TRUE, aspect.slope
         else
             formule <- if(aspect.slope) v ~ s + a + z else v ~ z
 
-        mod.lm <- glm(as.formula(formule), data = data.lm)
+        mod.lm <- stats::glm(stats::as.formula(formule), data = data.lm)
         remove.data <- c("residuals", "fitted.values", "effects", "linear.predictors",
                          "weights", "prior.weights", "y", "model", "data")
         mod.lm[remove.data] <- NULL

@@ -115,7 +115,7 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
     tkbind(cb.mthd, "<<ComboboxSelected>>", function(){
         if(stateMethod == "normal"){
             tkconfigure(frInterpPars, text = tclvalue(interp.method))
-            InterpP <- val.interpMthd[cb.interpMthd %in% str_trim(tclvalue(interp.method))]
+            InterpP <- val.interpMthd[cb.interpMthd %in% trimws(tclvalue(interp.method))]
             interpolationParams(InterpP)
         }
     })
@@ -165,14 +165,14 @@ getInterpolationPars1 <- function(parent.win, Parameters, stateMethod = "normal"
     bt.prm.CA <- ttkbutton(frGrd1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$method <<- val.interpMthd[cb.interpMthd %in% str_trim(tclvalue(interp.method))]
-        Parameters$nmin <<- as.numeric(str_trim(tclvalue(nmin.var)))
-        Parameters$nmax <<- as.numeric(str_trim(tclvalue(nmax.var)))
-        Parameters$maxdist <<- as.numeric(str_trim(tclvalue(maxdist.var)))
+        Parameters$method <<- val.interpMthd[cb.interpMthd %in% trimws(tclvalue(interp.method))]
+        Parameters$nmin <<- as.numeric(trimws(tclvalue(nmin.var)))
+        Parameters$nmax <<- as.numeric(trimws(tclvalue(nmax.var)))
+        Parameters$maxdist <<- as.numeric(trimws(tclvalue(maxdist.var)))
         Parameters$use.block <<- switch(tclvalue(use.block.var), '0' = FALSE, '1' = TRUE)
         Parameters$vargrd <<- switch(tclvalue(grid.var), '0' = FALSE, '1' = TRUE)
 
-        vgms <- str_trim(strsplit(tclvalue(vgm.model.var), ",")[[1]])
+        vgms <- trimws(strsplit(tclvalue(vgm.model.var), ",")[[1]])
         Parameters$vgm.model <<- vgms[vgms != ""]
 
         tkgrab.release(tt)

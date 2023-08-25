@@ -62,7 +62,7 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
                 ina <- !is.na(don.mon1[, j])
                 out <- don.mon1[, j] * NA
                 if(length(which(ina)) < (min.non.na - 1)) return(out)
-                out[ina] <- qnorm(estime.pars.fun[[2]](don.mon1[ina, j], PARS[[j]]))
+                out[ina] <- stats::qnorm(estime.pars.fun[[2]](don.mon1[ina, j], PARS[[j]]))
                 out[is.infinite(out) & sign(out) == -1] <- -5
                 out[is.infinite(out) & sign(out) == 1] <- 5
                 return(out)
@@ -71,7 +71,7 @@ SPEI_function <- function(data.mat, tscale = 1, frequency = 12, distribution = '
 
             if(distribution %in% c("gamma", "peasron3")){
                 pzero <- matrix(pzero[!inull], nrow(spi), ncol(spi), byrow = TRUE)
-                SPI[, !inull] <- qnorm(pzero + (1 - pzero) * pnorm(spi))
+                SPI[, !inull] <- stats::qnorm(pzero + (1 - pzero) * stats::pnorm(spi))
             }else SPI[, !inull] <- spi
         }
 
@@ -192,7 +192,7 @@ SPEI_computation <- function(data.mat, params, tscale = 1, frequency = 12, distr
                 ina <- !is.na(don.tmp[, j])
                 out <- don.tmp[, j] * NA
                 if(is.na(pars[[1]]) | length(which(ina)) < 4) return(out)
-                out[ina] <- qnorm(cdf.fun(don.tmp[ina, j], pars))
+                out[ina] <- stats::qnorm(cdf.fun(don.tmp[ina, j], pars))
                 out[is.infinite(out) & sign(out) == -1] <- -5
                 out[is.infinite(out) & sign(out) == 1] <- 5
                 return(out)
@@ -206,7 +206,7 @@ SPEI_computation <- function(data.mat, params, tscale = 1, frequency = 12, distr
                     pz
                 })
                 pzero <- matrix(pzero, nrow(spi), ncol(spi), byrow = TRUE)
-                spi <- qnorm(pzero + (1 - pzero) * pnorm(spi))
+                spi <- stats::qnorm(pzero + (1 - pzero) * stats::pnorm(spi))
             }
         }
 

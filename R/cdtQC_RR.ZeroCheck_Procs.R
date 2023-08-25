@@ -22,7 +22,7 @@ qcRRZeroCheckProcs <- function(GeneralParameters){
     if(is.null(don$elv)) head <- head[1:3]
     don0 <- rbind(cbind(head, do.call(rbind, don[c('id', 'lon', 'lat', 'elv')])),
                   cbind(don$dates, don$data))
-    write.table(don0, file = file.stn,
+    utils::write.table(don0, file = file.stn,
                 sep = don.info[[3]]$sepr, na = don.info[[3]]$miss.val,
                 col.names = FALSE, row.names = FALSE, quote = FALSE)
     rm(don0)

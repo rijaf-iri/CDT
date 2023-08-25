@@ -99,7 +99,7 @@ cdtBiasCorrectTempCMD <- function(time.step = "dekadal",
                 Insert.Messages.Out(msg, TRUE, "e", GUI)
                 return(NULL)
             }
-            daty <- read.table(dates$pars$file, stringsAsFactors = FALSE, colClasses = "character")
+            daty <- utils::read.table(dates$pars$file, stringsAsFactors = FALSE, colClasses = "character")
             daty <- daty[, 1]
 
             dirBias <- paste0('ADJUSTED_Temp_Data_',
@@ -142,11 +142,11 @@ cdtBiasCorrectTempCMD <- function(time.step = "dekadal",
     ## Get RFE data info
 
     varid <- netcdf.data$varid
-    nc <- nc_open(ncInfo$ncfiles[ncInfo$exist][1])
+    nc <- ncdf4::nc_open(ncInfo$ncfiles[ncInfo$exist][1])
     lon <- nc$var[[varid]]$dim[[netcdf.data$ilon]]$vals
     lat <- nc$var[[varid]]$dim[[netcdf.data$ilat]]$vals
     varinfo <- nc$var[[varid]][c('name', 'prec', 'units', 'longname', 'missval')]
-    nc_close(nc)
+    ncdf4::nc_close(nc)
 
     xo <- order(lon)
     lon <- lon[xo]

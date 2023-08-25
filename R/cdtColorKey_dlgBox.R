@@ -107,7 +107,7 @@ createColorkey <- function(parent.win, listCol){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         file2save <- tk_get_SaveFile(filetypes = filetypes)
         tcl('wm', 'attributes', tt, topmost = TRUE)
-        write.table(listCol, file2save, row.names = FALSE, col.names = FALSE)
+        utils::write.table(listCol, file2save, row.names = FALSE, col.names = FALSE)
     })
 
     tkconfigure(loadColor, command = function(){
@@ -116,7 +116,7 @@ createColorkey <- function(parent.win, listCol){
         fileopen <- tclvalue(tkgetOpenFile(initialdir = getwd(), initialfile = "", filetypes = filetypes))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(fileopen != "" | !is.na(fileopen)){
-            datColor <- try(read.table(fileopen, strip.white = TRUE, colClasses = "character"), silent = TRUE)
+            datColor <- try(utils::read.table(fileopen, strip.white = TRUE, colClasses = "character"), silent = TRUE)
             if(!inherits(datColor, "try-error")){
                 listCol <<- as.character(datColor[, 1])
                 if(length(listCanColor) > 0)

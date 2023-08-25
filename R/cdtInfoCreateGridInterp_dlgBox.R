@@ -93,7 +93,7 @@ createGridInterpolation <- function(parent.win, Parameters, group = 1){
     })
 
     tkbind(cb.CreateGrd, "<<ComboboxSelected>>", function(){
-        gridfrom <- val.createGird[cb.createGird %in% str_trim(tclvalue(varCreateGrd))]
+        gridfrom <- val.createGird[cb.createGird %in% trimws(tclvalue(varCreateGrd))]
         stategrd <- if(gridfrom == 'new') 'normal' else 'disabled'
         tkconfigure(bt.CreateGrd, state = stategrd)
         stategrNC <- if(gridfrom == 'ncdf') 'normal' else 'disabled'
@@ -111,8 +111,8 @@ createGridInterpolation <- function(parent.win, Parameters, group = 1){
     bt.prm.CA <- ttkbutton(frGrd1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        Parameters$from <<- val.createGird[cb.createGird %in% str_trim(tclvalue(varCreateGrd))]
-        Parameters$ncfile <<- str_trim(tclvalue(file.grdNC))
+        Parameters$from <<- val.createGird[cb.createGird %in% trimws(tclvalue(varCreateGrd))]
+        Parameters$ncfile <<- trimws(tclvalue(file.grdNC))
 
         if((Parameters$from == "ncdf") &
            (Parameters$ncfile %in% c("", "NA")))

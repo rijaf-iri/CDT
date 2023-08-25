@@ -99,36 +99,36 @@ AggregateTS_GetInfo <- function(){
     minhour0.txtVar <- tclVar(lang.dlg[['label']][['12']])
     minhour1.txtVar <- tclVar(lang.dlg[['label']][['11']])
 
-    if(str_trim(tclvalue(OriginData)) %in% Cbperiod0VAL[1:2]){
+    if(trimws(tclvalue(OriginData)) %in% Cbperiod0VAL[1:2]){
         state.mhI <- "normal"
-        state.mhO <- if(str_trim(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:2]) "normal" else "disabled"
+        state.mhO <- if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:2]) "normal" else "disabled"
 
         ## min
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[1]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]){
             CbminhourVAL0 <- c(5, 10, 15, 30)
             tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['12']]
 
-            if(!as.numeric(str_trim(tclvalue(minhour.in))) %in% CbminhourVAL0)
+            if(!as.numeric(trimws(tclvalue(minhour.in))) %in% CbminhourVAL0)
                 tclvalue(minhour.in) <- CbminhourVAL0[1]
 
             ## min
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 5){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 5){
                     CbminhourVAL1 <- c(10, 15, 30)
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 10){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 10){
                     CbminhourVAL1 <- 30
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 15){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 15){
                     CbminhourVAL1 <- 30
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 30){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 30){
                     tclvalue(ConvertData) <- Cbperiod0VAL[2]
                     CbminhourVAL1 <- c(1, 3, 6, 12)
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
@@ -136,43 +136,43 @@ AggregateTS_GetInfo <- function(){
             }
 
             ## hour
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
                 CbminhourVAL1 <- c(1, 3, 6, 12)
                 tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
             }
         }
 
         ## hour
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[2]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2]){
             CbminhourVAL0 <- c(1, 3, 6, 12)
             tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['11']]
             tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
 
-            if(!as.numeric(str_trim(tclvalue(minhour.in))) %in% CbminhourVAL0)
+            if(!as.numeric(trimws(tclvalue(minhour.in))) %in% CbminhourVAL0)
                 tclvalue(minhour.in) <- CbminhourVAL0[1]
 
             ## hour
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 1){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 1){
                     CbminhourVAL1 <- c(3, 6, 12)
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 3){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 3){
                     CbminhourVAL1 <- c(6, 12)
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 6){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 6){
                     CbminhourVAL1 <- 12
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 12){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 12){
                     tclvalue(ConvertData) <- Cbperiod0VAL[3]
                     state.mhO <- "disabled"
                 }
             }
         }
 
-        if(!as.numeric(str_trim(tclvalue(minhour.out))) %in% CbminhourVAL1)
+        if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
             tclvalue(minhour.out) <- CbminhourVAL1[1]
      }else{
         state.mhI <- "disabled"
@@ -198,10 +198,10 @@ AggregateTS_GetInfo <- function(){
     obs.hour <- tclVar(.cdtData$GalParams$HourMin$obs.hour)
 
     state.shour <- "disabled"
-    if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
-        if(str_trim(tclvalue(OriginData)) %in% Cbperiod0VAL[1]) state.shour <- "normal"
-        if(str_trim(tclvalue(OriginData)) %in% Cbperiod0VAL[2])
-            state.shour <- if(as.numeric(str_trim(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
+    if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
+        if(trimws(tclvalue(OriginData)) %in% Cbperiod0VAL[1]) state.shour <- "normal"
+        if(trimws(tclvalue(OriginData)) %in% Cbperiod0VAL[2])
+            state.shour <- if(as.numeric(trimws(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
     }
 
     txt.shour <- tklabel(frameOH, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
@@ -218,8 +218,8 @@ AggregateTS_GetInfo <- function(){
 
     MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
     mois <- format(ISOdate(2014, 1:12, 1), "%b")
-    mon <- as.numeric(str_trim(.cdtData$GalParams$Seasonal$start.mon))
-    len <- as.numeric(str_trim(.cdtData$GalParams$Seasonal$length.mon))
+    mon <- as.numeric(trimws(.cdtData$GalParams$Seasonal$start.mon))
+    len <- as.numeric(trimws(.cdtData$GalParams$Seasonal$length.mon))
     mon1 <- (mon + len - 1) %% 12
     mon1[mon1 == 0] <- 12
     seasdef <- paste(mois[mon], "->", mois[mon1])
@@ -229,10 +229,10 @@ AggregateTS_GetInfo <- function(){
  
     seasonalVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][8:9]
 
-    state.cbSeasS <- if(str_trim(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
-    state.cbSeasL <- if(str_trim(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
+    state.cbSeasS <- if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
+    state.cbSeasL <- if(trimws(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
 
-    seasdef <- if(str_trim(tclvalue(ConvertData)) == seasonalVAL[1]) seasdef else ""
+    seasdef <- if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]) seasdef else ""
     season.def <- tclVar(seasdef)
 
     txt.seasS <- tklabel(frameSeas, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
@@ -261,41 +261,41 @@ AggregateTS_GetInfo <- function(){
 
     tkbind(cb.intstep, "<<ComboboxSelected>>", function(){
         ## minute
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[1]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:3]
             period1VAL <- c('minute', 'hourly', 'daily')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(str_trim(tclvalue(ConvertData)) %in% .cdtEnv$tcl$lang$global[['combobox']][['1']][4:9])
+            if(trimws(tclvalue(ConvertData)) %in% .cdtEnv$tcl$lang$global[['combobox']][['1']][4:9])
                 tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
             state.mhI <- "normal"
-            state.mhO <- if(str_trim(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:2]) "normal" else "disabled"
-            state.shour <- if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[3]) "normal" else "disabled"
+            state.mhO <- if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:2]) "normal" else "disabled"
+            state.shour <- if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]) "normal" else "disabled"
 
             CbminhourVAL0 <- c(5, 10, 15, 30)
             tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['12']]
 
-            if(!as.numeric(str_trim(tclvalue(minhour.in))) %in% CbminhourVAL0)
+            if(!as.numeric(trimws(tclvalue(minhour.in))) %in% CbminhourVAL0)
                 tclvalue(minhour.in) <- CbminhourVAL0[1]
 
             ## min
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 5){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 5){
                     CbminhourVAL1 <- c(10, 15, 30)
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 10){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 10){
                     CbminhourVAL1 <- 30
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 15){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 15){
                     CbminhourVAL1 <- 30
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 30){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 30){
                     tclvalue(ConvertData) <- Cbperiod0VAL[2]
                     CbminhourVAL1 <- c(1, 3, 6, 12)
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
@@ -303,66 +303,66 @@ AggregateTS_GetInfo <- function(){
             }
 
             ## hour
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
                 CbminhourVAL1 <- c(1, 3, 6, 12)
                 tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
             }
 
-            if(!as.numeric(str_trim(tclvalue(minhour.out))) %in% CbminhourVAL1)
+            if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
                 tclvalue(minhour.out) <- CbminhourVAL1[1]
         }
 
         ## hourly
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[2]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2]){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:3]
             period1VAL <- c('hourly', 'daily')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(str_trim(tclvalue(ConvertData)) %in% .cdtEnv$tcl$lang$global[['combobox']][['1']][c(1, 4:9)])
+            if(trimws(tclvalue(ConvertData)) %in% .cdtEnv$tcl$lang$global[['combobox']][['1']][c(1, 4:9)])
                 tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
             state.mhI <- "normal"
-            state.mhO <- if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]) "normal" else "disabled"
+            state.mhO <- if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]) "normal" else "disabled"
             state.shour <- "disabled"
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
-                state.shour <- if(as.numeric(str_trim(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
+                state.shour <- if(as.numeric(trimws(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
             }
 
             CbminhourVAL0 <- c(1, 3, 6, 12)
             tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['11']]
             tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
 
-            if(!as.numeric(str_trim(tclvalue(minhour.in))) %in% CbminhourVAL0)
+            if(!as.numeric(trimws(tclvalue(minhour.in))) %in% CbminhourVAL0)
                 tclvalue(minhour.in) <- CbminhourVAL0[1]
 
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 1){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 1){
                     CbminhourVAL1 <- c(3, 6, 12)
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 3){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 3){
                     CbminhourVAL1 <- c(6, 12)
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 6){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 6){
                     CbminhourVAL1 <- 12
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 12){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 12){
                     tclvalue(ConvertData) <- Cbperiod0VAL[3]
                     state.mhO <- "disabled"
                 }
             }
 
-            if(!as.numeric(str_trim(tclvalue(minhour.out))) %in% CbminhourVAL1)
+            if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
                 tclvalue(minhour.out) <- CbminhourVAL1[1]
         }
 
         ## daily
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[3]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[3]){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][4:9]
             period1VAL <- c('pentad', 'dekadal', 'monthly', 'annual', 'seasonal', 'roll.seas')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(str_trim(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:3])
+            if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:3])
                 tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
             state.mhI <- "disabled"
@@ -371,11 +371,11 @@ AggregateTS_GetInfo <- function(){
         }
 
         ## pentad
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[4]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[4]){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][5:9]
             period1VAL <- c('dekadal', 'monthly', 'annual', 'seasonal', 'roll.seas')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(str_trim(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:4])
+            if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:4])
                 tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
             state.mhI <- "disabled"
@@ -384,11 +384,11 @@ AggregateTS_GetInfo <- function(){
         }
 
         ## dekadal
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[5]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[5]){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][6:9]
             period1VAL <- c('monthly', 'annual', 'seasonal', 'roll.seas')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(str_trim(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:5])
+            if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:5])
                 tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
             state.mhI <- "disabled"
@@ -397,11 +397,11 @@ AggregateTS_GetInfo <- function(){
         }
 
         ## monthly
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[6]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[6]){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][7:9]
             period1VAL <- c('annual', 'seasonal', 'roll.seas')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(str_trim(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:6])
+            if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:6])
                 tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
             state.mhI <- "disabled"
@@ -413,8 +413,8 @@ AggregateTS_GetInfo <- function(){
         tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
         tkconfigure(en.shour, state = state.shour)
 
-        state.cbSeasS <- if(str_trim(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
-        state.cbSeasL <- if(str_trim(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
+        state.cbSeasS <- if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
+        state.cbSeasL <- if(trimws(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
         tkconfigure(cb.seasS, state = state.cbSeasS)
         tkconfigure(cb.seasL, state = state.cbSeasL)
     })
@@ -422,23 +422,23 @@ AggregateTS_GetInfo <- function(){
     ##############
 
     tkbind(cb.outstep, "<<ComboboxSelected>>", function(){
-        if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
+        if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
             state.mhI <- "normal"
             state.mhO <- "normal"
             state.shour <- "disabled"
             tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-        }else if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+        }else if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
             state.mhI <- "normal"
             state.mhO <- "normal"
             state.shour <- "disabled"
 
             tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-        }else if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
+        }else if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
             state.mhI <- "normal"
             state.mhO <- "disabled"
-            if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[1]) state.shour <- "normal"
-            if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[2])
-                state.shour <- if(as.numeric(str_trim(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
+            if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]) state.shour <- "normal"
+            if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2])
+                state.shour <- if(as.numeric(trimws(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
         }else{
             state.mhI <- "disabled"
             state.mhO <- "disabled"
@@ -447,39 +447,39 @@ AggregateTS_GetInfo <- function(){
 
         #######
 
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[1]){
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 5) CbminhourVAL1 <- c(10, 15, 30)
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 10) CbminhourVAL1 <- 30
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 15) CbminhourVAL1 <- 30
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 30){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 5) CbminhourVAL1 <- c(10, 15, 30)
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 10) CbminhourVAL1 <- 30
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 15) CbminhourVAL1 <- 30
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 30){
                     tclvalue(ConvertData) <- Cbperiod0VAL[2]
                     CbminhourVAL1 <- c(1, 3, 6, 12)
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
                 }
             }
 
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
                 CbminhourVAL1 <- c(1, 3, 6, 12)
                 tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
             }
 
-            if(!as.numeric(str_trim(tclvalue(minhour.out))) %in% CbminhourVAL1)
+            if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
                 tclvalue(minhour.out) <- CbminhourVAL1[1]
         }
 
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[2]){
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 1) CbminhourVAL1 <- c(3, 6, 12)
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 3) CbminhourVAL1 <- c(6, 12)
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 6) CbminhourVAL1 <- 12
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 12){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2]){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 1) CbminhourVAL1 <- c(3, 6, 12)
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 3) CbminhourVAL1 <- c(6, 12)
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 6) CbminhourVAL1 <- 12
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 12){
                     tclvalue(ConvertData) <- Cbperiod0VAL[3]
                     state.mhO <- "disabled"
                 }
             }
 
-            if(!as.numeric(str_trim(tclvalue(minhour.out))) %in% CbminhourVAL1)
+            if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
                 tclvalue(minhour.out) <- CbminhourVAL1[1]
         }
 
@@ -487,17 +487,17 @@ AggregateTS_GetInfo <- function(){
         tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
         tkconfigure(en.shour, state = state.shour)
 
-        state.cbSeasS <- if(str_trim(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
-        state.cbSeasL <- if(str_trim(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
+        state.cbSeasS <- if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
+        state.cbSeasL <- if(trimws(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
         tkconfigure(cb.seasS, state = state.cbSeasS)
         tkconfigure(cb.seasL, state = state.cbSeasL)
 
         ########
 
         seasdef <- ""
-        if(str_trim(tclvalue(ConvertData)) == seasonalVAL[1]){
-            mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-            len <- as.numeric(str_trim(tclvalue(length.mon)))
+        if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]){
+            mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+            len <- as.numeric(trimws(tclvalue(length.mon)))
             mon1 <- (mon + len - 1) %% 12
             mon1[mon1 == 0] <- 12
             seasdef <- paste(mois[mon], "->", mois[mon1])
@@ -508,25 +508,25 @@ AggregateTS_GetInfo <- function(){
     ##############
 
     tkbind(cb.mhI, "<<ComboboxSelected>>", function(){
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[1]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]){
             ## min
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 5){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 5){
                     CbminhourVAL1 <- c(10, 15, 30)
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 10){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 10){
                     CbminhourVAL1 <- 30
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 15){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 15){
                     CbminhourVAL1 <- 30
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 30){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 30){
                     tclvalue(ConvertData) <- Cbperiod0VAL[2]
                     CbminhourVAL1 <- c(1, 3, 6, 12)
                     tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
@@ -537,36 +537,36 @@ AggregateTS_GetInfo <- function(){
             }
 
             ## hour
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
                 CbminhourVAL1 <- c(1, 3, 6, 12)
                 tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
                 state.shour <- "disabled"
                 state.mhO <- "normal"
             }
 
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
                 state.shour <- "normal"
                 state.mhO <- "disabled"
             }
         }
 
-        if(str_trim(tclvalue(OriginData)) == Cbperiod0VAL[2]){
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
+        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2]){
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
                 state.mhO <- "normal"
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 1){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 1){
                     CbminhourVAL1 <- c(3, 6, 12)
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 3){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 3){
                     CbminhourVAL1 <- c(6, 12)
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 6){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 6){
                     CbminhourVAL1 <- 12
                 }
 
-                if(as.numeric(str_trim(tclvalue(minhour.in))) == 12){
+                if(as.numeric(trimws(tclvalue(minhour.in))) == 12){
                     tclvalue(ConvertData) <- Cbperiod0VAL[3]
                     state.mhO <- "disabled"
                 }
@@ -574,8 +574,8 @@ AggregateTS_GetInfo <- function(){
                 state.shour <- "disabled"
             }
 
-            if(str_trim(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
-                state.shour <- if(as.numeric(str_trim(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
+            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
+                state.shour <- if(as.numeric(trimws(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
                 state.mhO <- "disabled"
             }
         }
@@ -583,7 +583,7 @@ AggregateTS_GetInfo <- function(){
         tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
         tkconfigure(en.shour, state = state.shour)
 
-        if(!as.numeric(str_trim(tclvalue(minhour.out))) %in% CbminhourVAL1)
+        if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
             tclvalue(minhour.out) <- CbminhourVAL1[1]
     })
 
@@ -591,9 +591,9 @@ AggregateTS_GetInfo <- function(){
 
     tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
         seasdef <- ""
-        if(str_trim(tclvalue(ConvertData)) == seasonalVAL[1]){
-            mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-            len <- as.numeric(str_trim(tclvalue(length.mon)))
+        if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]){
+            mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+            len <- as.numeric(trimws(tclvalue(length.mon)))
             mon1 <- (mon + len - 1) %% 12
             mon1[mon1 == 0] <- 12
             seasdef <- paste(mois[mon], "->", mois[mon1])
@@ -605,9 +605,9 @@ AggregateTS_GetInfo <- function(){
 
     tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
         seasdef <- ""
-        if(str_trim(tclvalue(ConvertData)) == seasonalVAL[1]){
-            mon <-  which(MOIS %in% str_trim(tclvalue(start.mon)))
-            len <- as.numeric(str_trim(tclvalue(length.mon)))
+        if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]){
+            mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
+            len <- as.numeric(trimws(tclvalue(length.mon)))
             mon1 <- (mon + len - 1) %% 12
             mon1[mon1 == 0] <- 12
             seasdef <- paste(mois[mon], "->", mois[mon1])
@@ -676,7 +676,7 @@ AggregateTS_GetInfo <- function(){
 
     tkconfigure(set.datatype, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        AggregateTS_ncdfData(tt, str_trim(tclvalue(file.stnfl)), tclvalue(OriginData))
+        AggregateTS_ncdfData(tt, trimws(tclvalue(file.stnfl)), tclvalue(OriginData))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingdone <<- 1
     })
@@ -712,7 +712,7 @@ AggregateTS_GetInfo <- function(){
         tclvalue(file.stnfl) <- ''
 
         ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1]){
+        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
             tclvalue(fileINdir) <- lang.dlg[['label']][['6']]
             tclvalue(fileORdir) <- lang.dlg[['label']][['9']]
 
@@ -744,7 +744,7 @@ AggregateTS_GetInfo <- function(){
         }
 
         ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2]){
+        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
             tclvalue(fileINdir) <- lang.dlg[['label']][['7']]
             tclvalue(fileORdir) <- lang.dlg[['label']][['10']]
 
@@ -772,7 +772,7 @@ AggregateTS_GetInfo <- function(){
         }
 
         ####
-        if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3]){
+        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3]){
             tclvalue(fileINdir) <- lang.dlg[['label']][['8']]
             tclvalue(fileORdir) <- lang.dlg[['label']][['10']]
 
@@ -788,7 +788,7 @@ AggregateTS_GetInfo <- function(){
 
             tkconfigure(set.datatype, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
-                AggregateTS_ncdfData(tt, str_trim(tclvalue(file.stnfl)), tclvalue(OriginData))
+                AggregateTS_ncdfData(tt, trimws(tclvalue(file.stnfl)), tclvalue(OriginData))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
                 settingdone <<- 1
             })
@@ -875,36 +875,36 @@ AggregateTS_GetInfo <- function(){
 
     ####
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl)) == ""){
+        if(trimws(tclvalue(file.stnfl)) == ""){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.save)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(file.save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingdone)){
+        }else if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3] & is.null(settingdone)){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$in.tstep <- period0VAL[Cbperiod0VAL %in% str_trim(tclvalue(OriginData))]
-            .cdtData$GalParams$out.tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(ConvertData))]
+            .cdtData$GalParams$in.tstep <- period0VAL[Cbperiod0VAL %in% trimws(tclvalue(OriginData))]
+            .cdtData$GalParams$out.tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
 
-            .cdtData$GalParams$HourMin$int <- as.numeric(str_trim(tclvalue(minhour.in)))
-            .cdtData$GalParams$HourMin$out <- as.numeric(str_trim(tclvalue(minhour.out)))
-            .cdtData$GalParams$HourMin$obs.hour <- as.numeric(str_trim(tclvalue(obs.hour)))
+            .cdtData$GalParams$HourMin$int <- as.numeric(trimws(tclvalue(minhour.in)))
+            .cdtData$GalParams$HourMin$out <- as.numeric(trimws(tclvalue(minhour.out)))
+            .cdtData$GalParams$HourMin$obs.hour <- as.numeric(trimws(tclvalue(obs.hour)))
 
-            .cdtData$GalParams$Seasonal$start.mon <- which(MOIS %in% str_trim(tclvalue(start.mon)))
-            .cdtData$GalParams$Seasonal$length.mon <- as.numeric(str_trim(tclvalue(length.mon)))
+            .cdtData$GalParams$Seasonal$start.mon <- which(MOIS %in% trimws(tclvalue(start.mon)))
+            .cdtData$GalParams$Seasonal$length.mon <- as.numeric(trimws(tclvalue(length.mon)))
 
-            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                .cdtData$GalParams$cdtstation <- str_trim(tclvalue(file.stnfl))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                .cdtData$GalParams$cdtdataset <- str_trim(tclvalue(file.stnfl))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[3])
-                .cdtData$GalParams$cdtnetcdf$dir <- str_trim(tclvalue(file.stnfl))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                .cdtData$GalParams$cdtstation <- trimws(tclvalue(file.stnfl))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                .cdtData$GalParams$cdtdataset <- trimws(tclvalue(file.stnfl))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3])
+                .cdtData$GalParams$cdtnetcdf$dir <- trimws(tclvalue(file.stnfl))
 
-            .cdtData$GalParams$output <- str_trim(tclvalue(file.save))
+            .cdtData$GalParams$output <- trimws(tclvalue(file.save))
 
             .cdtData$GalParams$settingdone <- settingdone
             .cdtData$GalParams$message <- lang.dlg[['message']]

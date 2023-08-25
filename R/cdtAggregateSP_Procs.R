@@ -157,7 +157,7 @@ AggregateSpNc_Execute <- function(){
         grid.dim <- c(length(grd.lon), length(grd.lat))
     }else{
         ## maybe use raster::extract
-        ixy <- over(old.grid, new.grid)
+        ixy <- sp::over(old.grid, new.grid)
         grid.dim <- new.grid@grid@cells.dim
     }
 

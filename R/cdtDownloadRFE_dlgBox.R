@@ -414,16 +414,16 @@ download_RFE <- function(){
     #################
 
     tkconfigure(bt.range, command = function(){
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
     tkconfigure(bt.info, command = function(){
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
-        minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
-        src <- RFEVAL[CbRFEVAL %in% str_trim(tclvalue(RFESrc))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
         urls <- rfe.product.source(src, tstep, minhour)
         utils::browseURL(paste0('file://', urls))
     })
@@ -463,9 +463,9 @@ download_RFE <- function(){
     ######################
 
     tkbind(cb.tres, "<<ComboboxSelected>>", function(){
-        rfe.src <- RFEVAL[CbRFEVAL %in% str_trim(tclvalue(RFESrc))]
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
-        minhour.val <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        minhour.val <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
         ########
         ## minute & hourly
@@ -505,7 +505,7 @@ download_RFE <- function(){
         RFEVAL <<- rfedata$name
  
         tkconfigure(cb.sat, values = CbRFEVAL)
-        if(!str_trim(tclvalue(RFESrc)) %in% CbRFEVAL) tclvalue(RFESrc) <- CbRFEVAL[1]
+        if(!trimws(tclvalue(RFESrc)) %in% CbRFEVAL) tclvalue(RFESrc) <- CbRFEVAL[1]
 
         ########
         need.pwd <- rfe.need.usrpwd(rfe.src)
@@ -529,9 +529,9 @@ download_RFE <- function(){
 
     ####
     tkbind(cb.mhI, "<<ComboboxSelected>>", function(){
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
-        rfe.src <- RFEVAL[CbRFEVAL %in% str_trim(tclvalue(RFESrc))]
-        minhour.val <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+        minhour.val <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
         ########
         rfedata <- rfe.product.list(tstep, minhour.val)
@@ -539,7 +539,7 @@ download_RFE <- function(){
         RFEVAL <<- rfedata$name
 
         tkconfigure(cb.sat, values = CbRFEVAL)
-        if(!str_trim(tclvalue(RFESrc)) %in% CbRFEVAL) tclvalue(RFESrc) <- CbRFEVAL[1]
+        if(!trimws(tclvalue(RFESrc)) %in% CbRFEVAL) tclvalue(RFESrc) <- CbRFEVAL[1]
 
         ########
         need.pwd <- rfe.need.usrpwd(rfe.src)
@@ -552,8 +552,8 @@ download_RFE <- function(){
 
     ####
     tkbind(cb.sat, "<<ComboboxSelected>>", function(){
-        rfe.src <- RFEVAL[CbRFEVAL %in% str_trim(tclvalue(RFESrc))]
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
+        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
 
         ########
         need.pwd <- rfe.need.usrpwd(rfe.src)
@@ -652,7 +652,7 @@ download_RFE <- function(){
     btCA <- ttkbutton(frGrd1, text = lang.dlg[['button']][['2']])
 
     tkconfigure(btOK, command = function(){
-        if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
@@ -661,15 +661,15 @@ download_RFE <- function(){
             tkfocus(.cdtEnv$tcl$main$win)
             tcl('update')
 
-            .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
-            .cdtData$GalParams$rfe.src <- RFEVAL[CbRFEVAL %in% str_trim(tclvalue(RFESrc))]
-            .cdtData$GalParams$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+            .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+            .cdtData$GalParams$rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+            .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             .cdtData$GalParams$iridl.src <- switch(tclvalue(iridl.src), '0' = FALSE, '1' = TRUE)
 
-            .cdtData$GalParams$login$usr <- str_trim(tclvalue(username))
-            .cdtData$GalParams$login$pwd <- str_trim(tclvalue(password))
+            .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
+            .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
 
-            .cdtData$GalParams$dir2save <- str_trim(tclvalue(dir2save))
+            .cdtData$GalParams$dir2save <- trimws(tclvalue(dir2save))
 
             .cdtData$GalParams$bbox$minlon <- as.numeric(tclvalue(minLon))
             .cdtData$GalParams$bbox$maxlon <- as.numeric(tclvalue(maxLon))

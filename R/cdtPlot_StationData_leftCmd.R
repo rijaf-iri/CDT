@@ -151,11 +151,11 @@ PlotCDTStationCmd <- function(){
     }
 
     set.dates.times <- function(incr, intstep){
-        yrs <- as.numeric(str_trim(tclvalue(date.year)))
-        mon <- as.numeric(str_trim(tclvalue(date.mon)))
-        dpk <- as.numeric(str_trim(tclvalue(date.day)))
-        hrs <- as.numeric(str_trim(tclvalue(date.hour)))
-        min <- as.numeric(str_trim(tclvalue(date.min)))
+        yrs <- as.numeric(trimws(tclvalue(date.year)))
+        mon <- as.numeric(trimws(tclvalue(date.mon)))
+        dpk <- as.numeric(trimws(tclvalue(date.day)))
+        hrs <- as.numeric(trimws(tclvalue(date.hour)))
+        min <- as.numeric(trimws(tclvalue(date.min)))
 
         todaty <- format.dates.times(intstep, yrs, mon, dpk, hrs, min)
         if(is.null(todaty)) return(NULL)
@@ -172,7 +172,7 @@ PlotCDTStationCmd <- function(){
             return(NULL)
         }
 
-        minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
         daty <- switch(intstep,
                        "minute" = daty + incr * minhour * 60,
                        "hourly" = daty + incr * minhour * 3600,
@@ -253,13 +253,13 @@ PlotCDTStationCmd <- function(){
             tkdestroy(frTS1)
             frTS1 <<- tkframe(frTS0)
 
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             date.time.selection(intstep, frTS1)
 
             tkgrid(frTS1, row = 0, column = 1, sticky = 'we', pady = 1, rowspan = 2, columnspan = 1)
 
             ##############
-            minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+            minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             retminhr <- set.hour.minute(intstep, minhour)
             tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
             tclvalue(minhour.tclVar) <- retminhr$val
@@ -336,7 +336,7 @@ PlotCDTStationCmd <- function(){
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$map$typeMap)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$map$typeMap)) == "Points")
                 pointSizeI <<- .cdtData$EnvData$dataMapOp$pointSize
         })
 
@@ -358,10 +358,10 @@ PlotCDTStationCmd <- function(){
 
         tkconfigure(bt.date.prev, command = function(){
             if(is.null(.cdtData$EnvData$don)) return(NULL)
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             if(intstep == "others"){
-                idaty <- which(.cdtData$EnvData$don$dates == str_trim(tclvalue(date.other)))
+                idaty <- which(.cdtData$EnvData$don$dates == trimws(tclvalue(date.other)))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(.cdtData$EnvData$don$dates)
                 tclvalue(date.other) <- .cdtData$EnvData$don$dates[idaty]
@@ -388,10 +388,10 @@ PlotCDTStationCmd <- function(){
 
         tkconfigure(bt.date.next, command = function(){
             if(is.null(.cdtData$EnvData$don)) return(NULL) 
-            intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             if(intstep == "others"){
-                idaty <- which(.cdtData$EnvData$don$dates == str_trim(tclvalue(date.other)))
+                idaty <- which(.cdtData$EnvData$don$dates == trimws(tclvalue(date.other)))
                 idaty <- idaty + 1
                 if(idaty > length(.cdtData$EnvData$don$dates)) idaty <- 1
                 tclvalue(date.other) <- .cdtData$EnvData$don$dates[idaty]
@@ -419,7 +419,7 @@ PlotCDTStationCmd <- function(){
         ##############
 
         tkbind(cb.Map.type, "<<ComboboxSelected>>", function(){
-            if(str_trim(tclvalue(.cdtData$EnvData$map$typeMap)) == "Points"){
+            if(trimws(tclvalue(.cdtData$EnvData$map$typeMap)) == "Points"){
                 .cdtData$EnvData$dataMapOp$pointSize <- pointSizeI
             }else .cdtData$EnvData$dataMapOp$pointSize <- NULL
 
@@ -473,7 +473,7 @@ PlotCDTStationCmd <- function(){
         ##############
 
         tkconfigure(bt.TSGraphOpt, command = function(){
-            ptype <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            ptype <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
             suffix.fun <- switch(ptype, "bar" = "Bar", "line" = "Line")
             plot.fun <- get(paste0("MapGraph.GraphOptions.", suffix.fun), mode = "function")
             .cdtData$EnvData$TSGraphOp <- plot.fun(.cdtData$EnvData$TSGraphOp)
@@ -484,7 +484,7 @@ PlotCDTStationCmd <- function(){
         .cdtData$EnvData$tab$dataGraph <- NULL
 
         tkconfigure(bt.TsGraph.plot, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
             if(is.null(.cdtData$EnvData$don)) return(NULL)
             getStnTS()
@@ -496,10 +496,10 @@ PlotCDTStationCmd <- function(){
         })
 
         tkconfigure(bt.stnID.prev, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
             if(is.null(.cdtData$EnvData$don)) return(NULL)
-            istn <- which(.cdtData$EnvData$don$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+            istn <- which(.cdtData$EnvData$don$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
             istn <- istn - 1
             if(istn < 1) istn <- length(.cdtData$EnvData$don$id)
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- .cdtData$EnvData$don$id[istn]
@@ -513,10 +513,10 @@ PlotCDTStationCmd <- function(){
         })
 
         tkconfigure(bt.stnID.next, command = function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
 
             if(is.null(.cdtData$EnvData$don)) return(NULL)
-            istn <- which(.cdtData$EnvData$don$id == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+            istn <- which(.cdtData$EnvData$don$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
             istn <- istn + 1
             if(istn > length(.cdtData$EnvData$don$id)) istn <- 1
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- .cdtData$EnvData$don$id[istn]
@@ -530,7 +530,7 @@ PlotCDTStationCmd <- function(){
         })
 
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% str_trim(tclvalue(typeTSp))]
+            .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOT[CbtypeTSPLOT %in% trimws(tclvalue(typeTSp))]
         })
 
         ############################################
@@ -611,9 +611,9 @@ PlotCDTStationCmd <- function(){
 
     splitStnData <- function(){
         .cdtData$EnvData$stndata <- NULL
-        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
-        stn.file <- str_trim(tclvalue(input.file))
+        stn.file <- trimws(tclvalue(input.file))
         don <- getStnOpenData(stn.file)
         if(is.null(don)) return(NULL)
 
@@ -735,7 +735,7 @@ PlotCDTStationCmd <- function(){
     }
 
     getStnTS <- function(){
-        stationID <- str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp))
+        stationID <- trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp))
         istn <- which(.cdtData$EnvData$don$id == stationID)
         if(length(istn) == 0){
             .cdtData$EnvData$stndata$series <- NULL
@@ -755,16 +755,16 @@ PlotCDTStationCmd <- function(){
             tcl('update')
         })
 
-        typemap <- str_trim(tclvalue(.cdtData$EnvData$map$typeMap))
+        typemap <- trimws(tclvalue(.cdtData$EnvData$map$typeMap))
 
         if(.cdtData$EnvData$tstep != "others"){
-            yrs <- as.numeric(str_trim(tclvalue(date.year)))
-            mon <- as.numeric(str_trim(tclvalue(date.mon)))
-            dpk <- as.numeric(str_trim(tclvalue(date.day)))
-            hrs <- as.numeric(str_trim(tclvalue(date.hour)))
-            min <- as.numeric(str_trim(tclvalue(date.min)))
+            yrs <- as.numeric(trimws(tclvalue(date.year)))
+            mon <- as.numeric(trimws(tclvalue(date.mon)))
+            dpk <- as.numeric(trimws(tclvalue(date.day)))
+            hrs <- as.numeric(trimws(tclvalue(date.hour)))
+            min <- as.numeric(trimws(tclvalue(date.min)))
             getSpat <- list(yrs, mon, dpk, hrs, min, typemap)
-        }else getSpat <- list(str_trim(tclvalue(date.other)), typemap)
+        }else getSpat <- list(trimws(tclvalue(date.other)), typemap)
 
         if(!is.null(.cdtData$EnvData$stndata$spatial)){
             formatSpData <- all.equal(.cdtData$EnvData$stndata$spatial, getSpat)
@@ -793,7 +793,7 @@ PlotCDTStationCmd <- function(){
                 }
                 if(.cdtData$EnvData$tstep == "monthly")
                     daty <- format(as.Date(paste(yrs, mon, dpk, sep = "-")), "%Y%m")
-            }else daty <- str_trim(tclvalue(date.other))
+            }else daty <- trimws(tclvalue(date.other))
 
             idaty <- which(.cdtData$EnvData$don$dates == daty)
 

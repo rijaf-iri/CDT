@@ -85,7 +85,7 @@ crossValidationInfoWind <- function(){
         tkconfigure(set.ncS, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             .cdtData$GalParams[["INPUT.S"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.S"]],
-                                                                 str_trim(tclvalue(dir.NC_S)))
+                                                                 trimws(tclvalue(dir.NC_S)))
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
 
@@ -123,7 +123,7 @@ crossValidationInfoWind <- function(){
             tkconfigure(set.ncUV, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
                 .cdtData$GalParams[["INPUT.UV"]] <- getInfoNetCDFDataWind(tt, .cdtData$GalParams[["INPUT.UV"]],
-                                                                          str_trim(tclvalue(dir.NC_UV)))
+                                                                          trimws(tclvalue(dir.NC_UV)))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
             })
 
@@ -173,7 +173,7 @@ crossValidationInfoWind <- function(){
             tkconfigure(set.ncU, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
                 .cdtData$GalParams[["INPUT.U"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.U"]],
-                                                                     str_trim(tclvalue(dir.NC_U)))
+                                                                     trimws(tclvalue(dir.NC_U)))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
             })
 
@@ -187,7 +187,7 @@ crossValidationInfoWind <- function(){
             tkconfigure(set.ncV, command = function(){
                 tcl('wm', 'attributes', tt, topmost = FALSE)
                 .cdtData$GalParams[["INPUT.V"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["INPUT.V"]],
-                                                                     str_trim(tclvalue(dir.NC_V)))
+                                                                     trimws(tclvalue(dir.NC_V)))
                 tcl('wm', 'attributes', tt, topmost = TRUE)
             })
 
@@ -300,7 +300,7 @@ crossValidationInfoWind <- function(){
     ###########
 
     tkconfigure(bt.DateRange, command = function(){
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
         tcl('wm', 'attributes', tt, topmost = TRUE)
@@ -335,7 +335,7 @@ crossValidationInfoWind <- function(){
     tkgrid(cb.windVar, row = 0, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     tkbind(cb.windVar, "<<ComboboxSelected>>", function(){
-        wvar <- valWindVar[cbWindVar %in% str_trim(tclvalue(windVar))]
+        wvar <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
         if(wvar == "speed") getwindSpeed() else getwindData()
     })
 
@@ -516,7 +516,7 @@ crossValidationInfoWind <- function(){
     ########
 
     tkbind(cb.mrg, "<<ComboboxSelected>>", function(){
-        mrgmethod <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
+        mrgmethod <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
         auxiliary.variables(mrgmethod)
     })
 
@@ -527,7 +527,7 @@ crossValidationInfoWind <- function(){
     helpWidget(bt.mrg.interp, lang.dlg[['tooltip']][['19']], lang.dlg[['status']][['19']])
 
     tkconfigure(bt.mrg.interp, command = function(){
-        mrgmethod <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
+        mrgmethod <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
         stateMethod <- if(mrgmethod %in% c("CSc", "BSc")) "disabled" else "normal"
 
         tcl('wm', 'attributes', tt, topmost = FALSE)
@@ -551,9 +551,9 @@ crossValidationInfoWind <- function(){
                 tkgrid(cb.datatype, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
 
                 tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
-                    if(str_trim(tclvalue(selstn.filetype)) == CbdatatypeVAL[1])
+                    if(trimws(tclvalue(selstn.filetype)) == CbdatatypeVAL[1])
                         tclvalue(txt.INData.var) <- lang.dlg[['label']][['14']]
-                    if(str_trim(tclvalue(selstn.filetype)) == CbdatatypeVAL[2])
+                    if(trimws(tclvalue(selstn.filetype)) == CbdatatypeVAL[2])
                         tclvalue(txt.INData.var) <- lang.dlg[['label']][['15']]
                 })
 
@@ -633,7 +633,7 @@ crossValidationInfoWind <- function(){
     ########
 
     tkbind(cb.selstn, "<<ComboboxSelected>>", function(){
-        selstn <- val.selectSTN[cb.selectSTN %in% str_trim(tclvalue(select.station))]
+        selstn <- val.selectSTN[cb.selectSTN %in% trimws(tclvalue(select.station))]
         crossvalid.stations(selstn)
     })
 
@@ -654,18 +654,18 @@ crossValidationInfoWind <- function(){
     #######
 
     tkconfigure(bt.prm.OK, command = function(){
-        .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(file.period))]
+        .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
 
-        .cdtData$GalParams$outdir <- str_trim(tclvalue(dir2save))
+        .cdtData$GalParams$outdir <- trimws(tclvalue(dir2save))
         if(.cdtData$GalParams$outdir %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }
 
-        .cdtData$GalParams$wvar <- valWindVar[cbWindVar %in% str_trim(tclvalue(windVar))]
+        .cdtData$GalParams$wvar <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
         if(.cdtData$GalParams$wvar == "speed"){
-            .cdtData$GalParams$STN.S <- str_trim(tclvalue(file.STN_S))
-            .cdtData$GalParams$INPUT.S$dir <- str_trim(tclvalue(dir.NC_S))
+            .cdtData$GalParams$STN.S <- trimws(tclvalue(file.STN_S))
+            .cdtData$GalParams$INPUT.S$dir <- trimws(tclvalue(dir.NC_S))
 
             if(.cdtData$GalParams$STN.S == ""){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-1']], icon = "warning", type = "ok")
@@ -677,8 +677,8 @@ crossValidationInfoWind <- function(){
             }
         }else{
             .cdtData$GalParams$one.ncdf <- switch(tclvalue(windUV), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$STN.U <- str_trim(tclvalue(file.STN_U))
-            .cdtData$GalParams$STN.V <- str_trim(tclvalue(file.STN_V))
+            .cdtData$GalParams$STN.U <- trimws(tclvalue(file.STN_U))
+            .cdtData$GalParams$STN.V <- trimws(tclvalue(file.STN_V))
 
             if(.cdtData$GalParams$STN.U == ""){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-2']], icon = "warning", type = "ok")
@@ -690,15 +690,15 @@ crossValidationInfoWind <- function(){
             }
 
             if(.cdtData$GalParams$one.ncdf){
-                .cdtData$GalParams$INPUT.UV$dir <- str_trim(tclvalue(dir.NC_UV))
+                .cdtData$GalParams$INPUT.UV$dir <- trimws(tclvalue(dir.NC_UV))
 
                 if(.cdtData$GalParams$INPUT.UV$dir %in% c("", "NA")){
                     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-2']], icon = "warning", type = "ok")
                     tkwait.window(tt)
                 }
             }else{
-                .cdtData$GalParams$INPUT.U$dir <- str_trim(tclvalue(dir.NC_U))
-                .cdtData$GalParams$INPUT.V$dir <- str_trim(tclvalue(dir.NC_V))
+                .cdtData$GalParams$INPUT.U$dir <- trimws(tclvalue(dir.NC_U))
+                .cdtData$GalParams$INPUT.V$dir <- trimws(tclvalue(dir.NC_V))
 
                 if(.cdtData$GalParams$INPUT.U$dir %in% c("", "NA")){
                     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-3']], icon = "warning", type = "ok")
@@ -711,9 +711,9 @@ crossValidationInfoWind <- function(){
             }
         }
 
-        .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% str_trim(tclvalue(merge.method))]
-        .cdtData$GalParams$MRG$nrun <- as.numeric(str_trim(tclvalue(nb.run)))
-         pass <- str_trim(strsplit(tclvalue(pass.ratio), ",")[[1]])
+        .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
+        .cdtData$GalParams$MRG$nrun <- as.numeric(trimws(tclvalue(nb.run)))
+         pass <- trimws(strsplit(tclvalue(pass.ratio), ",")[[1]])
         .cdtData$GalParams$MRG$pass <- as.numeric(pass[pass != ""])
         if(.cdtData$GalParams$MRG$nrun != length(.cdtData$GalParams$MRG$pass)){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
@@ -725,7 +725,7 @@ crossValidationInfoWind <- function(){
         .cdtData$GalParams$auxvar$aspect <- switch(tclvalue(aspect.auxvar), '0' = FALSE, '1' = TRUE)
         .cdtData$GalParams$auxvar$lon <- switch(tclvalue(lon.auxvar), '0' = FALSE, '1' = TRUE)
         .cdtData$GalParams$auxvar$lat <- switch(tclvalue(lat.auxvar), '0' = FALSE, '1' = TRUE)
-        .cdtData$GalParams$auxvar$demfile <- str_trim(tclvalue(demfile.var))
+        .cdtData$GalParams$auxvar$demfile <- trimws(tclvalue(demfile.var))
 
         if(.cdtData$GalParams$MRG$method == "RK" &
            (.cdtData$GalParams$auxvar$dem |
@@ -738,10 +738,10 @@ crossValidationInfoWind <- function(){
             tkwait.window(tt)
         }
 
-        .cdtData$GalParams$selstn$from <- val.selectSTN[cb.selectSTN %in% str_trim(tclvalue(select.station))]
-        .cdtData$GalParams$selstn$file.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(selstn.filetype))]
-        .cdtData$GalParams$selstn$file.stn <- str_trim(tclvalue(selstn.filestn))
-        .cdtData$GalParams$selstn$min.perc <- as.numeric(str_trim(tclvalue(selstn.minperc)))
+        .cdtData$GalParams$selstn$from <- val.selectSTN[cb.selectSTN %in% trimws(tclvalue(select.station))]
+        .cdtData$GalParams$selstn$file.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(selstn.filetype))]
+        .cdtData$GalParams$selstn$file.stn <- trimws(tclvalue(selstn.filestn))
+        .cdtData$GalParams$selstn$min.perc <- as.numeric(trimws(tclvalue(selstn.minperc)))
 
         if(.cdtData$GalParams$selstn$from == "file" &
            .cdtData$GalParams$selstn$file.stn == "")

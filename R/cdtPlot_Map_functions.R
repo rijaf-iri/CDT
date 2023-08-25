@@ -46,7 +46,7 @@ cdt.plotmap.args <- function(don, MapOp, shpf,
     ## colorscale title
     if(MapOp$colkeyLab$user){
         legend.texta <- MapOp$colkeyLab$label
-        if(str_trim(legend.texta) == "") legend.texta <- NULL
+        if(trimws(legend.texta) == "") legend.texta <- NULL
     }else legend.texta <- legend.text
 
     #################
@@ -135,27 +135,27 @@ cdt.plotmap.fun <- function(don, horizontal, kolor,
                             data.type = "Points", plot.type = "Pixels")
 {
     plot(1, xlim = xlim, ylim = ylim, xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
-    axlabs <- LatLonAxisLabels(axTicks(1), axTicks(2))
-    axis(side = 1, at = axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 1.0)
-    axis(side = 2, at = axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
-    title(main = titre, cex.main = 1.3, font.main = 2)
+    axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
+    graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 1.0)
+    graphics::axis(side = 2, at = graphics::axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
+    graphics::title(main = titre, cex.main = 1.3, font.main = 2)
 
     if(plot.type %in% c("Pixels", "FilledContour")){
         if(plot.type == "Pixels")
-            image(don, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
+            graphics::image(don, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
 
         if(data.type == "Grid" & plot.type == "FilledContour")
-            .filled.contour(don$x, don$y, don$z, levels = breaks, col = kolor)
+            graphics::.filled.contour(don$x, don$y, don$z, levels = breaks, col = kolor)
 
-        abline(h = axTicks(2), v = axTicks(1), col = "lightgray", lty = 3, lwd = 1.3)
-        lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
+        graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1), col = "lightgray", lty = 3, lwd = 1.3)
+        graphics::lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
     }else{
         if(data.type == "Points" & plot.type == "Points"){
-            abline(h = axTicks(2), v = axTicks(1), col = "lightgray", lty = 3, lwd = 1.3)
-            lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
+            graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1), col = "lightgray", lty = 3, lwd = 1.3)
+            graphics::lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
 
             kolor.p <- kolor[findInterval(don$z, breaks, rightmost.closed = TRUE, left.open = TRUE)]
-            points(don$x, don$y, col = kolor.p, cex = MapOp$pointSize, pch = 20)
+            graphics::points(don$x, don$y, col = kolor.p, cex = MapOp$pointSize, pch = 20)
         }
     }
 
@@ -164,8 +164,8 @@ cdt.plotmap.fun <- function(don, horizontal, kolor,
                        legend.args = legend.args, axis.args = list(at = breaks1, labels = legendLabel,
                        cex.axis = 1.0, font = 2, tcl = -0.3, mgp = c(0, 0.5, 0)), legend.shrink = 0.8)
 
-    plt <- par("plt")
-    usr <- par("usr")
+    plt <- graphics::par("plt")
+    usr <- graphics::par("usr")
     return(list(par = c(plt, usr)))
 }
 
@@ -179,8 +179,8 @@ cdt.plotmap.scalebar <- function(scalebar)
         if(scalebar$pos == 'bottomright') posx <- 0.75
         posy <- 0.08
 
-        scalebarX <- grconvertX(posx, "npc")
-        scalebarY <- grconvertY(posy, "npc")
+        scalebarX <- graphics::grconvertX(posx, "npc")
+        scalebarY <- graphics::grconvertY(posy, "npc")
 
         maps::map.scale(x = scalebarX, y = scalebarY, relwidth = 0.15, metric = TRUE, ratio = FALSE, cex = 0.7, font = 2)
     }

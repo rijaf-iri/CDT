@@ -30,7 +30,7 @@ computeWB_Cessation <- function(Parameters, data.type){
 
     frameDate <- tkframe(frWBalance)
 
-    imon <- as.numeric(str_trim(Parameters$hdate$start.month))
+    imon <- as.numeric(trimws(Parameters$hdate$start.month))
     start.month <- tclVar(MOIS[imon])
     start.day <- tclVar(Parameters$hdate$start.day)
     separate.year <- tclVar(Parameters$hdate$separate.year)
@@ -130,15 +130,15 @@ computeWB_Cessation <- function(Parameters, data.type){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-            Parameters$hdate$start.month <<- which(MOIS %in% str_trim(tclvalue(start.month)))
-            Parameters$hdate$start.day <<- as.numeric(str_trim(tclvalue(start.day)))
+            Parameters$hdate$start.month <<- which(MOIS %in% trimws(tclvalue(start.month)))
+            Parameters$hdate$start.day <<- as.numeric(trimws(tclvalue(start.day)))
             Parameters$hdate$separate.year <<- switch(tclvalue(separate.year), '0' = FALSE, '1' = TRUE)
 
             Parameters$wb$multi <<- switch(tclvalue(use.multi.wb), '0' = FALSE, '1' = TRUE)
             Parameters$swhc$multi <<- switch(tclvalue(use.multi.swhc), '0' = FALSE, '1' = TRUE)
 
-            Parameters$wb$wb1 <<- as.numeric(str_trim(tclvalue(start.wb)))
-            Parameters$swhc$cap.max <<- as.numeric(str_trim(tclvalue(capacity.max)))
+            Parameters$wb$wb1 <<- as.numeric(trimws(tclvalue(start.wb)))
+            Parameters$swhc$cap.max <<- as.numeric(trimws(tclvalue(capacity.max)))
 
             tkgrab.release(tt)
             tkdestroy(tt)

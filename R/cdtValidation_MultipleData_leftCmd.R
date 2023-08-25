@@ -197,7 +197,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- dat.opfiles[[1]]
                 tkconfigure(cb.datafile, values = unlist(openFile_ttkcomboList()))
-                .cdtData$GalParams$DATASETs[[jj]]$pars$file <- str_trim(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                .cdtData$GalParams$DATASETs[[jj]]$pars$file <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
             }
         })
 
@@ -338,15 +338,15 @@ Validation.MultiData.PanelCmd <- function(clim.var){
             if(path.hovd == "") return(NULL)
             tclvalue(file.hovd) <- path.hovd
 
-            if(file.exists(str_trim(tclvalue(file.hovd)))){
-                hovd.data <- try(readRDS(str_trim(tclvalue(file.hovd))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.hovd)))){
+                hovd.data <- try(readRDS(trimws(tclvalue(file.hovd))), silent = TRUE)
                 if(inherits(hovd.data, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', hovd.data[1]), TRUE, 'e')
                     return(NULL)
                 }
 
-                .cdtData$EnvData$file.hovd <- str_trim(tclvalue(file.hovd))
+                .cdtData$EnvData$file.hovd <- trimws(tclvalue(file.hovd))
                 .cdtData$EnvData$GeneralParameters <- hovd.data$GeneralParameters
                 .cdtData$EnvData$cdtData <- hovd.data$cdtData
                 .cdtData$EnvData$VALID.names <- hovd.data$VALID.names
@@ -360,7 +360,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% hovd.data$GeneralParameters$intstep]
 
                 if(!is.null(.cdtData$EnvData$opDATA$id)){
-                    statsdata <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
+                    statsdata <- StatDataT[STATDATATYPE %in% trimws(tclvalue(stat.data))]
 
                     stateDispSTN <- if(statsdata == 'stn') 'normal' else 'disabled'
                     tkconfigure(cb.stat.sel, values = .cdtData$EnvData$opDATA$id, state = stateDispSTN)
@@ -389,7 +389,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                     CbTypeGRAPH <- typeGraphCombo[itype]
 
                     if(statsdata == 'all'){
-                        if(str_trim(tclvalue(type.graph)) == typeGraphCombo[3])
+                        if(trimws(tclvalue(type.graph)) == typeGraphCombo[3])
                             tclvalue(type.graph) <- typeGraphCombo[1]
                     }
                     tkconfigure(cb.stats.graph, values = CbTypeGRAPH)
@@ -435,8 +435,8 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         ##############
         fr.seas <- ttklabelframe(frameSeason, text = lang.dlg[['label']][['8']], relief = 'sunken', labelanchor = "n", borderwidth = 2)
 
-        mon1 <- as.numeric(str_trim(GeneralParameters$date.range$start.month))
-        mon2 <- as.numeric(str_trim(GeneralParameters$date.range$end.month))
+        mon1 <- as.numeric(trimws(GeneralParameters$date.range$start.month))
+        mon2 <- as.numeric(trimws(GeneralParameters$date.range$end.month))
         start.mois <- tclVar(MOIS[mon1])
         end.mois <- tclVar(MOIS[mon2])
 
@@ -503,7 +503,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         #################
         tkbind(cb.stat.data, "<<ComboboxSelected>>", function(){
-            statsdata <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
+            statsdata <- StatDataT[STATDATATYPE %in% trimws(tclvalue(stat.data))]
 
             stateDispSTN <- if(statsdata == 'stn') 'normal' else 'disabled'
             tkconfigure(bt.stat.prev, state = stateDispSTN)
@@ -529,7 +529,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
             CbTypeGRAPH <- typeGraphCombo[itype]
 
             if(statsdata == 'all'){
-                if(str_trim(tclvalue(type.graph)) == typeGraphCombo[3])
+                if(trimws(tclvalue(type.graph)) == typeGraphCombo[3])
                     tclvalue(type.graph) <- typeGraphCombo[1]
             }
             tkconfigure(cb.stats.graph, values = CbTypeGRAPH)
@@ -549,7 +549,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         bt.volumeStats <- ttkbutton(subfr2, text = lang.dlg[['button']][['3']])
 
         tkconfigure(bt.volumeStats, command = function(){
-            statsdata <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
+            statsdata <- StatDataT[STATDATATYPE %in% trimws(tclvalue(stat.data))]
             GeneralParameters[['volume.stat']] <<- getInfo_volumetricValid(.cdtEnv$tcl$main$win, statsdata,
                                                                            GeneralParameters[['volume.stat']],
                                                                            obsOnly = TRUE
@@ -599,20 +599,20 @@ Validation.MultiData.PanelCmd <- function(clim.var){
             }
 
             ######################
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
-            GeneralParameters$outdir <- str_trim(tclvalue(dir2save))
-            GeneralParameters$STN.file <- str_trim(tclvalue(file.stnfl))
+            GeneralParameters$outdir <- trimws(tclvalue(dir2save))
+            GeneralParameters$STN.file <- trimws(tclvalue(file.stnfl))
 
             ######################
 
-            GeneralParameters$date.range$start.month <- which(MOIS %in% str_trim(tclvalue(start.mois)))
-            GeneralParameters$date.range$end.month <- which(MOIS %in% str_trim(tclvalue(end.mois)))
-            GeneralParameters$date.range$start.year <- as.numeric(str_trim(tclvalue(start.year)))
-            GeneralParameters$date.range$end.year <- as.numeric(str_trim(tclvalue(end.year)))
+            GeneralParameters$date.range$start.month <- which(MOIS %in% trimws(tclvalue(start.mois)))
+            GeneralParameters$date.range$end.month <- which(MOIS %in% trimws(tclvalue(end.mois)))
+            GeneralParameters$date.range$start.year <- as.numeric(trimws(tclvalue(start.year)))
+            GeneralParameters$date.range$end.year <- as.numeric(trimws(tclvalue(end.year)))
 
             GeneralParameters$aggr.series$aggr.data <- switch(tclvalue(aggr.data), '0' = FALSE, '1' = TRUE)
-            GeneralParameters$stat.data <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
+            GeneralParameters$stat.data <- StatDataT[STATDATATYPE %in% trimws(tclvalue(stat.data))]
 
             GeneralParameters$validExist <- switch(tclvalue(validExist), '0' = FALSE, '1' = TRUE)
             GeneralParameters$clim.var <- clim.var
@@ -644,7 +644,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                 if(ret == 0){
                     Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
-                    if(str_trim(tclvalue(stat.data)) == STATDATATYPE[3]){
+                    if(trimws(tclvalue(stat.data)) == STATDATATYPE[3]){
                         tkconfigure(cb.stat.sel, values = .cdtData$EnvData$opDATA$id)
                         tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[1]
 
@@ -696,7 +696,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stat.disp, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                statsdata <- StatDataT[STATDATATYPE %in% str_trim(tclvalue(stat.data))]
+                statsdata <- StatDataT[STATDATATYPE %in% trimws(tclvalue(stat.data))]
 
                 if(statsdata == 'all'){
                     don <- .cdtData$EnvData$Statistics$ALL
@@ -739,7 +739,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
                     titleTab <- 'Spatial-Average Statistics'
                 }
                 if(statsdata == 'stn'){
-                    istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(stn.stat.tab)))
+                    istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
                     don <- .cdtData$EnvData$Statistics$STN
                     nl <- length(don$threshold)
                     stats <- lapply(seq_along(.cdtData$EnvData$VALID.names), function(j){
@@ -773,7 +773,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stat.prev, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(stn.stat.tab)))
+                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
                 tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
@@ -810,7 +810,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stat.next, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(stn.stat.tab)))
+                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
                 istn <- istn + 1
                 if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
                 tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
@@ -892,7 +892,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stats.Opt, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                mapstat <- ValStatNAMES[CbStatNAMES %in% str_trim(tclvalue(statsVAR))]
+                mapstat <- ValStatNAMES[CbStatNAMES %in% trimws(tclvalue(statsVAR))]
                 stat.STN <- .cdtData$EnvData$Statistics$STN[c("cont", "catg", "volume")]
                 istat <- sapply(lapply(stat.STN, '[[', 1), function(x){
                     ll <- which(rownames(x$statistics) == mapstat)
@@ -911,7 +911,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
             }
             .cdtData$EnvData$statMapOp <- MapGraph.MapOptions(.cdtData$EnvData$statMapOp)
 
-            if(str_trim(tclvalue(.cdtData$EnvData$typeMap)) == "Points")
+            if(trimws(tclvalue(.cdtData$EnvData$typeMap)) == "Points")
                 pointSizeI <<- .cdtData$EnvData$statMapOp$pointSize
         })
 
@@ -921,7 +921,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.stats.maps, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                .cdtData$EnvData$statVAR <- ValStatNAMES[CbStatNAMES %in% str_trim(tclvalue(statsVAR))]
+                .cdtData$EnvData$statVAR <- ValStatNAMES[CbStatNAMES %in% trimws(tclvalue(statsVAR))]
 
                 imgContainer <- CDT.Display.Graph(multiValidation.plotStatMaps, .cdtData$EnvData$tab$Maps, 'Statistics-Maps')
                 .cdtData$EnvData$tab$Maps <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Maps)
@@ -976,7 +976,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         .cdtData$EnvData$tab$Graph <- NULL
 
         tkconfigure(bt.stats.graph, command = function(){
-            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% str_trim(tclvalue(type.graph))]
+            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% trimws(tclvalue(type.graph))]
             if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
                 imgContainer <- CDT.Display.Graph(multiValidation.plotGraph, .cdtData$EnvData$tab$Graph, 'Validation-Plot')
                 .cdtData$EnvData$tab$Graph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Graph)
@@ -984,9 +984,9 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         })
 
         tkconfigure(bt.stn.graph.prev, command = function(){
-            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% str_trim(tclvalue(type.graph))]
+            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% trimws(tclvalue(type.graph))]
             if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
-                istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDGraph)))
+                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(.cdtData$EnvData$stnIDGraph)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
                 tclvalue(.cdtData$EnvData$stnIDGraph) <- .cdtData$EnvData$opDATA$id[istn]
@@ -997,9 +997,9 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         })
 
         tkconfigure(bt.stn.graph.next, command = function(){
-            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% str_trim(tclvalue(type.graph))]
+            .cdtData$EnvData$type.graph <- valGraphCombo[typeGraphCombo %in% trimws(tclvalue(type.graph))]
             if(!is.null(.cdtData$EnvData$opDATA$stnStatData)){
-                istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDGraph)))
+                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(.cdtData$EnvData$stnIDGraph)))
                 istn <- istn + 1
                 if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
                 tclvalue(.cdtData$EnvData$stnIDGraph) <- .cdtData$EnvData$opDATA$id[istn]
@@ -1011,7 +1011,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         ##############
         tkconfigure(bt.Opt.graph, command = function(){
-            typeGraph <- valGraphCombo[typeGraphCombo %in% str_trim(tclvalue(type.graph))]
+            typeGraph <- valGraphCombo[typeGraphCombo %in% trimws(tclvalue(type.graph))]
 
             optname <- switch(typeGraph, 'Scatter' = 'scatter', 'CDF' = 'cdf', 'Lines' = 'line')
             if(!is.null(.cdtData$EnvData$VALID.names) &
@@ -1075,7 +1075,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.rank.prev, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDRank)))
+                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(.cdtData$EnvData$stnIDRank)))
                 istn <- istn - 1
                 if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
                 tclvalue(.cdtData$EnvData$stnIDRank) <- .cdtData$EnvData$opDATA$id[istn]
@@ -1087,7 +1087,7 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         tkconfigure(bt.rank.next, command = function(){
             if(!is.null(.cdtData$EnvData$Statistics)){
-                istn <- which(.cdtData$EnvData$opDATA$id == str_trim(tclvalue(.cdtData$EnvData$stnIDRank)))
+                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(.cdtData$EnvData$stnIDRank)))
                 istn <- istn + 1
                 if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
                 tclvalue(.cdtData$EnvData$stnIDRank) <- .cdtData$EnvData$opDATA$id[istn]
@@ -1174,11 +1174,11 @@ Validation.MultiData.PanelCmd <- function(clim.var){
     #######################################################################################################
 
     getInputInfos <- function(){
-        GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-        GeneralParameters$STN.file <- str_trim(tclvalue(file.stnfl))
-        GeneralParameters$VALID.files <- sapply(.cdtData$GalParams$DATASETs, function(don) str_trim(tclvalue(don$tcl$input.file)))
-        GeneralParameters$VALID.names <- sapply(.cdtData$GalParams$DATASETs, function(don) str_trim(tclvalue(don$tcl$data.name)))
-        GeneralParameters$outdir <- str_trim(tclvalue(dir2save))
+        GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+        GeneralParameters$STN.file <- trimws(tclvalue(file.stnfl))
+        GeneralParameters$VALID.files <- sapply(.cdtData$GalParams$DATASETs, function(don) trimws(tclvalue(don$tcl$input.file)))
+        GeneralParameters$VALID.names <- sapply(.cdtData$GalParams$DATASETs, function(don) trimws(tclvalue(don$tcl$data.name)))
+        GeneralParameters$outdir <- trimws(tclvalue(dir2save))
 
         return(GeneralParameters)
     }

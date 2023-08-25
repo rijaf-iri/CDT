@@ -189,7 +189,7 @@ cdt.index.flexseason <- function(startSeas, endSeas, dates, inTimestep)
 cdt.index.min2min <- function(times, out.step){
     ttn <- as.numeric(substr(times, 11, 12))
     ttn <- floor(ttn / out.step) * out.step
-    ttn <- str_pad(ttn, 2, pad = "0")
+    ttn <- stringr::str_pad(ttn, 2, pad = "0")
     index <- split(seq_along(ttn), paste0(substr(times, 1, 10), ttn))
 
     return(index)
@@ -203,7 +203,7 @@ cdt.index.min2min.end <- function(times, out.step){
     ttn <- ttn - 1/60
     ttn <- floor(ttn / out.step) * out.step
     ttn <- (ttn + out.step) %% 60
-    ttn <- str_pad(ttn, 2, pad = "0")
+    ttn <- stringr::str_pad(ttn, 2, pad = "0")
     trle <- rle(ttn)
     ie <- cumsum(trle$lengths)
     is <- c(1, (ie + 1)[-length(ie)])
@@ -225,7 +225,7 @@ cdt.index.min2min.end <- function(times, out.step){
 cdt.index.hour2hour <- function(times, out.step){
     ttn <- as.numeric(substr(times, 9, 10))
     ttn <- floor(ttn / out.step) * out.step
-    ttn <- str_pad(ttn, 2, pad = "0")
+    ttn <- stringr::str_pad(ttn, 2, pad = "0")
     index <- split(seq_along(ttn), paste0(substr(times, 1, 8), ttn))
 
     return(index)
@@ -236,7 +236,7 @@ cdt.index.hour2hour.end <- function(times, out.step){
     ttn <- ttn - 1/60
     ttn <- floor(ttn / out.step) * out.step
     ttn <- (ttn + out.step) %% 24
-    ttn <- str_pad(ttn, 2, pad = "0")
+    ttn <- stringr::str_pad(ttn, 2, pad = "0")
     trle <- rle(ttn)
     ie <- cumsum(trle$lengths)
     is <- c(1, (ie + 1)[-length(ie)])

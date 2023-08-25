@@ -215,7 +215,7 @@ download_Reanalysis <- function(){
     ###########################
 
     tkconfigure(bt.range, command = function(){
-         tstep <- switch(str_trim(tclvalue(reanalSrc)),
+         tstep <- switch(trimws(tclvalue(reanalSrc)),
                          "rda.ucar.edu - ds628.0 - 3Hourly" = "hourly",
                          "rda.ucar.edu - ds628.8-NRT - 3Hourly" = "hourly",
                          "disc.gsfc.nasa.gov - Hourly" = "hourly",
@@ -231,8 +231,8 @@ download_Reanalysis <- function(){
     })
 
     tkconfigure(bt.info, command = function(){
-        prod <- prodVAL[CbprodVAL %in% str_trim(tclvalue(reanalProd))]
-        src <- str_trim(tclvalue(reanalSrc))
+        prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
+        src <- trimws(tclvalue(reanalSrc))
         urls <- reanal.product.info(prod, src)
         utils::browseURL(paste0('file://', urls))
     })
@@ -271,14 +271,14 @@ download_Reanalysis <- function(){
     ###########################
 
     tkbind(cb.prod, "<<ComboboxSelected>>", function(){
-        prod <- prodVAL[CbprodVAL %in% str_trim(tclvalue(reanalProd))]
+        prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
         CbsrcVAL <- reanal.product.source(prod)
 
         tkconfigure(cb.src, values = CbsrcVAL)
         tclvalue(reanalSrc) <- CbsrcVAL[1]
 
         ########
-        src <- str_trim(tclvalue(reanalSrc))
+        src <- trimws(tclvalue(reanalSrc))
 
         need.pwd <- reanal.need.usrpwd(prod, src)
         statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
@@ -319,13 +319,13 @@ download_Reanalysis <- function(){
         }
 
         tkconfigure(cb.vars, values = CbvarsVAL)
-        if(!str_trim(tclvalue(downVar)) %in% CbvarsVAL)
+        if(!trimws(tclvalue(downVar)) %in% CbvarsVAL)
             tclvalue(downVar) <- CbvarsVAL[1]
     })
 
     tkbind(cb.src, "<<ComboboxSelected>>", function(){
-        prod <- prodVAL[CbprodVAL %in% str_trim(tclvalue(reanalProd))]
-        src <- str_trim(tclvalue(reanalSrc))
+        prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
+        src <- trimws(tclvalue(reanalSrc))
 
         ########
         if(prod == "jra55"){
@@ -359,7 +359,7 @@ download_Reanalysis <- function(){
         }
 
         tkconfigure(cb.vars, values = CbvarsVAL)
-        if(!str_trim(tclvalue(downVar)) %in% CbvarsVAL)
+        if(!trimws(tclvalue(downVar)) %in% CbvarsVAL)
             tclvalue(downVar) <- CbvarsVAL[1]
 
         ########
@@ -449,7 +449,7 @@ download_Reanalysis <- function(){
     btCA <- ttkbutton(frGrd1, text = lang.dlg[['button']][['2']])
 
     tkconfigure(btOK, command = function(){
-        if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
@@ -458,14 +458,14 @@ download_Reanalysis <- function(){
             tkfocus(.cdtEnv$tcl$main$win)
             tcl('update')
 
-            .cdtData$GalParams$var <- varsVAL[CbvarsVAL %in% str_trim(tclvalue(downVar))]
-            .cdtData$GalParams$prod <- prodVAL[CbprodVAL %in% str_trim(tclvalue(reanalProd))]
-            .cdtData$GalParams$src <- str_trim(tclvalue(reanalSrc))
+            .cdtData$GalParams$var <- varsVAL[CbvarsVAL %in% trimws(tclvalue(downVar))]
+            .cdtData$GalParams$prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
+            .cdtData$GalParams$src <- trimws(tclvalue(reanalSrc))
 
-            .cdtData$GalParams$login$usr <- str_trim(tclvalue(username))
-            .cdtData$GalParams$login$pwd <- str_trim(tclvalue(password))
+            .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
+            .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
 
-            .cdtData$GalParams$dir2save <- str_trim(tclvalue(dir2save))
+            .cdtData$GalParams$dir2save <- trimws(tclvalue(dir2save))
 
             .cdtData$GalParams$bbox$minlon <- as.numeric(tclvalue(minLon))
             .cdtData$GalParams$bbox$maxlon <- as.numeric(tclvalue(maxLon))

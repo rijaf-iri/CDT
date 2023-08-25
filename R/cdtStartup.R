@@ -26,10 +26,10 @@
 startCDT <- function(wd = NA, lang = NA){
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
     Config <- jsonlite::fromJSON(cdt.file.conf)
-    Config <- rapply(Config, str_trim, classes = "character", how = "replace")
+    Config <- rapply(Config, trimws, classes = "character", how = "replace")
 
     if(!is.na(wd)){
-        wd <- str_trim(wd)
+        wd <- trimws(wd)
         if(!dir.exists(wd)){
             warning(paste(wd, "does not found"), immediate. = TRUE)
             wd <- getwd()
@@ -63,7 +63,7 @@ startCDT <- function(wd = NA, lang = NA){
 
     tcl.file.conf <- file.path(.cdtDir$dirLocal, "config", "Tcl_config.json")
     TclConfig <- jsonlite::fromJSON(tcl.file.conf)
-    TclConfig <- rapply(TclConfig, str_trim, classes = "character", how = "replace")
+    TclConfig <- rapply(TclConfig, trimws, classes = "character", how = "replace")
 
     fontSize <- switch(tools::toTitleCase(Sys.info()["sysname"]),
                       "Windows" = TclConfig$Windows$font.size,

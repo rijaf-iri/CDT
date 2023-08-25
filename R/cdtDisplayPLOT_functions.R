@@ -8,9 +8,9 @@ CDT.Display.Graph <- function(plot.graph, notebookTab, tab.title){
             tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
             tcl('update')
         })
-        op <- par(bg = "white")
+        op <- graphics::par(bg = "white")
         ret <- plot.graph()
-        par(op)
+        graphics::par(op)
         ret
     }
 
@@ -56,9 +56,9 @@ CDT.Display.Map.inter <- function(plot.map, notebookTab, tab.title){
             tcl('update')
         })
 
-        op <- par(bg = "white")
+        op <- graphics::par(bg = "white")
         pltusr <- plot.map()
-        par(op)
+        graphics::par(op)
         for(j in seq_along(varplot)) tclvalue(parPltCrd[[varplot[j]]]) <- pltusr$par[j]
         return(0)
     }
@@ -126,9 +126,9 @@ CDT.Display.Points.Zoom <- function(plot.map, notebookTab, tab.title){
             tcl('update')
         })
 
-        op <- par(bg = "white")
+        op <- graphics::par(bg = "white")
         pltusr <- plot.map()
-        par(op)
+        graphics::par(op)
         for(j in seq_along(varplot)) tclvalue(parPltCrd[[varplot[j]]]) <- pltusr$par[j]
         return(0)
     }

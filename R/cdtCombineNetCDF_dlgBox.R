@@ -45,15 +45,15 @@ combine.netcdf_getParams <- function(){
     ############
 
     tkconfigure(bt.range, command = function(){
-        tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
     tkbind(cb.tstep, "<<ComboboxSelected>>", function(){
-        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
-        minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
         retminhr <- set.hour.minute(intstep, minhour)
         tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
         tclvalue(minhour.tclVar) <- retminhr$val
@@ -81,7 +81,7 @@ combine.netcdf_getParams <- function(){
     tkconfigure(set.InNCDF, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
         .cdtData$GalParams[["ncdf"]] <- getInfoNetCDFData(tt, .cdtData$GalParams[["ncdf"]],
-                                                          str_trim(tclvalue(dir.InNCDF)))
+                                                          trimws(tclvalue(dir.InNCDF)))
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingSNC <<- 1
     })
@@ -130,11 +130,11 @@ combine.netcdf_getParams <- function(){
 
     ####
     tkconfigure(bt.prm.OK, command = function(){
-        .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeStep))]
-        .cdtData$GalParams$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
-        .cdtData$GalParams$ncdf$dir <- str_trim(tclvalue(dir.InNCDF))
-        .cdtData$GalParams$file2save <- str_trim(tclvalue(file.save))
+        .cdtData$GalParams$ncdf$dir <- trimws(tclvalue(dir.InNCDF))
+        .cdtData$GalParams$file2save <- trimws(tclvalue(file.save))
 
         .cdtData$GalParams$message <- lang.dlg[['message']]
 

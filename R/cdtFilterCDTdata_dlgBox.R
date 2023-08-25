@@ -86,7 +86,7 @@ filterCDTData_getParams <- function(){
     #############
 
     tkconfigure(bt.Period, command = function(){
-        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], intstep)
     })
 
@@ -99,9 +99,9 @@ filterCDTData_getParams <- function(){
     })
 
     tkbind(cb.Tstep, "<<ComboboxSelected>>", function(){
-        intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
-        minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
         retminhr <<- set.hour.minute(intstep, minhour)
         tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
         tclvalue(minhour.tclVar) <- retminhr$val
@@ -160,20 +160,20 @@ filterCDTData_getParams <- function(){
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.prm.OK, command = function(){
-        if(str_trim(tclvalue(file.stnfl1)) %in% c("", "NA")){
+        if(trimws(tclvalue(file.stnfl1)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(str_trim(tclvalue(file.save1)) %in% c("", "NA")){
+        }else if(trimws(tclvalue(file.save1)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['7']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$filein <- str_trim(tclvalue(file.stnfl1))
+            .cdtData$GalParams$filein <- trimws(tclvalue(file.stnfl1))
             .cdtData$GalParams$all.period <- switch(tclvalue(all.period), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
-            .cdtData$GalParams$minhour <- as.numeric(str_trim(tclvalue(minhour.tclVar)))
-            .cdtData$GalParams$opfilter <- str_trim(tclvalue(filter.crt))
-            .cdtData$GalParams$valfilter <- as.numeric(str_trim(tclvalue(filter.val)))
-            .cdtData$GalParams$file2save <- str_trim(tclvalue(file.save1))
+            .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+            .cdtData$GalParams$opfilter <- trimws(tclvalue(filter.crt))
+            .cdtData$GalParams$valfilter <- as.numeric(trimws(tclvalue(filter.val)))
+            .cdtData$GalParams$file2save <- trimws(tclvalue(file.save1))
             .cdtData$GalParams$message <- lang.dlg[['message']]
 
             tkgrab.release(tt)

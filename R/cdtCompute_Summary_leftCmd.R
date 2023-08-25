@@ -167,7 +167,7 @@ summariesDataPanelCmd <- function(){
             tkdestroy(cb.en.infile)
             tclvalue(input.file) <- ''
 
-            data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
+            data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
             ###
             if(data.type == 'cdtstation'){
                 tclvalue(txt.INData.var) <- lang.dlg[['label']][['4']]
@@ -237,15 +237,15 @@ summariesDataPanelCmd <- function(){
         #################
 
         tkconfigure(summaryBut, command = function(){
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% str_trim(tclvalue(DataType))]
-            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% str_trim(tclvalue(timeSteps))]
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[1])
-                GeneralParameters$cdtstation$file <- str_trim(tclvalue(input.file))
-            if(str_trim(tclvalue(DataType)) == CbdatatypeVAL[2])
-                GeneralParameters$cdtdataset$index <- str_trim(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                GeneralParameters$cdtstation$file <- trimws(tclvalue(input.file))
+            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                GeneralParameters$cdtdataset$index <- trimws(tclvalue(input.file))
 
-            GeneralParameters$outdir <- str_trim(tclvalue(outAnom))
+            GeneralParameters$outdir <- trimws(tclvalue(outAnom))
 
             # assign("GeneralParameters", GeneralParameters, envir = .GlobalEnv)
 
@@ -327,8 +327,8 @@ summariesDataPanelCmd <- function(){
             if(path.Stat %in% c("", "NA") | is.na(path.Stat)) return(NULL)
             tclvalue(file.Stat) <- path.Stat
 
-            if(file.exists(str_trim(tclvalue(file.Stat)))){
-                OutSummary <- try(readRDS(str_trim(tclvalue(file.Stat))), silent = TRUE)
+            if(file.exists(trimws(tclvalue(file.Stat)))){
+                OutSummary <- try(readRDS(trimws(tclvalue(file.Stat))), silent = TRUE)
                 if(inherits(OutSummary, "try-error")){
                     Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
                     Insert.Messages.Out(gsub('[\r\n]', '', OutSummary[1]), TRUE, 'e')
@@ -336,7 +336,7 @@ summariesDataPanelCmd <- function(){
                 }
 
                 .cdtData$EnvData$output <- OutSummary
-                .cdtData$EnvData$PathSum <- dirname(str_trim(tclvalue(file.Stat)))
+                .cdtData$EnvData$PathSum <- dirname(trimws(tclvalue(file.Stat)))
                 .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
@@ -360,7 +360,7 @@ summariesDataPanelCmd <- function(){
         .cdtData$EnvData$tab$pMap <- NULL
 
         tkconfigure(bt.plotMap, command = function(){
-            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% str_trim(tclvalue(plot.type))]
+            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% trimws(tclvalue(plot.type))]
             if(!is.null(.cdtData$EnvData$output)) SummaryData.Display.Map()
         })
 
@@ -391,8 +391,8 @@ summariesDataPanelCmd <- function(){
         .cdtData$EnvData$tab$TGraph <- NULL
 
         tkconfigure(bt.SumGraph.Plot, command = function(){
-            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% str_trim(tclvalue(plot.type))]
-            .cdtData$EnvData$plot.maps$plotMois <- mois[cbMOIS %in% str_trim(tclvalue(plotMois))]
+            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% trimws(tclvalue(plot.type))]
+            .cdtData$EnvData$plot.maps$plotMois <- mois[cbMOIS %in% trimws(tclvalue(plotMois))]
 
             if(!is.null(.cdtData$EnvData$output)){
                 imgContainer <- CDT.Display.Graph(SummaryData.Plot.Graph, .cdtData$EnvData$tab$TGraph, 'Summary - Plot')
@@ -401,22 +401,22 @@ summariesDataPanelCmd <- function(){
         })
 
         tkconfigure(bt.SumGraph.Opt, command = function(){
-            plotType <- PLOT_TYPE[cbPLOT_TYPE %in% str_trim(tclvalue(plot.type))]
-            plot.fun <- get(paste0("Summary.GraphOptions.", str_to_title(plotType)), mode = "function")
+            plotType <- PLOT_TYPE[cbPLOT_TYPE %in% trimws(tclvalue(plot.type))]
+            plot.fun <- get(paste0("Summary.GraphOptions.", stringr::str_to_title(plotType)), mode = "function")
             .cdtData$EnvData$GraphOp <- plot.fun(.cdtData$EnvData$GraphOp)
         })
 
         ###################
 
         tkbind(cb.SumGraph.Type, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% str_trim(tclvalue(plot.type))]
+            .cdtData$EnvData$plot.maps$plotType <- PLOT_TYPE[cbPLOT_TYPE %in% trimws(tclvalue(plot.type))]
 
             stateMois <- if(.cdtData$EnvData$plot.maps$plotType == 'boxplot') "disabled" else "normal"
             tkconfigure(cb.SumGraph.Mois, state = stateMois)
         })
 
         tkbind(cb.SumGraph.Mois, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$plot.maps$plotMois <- mois[cbMOIS %in% str_trim(tclvalue(plotMois))]
+            .cdtData$EnvData$plot.maps$plotMois <- mois[cbMOIS %in% trimws(tclvalue(plotMois))]
         })
 
         ##############################################
@@ -521,7 +521,7 @@ summariesDataPanelCmd <- function(){
 
             tkconfigure(bt.stnID.prev, command = function(){
                 if(!is.null(.cdtData$EnvData$output)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
                     if(istn < 1) istn <- length(stnIDTSPLOT)
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]
@@ -533,7 +533,7 @@ summariesDataPanelCmd <- function(){
 
             tkconfigure(bt.stnID.next, command = function(){
                 if(!is.null(.cdtData$EnvData$output)){
-                    istn <- which(stnIDTSPLOT == str_trim(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+                    istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn + 1
                     if(istn > length(stnIDTSPLOT)) istn <- 1
                     tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[istn]

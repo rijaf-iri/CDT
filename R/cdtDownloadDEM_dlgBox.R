@@ -92,7 +92,7 @@ download_DEM <- function(){
     btCA <- ttkbutton(frGrd1, text = lang.dlg[['button']][['2']])
 
     tkconfigure(btOK, command = function(){
-        if(str_trim(tclvalue(dir2save)) %in% c("", "NA")){
+        if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
@@ -101,7 +101,7 @@ download_DEM <- function(){
             tkfocus(.cdtEnv$tcl$main$win)
             tcl('update')
 
-            .cdtData$GalParams$dir2save <- str_trim(tclvalue(dir2save))
+            .cdtData$GalParams$dir2save <- trimws(tclvalue(dir2save))
             .cdtData$GalParams$minlon <- as.numeric(tclvalue(minLon))
             .cdtData$GalParams$maxlon <- as.numeric(tclvalue(maxLon))
             .cdtData$GalParams$minlat <- as.numeric(tclvalue(minLat))

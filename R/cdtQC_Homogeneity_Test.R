@@ -9,9 +9,9 @@ homog.SNHT.Test <- function(x, h = NULL){
     n <- length(x)
     if(n < 3) return(NULL)
     ll <- 1:n
-    sdx <- sd(x)
+    sdx <- stats::sd(x)
     if(sdx < 1e-12) return(NULL)
-    x <- (x - mean(x)) / sd(x)
+    x <- (x - mean(x)) / stats::sd(x)
     Ts <- numeric(n)
 
     if(!is.null(h)){
@@ -94,7 +94,7 @@ homog.CUSUM.Simple <- function(x, h = NULL){
     if(n < 3) return(NULL)
     ll <- 1:n
     s <- sum(x)
-    sig <- sd(x)
+    sig <- stats::sd(x)
     if(sig < 1e-12) return(NULL)
 
     if(!is.null(h)){
@@ -154,7 +154,7 @@ homog.CUSUM.Trend <- function(x, h = NULL){
     n <- length(x)
     if(n < 3) return(NULL)
     ll <- 1:n
-    epst <- as.vector(residuals(lm(x ~ ilen)))
+    epst <- as.vector(stats::residuals(stats::lm(x ~ ilen)))
     sig <- sqrt(sum(epst^2) / (n - 2))
     if(sig < 1e-12) return(NULL)
 
@@ -204,7 +204,7 @@ homog.CUSUM.Trend <- function(x, h = NULL){
 # SNHT Critical Values
 
 fSNHT.Vc <- function(n){
-dat <- read.table(text = 
+dat <- utils::read.table(text = 
 "NA 90 92 94 95 97.5 99
 10 4.964 5.197 5.473 5.637 6.188 6.769
 12 5.288 5.554 5.876 6.068 6.729 7.459
