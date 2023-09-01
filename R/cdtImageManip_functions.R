@@ -194,9 +194,14 @@ LatLonLabels <- function(xlon, xlat){
 ## Get name of polygon @x, y position
 getAdminLabel <- function(xyMouse, parPltCrd = NULL, shp, idField){
     xypts <- data.frame(x = xyMouse$x, y = xyMouse$y)
-    sp::coordinates(xypts) <- ~x+y
-    admin_name <- sp::over(xypts, shp)
-    admin_name <- c(t(admin_name[1, ]))
+    xypts <- sf::st_as_sf(xypts, coords = c("x", "y"))
+    idp <- sf::st_intersects(xypts, shp)
+    admin_name <- sf::st_drop_geometry(shp)[idp[[1]], ]
+    if(nrow(admin_name) == 0){
+        admin_name <- rep(NA, ncol(admin_name))
+    }else{
+        admin_name <- c(t(admin_name[1, ]))
+    }
 
     if(tclvalue(tkwinfo('exists', idField$ID)) == "1"){
         idx <- as.integer(tclvalue(tcl(idField, 'current'))) + 1

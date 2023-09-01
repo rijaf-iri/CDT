@@ -126,9 +126,17 @@ split_3d.netcdf_writeNC <- function(){
     dy <- do.call(ncdf4::ncdim_def,
                     c(ncpars$dim[[2]][c('name', 'units', 'vals')],
                       list(longname = "Latitude")))
+    # outnc <- ncdf4::ncvar_def(ncpars$var$name, ncpars$var$units,
+    #                           list(dx, dy), -99999, ncpars$var$longname,
+    #                           ncpars$var$prec, compression = 9)
+    # outnc <- ncdf4::ncvar_def(ncpars$var$name, ncpars$var$units,
+    #                           list(dx, dy), ncpars$var$missval, ncpars$var$longname,
+    #                           ncpars$var$prec, compression = 9)
+    prec <- ifelse(ncpars$var$prec %in% c('short', 'integer', 'float', 'double'), 'double', ncpars$var$prec)
+
     outnc <- ncdf4::ncvar_def(ncpars$var$name, ncpars$var$units,
                               list(dx, dy), -99999, ncpars$var$longname,
-                              ncpars$var$prec, compression = 9)
+                              prec, compression = 9)
 
     ##################
 
@@ -179,6 +187,8 @@ split_3d.netcdf_writeNC <- function(){
 
             if(ncpars$rev) tmp <- t(tmp)
             tmp <- tmp[ncpars$dim[[1]]$order, ncpars$dim[[2]]$order]
+            # tmp[is.na(tmp)] <- -99999
+            # tmp[is.na(tmp)] <- ncpars$var$missval
             tmp[is.na(tmp)] <- -99999
 
             ncfile <- paste0(ncpars$var$name, "_", daty[i], ".nc")

@@ -14,14 +14,13 @@ ExecDownload_GADM <- function(){
                     .cdtData$GalParams$cntr_iso3, '_',
                     .cdtData$GalParams$level)
     gadm_frmt <- switch(.cdtData$GalParams$version,
-                        '3.6' = c('Rsp', '_sp', '.rds'),
+                        '3.6' = c('Rsf', '_sf', '.rds'),
                         '4.0' = c('Rsf', '_sf', '.rds'),
                         '4.1' = c('json', '', '.json.zip')
                        )
     urlfl <- paste0(baseURL, '/', gadm_frmt[1], '/', layer, gadm_frmt[2], gadm_frmt[3])
     destfl <- paste0(.cdtData$GalParams$dir2save, '/', layer, gadm_frmt[2], gadm_frmt[3])
 
-    # ret <- try(utils::download.file(urlfl, destfl, method = "auto", quiet = TRUE, mode = "wb", cacheOK = TRUE), silent = TRUE)
     handle <- curl::new_handle()
     curl::handle_setopt(handle, ssl_verifypeer = FALSE)
     ret <- try(curl::curl_download(urlfl, destfl, handle = handle), silent = TRUE)
@@ -40,20 +39,20 @@ ExecDownload_GADM <- function(){
 
     shp <- switch(.cdtData$GalParams$version,
                 '3.6' = local({
-                            readRDS(destfl)
+                            sf_data <- readRDS(destfl)
+                            sf::st_crs(sf_data) <- sf::st_crs(sf_data)
+                            sf_data
                         }),
                 '4.0' = local({
-                            sf_data <- readRDS(destfl)
-                            sf::as_Spatial(sf_data)
+                            readRDS(destfl)
                         }),
                 '4.1' = local({
-                            sf_data <- sf::st_read(destfl, quiet = TRUE)
-                            # sf_data <- sf::read_sf(destfl)
-                            sf::as_Spatial(sf_data)
+                            sf::st_read(destfl, quiet = TRUE)
                         })
             )
 
-    rgdal::writeOGR(shp, dsn = .cdtData$GalParams$dir2save, layer = layer, driver = "ESRI Shapefile")
+    shpfile <- file.path(.cdtData$GalParams$dir2save, paste0(layer, '.shp'))
+    sf::st_write(shp, shpfile, driver = "ESRI Shapefile", quiet = TRUE, append = FALSE)
 
     Insert.Messages.Out(.cdtData$GalParams[['message']][['4']], TRUE, "s")
     return(0)

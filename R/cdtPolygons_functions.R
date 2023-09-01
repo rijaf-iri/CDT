@@ -74,6 +74,22 @@ create.polygons <- function(x, y1, y2, xs, ys, xe, ye){
 }
 
 ###
+# x <- 1:100
+# # y1 <- rep(0, length(x))
+# y1 <- cos(x)
+# y2 <- sin(x)
+# # plot(x, y1, type = 'l')
+# # lines(x, y2, col = 2)
+
+# polys <- split.polygons.non_missing(x, y1, y2)
+## y2[10:15] <- NA
+# polys <- split.polygons.with_missing(x, y1, y2)
+# plot(x, y2, type = 'n')
+# for(j in seq_along(polys)){
+#     P <- polys[[j]]
+#     # polygon(P$x, P$y, col = 'blue', border = NA)
+#     polygon(P$x, P$y, col = 'blue', border = 'red')
+# }
 
 split.polygons.non_missing <- function(x, y1, y2){
     nl <- length(x)
@@ -210,33 +226,96 @@ split.polygons.with_missing <- function(x, y1, y2){
 
 ####
 
+# # polys <- list(
+# #     list(x = c(seq(0, 4, 0.5), 0), y = c(0:4, 3:0, 0)), 
+# #     list(x = c(seq(4, 8, 0.5), 4), y = -c(0:4, 3:0, 0)),
+# #     list(x = c(seq(8, 12, 0.5), 8), y = c(0:4, 3:0, 0))
+# # )
+# # breaks <- c(-2, 0, 2)
+
+# # plot(1, type = 'n', xlim = c(0, 12), ylim = c(-4, 4))
+# # for(j in seq_along(polys)){
+# #     # lines(polys[[j]]$x, polys[[j]]$y)
+# #     polygon(polys[[j]]$x, polys[[j]]$y, col = 'red', border = NA)
+# # }
+
+####
+
+# split.polygons.gradients.with_missing <- function(polys, breaks){
+#     nom.pl <- paste0("p", seq_along(polys))
+#     POLY <- lapply(seq_along(polys), function(j){
+#         pl <- sp::Polygon(do.call(cbind, polys[[j]][c('x','y')]))
+#         sp::Polygons(list(pl), nom.pl[j])
+#     })
+#     POLY <- sp::SpatialPolygons(POLY, seq_along(polys))
+
+#     xc <- range(unlist(lapply(polys, '[[', 'x')))
+#     xcrd <- xc + c(-1, 1) * diff(xc) * 0.01
+#     nom.sl <- paste0("p", seq_along(breaks))
+#     LINE <- lapply(seq_along(breaks), function(j){
+#         sl <- sp::Line(cbind(xcrd, breaks[j]))
+#         sp::Lines(list(sl), nom.sl[j])
+#     })
+#     LINE <- sp::SpatialLines(LINE)
+
+#     gint <- rgeos::gIntersection(POLY, LINE)
+#     gbf <- rgeos::gBuffer(gint, width = 0.000001)
+#     gdif <- rgeos::gDifference(POLY, gbf)
+
+#     brks <- c(-Inf, breaks, Inf)
+#     out <- lapply(gdif@polygons[[1]]@Polygons, function(pl){
+#         crd <- pl@coords
+#         crd <- list(x = crd[, 'x'], y = crd[ ,'y'])
+#         crd$z <- findInterval(crd$y[1], brks)
+#         crd
+#     })
+#     return(out)
+# }
+
+####
+
 split.polygons.gradients.with_missing <- function(polys, breaks){
-    nom.pl <- paste0("p", seq_along(polys))
     POLY <- lapply(seq_along(polys), function(j){
-        pl <- sp::Polygon(do.call(cbind, polys[[j]][c('x','y')]))
-        sp::Polygons(list(pl), nom.pl[j])
+        list(do.call(cbind, polys[[j]][c('x','y')]))
     })
-    POLY <- sp::SpatialPolygons(POLY, seq_along(polys))
+    POLY <- sf::st_multipolygon(POLY)
+    POLY <- sf::st_sfc(POLY)
 
     xc <- range(unlist(lapply(polys, '[[', 'x')))
     xcrd <- xc + c(-1, 1) * diff(xc) * 0.01
-    nom.sl <- paste0("p", seq_along(breaks))
     LINE <- lapply(seq_along(breaks), function(j){
-        sl <- sp::Line(cbind(xcrd, breaks[j]))
-        sp::Lines(list(sl), nom.sl[j])
+        cbind(xcrd, breaks[j])
     })
-    LINE <- sp::SpatialLines(LINE)
+    LINE <- sf::st_multilinestring(LINE)
+    LINE <- sf::st_sfc(LINE)
 
-    gint <- rgeos::gIntersection(POLY, LINE)
-    gbf <- rgeos::gBuffer(gint, width = 0.000001)
-    gdif <- rgeos::gDifference(POLY, gbf)
+    gint <- sf::st_intersection(POLY, LINE)
+    gbf <- sf::st_buffer(gint, dist = 0.000001)
+    gdif <- sf::st_difference(POLY, gbf)
+    gdif <- sf::st_cast(gdif, 'POLYGON')
 
     brks <- c(-Inf, breaks, Inf)
-    out <- lapply(gdif@polygons[[1]]@Polygons, function(pl){
-        crd <- pl@coords
-        crd <- list(x = crd[, 'x'], y = crd[ ,'y'])
+    out <- lapply(seq(length(gdif)), function(j){
+        crd <- sf::st_coordinates(gdif[j])
+        crd <- list(x = crd[, 'X'], y = crd[ ,'Y'])
         crd$z <- findInterval(crd$y[1], brks)
         crd
     })
+
     return(out)
 }
+
+#########
+# polys <- list(
+#     list(x = c(seq(0, 4, 0.5), 0), y = c(0:4, 3:0, 0)), 
+#     list(x = c(seq(4, 8, 0.5), 4), y = -c(0:4, 3:0, 0)),
+#     list(x = c(seq(8, 12, 0.5), 8), y = c(0:4, 3:0, 0))
+# )
+# breaks <- c(-2, 0, 2)
+# fillcol <- rainbow(length(breaks) + 1)
+# out <- split.polygons.gradients.with_missing(polys, breaks)
+
+# plot(1, type = 'n', xlim = c(0, 12), ylim = c(-4, 4))
+# for(j in seq_along(out)){
+#     polygon(out[[j]]$x, out[[j]]$y, col = fillcol[out[[j]]$z], border = NA)
+# }

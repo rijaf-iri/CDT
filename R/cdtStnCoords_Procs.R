@@ -64,10 +64,10 @@ StnChkCoordsProcs <- function(GeneralParameters){
             Insert.Messages.Out(message[['11']], TRUE, "w")
             shpd <- NULL
         }else{
-            shpd <- methods::as(shpd[[2]], "SpatialPolygons")
-            shpd <- rgeos::gUnaryUnion(shpd)
-            shpd <- rgeos::gSimplify(shpd, tol = 0.05, topologyPreserve = TRUE)
-            shpd <- rgeos::gBuffer(shpd, width = GeneralParameters$buffer/111)
+            shpd <- sf::st_geometry(shpd[[2]])
+            shpd <- sf::st_union(shpd)
+            shpd <- sf::st_simplify(shpd, preserveTopology = TRUE, dTolerance = 0.05)
+            shpd <- sf::st_buffer(shpd, dist = GeneralParameters$buffer/111)
         }
     }
 
@@ -87,7 +87,8 @@ StnChkCoordsProcs <- function(GeneralParameters){
     ## Missing coords
     imiss <- is.na(coords$lon) | is.na(coords$lat)
     if(any(imiss)){
-        don.table$miss <- data.frame(State = message[['13']], don.disp[imiss, , drop = FALSE])
+        tmp <- don.disp[imiss, , drop = FALSE]
+        don.table$miss <- data.frame(State = rep(message[['13']], nrow(tmp)), tmp)
         don.disp <- don.disp[!imiss, , drop = FALSE]
         coords <- coords[!imiss, , drop = FALSE]
     }
@@ -95,7 +96,8 @@ StnChkCoordsProcs <- function(GeneralParameters){
     ## Wrong coords
     iwrong <- coords$lon < -180 | coords$lon > 360 | coords$lat < -90 | coords$lat > 90
     if(any(iwrong)){
-        don.table$wrong <- data.frame(State = message[['14']], don.disp[iwrong, , drop = FALSE])
+        tmp <- don.disp[iwrong, , drop = FALSE]
+        don.table$wrong <- data.frame(State = rep(message[['14']], nrow(tmp)), tmp)
         don.disp <- don.disp[!iwrong, , drop = FALSE]
         coords <- coords[!iwrong, , drop = FALSE]
     }
@@ -103,7 +105,8 @@ StnChkCoordsProcs <- function(GeneralParameters){
     ## Duplicated ID
     iddup <- duplicated(coords$id) | duplicated(coords$id, fromLast = TRUE)
     if(any(iddup)){
-        don.table$iddup <- data.frame(State = message[['15']], don.disp[iddup, , drop = FALSE])
+        tmp <- don.disp[iddup, , drop = FALSE]
+        don.table$iddup <- data.frame(State = rep(message[['15']], nrow(tmp)), tmp)
         don.table$iddup <- don.table$iddup[order(coords$id[iddup]), , drop = FALSE]
         don.disp$StatusX[iddup] <- "orange"
     }
@@ -112,7 +115,8 @@ StnChkCoordsProcs <- function(GeneralParameters){
     crddup <- duplicated(coords[, c('lon', 'lat'), drop = FALSE]) |
             duplicated(coords[, c('lon', 'lat'), drop = FALSE], fromLast = TRUE)
     if(any(crddup)){
-        don.table$crddup <- data.frame(State = message[['16']], don.disp[crddup, , drop = FALSE])
+        tmp <- don.disp[crddup, , drop = FALSE]
+        don.table$crddup <- data.frame(State = rep(message[['16']], nrow(tmp)), tmp)
         don.table$crddup <- don.table$crddup[order(paste0(coords$lon[crddup], coords$lat[crddup])), , drop = FALSE]
         don.disp$StatusX[crddup] <- "orange"
     }
@@ -120,10 +124,12 @@ StnChkCoordsProcs <- function(GeneralParameters){
     ## Coordinates outside boundaries
     if(!is.null(shpd)){
         spcoords <- coords
-        sp::coordinates(spcoords) <- ~lon+lat
-        iout <- is.na(sp::over(spcoords, sp::geometry(shpd)))
+        spcoords <- sf::st_as_sf(spcoords, coords = c("lon", "lat"), dim = "XYZ")
+        iout <- sf::st_intersects(spcoords, shpd)
+        iout <- sapply(iout, length) == 0
         if(any(iout)){
-            don.table$out <- data.frame(State = message[['17']], don.disp[iout, , drop = FALSE])
+            tmp <- don.disp[iout, , drop = FALSE]
+            don.table$out <- data.frame(State = rep(message[['17']], nrow(tmp)), tmp)
             don.table$out <- don.table$out[order(coords$id[iout]), , drop = FALSE]
             don.disp$StatusX[iout] <- "red"
         }
@@ -230,8 +236,9 @@ StnChkCoordsDataStn <- function(GeneralParameters){
 ##########################################################################
 
 StnChkCoordsCorrect <- function(){
+    message <- .cdtData$EnvData[['message']]
     if(is.null(.cdtData$EnvData$Table.Disp0)){
-        Insert.Messages.Out(message[['17']], TRUE, "i")
+        Insert.Messages.Out(message[['18']], TRUE, "i")
         return(NULL)
     }
 

@@ -222,8 +222,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
     parsL <- doparallel.cond(length(don$dates) > 30)
 
     ret <- cdt.foreach(seq_along(don$dates), parsL, GUI,
-                       progress = TRUE, .packages = "sp",
-                       FUN = function(jj)
+                       progress = TRUE, FUN = function(jj)
     {
         vgm <- NULL
 
@@ -258,22 +257,22 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
                 return(msg)
             }
 
-            # exp.var <- gstat::variogram(stn~1, locations = locations.stn, cressie = TRUE)
-            # vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
-            # if(inherits(vgm, "try-error")){
-            #     msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
-            #     msg <- list(msg = msg, status = NULL)
-            #     return(msg)
-            # }
-
-            vgm <- try(automap::autofitVariogram(stn~1, input_data = locations.stn, model = interp$vgm.model, cressie = TRUE), silent = TRUE)
+            exp.var <- gstat::variogram(stn~1, locations = locations.stn, cressie = TRUE)
+            vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
             if(inherits(vgm, "try-error")){
                 msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
                 msg <- list(msg = msg, status = NULL)
                 return(msg)
-            }else{
-                vgm <- vgm$var_model
             }
+
+            # vgm <- try(automap::autofitVariogram(stn~1, input_data = locations.stn, model = interp$vgm.model, cressie = TRUE), silent = TRUE)
+            # if(inherits(vgm, "try-error")){
+            #     msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
+            #     msg <- list(msg = msg, status = NULL)
+            #     return(msg)
+            # }else{
+            #     vgm <- vgm$var_model
+            # }
         }
 
         if(interp$method == "ukr"){
@@ -288,22 +287,22 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
                 return(msg)
             }
 
-            # exp.var <- gstat::variogram(formuleUK, locations = locations.stn, cressie = TRUE)
-            # vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
-            # if(inherits(vgm, "try-error")){
-            #     msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
-            #     msg <- list(msg = msg, status = NULL)
-            #     return(msg)
-            # }
-
-            vgm <- try(automap::autofitVariogram(formuleUK, input_data = locations.stn, model = interp$vgm.model, cressie = TRUE), silent = TRUE)
+            exp.var <- gstat::variogram(formuleUK, locations = locations.stn, cressie = TRUE)
+            vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
             if(inherits(vgm, "try-error")){
                 msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
                 msg <- list(msg = msg, status = NULL)
                 return(msg)
-            }else{
-                vgm <- vgm$var_model
             }
+
+            # vgm <- try(automap::autofitVariogram(formuleUK, input_data = locations.stn, model = interp$vgm.model, cressie = TRUE), silent = TRUE)
+            # if(inherits(vgm, "try-error")){
+            #     msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
+            #     msg <- list(msg = msg, status = NULL)
+            #     return(msg)
+            # }else{
+            #     vgm <- vgm$var_model
+            # }
         }
 
         #######

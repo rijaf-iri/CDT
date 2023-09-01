@@ -214,13 +214,12 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
     {
         if(!GUI){
             fileopen <- GeneralParameters$shp.file$shp
-            dsn <- dirname(fileopen)
-            layer <- tools::file_path_sans_ext(basename(fileopen))
-            shpf <- try(rgdal::readOGR(dsn, layer, verbose = FALSE), silent = TRUE)
+            shpf <- try(sf::st_read(fileopen, quiet = TRUE), silent = TRUE)
             if(inherits(shpf, "try-error")){
                 Insert.Messages.Out(paste(lang.dlg[['message']][['9']], ":", fileopen), TRUE, "e", GUI)
                 return(NULL)
             }
+            sf::st_crs(shp.opfiles) <- sf::NA_crs_
         }else{
             shpf <- getShpOpenData(GeneralParameters$shp.file$shp)[[2]]
             if(is.null(shpf)){
@@ -240,12 +239,16 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
             return(NULL)
         }
 
-        iattr <- as.character(shpf@data[, GeneralParameters$shp.file$attr])
-        shpf.union <- maptools::unionSpatialPolygons(shpf, iattr)
-        shpf.df <- stats::aggregate(methods::as(shpf, "data.frame")[, 1], list(iattr), identity)
-        shpf.df$x <- seq(shpf.union)
-        row.names(shpf.df) <- sapply(methods::slot(shpf.union, "polygons"), function(x) methods::slot(x, "ID"))
-        shpf.union <- sp::SpatialPolygonsDataFrame(shpf.union, shpf.df)
+        iattr <- as.character(sf::st_drop_geometry(shpf[, GeneralParameters$shp.file$attr])[, 1])
+        shpf.union <- stats::aggregate(iattr, list(iattr), identity)
+        shpf.union$x <- seq_along(unique(iattr))
+        shpf.geom <- lapply(shpf.union$x, function(j){
+            y <- shpf[iattr == shpf.union$Group.1[j], ]
+            sf::st_union(sf::st_geometry(y))
+        })
+        shpf.geom <- do.call(c, shpf.geom)
+        sf::st_geometry(shpf.union) <- sf::st_sfc(shpf.geom)
+        shpf.union <- sf::as_Spatial(shpf.union)
     }
 
     #####################################

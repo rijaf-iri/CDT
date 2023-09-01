@@ -47,26 +47,29 @@ extractGeomPoints <- function(gridObj, points, padxy){
 #' @export
 
 extractGeomPolys <- function(gridObj, shpf, attr_name, attr_values){
-    iattr <- as.character(shpf@data[, attr_name])
-    shpf.union <- maptools::unionSpatialPolygons(shpf, iattr)
-    shpf.df <- stats::aggregate(methods::as(shpf, "data.frame")[, 1], list(iattr), identity)
-    shpf.df$x <- seq(shpf.union)
-    row.names(shpf.df) <- sapply(methods::slot(shpf.union, "polygons"), function(x) methods::slot(x, "ID"))
+    iattr <- as.character(sf::st_drop_geometry(shpf[, attr_name])[, 1])
+    shpf.union <- stats::aggregate(iattr, list(iattr), identity)
+    shpf.union$x <- seq_along(unique(iattr))
+    shpf.geom <- lapply(shpf.union$x, function(j){
+        y <- shpf[iattr == shpf.union$Group.1[j], ]
+        sf::st_union(sf::st_geometry(y))
+    })
+    shpf.geom <- do.call(c, shpf.geom)
+    sf::st_geometry(shpf.union) <- sf::st_sfc(shpf.geom)
 
-    shpf.union <- sp::SpatialPolygonsDataFrame(shpf.union, shpf.df)
-
-    # idPoly <- trimws(shpf.union@data$Group.1) %in% trimws(attr_values)
-    idPoly <- match(trimws(attr_values), trimws(shpf.union@data$Group.1))
+    idPoly <- match(trimws(attr_values), trimws(shpf.union$Group.1))
     shpf.regOI <- shpf.union[idPoly, ]
-    
-    headinfo <- cbind(as.character(shpf.regOI@data$Group.1),
-                      round(sp::coordinates(shpf.regOI), 5))
+    ctr_poly <- round(sf::st_coordinates(sf::st_centroid(shpf.regOI)), 5)
+    headinfo <- cbind(as.character(shpf.regOI$Group.1), ctr_poly)
     headinfo[, 1] <- substr(gsub("[^[:alnum:]]", "", headinfo[, 1]), 1, 25)
     headinfo[, 1] <- stringi::stri_trans_general(str = headinfo[, 1], id = "Latin-ASCII")
+    dimnames(headinfo) <- NULL
 
     polyRas <- gridObj
     polyRas$z <- seq_along(gridObj)
     polyRas <- raster::raster(polyRas)
+    shpf.regOI <- sf::as_Spatial(shpf.regOI)
+
     ij2xtr <- raster::extract(polyRas, shpf.regOI, weights = TRUE,
                         normalizeWeights = TRUE, cellnumbers = TRUE)
 
@@ -74,6 +77,37 @@ extractGeomPolys <- function(gridObj, shpf, attr_name, attr_values){
     if(all(na_pts)) return(NULL)
     list(headinfo = headinfo, ij2xtr = ij2xtr)
 }
+
+# extractGeomPolys <- function(gridObj, shpf, attr_name, attr_values){
+#     iattr <- as.character(shpf@data[, attr_name])
+#     shpf.union <- maptools::unionSpatialPolygons(shpf, iattr)
+#     shpf.df <- stats::aggregate(methods::as(shpf, "data.frame")[, 1], list(iattr), identity)
+#     shpf.df$x <- seq(shpf.union)
+#     row.names(shpf.df) <- sapply(methods::slot(shpf.union, "polygons"), function(x) methods::slot(x, "ID"))
+
+#     shpf.union <- sp::SpatialPolygonsDataFrame(shpf.union, shpf.df)
+
+#     # idPoly <- trimws(shpf.union@data$Group.1) %in% trimws(attr_values)
+#     idPoly <- match(trimws(attr_values), trimws(shpf.union@data$Group.1))
+#     shpf.regOI <- shpf.union[idPoly, ]
+    
+#     headinfo <- cbind(as.character(shpf.regOI@data$Group.1),
+#                       round(sp::coordinates(shpf.regOI), 5))
+#     headinfo[, 1] <- substr(gsub("[^[:alnum:]]", "", headinfo[, 1]), 1, 25)
+#     headinfo[, 1] <- stringi::stri_trans_general(str = headinfo[, 1], id = "Latin-ASCII")
+
+#     polyRas <- gridObj
+#     polyRas$z <- seq_along(gridObj)
+#     polyRas <- raster::raster(polyRas)
+#     ij2xtr <- raster::extract(polyRas, shpf.regOI, weights = TRUE,
+#                         normalizeWeights = TRUE, cellnumbers = TRUE)
+
+#     na_pts <- sapply(ij2xtr, is.null)
+#     if(all(na_pts)) return(NULL)
+#     list(headinfo = headinfo, ij2xtr = ij2xtr)
+# }
+
+######
 
 #' Geom points extraction
 #'

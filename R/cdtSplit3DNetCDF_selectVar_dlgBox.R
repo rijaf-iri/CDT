@@ -38,7 +38,7 @@ split_3d.netcdf_selectVariable <- function(parent.win, ncfile){
 
     ncvar <- nc$nvars
     ncdim <- nc$ndims
-    var.info <- lapply(nc$var, function(v) v[c('name', 'ndims', 'size', 'dimids', 'prec', 'units', 'longname')])
+    var.info <- lapply(nc$var, function(v) v[c('name', 'ndims', 'size', 'dimids', 'prec', 'units', 'longname', 'missval')])
     dim.info <- lapply(nc$dim, function(v) v[c('name', 'len', 'id', 'units', 'vals')])
     att.dim <- lapply(seq(ncdim), function(i){
         att <- ncdf4::ncatt_get(nc, nc$dim[[i]]$name)

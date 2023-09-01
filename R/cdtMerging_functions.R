@@ -135,8 +135,7 @@ cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
 
     parsL <- doparallel.cond(length(ncInfo$ncfiles) > 20)
     ret <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
-                       progress = TRUE, .packages = "sp",
-                       FUN = function(jj)
+                       progress = TRUE, FUN = function(jj)
     {
         if(ncInfo$exist[jj]){
             nc <- ncdf4::nc_open(ncInfo$ncfiles[jj])
@@ -387,7 +386,8 @@ merging.functions <- function(locations.stn, newgrid, params,
             coarse_interp$res <- rep(0, length(coarse_interp))
             row.names(loc.stn) <- 1:length(loc.stn)
             row.names(coarse_interp) <- length(loc.stn) + (1:length(coarse_interp))
-            loc.stn <- maptools::spRbind(loc.stn, coarse_interp)
+            loc.stn <- rbind(sf::st_as_sf(loc.stn), sf::st_as_sf(coarse_interp))
+            loc.stn <- sf::as_Spatial(loc.stn)
         }
 
         #########
@@ -462,7 +462,8 @@ merging.functions <- function(locations.stn, newgrid, params,
 
                     row.names(loc.stn) <- 1:length(loc.stn)
                     row.names(coarse_rnr) <- length(loc.stn) + (1:length(coarse_rnr))
-                    loc.stn <- maptools::spRbind(loc.stn, coarse_rnr)
+                    loc.stn <- rbind(sf::st_as_sf(loc.stn), sf::st_as_sf(coarse_rnr))
+                    loc.stn <- sf::as_Spatial(loc.stn)
                     loc.stn <- loc.stn[!is.na(loc.stn$grd), ]
                 }
             }

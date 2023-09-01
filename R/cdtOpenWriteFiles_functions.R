@@ -110,15 +110,17 @@ getOpenShp <- function(parent){
         }
     }
 
-    dsn <- dirname(fileopen)
-    layer <- tools::file_path_sans_ext(basename(fileopen))
-    shp.opfiles <- try(rgdal::readOGR(dsn, layer, verbose = FALSE), silent = TRUE)
+    shp.opfiles <- try(sf::st_read(fileopen, quiet = TRUE), silent = TRUE)
     if(inherits(shp.opfiles, "try-error")){
         Insert.Messages.Out(paste(.cdtEnv$tcl$lang$global[['message']][['1']], fileopen), format = TRUE)
         return(NULL)
     }else{
         tkinsert(.cdtEnv$tcl$main$Openfiles, "end", basename(fileopen))
-        sp::proj4string(shp.opfiles) <- sp::CRS(as.character(NA))
+
+        # sf object
+        # sf::st_crs(shp.opfiles) <- sf::st_crs(NA)
+        sf::st_crs(shp.opfiles) <- sf::NA_crs_
+
         return(list(basename(fileopen), shp.opfiles, fileopen))
     }
 }

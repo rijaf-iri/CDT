@@ -350,7 +350,7 @@ ExtractDataPanelCmd <- function(){
                 tkconfigure(cb.shpF, values = unlist(listOpenFiles))
 
                 shpf <- getShpOpenData(shpFile)
-                dat <- shpf[[2]]@data
+                dat <- sf::st_drop_geometry(shpf[[2]])
                 AttrTable <- names(dat)
                 tkconfigure(.cdtData$EnvData$cb.shpAttr, values = AttrTable)
                 tclvalue(shpAttr) <- AttrTable[1]
@@ -366,7 +366,7 @@ ExtractDataPanelCmd <- function(){
         #######################
         tkbind(cb.shpF, "<<ComboboxSelected>>", function(){
             shpf <- getShpOpenData(shpFile)
-            dat <- shpf[[2]]@data
+            dat <- sf::st_drop_geometry(shpf[[2]])
             AttrTable <- names(dat)
             tkconfigure(.cdtData$EnvData$cb.shpAttr, values = AttrTable)
             tclvalue(shpAttr) <- AttrTable[1]
@@ -380,7 +380,7 @@ ExtractDataPanelCmd <- function(){
 
         tkbind(.cdtData$EnvData$cb.shpAttr, "<<ComboboxSelected>>", function(){
             shpf <- getShpOpenData(shpFile)
-            dat <- shpf[[2]]@data
+            dat <- sf::st_drop_geometry(shpf[[2]])
 
             idx <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
             adminN <- as.character(dat[, idx])
@@ -402,7 +402,7 @@ ExtractDataPanelCmd <- function(){
             shpf <- getShpOpenData(shpFile)
             if(!is.null(shpf))
                 .cdtData$EnvData$tab$TableAttr <- 
-                    tableNotebookTab_unik(shpf[[2]]@data,
+                    tableNotebookTab_unik(sf::st_drop_geometry(shpf[[2]]),
                                           .cdtData$EnvData$tab$TableAttr,
                                           shpf[[1]], 10)
         })
@@ -419,10 +419,11 @@ ExtractDataPanelCmd <- function(){
                 .cdtData$EnvData$shpf <- shpf
                 .cdtData$EnvData$ocrds <- getBoundaries(shpf)
 
-                lo1 <- round(sp::bbox(shpf)[1, 1], 4)
-                lo2 <- round(sp::bbox(shpf)[1, 2], 4)
-                la1 <- round(sp::bbox(shpf)[2, 1], 4)
-                la2 <- round(sp::bbox(shpf)[2, 2], 4)
+                xybbx <- sf::st_bbox(shpf)
+                lo1 <- round(xybbx$xmin, 4)
+                lo2 <- round(xybbx$xmax, 4)
+                la1 <- round(xybbx$ymin, 4)
+                la2 <- round(xybbx$ymax, 4)
                 ZoomXYval0 <<- c(lo1, lo2, la1, la2)
 
                 tclvalue(.cdtData$EnvData$zoom$xx1) <- lo1
@@ -786,7 +787,8 @@ ExtractDataPanelCmd <- function(){
                 shpfopen <- getShpOpenData(shpFile)
                 shpf <- shpfopen[[2]]
                 ids <- as.numeric(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
-                .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
+                dat <- sf::st_drop_geometry(shpf)
+                .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[dat[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
             }
 
             # selectedPolygon
@@ -937,7 +939,8 @@ ExtractDataPanelCmd <- function(){
                     shpf <- shpfopen[[2]]
                     ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
                     nompoly <- trimws(tclvalue(.cdtData$EnvData$namePoly))
-                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == nompoly, ])
+                    dat <- sf::st_drop_geometry(shpf)
+                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[dat[, ids] == nompoly, ])
                 }
             }
 
@@ -1010,7 +1013,8 @@ ExtractDataPanelCmd <- function(){
                     shpf <- shpfopen[[2]]
                     ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
                     nompoly <- trimws(tclvalue(.cdtData$EnvData$namePoly))
-                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == nompoly, ])
+                    dat <- sf::st_drop_geometry(shpf)
+                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[dat[, ids] == nompoly, ])
                 }
             }
 

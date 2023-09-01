@@ -151,6 +151,36 @@ defSpatialPixels <- function(grd_Coords, projCRS = sp::CRS(as.character(NA)), re
     return(grd)
 }
 
+defRegularGrid <- function(grd_Coords, projCRS = sf::NA_crs_, regrid = FALSE)
+{
+    if(regrid){
+        x <- grd_Coords$lon
+        xrg <- diff(range(diff(x)))
+        if(xrg > 0.0001){
+            xr <- range(x)
+            x <- seq(xr[1], xr[2], length.out = length(x))
+        }
+        y <- grd_Coords$lat
+        yrg <- diff(range(diff(y)))
+        if(yrg > 0.0001){
+            yr <- range(y)
+            y <- seq(yr[1], yr[2], length.out = length(y))
+        }
+
+        nxy <- c(length(x), length(y))
+        grd0 <- expand.grid(lon = x, lat = y)
+    }else{
+        nxy <- sapply(grd_Coords, length)
+        grd0 <- expand.grid(lon = grd_Coords$lon, lat = grd_Coords$lat)
+    }
+
+    grd <- sf::st_as_sf(grd0, coords = c("lon", "lat"), dim = "XYZ")
+    grd <- sf::st_make_grid(grd, n = nxy, what = "centers")
+    sf::st_crs(grd) <- projCRS
+
+    return(grd)
+}
+
 ##############################################
 
 ## Get index of points at grid
@@ -276,24 +306,44 @@ sort.filename.data <- function(X){
 ##############################################
 
 ## Get boundaries from shapefile
+
 getBoundaries <- function(shpf){
-    # shpf <- rgeos::gSimplify(shpf, 0.001, topologyPreserve = TRUE)
-    ocrds <- matrix(NA, nrow = 1, ncol = 2)
+    coords <- matrix(NA, nrow = 1, ncol = 2)
     if(!is.null(shpf)){
-        retPolygon <- lapply(methods::slot(shpf, "polygons"),
-                             function(i) methods::slot(i, "Polygons"))
-        polys <- lapply(retPolygon, function(x){
-            ret <- NULL
-            for(i in seq_along(x)){
-                poly <- rbind(methods::slot(x[[i]], "coords"), cbind(NA, NA))
-                ret <- rbind(ret, poly)
-            }
-            ret
+        st_geom <- sf::st_geometry(shpf)
+        coords <- lapply(st_geom, function(x){
+            ret <- lapply(x, function(s){
+                if(is.list(s)){
+                    do.call(rbind, lapply(s, rbind, cbind(NA, NA)))
+                }else{
+                    rbind(s, cbind(NA, NA))
+                }
+            })
+            do.call(rbind, ret)
         })
-        ocrds <- do.call(rbind, polys)
+        coords <- do.call(rbind, coords)
     }
-    return(ocrds)
+    return(coords)
 }
+
+# getBoundaries <- function(shpf){
+#     # shpf <- rgeos::gSimplify(shpf, 0.001, topologyPreserve = TRUE)
+#     ocrds <- matrix(NA, nrow = 1, ncol = 2)
+#     if(!is.null(shpf)){
+#         retPolygon <- lapply(methods::slot(shpf, "polygons"),
+#                              function(i) methods::slot(i, "Polygons"))
+#         polys <- lapply(retPolygon, function(x){
+#             ret <- NULL
+#             for(i in seq_along(x)){
+#                 poly <- rbind(methods::slot(x[[i]], "coords"), cbind(NA, NA))
+#                 ret <- rbind(ret, poly)
+#             }
+#             ret
+#         })
+#         ocrds <- do.call(rbind, polys)
+#     }
+#     return(ocrds)
+# }
 
 ##############################################
 

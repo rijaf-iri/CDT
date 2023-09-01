@@ -385,10 +385,9 @@ cdtMergingPrecipCMD <- function(time.step = "dekadal",
             Insert.Messages.Out(msg, TRUE, "e", GUI)
             return(NULL)
         }
-        dsn <- dirname(blank$shapefile)
-        layer <- tools::file_path_sans_ext(basename(blank$shapefile))
-        shpd <- rgdal::readOGR(dsn, layer)
-        sp::proj4string(shpd) <- sp::CRS(as.character(NA))
+
+        shpd <- sf::st_read(blank$shapefile, quiet = TRUE)
+        sf::st_crs(shpd) <- sf::st_crs(NA)
         outMask <- create.mask.grid(shpd, xy.grid)
     }
 

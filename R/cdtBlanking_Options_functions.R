@@ -47,13 +47,23 @@ blanking.options <- function(...){
         )
 }
 
+#######
+
 ## create mask, blanking
 # ncgrid: named list(lon, lat)
-create.mask.grid <- function(shp, ncgrid){
-    width <- mean(diff(sapply(ncgrid, range)) / (sapply(ncgrid, length) - 1))
-    shp <- methods::as(shp, "SpatialPolygons")
-    shp <- rgeos::gUnaryUnion(shp)
-    shp <- rgeos::gSimplify(shp, tol = width / 4, topologyPreserve = TRUE)
+
+create.mask.grid <- function(shp_sf, ncgrid){
+    sf_type <- sf::st_geometry_type(shp_sf, by_geometry = FALSE)
+    sf_type <- as.character(sf_type)[1]
+    if(!(sf_type == "MULTIPOLYGON" | sf_type == "POLYGON")){
+        stop('Shapefile must be a polygons')
+    }
+
+    width <- min(diff(sapply(ncgrid, range)) / (sapply(ncgrid, length) - 1))
+
+    shp <- sf::st_geometry(shp_sf)
+    shp <- sf::st_union(shp)
+    shp <- sf::st_simplify(shp, preserveTopology = TRUE, dTolerance = width / 4)
 
     blkOpts <- blanking.options()
     if(blkOpts$bufferOption == "default"){
@@ -63,14 +73,41 @@ create.mask.grid <- function(shp, ncgrid){
     }
 
     if(buffer > 0){
-        shp <- rgeos::gBuffer(shp, width = buffer)
+        shp <- sf::st_buffer(shp, dist = buffer)
     }
 
-    slot.shp <- methods::slot(shp, "polygons")
-    shp.df <- data.frame(vtmp = rep(1, length(slot.shp)))
-    row.names(shp.df) <- sapply(slot.shp, function(x) methods::slot(x, "ID"))
-    shp <- sp::SpatialPolygonsDataFrame(shp, shp.df)
-    mask <- sp::over(defSpatialPixels(ncgrid), shp)[, 'vtmp']
+    xygrid <- defRegularGrid(ncgrid)
+    mask <- sf::st_intersects(xygrid, shp)
+    mask <- sapply(mask, length)
+    mask <- ifelse(mask == 0, NA, 1)
     dim(mask) <- sapply(ncgrid, length)
+
     return(mask)
 }
+
+
+# create.mask.grid <- function(shp, ncgrid){
+#     width <- mean(diff(sapply(ncgrid, range)) / (sapply(ncgrid, length) - 1))
+#     shp <- methods::as(shp, "SpatialPolygons")
+#     shp <- rgeos::gUnaryUnion(shp)
+#     shp <- rgeos::gSimplify(shp, tol = width / 4, topologyPreserve = TRUE)
+
+#     blkOpts <- blanking.options()
+#     if(blkOpts$bufferOption == "default"){
+#         buffer <- 4 * width
+#     }else{
+#         buffer <- blkOpts$bufferWidth
+#     }
+
+#     if(buffer > 0){
+#         shp <- rgeos::gBuffer(shp, width = buffer)
+#     }
+
+#     slot.shp <- methods::slot(shp, "polygons")
+#     shp.df <- data.frame(vtmp = rep(1, length(slot.shp)))
+#     row.names(shp.df) <- sapply(slot.shp, function(x) methods::slot(x, "ID"))
+#     shp <- sp::SpatialPolygonsDataFrame(shp, shp.df)
+#     mask <- sp::over(defSpatialPixels(ncgrid), shp)[, 'vtmp']
+#     dim(mask) <- sapply(ncgrid, length)
+#     return(mask)
+# }

@@ -48,31 +48,38 @@ spatialAnalysis.plotStatMaps <- function(){
             }
         }else{
             ipvl <- c(don$pval)
+            ## p-value < 0.05
             ipvl <- !is.na(ipvl) & ipvl < 0.05
             if(any(ipvl)){
                 grd <- don$x[2] - don$x[1]
                 dd <- expand.grid(x = don$x, y = don$y)
-                sp::coordinates(dd) <- ~x+y
-                dd <- dd[ipvl, ]
-                buffer <- rgeos::gBuffer(dd, width = grd * 1.02)
+                dd <- dd[ipvl, , drop = FALSE]
+                dd <- sf::st_as_sf(dd, coords = c("x", "y"), dim = "XYZ")
+                buffer <- sf::st_buffer(dd, dist = grd * 1.02)
+                buffer <- sf::st_union(buffer)
+                dd <- sf::st_cast(buffer, 'POLYGON')
+                centr <- sf::st_centroid(dd)
+                centr <- sf::st_coordinates(centr)
+                # bbx <- lapply(seq_along(dd), function(i) matrix(sf::st_bbox(dd[i]), 2))
+                bbx <- lapply(seq_along(dd), function(i) sf::st_bbox(dd[i]))
 
-                dd <- sp::disaggregate(buffer)
-                centr <- sp::coordinates(dd)
-                bbx <- lapply(seq_along(dd), function(i) sp::bbox(dd[i]))
                 esp <- if(grd > 0.25) 0.25 else grd * 5
                 esp <- if(esp > 0.25) 0.25 else esp
-                dd <- lapply(seq_along(bbx), function(i){   
-                    xpt <- c(rev(seq(centr[i, 1], bbx[[i]][1, 1], -esp)[-1]), seq(centr[i, 1], bbx[[i]][1, 2], esp))
-                    ypt <- c(rev(seq(centr[i, 2], bbx[[i]][2, 1], -esp)[-1]), seq(centr[i, 2], bbx[[i]][2, 2], esp))
+                dd <- lapply(seq_along(bbx), function(i){
+                    # xpt <- c(rev(seq(centr[i, 1], bbx[[i]][1, 1], -esp)[-1]), seq(centr[i, 1], bbx[[i]][1, 2], esp))
+                    # ypt <- c(rev(seq(centr[i, 2], bbx[[i]][2, 1], -esp)[-1]), seq(centr[i, 2], bbx[[i]][2, 2], esp))
+                    xpt <- c(rev(seq(centr[i, 1], bbx[[i]]$xmin, -esp)[-1]), seq(centr[i, 1], bbx[[i]]$xmax, esp))
+                    ypt <- c(rev(seq(centr[i, 2], bbx[[i]]$ymin, -esp)[-1]), seq(centr[i, 2], bbx[[i]]$ymax, esp))
                     xy <- expand.grid(x = xpt, y = ypt)
-                    sp::coordinates(xy) <- ~x+y
-                    ij <- as.logical(sp::over(xy, dd[i]))
-                    ij[is.na(ij)] <- FALSE
-                    sp::coordinates(xy[ij, ])
+                    xy <- sf::st_as_sf(xy, coords = c("x", "y"), dim = "XYZ")
+                    ij <- sf::st_intersects(xy, dd[i])
+                    ij <- sapply(ij, length) > 0
+                    sf::st_coordinates(xy[ij, ])
                 })
                 dd <- do.call(rbind, dd)
+
                 # points(dd[, 1], dd[, 2], pch = 15, cex = 0.3, col = adjustcolor('gray20', alpha.f = 0.9))
-                graphics::points(dd[, 1], dd[, 2], pch = 15, cex = 0.3)
+                graphics::points(dd[, 1], dd[, 2], pch = 15, cex = 0.5)
             }
         }
     }

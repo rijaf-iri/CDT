@@ -146,15 +146,21 @@ displayMap4Extraction <- function(notebookTab){
             ##
             if(.cdtData$EnvData$type.extract == "poly"){
                 xypts <- data.frame(x = ret$xc, y = ret$yc)
-                sp::coordinates(xypts) <- ~x+y
-                admin_name <- sp::over(xypts, shpf)
-                admin_name <- c(t(admin_name[1, ]))
+                xypts <- sf::st_as_sf(xypts, coords = c("x", "y"))
+                idp <- sf::st_intersects(xypts, shpf)
+                admin_name <- sf::st_drop_geometry(shpf)[idp[[1]], ]
+                if(nrow(admin_name) == 0){
+                    admin_name <- rep(NA, ncol(admin_name))
+                }else{
+                    admin_name <- c(t(admin_name[1, ]))
+                }
 
                 ids <- as.integer(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
                 admin_name <- admin_name[ids]
                 if(!is.na(admin_name)){
                     tclvalue(.cdtData$EnvData$namePoly) <- as.character(admin_name)
-                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
+                    dat <- sf::st_drop_geometry(shpf)
+                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[dat[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
                 }
                 stateADD <- 'disabled'
                 colorADD <- 'lightblue'
@@ -173,15 +179,21 @@ displayMap4Extraction <- function(notebookTab){
             ##
             if(.cdtData$EnvData$type.extract == 'mpoly'){
                 xypts <- data.frame(x = ret$xc, y = ret$yc)
-                sp::coordinates(xypts) <- ~x+y
-                admin_name <- sp::over(xypts, shpf)
-                admin_name <- c(t(admin_name[1, ]))
+                xypts <- sf::st_as_sf(xypts, coords = c("x", "y"))
+                idp <- sf::st_intersects(xypts, shpf)
+                admin_name <- sf::st_drop_geometry(shpf)[idp[[1]], ]
+                if(nrow(admin_name) == 0){
+                    admin_name <- rep(NA, ncol(admin_name))
+                }else{
+                    admin_name <- c(t(admin_name[1, ]))
+                }
 
                 ids <- as.numeric(tclvalue(tcl(.cdtData$EnvData$cb.shpAttr, 'current'))) + 1
                 admin_name <- admin_name[ids]
                 if(!is.na(admin_name)){
                     tclvalue(.cdtData$EnvData$namePoly) <- as.character(admin_name)
-                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[shpf@data[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
+                    dat <- sf::st_drop_geometry(shpf)
+                    .cdtData$EnvData$selectedPolygon <- getBoundaries(shpf[dat[, ids] == tclvalue(.cdtData$EnvData$namePoly), ])
                 }
                 stateADD <- 'normal'
                 colorADD <- 'red'
