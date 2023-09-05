@@ -146,33 +146,10 @@ Remember these paths, you will need them when you install the package `rgdal` an
 Download and install `R` binary for your MacOS X version from [https://cran.r-project.org/bin/macosx](https://cran.r-project.org/bin/macosx/)
 
 ```
-CDT requires R version 3.5.0 or higher. We recommend that you have the latest version of R.
+CDT requires R version 4.0.0 or higher. We recommend that you have the latest version of R.
 ```
 
-### 5) Install `rgeos` and `rgdal`
-
-Open `R` and install `rgdal` package with:
-
-```r
-install.packages("rgdal", type = "source", 
-configure.args = c(
-   "--with-proj-include=/Library/Frameworks/PROJ.framework/unix/include", 
-   "--with-proj-lib=/Library/Frameworks/PROJ.framework/unix/lib", 
-   "--with-gdal-config=/Library/Frameworks/GDAL.framework/unix/bin/gdal-config"
-  )
-)
-```
-
-Install `rgeos` package with:
-
-```r
-install.packages("rgeos", type = "source", 
-configure.args = 
-   "--with-geos-config=/Library/Frameworks/GEOS.framework/unix/bin/geos-config"
-)
-```
-
-### 6) Install `CDT`
+### 5) Install `CDT`
 Open `R` and install `devtools` package with: 
 
 ```r
@@ -254,7 +231,7 @@ Install `R` if not installed yet.
 Add the `R` repository to your sources
 
 ```
-CDT requires R version 3.5.0 or higher. We recommend that you have the latest version of R, this implies that you have to install R from source.
+CDT requires R version 4.0.0 or higher. We recommend that you have the latest version of R, this implies that you have to install R from source.
 ```
 
 ```bash
@@ -290,37 +267,7 @@ install.packages('ncdf4', type = "source",
         configure.args = paste0('--with-nc-config=', nc_config))
 ```
 
-### 6) Install `rgeos` and `rgdal`
-
-Open `R` and install `rgdal` package with:
-
-```r
-## edit the paths
-gdal_config <- '/usr/bin/gdal-config'
-proj_include <- '/usr/include'
-proj_lib <- '/usr/lib'
-
-install.packages("rgdal", type = "source", 
-         configure.args = c(
-                       paste0('--with-proj-include=', proj_include),
-                        paste0('--with-proj-lib=', proj_lib),
-                        paste0('--with-gdal-config=', gdal_config)
-                      )
-                  )
-```
-
-Install `rgeos` package with:
-
-```r
-## edit the path
-geos_config <- '/usr/bin/geos-config'
-
-install.packages("rgeos", type = "source", 
-       configure.args = paste0('--with-geos-config=', geos_config)
-       )
-```
-
-### 7) Install `CDT`
+### 6) Install `CDT`
 
 Open `R` and install `devtools` package with: 
 
