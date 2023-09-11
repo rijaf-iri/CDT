@@ -2,13 +2,19 @@
 cdt.data.analysis <- function(MAT, FUN,
                               trend = list(year = NA, min.year = 10, unit = 1),
                               percentile = 90,
-                              freq.thres = list(low = NA, up = NA)
+                              freq.args = list(oper = '>=', thres = NA, low = NA, up = NA),
+                              probs = list(thres.type = 'value',
+                                           thres.value = NA,
+                                           thres.percent = 90)
                             )
 {
     nc <- ncol(MAT)
     nr <- nrow(MAT)
-    nNA <- colSums(!is.na(MAT)) > 2
+    ## at least 5 years of data
+    nOBS <- colSums(!is.na(MAT))
+    nNA <- nOBS >= 5
     MAT <- MAT[, nNA, drop = FALSE]
+    nOBS <- nOBS[nNA]
 
     out <- if(FUN == "trend") matrix(NA, nrow = 4, ncol = nc) else rep(NA, nc)
     if(ncol(MAT) == 0) return(out)
@@ -17,6 +23,10 @@ cdt.data.analysis <- function(MAT, FUN,
         res <- colMeans(MAT, na.rm = TRUE)
     if(FUN == "median")
         res <- matrixStats::colMedians(MAT, na.rm = TRUE)
+    if(FUN == "min")
+        res <- matrixStats::colMins(MAT, na.rm = TRUE)
+    if(FUN == "max")
+        res <- matrixStats::colMaxs(MAT, na.rm = TRUE)
     if(FUN == "std")
         res <- matrixStats::colSds(MAT, na.rm = TRUE)
     if(FUN == "cv")
@@ -30,12 +40,30 @@ cdt.data.analysis <- function(MAT, FUN,
         res <- round(res[c(1, 2, 4, 9), , drop = FALSE], 3)
     }
     if(FUN == "percentile"){
-        probs <- percentile / 100
-        res <- matrixStats::colQuantiles(MAT, probs = probs, na.rm = TRUE, type = 8)
+        perc <- percentile / 100
+        res <- matrixStats::colQuantiles(MAT, probs = perc, na.rm = TRUE, type = 8)
     }
     if(FUN == "frequency"){
-        MAT <- (MAT >= freq.thres$low) & (MAT <= freq.thres$up) & !is.na(MAT)
+        if(freq.args$oper == ">=<"){
+            MAT <- (MAT >= freq.args$low) & (MAT <= freq.args$up) & !is.na(MAT)
+        }else{
+            oper.fun <- get(freq.args$oper, mode = "function")
+            MAT <- oper.fun(MAT, freq.args$thres) & !is.na(MAT)
+        }
         res <- colSums(MAT, na.rm = TRUE)
+        # Frequency, number of event every 10 years
+        res <- round(res * 10 / nOBS)
+    }
+    if(FUN %in% c("probExc", "probNExc")){
+        if(probs$thres.type == 'percentile'){
+            perc <- probs$thres.percent / 100
+            thres <- matrixStats::colQuantiles(MAT, probs = perc, na.rm = TRUE, type = 8)
+        }else{
+            thres <- rep(probs$thres.value, ncol(MAT))
+        }
+
+        res <- probability.exceeding.mat(MAT, thres)
+        if(FUN == 'probNExc') res <- 100 - res
     }
 
     res[is.nan(res) | is.infinite(res)] <- NA

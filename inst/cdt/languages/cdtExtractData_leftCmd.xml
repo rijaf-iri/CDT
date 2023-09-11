@@ -59,6 +59,9 @@
         <label id="3">
             <text lang="en"> Directory of the NetCDF files </text>
         </label>
+        <label id="3-1">
+            <text lang="en"> NetCDF data file </text>
+        </label>
         <label id="4">
             <text lang="en"> Index file (*.rds) of the dataset </text>
         </label>
@@ -146,6 +149,16 @@
             <tooltip>
                 <text lang="en"> Enter the full path to directory containing the NetCDF files </text>
                 <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers NetCDF </text>
+            </tooltip>
+        </content>
+        <content id="3-1">
+            <status>
+                <text lang="en"> Select or open the NetCDF file to extract </text>
+                <text lang="fr"> Sélectionner ou ouvrir le fichier NetCDF à extraire </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select or open the NetCDF file to extract </text>
+                <text lang="fr"> Sélectionner ou ouvrir le fichier NetCDF à extraire </text>
             </tooltip>
         </content>
         <content id="4">

@@ -64,19 +64,25 @@ spatialAnalysisProcs <- function(GeneralParameters){
 
     ################################################
 
-    ANALYSIS <- c('Mean', 'Median', 'Standard_deviation', 'Trend',
+    ANALYSIS <- c('Mean', 'Median', 'Minimum', 'Maximum',
+                  'Standard_deviation', 'Trend',
                   'Coefficient_of_variation', 'Percentiles',
-                  'Frequency', 'Anomaly')
+                  'Frequency', 'Anomaly',
+                  'Probability_Exceeding', 'Probability_non_Exceeding')
 
     analysis.dir <- switch(analysis$method,
                            'mean' = ANALYSIS[1],
                            'median' = ANALYSIS[2],
-                           'std' = ANALYSIS[3],
-                           'trend' = ANALYSIS[4],
-                           'cv' = ANALYSIS[5],
-                           'percentile' = ANALYSIS[6],
-                           'frequency' = ANALYSIS[7],
-                           'anomaly' = ANALYSIS[8]
+                           'min' = ANALYSIS[3],
+                           'max' = ANALYSIS[4],
+                           'std' = ANALYSIS[5],
+                           'trend' = ANALYSIS[6],
+                           'cv' = ANALYSIS[7],
+                           'percentile' = ANALYSIS[8],
+                           'frequency' = ANALYSIS[9],
+                           'anomaly' = ANALYSIS[10],
+                           'probExc' = ANALYSIS[11],
+                           'probNExc' = ANALYSIS[12]
                          )
 
     outAnaDIR <- file.path(outputDIR, analysis.dir)
@@ -327,12 +333,18 @@ spatialAnalysisProcs <- function(GeneralParameters){
                                     )
                                 )
             })
+        }else if(analysis$method %in% c('probExc', 'probNExc')){
+            AnalysData <- lapply(ixm, function(ix){
+                MAT <- AggrData[ix, , drop = FALSE]
+                cdt.data.analysis(MAT, analysis$method, probs = analysis$probs)
+            })
+            AnalysData <- do.call(rbind, AnalysData)
         }else{
             AnalysData <- lapply(ixm, function(ix){
                 MAT <- AggrData[ix, , drop = FALSE]
                 cdt.data.analysis(MAT, analysis$method,
                                     percentile = analysis$percentile,
-                                    freq.thres = analysis$frequency
+                                    freq.args = analysis$frequency
                                 )
             })
             AnalysData <- do.call(rbind, AnalysData)
@@ -435,12 +447,20 @@ spatialAnalysisProcs <- function(GeneralParameters){
                 })
 
                 return(list(Data = AnalysData, NonMiss = AggrNA))
+            }else if(analysis$method %in% c('probExc', 'probNExc')){
+                AnalysData <- lapply(ixm, function(ix){
+                    MAT <- don[ix, , drop = FALSE]
+                    cdt.data.analysis(MAT, analysis$method, probs = analysis$probs)
+                })
+                AnalysData <- do.call(rbind, AnalysData)
+
+                return(list(Data = AnalysData, NonMiss = AggrNA))
             }else{
                 AnalysData <- lapply(ixm, function(ix){
                     MAT <- don[ix, , drop = FALSE]
                     cdt.data.analysis(MAT, analysis$method,
                                         percentile = analysis$percentile,
-                                        freq.thres = analysis$frequency
+                                        freq.args = analysis$frequency
                                     )
                 })
                 AnalysData <- do.call(rbind, AnalysData)
@@ -508,6 +528,14 @@ spatialAnalysisProcs <- function(GeneralParameters){
                     nc.var <- "med"
                     longname.mon <- "Median"
                 }
+                if(analysis$method == "min"){
+                    nc.var <- "min"
+                    longname.mon <- "Minimum"
+                }
+                if(analysis$method == "max"){
+                    nc.var <- "max"
+                    longname.mon <- "Maximum"
+                }
                 if(analysis$method == "std"){
                     nc.var <- "std"
                     longname.mon <- "Standard deviation"
@@ -523,6 +551,24 @@ spatialAnalysisProcs <- function(GeneralParameters){
                 if(analysis$method == "frequency"){
                     nc.var <- "ferq"
                     longname.mon <- "Frequency, number of event every 10 years"
+                }
+                if(analysis$method == "probExc"){
+                    nc.var <- "prob"
+                    if(analysis$probs$thres.type == 'percentile'){
+                        prob_thres <- paste0(analysis$probs$thres.percent, "th Percentile")
+                    }else{
+                        prob_thres <- paste("value", analysis$probs$thres.value)
+                    }
+                    longname.mon <- paste("Probability of exceeding the", prob_thres)
+                }
+                if(analysis$method == "probNExc"){
+                    nc.var <- "prob"
+                    if(analysis$probs$thres.type == 'percentile'){
+                        prob_thres <- paste0(analysis$probs$thres.percent, "th Percentile")
+                    }else{
+                        prob_thres <- paste("value", analysis$probs$thres.value)
+                    }
+                    longname.mon <- paste("Probability of non exceeding the", prob_thres)
                 }
  
                 grdOut <- ncdf4::ncvar_def(nc.var, "", xy.dim, NA, longname = longname.mon, prec = "float", compression = 9)

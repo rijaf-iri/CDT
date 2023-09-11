@@ -84,17 +84,24 @@ ExtractDataPanelCmd <- function(){
 
     #######################################################################################################
 
-    set.data.type.vars <- function(data.type){
-        if(data.type == 'cdtnetcdf'){
-            txt <- lang.dlg[['label']][['3']]
-            state <- "normal"
-            help1 <- lang.dlg[['tooltip']][['3']]
-            help2 <- lang.dlg[['status']][['3']]
-        }else{
-            txt <- lang.dlg[['label']][['4']]
+    set.data.type.vars <- function(data.type, intstep){
+        if(intstep == 'onefile'){
+            txt <- lang.dlg[['label']][['3-1']]
             state <- "disabled"
-            help1 <- lang.dlg[['tooltip']][['4']]
-            help2 <- lang.dlg[['status']][['4']]
+            help1 <- lang.dlg[['tooltip']][['3-1']]
+            help2 <- lang.dlg[['status']][['3-1']]
+        }else{
+            if(data.type == 'cdtnetcdf'){
+                txt <- lang.dlg[['label']][['3']]
+                state <- "normal"
+                help1 <- lang.dlg[['tooltip']][['3']]
+                help2 <- lang.dlg[['status']][['3']]
+            }else{
+                txt <- lang.dlg[['label']][['4']]
+                state <- "disabled"
+                help1 <- lang.dlg[['tooltip']][['4']]
+                help2 <- lang.dlg[['status']][['4']]
+            }
         }
 
         list(txt = txt, state = state, tooltip = help1, status = help2)
@@ -143,8 +150,8 @@ ExtractDataPanelCmd <- function(){
         frameTimeS <- ttklabelframe(subfr1, text = lang.dlg[['label']][['1']], relief = 'groove')
 
         timeSteps <- tclVar()
-        CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:8]
-        periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly', 'annual', 'seasonal')
+        CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][c(1:8, 10, 11)]
+        periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly', 'annual', 'seasonal', 'others', 'onefile')
         tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$intstep]
 
         retminhr <- set.hour.minute(GeneralParameters$intstep, GeneralParameters$minhour)
@@ -238,13 +245,52 @@ ExtractDataPanelCmd <- function(){
                 })
             }
 
-            if(intstep %in% c('seasonal', 'annual')){
+            #####
+            if(intstep %in% c('seasonal', 'annual', 'others', 'onefile')){
                 tkconfigure(cb.startMonth, state = "disabled")
                 tkconfigure(cb.endMonth, state = "disabled")
+                stateDR <- if(intstep %in% c('others', 'onefile')) "disabled" else "normal"
+                tkconfigure(bt.daterange, state = stateDR)
             }else{
                 tkconfigure(cb.startMonth, state = "normal")
                 tkconfigure(cb.endMonth, state = "normal")
+                tkconfigure(bt.daterange, state = "normal")
             }
+
+            #####
+            data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            setDT <- set.data.type.vars(data.type, intstep)
+            tclvalue(txt.INData.var) <- setDT$txt
+            tkconfigure(set.infile, state = setDT$state)
+            helpWidget(cb.infile, setDT$tooltip, setDT$status)
+
+            #####
+            tkdestroy(cb.infile)
+            tclvalue(input.file) <- ''
+
+            if(intstep == 'onefile'){
+                tclvalue(DataType) <- CbdatatypeVAL[2]
+                tkconfigure(cb.datatype, state = "disabled")
+                cb.infile <<- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
+            }else{
+                tkconfigure(cb.datatype, state = "normal")
+                cb.infile <<- tkentry(frameInData, textvariable = input.file, width = largeur2)
+            }
+            tkgrid(cb.infile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+            #####
+            if(intstep == 'onefile'){
+                CbOutFileFormat <<- CbOutFileFormat1
+                OutFileFormatV <<- OutFileFormatVal[-2]
+                OutFileFormat <<- if(.cdtData$EnvData$type.extract %in% c("point", "mpoint")) c(CbOutFileFormat[1], '') else CbOutFileFormat
+            }else{
+                CbOutFileFormat <<- CbOutFileFormat2
+                OutFileFormatV <<- OutFileFormatVal
+                OutFileFormat <<- if(.cdtData$EnvData$type.extract %in% c("point", "mpoint")) CbOutFileFormat[1:2] else CbOutFileFormat
+            }
+            tkconfigure(cb.outFormat, values = OutFileFormat)
+            outfrmt <- OutFileFormatV[CbOutFileFormat %in% trimws(tclvalue(out.format))]
+            if(!(outfrmt %in% OutFileFormatV)) tclvalue(out.format) <- OutFileFormat[1]
         })
 
         #############################
@@ -252,27 +298,31 @@ ExtractDataPanelCmd <- function(){
         frameInData <- ttklabelframe(subfr1, text = lang.dlg[['label']][['2']], relief = 'groove')
 
         DataType <- tclVar()
-        # CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][2:3]
-        # datatypeVAL <- c('cdtdataset', 'cdtnetcdf')
-        CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][3]
-        CbdatatypeVAL <- c(CbdatatypeVAL, "")
-        datatypeVAL <- c('cdtnetcdf', "")
+        CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][2:3]
+        datatypeVAL <- c('cdtdataset', 'cdtnetcdf')
         tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% GeneralParameters$data.type]
 
-        setDT <- set.data.type.vars(GeneralParameters$data.type)
+        setDT <- set.data.type.vars(GeneralParameters$data.type, GeneralParameters$intstep)
         txt.INData.var <- tclVar(setDT$txt)
 
-        dirInput <- if(GeneralParameters$data.type == 'cdtnetcdf')
-                        GeneralParameters$cdtnetcdf$dir
-                    else
-                        GeneralParameters$cdtdataset$index
+        if(GeneralParameters$data.type == 'cdtnetcdf' |
+           GeneralParameters$intstep == 'onefile')
+        {
+            dirInput <- GeneralParameters$cdtnetcdf$dir
+        }else{
+            dirInput <- GeneralParameters$cdtdataset$index
+        }
         input.file <- tclVar(dirInput)
 
         txt.datatype <- tklabel(frameInData, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
         cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
         txt.infile <- tklabel(frameInData, text = tclvalue(txt.INData.var), textvariable = txt.INData.var, anchor = 'w', justify = 'left')
         set.infile <- tkbutton(frameInData, text = .cdtEnv$tcl$lang$global[['button']][['5']], width = 8, state = setDT$state)
-        cb.infile <- tkentry(frameInData, textvariable = input.file, width = largeur2)
+        if(GeneralParameters$intstep == 'onefile'){
+           cb.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
+        }else{
+           cb.infile <- tkentry(frameInData, textvariable = input.file, width = largeur2) 
+        }
         bt.infile <- tkbutton(frameInData, text = "...")
 
         #################
@@ -293,30 +343,56 @@ ExtractDataPanelCmd <- function(){
         ############
         settingINData <- NULL
         tkconfigure(set.infile, command = function(){
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            stateFormat <- if(intstep == 'others') 'disabled' else 'normal'
             GeneralParameters[['cdtnetcdf']] <<- getInfoNetCDFData(.cdtEnv$tcl$main$win,
                                                                    GeneralParameters[['cdtnetcdf']],
-                                                                   trimws(tclvalue(input.file)))
+                                                                   trimws(tclvalue(input.file)),
+                                                                   stateFormat)
             settingINData <<- 1
         })
 
         tkconfigure(bt.infile, command = function(){
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
-            if(data.type == 'cdtnetcdf'){
-                dirnc <- tk_choose.dir(getwd(), "")
-                tclvalue(input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
+            
+            if(intstep == 'onefile'){
+                tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
+                tcl('update')
+                on.exit({
+                    tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+                    tcl('update')
+                })
+
+                nc.opfiles <- getOpenNetcdf(.cdtEnv$tcl$main$win)
+                if(!is.null(nc.opfiles)){
+                    update.OpenFiles('netcdf', nc.opfiles)
+                    listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
+                    tclvalue(input.file) <- nc.opfiles[[1]]
+                    lapply(list(cb.shpF, cb.infile), tkconfigure, values = unlist(listOpenFiles))
+                }
             }else{
-                path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
-                tclvalue(input.file) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+                if(data.type == 'cdtnetcdf'){
+                    dirnc <- tk_choose.dir(getwd(), "")
+                    tclvalue(input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
+                }else{
+                    path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
+                    tclvalue(input.file) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
+                }
             }
         })
 
         #################
 
         tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
+            settingINData <<- NULL
+
             tclvalue(input.file) <- ''
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            setDT <- set.data.type.vars(data.type)
+            setDT <- set.data.type.vars(data.type, intstep)
+            tclvalue(txt.INData.var) <- setDT$txt
             tkconfigure(set.infile, state = setDT$state)
             helpWidget(cb.infile, setDT$tooltip, setDT$status)
        })
@@ -347,7 +423,13 @@ ExtractDataPanelCmd <- function(){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(shpFile) <- shp.opfiles[[1]]
                 listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                tkconfigure(cb.shpF, values = unlist(listOpenFiles))
+
+                intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+                if(intstep == 'onefile'){
+                    lapply(list(cb.shpF, cb.infile), tkconfigure, values = unlist(listOpenFiles))
+                }else{
+                    tkconfigure(cb.shpF, values = unlist(listOpenFiles))
+                }
 
                 shpf <- getShpOpenData(shpFile)
                 dat <- sf::st_drop_geometry(shpf[[2]])
@@ -832,10 +914,13 @@ ExtractDataPanelCmd <- function(){
 
         tkbind(cb.TypeExtr, "<<ComboboxSelected>>", function(){
             .cdtData$EnvData$selectedPolygon <- NULL
+
+            intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+            outfrmt <- OutFileFormatV[CbOutFileFormat %in% trimws(tclvalue(out.format))]
             OutFileFormat <- CbOutFileFormat
 
             .cdtData$EnvData$type.extract <- typeEXTRACTV[typeEXTRACT %in% trimws(tclvalue(type.extract))]
-            outfrmt <- trimws(tclvalue(out.format))
+            # outfrmt <- trimws(tclvalue(out.format))
 
             if(.cdtData$EnvData$type.extract == "point")
             {
@@ -858,8 +943,13 @@ ExtractDataPanelCmd <- function(){
                 colfileORdir <- 'lightblue'
                 isFile <- TRUE
  
-                OutFileFormat <- OutFileFormat[1:2]
-                out.formatVAL <- if(outfrmt %in% CbOutFileFormat[3:4]) OutFileFormat[1] else tclvalue(out.format)
+                if(intstep == 'onefile'){
+                    OutFileFormat <- c(OutFileFormat[1], "")
+                    out.formatVAL <- OutFileFormat[1]
+                }else{
+                    OutFileFormat <- OutFileFormat[1:2]
+                    out.formatVAL <- if(outfrmt %in% c('ncdf', 'tyxz')) OutFileFormat[1] else tclvalue(out.format)
+                }
             }
 
             ##
@@ -877,15 +967,15 @@ ExtractDataPanelCmd <- function(){
                 minrectVal <- 'Minimum'
                 maxrectVal <- 'Maximum'
 
-                stateSpAv <- if(outfrmt == CbOutFileFormat[2]) 'normal' else 'disabled'
+                stateSpAv <- if(outfrmt == 'cpt') 'normal' else 'disabled'
 
-                if(outfrmt %in% CbOutFileFormat[3:4]){
+                if(outfrmt %in% c('ncdf', 'tyxz')){
                     spatAverg <- "0"
-                }else if(outfrmt == CbOutFileFormat[1]){
+                }else if(outfrmt == 'cdt'){
                     spatAverg <- "1"
                 }else spatAverg <- tclvalue(spatAverage)
 
-                if(outfrmt == CbOutFileFormat[3]){
+                if(outfrmt == 'ncdf'){
                     txtfileORdir <- lang.dlg[['label']][['20']]
                     colfileORdir <- 'lightgreen'
                     isFile <- FALSE
@@ -913,15 +1003,15 @@ ExtractDataPanelCmd <- function(){
                 minrectVal <- ''
                 maxrectVal <- ''
 
-                stateSpAv <- if(outfrmt == CbOutFileFormat[2]) 'normal' else 'disabled'
+                stateSpAv <- if(outfrmt == 'cpt') 'normal' else 'disabled'
 
-                if(outfrmt %in% CbOutFileFormat[3:4]){
+                if(outfrmt %in% c('ncdf', 'tyxz')){
                     spatAverg <- "0"
-                }else if(outfrmt == CbOutFileFormat[1]){
+                }else if(outfrmt == 'cdt'){
                     spatAverg <- "1"
                 }else spatAverg <- tclvalue(spatAverage)
 
-                if(outfrmt == CbOutFileFormat[3]){
+                if(outfrmt == 'ncdf'){
                     txtfileORdir <- lang.dlg[['label']][['20']]
                     colfileORdir <- 'lightgreen'
                     isFile <- FALSE
@@ -968,8 +1058,13 @@ ExtractDataPanelCmd <- function(){
                 colfileORdir <- 'lightblue'
                 isFile <- TRUE
 
-                OutFileFormat <- OutFileFormat[1:2]
-                out.formatVAL <- if(outfrmt %in% CbOutFileFormat[3:4]) OutFileFormat[1] else tclvalue(out.format)
+                if(intstep == 'onefile'){
+                    OutFileFormat <- c(OutFileFormat[1], '')
+                    out.formatVAL <- OutFileFormat[1]
+                }else{
+                    OutFileFormat <- OutFileFormat[1:2]
+                    out.formatVAL <- if(outfrmt %in% c('ncdf', 'tyxz')) OutFileFormat[1] else tclvalue(out.format)
+                }
             }
 
             ##
@@ -992,9 +1087,9 @@ ExtractDataPanelCmd <- function(){
                 #################
 
                 stateSpAv <- 'disabled'
-                spatAverg <- if(outfrmt %in% CbOutFileFormat[3:4]) "0" else "1"
+                spatAverg <- if(outfrmt %in% c('ncdf', 'tyxz')) "0" else "1"
 
-                if(outfrmt %in% CbOutFileFormat[3:4]){
+                if(outfrmt %in% c('ncdf', 'tyxz')){
                     txtfileORdir <- lang.dlg[['label']][['20']]
                     colfileORdir <- 'lightgreen'
                     isFile <- FALSE
@@ -1116,11 +1211,21 @@ ExtractDataPanelCmd <- function(){
 
         frameOutFormat <- ttklabelframe(subfr3, text = lang.dlg[['label']][['18']], relief = 'groove')
 
-        CbOutFileFormat <- c('CDT Stations Data Format', 'CPT File Format',
-                             'NetCDF Files', 'Time|Lat|Lon|Value Format')
-        OutFileFormatV <- c('cdt', 'cpt', 'ncdf', 'tyxz')
+        CbOutFileFormat1 <- c('CDT Stations Data Format', 'NetCDF Files', 'Lat|Lon|Value Format')
+        CbOutFileFormat2 <- c('CDT Stations Data Format', 'CPT File Format',
+                              'NetCDF Files', 'Time|Lat|Lon|Value Format')
+        OutFileFormatVal <- c('cdt', 'cpt', 'ncdf', 'tyxz')
 
-        OutFileFormat <- if(GeneralParameters$type.extract %in% c("point", "mpoint")) CbOutFileFormat[1:2] else CbOutFileFormat
+        if(GeneralParameters$intstep == 'onefile'){
+            CbOutFileFormat <- CbOutFileFormat1
+            OutFileFormatV <- OutFileFormatVal[-2]
+            OutFileFormat <- if(GeneralParameters$type.extract %in% c("point", "mpoint")) c(CbOutFileFormat[1], '') else CbOutFileFormat
+        }else{
+            CbOutFileFormat <- CbOutFileFormat2
+            OutFileFormatV <- OutFileFormatVal
+            OutFileFormat <- if(GeneralParameters$type.extract %in% c("point", "mpoint")) CbOutFileFormat[1:2] else CbOutFileFormat
+        }
+
         out.format <- tclVar()
         tclvalue(out.format) <- CbOutFileFormat[OutFileFormatV %in% GeneralParameters$out.data$format]
 
@@ -1149,7 +1254,7 @@ ExtractDataPanelCmd <- function(){
         #################
 
         tkbind(cb.outFormat, "<<ComboboxSelected>>", function(){
-            outfrmt <- trimws(tclvalue(out.format))
+            outfrmt <- OutFileFormatV[CbOutFileFormat %in% trimws(tclvalue(out.format))]
 
             if(.cdtData$EnvData$type.extract %in% c('point', 'mpoint'))
             {
@@ -1160,13 +1265,11 @@ ExtractDataPanelCmd <- function(){
                 spatAverg <- "0"
                 stateSpAv <- 'disabled'
             }else{
-                if(outfrmt == CbOutFileFormat[3]){
+                if(outfrmt == 'ncdf'){
                     txtfileORdir <- lang.dlg[['label']][['20']]
                     colfileORdir <- 'lightgreen'
                     isFile <- FALSE
-                }else if(outfrmt == CbOutFileFormat[4] &
-                         .cdtData$EnvData$type.extract == 'mpoly')
-                {
+                }else if(outfrmt == 'tyxz' && .cdtData$EnvData$type.extract == 'mpoly'){
                     txtfileORdir <- lang.dlg[['label']][['20']]
                     colfileORdir <- 'lightgreen'
                     isFile <- FALSE
@@ -1176,16 +1279,15 @@ ExtractDataPanelCmd <- function(){
                     isFile <- TRUE
                 }
 
-                if(outfrmt %in% CbOutFileFormat[3:4]){
+                if(outfrmt %in% c('ncdf', 'tyxz')){
                     spatAverg <- "0"
-                }else if(outfrmt == CbOutFileFormat[1]){
+                }else if(outfrmt == 'cdt'){
                     spatAverg <- "1"
                 }else{
                     spatAverg <- if(.cdtData$EnvData$type.extract == 'mpoly') "1" else "0"
                 }
 
-                stateSpAv <- if(outfrmt == CbOutFileFormat[2] &
-                                .cdtData$EnvData$type.extract != 'mpoly') 'normal' else 'disabled'
+                stateSpAv <- if(outfrmt == 'cpt' && .cdtData$EnvData$type.extract != 'mpoly') 'normal' else 'disabled'
             }
 
             tkconfigure(chk.SpAvrg, state = stateSpAv)
@@ -1260,11 +1362,9 @@ ExtractDataPanelCmd <- function(){
 
             GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(GeneralParameters$data.type == "") return(NULL)
-
             if(GeneralParameters$data.type == 'cdtnetcdf'){
                 GeneralParameters$cdtnetcdf$dir <- trimws(tclvalue(input.file))
-                if(is.null(settingINData)){
+                if(is.null(settingINData) && GeneralParameters$intstep != 'onefile'){
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "w")
                     return(NULL)
                 }
@@ -1304,6 +1404,8 @@ ExtractDataPanelCmd <- function(){
             GeneralParameters$months$end <- which(MOIS %in% trimws(tclvalue(endMonth)))
 
             GeneralParameters$out.data$format <- OutFileFormatV[CbOutFileFormat %in% trimws(tclvalue(out.format))]
+            if(GeneralParameters$out.data$format == '') return(NULL)
+
             GeneralParameters$out.data$sp.avrg <- switch(tclvalue(spatAverage), '0' = FALSE, '1' = TRUE)
             GeneralParameters$out.data$outdir <- trimws(tclvalue(file2save))
             GeneralParameters$out.data$isFile <- switch(tclvalue(outputFD), '0' = FALSE, '1' = TRUE)

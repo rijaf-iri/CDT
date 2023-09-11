@@ -40,10 +40,11 @@ spatialAnalysisPanelCmd <- function(){
     GeneralParameters <- list(data.type = "cdtstation", in.tstep = "daily", in.file = "", out.dir = "",
                               analysis = list(method = "mean",
                                              percentile = 90,
-                                             frequency = list(low = 0, up = 200),
+                                             frequency = list(oper = '>=', thres = 100, low = 0, up = 200),
                                              anomaly = list(perc = FALSE, all.years = TRUE,
                                                             start.year = 1991, end.year = 2020, min.year = 10),
-                                             trend = list(unit = 1, min.year = 10)
+                                             trend = list(unit = 1, min.year = 10),
+                                             probs = list(thres.type = 'value', thres.value = 200, thres.percent = 90)
                                             ),
                               aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 1,
                                                  min.frac = list(unique = TRUE, all = 0.95, month = rep(0.95, 12))),
@@ -529,7 +530,7 @@ spatialAnalysisPanelCmd <- function(){
         frameAnalysis <- ttklabelframe(subfr2, text = lang.dlg[['label']][['27']], relief = 'groove')
 
         CbAnalysesVAL <- lang.dlg[['combobox']][['1']]
-        AnalysesVAL <- c('mean', 'median', 'std', 'cv', 'trend', 'percentile', 'frequency', 'anomaly')
+        AnalysesVAL <- c('mean', 'median', 'min', 'max', 'std', 'cv', 'trend', 'percentile', 'frequency', 'anomaly', 'probExc', 'probNExc')
         analysis.method <- tclVar()
         tclvalue(analysis.method) <- CbAnalysesVAL[AnalysesVAL %in% GeneralParameters$analysis$method]
 
@@ -549,22 +550,18 @@ spatialAnalysisPanelCmd <- function(){
 
             ###############
             if(analysisMthd == 'trend'){
-                rd.trend1 <- tkradiobutton(fr.anMthd, text = lang.dlg[['radiobutton']][['1']][1], variable = trend.unit, value = "1", anchor = 'w', justify = 'left')
-                rd.trend2 <- tkradiobutton(fr.anMthd, text = lang.dlg[['radiobutton']][['1']][2], variable = trend.unit, value = "2", anchor = 'w', justify = 'left')
-                rd.trend3 <- tkradiobutton(fr.anMthd, text = lang.dlg[['radiobutton']][['1']][3], variable = trend.unit, value = "3", anchor = 'w', justify = 'left')
+                cb.trend <- ttkcombobox(fr.anMthd, values = CbTrendUnitVAL, textvariable = trend.unit, width = largeur4a)
                 txt.trend <- tklabel(fr.anMthd, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
                 en.trend <- tkentry(fr.anMthd, textvariable = trend.minyear, width = 4)
 
-                tkgrid(rd.trend1, sticky = 'we', columnspan = 2)
-                tkgrid(rd.trend2, sticky = 'we', columnspan = 2)
-                tkgrid(rd.trend3, sticky = 'we', columnspan = 2)
+                tkgrid(cb.trend, sticky = 'we', columnspan = 2)
                 tkgrid(txt.trend, en.trend)
 
                 helpWidget(en.trend, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
             }
 
             if(analysisMthd == 'percentile'){
-                en.Percent <- tkentry(fr.anMthd, textvariable = mth.perc, width = 4, justify = 'center')
+                en.Percent <- tkentry(fr.anMthd, textvariable = perc.mthd.val, width = 4, justify = 'center')
                 th.Percent <- tklabel(fr.anMthd, text = lang.dlg[['label']][['11']], anchor = 'w', justify = 'left')
                 txt.Percent <- tklabel(fr.anMthd, text = lang.dlg[['label']][['12']])
 
@@ -574,19 +571,49 @@ spatialAnalysisPanelCmd <- function(){
             }
 
             if(analysisMthd == 'frequency'){
-                txt.Freq1 <- tklabel(fr.anMthd, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
-                en.Freq1 <- tkentry(fr.anMthd, textvariable = low.thres, width = 5, justify = 'center')
-                txt.Freq2 <- tklabel(fr.anMthd, text = lang.dlg[['label']][['14']])
-                en.Freq2 <- tkentry(fr.anMthd, textvariable = up.thres, width = 5, justify = 'center')
+                set_freq_thresholds <- function(freq_operator){
+                    tkdestroy(fr.freq)
+                    fr.freq <<- tkframe(fr.anMthd)
 
-                tkgrid(txt.Freq1, en.Freq1, txt.Freq2, en.Freq2)
+                    if(freq_operator == '>=<'){
+                        txt.Freq1 <- tklabel(fr.freq, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
+                        en.Freq1 <- tkentry(fr.freq, textvariable = freq.low.thres, width = 5, justify = 'center')
+                        txt.Freq2 <- tklabel(fr.freq, text = lang.dlg[['label']][['14']])
+                        en.Freq2 <- tkentry(fr.freq, textvariable = freq.up.thres, width = 5, justify = 'center')
+                        tkgrid(txt.Freq1, en.Freq1, txt.Freq2, en.Freq2)
+                        helpWidget(en.Freq1, lang.dlg[['tooltip']][['16']], lang.dlg[['status']][['16']])
+                        helpWidget(en.Freq2, lang.dlg[['tooltip']][['17']], lang.dlg[['status']][['17']])
+                    }else{
+                        txt.Freq1 <- tklabel(fr.freq, text = lang.dlg[['label']][['28']], anchor = 'e', justify = 'right')
+                        en.Freq1 <- tkentry(fr.freq, textvariable = freq.val.thres, width = 5, justify = 'center')
+                        tkgrid(txt.Freq1, en.Freq1)
+                        helpWidget(en.Freq1, lang.dlg[['tooltip']][['20']], lang.dlg[['status']][['20']])
+                    }
 
-                helpWidget(en.Freq1, lang.dlg[['tooltip']][['16']], lang.dlg[['status']][['16']])
-                helpWidget(en.Freq2, lang.dlg[['tooltip']][['17']], lang.dlg[['status']][['17']])
+                    tkgrid(fr.freq, row = 0, column = 2)
+                }
+
+                ####
+
+                FREQ_OPER <- c(">=", ">", "<=", "<", ">=<")
+
+                txt.freq.opr <- tklabel(fr.anMthd, text = lang.dlg[['label']][['32']], anchor = 'w', justify = 'left')
+                cb.freq.opr <- ttkcombobox(fr.anMthd, values = FREQ_OPER, textvariable = freq.oper.fun, width = 4)
+                fr.freq <- tkframe(fr.anMthd)
+
+                tkgrid(txt.freq.opr, row = 0, column = 0)
+                tkgrid(cb.freq.opr, row = 0, column = 1)
+
+                set_freq_thresholds(trimws(tclvalue(freq.oper.fun)))
+
+                tkbind(cb.freq.opr, "<<ComboboxSelected>>", function(){
+                    freq_operator <- trimws(tclvalue(freq.oper.fun))
+                    set_freq_thresholds(freq_operator)
+                })
             }
 
             if(analysisMthd == 'anomaly'){
-                chk.Anom <- tkcheckbutton(fr.anMthd, variable = perc.anom, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+                chk.Anom <- tkcheckbutton(fr.anMthd, variable = anom.perc.mean, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
                 bt.AnomBP <- ttkbutton(fr.anMthd, text = lang.dlg[['button']][['4']])
 
                 tkgrid(chk.Anom)
@@ -598,6 +625,44 @@ spatialAnalysisPanelCmd <- function(){
                 tkconfigure(bt.AnomBP, command = function(){
                     GeneralParameters$analysis$anomaly <<- getInfoBasePeriod(.cdtEnv$tcl$main$win,
                                                                              GeneralParameters$analysis$anomaly)
+                })
+            }
+
+            if(analysisMthd %in% c('probExc', 'probNExc')){
+                txt.probtype <- tklabel(fr.anMthd, text = lang.dlg[['label']][['28']], anchor = 'e', justify = 'right')
+                cb.probtype <- ttkcombobox(fr.anMthd, values = CbProbThresTypeVAL, textvariable = probs.thres.type, justify = 'center', width = 10)
+                en.probthres <- tkentry(fr.anMthd, textvariable = probs.thres.value, width = 5, justify = 'center')
+                txt.probthres1 <- tklabel(fr.anMthd, text = tclvalue(txtProbthres1), textvariable = txtProbthres1, anchor = 'w', justify = 'left')
+                txt.probthres2 <- tklabel(fr.anMthd, text = tclvalue(txtProbthres2), textvariable = txtProbthres2)
+
+                tkgrid(txt.probtype, cb.probtype, en.probthres, txt.probthres1, txt.probthres2)
+
+                ###
+                tkbind(en.probthres, "<FocusOut>", function(){
+                    probtype <- ProbThresTypeVAL[CbProbThresTypeVAL %in% trimws(tclvalue(probs.thres.type))]
+
+                    if(probtype == 'percentile'){
+                        tclvalue(probs.thres.tmp1) <- tclvalue(probs.thres.value)
+                    }else{
+                        tclvalue(probs.thres.tmp2) <- tclvalue(probs.thres.value)
+                    }
+                })
+
+                tkbind(cb.probtype, "<<ComboboxSelected>>", function(){
+                    probtype <- ProbThresTypeVAL[CbProbThresTypeVAL %in% trimws(tclvalue(probs.thres.type))]
+
+                    if(probtype == 'percentile'){
+                        tclvalue(probs.thres.value) <- tclvalue(probs.thres.tmp1)
+                        txt_probthres1 <- lang.dlg[['label']][['11']]
+                        txt_probthres2 <- lang.dlg[['label']][['12']]
+                    }else{
+                        tclvalue(probs.thres.value) <- tclvalue(probs.thres.tmp2)
+                        txt_probthres1 <- ''
+                        txt_probthres2 <- lang.dlg[['label']][['29']]
+                    }
+
+                    tclvalue(txtProbthres1) <- txt_probthres1
+                    tclvalue(txtProbthres2) <- txt_probthres2
                 })
             }
 
@@ -617,13 +682,47 @@ spatialAnalysisPanelCmd <- function(){
 
         fr.anMthd <- tkframe(frameAnalysis)
 
-        trend.unit <- tclVar(GeneralParameters$analysis$trend$unit)
+        CbTrendUnitVAL <- lang.dlg[['combobox']][['5']]
+        TrendUnitVAL <- 1:3
+        trend.unit <- tclVar()
+        tclvalue(trend.unit) <- CbTrendUnitVAL[TrendUnitVAL %in% GeneralParameters$analysis$trend$unit]
         trend.minyear <- tclVar(GeneralParameters$analysis$trend$min.year)
-        mth.perc <- tclVar(GeneralParameters$analysis$percentile)
-        low.thres <- tclVar(GeneralParameters$analysis$frequency$low)
-        up.thres <- tclVar(GeneralParameters$analysis$frequency$up)
-        perc.anom <- tclVar(GeneralParameters$analysis$anomaly$perc)
 
+        perc.mthd.val <- tclVar(GeneralParameters$analysis$percentile)
+
+        freq.oper.fun <- tclVar(GeneralParameters$analysis$frequency$oper)
+        freq.val.thres <- tclVar(GeneralParameters$analysis$frequency$thres)
+        freq.low.thres <- tclVar(GeneralParameters$analysis$frequency$low)
+        freq.up.thres <- tclVar(GeneralParameters$analysis$frequency$up)
+
+        anom.perc.mean <- tclVar(GeneralParameters$analysis$anomaly$perc)
+
+        # CbProbThresTypeVAL <- lang.dlg[['combobox']][['4']]
+        # ProbThresTypeVAL <- c("value", "percentile")
+        CbProbThresTypeVAL <- lang.dlg[['combobox']][['4']][1]
+        ProbThresTypeVAL <- c("value", "percentile")[1]
+
+        probs.thres.type <- tclVar()
+        tclvalue(probs.thres.type) <- CbProbThresTypeVAL[ProbThresTypeVAL %in% GeneralParameters$analysis$probs$thres.type]
+
+        probs.thres.tmp1 <- tclVar(GeneralParameters$analysis$probs$thres.percent)
+        probs.thres.tmp2 <- tclVar(GeneralParameters$analysis$probs$thres.value)
+        probs.thres.value <- tclVar()
+
+        if(GeneralParameters$analysis$probs$thres.type == 'percentile'){
+            tclvalue(probs.thres.value) <- tclvalue(probs.thres.tmp1)
+            txt_probthres1 <- lang.dlg[['label']][['11']]
+            txt_probthres2 <- lang.dlg[['label']][['12']]
+        }else{
+            tclvalue(probs.thres.value) <- tclvalue(probs.thres.tmp2)
+            txt_probthres1 <- ''
+            txt_probthres2 <- lang.dlg[['label']][['29']]
+        }
+
+        txtProbthres1 <- tclVar(txt_probthres1)
+        txtProbthres2 <- tclVar(txt_probthres2)
+
+        ###
         analysisMethodFun(GeneralParameters$analysis$method)
 
         #############################
@@ -644,7 +743,7 @@ spatialAnalysisPanelCmd <- function(){
             GeneralParameters$analysis$method <- AnalysesVAL[CbAnalysesVAL %in% trimws(tclvalue(analysis.method))]
 
             if(GeneralParameters$analysis$method == 'trend'){
-                GeneralParameters$analysis$trend$unit <- as.numeric(tclvalue(trend.unit))
+                GeneralParameters$analysis$trend$unit <- TrendUnitVAL[CbTrendUnitVAL %in% trimws(tclvalue(trend.unit))]
                 GeneralParameters$analysis$trend$min.year <- as.numeric(trimws(tclvalue(trend.minyear)))
                 if(is.na(GeneralParameters$analysis$trend$min.year)){
                     Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, 'e')
@@ -653,7 +752,7 @@ spatialAnalysisPanelCmd <- function(){
             }
 
             if(GeneralParameters$analysis$method == 'percentile'){
-                GeneralParameters$analysis$percentile <- as.numeric(trimws(tclvalue(mth.perc)))
+                GeneralParameters$analysis$percentile <- as.numeric(trimws(tclvalue(perc.mthd.val)))
                 if(is.na(GeneralParameters$analysis$percentile)){
                     Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, 'e')
                     return(NULL)
@@ -661,20 +760,40 @@ spatialAnalysisPanelCmd <- function(){
             }
 
             if(GeneralParameters$analysis$method == 'frequency'){
-                GeneralParameters$analysis$frequency$low <- as.numeric(trimws(tclvalue(low.thres)))
-                GeneralParameters$analysis$frequency$up <- as.numeric(trimws(tclvalue(up.thres)))
-                if(is.na(GeneralParameters$analysis$frequency$low) |
-                   is.na(GeneralParameters$analysis$frequency$up)){
-                    Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
-                    return(NULL)
+                GeneralParameters$analysis$frequency$oper <- trimws(tclvalue(freq.oper.fun))
+
+                if(GeneralParameters$analysis$frequency$oper == '>=<'){
+                    GeneralParameters$analysis$frequency$low <- as.numeric(trimws(tclvalue(freq.low.thres)))
+                    GeneralParameters$analysis$frequency$up <- as.numeric(trimws(tclvalue(freq.up.thres)))
+                    if(is.na(GeneralParameters$analysis$frequency$low) |
+                       is.na(GeneralParameters$analysis$frequency$up))
+                    {
+                        Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
+                        return(NULL)
+                    }
+                }else{
+                    GeneralParameters$analysis$frequency$thres <- as.numeric(trimws(tclvalue(freq.val.thres)))
+                    if(is.na(GeneralParameters$analysis$frequency$thres)){
+                        Insert.Messages.Out(lang.dlg[['message']][['3-1']], TRUE, 'e')
+                        return(NULL)
+                    }
                 }
             }
 
             if(GeneralParameters$analysis$method == 'anomaly'){
-                GeneralParameters$analysis$anomaly$perc <- switch(tclvalue(perc.anom), '0' = FALSE, '1' = TRUE)
+                GeneralParameters$analysis$anomaly$perc <- switch(tclvalue(anom.perc.mean), '0' = FALSE, '1' = TRUE)
             }
 
-            ##########
+            if(GeneralParameters$analysis$method %in% c('probExc', 'probNExc')){
+                GeneralParameters$analysis$probs$thres.type <- ProbThresTypeVAL[CbProbThresTypeVAL %in% trimws(tclvalue(probs.thres.type))]
+                if(GeneralParameters$analysis$probs$thres.type == 'percentile'){
+                    GeneralParameters$analysis$probs$thres.percent <- as.numeric(trimws(tclvalue(probs.thres.value)))
+                }else{
+                    GeneralParameters$analysis$probs$thres.value <- as.numeric(trimws(tclvalue(probs.thres.value)))
+                }
+            }
+
+            ######
             # assign("GeneralParameters", GeneralParameters, envir = .GlobalEnv)
 
             Insert.Messages.Out(paste(lang.dlg[['message']][['4']], tclvalue(analysis.method), "......."), TRUE, "i")
@@ -709,12 +828,125 @@ spatialAnalysisPanelCmd <- function(){
             }else Insert.Messages.Out(msg1, TRUE, 'e')
         })
 
+        #############################
+
+        frameStatSave <- ttklabelframe(subfr2, text = lang.dlg[['label']][['30']], relief = 'groove')
+
+        dir.stat.save <- tclVar()
+
+        txt.stat.save <- tklabel(frameStatSave, text = lang.dlg[['label']][['31']], anchor = 'w', justify = 'left')
+        en.stat.save <- tkentry(frameStatSave, textvariable = dir.stat.save, width = largeur2)
+        bt.stat.save <- tkbutton(frameStatSave, text = "...")
+        AnalyzeSave <- ttkbutton(frameStatSave, text = lang.dlg[['button']][['6']])
+
+        tkgrid(txt.stat.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.stat.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.stat.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(AnalyzeSave, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 0, pady = 2, ipadx = 1, ipady = 1)
+
+        ####
+
+        tkconfigure(bt.stat.save, command = function() fileORdir2Save(dir.stat.save, isFile = FALSE))
+
+        tkconfigure(AnalyzeSave, command = function(){
+            analysis_method <- AnalysesVAL[CbAnalysesVAL %in% trimws(tclvalue(analysis.method))]
+            analysis_dir <- switch(analysis_method,
+                                   'mean' = 'Mean',
+                                   'median' = 'Median',
+                                   'min' = 'Minimum',
+                                   'max' = 'Maximum',
+                                   'std' = 'Standard_deviation',
+                                   'trend' = 'Trend',
+                                   'cv' = 'Coefficient_of_variation',
+                                   'percentile' = 'Percentile',
+                                   'frequency' = 'Frequency',
+                                   'anomaly' = 'Anomaly',
+                                   'probExc' = 'Probability_Exceeding',
+                                   'probNExc' = 'Probability_non_Exceeding'
+                                 )
+
+            if(analysis_method == 'trend'){
+                trendU <- TrendUnitVAL[CbTrendUnitVAL %in% trimws(tclvalue(trend.unit))]
+                trend_type <- switch(as.character(trendU), 
+                                     "1" = "per_year",
+                                     "2" = "over_the_period",
+                                     "3" = "percentage_of_mean"
+                                    )
+            }
+            if(analysis_method == 'percentile'){
+                percent_val <- as.numeric(trimws(tclvalue(perc.mthd.val)))
+            }
+            if(analysis_method == 'frequency'){
+                freq_opr <- trimws(tclvalue(freq.oper.fun))
+                if(freq_opr == '>=<'){
+                    freq_low <- as.numeric(trimws(tclvalue(freq.low.thres)))
+                    freq_up <- as.numeric(trimws(tclvalue(freq.up.thres)))
+                    freq_type <- paste0('between_', freq_low, '_', freq_up)
+                }else{
+                    freq_thres <- as.numeric(trimws(tclvalue(freq.val.thres)))
+                    opr <- switch(">=" = 'ge', ">" = 'gt', "<=" = 'le', "<" = 'lt')
+                    freq_type <- paste0(opr, '_', freq_thres)
+                }
+            }
+            if(analysis_method == 'anomaly'){
+                anomaly_type <- switch(tclvalue(anom.perc.mean), 
+                                    '0' = 'difference', 
+                                    '1' = 'percentage_of_mean')
+            }
+            if(analysis_method %in% c('probExc', 'probNExc')){
+                thres_type <- ProbThresTypeVAL[CbProbThresTypeVAL %in% trimws(tclvalue(probs.thres.type))]
+                thres_val <- as.numeric(trimws(tclvalue(probs.thres.value)))
+            }
+
+            analysis_dir_save <- switch(analysis_method,
+                                       'mean' = 'Mean',
+                                       'median' = 'Median',
+                                       'min' = 'Minimum',
+                                       'max' = 'Maximum',
+                                       'std' = 'Standard_deviation',
+                                       'cv' = 'Coefficient_of_variation',
+                                       'trend' = paste0('Trend_', trend_type),
+                                       'percentile' = paste0('Percentile_', percent_val),
+                                       'frequency' = paste0('Frequency_10years_', freq_type),
+                                       'anomaly' = paste0('Anomaly_', anomaly_type),
+                                       'probExc' = paste0('Probability_Exceeding_', thres_type, '_', thres_val),
+                                       'probNExc' = paste0('Probability_non_Exceeding_', thres_type, '_', thres_val)
+                                     )
+
+            res_dir <- trimws(tclvalue(file.save1))
+            outstep <- outSeriesVAL[CboutSeriesVAL %in% trimws(tclvalue(out.tstep))]
+            inFile <- trimws(tclvalue(file.stnfl))
+            spatial_dir <- paste0("SPATIAL.ANALYSIS_", toupper(outstep),
+                                  "_", tools::file_path_sans_ext(basename(inFile)))
+            res_analysis <- file.path(res_dir, spatial_dir, analysis_dir)
+
+            out_dir_save <- trimws(tclvalue(dir.stat.save))
+
+            if(dir.exists(res_analysis)){
+                ret <- file.copy(res_analysis, out_dir_save, recursive = TRUE, overwrite = TRUE)
+                if(ret){
+                    dir1 <- file.path(out_dir_save, analysis_dir)
+                    dir2 <- file.path(out_dir_save, analysis_dir_save)
+                    file.rename(dir1, dir2)
+                    msg <- paste(lang.dlg[['message']][['23']], 'for', analysis_dir)
+                    Insert.Messages.Out(msg, TRUE, "s")
+                }else{
+                    msg <- paste(lang.dlg[['message']][['24']], 'for', analysis_dir)
+                    Insert.Messages.Out(msg, TRUE, 'e')
+                }
+            }else{
+                msg <- paste(lang.dlg[['message']][['25']], 'for', analysis_dir)
+                Insert.Messages.Out(msg, TRUE, 'e')
+            }
+        })
+
         ##############################################
         tkgrid(frameOut, row = 0, column = 0, sticky = 'we')
         tkgrid(bt.YearAnalyze, row = 1, column = 0, sticky = 'we', pady = 1)
         tkgrid(bt.AggrFun, row = 2, column = 0, sticky = 'we', pady = 3)
         tkgrid(frameAnalysis, row = 3, column = 0, sticky = 'we', pady = 1)
-        tkgrid(AnalyzeBut, row = 4, column = 0, sticky = 'we', pady = 3)
+        tkgrid(AnalyzeBut, row = 4, column = 0, sticky = 'we', pady = 5)
+        tkgrid(frameStatSave, row = 5, column = 0, sticky = 'we', pady = 5)
 
     #######################################################################################################
 

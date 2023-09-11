@@ -3,7 +3,9 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtExtractData_Procs.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
-    missval <- -9999
+    if(GUI){
+        missval <- as.numeric(.cdtData$Config$missval)
+    }else missval <- -9999
 
     ###############################################
 
@@ -146,14 +148,18 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
         if(file.exists(outputDIR)) unlink(outputDIR)
     }
 
-    ####
-    rgtime <- check.start.end.InfoDate(tstep, date.range)
-    if(any(sapply(rgtime, is.null))){
-        Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, "e", GUI)
-        return(NULL)
+    #####################################
+
+    if(!(tstep %in% c('onefile', 'others'))){
+        rgtime <- check.start.end.InfoDate(tstep, date.range)
+        if(any(sapply(rgtime, is.null))){
+            Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, "e", GUI)
+            return(NULL)
+        }
     }
- 
-    ####
+
+    #####################################
+
     if(GeneralParameters$type.extract == 'point')
     {
         if(is.na(xminLon) | is.na(xminLat))
@@ -253,87 +259,101 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
 
     #####################################
 
-    if(tstep == "seasonal"){
-        startMonth <- GeneralParameters$season.start
-        seasonLength <- GeneralParameters$season.len
-        dates <- table.format.date.seasonal(date.range, startMonth, seasonLength)
-    }else{
-        dates <- table.format.date.time(tstep, date.range, minhour)
-    }
+    if(!(tstep %in% c('onefile', 'others'))){
+        if(tstep == "seasonal"){
+            startMonth <- GeneralParameters$season.start
+            seasonLength <- GeneralParameters$season.len
+            dates <- table.format.date.seasonal(date.range, startMonth, seasonLength)
+        }else{
+            dates <- table.format.date.time(tstep, date.range, minhour)
+        }
 
-    if(!tstep %in% c("annual", "seasonal")){
-        startMonth <- GeneralParameters$months$start
-        endMonth <- GeneralParameters$months$end
+        if(!tstep %in% c("annual", "seasonal")){
+            startMonth <- GeneralParameters$months$start
+            endMonth <- GeneralParameters$months$end
 
-        seasonLength <- (endMonth - startMonth + 1) %% 12
-        seasonLength[seasonLength == 0] <- 12
-        monthtoExtr <- (startMonth:(startMonth + (seasonLength - 1))) %% 12
-        monthtoExtr[monthtoExtr == 0] <- 12
+            seasonLength <- (endMonth - startMonth + 1) %% 12
+            seasonLength[seasonLength == 0] <- 12
+            monthtoExtr <- (startMonth:(startMonth + (seasonLength - 1))) %% 12
+            monthtoExtr[monthtoExtr == 0] <- 12
 
-        imois <- as.numeric(dates[, 2]) %in% monthtoExtr
-        dates <- dates[imois, , drop = FALSE]
-    }else{
-        imois <- rep(TRUE, nrow(dates))
-    }
+            imois <- as.numeric(dates[, 2]) %in% monthtoExtr
+            dates <- dates[imois, , drop = FALSE]
+        }else{
+            imois <- rep(TRUE, nrow(dates))
+        }
 
-    xdaty <- dates[, -ncol(dates), drop = FALSE]
-    xdaty <- split(xdaty, col(xdaty))
+        xdaty <- dates[, -ncol(dates), drop = FALSE]
+        xdaty <- split(xdaty, col(xdaty))
 
-    if(tstep == "seasonal"){
-        dates <- paste0(xdaty[[1]], '-', xdaty[[2]], '_',
-                        xdaty[[3]], '-', xdaty[[4]])
-    }else{
-        dates <- do.call(paste0, xdaty)
+        if(tstep == "seasonal"){
+            dates <- paste0(xdaty[[1]], '-', xdaty[[2]], '_',
+                            xdaty[[3]], '-', xdaty[[4]])
+        }else{
+            dates <- do.call(paste0, xdaty)
+        }
     }
 
     #####################################
 
     if(GeneralParameters$data.type == 'cdtnetcdf'){
-        inputdat <- GeneralParameters$cdtnetcdf
-        ncfiles <- do.call(sprintf, c(list(fmt = inputdat$format), xdaty))
-
-        ncfiles <- ncfiles[imois]
-        ncpath <- file.path(inputdat$dir, ncfiles)
-        existFl <- unlist(lapply(ncpath, file.exists))
-
-        if(!any(existFl)){
-            Insert.Messages.Out(lang.dlg[['message']][['12']], TRUE, "e", GUI)
+        if(tstep == "onefile"){
+            ncdata <- getNcdfOpenData(GeneralParameters$cdtnetcdf$dir)
+            lon <- ncdata[[2]]$x
+            lat <- ncdata[[2]]$y
+            varInfo <- ncdata[[2]]$varinfo
+        }else if(tstep == "others"){
+            ## 
+            ##
+            ##
+            Insert.Messages.Out("Not implemented yet", TRUE, "e", GUI)
             return(NULL)
-        }
-
-        dates <- dates[existFl]
-        ncpath <- ncpath[existFl]
-
-        ####
-        if(GUI){
-            ncInfo <- getNCDFSampleData(inputdat$sample)
-            if(is.null(ncInfo)){
-                Insert.Messages.Out(lang.dlg[['message']][['13']], TRUE, "e", GUI)
-                return(NULL)
-            }
-            ncInfo <- ncInfo[c('varid', 'ilon', 'ilat')]
         }else{
-            ncInfo <- inputdat$sample
-            if(is.null(ncInfo$varid) | is.null(ncInfo$ilon) | is.null(ncInfo$ilat)){
-                Insert.Messages.Out(lang.dlg[['message']][['14']], TRUE, "e", GUI)
+            inputdat <- GeneralParameters$cdtnetcdf
+            ncfiles <- do.call(sprintf, c(list(fmt = inputdat$format), xdaty))
+            ncfiles <- ncfiles[imois]
+            ncpath <- file.path(inputdat$dir, ncfiles)
+            existFl <- unlist(lapply(ncpath, file.exists))
+
+            if(!any(existFl)){
+                Insert.Messages.Out(lang.dlg[['message']][['12']], TRUE, "e", GUI)
                 return(NULL)
             }
+
+            dates <- dates[existFl]
+            ncpath <- ncpath[existFl]
+
+            ####
+            if(GUI){
+                ncInfo <- getNCDFSampleData(inputdat$sample)
+                if(is.null(ncInfo)){
+                    Insert.Messages.Out(lang.dlg[['message']][['13']], TRUE, "e", GUI)
+                    return(NULL)
+                }
+                ncInfo <- ncInfo[c('varid', 'ilon', 'ilat')]
+            }else{
+                ncInfo <- inputdat$sample
+                if(is.null(ncInfo$varid) | is.null(ncInfo$ilon) | is.null(ncInfo$ilat)){
+                    Insert.Messages.Out(lang.dlg[['message']][['14']], TRUE, "e", GUI)
+                    return(NULL)
+                }
+            }
+
+            varInfo <- NULL
+            varInfo$name <- ncInfo$varid
+            nc <- ncdf4::nc_open(ncpath[1])
+            lon <- nc$var[[ncInfo$varid]]$dim[[ncInfo$ilon]]$vals
+            lat <- nc$var[[ncInfo$varid]]$dim[[ncInfo$ilat]]$vals
+            varInfo$longname <- nc$var[[ncInfo$varid]]$longname
+            varInfo$units <- nc$var[[ncInfo$varid]]$units
+            varInfo$prec <- nc$var[[ncInfo$varid]]$prec
+            ncdf4::nc_close(nc)
+
+            ncInfo$xo <- order(lon)
+            lon <- lon[ncInfo$xo]
+            ncInfo$yo <- order(lat)
+            lat <- lat[ncInfo$yo]
         }
-
-        varInfo <- NULL
-        varInfo$name <- ncInfo$varid
-        nc <- ncdf4::nc_open(ncpath[1])
-        lon <- nc$var[[ncInfo$varid]]$dim[[ncInfo$ilon]]$vals
-        lat <- nc$var[[ncInfo$varid]]$dim[[ncInfo$ilat]]$vals
-        varInfo$longname <- nc$var[[ncInfo$varid]]$longname
-        varInfo$units <- nc$var[[ncInfo$varid]]$units
-        varInfo$prec <- nc$var[[ncInfo$varid]]$prec
-        ncdf4::nc_close(nc)
-
-        ncInfo$xo <- order(lon)
-        lon <- lon[ncInfo$xo]
-        ncInfo$yo <- order(lat)
-        lat <- lat[ncInfo$yo]
     }else{
         inputdat <- GeneralParameters$cdtdataset
         if(!file.exists(inputdat$index)){
@@ -442,51 +462,26 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
 
     #####################################
     Insert.Messages.Out(lang.dlg[['message']][['20']], TRUE, "i", GUI)
- 
+
     params <- GeneralParameters
 
     if(params$data.type == 'cdtnetcdf'){
-        parsL <- doparallel.cond(length(ncpath) >= 100)
-        ret <- cdt.foreach(seq_along(ncpath), parsL, GUI, progress, FUN = function(jj)
-        {
-            exract_write_NCDF <- function(ii, mat){
-                outfile <- file.path(outputDIR[ii], basename(ncpath[jj]))
-                dx <- ncdf4::ncdim_def("Lon", "degreeE", headinfo[[ii]]$x)
-                dy <- ncdf4::ncdim_def("Lat", "degreeN", headinfo[[ii]]$y)
-                xydim <- list(dx, dy)
-                ncout <- do.call(ncdf4::ncvar_def, c(varInfo, list(dim = xydim, missval = -9999, compression = 9)))
-                mat <- mat[headinfo[[ii]]$z]
-                dim(mat) <- dim(headinfo[[ii]]$z)
-                mat[is.na(mat)] <- missval
-                nc <- ncdf4::nc_create(outfile, ncout)
-                ncdf4::ncvar_put(nc, ncout, mat)
-                ncdf4::nc_close(nc)
-            }
-
-            exract_write_TYXZ <- function(ii, mat){
-                outfile <- outputDIR[ii]
-                crds <- expand.grid(headinfo[[ii]]$x, headinfo[[ii]]$y)
-                crds <- round(crds[, 2:1], 6)
-                ina <- c(is.na(headinfo[[ii]]$z))
-                mat <- round(mat[headinfo[[ii]]$z], 3)
-                mat <- cbind(dates[jj], crds, mat)
-                mat <- mat[!ina, , drop = FALSE]
-                writeFiles(mat, outfile, append = TRUE)
-            }
-
-            ###############
-
-            nc <- try(ncdf4::nc_open(ncpath[jj]), silent = TRUE)
-            if(inherits(nc, "try-error")) return(NA)
-            val <- ncdf4::ncvar_get(nc, varid = ncInfo$varid)
-            ncdf4::nc_close(nc)
-            val <- transposeNCDFData(val, ncInfo)
+        if(tstep == "onefile"){
+            val <- ncdata[[2]]$z
 
             if(params$type.extract == 'point')
             {
                 extdat <- val[ij2xtr]
                 if(length(ij2xtr) > 1)
                     extdat <- mean(extdat, na.rm = TRUE)
+
+                caption <- c('ID', 'LON', 'DATE/LAT')
+                xhead <- t(headinfo)
+                ret <- round(extdat, 3)
+                ret[is.na(ret)] <- missval
+                ret <- rbind(xhead, ret)
+                ret <- cbind(c(caption, "Values"), ret)
+                writeFiles(ret, outputDIR)
             }
 
             if(params$type.extract == 'mpoint')
@@ -501,165 +496,360 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
                     tmp <- rep(NA, length(nonZero))
                     tmp[nonZero] <- extdat
                     extdat <- tmp
-                    rm(tmp)
                 }
+
+                caption <- c('ID', 'LON', 'DATE/LAT')
+                xhead <- t(headinfo)
+                ret <- round(extdat, 3)
+                ret[is.na(ret)] <- missval
+                ret <- rbind(xhead, ret)
+                ret <- cbind(c(caption, "Values"), ret)
+                writeFiles(ret, outputDIR)
             }
 
             if(params$type.extract %in% c('rect', 'poly'))
             {
-                extdat <- lapply(seq_along(ij2xtr), function(ii){
-                    ij <- ij2xtr[[ii]]
-                    mat <- val[ij[, "value"]]
+                # extdat <- lapply(seq_along(ij2xtr), function(ii){
+                # ij <- ij2xtr[[ii]]
+                ij <- ij2xtr[[1]]
+                mat <- val[ij[, "value"]]
 
-                    if(params$out.data$sp.avrg)
-                    {
-                        if(nrow(ij) > 1){
-                            mat <- mat * ij[, "weight"]
-                            mat <- mat[!is.na(mat)]
-                            mat <- if(length(mat) > 0) sum(mat) else NA
-                        }
-                        return(mat)
-                    }else{
-                        if(params$out.data$format == "ncdf"){
-                            exract_write_NCDF(ii, mat)
-                            return(NULL)
-                        }
-
-                        if(params$out.data$format == "tyxz"){
-                            exract_write_TYXZ(ii, mat)
-                            return(NULL)
-                        }
-
-                        if(params$out.data$format == "cpt"){
-                            ### mthd1
-                            mat <- mat[headinfo[[ii]]$z]
-                            dim(mat) <- dim(headinfo[[ii]]$z)
-                            mat[is.na(mat)] <- missval
-                            return(mat)
-
-                            ### mthd2
-                            # mat <- mat[headinfo[[ii]]$z]
-                            # mat <- matrix(mat, nrow = 1)
-                            # writeFiles(mat, outputDIR[ii], append = TRUE)
-                            # return(jj)
-                        }
+                if(params$out.data$sp.avrg)
+                {
+                    if(nrow(ij) > 1){
+                        mat <- mat * ij[, "weight"]
+                        mat <- mat[!is.na(mat)]
+                        mat <- if(length(mat) > 0) sum(mat) else NA
                     }
-                })
-                extdat <- extdat[[1]]
+                    
+                    caption <- c('ID', 'LON', 'DATE/LAT')
+                    xhead <- t(headinfo)
+                    ret <- round(mat, 3)
+                    ret[is.na(ret)] <- missval
+                    ret <- rbind(xhead, ret)
+                    ret <- cbind(c(caption, 'Value'), ret)
+                    writeFiles(ret, outputDIR)
+                }else{
+                    if(params$out.data$format == "ncdf"){
+                        if(params$type.extract == 'rect'){
+                            outfile <- paste0('extracted_rectangle_', ncdata[[1]])
+                        }else{
+                            namepoly <- gsub("[^[:alnum:]]", "", GeneralParameters$Geom$namePoly)
+                            namepoly <- substr(namepoly, 1, 25)
+                            outfile <- paste0('extracted_', namepoly, '_', ncdata[[1]])
+                        }
+
+                        outfile <- file.path(outputDIR, outfile)
+                        dx <- ncdf4::ncdim_def("Lon", "degreeE", headinfo[[1]]$x)
+                        dy <- ncdf4::ncdim_def("Lat", "degreeN", headinfo[[1]]$y)
+                        xydim <- list(dx, dy)
+                        ncout <- do.call(ncdf4::ncvar_def, c(varInfo[c('name', 'prec', 'units', 'longname')], list(dim = xydim, missval = -9999, compression = 9)))
+                        mat <- mat[headinfo[[1]]$z]
+                        dim(mat) <- dim(headinfo[[1]]$z)
+                        mat[is.na(mat)] <- missval
+                        nc <- ncdf4::nc_create(outfile, ncout)
+                        ncdf4::ncvar_put(nc, ncout, mat)
+                        ncdf4::nc_close(nc)
+                    }
+
+                    if(params$out.data$format == "tyxz"){
+                        crds <- expand.grid(headinfo[[1]]$x, headinfo[[1]]$y)
+                        crds <- round(crds[, 2:1], 6)
+                        ina <- c(is.na(headinfo[[1]]$z))
+                        mat <- round(mat[headinfo[[1]]$z], 3)
+                        mat <- cbind(crds, mat)
+                        mat <- mat[!ina, , drop = FALSE]
+                        names(mat) <- c('Lat', 'Lon', 'Values')
+                        writeFiles(mat, outputDIR, col.names = TRUE)
+                    }
+                }
+                # })
             }
 
             if(params$type.extract == 'mpoly')
             {
-                extdat <- sapply(seq_along(ij2xtr), function(ii){
-                    ij <- ij2xtr[[ii]]
-                    mat <- val[ij[, "value"]]
+                if(params$out.data$format %in% c("ncdf", "tyxz")){
+                    for(ii in seq_along(ij2xtr)){
+                        ij <- ij2xtr[[ii]]
+                        mat <- val[ij[, "value"]]
 
-                    if(params$out.data$format %in% c('cdt', 'cpt'))
-                    {
+                        if(params$out.data$format == "ncdf"){
+                            outfile <- paste0('extracted_', basename(outputDIR[ii]), '_', ncdata[[1]])
+                            outfile <- file.path(outputDIR[ii], outfile)
+                            dx <- ncdf4::ncdim_def("Lon", "degreeE", headinfo[[ii]]$x)
+                            dy <- ncdf4::ncdim_def("Lat", "degreeN", headinfo[[ii]]$y)
+                            xydim <- list(dx, dy)
+                            ncout <- do.call(ncdf4::ncvar_def, c(varInfo[c('name', 'prec', 'units', 'longname')], list(dim = xydim, missval = -9999, compression = 9)))
+                            mat <- mat[headinfo[[ii]]$z]
+                            dim(mat) <- dim(headinfo[[ii]]$z)
+                            mat[is.na(mat)] <- missval
+                            nc <- ncdf4::nc_create(outfile, ncout)
+                            ncdf4::ncvar_put(nc, ncout, mat)
+                            ncdf4::nc_close(nc)
+                        }
+
+                        if(params$out.data$format == "tyxz"){
+                            crds <- expand.grid(headinfo[[ii]]$x, headinfo[[ii]]$y)
+                            crds <- round(crds[, 2:1], 6)
+                            ina <- c(is.na(headinfo[[ii]]$z))
+                            mat <- round(mat[headinfo[[ii]]$z], 3)
+                            mat <- cbind(crds, mat)
+                            mat <- mat[!ina, , drop = FALSE]
+                            names(mat) <- c('Lat', 'Lon', 'Values')
+                            writeFiles(mat, outputDIR[ii], col.names = TRUE)
+                        }
+                    }
+                }
+
+                if(params$out.data$format == 'cdt'){
+                    extdat <- sapply(seq_along(ij2xtr), function(ii){
+                        ij <- ij2xtr[[ii]]
+                        mat <- val[ij[, "value"]]
+
                         if(nrow(ij) > 1){
                             mat <- mat * ij[, "weight"]
                             mat <- mat[!is.na(mat)]
                             mat <- if(length(mat) > 0) sum(mat) else NA
                         }
-                        return(mat)
-                    }else{
-                        if(params$out.data$format == "ncdf"){
-                            exract_write_NCDF(ii, mat)
-                            return(NULL)
-                        }
 
-                        if(params$out.data$format == "tyxz"){
-                            exract_write_TYXZ(ii, mat)
-                            return(NULL)
-                        }
-                    }
-                })
-                
-                if(params$out.data$format %in% c('cdt', 'cpt'))
-                {
+                        return(mat)
+                    })
+
                     if(!all(nonNull)){
                         tmp <- rep(NA, length(nonNull))
                         tmp[nonNull] <- extdat
                         extdat <- tmp
+                    }
+
+                    caption <- c('ID', 'LON', 'DATE/LAT')
+                    xhead <- t(headinfo)
+                    ret <- round(extdat, 3)
+                    ret[is.na(ret)] <- missval
+                    ret <- rbind(xhead, ret)
+                    ret <- cbind(c(caption, "Values"), ret)
+                    writeFiles(ret, outputDIR)
+                }
+            }
+        }else if(tstep == "others"){
+            ##
+            ##
+            ##
+        }else{
+            parsL <- doparallel.cond(length(ncpath) >= 100)
+            ret <- cdt.foreach(seq_along(ncpath), parsL, GUI, progress, FUN = function(jj)
+            {
+                exract_write_NCDF <- function(ii, mat){
+                    outfile <- file.path(outputDIR[ii], basename(ncpath[jj]))
+                    dx <- ncdf4::ncdim_def("Lon", "degreeE", headinfo[[ii]]$x)
+                    dy <- ncdf4::ncdim_def("Lat", "degreeN", headinfo[[ii]]$y)
+                    xydim <- list(dx, dy)
+                    ncout <- do.call(ncdf4::ncvar_def, c(varInfo, list(dim = xydim, missval = -9999, compression = 9)))
+                    mat <- mat[headinfo[[ii]]$z]
+                    dim(mat) <- dim(headinfo[[ii]]$z)
+                    mat[is.na(mat)] <- missval
+                    nc <- ncdf4::nc_create(outfile, ncout)
+                    ncdf4::ncvar_put(nc, ncout, mat)
+                    ncdf4::nc_close(nc)
+                }
+
+                exract_write_TYXZ <- function(ii, mat){
+                    outfile <- outputDIR[ii]
+                    crds <- expand.grid(headinfo[[ii]]$x, headinfo[[ii]]$y)
+                    crds <- round(crds[, 2:1], 6)
+                    ina <- c(is.na(headinfo[[ii]]$z))
+                    mat <- round(mat[headinfo[[ii]]$z], 3)
+                    mat <- cbind(dates[jj], crds, mat)
+                    mat <- mat[!ina, , drop = FALSE]
+                    writeFiles(mat, outfile, append = TRUE)
+                }
+
+                ###############
+
+                nc <- try(ncdf4::nc_open(ncpath[jj]), silent = TRUE)
+                if(inherits(nc, "try-error")) return(NA)
+                val <- ncdf4::ncvar_get(nc, varid = ncInfo$varid)
+                ncdf4::nc_close(nc)
+                val <- transposeNCDFData(val, ncInfo)
+
+                if(params$type.extract == 'point')
+                {
+                    extdat <- val[ij2xtr]
+                    if(length(ij2xtr) > 1)
+                        extdat <- mean(extdat, na.rm = TRUE)
+                }
+
+                if(params$type.extract == 'mpoint')
+                {
+                    extdat <- sapply(ij2xtr, function(ij){
+                        mat <- val[ij]
+                        if(length(ij) > 1)
+                            mat <- mean(mat, na.rm = TRUE)
+                        return(mat)
+                    })
+                    if(!all(nonZero)){
+                        tmp <- rep(NA, length(nonZero))
+                        tmp[nonZero] <- extdat
+                        extdat <- tmp
                         rm(tmp)
                     }
                 }
+
+                if(params$type.extract %in% c('rect', 'poly'))
+                {
+                    extdat <- lapply(seq_along(ij2xtr), function(ii){
+                        ij <- ij2xtr[[ii]]
+                        mat <- val[ij[, "value"]]
+
+                        if(params$out.data$sp.avrg)
+                        {
+                            if(nrow(ij) > 1){
+                                mat <- mat * ij[, "weight"]
+                                mat <- mat[!is.na(mat)]
+                                mat <- if(length(mat) > 0) sum(mat) else NA
+                            }
+                            return(mat)
+                        }else{
+                            if(params$out.data$format == "ncdf"){
+                                exract_write_NCDF(ii, mat)
+                                return(NULL)
+                            }
+
+                            if(params$out.data$format == "tyxz"){
+                                exract_write_TYXZ(ii, mat)
+                                return(NULL)
+                            }
+
+                            if(params$out.data$format == "cpt"){
+                                ### mthd1
+                                mat <- mat[headinfo[[ii]]$z]
+                                dim(mat) <- dim(headinfo[[ii]]$z)
+                                mat[is.na(mat)] <- missval
+                                return(mat)
+
+                                ### mthd2
+                                # mat <- mat[headinfo[[ii]]$z]
+                                # mat <- matrix(mat, nrow = 1)
+                                # writeFiles(mat, outputDIR[ii], append = TRUE)
+                                # return(jj)
+                            }
+                        }
+                    })
+                    extdat <- extdat[[1]]
+                }
+
+                if(params$type.extract == 'mpoly')
+                {
+                    extdat <- sapply(seq_along(ij2xtr), function(ii){
+                        ij <- ij2xtr[[ii]]
+                        mat <- val[ij[, "value"]]
+
+                        if(params$out.data$format %in% c('cdt', 'cpt'))
+                        {
+                            if(nrow(ij) > 1){
+                                mat <- mat * ij[, "weight"]
+                                mat <- mat[!is.na(mat)]
+                                mat <- if(length(mat) > 0) sum(mat) else NA
+                            }
+                            return(mat)
+                        }else{
+                            if(params$out.data$format == "ncdf"){
+                                exract_write_NCDF(ii, mat)
+                                return(NULL)
+                            }
+
+                            if(params$out.data$format == "tyxz"){
+                                exract_write_TYXZ(ii, mat)
+                                return(NULL)
+                            }
+                        }
+                    })
+                    
+                    if(params$out.data$format %in% c('cdt', 'cpt'))
+                    {
+                        if(!all(nonNull)){
+                            tmp <- rep(NA, length(nonNull))
+                            tmp[nonNull] <- extdat
+                            extdat <- tmp
+                            rm(tmp)
+                        }
+                    }
+                }
+
+                rm(val)
+                return(extdat)
+            })
+
+            #############
+
+            cond1 <- params$out.data$sp.avrg
+            cond2 <- params$out.data$format == "cdt"
+            cond3 <- params$out.data$format == "cpt"
+            cond4 <- params$type.extract %in% c('rect', 'poly')
+            cond5 <- params$type.extract %in% c('point', 'mpoint', 'mpoly')
+            cond6 <- (cond3 & cond5) | (cond3 & cond1)
+            cond7 <- cond3 & !cond1 & cond4
+
+            if(cond1 | cond2 | cond6) ret <- do.call(rbind, ret)
+
+            if(cond2){
+                caption <- c('ID', 'LON', 'DATE/LAT')
+                xhead <- t(headinfo)
+                ret <- round(ret, 3)
+                ret[is.na(ret)] <- missval
+                ret <- rbind(xhead, ret)
+                ret <- cbind(c(caption, dates), ret)
+                writeFiles(ret, outputDIR)
             }
 
-            rm(val)
-            return(extdat)
-        })
+            if(cond6){
+                ret <- round(ret, 3)
+                ret[is.na(ret)] <- missval
+                cptIn <- list(data = ret, date = dates, stninfo = headinfo,
+                              varid = varInfo$name, units = varInfo$units,
+                              missval = missval)
+                cptOut <- do.call(CPT.convertStationData, cptIn)
+                cat(cptOut, file = outputDIR)
+            }
 
-        #############
+            if(cond7){
+                ### mthd1
+                ret <- lapply(ret, function(x){
+                    if(is.null(dim(x)) & is.na(x[1]))
+                        x <- array(missval, dim(headinfo[[1]]$z))
+                    return(x)
+                })
+                gridinfo <- headinfo[[1]][c('x', 'y')]
+                cptIn <- list(data = ret, date = dates, gridinfo = gridinfo,
+                              varid = varInfo$name, units = varInfo$units,
+                              missval = missval)
+                cptOut <- do.call(CPT.convertGridData, cptIn)
+                cat(cptOut, file = outputDIR)
 
-        cond1 <- params$out.data$sp.avrg
-        cond2 <- params$out.data$format == "cdt"
-        cond3 <- params$out.data$format == "cpt"
-        cond4 <- params$type.extract %in% c('rect', 'poly')
-        cond5 <- params$type.extract %in% c('point', 'mpoint', 'mpoly')
-        cond6 <- (cond3 & cond5) | (cond3 & cond1)
-        cond7 <- cond3 & !cond1 & cond4
-
-        if(cond1 | cond2 | cond6) ret <- do.call(rbind, ret)
-
-        if(cond2){
-            caption <- c('ID', 'LON', 'DATE/LAT')
-            xhead <- t(headinfo)
-            ret <- round(ret, 3)
-            ret[is.na(ret)] <- missval
-            ret <- rbind(xhead, ret)
-            ret <- cbind(c(caption, dates), ret)
-            writeFiles(ret, outputDIR)
+                ### mthd2
+                # ix <- do.call(c, ret)
+                # ix <- ix[!is.na(x)]
+                # ix <- order(ix)
+                # dates <- dates[ix]
+                # ret <- read.table(outputDIR)
+                # ret <- ret[ix, , drop = FALSE]
+                # ret <- lapply(seq(nrow(ret)), function(j){
+                #     x <- as.numeric(ret[j, ])
+                #     dim(x) <- dim(headinfo[[1]]$z)
+                #     x[is.na(x)] <- missval
+                #     x
+                # })
+                # gridinfo <- headinfo[[1]][c('x', 'y')]
+                # cptIn <- list(data = ret, date = dates, gridinfo = gridinfo,
+                #               varid = varInfo$name, units = varInfo$units,
+                #               missval = missval)
+                # cptOut <- do.call(CPT.convertGridData, cptIn)
+                # cat(cptOut, file = outputDIR)
+            }
         }
-
-        if(cond6){
-            ret <- round(ret, 3)
-            ret[is.na(ret)] <- missval
-            cptIn <- list(data = ret, date = dates, stninfo = headinfo,
-                          varid = varInfo$name, units = varInfo$units,
-                          missval = missval)
-            cptOut <- do.call(CPT.convertStationData, cptIn)
-            cat(cptOut, file = outputDIR)
-        }
-
-        if(cond7){
-            ### mthd1
-            ret <- lapply(ret, function(x){
-                if(is.null(dim(x)) & is.na(x[1]))
-                    x <- array(missval, dim(headinfo[[1]]$z))
-                return(x)
-            })
-            gridinfo <- headinfo[[1]][c('x', 'y')]
-            cptIn <- list(data = ret, date = dates, gridinfo = gridinfo,
-                          varid = varInfo$name, units = varInfo$units,
-                          missval = missval)
-            cptOut <- do.call(CPT.convertGridData, cptIn)
-            cat(cptOut, file = outputDIR)
-
-            ### mthd2
-            # ix <- do.call(c, ret)
-            # ix <- ix[!is.na(x)]
-            # ix <- order(ix)
-            # dates <- dates[ix]
-            # ret <- read.table(outputDIR)
-            # ret <- ret[ix, , drop = FALSE]
-            # ret <- lapply(seq(nrow(ret)), function(j){
-            #     x <- as.numeric(ret[j, ])
-            #     dim(x) <- dim(headinfo[[1]]$z)
-            #     x[is.na(x)] <- missval
-            #     x
-            # })
-            # gridinfo <- headinfo[[1]][c('x', 'y')]
-            # cptIn <- list(data = ret, date = dates, gridinfo = gridinfo,
-            #               varid = varInfo$name, units = varInfo$units,
-            #               missval = missval)
-            # cptOut <- do.call(CPT.convertGridData, cptIn)
-            # cat(cptOut, file = outputDIR)
-        }
-
         Insert.Messages.Out(lang.dlg[['message']][['21']], TRUE, "s", GUI)
     }else{
         ## cdtdataset
+        Insert.Messages.Out("Not implemented yet", TRUE, "e", GUI)
     }
 
     return(0)

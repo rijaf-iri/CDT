@@ -28,7 +28,9 @@ spatialAnalysisEditYrsMon <- function(parent.win, vedit, is.year){
     tkgrid.configure(yscr.Edit, sticky = "ns")
     tkgrid.configure(text.Edit, sticky = 'nswe')
 
-    if(length(vedit) == 1 & is.na(vedit)) vedit <- ''
+    if(length(vedit) == 1){
+        if(is.na(vedit)) vedit <- ''
+    }
     if(length(vedit) == 0) vedit <- ''
     vedit <- paste0(vedit, collapse = ', ')
 

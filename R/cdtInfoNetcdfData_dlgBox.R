@@ -1,5 +1,5 @@
 
-getInfoNetCDFData <- function(parent.win, Parameters, ncDIR)
+getInfoNetCDFData <- function(parent.win, Parameters, ncDIR, stateFormat = 'normal')
 {
     largeur1 <- if(WindowsOS()) 42 else 40
 
@@ -26,7 +26,7 @@ getInfoNetCDFData <- function(parent.win, Parameters, ncDIR)
     cb.ncsample <- ttkcombobox(frFF, values = unlist(openFile_ttkcomboList()), textvariable = rfesample, width = largeur1)
     bt.ncsample <- tkbutton(frFF, text = "...")
     txt.inrfeff <- tklabel(frFF, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-    en.inrfeff <- tkentry(frFF, textvariable = inrfeff, width = largeur1)
+    en.inrfeff <- tkentry(frFF, textvariable = inrfeff, width = largeur1, state = stateFormat)
 
     ###################
 

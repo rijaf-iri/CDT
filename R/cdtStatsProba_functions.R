@@ -776,3 +776,46 @@ qgumbel <- function(p, loc = 0, scale = 1, lower.tail = TRUE){
 rgumbel <- function(n, loc = 0, scale = 1){
     loc - scale * log(stats::rexp(n))
 }
+
+#############################################
+
+probability.exceeding.vec <- function(x, thres){
+    x <- x[!is.na(x)]
+    if(length(x) < 3) return(NA)
+    x <- x[order(x)]
+    rk <- rank(x)
+    rk <- max(rk) - rk + 1
+    pr <- rk / (length(rk) + 1)
+
+    dx <- duplicated(x)
+    fpr <- stats::approxfun(x[!dx], pr[!dx])
+
+    if(thres < min(x)){
+        x1 <- min(x) - stats::median(diff(x))
+        if(thres < x1){
+            out <- 1
+        }else{
+            out <- pr[1] + (thres - x[1]) * (1 - pr[1])/(x1 - x[1])
+        }
+    }else if(thres > max(x)){
+        x0 <- max(x) + stats::median(diff(x))
+        if(thres > x0){
+            out <- 0
+        }else{
+            n <- length(x)
+            out <- pr[n] + (thres - x[n]) * (-pr[n])/(x0 - x[n])
+        }
+    }else{
+        out <- fpr(thres)
+    }
+
+    100 * out
+}
+
+probability.exceeding.mat <- function(x, thres){
+    out <- lapply(seq(ncol(x)), function(j){
+        probability.exceeding.vec(x[, j], thres[j])
+    })
+
+    do.call(c, out)
+}
