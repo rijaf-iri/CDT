@@ -441,6 +441,7 @@ refreshCDT <- function(staterun = "disabled"){
     unlink(file.path(.cdtEnv$tcl$dir, list.files(.cdtEnv$tcl$dir, "\\.png$")))
     tclvalue(.cdtEnv$tcl$status$pbLab) <- ""
     tclvalue(.cdtEnv$tcl$status$pbBar) <- 0
+    tclvalue(.cdtEnv$tcl$status$pbnmax) <- 1
 }
 
 ########################################################################

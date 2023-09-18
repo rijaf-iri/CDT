@@ -264,17 +264,48 @@ cdt.foreach <- function(loopL, parsL, GUI = TRUE, progress = FALSE, ..., FUN)
     if(missing(parsL)) parsL <- list(condition = FALSE)
     is.parallel <- do.call(cdt.doparallel, parsL)
 
-    tclvalue(.cdtEnv$tcl$status$pbnmax) <- length(loopL)
-
+    ###########
+    ### use of .cdtEnv$tcl$status$pbnmax
     if(progress){
+        tclvalue(.cdtEnv$tcl$status$pbnmax) <- length(loopL)
+
         if(GUI){
             tclvalue(.cdtEnv$tcl$status$pbLab) <- "0 %"
             tclvalue(.cdtEnv$tcl$status$pbBar) <- 0
+            progress.fun <- updateProgressBar
+        }else{
+            progress.fun <- updateProgressText
         }
 
-        progress.fun <- if(GUI) updateProgressBar else updateProgressText
         opts <- list(progress = progress.fun)
     }else opts <- list(progress = NULL)
+
+    ###########
+    ### no need of .cdtEnv$tcl$status$pbnmax, it can be removed
+    # if(progress){
+    #     pbnmax <- length(loopL)
+
+    #     if(GUI){
+    #         tclvalue(.cdtEnv$tcl$status$pbLab) <- "0 %"
+    #         tclvalue(.cdtEnv$tcl$status$pbBar) <- 0
+    #         progress.fun <- function(n){
+    #             newvalue <- 100 * n / pbnmax
+    #             newlabel <- sprintf("%.f %%", round(newvalue))
+    #             tclvalue(.cdtEnv$tcl$status$pbLab) <- newlabel
+    #             tclvalue(.cdtEnv$tcl$status$pbBar) <- newvalue
+    #             tcl("update", "idletask")
+    #         }
+    #     }else{
+    #         progress.fun <- function(n){
+    #             newvalue <- 100 * n / pbnmax
+    #             cat(sprintf("Task %.f done; %.1f %% completed\n", n, newvalue))
+    #         }
+    #     }
+
+    #     opts <- list(progress = progress.fun)
+    # }else opts <- list(progress = NULL)
+
+    ###########
 
     if(is.parallel$parLL){
         on.exit(parallel::stopCluster(is.parallel$cluster))

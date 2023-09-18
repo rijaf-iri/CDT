@@ -1718,6 +1718,7 @@ startCDT <- function(wd = NA, lang = NA){
     tkbind(top.menu, "<ButtonPress-1>", function(){
         tclvalue(.cdtEnv$tcl$status$pbLab) <- ""
         tclvalue(.cdtEnv$tcl$status$pbBar) <- 0
+        tclvalue(.cdtEnv$tcl$status$pbnmax) <- 1
     })
  
     #################################################################################
