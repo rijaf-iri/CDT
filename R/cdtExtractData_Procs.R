@@ -645,7 +645,7 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
                     dx <- ncdf4::ncdim_def("Lon", "degreeE", headinfo[[ii]]$x)
                     dy <- ncdf4::ncdim_def("Lat", "degreeN", headinfo[[ii]]$y)
                     xydim <- list(dx, dy)
-                    ncout <- do.call(ncdf4::ncvar_def, c(varInfo, list(dim = xydim, missval = -9999, compression = 9)))
+                    ncout <- do.call(ncdf4::ncvar_def, c(varInfo, list(dim = xydim, missval = missval, compression = 9)))
                     mat <- mat[headinfo[[ii]]$z]
                     dim(mat) <- dim(headinfo[[ii]]$z)
                     mat[is.na(mat)] <- missval
