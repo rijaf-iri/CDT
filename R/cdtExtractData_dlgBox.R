@@ -92,7 +92,7 @@ extractTS.previewWin <- function(states, shpL, type){
             tkdelete(textObj, "0.0", "end")
             shpf <- getShpOpenData(shpL[[2]])
             if(!is.null(shpf)){
-                dat <- shpf[[2]]@data
+                dat <- sf::st_drop_geometry(shpf[[2]])
                 idx <- as.integer(tclvalue(tcl(shpL[[1]], 'current'))) + 1
                 adminN <- as.character(dat[, idx])
                 shpAttr <- levels(as.factor(adminN))
