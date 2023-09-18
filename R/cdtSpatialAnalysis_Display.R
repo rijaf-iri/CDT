@@ -10,8 +10,18 @@ spatialAnalysis.plotStatMaps <- function(){
         titre2 <- tclvalue(.cdtData$EnvData$climStat)
         titre3 <- switch(params$analysis$method,
                          "percentile" = paste0("(", params$analysis$percentile, "th", ")"),
-                         "frequency" = paste0("(", params$analysis$frequency$low, " < X < ",
-                                                   params$analysis$frequency$up, ")"),
+                         "frequency" = {
+                                freq_opr <- params$analysis$frequency$oper
+
+                            if(freq_opr == '>=<'){
+                                freq_low <- params$analysis$frequency$low
+                                freq_up <- params$analysis$frequency$up
+                                paste0("(", freq_low, " < X < ", freq_up, ")")
+                            }else{
+                                freq_thres <- params$analysis$frequency$thres
+                                paste0("(", "X ", freq_opr, " " , freq_thres, ")")
+                            }
+                          },
                           "trend" = {
                                 if(params$analysis$trend$unit == 1) "per year"
                                 if(params$analysis$trend$unit == 2) "over"
