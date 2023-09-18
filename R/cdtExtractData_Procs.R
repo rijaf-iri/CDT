@@ -298,11 +298,13 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
 
     if(GeneralParameters$data.type == 'cdtnetcdf'){
         if(tstep == "onefile"){
-            ncdata <- getNcdfOpenData(GeneralParameters$cdtnetcdf$dir)
+            inputdat <- GeneralParameters$cdtnetcdf
+            ncdata <- getNcdfOpenData(inputdat$dir)
             lon <- ncdata[[2]]$x
             lat <- ncdata[[2]]$y
             varInfo <- ncdata[[2]]$varinfo
         }else if(tstep == "others"){
+            inputdat <- GeneralParameters$cdtnetcdf
             ## 
             ##
             ##
