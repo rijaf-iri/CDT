@@ -139,7 +139,7 @@ AggregateTS_GetInfo <- function(){
     }
 
     setSeasonalFun <- function(out.tstep){
-        tkdestroy(frameMinHourDay)
+        # tkdestroy(frameMinHourDay)
         tkdestroy(frameSeas)
         frameSeas <<- tkframe(frConvTS, relief = "sunken", borderwidth = 2)
 
@@ -193,7 +193,7 @@ AggregateTS_GetInfo <- function(){
 
     setMinHourFun <- function(dataTstepIn, dataTstepOut){
         tkdestroy(frameMinHourDay)
-        tkdestroy(frameSeas)
+        # tkdestroy(frameSeas)
         frameMinHourDay <<- tkframe(frConvTS)
 
         ####################
@@ -683,6 +683,10 @@ AggregateTS_GetInfo <- function(){
             outTsVal <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
             if(dataTstepOut %in% outTsVal) tclvalue(ConvertData) <- Cbperiod1VAL[1]
             dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+        }
+
+        if(!dataTstepOut %in% c('seasonal', 'roll.seas')){
+            tkdestroy(frameSeas)
         }
 
         ## minute, hourly
