@@ -139,7 +139,6 @@ AggregateTS_GetInfo <- function(){
     }
 
     setSeasonalFun <- function(out.tstep){
-        # tkdestroy(frameMinHourDay)
         tkdestroy(frameSeas)
         frameSeas <<- tkframe(frConvTS, relief = "sunken", borderwidth = 2)
 
@@ -193,7 +192,6 @@ AggregateTS_GetInfo <- function(){
 
     setMinHourFun <- function(dataTstepIn, dataTstepOut){
         tkdestroy(frameMinHourDay)
-        # tkdestroy(frameSeas)
         frameMinHourDay <<- tkframe(frConvTS)
 
         ####################
