@@ -37,7 +37,7 @@ Format_CDT_Input_Station_Data <- function(){
 
     tkconfigure(bt.period, command = function(){
         tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
-        .cdtData$GalParams[["Date.Range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["Date.Range"]], tstep)
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
     })
 
     tkgrid(cb.period, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)

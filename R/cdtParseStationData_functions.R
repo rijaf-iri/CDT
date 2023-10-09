@@ -79,7 +79,7 @@ readCDTStationData_allFormat <- function(file, sep = ",", na.strings = "-99"){
 #' 
 #' @export
 
-writeCDTStationData <- function(data, file, na.strings = "-99", sep = " "){
+writeCDTStationData <- function(data, file, na.strings = "-99", sep = ","){
     if(!inherits(data, "cdtstationdata"))
         stop("data is not a CDT stations data object")
 

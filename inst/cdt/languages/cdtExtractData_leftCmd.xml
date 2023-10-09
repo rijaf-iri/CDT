@@ -57,10 +57,10 @@
             <text lang="en"> Input Data </text>
         </label>
         <label id="3">
-            <text lang="en"> Directory of the NetCDF files </text>
+            <text lang="en"> Directory of the netCDF files </text>
         </label>
         <label id="3-1">
-            <text lang="en"> NetCDF data file </text>
+            <text lang="en"> netCDF data file </text>
         </label>
         <label id="4">
             <text lang="en"> Index file (*.rds) of the dataset </text>
@@ -143,22 +143,22 @@
         </content>
         <content id="3">
             <status>
-                <text lang="en"> Enter the full path to directory containing the NetCDF files </text>
-                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers NetCDF </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to directory containing the NetCDF files </text>
-                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers NetCDF </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF files </text>
+                <text lang="fr"> Entrez le chemin complet du répertoire contenant les fichiers netCDF </text>
             </tooltip>
         </content>
         <content id="3-1">
             <status>
-                <text lang="en"> Select or open the NetCDF file to extract </text>
-                <text lang="fr"> Sélectionner ou ouvrir le fichier NetCDF à extraire </text>
+                <text lang="en"> Select or open the netCDF file to extract </text>
+                <text lang="fr"> Sélectionner ou ouvrir le fichier netCDF à extraire </text>
             </status>
             <tooltip>
-                <text lang="en"> Select or open the NetCDF file to extract </text>
-                <text lang="fr"> Sélectionner ou ouvrir le fichier NetCDF à extraire </text>
+                <text lang="en"> Select or open the netCDF file to extract </text>
+                <text lang="fr"> Sélectionner ou ouvrir le fichier netCDF à extraire </text>
             </tooltip>
         </content>
         <content id="4">
@@ -303,8 +303,8 @@
             <text lang="en"> Latitude max not valid </text>
         </content>
         <content id="5">
-            <text lang="en"> You have to set the NetCDF files parameters </text>
-            <text lang="fr"> Vous devez définir les paramètres des fichiers NetCDF </text>
+            <text lang="en"> You have to set the netCDF files parameters </text>
+            <text lang="fr"> Vous devez définir les paramètres des fichiers netCDF </text>
         </content>
         <content id="6">
             <text lang="en"> Starting extraction ........... </text>

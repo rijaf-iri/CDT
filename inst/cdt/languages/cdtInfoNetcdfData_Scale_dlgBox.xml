@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> NetCDF Data - Settings </text>
-        <text lang="fr"> Données NetCDF - Paramètres </text>
+        <text lang="en"> netCDF Data - Settings </text>
+        <text lang="fr"> Données netCDF - Paramètres </text>
     </title>
     <widget>
         <label id="1">
-            <text lang="en"> NetCDF data sample file </text>
-            <text lang="fr"> Fichier exemple de données NetCDF </text>
+            <text lang="en"> netCDF data sample file </text>
+            <text lang="fr"> Fichier exemple de données netCDF </text>
         </label>
         <label id="2">
-            <text lang="en"> NetCDF data filenames format </text>
-            <text lang="fr"> Format des fichiers de données NetCDF </text>
+            <text lang="en"> netCDF data filenames format </text>
+            <text lang="fr"> Format des fichiers de données netCDF </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
-                <text lang="en"> File containing a sample of the NetCDF data </text>
-                <text lang="fr"> Fichier contenant un exemple des données NetCDF </text>
+                <text lang="en"> File containing a sample of the netCDF data </text>
+                <text lang="fr"> Fichier contenant un exemple des données netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> File containing a sample of the NetCDF data </text>
-                <text lang="fr"> Fichier contenant un exemple des données NetCDF </text>
+                <text lang="en"> File containing a sample of the netCDF data </text>
+                <text lang="fr"> Fichier contenant un exemple des données netCDF </text>
             </tooltip>
         </content>
         <content id="2">
@@ -37,12 +37,12 @@
         </content>
         <content id="3">
             <status>
-                <text lang="en"> Enter the filename format of NetCDF data, example: </text>
-                <text lang="fr"> Entrez le format de nom de fichier des données NetCDF, exemple: </text>
+                <text lang="en"> Enter the filename format of netCDF data, example: </text>
+                <text lang="fr"> Entrez le format de nom de fichier des données netCDF, exemple: </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of NetCDF data, example: </text>
-                <text lang="fr"> Entrez le format de nom de fichier des données NetCDF, exemple: </text>
+                <text lang="en"> Enter the filename format of netCDF data, example: </text>
+                <text lang="fr"> Entrez le format de nom de fichier des données netCDF, exemple: </text>
             </tooltip>
         </content>
     </help>

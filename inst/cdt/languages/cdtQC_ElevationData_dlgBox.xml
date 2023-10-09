@@ -17,10 +17,10 @@
     <help>
         <content id="1">
             <status>
-                <text lang="en"> Select the file containing the elevation data in NetCDF </text>
+                <text lang="en"> Select the file containing the elevation data in netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> Select the file containing the elevation data in NetCDF </text>
+                <text lang="en"> Select the file containing the elevation data in netCDF </text>
             </tooltip>
         </content>
         <content id="2">

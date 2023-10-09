@@ -137,7 +137,7 @@
     </help>
     <message>
         <content id="1">
-            <text lang="en"> Extract JRA-55 NRT GRIB to NetCDF ... </text>
+            <text lang="en"> Extract JRA-55 NRT GRIB to netCDF ... </text>
         </content>
         <content id="2">
             <text lang="en"> Enter the path to directory containing the GRIB files </text>

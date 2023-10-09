@@ -67,7 +67,7 @@
             <text lang="en"> Latitude </text>
         </checkbutton>
         <checkbutton id="6">
-            <text lang="en"> U and V components are in one NetCDF file </text>
+            <text lang="en"> U and V components are in one netCDF file </text>
         </checkbutton>
         <label id="1-1">
             <text lang="en"> Station wind speed file </text>
@@ -79,16 +79,16 @@
             <text lang="en"> Station V-component file </text>
         </label>
         <label id="2-1">
-            <text lang="en"> Directory of the NetCDF wind speed files </text>
+            <text lang="en"> Directory of the netCDF wind speed files </text>
         </label>
         <label id="2-2">
-            <text lang="en"> Directory of the NetCDF U-component files </text>
+            <text lang="en"> Directory of the netCDF U-component files </text>
         </label>
         <label id="2-3">
-            <text lang="en"> Directory of the NetCDF V-component files </text>
+            <text lang="en"> Directory of the netCDF V-component files </text>
         </label>
         <label id="2-4">
-            <text lang="en"> Directory of the NetCDF U and V data files </text>
+            <text lang="en"> Directory of the netCDF U and V data files </text>
         </label>
         <label id="3">
             <text lang="en"> Directory to save result </text>
@@ -97,7 +97,7 @@
             <text lang="en"> Include auxiliary variables </text>
         </label>
         <label id="6">
-            <text lang="en"> Elevation data (NetCDF) </text>
+            <text lang="en"> Elevation data (netCDF) </text>
         </label>
         <label id="7">
             <text lang="en"> Merging method </text>
@@ -232,10 +232,10 @@
         </content>
         <content id="7">
             <status>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </status>
             <tooltip>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </tooltip>
         </content>
         <content id="8">
@@ -288,7 +288,7 @@
         </content>
         <content id="15">
             <status>
-                <text lang="en"> File containing the elevation data in NetCDF </text>
+                <text lang="en"> File containing the elevation data in netCDF </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file in the list </text>
@@ -338,16 +338,16 @@
             <text lang="en"> Select the file containing the meridional velocity (V) station data </text>
         </content>
         <content id="2-1">
-            <text lang="en"> Browse or enter the directory containing the wind speed NetCDF files </text>
+            <text lang="en"> Browse or enter the directory containing the wind speed netCDF files </text>
         </content>
         <content id="2-2">
-            <text lang="en"> Browse or enter the directory containing the wind data NetCDF files </text>
+            <text lang="en"> Browse or enter the directory containing the wind data netCDF files </text>
         </content>
         <content id="2-3">
-            <text lang="en"> Browse or enter the directory containing the zonal velocity (U) NetCDF files </text>
+            <text lang="en"> Browse or enter the directory containing the zonal velocity (U) netCDF files </text>
         </content>
         <content id="2-4">
-            <text lang="en"> Browse or enter the directory containing the meridional velocity (V) NetCDF files </text>
+            <text lang="en"> Browse or enter the directory containing the meridional velocity (V) netCDF files </text>
         </content>
         <content id="3">
             <text lang="en"> Browse or enter the path to directory to save results </text>
@@ -359,7 +359,7 @@
             <text lang="en"> Number of run is not equal to the number of pass ratio </text>
         </content>
         <content id="7">
-            <text lang="en"> You have to provide DEM data in NetCDF format </text>
+            <text lang="en"> You have to provide DEM data in netCDF format </text>
         </content>
         <content id="8">
             <text lang="en"> Wind data merging cross-validation finished successfully </text>

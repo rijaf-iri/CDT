@@ -4,7 +4,7 @@
 \alias{writeCDTStationData}
 \title{Write CDT station format to a file.}
 \usage{
-writeCDTStationData(data, file, na.strings = "-99", sep = " ")
+writeCDTStationData(data, file, na.strings = "-99", sep = ",")
 }
 \arguments{
 \item{data}{CDT stations data objects.}

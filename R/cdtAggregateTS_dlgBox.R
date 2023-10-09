@@ -2,15 +2,15 @@
 AggregateTS_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 47
-        largeur1 <- 45
-        largeur2 <- 33
-        wtkcombo <- 19
+        largeur0 <- 53
+        largeur1 <- 51
+        largeur2 <- 37
+        wtkcombo <- 21
     }else{
-        largeur0 <- 40
-        largeur1 <- 39
-        largeur2 <- 30
-        wtkcombo <- 18
+        largeur0 <- 46
+        largeur1 <- 45
+        largeur2 <- 34
+        wtkcombo <- 20
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtAggregateTS_dlgBox.xml")
@@ -25,6 +25,500 @@ AggregateTS_GetInfo <- function(){
     frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2)
     frMRG1 <- tkframe(tt)
     frAGGRTS <- tkframe(frMRG0, relief = "sunken", borderwidth = 2)
+
+    ############################################
+
+    saveFun <- function(data.type){
+        tkdestroy(frSaveIn)
+        frSaveIn <<- tkframe(frSave)
+
+        #########
+        if(data.type == 'cdtstation'){
+            txtSaveDir <- lang.dlg[['label']][['9']]
+            isFile <- TRUE
+        }else{
+            txtSaveDir <- lang.dlg[['label']][['10']]
+            isFile <- FALSE
+        }
+        fileORdir <- tclVar(txtSaveDir)
+
+        txt.file.save <- tklabel(frSaveIn, text = tclvalue(fileORdir), textvariable = fileORdir, anchor = 'w', justify = 'left')
+        en.file.save <- tkentry(frSaveIn, textvariable = file.save, width = largeur0)
+        bt.file.save <- tkbutton(frSaveIn, text = "...")
+
+        ihlpSav <- if(data.type == 'cdtstation') '10' else '11'
+        helpWidget(en.file.save, lang.dlg[['tooltip']][[ihlpSav]], lang.dlg[['status']][[ihlpSav]])
+        helpWidget(bt.file.save, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
+
+        #########
+        tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.file.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+        #########
+
+        tkconfigure(bt.file.save, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            fileORdir2Save(file.save, isFile = isFile)
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+        })
+
+        #########
+
+        if(data.type == 'cdtnetcdf'){
+            txt.ncout.frmt <- tklabel(frSaveIn, text = lang.dlg[['label']][['16']], anchor = 'w', justify = 'left')
+            en.ncout.frmt <- tkentry(frSaveIn, textvariable = ncout.format, width = largeur0)
+
+            tkgrid(txt.ncout.frmt, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+            tkgrid(en.ncout.frmt, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        }
+
+        if(data.type == 'cdtdataset'){
+            txt.dset.name <- tklabel(frSaveIn, text = lang.dlg[['label']][['17']], anchor = 'w', justify = 'left')
+            en.dset.name <- tkentry(frSaveIn, textvariable = dataset.name, width = largeur0)
+
+            tkgrid(txt.dset.name, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+            tkgrid(en.dset.name, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        }
+
+        #########
+
+        if(data.type %in% c('cdtnetcdf', 'cdtdataset')){
+            bt.Varinfo <- tkbutton(frSaveIn, text = lang.dlg[['button']][['2']])
+
+            tkgrid(bt.Varinfo, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+            tkconfigure(bt.Varinfo, command = function(){
+                initVar <- .cdtData$GalParams$varinfo
+                varInfo <- NULL
+
+                if(data.type == "cdtnetcdf"){
+                    inputFile <- .cdtData$GalParams$cdtnetcdf$sample
+                    if(inputFile != ""){
+                        varInfo <- getNCDFSampleData(inputFile)
+                        varInfo <- varInfo$varinfo
+                    }
+                }
+
+                if(data.type == "cdtdataset"){
+                    inputFile <- trimws(tclvalue(file.stnfl))
+                    if(inputFile != "" & file.exists(inputFile)){
+                        varInfo <- readRDS(inputFile)
+                        varInfo <- varInfo$varInfo
+                    }
+                }
+
+                if(!is.null(varInfo)){
+                    if(initVar$name != varInfo$name && initVar$name == "") initVar$name <- varInfo$name
+                    if(initVar$units != varInfo$units && initVar$units == "") initVar$units <- varInfo$units
+                    if(initVar$prec != varInfo$prec && initVar$prec == "float") initVar$prec <- varInfo$prec
+                    if(initVar$longname != varInfo$longname && initVar$longname == "") initVar$longname <- varInfo$longname
+                    if(initVar$missval != varInfo$missval && initVar$missval == -9999) initVar$missval <- varInfo$missval
+                }
+
+                tcl('wm', 'attributes', tt, topmost = FALSE)
+                .cdtData$GalParams$varinfo <- getNetCDFvarInfo(tt, initVar)
+                tcl('wm', 'attributes', tt, topmost = TRUE)
+            })
+        }
+
+        #########
+
+        tkgrid(frSaveIn)
+    }
+
+    ############################################
+
+    seasonDispFun <- function(){
+        mois <- format(ISOdate(2014, 1:12, 1), "%b")
+        mon <- which(MOIS %in% trimws(tclvalue(start.mon)))
+        len <- as.numeric(trimws(tclvalue(length.mon)))
+        mon1 <- (mon + len - 1) %% 12
+        mon1[mon1 == 0] <- 12
+        paste(mois[mon], "->", mois[mon1])
+    }
+
+    setSeasonalFun <- function(out.tstep){
+        tkdestroy(frameMinHourDay)
+        tkdestroy(frameSeas)
+        frameSeas <<- tkframe(frConvTS, relief = "sunken", borderwidth = 2)
+
+        if(out.tstep %in% c('seasonal', 'roll.seas')){
+            seasdef <- if(out.tstep == 'seasonal') seasonDispFun() else ""
+            season.def <- tclVar(seasdef)
+
+            #######
+            state.cbSeasS <- if(out.tstep == 'seasonal') "normal" else "disabled"
+
+            txt.seasS <- tklabel(frameSeas, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+            cb.seasS <- ttkcombobox(frameSeas, values = MOIS, textvariable = start.mon, width = 10, state = state.cbSeasS, justify = 'center')
+            txt.seasL <- tklabel(frameSeas, text = lang.dlg[['label']][['4']])
+            cb.seasL <- ttkcombobox(frameSeas, values = 2:12, textvariable = length.mon, width = 3)
+            txt.SeasD <- tklabel(frameSeas, text = tclvalue(season.def), textvariable = season.def)
+
+            tkgrid(txt.seasS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(cb.seasS, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(txt.seasL, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(cb.seasL, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(txt.SeasD, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+
+            helpWidget(cb.seasS, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+            helpWidget(cb.seasL, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+
+            #######
+
+            tkgrid(frameSeas, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipady = 3)
+
+            #######
+
+            tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
+                out.tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+                seasdef <- if(out.tstep == 'seasonal') seasonDispFun() else ""
+                tclvalue(season.def) <- seasdef
+            })
+
+            ######
+
+            tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
+                out.tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+                seasdef <- if(out.tstep == 'seasonal') seasonDispFun() else ""
+                tclvalue(season.def) <- seasdef
+            })
+        }
+
+        tcl('update')
+    }
+
+    ############################################
+
+    setMinHourFun <- function(dataTstepIn, dataTstepOut){
+        tkdestroy(frameMinHourDay)
+        tkdestroy(frameSeas)
+        frameMinHourDay <<- tkframe(frConvTS)
+
+        ####################
+
+        if(dataTstepIn %in% c('minute', 'hourly')){
+            frameMH <- tkframe(frameMinHourDay, relief = "sunken", borderwidth = 2)
+
+            CbminhourVAL0 <- ""
+            CbminhourVAL1 <- ""
+
+            minhour0.txtVar <- tclVar(lang.dlg[['label']][['12']])
+            minhour1.txtVar <- tclVar(lang.dlg[['label']][['11']])
+
+            inMinHr <- as.numeric(trimws(tclvalue(minhour.in)))
+            outMinHr <- as.numeric(trimws(tclvalue(minhour.out)))
+
+            ###########
+            state.mhO <- if(dataTstepOut %in% c('minute', 'hourly')) "normal" else "disabled"
+
+            ## min
+            if(dataTstepIn == 'minute'){
+                Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:3]
+                period1VAL <- c('minute', 'hourly', 'daily')
+                tkconfigure(cb.outstep, values = Cbperiod1VAL)
+
+                outTsVal <- c('pentad', 'dekadal', 'monthly', 'annual', 'seasonal', 'roll.seas')
+                if(dataTstepOut %in% outTsVal) tclvalue(ConvertData) <- Cbperiod1VAL[1]
+                dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+
+                #######
+                CbminhourVAL0 <- c(5, 10, 15, 30)
+                tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['12']]
+
+                if(!inMinHr %in% CbminhourVAL0){
+                    tclvalue(minhour.in) <- CbminhourVAL0[1]
+                    inMinHr <- CbminhourVAL0[1]
+                }
+
+                ## min
+                if(dataTstepOut == 'minute'){
+                    if(inMinHr == 5){
+                        CbminhourVAL1 <- c(10, 15, 30)
+                        tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
+                    }
+                    if(inMinHr == 10){
+                        CbminhourVAL1 <- 30
+                        tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
+                    }
+                    if(inMinHr == 15){
+                        CbminhourVAL1 <- 30
+                        tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
+                    }
+                    if(inMinHr == 30){
+                        tclvalue(ConvertData) <- Cbperiod0VAL[2]
+                        dataTstepOut <- 'hourly'
+                        CbminhourVAL1 <- c(1, 3, 6, 12)
+                        tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
+                    }
+                }
+
+                ## hour
+                if(dataTstepOut == 'hourly'){
+                    CbminhourVAL1 <- c(1, 3, 6, 12)
+                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
+                }
+            }
+
+            ## hour
+            if(dataTstepIn == 'hourly'){
+                Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:3]
+                period1VAL <- c('hourly', 'daily')
+                tkconfigure(cb.outstep, values = Cbperiod1VAL)
+
+                outTsVal <- c('minute', 'pentad', 'dekadal', 'monthly', 'annual', 'seasonal', 'roll.seas')
+                if(dataTstepOut %in% outTsVal) tclvalue(ConvertData) <- Cbperiod1VAL[1]
+                dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+
+                #######
+                CbminhourVAL0 <- c(1, 3, 6, 12)
+                tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['11']]
+                tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
+
+                if(!inMinHr %in% CbminhourVAL0){
+                    tclvalue(minhour.in) <- CbminhourVAL0[1]
+                    inMinHr <- CbminhourVAL0[1]
+                }
+
+                ## hour
+                if(dataTstepOut == 'hourly'){
+                    if(inMinHr == 1) CbminhourVAL1 <- c(3, 6, 12)
+                    if(inMinHr == 3) CbminhourVAL1 <- c(6, 12)
+                    if(inMinHr == 6) CbminhourVAL1 <- 12
+                    if(inMinHr == 12){
+                        tclvalue(ConvertData) <- Cbperiod0VAL[3]
+                        dataTstepOut <- 'daily'
+                        state.mhO <- "disabled"
+                    }
+                }
+            }
+
+            if(!outMinHr %in% CbminhourVAL1) tclvalue(minhour.out) <- CbminhourVAL1[1]
+
+            ###########
+
+            cb.mhI <- ttkcombobox(frameMH, values = CbminhourVAL0, textvariable = minhour.in, width = 3)
+            txt.mhI <- tklabel(frameMH, text = tclvalue(minhour0.txtVar), textvariable = minhour0.txtVar, anchor = 'w', justify = 'left')
+            txt.mht <- tklabel(frameMH, text = paste("-", lang.dlg[['label']][['2']], "-"))
+            cb.mhO <- ttkcombobox(frameMH, values = CbminhourVAL1, textvariable = minhour.out, width = 3, state = state.mhO)
+            txt.mhO <- tklabel(frameMH, text = tclvalue(minhour1.txtVar), textvariable = minhour1.txtVar, anchor = 'w', justify = 'left')
+
+            tkgrid(cb.mhI, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(txt.mhI, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(txt.mht, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(cb.mhO, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(txt.mhO, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+
+            ##########
+
+            frameOH <- tkframe(frameMinHourDay, relief = "sunken", borderwidth = 2)
+
+            state.shour <- "disabled"
+            if(dataTstepOut == 'daily'){
+                if(dataTstepIn == 'minute') state.shour <- "normal"
+                if(dataTstepIn == 'hourly') state.shour <- if(inMinHr %in% c(6:12)) "disabled" else "normal"
+            }
+
+            txt.shour <- tklabel(frameOH, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
+            en.shour <- tkentry(frameOH, textvariable = obs.hour, width = 2, state = state.shour)
+
+            tkgrid(txt.shour, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(en.shour, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+
+            helpWidget(en.shour, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
+
+            ##########
+
+            frameAggrP <- tkframe(frameMinHourDay, relief = "sunken", borderwidth = 2)
+
+            txt.AggP <- tklabel(frameAggrP, text = lang.dlg[['label']][['14']], anchor = 'e', justify = 'right')
+            cb.AggP <- ttkcombobox(frameAggrP, values = CbAggPeriodVAL, textvariable = aggr.period, width = 7, justify = 'center')
+
+            tkgrid(txt.AggP, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(cb.AggP, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+
+            helpWidget(cb.AggP, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+
+            ##########
+
+            frameAggrD <- tkframe(frameMinHourDay, relief = "sunken", borderwidth = 2)
+
+            txt.AggD <- tklabel(frameAggrD, text = lang.dlg[['label']][['15']], anchor = 'e', justify = 'right')
+            cb.AggD <- ttkcombobox(frameAggrD, values = CbaggDateVAL, textvariable = aggr.date, width = 7, justify = 'center')
+
+            tkgrid(txt.AggD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+            tkgrid(cb.AggD, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
+
+            helpWidget(cb.AggD, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
+
+            ##########
+
+            tkgrid(frameMH, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 4, ipady = 3)
+            tkgrid(frameOH, row = 0, column = 1, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 4, ipady = 3)
+            tkgrid(frameAggrP, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipady = 3)
+            tkgrid(frameAggrD, row = 1, column = 1, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipady = 3)
+
+            ##########
+
+            tkgrid(frameMinHourDay, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipady = 3)
+
+            ##########
+
+            tkbind(cb.outstep, "<<ComboboxSelected>>", function(){
+                dataTstepIn <- period0VAL[Cbperiod0VAL %in% trimws(tclvalue(OriginData))]
+                dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+                inMinHr <- as.numeric(trimws(tclvalue(minhour.in)))
+                outMinHr <- as.numeric(trimws(tclvalue(minhour.out)))
+
+                if(dataTstepOut == 'minute'){
+                    state.mhI <- "normal"
+                    state.mhO <- "normal"
+                    state.shour <- "disabled"
+                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
+                }else if(dataTstepOut == 'hourly'){
+                    state.mhI <- "normal"
+                    state.mhO <- "normal"
+                    state.shour <- "disabled"
+                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
+                }else if(dataTstepOut == 'daily'){
+                    state.mhI <- "normal"
+                    state.mhO <- "disabled"
+                    if(dataTstepIn == 'minute') state.shour <- "normal"
+                    if(dataTstepIn == 'hourly')
+                        state.shour <- if(inMinHr %in% c(6:12)) "disabled" else "normal"
+                }else{
+                    state.mhI <- "disabled"
+                    state.mhO <- "disabled"
+                    state.shour <- "disabled"
+                }
+
+                #######
+
+                if(dataTstepIn == 'minute'){
+                    if(dataTstepOut == 'minute'){
+                        if(inMinHr == 5) CbminhourVAL1 <- c(10, 15, 30)
+                        if(inMinHr == 10) CbminhourVAL1 <- 30
+                        if(inMinHr == 15) CbminhourVAL1 <- 30
+                        if(inMinHr == 30){
+                            tclvalue(ConvertData) <- Cbperiod0VAL[2]
+                            dataTstepOut <- 'hourly'
+                            CbminhourVAL1 <- c(1, 3, 6, 12)
+                            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
+                        }
+                    }
+
+                    if(dataTstepOut == 'hourly'){
+                        CbminhourVAL1 <- c(1, 3, 6, 12)
+                        tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
+                    }
+
+                    if(!outMinHr %in% CbminhourVAL1) tclvalue(minhour.out) <- CbminhourVAL1[1]
+                }
+
+                if(dataTstepIn == 'hourly'){
+                    if(dataTstepOut == 'hourly'){
+                        if(inMinHr == 1) CbminhourVAL1 <- c(3, 6, 12)
+                        if(inMinHr == 3) CbminhourVAL1 <- c(6, 12)
+                        if(inMinHr == 6) CbminhourVAL1 <- 12
+                        if(inMinHr == 12){
+                            tclvalue(ConvertData) <- Cbperiod0VAL[3]
+                            dataTstepOut <- 'daily'
+                            state.mhO <- "disabled"
+                        }
+                    }
+
+                    if(!outMinHr %in% CbminhourVAL1) tclvalue(minhour.out) <- CbminhourVAL1[1]
+                }
+
+                tkconfigure(cb.mhI, state = state.mhI)
+                tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
+                tkconfigure(en.shour, state = state.shour)
+            })
+
+            ##########
+
+            tkbind(cb.mhI, "<<ComboboxSelected>>", function(){
+                dataTstepIn <- period0VAL[Cbperiod0VAL %in% trimws(tclvalue(OriginData))]
+                dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+                inMinHr <- as.numeric(trimws(tclvalue(minhour.in)))
+                outMinHr <- as.numeric(trimws(tclvalue(minhour.out)))
+
+                if(dataTstepIn == 'minute'){
+                    ## min
+                    if(dataTstepOut == 'minute'){
+                        if(inMinHr == 5){
+                            CbminhourVAL1 <- c(10, 15, 30)
+                            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
+                        }
+                        if(inMinHr == 10){
+                            CbminhourVAL1 <- 30
+                            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
+                        }
+                        if(inMinHr == 15){
+                            CbminhourVAL1 <- 30
+                            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
+                        }
+                        if(inMinHr == 30){
+                            tclvalue(ConvertData) <- Cbperiod0VAL[2]
+                            CbminhourVAL1 <- c(1, 3, 6, 12)
+                            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
+                        }
+
+                        state.shour <- "disabled"
+                        state.mhO <- "normal"
+                    }
+
+                    ## hour
+                    if(dataTstepOut == 'hourly'){
+                        CbminhourVAL1 <- c(1, 3, 6, 12)
+                        tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
+                        state.shour <- "disabled"
+                        state.mhO <- "normal"
+                    }
+
+                    if(dataTstepOut == 'daily'){
+                        state.shour <- "normal"
+                        state.mhO <- "disabled"
+                    }
+                }
+
+                if(dataTstepIn == 'hourly'){
+                    if(dataTstepOut == 'hourly'){
+                        state.mhO <- "normal"
+
+                        if(inMinHr == 1) CbminhourVAL1 <- c(3, 6, 12)
+                        if(inMinHr == 3) CbminhourVAL1 <- c(6, 12)
+                        if(inMinHr == 6) CbminhourVAL1 <- 12
+                        if(inMinHr == 12){
+                            tclvalue(ConvertData) <- Cbperiod0VAL[3]
+                            state.mhO <- "disabled"
+                        }
+
+                        state.shour <- "disabled"
+                    }
+
+                    if(dataTstepOut == 'daily'){
+                        state.shour <- if(inMinHr %in% c(6:12)) "disabled" else "normal"
+                        state.mhO <- "disabled"
+                    }
+                }
+
+                tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
+                tkconfigure(en.shour, state = state.shour)
+
+                if(!outMinHr %in% CbminhourVAL1) tclvalue(minhour.out) <- CbminhourVAL1[1]
+            })
+        }else{
+            tkbind(cb.outstep, "<<ComboboxSelected>>", function(){
+                dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+
+                setSeasonalFun(dataTstepOut)
+            })
+        }
+
+        tcl('update')
+    }
 
     ############################################
 
@@ -70,8 +564,8 @@ AggregateTS_GetInfo <- function(){
     ConvertData <- tclVar()
     tclvalue(ConvertData) <- Cbperiod1VAL[period1VAL %in% .cdtData$GalParams$out.tstep]
 
-    cb.intstep <- ttkcombobox(frameTS, values = Cbperiod0VAL, textvariable = OriginData, width = wtkcombo)
-    cb.outstep <- ttkcombobox(frameTS, values = Cbperiod1VAL, textvariable = ConvertData, width = wtkcombo)
+    cb.intstep <- ttkcombobox(frameTS, values = Cbperiod0VAL, textvariable = OriginData, width = wtkcombo, justify = 'center')
+    cb.outstep <- ttkcombobox(frameTS, values = Cbperiod1VAL, textvariable = ConvertData, width = wtkcombo, justify = 'center')
     txt.convTs <- tklabel(frameTS, text = paste("-", lang.dlg[['label']][['2']], "-"))
 
     tkgrid(cb.intstep, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1)
@@ -83,7 +577,12 @@ AggregateTS_GetInfo <- function(){
 
     ####################
 
-    frameMH <- tkframe(frConvTS, relief = "sunken", borderwidth = 2)
+    frameMinHourDay <- tkframe(frConvTS)
+
+    dataTstepIn <- period0VAL[Cbperiod0VAL %in% trimws(tclvalue(OriginData))]
+    dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
+
+    ######
 
     mnhr1 <- .cdtData$GalParams$HourMin$int
     if(is.na(mnhr1)) mnhr1 <- ""
@@ -93,526 +592,109 @@ AggregateTS_GetInfo <- function(){
     minhour.in <- tclVar(mnhr1)
     minhour.out <- tclVar(mnhr2)
 
-    CbminhourVAL0 <- ""
-    CbminhourVAL1 <- ""
-
-    minhour0.txtVar <- tclVar(lang.dlg[['label']][['12']])
-    minhour1.txtVar <- tclVar(lang.dlg[['label']][['11']])
-
-    if(trimws(tclvalue(OriginData)) %in% Cbperiod0VAL[1:2]){
-        state.mhI <- "normal"
-        state.mhO <- if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:2]) "normal" else "disabled"
-
-        ## min
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]){
-            CbminhourVAL0 <- c(5, 10, 15, 30)
-            tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['12']]
-
-            if(!as.numeric(trimws(tclvalue(minhour.in))) %in% CbminhourVAL0)
-                tclvalue(minhour.in) <- CbminhourVAL0[1]
-
-            ## min
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 5){
-                    CbminhourVAL1 <- c(10, 15, 30)
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 10){
-                    CbminhourVAL1 <- 30
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 15){
-                    CbminhourVAL1 <- 30
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 30){
-                    tclvalue(ConvertData) <- Cbperiod0VAL[2]
-                    CbminhourVAL1 <- c(1, 3, 6, 12)
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-                }
-            }
-
-            ## hour
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                CbminhourVAL1 <- c(1, 3, 6, 12)
-                tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-            }
-        }
-
-        ## hour
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2]){
-            CbminhourVAL0 <- c(1, 3, 6, 12)
-            tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['11']]
-            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-
-            if(!as.numeric(trimws(tclvalue(minhour.in))) %in% CbminhourVAL0)
-                tclvalue(minhour.in) <- CbminhourVAL0[1]
-
-            ## hour
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 1){
-                    CbminhourVAL1 <- c(3, 6, 12)
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 3){
-                    CbminhourVAL1 <- c(6, 12)
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 6){
-                    CbminhourVAL1 <- 12
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 12){
-                    tclvalue(ConvertData) <- Cbperiod0VAL[3]
-                    state.mhO <- "disabled"
-                }
-            }
-        }
-
-        if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
-            tclvalue(minhour.out) <- CbminhourVAL1[1]
-     }else{
-        state.mhI <- "disabled"
-        state.mhO <- "disabled"
-    }
-
-    cb.mhI <- ttkcombobox(frameMH, values = CbminhourVAL0, textvariable = minhour.in, width = 3, state = state.mhI)
-    txt.mhI <- tklabel(frameMH, text = tclvalue(minhour0.txtVar), textvariable = minhour0.txtVar, anchor = 'w', justify = 'left')
-    txt.mht <- tklabel(frameMH, text = paste("-", lang.dlg[['label']][['2']], "-"))
-    cb.mhO <- ttkcombobox(frameMH, values = CbminhourVAL1, textvariable = minhour.out, width = 3, state = state.mhO)
-    txt.mhO <- tklabel(frameMH, text = tclvalue(minhour1.txtVar), textvariable = minhour1.txtVar, anchor = 'w', justify = 'left')
-
-    tkgrid(cb.mhI, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(txt.mhI, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(txt.mht, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(cb.mhO, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(txt.mhO, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-
-    ####################
-
-    frameOH <- tkframe(frConvTS, relief = "sunken", borderwidth = 2)
-
     obs.hour <- tclVar(.cdtData$GalParams$HourMin$obs.hour)
 
-    state.shour <- "disabled"
-    if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
-        if(trimws(tclvalue(OriginData)) %in% Cbperiod0VAL[1]) state.shour <- "normal"
-        if(trimws(tclvalue(OriginData)) %in% Cbperiod0VAL[2])
-            state.shour <- if(as.numeric(trimws(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
+    ######
+
+    aggr.period <- tclVar()
+    CbAggPeriodVAL <- lang.dlg[['combobox']][['1']]
+    aggPeriodVAL <- c('start', 'end')
+    tclvalue(aggr.period) <- CbAggPeriodVAL[aggPeriodVAL %in% .cdtData$GalParams$aggr.period]
+
+    ######
+
+    aggr.date <- tclVar()
+    CbaggDateVAL <- lang.dlg[['combobox']][['1']]
+    aggDateVAL <- c('start', 'end')
+    tclvalue(aggr.date) <- CbaggDateVAL[aggDateVAL %in% .cdtData$GalParams$aggr.date]
+
+    #####
+
+    if(dataTstepIn %in% c('minute', 'hourly')){
+        setMinHourFun(dataTstepIn, dataTstepOut)
     }
-
-    txt.shour <- tklabel(frameOH, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
-    en.shour <- tkentry(frameOH, textvariable = obs.hour, width = 2, state = state.shour)
-
-    tkgrid(txt.shour, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(en.shour, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-
-    helpWidget(en.shour, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
 
     ####################
 
     frameSeas <- tkframe(frConvTS, relief = "sunken", borderwidth = 2)
 
-    MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
-    mois <- format(ISOdate(2014, 1:12, 1), "%b")
-    mon <- as.numeric(trimws(.cdtData$GalParams$Seasonal$start.mon))
-    len <- as.numeric(trimws(.cdtData$GalParams$Seasonal$length.mon))
-    mon1 <- (mon + len - 1) %% 12
-    mon1[mon1 == 0] <- 12
-    seasdef <- paste(mois[mon], "->", mois[mon1])
-
-    start.mon <- tclVar(MOIS[mon])
-    length.mon <- tclVar(len)
- 
     seasonalVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][8:9]
 
-    state.cbSeasS <- if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
-    state.cbSeasL <- if(trimws(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
+    MOIS <- format(ISOdate(2014, 1:12, 1), "%B")
+    mon_start <- as.numeric(trimws(.cdtData$GalParams$Seasonal$start.mon))
+    mon_len <- as.numeric(trimws(.cdtData$GalParams$Seasonal$length.mon))
 
-    seasdef <- if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]) seasdef else ""
-    season.def <- tclVar(seasdef)
+    start.mon <- tclVar(MOIS[mon_start])
+    length.mon <- tclVar(mon_len)
 
-    txt.seasS <- tklabel(frameSeas, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
-    cb.seasS <- ttkcombobox(frameSeas, values = MOIS, textvariable = start.mon, width = 10, state = state.cbSeasS)
-    txt.seasL <- tklabel(frameSeas, text = lang.dlg[['label']][['4']])
-    cb.seasL <- ttkcombobox(frameSeas, values = 2:12, textvariable = length.mon, width = 3, state = state.cbSeasL)
-    txt.SeasD <- tklabel(frameSeas, text = tclvalue(season.def), textvariable = season.def)
-
-    tkgrid(txt.seasS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(cb.seasS, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(txt.seasL, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(cb.seasL, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-    tkgrid(txt.SeasD, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-
-    helpWidget(cb.seasS, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
-    helpWidget(cb.seasL, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+    if(dataTstepOut %in% c('seasonal', 'roll.seas')){
+        setSeasonalFun(dataTstepOut)
+    }
 
     #####################
 
-    tkgrid(frameTS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2)
-    tkgrid(frameMH, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 4, ipady = 3)
-    tkgrid(frameOH, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 4, ipady = 3)
-    tkgrid(frameSeas, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipady = 3)
+    tkgrid(frameTS, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 2)
 
     #####################
 
     tkbind(cb.intstep, "<<ComboboxSelected>>", function(){
-        ## minute
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]){
-            Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:3]
-            period1VAL <- c('minute', 'hourly', 'daily')
-            tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(trimws(tclvalue(ConvertData)) %in% .cdtEnv$tcl$lang$global[['combobox']][['1']][4:9])
-                tclvalue(ConvertData) <- Cbperiod1VAL[1]
-
-            state.mhI <- "normal"
-            state.mhO <- if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:2]) "normal" else "disabled"
-            state.shour <- if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]) "normal" else "disabled"
-
-            CbminhourVAL0 <- c(5, 10, 15, 30)
-            tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['12']]
-
-            if(!as.numeric(trimws(tclvalue(minhour.in))) %in% CbminhourVAL0)
-                tclvalue(minhour.in) <- CbminhourVAL0[1]
-
-            ## min
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 5){
-                    CbminhourVAL1 <- c(10, 15, 30)
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 10){
-                    CbminhourVAL1 <- 30
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 15){
-                    CbminhourVAL1 <- 30
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 30){
-                    tclvalue(ConvertData) <- Cbperiod0VAL[2]
-                    CbminhourVAL1 <- c(1, 3, 6, 12)
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-                }
-            }
-
-            ## hour
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                CbminhourVAL1 <- c(1, 3, 6, 12)
-                tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-            }
-
-            if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
-                tclvalue(minhour.out) <- CbminhourVAL1[1]
-        }
-
-        ## hourly
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2]){
-            Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][2:3]
-            period1VAL <- c('hourly', 'daily')
-            tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(trimws(tclvalue(ConvertData)) %in% .cdtEnv$tcl$lang$global[['combobox']][['1']][c(1, 4:9)])
-                tclvalue(ConvertData) <- Cbperiod1VAL[1]
-
-            state.mhI <- "normal"
-            state.mhO <- if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]) "normal" else "disabled"
-            state.shour <- "disabled"
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
-                state.shour <- if(as.numeric(trimws(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
-            }
-
-            CbminhourVAL0 <- c(1, 3, 6, 12)
-            tclvalue(minhour0.txtVar) <- lang.dlg[['label']][['11']]
-            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-
-            if(!as.numeric(trimws(tclvalue(minhour.in))) %in% CbminhourVAL0)
-                tclvalue(minhour.in) <- CbminhourVAL0[1]
-
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 1){
-                    CbminhourVAL1 <- c(3, 6, 12)
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 3){
-                    CbminhourVAL1 <- c(6, 12)
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 6){
-                    CbminhourVAL1 <- 12
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 12){
-                    tclvalue(ConvertData) <- Cbperiod0VAL[3]
-                    state.mhO <- "disabled"
-                }
-            }
-
-            if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
-                tclvalue(minhour.out) <- CbminhourVAL1[1]
-        }
+        dataTstepIn <- period0VAL[Cbperiod0VAL %in% trimws(tclvalue(OriginData))]
+        dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
 
         ## daily
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[3]){
+        if(dataTstepIn == 'daily'){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][4:9]
             period1VAL <- c('pentad', 'dekadal', 'monthly', 'annual', 'seasonal', 'roll.seas')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:3])
-                tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
-            state.mhI <- "disabled"
-            state.mhO <- "disabled"
-            state.shour <- "disabled"
+            outTsVal <- c('minute', 'hourly', 'daily')
+            if(dataTstepOut %in% outTsVal) tclvalue(ConvertData) <- Cbperiod1VAL[1]
+            dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
         }
 
         ## pentad
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[4]){
+        if(dataTstepIn == 'pentad'){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][5:9]
             period1VAL <- c('dekadal', 'monthly', 'annual', 'seasonal', 'roll.seas')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:4])
-                tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
-            state.mhI <- "disabled"
-            state.mhO <- "disabled"
-            state.shour <- "disabled"
+            outTsVal <- c('minute', 'hourly', 'daily', 'pentad')
+            if(dataTstepOut %in% outTsVal) tclvalue(ConvertData) <- Cbperiod1VAL[1]
+            dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
         }
 
         ## dekadal
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[5]){
+        if(dataTstepIn == 'dekadal'){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][6:9]
             period1VAL <- c('monthly', 'annual', 'seasonal', 'roll.seas')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:5])
-                tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
-            state.mhI <- "disabled"
-            state.mhO <- "disabled"
-            state.shour <- "disabled"
+            outTsVal <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal')
+            if(dataTstepOut %in% outTsVal) tclvalue(ConvertData) <- Cbperiod1VAL[1]
+            dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
         }
 
         ## monthly
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[6]){
+        if(dataTstepIn == 'monthly'){
             Cbperiod1VAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][7:9]
             period1VAL <- c('annual', 'seasonal', 'roll.seas')
             tkconfigure(cb.outstep, values = Cbperiod1VAL)
-            if(trimws(tclvalue(ConvertData)) %in% Cbperiod0VAL[1:6])
-                tclvalue(ConvertData) <- Cbperiod1VAL[1]
 
-            state.mhI <- "disabled"
-            state.mhO <- "disabled"
-            state.shour <- "disabled"
+            outTsVal <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
+            if(dataTstepOut %in% outTsVal) tclvalue(ConvertData) <- Cbperiod1VAL[1]
+            dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
         }
 
-        tkconfigure(cb.mhI, values = CbminhourVAL0, state = state.mhI)
-        tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
-        tkconfigure(en.shour, state = state.shour)
-
-        state.cbSeasS <- if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
-        state.cbSeasL <- if(trimws(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
-        tkconfigure(cb.seasS, state = state.cbSeasS)
-        tkconfigure(cb.seasL, state = state.cbSeasL)
+        ## minute, hourly
+        setMinHourFun(dataTstepIn, dataTstepOut)
     })
 
     ##############
 
     tkbind(cb.outstep, "<<ComboboxSelected>>", function(){
-        if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-            state.mhI <- "normal"
-            state.mhO <- "normal"
-            state.shour <- "disabled"
-            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-        }else if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-            state.mhI <- "normal"
-            state.mhO <- "normal"
-            state.shour <- "disabled"
+        dataTstepOut <- periodVAL[CbperiodVAL %in% trimws(tclvalue(ConvertData))]
 
-            tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-        }else if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
-            state.mhI <- "normal"
-            state.mhO <- "disabled"
-            if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]) state.shour <- "normal"
-            if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2])
-                state.shour <- if(as.numeric(trimws(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
-        }else{
-            state.mhI <- "disabled"
-            state.mhO <- "disabled"
-            state.shour <- "disabled"
-        }
-
-        #######
-
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]){
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 5) CbminhourVAL1 <- c(10, 15, 30)
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 10) CbminhourVAL1 <- 30
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 15) CbminhourVAL1 <- 30
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 30){
-                    tclvalue(ConvertData) <- Cbperiod0VAL[2]
-                    CbminhourVAL1 <- c(1, 3, 6, 12)
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-                }
-            }
-
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                CbminhourVAL1 <- c(1, 3, 6, 12)
-                tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-            }
-
-            if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
-                tclvalue(minhour.out) <- CbminhourVAL1[1]
-        }
-
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2]){
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 1) CbminhourVAL1 <- c(3, 6, 12)
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 3) CbminhourVAL1 <- c(6, 12)
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 6) CbminhourVAL1 <- 12
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 12){
-                    tclvalue(ConvertData) <- Cbperiod0VAL[3]
-                    state.mhO <- "disabled"
-                }
-            }
-
-            if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
-                tclvalue(minhour.out) <- CbminhourVAL1[1]
-        }
-
-        tkconfigure(cb.mhI, state = state.mhI)
-        tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
-        tkconfigure(en.shour, state = state.shour)
-
-        state.cbSeasS <- if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]) "normal" else "disabled"
-        state.cbSeasL <- if(trimws(tclvalue(ConvertData)) %in% seasonalVAL[1:2]) "normal" else "disabled"
-        tkconfigure(cb.seasS, state = state.cbSeasS)
-        tkconfigure(cb.seasL, state = state.cbSeasL)
-
-        ########
-
-        seasdef <- ""
-        if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]){
-            mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
-            len <- as.numeric(trimws(tclvalue(length.mon)))
-            mon1 <- (mon + len - 1) %% 12
-            mon1[mon1 == 0] <- 12
-            seasdef <- paste(mois[mon], "->", mois[mon1])
-        }
-        tclvalue(season.def) <- seasdef
-    })
-
-    ##############
-
-    tkbind(cb.mhI, "<<ComboboxSelected>>", function(){
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[1]){
-            ## min
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[1]){
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 5){
-                    CbminhourVAL1 <- c(10, 15, 30)
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 10){
-                    CbminhourVAL1 <- 30
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 15){
-                    CbminhourVAL1 <- 30
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['12']]
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 30){
-                    tclvalue(ConvertData) <- Cbperiod0VAL[2]
-                    CbminhourVAL1 <- c(1, 3, 6, 12)
-                    tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-                }
-
-                state.shour <- "disabled"
-                state.mhO <- "normal"
-            }
-
-            ## hour
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                CbminhourVAL1 <- c(1, 3, 6, 12)
-                tclvalue(minhour1.txtVar) <- lang.dlg[['label']][['11']]
-                state.shour <- "disabled"
-                state.mhO <- "normal"
-            }
-
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
-                state.shour <- "normal"
-                state.mhO <- "disabled"
-            }
-        }
-
-        if(trimws(tclvalue(OriginData)) == Cbperiod0VAL[2]){
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[2]){
-                state.mhO <- "normal"
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 1){
-                    CbminhourVAL1 <- c(3, 6, 12)
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 3){
-                    CbminhourVAL1 <- c(6, 12)
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 6){
-                    CbminhourVAL1 <- 12
-                }
-
-                if(as.numeric(trimws(tclvalue(minhour.in))) == 12){
-                    tclvalue(ConvertData) <- Cbperiod0VAL[3]
-                    state.mhO <- "disabled"
-                }
-
-                state.shour <- "disabled"
-            }
-
-            if(trimws(tclvalue(ConvertData)) == Cbperiod0VAL[3]){
-                state.shour <- if(as.numeric(trimws(tclvalue(minhour.in))) %in% c(6:12)) "disabled" else "normal"
-                state.mhO <- "disabled"
-            }
-        }
-
-        tkconfigure(cb.mhO, values = CbminhourVAL1, state = state.mhO)
-        tkconfigure(en.shour, state = state.shour)
-
-        if(!as.numeric(trimws(tclvalue(minhour.out))) %in% CbminhourVAL1)
-            tclvalue(minhour.out) <- CbminhourVAL1[1]
-    })
-
-    ##############
-
-    tkbind(cb.seasS, "<<ComboboxSelected>>", function(){
-        seasdef <- ""
-        if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]){
-            mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
-            len <- as.numeric(trimws(tclvalue(length.mon)))
-            mon1 <- (mon + len - 1) %% 12
-            mon1[mon1 == 0] <- 12
-            seasdef <- paste(mois[mon], "->", mois[mon1])
-        }
-        tclvalue(season.def) <- seasdef
-    })
-
-    ##############
-
-    tkbind(cb.seasL, "<<ComboboxSelected>>", function(){
-        seasdef <- ""
-        if(trimws(tclvalue(ConvertData)) == seasonalVAL[1]){
-            mon <-  which(MOIS %in% trimws(tclvalue(start.mon)))
-            len <- as.numeric(trimws(tclvalue(length.mon)))
-            mon1 <- (mon + len - 1) %% 12
-            mon1[mon1 == 0] <- 12
-            seasdef <- paste(mois[mon], "->", mois[mon1])
-        }
-        tclvalue(season.def) <- seasdef
+        setSeasonalFun(dataTstepOut)
     })
 
     ###########################################
@@ -640,7 +722,7 @@ AggregateTS_GetInfo <- function(){
     fileINdir <- tclVar(txtFileDir)
 
     ##############
-    cb.datatype <- ttkcombobox(frDataType, values = CbdatatypeVAL, textvariable = DataType, width = largeur2)
+    cb.datatype <- ttkcombobox(frDataType, values = CbdatatypeVAL, textvariable = DataType, width = largeur2, justify = 'center')
     set.datatype <- ttkbutton(frDataType, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetData)
 
     txt.stnfl <- tklabel(frDataType, text = tclvalue(fileINdir), textvariable = fileINdir, anchor = 'w', justify = 'left')
@@ -712,9 +794,10 @@ AggregateTS_GetInfo <- function(){
         tclvalue(file.stnfl) <- ''
 
         ####
-        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
+        dataType <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+ 
+        if(dataType == 'cdtstation'){
             tclvalue(fileINdir) <- lang.dlg[['label']][['6']]
-            tclvalue(fileORdir) <- lang.dlg[['label']][['9']]
 
             cb.stnfl <- ttkcombobox(frDataType, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
 
@@ -730,23 +813,17 @@ AggregateTS_GetInfo <- function(){
                     tkconfigure(cb.stnfl, values = unlist(listOpenFiles))
                 }
             })
-            tkconfigure(bt.file.save, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                fileORdir2Save(file.save, isFile = TRUE)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-            })
+
             tkconfigure(set.datatype, state = 'disabled')
 
             #######
             helpWidget(cb.stnfl, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
             helpWidget(bt.stnfl, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
-            helpWidget(en.file.save, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
         }
 
         ####
-        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
+        if(dataType == 'cdtdataset'){
             tclvalue(fileINdir) <- lang.dlg[['label']][['7']]
-            tclvalue(fileORdir) <- lang.dlg[['label']][['10']]
 
             cb.stnfl <- tkentry(frDataType, textvariable = file.stnfl, width = largeur0)
 
@@ -758,23 +835,16 @@ AggregateTS_GetInfo <- function(){
                 tclvalue(file.stnfl) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
             })
 
-            tkconfigure(bt.file.save, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                fileORdir2Save(file.save, isFile = FALSE)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-            })
             tkconfigure(set.datatype, state = 'disabled')
 
             #######
             helpWidget(cb.stnfl, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
             helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-            helpWidget(en.file.save, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
         }
 
         ####
-        if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3]){
+        if(dataType == 'cdtnetcdf'){
             tclvalue(fileINdir) <- lang.dlg[['label']][['8']]
-            tclvalue(fileORdir) <- lang.dlg[['label']][['10']]
 
             cb.stnfl <- tkentry(frDataType, textvariable = file.stnfl, width = largeur0)
 
@@ -793,21 +863,19 @@ AggregateTS_GetInfo <- function(){
                 settingdone <<- 1
             })
 
-            tkconfigure(bt.file.save, command = function(){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                fileORdir2Save(file.save, isFile = FALSE)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-            })
             tkconfigure(set.datatype, state = 'normal')
 
             #######
             helpWidget(cb.stnfl, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
             helpWidget(bt.stnfl, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-            helpWidget(en.file.save, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
         }
 
         #######
         tkgrid(cb.stnfl, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+
+        #######
+
+        saveFun(dataType)
         tkfocus(tt)
     })
 
@@ -825,38 +893,13 @@ AggregateTS_GetInfo <- function(){
 
     frSave <- tkframe(frAGGRTS, relief = 'groove', borderwidth = 2)
 
+    frSaveIn <- tkframe(frSave)
+
     file.save <- tclVar(.cdtData$GalParams$output)
+    ncout.format <- tclVar(.cdtData$GalParams$ncout.format)
+    dataset.name <- tclVar(.cdtData$GalParams$dataset.name)
 
-    if(.cdtData$GalParams$data.type == 'cdtstation'){
-        txtSaveDir <- lang.dlg[['label']][['9']]
-        isFile <- TRUE
-    }else{
-        txtSaveDir <- lang.dlg[['label']][['10']]
-        isFile <- FALSE
-    }
-    fileORdir <- tclVar(txtSaveDir)
-
-    txt.file.save <- tklabel(frSave, text = tclvalue(fileORdir), textvariable = fileORdir, anchor = 'w', justify = 'left')
-    en.file.save <- tkentry(frSave, textvariable = file.save, width = largeur0)
-    bt.file.save <- tkbutton(frSave, text = "...")
-
-    #########
-
-    tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-    tkgrid(bt.file.save, row = 1, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-
-    ihlpSav <- if(.cdtData$GalParams$data.type == 'cdtstation') '10' else '11'
-    helpWidget(en.file.save, lang.dlg[['tooltip']][[ihlpSav]], lang.dlg[['status']][[ihlpSav]])
-    helpWidget(bt.file.save, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
-
-    #########
-
-    tkconfigure(bt.file.save, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        fileORdir2Save(file.save, isFile = isFile)
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-    })
+    saveFun(.cdtData$GalParams$data.type)
 
     ############################################
     tkgrid(frConvTS, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -892,17 +935,28 @@ AggregateTS_GetInfo <- function(){
             .cdtData$GalParams$HourMin$out <- as.numeric(trimws(tclvalue(minhour.out)))
             .cdtData$GalParams$HourMin$obs.hour <- as.numeric(trimws(tclvalue(obs.hour)))
 
+            .cdtData$GalParams$aggr.date <- aggDateVAL[CbaggDateVAL %in% trimws(tclvalue(aggr.date))]
+            .cdtData$GalParams$aggr.period <- aggPeriodVAL[CbAggPeriodVAL %in% trimws(tclvalue(aggr.period))]
+
             .cdtData$GalParams$Seasonal$start.mon <- which(MOIS %in% trimws(tclvalue(start.mon)))
             .cdtData$GalParams$Seasonal$length.mon <- as.numeric(trimws(tclvalue(length.mon)))
 
             .cdtData$GalParams$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+            if(.cdtData$GalParams$data.type == 'cdtstation')
                 .cdtData$GalParams$cdtstation <- trimws(tclvalue(file.stnfl))
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+            if(.cdtData$GalParams$data.type == 'cdtdataset'){
                 .cdtData$GalParams$cdtdataset <- trimws(tclvalue(file.stnfl))
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[3])
+                .cdtData$GalParams$dataset.name <- trimws(tclvalue(dataset.name))
+                if(.cdtData$GalParams$dataset.name == ""){
+                    cdt.tkmessageBox(tt, message = lang.dlg[['message']][['15']], icon = "warning", type = "ok")
+                    tkwait.window(tt)
+                }
+            }
+            if(.cdtData$GalParams$data.type == 'cdtnetcdf'){
                 .cdtData$GalParams$cdtnetcdf$dir <- trimws(tclvalue(file.stnfl))
+                .cdtData$GalParams$ncout.format <- trimws(tclvalue(ncout.format))
+            }
 
             .cdtData$GalParams$output <- trimws(tclvalue(file.save))
 

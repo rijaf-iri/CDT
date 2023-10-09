@@ -55,10 +55,10 @@
         </content>
         <content id="5">
             <status>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </status>
             <tooltip>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </tooltip>
         </content>
         <content id="6">
@@ -83,7 +83,7 @@
             <text lang="en"> Browse or enter the directory containing the merged files to be scaled </text>
         </content>
         <content id="2">
-            <text lang="en"> Brwose or enter the directory containing the NetCDF files to be used for scaling </text>
+            <text lang="en"> Brwose or enter the directory containing the netCDF files to be used for scaling </text>
         </content>
         <content id="3">
             <text lang="en"> Browse or enter the path to directory to save results </text>
@@ -95,13 +95,13 @@
             <text lang="en"> Scaling up merged data failed </text>
         </content>
         <content id="6">
-            <text lang="en"> NetCDF data sample to be scaled up not found </text>
+            <text lang="en"> netCDF data sample to be scaled up not found </text>
         </content>
         <content id="7">
             <text lang="en"> Data to be scaled up not found </text>
         </content>
         <content id="8">
-            <text lang="en"> NetCDF data sample to be used to scale up not found </text>
+            <text lang="en"> netCDF data sample to be used to scale up not found </text>
         </content>
         <content id="9">
             <text lang="en"> Data to be used to scale up not found </text>

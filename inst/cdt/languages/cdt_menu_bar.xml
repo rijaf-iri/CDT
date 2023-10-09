@@ -10,8 +10,8 @@
             <text lang="fr"> Ouvrir un data.frame </text>
         </submenu>
         <submenu id="2">
-            <text lang="en"> Open NetCDF file </text>
-            <text lang="fr"> Ouvrir un fichier NetCDF </text>
+            <text lang="en"> Open netCDF file </text>
+            <text lang="fr"> Ouvrir un fichier netCDF </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> Open ESRI Shapefile </text>
@@ -68,12 +68,12 @@
             <text lang="fr"> Vérifier Disponibilité Données </text>
         </submenu>
         <submenu id="4">
-            <text lang="en"> Transform NetCDF files into CDT Dataset </text>
-            <text lang="fr"> Transformer des fichiers NetCDF en données CDT </text>
+            <text lang="en"> Transform netCDF files into CDT Dataset </text>
+            <text lang="fr"> Transformer des fichiers netCDF en données CDT </text>
         </submenu>
         <submenu id="5">
-            <text lang="en"> Split NetCDF files into CDT NetCDF format </text>
-            <text lang="fr"> Morceler des fichiers NetCDF en format CDT NetCDF </text>
+            <text lang="en"> Split netCDF files into CDT netCDF format </text>
+            <text lang="fr"> Morceler des fichiers netCDF en format CDT netCDF </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Download Data </text>
@@ -136,12 +136,12 @@
             <text lang="fr"> Conversion au format de données CPT </text>
         </submenu>
         <submenu id="9-2">
-            <text lang="en"> Converting NetCDF/GeoTIFF/ESRI .hdr Labelled </text>
-            <text lang="fr"> Convertir NetCDF/GeoTIFF/ESRI .hdr Labelled </text>
+            <text lang="en"> Converting netCDF/GeoTIFF/ESRI .hdr Labelled </text>
+            <text lang="fr"> Convertir netCDF/GeoTIFF/ESRI .hdr Labelled </text>
         </submenu>
         <submenu id="9-3">
-            <text lang="en"> Create GrADS Descriptor File from CDT NetCDF format files </text>
-            <text lang="fr"> Créer un descripteur GrADS à partir de fichiers au format CDT NetCDF </text>
+            <text lang="en"> Create GrADS Descriptor File from CDT netCDF format files </text>
+            <text lang="fr"> Créer un descripteur GrADS à partir de fichiers au format CDT netCDF </text>
         </submenu>
         <submenu id="10">
             <text lang="en"> Data Extraction </text>
@@ -152,8 +152,8 @@
             <text lang="fr"> Masquer les grilles à l'extérieur des polygones </text>
         </submenu>
         <submenu id="12">
-            <text lang="en"> Combine multiple CDT NetCDF format files into one </text>
-            <text lang="fr"> Combiner plusieurs fichiers au format CDT NetCDF en un seul </text>
+            <text lang="en"> Combine multiple CDT netCDF format files into one </text>
+            <text lang="fr"> Combiner plusieurs fichiers au format CDT netCDF en un seul </text>
         </submenu>
         <submenu id="13">
             <text lang="en"> Data Operation </text>
@@ -274,8 +274,8 @@
             <text lang="fr"> Validate multiple data sets (CDT Station Format) </text>
         </submenu>
         <submenu id="2-old">
-            <text lang="en"> Gridded Data (NetCDF Format) </text>
-            <text lang="fr"> Gridded Data (NetCDF Format) </text>
+            <text lang="en"> Gridded Data (netCDF Format) </text>
+            <text lang="fr"> Gridded Data (netCDF Format) </text>
         </submenu>
         <submenu id="4-1">
             <text lang="en"> Precipitation Data </text>
@@ -337,7 +337,11 @@
         </submenu>
         <submenu id="5">
             <text lang="en"> Daily Rainfall Analysis </text>
-            <text lang="fr"> Analyses Pluies Journalières </text>
+            <text lang="fr"> Analyses des Pluies Journalières </text>
+        </submenu>
+        <submenu id="5-1">
+            <text lang="en"> Seasonal Rainfall Analysis </text>
+            <text lang="fr"> Analyses des Pluies Saisonière </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Rainy Season Characteristics </text>
@@ -402,16 +406,16 @@
             <text lang="fr"> Visualisation données grilles </text>
         </submenu>
         <submenu id="3">
-            <text lang="en"> Plot NetCDF Data (One File) </text>
-            <text lang="fr"> Visualisation NetCDF (Un Fichier) </text>
+            <text lang="en"> Plot netCDF Data (One File) </text>
+            <text lang="fr"> Visualisation netCDF (Un Fichier) </text>
         </submenu>
         <submenu id="4">
-            <text lang="en"> Plot NetCDF Data (Sequential Files) </text>
-            <text lang="fr"> Visualisation NetCDF (Fichiers Séquentiels) </text>
+            <text lang="en"> Plot netCDF Data (Sequential Files) </text>
+            <text lang="fr"> Visualisation netCDF (Fichiers Séquentiels) </text>
         </submenu>
         <submenu id="5">
-            <text lang="en"> Plot NetCDF Data (Multiple Variables) </text>
-            <text lang="fr"> Visualisation NetCDF (Plusieurs Variables) </text>
+            <text lang="en"> Plot netCDF Data (Multiple Variables) </text>
+            <text lang="fr"> Visualisation netCDF (Plusieurs Variables) </text>
         </submenu>
         <submenu id="6">
             <text lang="en"> Plot multiple data sets </text>
@@ -429,7 +433,7 @@
         </submenu>
         <submenu id="2">
             <text lang="en"> Update CDT from GitHub </text>
-            <text lang="fr"> Update CDT from GitHub </text>
+            <text lang="fr"> Mettre à jour CDT </text>
         </submenu>
         <submenu id="3">
             <text lang="en"> About CDT </text>

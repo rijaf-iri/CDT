@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> Blank NetCDF Data </text>
+        <text lang="en"> Blank netCDF Data </text>
     </title>
     <widget>
         <combobox id="1">
             <option id="1">
-                <text lang="en"> One NetCDF file </text>
+                <text lang="en"> One netCDF file </text>
             </option>
             <option id="2">
-                <text lang="en"> Multiple NetCDF files </text>
+                <text lang="en"> Multiple netCDF files </text>
             </option>
         </combobox>
         <label id="1">
-            <text lang="en"> NetCDF data file </text>
+            <text lang="en"> netCDF data file </text>
         </label>
         <label id="2">
             <text lang="en"> Directory containing the netcdf data (*.nc) </text>
         </label>
         <label id="3">
-            <text lang="en"> NetCDF data sample file </text>
+            <text lang="en"> netCDF data sample file </text>
         </label>
         <label id="4">
             <text lang="en"> ESRI shapefiles used for blanking </text>
@@ -64,16 +64,16 @@
     </help>
     <message>
         <content id="1">
-            <text lang="en"> Blank NetCDF data ... </text>
+            <text lang="en"> Blank netCDF data ... </text>
         </content>
         <content id="2">
             <text lang="en"> Directory to save results is missing </text>
         </content>
         <content id="3">
-            <text lang="en"> Unable to read NetCDF file </text>
+            <text lang="en"> Unable to read netCDF file </text>
         </content>
         <content id="4">
-            <text lang="en"> Unable to read the sample NetCDF file </text>
+            <text lang="en"> Unable to read the sample netCDF file </text>
         </content>
         <content id="5">
             <text lang="en"> No shapefiles provided </text>
@@ -82,13 +82,13 @@
             <text lang="en"> Unable to open the shapefile </text>
         </content>
         <content id="7">
-            <text lang="en"> No NetCDF files found </text>
+            <text lang="en"> No netCDF files found </text>
         </content>
         <content id="8">
-            <text lang="en"> Blanking NetCDF data finished successfully </text>
+            <text lang="en"> Blanking netCDF data finished successfully </text>
         </content>
         <content id="9">
-            <text lang="en"> Blanking NetCDF data failed </text>
+            <text lang="en"> Blanking netCDF data failed </text>
         </content>
     </message>
 </dialog_box>

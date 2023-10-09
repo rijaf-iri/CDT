@@ -60,10 +60,16 @@
         </combobox>
         <combobox id="2">
             <option id="1">
-                <text lang="en"> Data </text>
+                <text lang="en"> Monthly Data </text>
             </option>
             <option id="2">
-                <text lang="en"> Anomaly </text>
+                <text lang="en"> Yearly Data </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Seasonal Data </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Anomaly Data </text>
             </option>
         </combobox>
         <combobox id="3">
@@ -193,8 +199,14 @@
         <label id="16">
             <text lang="en"> Statistics Maps </text>
         </label>
-        <label id="17">
-            <text lang="en"> Monthly-Seasonal-Annual Maps </text>
+        <label id="17-1">
+            <text lang="en"> Monthly Maps </text>
+        </label>
+        <label id="17-2">
+            <text lang="en"> Yearly Maps </text>
+        </label>
+        <label id="17-3">
+            <text lang="en"> Seasonal Maps </text>
         </label>
         <label id="18">
             <text lang="en"> From </text>
@@ -233,13 +245,22 @@
             <text lang="en"> value </text>
         </label>
         <label id="30">
-            <text lang="en"> Save Analysis Outputs </text>
+            <text lang="en"> Save This Analysis Output </text>
         </label>
         <label id="31">
             <text lang="en"> Directory to save the outputs </text>
         </label>
         <label id="32">
             <text lang="en"> Operator </text>
+        </label>
+        <label id="33">
+            <text lang="en"> Time step </text>
+        </label>
+        <label id="34">
+            <text lang="en"> Months </text>
+        </label>
+        <label id="35">
+            <text lang="en"> Monthly Data </text>
         </label>
     </widget>
     <help>
@@ -482,6 +503,9 @@
         </content>
         <content id="25">
             <text lang="en"> No analysis outputs found </text>
+        </content>
+        <content id="26">
+            <text lang="en"> The old version of saved analysis is no longer compatible with this new version. Please redo your analysis </text>
         </content>
     </message>
 </panel_cmd>

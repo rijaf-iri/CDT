@@ -23,8 +23,8 @@ AggregateMinMax_Execute <- function(){
 
     #########################
     agg.index <- cdt.index.aggregate(dates, period, period1,
-                                    minhr.in.step, minhr.out.step, obs.hour,
-                                    seasonLength, startMonth)
+                                    minhr.in.step, minhr.out.step,
+                                    seasonLength, startMonth, obs.hour)
 
     if(aggr.pars$min.frac$unique){
         ifull <- (agg.index$nba / agg.index$nb0) >= aggr.pars$min.frac$all

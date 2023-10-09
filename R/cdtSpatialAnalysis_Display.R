@@ -10,24 +10,25 @@ spatialAnalysis.plotStatMaps <- function(){
         titre2 <- tclvalue(.cdtData$EnvData$climStat)
         titre3 <- switch(params$analysis$method,
                          "percentile" = paste0("(", params$analysis$percentile, "th", ")"),
-                         "frequency" = {
+                         "probExc" = paste0("(", params$analysis$probs.thres, " [value])"),
+                         "probNExc" = paste0("(", params$analysis$probs.thres, " [value])"),
+                         "frequency" = local({
                                 freq_opr <- params$analysis$frequency$oper
-
-                            if(freq_opr == '>=<'){
-                                freq_low <- params$analysis$frequency$low
-                                freq_up <- params$analysis$frequency$up
-                                paste0("(", freq_low, " < X < ", freq_up, ")")
-                            }else{
-                                freq_thres <- params$analysis$frequency$thres
-                                paste0("(", "X ", freq_opr, " " , freq_thres, ")")
-                            }
-                          },
+                                if(freq_opr == '>=<'){
+                                    freq_low <- params$analysis$frequency$low.value
+                                    freq_up <- params$analysis$frequency$up.value
+                                    paste0("(", freq_low, " \u2264 X \u2264 ", freq_up, " [value])")
+                                }else{
+                                    freq_thres <- params$analysis$frequency$thres.value
+                                    paste0("(", "X ", freq_opr, " " , freq_thres, " [value])")
+                                }
+                            }),
                           "trend" = {
                                 if(params$analysis$trend$unit == 1) "per year"
                                 if(params$analysis$trend$unit == 2) "over"
                                 if(params$analysis$trend$unit == 3) "/ average (in %)"
-                          },
-                        NULL)
+                            },
+                            NULL)
         titre4 <- tclvalue(.cdtData$EnvData$climDate)
         .titre <- paste(titre1, titre2, titre3, titre4)
     }else .titre <- climMapOp$title$title
@@ -106,14 +107,13 @@ spatialAnalysis.plotStatMaps <- function(){
 
 spatialAnalysis.plotTSMaps <- function(){
     TSMapOp <- .cdtData$EnvData$TSMapOp
-
-    if(tclvalue(.cdtData$EnvData$TSData) == "Data")
-        don <- .cdtData$EnvData$tsdata
-    if(tclvalue(.cdtData$EnvData$TSData) == "Anomaly")
-        don <- .cdtData$EnvData$anomData
+    don <- switch(.cdtData$EnvData$TSData,
+                  "Data" = .cdtData$EnvData$tsdata,
+                  "Anomaly" = .cdtData$EnvData$anomData
+                 )
 
     if(!TSMapOp$title$user){
-        if(trimws(tclvalue(.cdtData$EnvData$TSData)) == "Data"){
+        if(.cdtData$EnvData$TSData == "Data"){
             params <- .cdtData$EnvData$statpars$params
             titre1 <- stringr::str_to_title(params$out.series$tstep)
             # c("sum", "mean", "median", "max", "min", "count")
@@ -127,7 +127,7 @@ spatialAnalysis.plotTSMaps <- function(){
             .titre <- paste(titre1, titre2, titre3, titre4)
         }
 
-        if(trimws(tclvalue(.cdtData$EnvData$TSData)) == "Anomaly"){
+        if(.cdtData$EnvData$TSData == "Anomaly"){
             params <- don$params
             titre1 <- stringr::str_to_title(params$out.series$tstep)
             titre2 <- "anomaly"
@@ -167,15 +167,21 @@ spatialAnalysis.plotTSGraph <- function(){
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
 
     if(.cdtData$EnvData$statpars$params$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$tsdata$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+        if(.cdtData$EnvData$statpars$params$out.series$tstep == 'monthly'){
+            tmp_data <- .cdtData$EnvData$monthtsdata
+        }else{
+            tmp_data <- .cdtData$EnvData$tsdata
+        }
+
+        ixy <- which(tmp_data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['18']], TRUE, 'e')
             return(NULL)
         }
-        don <- .cdtData$EnvData$tsdata$data[, ixy]
-        dates <- .cdtData$EnvData$tsdata$date
+        don <- tmp_data$data[, ixy]
+        dates <- tmp_data$date
         daty <- as.numeric(substr(dates, 1, 4))
-        .cdtData$EnvData$location <- paste0("Station: ", .cdtData$EnvData$tsdata$id[ixy])
+        .cdtData$EnvData$location <- paste0("Station: ", tmp_data$id[ixy])
     }else{
         cdtdataset <- .cdtData$EnvData$cdtdataset
         xloc <- as.numeric(trimws(tclvalue(.cdtData$EnvData$plot.maps$lonLOC)))
@@ -191,12 +197,24 @@ spatialAnalysis.plotTSGraph <- function(){
         year2 <- substr(dates, 9, 12)
         mon2 <- substr(dates, 14, 15)
         if(all(year1 == year2)){
-            if(all(mon1 == mon2)) dateTS <- paste0(year1, mon1)
-            else{
+            if(all(mon1 == mon2)){
+                dateTS <- paste0(year1, mon1)
+            }else{
                 dateTS <- if(all(mon1 == "01") && all(mon2 == "12")) year1 else dates
             }
-        }else dateTS <- dates
-        ipos <- which(.cdtData$EnvData$statpars$stats == trimws(tclvalue(.cdtData$EnvData$climDate)))
+        }else{
+            dateTS <- dates
+        }
+
+        if(.cdtData$EnvData$statpars$params$out.series$tstep == 'monthly'){
+            climPeriod <- trimws(tclvalue(.cdtData$EnvData$climDate))
+            climPeriod <- strsplit(climPeriod, '_')[[1]][1]
+            monthGraph <- paste0(climPeriod, '_', .cdtData$EnvData$monthGraph)
+            ipos <- which(.cdtData$EnvData$statpars$stats == monthGraph)
+        }else{
+            ipos <- which(.cdtData$EnvData$statpars$stats == trimws(tclvalue(.cdtData$EnvData$climDate)))
+        }
+
         idaty <- dateTS %in% .cdtData$EnvData$statpars$timeseries[[ipos]][[2]]
         dates <- dateTS[idaty]
         don <- don[idaty]
@@ -235,6 +253,32 @@ spatialAnalysis.plotTSGraph <- function(){
 
     xlab0 <- ""
     ylab0 <- ""
+    params <- .cdtData$EnvData$statpars$params
+    lab_tmp1 <- stringr::str_to_title(params$out.series$tstep)
+    lab_tmp2 <- switch(params$aggr.series$aggr.fun,
+                       "sum" = "total", "mean" = "average",
+                       "median" = "median", "max" = "maximum",
+                       "min" = "minimum", "count" = "number")
+    lab_tmp3 <- if(params$aggr.series$aggr.fun == "count")
+                    paste("(", params$aggr.series$opr.fun, params$aggr.series$opr.thres, ")") else NULL
+    lab_tmp4 <- switch(params$out.series$tstep,
+                       'monthly' = local({
+                            dmois <- ISOdate(2014, 1:12, 1)
+                            mon <- format(dmois, "%m")
+                            im <- which(mon == .cdtData$EnvData$monthGraph)
+                            paste0("[", format(dmois, "%B")[im], "]")
+                       }),
+                       'seasonal' = local({
+                            mois <- format(ISOdate(2014, 1:12, 1), "%b")
+                            mon <- params$out.series$start.mon
+                            len <- params$out.series$length.mon
+                            mon1 <- (mon + len - 1) %% 12
+                            mon1[mon1 == 0] <- 12
+                            paste0("[", mois[mon], "->", mois[mon1], "]")
+                       }),
+                       NULL)
+
+    lab_tmp <- paste(lab_tmp1, lab_tmp2, lab_tmp3, lab_tmp4)
 
     #########
 
@@ -253,6 +297,7 @@ spatialAnalysis.plotTSGraph <- function(){
         if(optsgph$xlim$is.min) xlim[1] <- as.numeric(optsgph$xlim$min)
         if(optsgph$xlim$is.max) xlim[2] <- as.numeric(optsgph$xlim$max)
         ylim <- c(0, 100)
+        xlab0 <- lab_tmp
         ylab0 <- "Probability of Exceeding"
     }else{
         xlim <- range(daty, na.rm = TRUE)
@@ -262,8 +307,16 @@ spatialAnalysis.plotTSGraph <- function(){
         daty <- daty[idt]
         don <- don[idt]
         ylim <- range(pretty(don))
-        if(GRAPHTYPE == 'anom')
-            if(optsgph$anom$perc.anom) ylab0 <- "Anomaly (% of Mean)"
+        if(GRAPHTYPE == 'anom'){
+            if(optsgph$anom$perc.anom){
+                 # ylab0 <- "Anomaly (% of Mean)"
+                 ylab0 <- paste(lab_tmp1, "anomaly", "(% of Mean)", lab_tmp4)
+             }else{
+                ylab0 <- paste(lab_tmp1, "anomaly", lab_tmp4)
+             }
+        }else{
+            ylab0 <- lab_tmp
+        }
     }
 
     if(optsgph$ylim$is.min) ylim[1] <- optsgph$ylim$min

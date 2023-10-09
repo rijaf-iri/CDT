@@ -40,15 +40,14 @@ spatialAnalysisPanelCmd <- function(){
     GeneralParameters <- list(data.type = "cdtstation", in.tstep = "daily", in.file = "", out.dir = "",
                               analysis = list(method = "mean",
                                              percentile = 90,
-                                             frequency = list(oper = '>=', thres = 100, low = 0, up = 200),
                                              # frequency = list(oper = '>=', thres.type = 'value',
-                                             #                  thres.value = 100, low.value = 0, up.value = 200,
-                                             #                  thres.percent = 95, low.percent = 33, up.percent = 66),
+                                             #                  thres.value = 200, low.value = 0, up.value = 200,
+                                             #                  thres.percent = 95, low.percent = 33.33, up.percent = 66.66),
+                                             frequency = list(oper = '>=', thres.value = 200, low.value = 0, up.value = 200),
                                              anomaly = list(perc = FALSE, all.years = TRUE,
                                                             start.year = 1991, end.year = 2020, min.year = 10),
                                              trend = list(unit = 1, min.year = 10),
-                                             probs = list(thres.type = 'value', thres.value = 200, thres.percent = 90)
-                                            ),
+                                             probs.thres = 200),
                               aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 1,
                                                  min.frac = list(unique = TRUE, all = 0.95, month = rep(0.95, 12))),
                               use.years = list(all.years = TRUE, start.year = 1981, end.year = 2021,
@@ -360,7 +359,7 @@ spatialAnalysisPanelCmd <- function(){
         outSeriesVAL <- c('monthly', 'annual', 'seasonal')
         tclvalue(out.tstep) <- CboutSeriesVAL[outSeriesVAL %in% GeneralParameters$out.series$tstep]
 
-        txt.outTS <- tklabel(frameOut, text = "Time step", anchor = 'e', justify = 'right')
+        txt.outTS <- tklabel(frameOut, text = lang.dlg[['label']][['33']], anchor = 'e', justify = 'right')
         cb.outTS <- ttkcombobox(frameOut, values = CboutSeriesVAL, textvariable = out.tstep, width = largeur3)
 
         helpWidget(cb.outTS, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
@@ -377,6 +376,8 @@ spatialAnalysisPanelCmd <- function(){
 
             tkdestroy(inMonthSeas)
 
+            cbTSMapVal <- CbsourceTSDataVAL
+
             if(outstep == 'monthly'){
                 inMonthSeas <<- ttkbutton(frDispSeas, text = lang.dlg[['button']][['3']])
 
@@ -385,7 +386,28 @@ spatialAnalysisPanelCmd <- function(){
                 tkconfigure(inMonthSeas, command = function(){
                     GeneralParameters$use.month <<- getInfoMonths2Process(.cdtEnv$tcl$main$win,
                                                                           GeneralParameters$use.month)
+                    if(GeneralParameters$use.month$nseq.months){
+                        smon <- GeneralParameters$use.month$custom.months
+                    }else{
+                        smon1 <- GeneralParameters$use.month$start.month
+                        smon2 <- GeneralParameters$use.month$end.month
+                        monlen <- (smon2 - smon1 + 1) %% 12
+                        monlen[monlen == 0] <- 12
+                        smon <- (smon1:(smon1 + (monlen - 1))) %% 12
+                        smon[smon == 0] <- 12
+                    }
+
+                    TSDateMonthsVAL <- MOIS[smon]
+
+                    tkconfigure(cb.TSMon, values = TSDateMonthsVAL)
+                    tclvalue(TSDateMonths) <- TSDateMonthsVAL[1]
+                    tkconfigure(cb.GrphMon, values = TSDateMonthsVAL)
+                    tclvalue(TSGraphMonths) <- TSDateMonthsVAL[1]
                 })
+
+                lab_frameTSMaps <- lang.dlg[['label']][['17-1']]
+                cbTSMapVal[1] <- lang.dlg[['combobox']][['2']][1]
+                stateTSMon <- 'normal'
             }else{
                 seasdef <- ""
                 if(outstep == 'seasonal'){
@@ -394,18 +416,33 @@ spatialAnalysisPanelCmd <- function(){
                     mon1 <- (mon + len - 1) %% 12
                     mon1[mon1 == 0] <- 12
                     seasdef <- paste(MOIS[mon], "->", MOIS[mon1])
+
+                    lab_frameTSMaps <- lang.dlg[['label']][['17-3']]
+                    cbTSMapVal[1] <- lang.dlg[['combobox']][['2']][3]
                 }
                 if(outstep == 'annual'){
                     tclvalue(start.mon) <- MOIS[1]
                     tclvalue(length.mon) <- 12
                     seasdef <- paste(MOIS[1], "->", MOIS[12])
+
+                    lab_frameTSMaps <- lang.dlg[['label']][['17-2']]
+                    cbTSMapVal[1] <- lang.dlg[['combobox']][['2']][2]
                 }
                 tclvalue(season.def) <- seasdef
+                stateTSMon <- 'disabled'
 
                 inMonthSeas <<- tklabel(frDispSeas, text = tclvalue(season.def), textvariable = season.def)
             }
 
             tkgrid(inMonthSeas, row = 0, column = 0, sticky = 'we')
+
+            tkconfigure(cb.TSMon, state = stateTSMon)
+            tkconfigure(cb.GrphMon, state = stateTSMon)
+
+            tkconfigure(frameTSMaps, text = lab_frameTSMaps)
+            tkconfigure(cb.TSData, values = cbTSMapVal)
+            tclvalue(VarsourceTSDataVAL) <- cbTSMapVal[1]
+            CbsourceTSDataVAL <<- cbTSMapVal
 
             stateAggr <- if(outstep == 'monthly' & instep == 'monthly') "disabled" else "normal"
             tkconfigure(bt.AggrFun, state = stateAggr)
@@ -484,6 +521,23 @@ spatialAnalysisPanelCmd <- function(){
             tkconfigure(inMonthSeas, command = function(){
                 GeneralParameters$use.month <<- getInfoMonths2Process(.cdtEnv$tcl$main$win,
                                                                       GeneralParameters$use.month)
+                if(GeneralParameters$use.month$nseq.months){
+                    smon <- GeneralParameters$use.month$custom.months
+                }else{
+                    smon1 <- GeneralParameters$use.month$start.month
+                    smon2 <- GeneralParameters$use.month$end.month
+                    monlen <- (smon2 - smon1 + 1) %% 12
+                    monlen[monlen == 0] <- 12
+                    smon <- (smon1:(smon1 + (monlen - 1))) %% 12
+                    smon[smon == 0] <- 12
+                }
+
+                TSDateMonthsVAL <- MOIS[smon]
+
+                tkconfigure(cb.TSMon, values = TSDateMonthsVAL)
+                tclvalue(TSDateMonths) <- TSDateMonthsVAL[1]
+                tkconfigure(cb.GrphMon, values = TSDateMonthsVAL)
+                tclvalue(TSGraphMonths) <- TSDateMonthsVAL[1]
             })
         }else{
             inMonthSeas <- tklabel(frDispSeas, text = tclvalue(season.def), textvariable = season.def)
@@ -524,8 +578,7 @@ spatialAnalysisPanelCmd <- function(){
             AGGRFUN <- c("sum", "mean", "median", "max", "min", "count")
             GeneralParameters$aggr.series <<- getInfo_AggregateFun(.cdtEnv$tcl$main$win,
                                                                    GeneralParameters$aggr.series,
-                                                                   AGGRFUN
-                                                                  )
+                                                                   AGGRFUN)
         })
 
         #######################
@@ -575,25 +628,27 @@ spatialAnalysisPanelCmd <- function(){
 
             if(analysisMthd == 'frequency'){
                 set_freq_thresholds <- function(freq_operator){
-                    tkdestroy(fr.freq)
-                    fr.freq <<- tkframe(fr.anMthd)
+                    tkdestroy(fr.freq.thres)
+                    fr.freq.thres <<- tkframe(fr.anMthd)
 
                     if(freq_operator == '>=<'){
-                        txt.Freq1 <- tklabel(fr.freq, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
-                        en.Freq1 <- tkentry(fr.freq, textvariable = freq.low.thres, width = 5, justify = 'center')
-                        txt.Freq2 <- tklabel(fr.freq, text = lang.dlg[['label']][['14']])
-                        en.Freq2 <- tkentry(fr.freq, textvariable = freq.up.thres, width = 5, justify = 'center')
+                        txt.Freq1 <- tklabel(fr.freq.thres, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
+                        en.Freq1 <- tkentry(fr.freq.thres, textvariable = freq.thres.LOW, width = 5, justify = 'center')
+                        txt.Freq2 <- tklabel(fr.freq.thres, text = lang.dlg[['label']][['14']])
+                        en.Freq2 <- tkentry(fr.freq.thres, textvariable = freq.thres.UP, width = 5, justify = 'center')
                         tkgrid(txt.Freq1, en.Freq1, txt.Freq2, en.Freq2)
                         helpWidget(en.Freq1, lang.dlg[['tooltip']][['16']], lang.dlg[['status']][['16']])
                         helpWidget(en.Freq2, lang.dlg[['tooltip']][['17']], lang.dlg[['status']][['17']])
                     }else{
-                        txt.Freq1 <- tklabel(fr.freq, text = lang.dlg[['label']][['28']], anchor = 'e', justify = 'right')
-                        en.Freq1 <- tkentry(fr.freq, textvariable = freq.val.thres, width = 5, justify = 'center')
-                        tkgrid(txt.Freq1, en.Freq1)
-                        helpWidget(en.Freq1, lang.dlg[['tooltip']][['20']], lang.dlg[['status']][['20']])
+                        txt.freqthres <- tklabel(fr.freq.thres, text = lang.dlg[['label']][['28']], anchor = 'e', justify = 'right')
+                        en.freqthres <- tkentry(fr.freq.thres, textvariable = freq.thres.value, width = 5, justify = 'center')
+                        txt.freqthres1 <- tklabel(fr.freq.thres, text = lang.dlg[['label']][['29']], anchor = 'w', justify = 'left')
+                        tkgrid(txt.freqthres, en.freqthres, txt.freqthres1)
+
+                        helpWidget(en.freqthres, lang.dlg[['tooltip']][['20']], lang.dlg[['status']][['20']])
                     }
 
-                    tkgrid(fr.freq, row = 0, column = 2)
+                    tkgrid(fr.freq.thres, row = 0, column = 2)
                 }
 
                 ####
@@ -602,10 +657,12 @@ spatialAnalysisPanelCmd <- function(){
 
                 txt.freq.opr <- tklabel(fr.anMthd, text = lang.dlg[['label']][['32']], anchor = 'w', justify = 'left')
                 cb.freq.opr <- ttkcombobox(fr.anMthd, values = FREQ_OPER, textvariable = freq.oper.fun, width = 4)
-                fr.freq <- tkframe(fr.anMthd)
+                fr.freq.thres <- tkframe(fr.anMthd)
 
                 tkgrid(txt.freq.opr, row = 0, column = 0)
                 tkgrid(cb.freq.opr, row = 0, column = 1)
+
+                ####
 
                 set_freq_thresholds(trimws(tclvalue(freq.oper.fun)))
 
@@ -633,40 +690,10 @@ spatialAnalysisPanelCmd <- function(){
 
             if(analysisMthd %in% c('probExc', 'probNExc')){
                 txt.probtype <- tklabel(fr.anMthd, text = lang.dlg[['label']][['28']], anchor = 'e', justify = 'right')
-                cb.probtype <- ttkcombobox(fr.anMthd, values = CbProbThresTypeVAL, textvariable = probs.thres.type, justify = 'center', width = 10)
                 en.probthres <- tkentry(fr.anMthd, textvariable = probs.thres.value, width = 5, justify = 'center')
-                txt.probthres1 <- tklabel(fr.anMthd, text = tclvalue(txtProbthres1), textvariable = txtProbthres1, anchor = 'w', justify = 'left')
-                txt.probthres2 <- tklabel(fr.anMthd, text = tclvalue(txtProbthres2), textvariable = txtProbthres2)
+                txt.probthres <- tklabel(fr.anMthd, text = lang.dlg[['label']][['29']], anchor = 'w', justify = 'left')
 
-                tkgrid(txt.probtype, cb.probtype, en.probthres, txt.probthres1, txt.probthres2)
-
-                ###
-                tkbind(en.probthres, "<FocusOut>", function(){
-                    probtype <- ProbThresTypeVAL[CbProbThresTypeVAL %in% trimws(tclvalue(probs.thres.type))]
-
-                    if(probtype == 'percentile'){
-                        tclvalue(probs.thres.tmp1) <- tclvalue(probs.thres.value)
-                    }else{
-                        tclvalue(probs.thres.tmp2) <- tclvalue(probs.thres.value)
-                    }
-                })
-
-                tkbind(cb.probtype, "<<ComboboxSelected>>", function(){
-                    probtype <- ProbThresTypeVAL[CbProbThresTypeVAL %in% trimws(tclvalue(probs.thres.type))]
-
-                    if(probtype == 'percentile'){
-                        tclvalue(probs.thres.value) <- tclvalue(probs.thres.tmp1)
-                        txt_probthres1 <- lang.dlg[['label']][['11']]
-                        txt_probthres2 <- lang.dlg[['label']][['12']]
-                    }else{
-                        tclvalue(probs.thres.value) <- tclvalue(probs.thres.tmp2)
-                        txt_probthres1 <- ''
-                        txt_probthres2 <- lang.dlg[['label']][['29']]
-                    }
-
-                    tclvalue(txtProbthres1) <- txt_probthres1
-                    tclvalue(txtProbthres2) <- txt_probthres2
-                })
+                tkgrid(txt.probtype, en.probthres, txt.probthres)
             }
 
             ###############
@@ -692,40 +719,17 @@ spatialAnalysisPanelCmd <- function(){
         trend.minyear <- tclVar(GeneralParameters$analysis$trend$min.year)
 
         perc.mthd.val <- tclVar(GeneralParameters$analysis$percentile)
-
-        freq.oper.fun <- tclVar(GeneralParameters$analysis$frequency$oper)
-        freq.val.thres <- tclVar(GeneralParameters$analysis$frequency$thres)
-        freq.low.thres <- tclVar(GeneralParameters$analysis$frequency$low)
-        freq.up.thres <- tclVar(GeneralParameters$analysis$frequency$up)
-
         anom.perc.mean <- tclVar(GeneralParameters$analysis$anomaly$perc)
+        probs.thres.value <- tclVar(GeneralParameters$analysis$probs.thres)
 
-        # CbProbThresTypeVAL <- lang.dlg[['combobox']][['4']]
-        # ProbThresTypeVAL <- c("value", "percentile")
-        CbProbThresTypeVAL <- lang.dlg[['combobox']][['4']][1]
-        ProbThresTypeVAL <- c("value", "percentile")[1]
+        ####
+        freq.oper.fun <- tclVar(GeneralParameters$analysis$frequency$oper)
+        freq.thres.LOW <- tclVar(GeneralParameters$analysis$frequency$low.value)
+        freq.thres.UP <- tclVar(GeneralParameters$analysis$frequency$up.value)
+        freq.thres.value <- tclVar(GeneralParameters$analysis$frequency$thres.value)
 
-        probs.thres.type <- tclVar()
-        tclvalue(probs.thres.type) <- CbProbThresTypeVAL[ProbThresTypeVAL %in% GeneralParameters$analysis$probs$thres.type]
+        ####
 
-        probs.thres.tmp1 <- tclVar(GeneralParameters$analysis$probs$thres.percent)
-        probs.thres.tmp2 <- tclVar(GeneralParameters$analysis$probs$thres.value)
-        probs.thres.value <- tclVar()
-
-        if(GeneralParameters$analysis$probs$thres.type == 'percentile'){
-            tclvalue(probs.thres.value) <- tclvalue(probs.thres.tmp1)
-            txt_probthres1 <- lang.dlg[['label']][['11']]
-            txt_probthres2 <- lang.dlg[['label']][['12']]
-        }else{
-            tclvalue(probs.thres.value) <- tclvalue(probs.thres.tmp2)
-            txt_probthres1 <- ''
-            txt_probthres2 <- lang.dlg[['label']][['29']]
-        }
-
-        txtProbthres1 <- tclVar(txt_probthres1)
-        txtProbthres2 <- tclVar(txt_probthres2)
-
-        ###
         analysisMethodFun(GeneralParameters$analysis$method)
 
         #############################
@@ -766,17 +770,17 @@ spatialAnalysisPanelCmd <- function(){
                 GeneralParameters$analysis$frequency$oper <- trimws(tclvalue(freq.oper.fun))
 
                 if(GeneralParameters$analysis$frequency$oper == '>=<'){
-                    GeneralParameters$analysis$frequency$low <- as.numeric(trimws(tclvalue(freq.low.thres)))
-                    GeneralParameters$analysis$frequency$up <- as.numeric(trimws(tclvalue(freq.up.thres)))
-                    if(is.na(GeneralParameters$analysis$frequency$low) |
-                       is.na(GeneralParameters$analysis$frequency$up))
+                    GeneralParameters$analysis$frequency$low.value <- as.numeric(trimws(tclvalue(freq.thres.LOW)))
+                    GeneralParameters$analysis$frequency$up.value <- as.numeric(trimws(tclvalue(freq.thres.UP)))
+                    if(is.na(GeneralParameters$analysis$frequency$low.value) |
+                       is.na(GeneralParameters$analysis$frequency$up.value))
                     {
                         Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
                         return(NULL)
                     }
                 }else{
-                    GeneralParameters$analysis$frequency$thres <- as.numeric(trimws(tclvalue(freq.val.thres)))
-                    if(is.na(GeneralParameters$analysis$frequency$thres)){
+                    GeneralParameters$analysis$frequency$thres.value <- as.numeric(trimws(tclvalue(freq.thres.value)))
+                    if(is.na(GeneralParameters$analysis$frequency$thres.value)){
                         Insert.Messages.Out(lang.dlg[['message']][['3-1']], TRUE, 'e')
                         return(NULL)
                     }
@@ -788,12 +792,7 @@ spatialAnalysisPanelCmd <- function(){
             }
 
             if(GeneralParameters$analysis$method %in% c('probExc', 'probNExc')){
-                GeneralParameters$analysis$probs$thres.type <- ProbThresTypeVAL[CbProbThresTypeVAL %in% trimws(tclvalue(probs.thres.type))]
-                if(GeneralParameters$analysis$probs$thres.type == 'percentile'){
-                    GeneralParameters$analysis$probs$thres.percent <- as.numeric(trimws(tclvalue(probs.thres.value)))
-                }else{
-                    GeneralParameters$analysis$probs$thres.value <- as.numeric(trimws(tclvalue(probs.thres.value)))
-                }
+                GeneralParameters$analysis$probs.thres <- as.numeric(trimws(tclvalue(probs.thres.value)))
             }
 
             ######
@@ -882,13 +881,13 @@ spatialAnalysisPanelCmd <- function(){
             if(analysis_method == 'frequency'){
                 freq_opr <- trimws(tclvalue(freq.oper.fun))
                 if(freq_opr == '>=<'){
-                    freq_low <- as.numeric(trimws(tclvalue(freq.low.thres)))
-                    freq_up <- as.numeric(trimws(tclvalue(freq.up.thres)))
-                    freq_type <- paste0('between_', freq_low, '_', freq_up)
+                    freq_low <- as.numeric(trimws(tclvalue(freq.thres.LOW)))
+                    freq_up <- as.numeric(trimws(tclvalue(freq.thres.UP)))
+                    freq_suffix <- paste0('between_', freq_low, '_', freq_up)
                 }else{
-                    freq_thres <- as.numeric(trimws(tclvalue(freq.val.thres)))
+                    freq_thres <- as.numeric(trimws(tclvalue(freq.thres.value)))
                     opr <- switch(">=" = 'ge', ">" = 'gt', "<=" = 'le', "<" = 'lt')
-                    freq_type <- paste0(opr, '_', freq_thres)
+                    freq_suffix <- paste0(opr, '_', freq_thres)
                 }
             }
             if(analysis_method == 'anomaly'){
@@ -897,7 +896,6 @@ spatialAnalysisPanelCmd <- function(){
                                     '1' = 'percentage_of_mean')
             }
             if(analysis_method %in% c('probExc', 'probNExc')){
-                thres_type <- ProbThresTypeVAL[CbProbThresTypeVAL %in% trimws(tclvalue(probs.thres.type))]
                 thres_val <- as.numeric(trimws(tclvalue(probs.thres.value)))
             }
 
@@ -910,10 +908,10 @@ spatialAnalysisPanelCmd <- function(){
                                        'cv' = 'Coefficient_of_variation',
                                        'trend' = paste0('Trend_', trend_type),
                                        'percentile' = paste0('Percentile_', percent_val),
-                                       'frequency' = paste0('Frequency_10years_', freq_type),
+                                       'frequency' = paste0('Frequency_', freq_suffix),
                                        'anomaly' = paste0('Anomaly_', anomaly_type),
-                                       'probExc' = paste0('Probability_Exceeding_', thres_type, '_', thres_val),
-                                       'probNExc' = paste0('Probability_non_Exceeding_', thres_type, '_', thres_val)
+                                       'probExc' = paste0('Probability_Exceeding_', thres_val),
+                                       'probNExc' = paste0('Probability_non_Exceeding_', thres_val)
                                      )
 
             res_dir <- trimws(tclvalue(file.save1))
@@ -931,6 +929,7 @@ spatialAnalysisPanelCmd <- function(){
                     dir1 <- file.path(out_dir_save, analysis_dir)
                     dir2 <- file.path(out_dir_save, analysis_dir_save)
                     file.rename(dir1, dir2)
+                    unlink(file.path(dir2, 'params.rds'))
                     msg <- paste(lang.dlg[['message']][['23']], 'for', analysis_dir)
                     Insert.Messages.Out(msg, TRUE, "s")
                 }else{
@@ -1122,18 +1121,10 @@ spatialAnalysisPanelCmd <- function(){
             if(is.null(ret)) return(NULL)
 
             ###################
-            tkconfigure(cb.TSDate, values = params$timeseries[[1]][[2]])
-            tclvalue(.cdtData$EnvData$TSDate) <- params$timeseries[[1]][[2]][1]
-
-            ###################
             if(!is.null(.cdtData$EnvData$don)){
                 atlevel <- pretty(.cdtData$EnvData$don$z, n = 10, min.n = 7)
                 .cdtData$EnvData$climMapOp$userLvl$levels <- atlevel
             }
-
-            ###################
-            ret1 <- read.ClimTSData()
-            if(is.null(ret1)) return(NULL)
         })
 
         ###############
@@ -1141,27 +1132,33 @@ spatialAnalysisPanelCmd <- function(){
         tkbind(cb.climDate, "<<ComboboxSelected>>", function(){
             ret <- read.ClimStat()
             if(is.null(ret)) return(NULL)
-
-            ###################
-            ipos <- which(.cdtData$EnvData$statpars$stats == tclvalue(.cdtData$EnvData$climDate))
-            tkconfigure(cb.TSDate, values = .cdtData$EnvData$statpars$timeseries[[ipos]][[2]])
-            tclvalue(.cdtData$EnvData$TSDate) <- .cdtData$EnvData$statpars$timeseries[[ipos]][[2]][1]
-
-            ###################
-            ret1 <- read.ClimTSData()
-            if(is.null(ret1)) return(NULL)
         })
 
         ##############################################
 
-        frameTSMaps <- ttklabelframe(subfr3, text = lang.dlg[['label']][['17']], relief = 'groove')
+        frameTSMaps <- ttklabelframe(subfr3, text = lang.dlg[['label']][['17-1']], relief = 'groove')
 
+        ####
+        # idx_data <- switch(GeneralParameters$out.series$tstep,
+        #                    'monthly' = 1, 'annual' = 2, 'seasonal' = 3)
+        # CbsourceTSDataVAL <- lang.dlg[['combobox']][['2']][c(idx_data, 4)]
+
+        ## initialization
+        CbsourceTSDataVAL <- c(lang.dlg[['combobox']][['2']][1], '')
+        #####
+
+        sourceTSDataVAL <- c("Data", "Anomaly")
+        VarsourceTSDataVAL <- tclVar()
+        tclvalue(VarsourceTSDataVAL) <- CbsourceTSDataVAL[sourceTSDataVAL %in% GeneralParameters$plot$TSData]
+
+        TSDateMonths <- tclVar(MOIS[1])
         .cdtData$EnvData$TSDate <- tclVar()
 
-        CbsourceTSDataVAL <- lang.dlg[['combobox']][['2']]
-        sourceTSDataVAL <- c("Data", "Anomaly")
-        .cdtData$EnvData$TSData <- tclVar()
-        tclvalue(.cdtData$EnvData$TSData) <- CbsourceTSDataVAL[sourceTSDataVAL %in% GeneralParameters$plot$TSData]
+        txt.TSData <- tklabel(frameTSMaps, text = lang.dlg[['label']][['18']], anchor = 'e', justify = 'right')
+        cb.TSData <- ttkcombobox(frameTSMaps, values = CbsourceTSDataVAL, textvariable = VarsourceTSDataVAL, width = largeur8, justify = 'center')
+
+        txt.TSMon <- tklabel(frameTSMaps, text = lang.dlg[['label']][['34']], anchor = 'e', justify = 'right')
+        cb.TSMon <- ttkcombobox(frameTSMaps, values = MOIS, textvariable = TSDateMonths, width = largeur8, justify = 'center')
 
         cb.TSDate <- ttkcombobox(frameTSMaps, values = "", textvariable = .cdtData$EnvData$TSDate, width = largeur8, justify = 'center')
         bt.TSDate.prev <- ttkbutton(frameTSMaps, text = "<<", width = largeur7)
@@ -1170,30 +1167,32 @@ spatialAnalysisPanelCmd <- function(){
         bt.TSDate.plot <- ttkbutton(frameTSMaps, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur6)
         bt.TSMapOpt <- ttkbutton(frameTSMaps, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur6)
 
-        txt.TSData <- tklabel(frameTSMaps, text = lang.dlg[['label']][['18']], anchor = 'e', justify = 'right')
-        cb.TSData <- ttkcombobox(frameTSMaps, values = CbsourceTSDataVAL[1], textvariable = .cdtData$EnvData$TSData, width = largeur9, justify = 'center')
-
         ###################
 
-        tkgrid(bt.TSDate.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.TSDate, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.TSDate.next, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.TSData, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.TSData, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        tkgrid(bt.TSMapOpt, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
-        tkgrid(bt.TSDate.plot, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(txt.TSMon, row = 1, column = 0, sticky = 'e', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.TSMon, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        tkgrid(txt.TSData, row = 2, column = 0, sticky = 'e', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.TSData, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TSDate.prev, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.TSDate, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.TSDate.next, row = 2, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(bt.TSMapOpt, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
+        tkgrid(bt.TSDate.plot, row = 3, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, ipadx = 1, ipady = 1)
 
         ###################
 
         tkconfigure(bt.TSMapOpt, command = function(){
-            sourceTSData <- sourceTSDataVAL[CbsourceTSDataVAL %in% trimws(tclvalue(.cdtData$EnvData$TSData))]
+            sourceTSData <- sourceTSDataVAL[CbsourceTSDataVAL %in% trimws(tclvalue(VarsourceTSDataVAL))]
             if(!is.null(.cdtData$EnvData$tsdata)){
+                if(sourceTSData == "") return(NULL)
                 if(sourceTSData == "Data")
                     atlevel <- pretty(.cdtData$EnvData$tsdata$z, n = 10, min.n = 7)
                 if(sourceTSData == "Anomaly")
                     atlevel <- pretty(.cdtData$EnvData$anomData$z, n = 10, min.n = 7)
+
                 if(is.null(.cdtData$EnvData$TSMapOp$userLvl$levels)){
                     .cdtData$EnvData$TSMapOp$userLvl$levels <- atlevel
                 }else{
@@ -1210,17 +1209,38 @@ spatialAnalysisPanelCmd <- function(){
         .cdtData$EnvData$tab$TSMap <- NULL
 
         tkconfigure(bt.TSDate.plot, command = function(){
-            if(trimws(tclvalue(.cdtData$EnvData$TSDate)) != "")
+            if(trimws(tclvalue(.cdtData$EnvData$TSDate)) != ""){
+                sourceTS <- trimws(tclvalue(VarsourceTSDataVAL))
+                if(sourceTS == "") return(NULL)
+                sourceTSData <- sourceTSDataVAL[CbsourceTSDataVAL %in% sourceTS]
+                .cdtData$EnvData$TSData <- sourceTSData
+
                 spatialAnalysis.DisplayTSMaps()
+            }
         })
 
         tkconfigure(bt.TSDate.prev, command = function(){
             if(trimws(tclvalue(.cdtData$EnvData$TSDate)) != ""){
-                ipos <- which(.cdtData$EnvData$statpars$stats == tclvalue(.cdtData$EnvData$climDate))
+                if(.cdtData$EnvData$statpars$params$out.series$tstep == 'monthly'){
+                    climMon <- sapply(.cdtData$EnvData$statpars$timeseries, '[[', 1)
+                    climMon <- sapply(strsplit(climMon, '_'), '[[', 2)
+                    climMon <- as.numeric(climMon)
+                    mon <- which(MOIS == trimws(tclvalue(TSDateMonths)))
+                    ipos <- which(climMon == mon)
+                }else{
+                    ipos <- which(.cdtData$EnvData$statpars$stats == tclvalue(.cdtData$EnvData$climDate))
+                }
+
                 idaty <- which(.cdtData$EnvData$statpars$timeseries[[ipos]][[2]] == tclvalue(.cdtData$EnvData$TSDate))
                 idaty <- idaty - 1
                 if(idaty < 1) idaty <- length(.cdtData$EnvData$statpars$timeseries[[ipos]][[2]])
                 tclvalue(.cdtData$EnvData$TSDate) <- .cdtData$EnvData$statpars$timeseries[[ipos]][[2]][idaty]
+
+                sourceTS <- trimws(tclvalue(VarsourceTSDataVAL))
+                if(sourceTS == "") return(NULL)
+                sourceTSData <- sourceTSDataVAL[CbsourceTSDataVAL %in% sourceTS]
+                .cdtData$EnvData$TSData <- sourceTSData
+
                 ret1 <- read.ClimTSData()
                 if(is.null(ret1)) return(NULL)
 
@@ -1230,11 +1250,25 @@ spatialAnalysisPanelCmd <- function(){
 
         tkconfigure(bt.TSDate.next, command = function(){
             if(trimws(tclvalue(.cdtData$EnvData$TSDate)) != ""){
-                ipos <- which(.cdtData$EnvData$statpars$stats == tclvalue(.cdtData$EnvData$climDate))
+                if(.cdtData$EnvData$statpars$params$out.series$tstep == 'monthly'){
+                    climMon <- sapply(.cdtData$EnvData$statpars$timeseries, '[[', 1)
+                    climMon <- sapply(strsplit(climMon, '_'), '[[', 2)
+                    climMon <- as.numeric(climMon)
+                    mon <- which(MOIS == trimws(tclvalue(TSDateMonths)))
+                    ipos <- which(climMon == mon)
+                }else{
+                    ipos <- which(.cdtData$EnvData$statpars$stats == tclvalue(.cdtData$EnvData$climDate))
+                }
                 idaty <- which(.cdtData$EnvData$statpars$timeseries[[ipos]][[2]] == tclvalue(.cdtData$EnvData$TSDate))
                 idaty <- idaty + 1
                 if(idaty > length(.cdtData$EnvData$statpars$timeseries[[ipos]][[2]])) idaty <- 1
                 tclvalue(.cdtData$EnvData$TSDate) <- .cdtData$EnvData$statpars$timeseries[[ipos]][[2]][idaty]
+
+                sourceTS <- trimws(tclvalue(VarsourceTSDataVAL))
+                if(sourceTS == "") return(NULL)
+                sourceTSData <- sourceTSDataVAL[CbsourceTSDataVAL %in% sourceTS]
+                .cdtData$EnvData$TSData <- sourceTSData
+
                 ret1 <- read.ClimTSData()
                 if(is.null(ret1)) return(NULL)
 
@@ -1250,13 +1284,34 @@ spatialAnalysisPanelCmd <- function(){
         })
 
         tkbind(cb.TSData, "<<ComboboxSelected>>", function(){
-            sourceTSData <- sourceTSDataVAL[CbsourceTSDataVAL %in% trimws(tclvalue(.cdtData$EnvData$TSData))]
+            sourceTSData <- sourceTSDataVAL[CbsourceTSDataVAL %in% trimws(tclvalue(VarsourceTSDataVAL))]
             if(!is.null(.cdtData$EnvData$tsdata)){
+                if(sourceTSData == "") return(NULL)
                 if(sourceTSData == "Data")
                     atlevel <- pretty(.cdtData$EnvData$tsdata$z, n = 10, min.n = 7)
                 if(sourceTSData == "Anomaly")
                     atlevel <- pretty(.cdtData$EnvData$anomData$z, n = 10, min.n = 7)
+
                 .cdtData$EnvData$TSMapOp$userLvl$levels <- atlevel
+            }
+        })
+
+        tkbind(cb.TSMon, "<<ComboboxSelected>>", function(){
+            if(.cdtData$EnvData$statpars$params$out.series$tstep == 'monthly'){
+                climMon <- sapply(.cdtData$EnvData$statpars$timeseries, '[[', 1)
+                climMon <- sapply(strsplit(climMon, '_'), '[[', 2)
+                climMon <- as.numeric(climMon)
+
+                mon <- which(MOIS == trimws(tclvalue(TSDateMonths)))
+                ipos <- which(climMon == mon)
+
+                .cdtData$EnvData$tsdata$date <- .cdtData$EnvData$statpars$timeseries[[ipos]][[2]]
+                tkconfigure(cb.TSDate, values = .cdtData$EnvData$tsdata$date)
+                tclvalue(.cdtData$EnvData$TSDate) <- .cdtData$EnvData$statpars$timeseries[[ipos]][[2]][1]
+
+                ###################
+                ret1 <- read.ClimTSData()
+                if(is.null(ret1)) return(NULL)
             }
         })
 
@@ -1288,8 +1343,8 @@ spatialAnalysisPanelCmd <- function(){
         ##############################################
 
         tkgrid(frameAnDat, row = 0, column = 0, sticky = 'we')
-        tkgrid(frameClimatoMap, row = 1, column = 0, sticky = 'we')
-        tkgrid(frameTSMaps, row = 2, column = 0, sticky = 'we', pady = 1)
+        tkgrid(frameClimatoMap, row = 1, column = 0, sticky = 'we', pady = 7)
+        tkgrid(frameTSMaps, row = 2, column = 0, sticky = 'we', pady = 3)
         tkgrid(framePlotType, row = 3, column = 0, sticky = '', pady = 3)
 
     #######################################################################################################
@@ -1298,6 +1353,22 @@ spatialAnalysisPanelCmd <- function(){
     subfr4 <- bwTabScrollableFrame(cmd.tab4)
 
         ##############################################
+
+        frameGrphMonths <- ttklabelframe(subfr4, text = lang.dlg[['label']][['35']], relief = 'groove')
+
+        TSGraphMonths <- tclVar(MOIS[1])
+
+        txt.GrphMon <- tklabel(frameGrphMonths, text = lang.dlg[['label']][['34']], anchor = 'e', justify = 'right')
+        cb.GrphMon <- ttkcombobox(frameGrphMonths, values = MOIS, textvariable = TSGraphMonths, width = largeur8, justify = 'center')
+
+        tkgrid(txt.GrphMon, cb.GrphMon)
+
+        tkbind(cb.GrphMon, "<<ComboboxSelected>>", function(){
+            ret2 <- read.MonthTSData()
+            if(is.null(ret2)) return(NULL)
+        })
+
+        #################
 
         frameTSPlot <- ttklabelframe(subfr4, text = lang.dlg[['label']][['20']], relief = 'groove')
  
@@ -1405,8 +1476,9 @@ spatialAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        tkgrid(frameTSPlot, row = 0, column = 0, sticky = 'we', pady = 1)
-        tkgrid(frameSTNCrds, row = 1, column = 0, sticky = '', pady = 3)
+        tkgrid(frameGrphMonths, row = 0, column = 0, sticky = '', pady = 1)
+        tkgrid(frameTSPlot, row = 1, column = 0, sticky = 'we', pady = 7)
+        tkgrid(frameSTNCrds, row = 2, column = 0, sticky = '', pady = 1)
 
     #######################################################################################################
 
@@ -1563,6 +1635,13 @@ spatialAnalysisPanelCmd <- function(){
     #######################################################################################################
 
     load.SpatialAnalysis.Data <- function(){
+        if(is.null(.cdtData$EnvData$DirStat$timestep)){
+            Insert.Messages.Out(lang.dlg[['message']][['26']], TRUE, 'e')
+            return(NULL)
+        }
+
+        ###################
+
         if("Anomaly" %in% .cdtData$EnvData$DirStat$Stats){
             climato.maps.Values <- .cdtData$EnvData$DirStat$Stats[!.cdtData$EnvData$DirStat$Stats %in% "Anomaly"]
             if(length(climato.maps.Values) == 0){
@@ -1580,9 +1659,47 @@ spatialAnalysisPanelCmd <- function(){
 
         ###################
 
-        TSDATA <- if("Anomaly" %in% .cdtData$EnvData$DirStat$Stats) CbsourceTSDataVAL else CbsourceTSDataVAL[1]
-        tkconfigure(cb.TSData, values = TSDATA)
-        tclvalue(.cdtData$EnvData$TSData) <- CbsourceTSDataVAL[1]
+        idx_ts <- switch(.cdtData$EnvData$DirStat$timestep,
+                  'monthly' = 1, 'annual' = 2, 'seasonal' = 3)
+
+        if("Anomaly" %in% .cdtData$EnvData$DirStat$Stats){
+            CbsourceTSDataVAL <<- lang.dlg[['combobox']][['2']][c(idx_ts, 4)]
+            lab_frameTSMaps <- lang.dlg[['label']][[paste0('17-', idx_ts)]]
+        }else{
+            CbsourceTSDataVAL[1] <<- lang.dlg[['combobox']][['2']][idx_ts]
+            lab_frameTSMaps <- lang.dlg[['label']][[paste0('17-', idx_ts)]]
+        }
+
+        tkconfigure(frameTSMaps, text = lab_frameTSMaps)
+        tkconfigure(cb.TSData, values = CbsourceTSDataVAL)
+        tclvalue(VarsourceTSDataVAL) <- CbsourceTSDataVAL[1]
+
+        ###################
+
+        if(.cdtData$EnvData$DirStat$timestep == 'monthly'){
+            if(.cdtData$EnvData$DirStat$use.month$nseq.months){
+                smon <- .cdtData$EnvData$DirStat$use.month$custom.months
+            }else{
+                smon1 <- .cdtData$EnvData$DirStat$use.month$start.month
+                smon2 <- .cdtData$EnvData$DirStat$use.month$end.month
+                monlen <- (smon2 - smon1 + 1) %% 12
+                monlen[monlen == 0] <- 12
+                smon <- (smon1:(smon1 + (monlen - 1))) %% 12
+                smon[smon == 0] <- 12
+            }
+
+            TSDateMonthsVAL <- MOIS[smon]
+
+            tkconfigure(cb.TSMon, values = TSDateMonthsVAL)
+            tclvalue(TSDateMonths) <- TSDateMonthsVAL[1]
+            tkconfigure(cb.GrphMon, values = TSDateMonthsVAL)
+            tclvalue(TSGraphMonths) <- TSDateMonthsVAL[1]
+
+            stateTSMon <- 'normal'
+        }else stateTSMon <- 'disabled'
+
+        tkconfigure(cb.TSMon, state = stateTSMon)
+        tkconfigure(cb.GrphMon, state = stateTSMon)
 
         ###################
         analysis.path <- file.path(.cdtData$EnvData$PathStat, tclvalue(.cdtData$EnvData$climStat))
@@ -1614,6 +1731,10 @@ spatialAnalysisPanelCmd <- function(){
         ###################
         ret1 <- read.ClimTSData()
         if(is.null(ret1)) return(NULL)
+
+        ###################
+        ret2 <- read.MonthTSData()
+        if(is.null(ret2)) return(NULL)
 
         ###################
         xlim.years <- substr(.cdtData$EnvData$statpars$stats[1], 1, 9)
@@ -1656,10 +1777,19 @@ spatialAnalysisPanelCmd <- function(){
             return(NULL)
         }
 
-        readClimData <- TRUE
+        statparsL <- paste0(unlist(.cdtData$EnvData$statpars$params$analysis), collapse = ';')
+
+        readClimData1 <- TRUE
+        if(!is.null(.cdtData$EnvData$don))
+            if(!is.null(.cdtData$EnvData$statparsL))
+                if(.cdtData$EnvData$statparsL == statparsL) readClimData1 <- FALSE
+
+        readClimData2 <- TRUE
         if(!is.null(.cdtData$EnvData$don))
             if(!is.null(.cdtData$EnvData$filestat))
-                if(.cdtData$EnvData$filestat == filestat) readClimData <- FALSE
+                if(.cdtData$EnvData$filestat == filestat) readClimData2 <- FALSE
+
+        readClimData <- readClimData1 | readClimData2
 
         if(.cdtData$EnvData$statpars$params$data.type == "cdtstation"){
             change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
@@ -1752,6 +1882,7 @@ spatialAnalysisPanelCmd <- function(){
                     }
                 }
                 .cdtData$EnvData$filestat <- filestat
+                .cdtData$EnvData$statparsL <- statparsL
                 .cdtData$EnvData$change.plot.ClimData <- change.plot
 
                 rm(don)
@@ -1779,6 +1910,7 @@ spatialAnalysisPanelCmd <- function(){
                     ncdf4::nc_close(nc)
                 }
                 .cdtData$EnvData$filestat <- filestat
+                .cdtData$EnvData$statparsL <- statparsL
             }
         }
         return(0)
@@ -1797,7 +1929,19 @@ spatialAnalysisPanelCmd <- function(){
         tsdata.path <- file.path(.cdtData$EnvData$PathStat, "Aggregated_TimeSeries")
 
         if(.cdtData$EnvData$statpars$params$data.type == "cdtstation"){
-            filetsdata <- file.path(tsdata.path, paste0("outTS", "_", tclvalue(.cdtData$EnvData$climDate), ".csv"))
+            if(.cdtData$EnvData$DirStat$timestep == 'monthly'){
+                climPeriod <- tclvalue(.cdtData$EnvData$climDate)
+                climPeriod <- strsplit(climPeriod, '_')[[1]][1]
+                mon <- which(MOIS == trimws(tclvalue(TSDateMonths)))
+                mon <- stringr::str_pad(mon, 2, pad = '0')
+                climDate <- paste0(climPeriod, '_', mon)
+            }else{
+                climDate <- tclvalue(.cdtData$EnvData$climDate)
+            }
+
+            ########
+            filetsdata <- file.path(tsdata.path, paste0("outTS", "_", climDate, ".csv"))
+
             if(!file.exists(filetsdata)){
                 Insert.Messages.Out(paste(filetsdata, lang.dlg[['message']][['8']]), TRUE, 'e')
                 return(NULL)
@@ -1871,7 +2015,8 @@ spatialAnalysisPanelCmd <- function(){
 
             if("Anomaly" %in% .cdtData$EnvData$DirStat$Stats){
                 anom.path <- file.path(.cdtData$EnvData$PathStat, "Anomaly")
-                file.anom <- file.path(anom.path, paste0("anomaly", "_", tclvalue(.cdtData$EnvData$climDate), ".csv"))
+                file.anom <- file.path(anom.path, paste0("anomaly", "_", climDate, ".csv"))
+
                 if(!file.exists(file.anom)){
                     Insert.Messages.Out(paste(file.anom, lang.dlg[['message']][['8']]), TRUE, 'e')
                     return(NULL)
@@ -1963,13 +2108,6 @@ spatialAnalysisPanelCmd <- function(){
                 .cdtData$EnvData$filetsdata <- filetsdata
             }
 
-            if(is.null(.cdtData$EnvData$cdtdataset)){
-                fldataset <- basename(.cdtData$EnvData$statpars$params$in.file)
-                fldataset <- file.path(.cdtData$EnvData$PathStat, paste0("Aggregated_", tools::file_path_sans_ext(fldataset)), fldataset)
-                .cdtData$EnvData$cdtdataset <- readRDS(fldataset)
-                .cdtData$EnvData$cdtdataset$fileInfo <- fldataset
-            }
-
             if("Anomaly" %in% .cdtData$EnvData$DirStat$Stats){
                 anom.path <- file.path(.cdtData$EnvData$PathStat, "Anomaly")
                 file.anom <- file.path(anom.path, paste0("anomaly", "_", tclvalue(.cdtData$EnvData$TSDate), ".nc"))
@@ -1996,13 +2134,87 @@ spatialAnalysisPanelCmd <- function(){
             }
         }
 
-        if(is.null(.cdtData$EnvData$ONI)){
-            ONI <- readRDS(file.path(.cdtDir$Root, 'data', 'ONI_1950-present.rds'))
-            .cdtData$EnvData$ONI$date <- format(addMonths(as.Date(paste0(ONI$ts[, 1], "-15")), 1), "%Y%m")
-            .cdtData$EnvData$ONI$data <- ONI$ts[, 3]
+        return(0)
+    }
+
+    ##############################################
+
+    read.MonthTSData <- function(){
+        tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
+        tcl('update')
+        on.exit({
+            tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+            tcl('update')
+        })
+
+        montsdata.path <- file.path(.cdtData$EnvData$PathStat, "Aggregated_TimeSeries")
+
+        if(.cdtData$EnvData$statpars$params$data.type == "cdtstation"){
+            if(.cdtData$EnvData$DirStat$timestep == 'monthly'){
+                climPeriod <- tclvalue(.cdtData$EnvData$climDate)
+                climPeriod <- strsplit(climPeriod, '_')[[1]][1]
+                mon <- which(MOIS == trimws(tclvalue(TSGraphMonths)))
+                mon <- stringr::str_pad(mon, 2, pad = '0')
+                monthDate <- paste0(climPeriod, '_', mon)
+
+                ########
+                filetsMonth <- file.path(montsdata.path, paste0("outTS", "_", monthDate, ".csv"))
+
+                if(!file.exists(filetsMonth)){
+                    Insert.Messages.Out(paste(filetsMonth, lang.dlg[['message']][['8']]), TRUE, 'e')
+                    return(NULL)
+                }
+
+                ########
+                readMonData <- TRUE
+                if(!is.null(.cdtData$EnvData$monthtsdata))
+                    if(!is.null(.cdtData$EnvData$filetsMonth))
+                        if(.cdtData$EnvData$filetsMonth == filetsMonth) readMonData <- FALSE
+
+                if(readMonData){
+                    don <- utils::read.table(filetsMonth, header = FALSE, sep = ",",
+                                      stringsAsFactors = FALSE, colClasses = "character",
+                                      na.strings = .cdtData$Config$missval)
+
+                    .cdtData$EnvData$monthtsdata <- list(id = as.character(don[1, -1]), 
+                                                    x0 = as.numeric(don[2, -1]),
+                                                    y0 = as.numeric(don[3, -1]), 
+                                                    date = as.character(don[-(1:3), 1]),
+                                                    data = local({
+                                                            x <- don[-(1:3), -1, drop = FALSE]
+                                                            xdim <- dim(x)
+                                                            x <- apply(x, 2, as.numeric)
+                                                            dim(x) <- xdim
+                                                            x
+                                                        })
+                                                    )
+                    .cdtData$EnvData$filetsMonth <- filetsMonth
+                }
+            }
+        }else{
+            if(is.null(.cdtData$EnvData$cdtdataset)){
+                fldataset <- basename(.cdtData$EnvData$statpars$params$in.file)
+                fldataset <- file.path(.cdtData$EnvData$PathStat, paste0("Aggregated_", tools::file_path_sans_ext(fldataset)), fldataset)
+                .cdtData$EnvData$cdtdataset <- readRDS(fldataset)
+                .cdtData$EnvData$cdtdataset$fileInfo <- fldataset
+            }
+        }
+
+        if(.cdtData$EnvData$DirStat$timestep == 'monthly'){
+            mon <- which(MOIS == trimws(tclvalue(TSGraphMonths)))
+            mon <- stringr::str_pad(mon, 2, pad = '0')
+            .cdtData$EnvData$monthGraph <- mon
         }
 
         return(0)
+    }
+
+    ##############################################
+
+    if(is.null(.cdtData$EnvData$ONI)){
+        ONI <- readRDS(file.path(.cdtDir$Root, 'data', 'ONI_1950-present.rds'))
+        .cdtData$EnvData$ONI$date <- format(addMonths(as.Date(paste0(ONI$ts[, 1], "-15")), 1), "%Y%m")
+        .cdtData$EnvData$ONI$data <- ONI$ts[, 3]
     }
 
     #######################################################################################################

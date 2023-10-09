@@ -25,7 +25,7 @@
             <text lang="en"> Threshold value </text>
         </label>
         <label id="2">
-            <text lang="en"> NetCDF file containing the thresholds data </text>
+            <text lang="en"> netCDF file containing the thresholds data </text>
         </label>
         <label id="3">
             <text lang="en"> Compute percentile from </text>

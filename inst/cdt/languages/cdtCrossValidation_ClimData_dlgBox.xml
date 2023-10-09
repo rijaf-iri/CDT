@@ -71,7 +71,7 @@
             <text lang="en"> Station data file </text>
         </label>
         <label id="2">
-            <text lang="en"> Directory containing the NetCDF files </text>
+            <text lang="en"> Directory containing the netCDF files </text>
         </label>
         <label id="3">
             <text lang="en"> Directory to save result </text>
@@ -80,7 +80,7 @@
             <text lang="en"> Include auxiliary variables </text>
         </label>
         <label id="6">
-            <text lang="en"> Elevation data (NetCDF) </text>
+            <text lang="en"> Elevation data (netCDF) </text>
         </label>
         <label id="7">
             <text lang="en"> Merging method </text>
@@ -148,10 +148,10 @@
         </content>
         <content id="5">
             <status>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to directory containing the NetCDF files </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF files </text>
             </tooltip>
         </content>
         <content id="6">
@@ -164,10 +164,10 @@
         </content>
         <content id="7">
             <status>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </status>
             <tooltip>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </tooltip>
         </content>
         <content id="8">
@@ -220,7 +220,7 @@
         </content>
         <content id="15">
             <status>
-                <text lang="en"> File containing the elevation data in NetCDF </text>
+                <text lang="en"> File containing the elevation data in netCDF </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file in the list </text>
@@ -264,19 +264,19 @@
             <text lang="en"> Select the file containing the station data </text>
         </content>
         <content id="2">
-            <text lang="en"> Browse or enter the directory containing the NetCDF data </text>
+            <text lang="en"> Browse or enter the directory containing the netCDF data </text>
         </content>
         <content id="3">
             <text lang="en"> Browse or enter the path to directory to save results </text>
         </content>
         <content id="4">
-            <text lang="en"> You have to set the NetCDF files parameters </text>
+            <text lang="en"> You have to set the netCDF files parameters </text>
         </content>
         <content id="6">
             <text lang="en"> Number of run is not equal to the number of pass ratio </text>
         </content>
         <content id="7">
-            <text lang="en"> You have to provide DEM data in NetCDF format </text>
+            <text lang="en"> You have to provide DEM data in netCDF format </text>
         </content>
         <content id="8">
             <text lang="en"> Cross-validation merging finished successfully </text>
@@ -294,7 +294,7 @@
             <text lang="en"> No elevation data found </text>
         </content>
         <content id="14">
-            <text lang="en"> NetCDF data not found </text>
+            <text lang="en"> netCDF data not found </text>
         </content>
         <content id="15">
             <text lang="en"> No data on stations to use for cross-validation </text>

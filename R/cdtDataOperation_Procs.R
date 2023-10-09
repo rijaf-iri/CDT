@@ -174,7 +174,7 @@ dataOperation_Execute <- function(){
         grdNC <- ncdf4::ncvar_def(GalParams$varinfo$name, GalParams$varinfo$units,
                                   xy.dim, GalParams$varinfo$missval,
                                   longname = GalParams$varinfo$longname,
-                                  prec = GalParams$varinfo$prec, compression = 6)
+                                  prec = GalParams$varinfo$prec, compression = 9)
 
         #########
 

@@ -1408,6 +1408,17 @@ startCDT <- function(wd = NA, lang = NA){
                 }
             })
 
+            tkadd(menu.dataproc, "command", label = lang.menu[["data.analysis"]][["5-1"]],
+                  command = function()
+            {
+                refreshCDT(staterun = "disabled")
+                spinbox.state(state = 'normal')
+                # if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+                #     seasonalRainAnalysisPanelCmd()
+                #     .cdtEnv$tcl$data$lcmd.frame <- 1
+                # }
+            })
+
             ##########
             tkadd(menu.dataproc, "separator")
 

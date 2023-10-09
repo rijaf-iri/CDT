@@ -82,8 +82,22 @@ create_grid_buffer <- function(locations.stn, newgrid,
 
     ix <- seq(1, nx, rx)
     iy <- seq(1, ny, ry)
-    if(nx - ix[length(ix)] > 1) ix <- c(ix[-length(ix)], nx)
-    if(ny - iy[length(iy)] > 1) iy <- c(iy[-length(iy)], ny)
+
+    if(ix[length(ix)] < nx){
+        if((nx - ix[length(ix)]) > rx/2){
+            ix <- c(ix, nx)
+        }else{
+            ix <- c(ix[-length(ix)], nx)
+        }
+    }
+
+    if(iy[length(iy)] < ny){
+        if((ny - iy[length(iy)]) > ry/2){
+            iy <- c(iy, ny)
+        }else{
+            iy <- c(iy[-length(iy)], ny)
+        }
+    }
 
     ixy <- expand.grid(ix, iy)
     icoarse <- ixy[, 1] + ((ixy[, 2] - 1) * nx)
@@ -127,9 +141,8 @@ create_grid_buffer <- function(locations.stn, newgrid,
     #####
     if(saveGridBuffer){
         out_grid$buffer <- buffer.out
-        out_grid$icoarse <- icoarse
         out_grid$coarse1 <- coarsegrid
-        out_grid$igrid <- igrid
+        out_grid$newgrid <- newgrid[igrid, ]
         saveRDS(out_grid, fileGridBuffer)
     }
     #####

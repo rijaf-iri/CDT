@@ -17,7 +17,7 @@
             <text lang="en"> Index file (*.rds) of the dataset </text>
         </label>
         <label id="5">
-            <text lang="en"> Directory containing the NetCDF data </text>
+            <text lang="en"> Directory containing the netCDF data </text>
         </label>
         <label id="6">
             <text lang="en"> Aggregation Function </text>
@@ -68,10 +68,10 @@
         </content>
         <content id="4">
             <status>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
             </tooltip>
         </content>
         <content id="5">
@@ -147,7 +147,7 @@
             <text lang="en"> Browse the directory or enter the file to save results </text>
         </content>
         <content id="3">
-            <text lang="en"> You have to set the NetCDF files parameters </text>
+            <text lang="en"> You have to set the netCDF files parameters </text>
         </content>
         <content id="4">
             <text lang="en"> Aggregating time series ... </text>
@@ -165,10 +165,10 @@
             <text lang="en"> Time step of the dataset is not </text>
         </content>
         <content id="9">
-            <text lang="en"> Unable to locate NetCDF files </text>
+            <text lang="en"> Unable to locate netCDF files </text>
         </content>
         <content id="10">
-            <text lang="en"> NetCDF data sample not found </text>
+            <text lang="en"> netCDF data sample not found </text>
         </content>
         <content id="11">
             <text lang="en"> Data aggregation finished successfully </text>

@@ -38,8 +38,8 @@
             <text lang="fr"> Répertoire de sauvegarde des données converties </text>
         </label>
         <label id="9">
-            <text lang="en"> NetCDF Options </text>
-            <text lang="fr"> Options NetCDF </text>
+            <text lang="en"> netCDF Options </text>
+            <text lang="fr"> Options netCDF </text>
         </label>
     </widget>
     <message>

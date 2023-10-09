@@ -2,7 +2,7 @@
 <panel_cmd>
     <tab_title>
         <tab id="1">
-            <text lang="en"> Plot NetCDF Data </text>
+            <text lang="en"> Plot netCDF Data </text>
         </tab>
         <tab id="2">
             <text lang="en"> Layers </text>
@@ -13,10 +13,10 @@
             <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <label id="1">
-            <text lang="en"> Directory containing the NetCDF data </text>
+            <text lang="en"> Directory containing the netCDF data </text>
         </label>
         <label id="2">
-            <text lang="en"> NetCDF data sample file </text>
+            <text lang="en"> netCDF data sample file </text>
         </label>
         <label id="3">
             <text lang="en"> Filename format </text>
@@ -34,18 +34,18 @@
     <help>
         <content id="1">
             <status>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
-                <text lang="en"> File containing a sample of the data in NetCDF </text>
+                <text lang="en"> File containing a sample of the data in netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> File containing a sample of the data in NetCDF </text>
+                <text lang="en"> File containing a sample of the data in netCDF </text>
             </tooltip>
         </content>
         <content id="3">
@@ -58,19 +58,19 @@
         </content>
         <content id="4">
             <status>
-                <text lang="en"> Enter the filename format of NetCDF data, example: rfe_2017_01-dk2.nc\nReplace the whole string representing the date or sequence by %S\nrfe_2017_01-dk2.nc becomes rfe_%S.nc </text>
+                <text lang="en"> Enter the filename format of netCDF data, example: rfe_2017_01-dk2.nc\nReplace the whole string representing the date or sequence by %S\nrfe_2017_01-dk2.nc becomes rfe_%S.nc </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of NetCDF data, example: rfe_2017_01-dk2.nc -&gt; rfe_%S.nc </text>
+                <text lang="en"> Enter the filename format of netCDF data, example: rfe_2017_01-dk2.nc -&gt; rfe_%S.nc </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
-            <text lang="en"> No NetCDF files found </text>
+            <text lang="en"> No netCDF files found </text>
         </content>
         <content id="2">
-            <text lang="en"> No NetCDF data sample found </text>
+            <text lang="en"> No netCDF data sample found </text>
         </content>
     </message>
 </panel_cmd>

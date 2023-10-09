@@ -2,11 +2,9 @@
 cdt.data.analysis <- function(MAT, FUN,
                               trend = list(year = NA, min.year = 10, unit = 1),
                               percentile = 90,
-                              freq.args = list(oper = '>=', thres = NA, low = NA, up = NA),
-                              probs = list(thres.type = 'value',
-                                           thres.value = NA,
-                                           thres.percent = 90)
-                            )
+                              freq.args = list(oper = '>=', thres.value = 200,
+                                               low.value = 0, up.value = 200),
+                              probs.thres = 200)
 {
     nc <- ncol(MAT)
     nr <- nrow(MAT)
@@ -45,23 +43,21 @@ cdt.data.analysis <- function(MAT, FUN,
     }
     if(FUN == "frequency"){
         if(freq.args$oper == ">=<"){
-            MAT <- (MAT >= freq.args$low) & (MAT <= freq.args$up) & !is.na(MAT)
+            thres1 <- rep(freq.args$low.value, ncol(MAT))
+            thres2 <- rep(freq.args$up.value, ncol(MAT))
+            MAT <- sweep(MAT, 2, thres1, '>=') &
+                   sweep(MAT, 2, thres2, '<=') &
+                   !is.na(MAT)
         }else{
-            oper.fun <- get(freq.args$oper, mode = "function")
-            MAT <- oper.fun(MAT, freq.args$thres) & !is.na(MAT)
+            thres <- rep(freq.args$thres.value, ncol(MAT))
+            MAT <- sweep(MAT, 2, thres, freq.args$oper) & !is.na(MAT)
         }
         res <- colSums(MAT, na.rm = TRUE)
-        # Frequency, number of event every 10 years
-        res <- round(res * 10 / nOBS)
+        # Frequency in percentage
+        res <- round(100 * res / nOBS, 2)
     }
     if(FUN %in% c("probExc", "probNExc")){
-        if(probs$thres.type == 'percentile'){
-            perc <- probs$thres.percent / 100
-            thres <- matrixStats::colQuantiles(MAT, probs = perc, na.rm = TRUE, type = 8)
-        }else{
-            thres <- rep(probs$thres.value, ncol(MAT))
-        }
-
+        thres <- rep(probs.thres, ncol(MAT))
         res <- probability.exceeding.mat(MAT, thres)
         if(FUN == 'probNExc') res <- 100 - res
     }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> NetCDF Variable Information </text>
+        <text lang="en"> netCDF Variable Information </text>
     </title>
     <widget>
         <label id="1">

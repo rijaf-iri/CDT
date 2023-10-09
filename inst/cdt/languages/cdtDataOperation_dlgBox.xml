@@ -11,7 +11,7 @@
             <text lang="en"> Remove </text>
         </button>
         <button id="3">
-            <text lang="en"> CDT dataset/NetCDF Variable Information </text>
+            <text lang="en"> CDT dataset/netCDF Variable Information </text>
         </button>
         <label id="1">
             <text lang="en"> Format of input data </text>
@@ -23,7 +23,7 @@
             <text lang="en"> File containing the CDT station data </text>
         </label>
         <label id="4">
-            <text lang="en"> Directory containing the NetCDF data </text>
+            <text lang="en"> Directory containing the netCDF data </text>
         </label>
         <label id="5">
             <text lang="en"> Path to the index file (*.rds) of the dataset </text>
@@ -41,7 +41,10 @@
             <text lang="en"> Time step </text>
         </label>
         <label id="10">
-            <text lang="en"> Output NetCDF filename format </text>
+            <text lang="en"> Output netCDF filename format </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Dataset name </text>
         </label>
     </widget>
     <help>
@@ -74,7 +77,7 @@
             <text lang="en"> The number of input data and the number of the variables in the formula do not match </text>
         </content>
         <content id="7">
-            <text lang="en"> The variable information for the NetCDF or CDT dataset must be edited </text>
+            <text lang="en"> The variable information for the netCDF or CDT dataset must be edited </text>
         </content>
         <content id="8">
             <text lang="en"> Wrong formula </text>
@@ -101,16 +104,19 @@
             <text lang="en"> Computing data failed </text>
         </content>
         <content id="15">
-            <text lang="en"> Unable to open NetCDF sample files </text>
+            <text lang="en"> Unable to open netCDF sample files </text>
         </content>
         <content id="16">
-            <text lang="en"> The NetCDF grids do not match </text>
+            <text lang="en"> The netCDF grids do not match </text>
         </content>
         <content id="17">
-            <text lang="en"> The NetCDF do not find </text>
+            <text lang="en"> The netCDF do not find </text>
         </content>
         <content id="18">
-            <text lang="en"> Unable to read at least one of those NetCDF files </text>
+            <text lang="en"> Unable to read at least one of those netCDF files </text>
+        </content>
+        <content id="19">
+            <text lang="en"> Provide the dataset name </text>
         </content>
     </message>
 </dialog_box>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> Import NetCDF files into CDT Dataset </text>
-        <text lang="fr"> Importer des fichiers NetCDF au jeu de données CDT </text>
+        <text lang="en"> Import netCDF files into CDT Dataset </text>
+        <text lang="fr"> Importer des fichiers netCDF au jeu de données CDT </text>
     </title>
     <widget>
         <button id="1">
@@ -10,8 +10,8 @@
             <text lang="fr"> Set Date Range </text>
         </button>
         <label id="1">
-            <text lang="en"> Directory containing the NetCDF data </text>
-            <text lang="fr"> Répertoire contenant les données NetCDF </text>
+            <text lang="en"> Directory containing the netCDF data </text>
+            <text lang="fr"> Répertoire contenant les données netCDF </text>
         </label>
         <label id="2">
             <text lang="en"> Add new data to an existing dataset </text>
@@ -39,12 +39,12 @@
         </content>
         <content id="2">
             <status>
-                <text lang="en"> Enter the full path to the directory containing the NetCDF files </text>
-                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les fichiers NetCDF </text>
+                <text lang="en"> Enter the full path to the directory containing the netCDF files </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les fichiers netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to the directory containing the NetCDF files </text>
-                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les fichiers NetCDF </text>
+                <text lang="en"> Enter the full path to the directory containing the netCDF files </text>
+                <text lang="fr"> Entrez le chemin d'accès complet au répertoire contenant les fichiers netCDF </text>
             </tooltip>
         </content>
         <content id="3">
@@ -120,8 +120,8 @@
     </help>
     <message>
         <content id="1">
-            <text lang="en"> Select or enter the directory containing the NetCDF files </text>
-            <text lang="fr"> Sélectionnez ou entrez le répertoire contenant les fichiers NetCDF </text>
+            <text lang="en"> Select or enter the directory containing the netCDF files </text>
+            <text lang="fr"> Sélectionnez ou entrez le répertoire contenant les fichiers netCDF </text>
         </content>
         <content id="2">
             <text lang="en"> Select or enter the path to the file &lt;dataset name&gt;.rds </text>
@@ -168,8 +168,8 @@
             <text lang="fr"> Aucun exemple de données netcdf trouvé </text>
         </content>
         <content id="13">
-            <text lang="en"> NetCDF data not found </text>
-            <text lang="fr"> Données NetCDF introuvables </text>
+            <text lang="en"> netCDF data not found </text>
+            <text lang="fr"> Données netCDF introuvables </text>
         </content>
         <content id="14">
             <text lang="en"> Data already up to date </text>
@@ -180,12 +180,12 @@
             <text lang="fr"> Les données ont une résolution ou des limites différentes </text>
         </content>
         <content id="16">
-            <text lang="en"> Reading NetCDF data ..... </text>
-            <text lang="fr"> Lecture des données NetCDF .... </text>
+            <text lang="en"> Reading netCDF data ..... </text>
+            <text lang="fr"> Lecture des données netCDF .... </text>
         </content>
         <content id="17">
-            <text lang="en"> Reading NetCDF data done </text>
-            <text lang="fr"> Lecture des données NetCDF terminée </text>
+            <text lang="en"> Reading netCDF data done </text>
+            <text lang="fr"> Lecture des données netCDF terminée </text>
         </content>
         <content id="18">
             <text lang="en"> Creating CDT gridded dataset ..... </text>

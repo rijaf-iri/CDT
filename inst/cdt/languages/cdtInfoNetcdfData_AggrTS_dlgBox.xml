@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> NetCDF Data - Settings </text>
-        <text lang="fr"> Données NetCDF - Paramètres </text>
+        <text lang="en"> netCDF Data - Settings </text>
+        <text lang="fr"> Données netCDF - Paramètres </text>
     </title>
     <widget>
         <button id="1">
@@ -22,29 +22,29 @@
             <text lang="fr"> Décade </text>
         </label>
         <label id="4">
-            <text lang="en"> NetCDF data sample file </text>
-            <text lang="fr"> Echantillon de fichier NetCDF </text>
+            <text lang="en"> netCDF data sample file </text>
+            <text lang="fr"> Echantillon de fichier netCDF </text>
         </label>
         <label id="5">
-            <text lang="en"> NetCDF data filenames format </text>
-            <text lang="fr"> Format des fichiers de données NetCDF </text>
+            <text lang="en"> netCDF data filenames format </text>
+            <text lang="fr"> Format des fichiers de données netCDF </text>
         </label>
     </widget>
     <help>
         <content id="1">
             <status>
-                <text lang="en"> Start and end date of the NetCDF data to be aggregated </text>
-                <text lang="fr"> Date de début et de fin des données NetCDF à agréger </text>
+                <text lang="en"> Start and end date of the netCDF data to be aggregated </text>
+                <text lang="fr"> Date de début et de fin des données netCDF à agréger </text>
             </status>
             <tooltip>
-                <text lang="en"> Start and end date of the NetCDF data to be aggregated </text>
-                <text lang="fr"> Date de début et de fin des données NetCDF à agréger </text>
+                <text lang="en"> Start and end date of the netCDF data to be aggregated </text>
+                <text lang="fr"> Date de début et de fin des données netCDF à agréger </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
-                <text lang="en"> File containing a sample of the NetCDF data </text>
-                <text lang="fr"> Fichier contenant un exemple des données NetCDF </text>
+                <text lang="en"> File containing a sample of the netCDF data </text>
+                <text lang="fr"> Fichier contenant un exemple des données netCDF </text>
             </status>
             <tooltip>
                 <text lang="en"> Browse file if not listed </text>
@@ -53,12 +53,12 @@
         </content>
         <content id="3">
             <status>
-                <text lang="en"> Enter the filename format of NetCDF data </text>
-                <text lang="fr"> Entrez le format du nom de fichier des données NetCDF </text>
+                <text lang="en"> Enter the filename format of netCDF data </text>
+                <text lang="fr"> Entrez le format du nom de fichier des données netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of NetCDF data </text>
-                <text lang="fr"> Entrez le format du nom de fichier des données NetCDF </text>
+                <text lang="en"> Enter the filename format of netCDF data </text>
+                <text lang="fr"> Entrez le format du nom de fichier des données netCDF </text>
             </tooltip>
         </content>
     </help>

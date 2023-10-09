@@ -28,7 +28,7 @@ AggregateTS_ncdfData <- function(parent.win, ncDIR,
     tkconfigure(bt.daterange, command = function(){
         TSTEPVAL1 <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
         tstep <- TSTEPVAL1[TSTEPVAL0 %in% tstep]
-        .cdtData$GalParams[["Date.Range"]] <- getInfoDateRange(tt1, .cdtData$GalParams[["Date.Range"]], tstep)
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt1, .cdtData$GalParams[["date.range"]], tstep)
     })
 
     tkgrid(bt.daterange, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)

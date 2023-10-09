@@ -30,24 +30,25 @@ getNetCDFvarInfo <- function(parent.win, Parameters){
     var.miss <- tclVar(Parameters$missval)
     var.long <- tclVar(Parameters$longname)
 
+    nc.precision <- c('float', 'double', 'short', 'integer')
+
     txt.name <- tklabel(frInfo, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
     en.name <- tkentry(frInfo, textvariable = var.name, width = largeur1)
     txt.unit <- tklabel(frInfo, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
     en.unit <- tkentry(frInfo, textvariable = var.unit, width = largeur1)
     txt.prec <- tklabel(frInfo, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
-    en.prec <- tkentry(frInfo, textvariable = var.prec, width = largeur1)
+    cb.prec <- ttkcombobox(frInfo, values = nc.precision, textvariable = var.prec, width = largeur1, justify = 'center')
     txt.miss <- tklabel(frInfo, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
     en.miss <- tkentry(frInfo, textvariable = var.miss, width = largeur1)
     txt.long <- tklabel(frInfo, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
     en.long <- tkentry(frInfo, textvariable = var.long, width = largeur2)
-
 
     tkgrid(txt.name, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.name, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.unit, row = 0, column = 2, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.unit, row = 0, column = 3, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.prec, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.prec, row = 1, column = 1, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.prec, row = 1, column = 1, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.miss, row = 1, column = 2, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.miss, row = 1, column = 3, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.long, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)

@@ -163,7 +163,7 @@ multiValidation.plotGraph <- function(){
                         )
         }else{
             kol.hexbin <- grDevices::colorRampPalette(optsgph$hexbin$col)
-            pp <- hexbin::hexbinplot(y ~ x | name, don,
+            pp <- hexbin::hexbinplot(y ~ x | name, don, aspect = 1,
                             panel = function(x, y, ...){
                                 lattice::panel.abline(h = xyax, v = xyax, col = "lightgray", lty = "solid", lwd = 1.0)
                                 lattice::panel.abline(h = xminTck, v = xminTck, col = "lightgray", lty = "dotted")

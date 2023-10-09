@@ -58,7 +58,7 @@
             <text lang="en"> Horizontal Radius of Influence </text>
         </label>
         <label id="5">
-            <text lang="en"> Elevation data (NetCDF) </text>
+            <text lang="en"> Elevation data (netCDF) </text>
         </label>
         <label id="6">
             <text lang="en"> Interpolation method </text>
@@ -123,7 +123,7 @@
         </content>
         <content id="7">
             <status>
-                <text lang="en"> File containing the elevation data in NetCDF </text>
+                <text lang="en"> File containing the elevation data in netCDF </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file in the list </text>
@@ -180,7 +180,7 @@
     </help>
     <message>
         <content id="1">
-            <text lang="en"> You have to provide DEM data in NetCDF format </text>
+            <text lang="en"> You have to provide DEM data in netCDF format </text>
         </content>
         <content id="2">
             <text lang="en"> Need to include at least one auxiliary variable </text>

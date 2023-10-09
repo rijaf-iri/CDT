@@ -389,10 +389,10 @@
             <text lang="en"> Computing climatology finished </text>
         </content>
         <content id="25">
-            <text lang="en"> Writing NetCDF data to files ... </text>
+            <text lang="en"> Writing netCDF data to files ... </text>
         </content>
         <content id="26">
-            <text lang="en"> Writing NetCDF data finished </text>
+            <text lang="en"> Writing netCDF data finished </text>
         </content>
         <content id="27">
             <text lang="en"> Station not found </text>

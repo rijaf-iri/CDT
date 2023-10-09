@@ -179,7 +179,7 @@
             <text lang="en"> Station data do not overlap to the selected date range </text>
         </content>
         <content id="12">
-            <text lang="en"> Unable to read the NetCDF file to create the interpolation grid </text>
+            <text lang="en"> Unable to read the netCDF file to create the interpolation grid </text>
         </content>
         <content id="13">
             <text lang="en"> Unable to read the elevation data </text>

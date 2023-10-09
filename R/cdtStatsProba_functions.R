@@ -819,3 +819,21 @@ probability.exceeding.mat <- function(x, thres){
 
     do.call(c, out)
 }
+
+#############################################
+
+ecdf_plot_smooth <- function(x, adj = 0.1){
+    ex <- 0.01 * diff(range(x))
+    xmin <- min(x) - ex
+    xmax <- max(x) + ex
+    dens <- stats::density(x, adjust = adj, from = xmin, to = xmax)
+    y <- 100 * (1 - (cumsum(dens$y) / sum(dens$y)))
+    return(list(x = dens$x, y = y))
+}
+
+ecdf_plot_ts <- function(x){
+    fn <- stats::ecdf(x)
+    x <- sort(x)
+    y <- 100 * (1 - fn(x))
+    return(list(x = x, y = y))
+}

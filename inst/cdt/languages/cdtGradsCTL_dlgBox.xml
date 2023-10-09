@@ -10,8 +10,8 @@
             <text lang="fr"> Set Date Range </text>
         </button>
         <label id="1">
-            <text lang="en"> Directory containing the NetCDF data </text>
-            <text lang="fr"> Répertoire contenant les données NetCDF </text>
+            <text lang="en"> Directory containing the netCDF data </text>
+            <text lang="fr"> Répertoire contenant les données netCDF </text>
         </label>
         <label id="2">
             <text lang="en"> File to save the descriptor file </text>

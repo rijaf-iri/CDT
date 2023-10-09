@@ -113,14 +113,21 @@ jra55.format.ncdf <- function(dirNCDF, dirOUT){
         nc <- ncdf4::nc_open(ncpaths[jj])
         # init_time0 <- nc$dim[['initial_time0_hours']]$vals
         # t_units <- nc$dim[['initial_time0_hours']]$units
-        # 
-        fcst_time <- nc$dim[["forecast_time1"]]$vals
+        #
+        fcst_time0 <- ncdf4::ncatt_get(nc, varid, 'forecast_time')
+        fcst_time1 <- nc$dim[["forecast_time1"]]$vals
         initial_time0 <- ncdf4::ncvar_get(nc, varid = "initial_time0_encoded")
         val <- ncdf4::ncvar_get(nc, varid)
         ncdf4::nc_close(nc)
 
+        # units(init_time0) <- units::as_units(t_units)
+        # times <- as.POSIXct(init_time0, tz = "UTC")
+        times <- strptime(initial_time0, "%Y%m%d%H", tz = "UTC")
+
         if(length(dim(val)) == 2){
-            ncout <- file.path(outdir, paste0(varname, "_", initial_time0, ".nc"))
+            daty <- times + fcst_time0$value * 3600
+            outdaty <- format(daty, "%Y%m%d%H")
+            ncout <- file.path(outdir, paste0(varname, "_", outdaty, ".nc"))
             val <- val - 273.15
             val[is.na(val)] <- missval
 
@@ -128,11 +135,7 @@ jra55.format.ncdf <- function(dirNCDF, dirOUT){
             ncdf4::ncvar_put(nc, ncgrd, val[xo, yo])
             ncdf4::nc_close(nc)
         }else{
-            # units(init_time0) <- units::as_units(t_units)
-            # times <- as.POSIXct(init_time0, tz = "UTC")
-            times <- strptime(initial_time0, "%Y%m%d%H", tz = "UTC")
-            # 
-            timestamp <- c(rbind(times + fcst_time[1] * 3600, times + fcst_time[2] * 3600))
+            timestamp <- c(rbind(times + fcst_time1[1] * 3600, times + fcst_time1[2] * 3600))
             daty <- as.POSIXct(timestamp, origin = "1970-01-01", tz = "UTC")
             outdaty <- format(daty, "%Y%m%d%H")
             ncout <- file.path(outdir, paste0(varname, "_", outdaty, ".nc"))

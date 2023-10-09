@@ -11,12 +11,12 @@ formatCDTDataMultiple.Files <- function(){
         is <- "start.dek"
         ie <- 'end.dek'
     }
-    istart.yrs <- .cdtData$GalParams$Date.Range$start.year
-    istart.mon <- .cdtData$GalParams$Date.Range$start.mon
-    istart.day <- .cdtData$GalParams$Date.Range[[is]]
-    iend.yrs <- .cdtData$GalParams$Date.Range$end.year
-    iend.mon <- .cdtData$GalParams$Date.Range$end.mon
-    iend.day <- .cdtData$GalParams$Date.Range[[ie]]
+    istart.yrs <- .cdtData$GalParams$date.range$start.year
+    istart.mon <- .cdtData$GalParams$date.range$start.mon
+    istart.day <- .cdtData$GalParams$date.range[[is]]
+    iend.yrs <- .cdtData$GalParams$date.range$end.year
+    iend.mon <- .cdtData$GalParams$date.range$end.mon
+    iend.day <- .cdtData$GalParams$date.range[[ie]]
     min.perc <- .cdtData$GalParams$min.perc / 100
 
     filefrmt <- .cdtData$GalParams$Multiple.File$file.format
@@ -230,12 +230,12 @@ formatCDTDataSingle.File <- function(GeneralParameters){
         ie <- 'end.dek'
     }
 
-    istart.yrs <- .cdtData$GalParams$Date.Range$start.year
-    istart.mon <- .cdtData$GalParams$Date.Range$start.mon
-    istart.day <- .cdtData$GalParams$Date.Range[[is]]
-    iend.yrs <- .cdtData$GalParams$Date.Range$end.year
-    iend.mon <- .cdtData$GalParams$Date.Range$end.mon
-    iend.day <- .cdtData$GalParams$Date.Range[[ie]]
+    istart.yrs <- .cdtData$GalParams$date.range$start.year
+    istart.mon <- .cdtData$GalParams$date.range$start.mon
+    istart.day <- .cdtData$GalParams$date.range[[is]]
+    iend.yrs <- .cdtData$GalParams$date.range$end.year
+    iend.mon <- .cdtData$GalParams$date.range$end.mon
+    iend.day <- .cdtData$GalParams$date.range[[ie]]
     min.perc <- .cdtData$GalParams$min.perc/100
 
     include.elev <- .cdtData$GalParams$Single.File$include.elev

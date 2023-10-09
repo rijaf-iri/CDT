@@ -28,7 +28,7 @@
             <text lang="en"> Directory of bias files </text>
         </label>
         <label id="3">
-            <text lang="en"> Directory containing the NetCDF files </text>
+            <text lang="en"> Directory containing the netCDF files </text>
         </label>
         <label id="4">
             <text lang="en"> Directory to save result </text>
@@ -72,10 +72,10 @@
         </content>
         <content id="5">
             <status>
-                <text lang="en"> Enter the full path to the directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to the directory containing the netCDF data </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to the directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to the directory containing the netCDF data </text>
             </tooltip>
         </content>
         <content id="6">
@@ -88,10 +88,10 @@
         </content>
         <content id="7">
             <status>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </status>
             <tooltip>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </tooltip>
         </content>
         <content id="8">
@@ -104,16 +104,16 @@
         </content>
         <content id="9">
             <status>
-                <text lang="en"> The NetCDF file names format of the bias corrected data </text>
+                <text lang="en"> The netCDF file names format of the bias corrected data </text>
             </status>
             <tooltip>
-                <text lang="en"> The NetCDF file names format of the bias corrected data </text>
+                <text lang="en"> The netCDF file names format of the bias corrected data </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
-            <text lang="en"> Select or enter the directory containing the NetCDF files </text>
+            <text lang="en"> Select or enter the directory containing the netCDF files </text>
         </content>
         <content id="2">
             <text lang="en"> Enter the path to directory containing the Bias factors </text>
@@ -122,7 +122,7 @@
             <text lang="en"> Browse or enter the path to directory to save results </text>
         </content>
         <content id="4">
-            <text lang="en"> You have to set the NetCDF files parameters </text>
+            <text lang="en"> You have to set the netCDF files parameters </text>
         </content>
         <content id="5">
             <text lang="en"> Bias correction finished successfully </text>
@@ -134,16 +134,16 @@
             <text lang="en"> Bias correction ... </text>
         </content>
         <content id="8">
-            <text lang="en"> No NetCDF sample found </text>
+            <text lang="en"> No netCDF sample found </text>
         </content>
         <content id="9">
-            <text lang="en"> NetCDF data not found </text>
+            <text lang="en"> netCDF data not found </text>
         </content>
         <content id="10">
-            <text lang="en"> Bias and the NetCDF data are in the different region </text>
+            <text lang="en"> Bias and the netCDF data are in the different region </text>
         </content>
         <content id="11">
-            <text lang="en"> Bias and the NetCDF data have different grid </text>
+            <text lang="en"> Bias and the netCDF data have different grid </text>
         </content>
     </message>
 </dialog_box>

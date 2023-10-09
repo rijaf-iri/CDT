@@ -395,6 +395,9 @@ pressure_conversion_netcdf <- function(convert = 'sfc2msl',
     output_pars <- list(dir = "", format = "prmsl_%S.nc")
     output <- init.default.list.args(output, output_pars)
     output$format <- gsub('%S', '%s', output$format)
+    if(!dir.exists(output$dir)){
+        dir.create(output$dir, recursive = TRUE, showWarnings = FALSE)
+    }
 
     ##########
 
@@ -603,8 +606,6 @@ pressure_conversion_netcdf <- function(convert = 'sfc2msl',
 
     return(0)
 }
-
-output = list(dir = "", format = "prmsl_%s%s%s.nc")
 
 mSLP_checkDim <- function(pres, temp, elev, lat){
     if(is.vector(pres) && is.vector(elev)){

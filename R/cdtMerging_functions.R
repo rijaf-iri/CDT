@@ -295,7 +295,8 @@ merging.functions <- function(locations.stn, newgrid, params,
 
     for(pass in seq(params$MRG$nrun)){
         newdata0 <- newgrid[igrid, ]
-        locations.stn$grd <- sp::over(locations.stn, newdata0)$grd
+        # locations.stn$grd <- sp::over(locations.stn, newdata0)$grd
+        locations.stn$grd <- sp::over(locations.stn, newgrid)$grd
         locations.stn <- locations.stn[!is.na(locations.stn$grd), ]
 
         if(length(locations.stn) < mrgOpts$mrgMinNumberSTN){

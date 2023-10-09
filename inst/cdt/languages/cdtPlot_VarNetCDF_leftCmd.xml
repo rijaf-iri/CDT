@@ -2,7 +2,7 @@
 <panel_cmd>
     <tab_title>
         <tab id="1">
-            <text lang="en"> NetCDF Data </text>
+            <text lang="en"> netCDF Data </text>
         </tab>
         <tab id="2">
             <text lang="en"> Maps </text>
@@ -19,10 +19,10 @@
             <text lang="en"> Draw a box around plots </text>
         </checkbutton>
         <label id="1">
-            <text lang="en"> Directory containing the NetCDF data </text>
+            <text lang="en"> Directory containing the netCDF data </text>
         </label>
         <label id="2">
-            <text lang="en"> NetCDF data sample file </text>
+            <text lang="en"> netCDF data sample file </text>
         </label>
         <label id="3">
             <text lang="en"> Filename format </text>
@@ -52,18 +52,18 @@
     <help>
         <content id="1">
             <status>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to directory containing the NetCDF data </text>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
             </tooltip>
         </content>
         <content id="2">
             <status>
-                <text lang="en"> Select a sample file of the data in NetCDF </text>
+                <text lang="en"> Select a sample file of the data in netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> Select a sample file of the data in NetCDF </text>
+                <text lang="en"> Select a sample file of the data in netCDF </text>
             </tooltip>
         </content>
         <content id="3">
@@ -76,25 +76,25 @@
         </content>
         <content id="4">
             <status>
-                <text lang="en"> Enter the filename format of NetCDF data, example: Bernoulli-Gamma_Pars.STN_2.nc\nReplace the whole string representing the date or sequence by %S\nBernoulli-Gamma_Pars.STN_2.nc becomes Bernoulli-Gamma_Pars.STN_%S.nc </text>
+                <text lang="en"> Enter the filename format of netCDF data, example: Bernoulli-Gamma_Pars.STN_2.nc\nReplace the whole string representing the date or sequence by %S\nBernoulli-Gamma_Pars.STN_2.nc becomes Bernoulli-Gamma_Pars.STN_%S.nc </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of NetCDF data, example: Bernoulli-Gamma_Pars.STN_2.nc </text>
+                <text lang="en"> Enter the filename format of netCDF data, example: Bernoulli-Gamma_Pars.STN_2.nc </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1">
-            <text lang="en"> The NetCDF must be a spatial data </text>
+            <text lang="en"> The netCDF must be a spatial data </text>
         </content>
         <content id="2">
-            <text lang="en"> No variables found in the NetCDF file </text>
+            <text lang="en"> No variables found in the netCDF file </text>
         </content>
         <content id="3">
             <text lang="en"> does not exist </text>
         </content>
         <content id="4">
-            <text lang="en"> No NetCDF files found </text>
+            <text lang="en"> No netCDF files found </text>
         </content>
         <content id="5">
             <text lang="en"> No selected variables to plot </text>
@@ -106,7 +106,7 @@
             <text lang="en"> not a spatial data </text>
         </content>
         <content id="8">
-            <text lang="en"> No NetCDF file found </text>
+            <text lang="en"> No netCDF file found </text>
         </content>
     </message>
 </panel_cmd>

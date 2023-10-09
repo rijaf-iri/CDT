@@ -34,10 +34,10 @@
             <text lang="en"> Index file (*.rds) for Tmax data </text>
         </label>
         <label id="8">
-            <text lang="en"> Directory of the Tmin NetCDF files </text>
+            <text lang="en"> Directory of the Tmin netCDF files </text>
         </label>
         <label id="9">
-            <text lang="en"> Directory of the Tmax NetCDF files </text>
+            <text lang="en"> Directory of the Tmax netCDF files </text>
         </label>
         <label id="10">
             <text lang="en"> File to save the result </text>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> Select NetCDF Variable </text>
+        <text lang="en"> Select netCDF Variable </text>
     </title>
     <widget>
         <label id="1">
@@ -19,7 +19,7 @@
             <text lang="en"> unable to open </text>
         </content>
         <content id="2">
-            <text lang="en"> The NetCDF file must have at least 3 dimensions </text>
+            <text lang="en"> The netCDF file must have at least 3 dimensions </text>
         </content>
         <content id="3">
             <text lang="en"> The variable must have at least 3 dimensions </text>

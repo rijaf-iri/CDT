@@ -182,103 +182,48 @@ cdt.index.flexseason <- function(startSeas, endSeas, dates, inTimestep)
 
 #############################################
 
-## Time at the beginning
-## 2018-01-01 00:00 will represent the average or total from
-## 2018-01-01 00:00 to (2018-01-01 00:00)+out.step
+## Example: 5 minutes to 30 minutes
+## aggr.period = 'start', 2023-01-01 00:00 to 2023-01-01 00:25
+## aggr.date = 'start', date will be 2023-01-01 00:00
+## aggr.date = 'end', date will be 2023-01-01 00:30 ????
 
-cdt.index.min2min <- function(times, out.step){
-    ttn <- as.numeric(substr(times, 11, 12))
-    ttn <- floor(ttn / out.step) * out.step
-    ttn <- stringr::str_pad(ttn, 2, pad = "0")
-    index <- split(seq_along(ttn), paste0(substr(times, 1, 10), ttn))
+## aggr.period = 'end', 2023-01-01 00:05 to 2023-01-01 00:30
+## aggr.date = 'start', date will be 2023-01-01 00:00 (does it even make sense???)
+## aggr.date = 'end', date will be 2023-01-01 00:30
 
-    return(index)
-}
+cdt.index.min2min <- function(times, out.step, aggr.date, aggr.period){
+    if(aggr.period == 'start'){
+        ttn <- as.numeric(substr(times, 11, 12))
+        ttn <- floor(ttn / out.step) * out.step
+        ttn <- stringr::str_pad(ttn, 2, pad = "0")
+        index <- split(seq_along(ttn), paste0(substr(times, 1, 10), ttn))
+        if(aggr.date == 'end'){
+            obs_d <- as.POSIXct(names(index), tz = "UTC", format = "%Y%m%d%H%M")
+            names(index) <- format(obs_d + out.step * 60, "%Y%m%d%H%M")
+        }
+    }else{
+        ttn <- as.numeric(substr(times, 11, 12))
+        ttn <- ttn - 1/60
+        ttn <- floor(ttn / out.step) * out.step
+        ttn <- (ttn + out.step) %% 60
+        ttn <- stringr::str_pad(ttn, 2, pad = "0")
+        trle <- rle(ttn)
+        ie <- cumsum(trle$lengths)
+        is <- c(1, (ie + 1)[-length(ie)])
+        index <- lapply(seq_along(is), function(j) is[j]:ie[j])
 
-## Time at the end
-## 2018-01-01 00:00 will represent the average or total from
-## (2018-01-01 00:00)-out.step to 2018-01-01 00:00
-cdt.index.min2min.end <- function(times, out.step){
-    ttn <- as.numeric(substr(times, 11, 12))
-    ttn <- ttn - 1/60
-    ttn <- floor(ttn / out.step) * out.step
-    ttn <- (ttn + out.step) %% 60
-    ttn <- stringr::str_pad(ttn, 2, pad = "0")
-    trle <- rle(ttn)
-    ie <- cumsum(trle$lengths)
-    is <- c(1, (ie + 1)[-length(ie)])
-    index <- lapply(seq_along(is), function(j) is[j]:ie[j])
+        tth <- times[ie]
+        step <- !substr(tth, 11, 12) %in% unique(trle$values)
+        if(any(step)){
+            td <- as.POSIXct(tth[step], tz = "UTC", format = "%Y%m%d%H%M")
+            tth[step] <- paste0(format(td + out.step * 60, "%Y%m%d%H"), trle$values[step])
+        }
+        names(index) <- tth
 
-    tth <- times[ie]
-    step <- !substr(tth, 11, 12) %in% unique(trle$values)
-    if(any(step)){
-        td <- as.POSIXct(tth[step], tz = "UTC", format = "%Y%m%d%H%M")
-        tth[step] <- paste0(format(td + out.step * 60, "%Y%m%d%H"), trle$values[step])
-    }
-    names(index) <- tth
-
-    return(index)
-}
-
-##############
-
-cdt.index.hour2hour <- function(times, out.step){
-    ttn <- as.numeric(substr(times, 9, 10))
-    ttn <- floor(ttn / out.step) * out.step
-    ttn <- stringr::str_pad(ttn, 2, pad = "0")
-    index <- split(seq_along(ttn), paste0(substr(times, 1, 8), ttn))
-
-    return(index)
-}
-
-cdt.index.hour2hour.end <- function(times, out.step){
-    ttn <- as.numeric(substr(times, 9, 10))
-    ttn <- ttn - 1/60
-    ttn <- floor(ttn / out.step) * out.step
-    ttn <- (ttn + out.step) %% 24
-    ttn <- stringr::str_pad(ttn, 2, pad = "0")
-    trle <- rle(ttn)
-    ie <- cumsum(trle$lengths)
-    is <- c(1, (ie + 1)[-length(ie)])
-    index <- lapply(seq_along(is), function(j) is[j]:ie[j])
-
-    tth <- times[ie]
-    step <- !substr(tth, 9, 10) %in% unique(trle$values)
-    if(any(step)){
-        td <- as.POSIXct(tth[step], tz = "UTC", format = "%Y%m%d%H")
-        tth[step] <- paste0(format(td + out.step * 3600, "%Y%m%d"), trle$values[step])
-    }
-    names(index) <- tth
-
-    return(index)
-}
-
-##############
-
-cdt.index.min2hour <- function(times, out.step){
-    index <- split(seq_along(times), substr(times, 1, 10))
-    if(out.step > 1){
-        idx <- cdt.index.hour2hour(names(index), out.step)
-        index <- lapply(idx, function(j) unlist(index[j], use.names = FALSE))
-    }
-
-    return(index)
-}
-
-cdt.index.min2hour.end <- function(times, out.step){
-    ttn <- as.POSIXct(times, tz = "UTC", format = "%Y%m%d%H%M")
-    ttn <- ttn - 1
-    ttn <- format(ttn, "%Y%m%d%H%M")
-    index <- split(seq_along(ttn), substr(ttn, 1, 10))
-
-    tth <- names(index)
-    tth <- as.POSIXct(tth, tz = "UTC", format = "%Y%m%d%H")
-    tth <- format(tth + 3600, "%Y%m%d%H")
-    names(index) <- tth
-
-    if(out.step > 1){
-        idx <- cdt.index.hour2hour.end(tth, out.step)
-        index <- lapply(idx, function(j) unlist(index[j], use.names = FALSE))
+        if(aggr.date == 'start'){
+            obs_d <- as.POSIXct(names(index), tz = "UTC", format = "%Y%m%d%H%M")
+            names(index) <- format(obs_d - out.step * 60, "%Y%m%d%H%M")
+        }
     }
 
     return(index)
@@ -286,22 +231,133 @@ cdt.index.min2hour.end <- function(times, out.step){
 
 ##############
 
-cdt.index.minhr2daily <- function(times, instep, obs.hour){
+## Example: 1 hour to 12 hours
+## aggr.period = 'start', 2023-01-01 00:00 to 2023-01-01 11:00
+## aggr.date = 'start', date will be 2023-01-01 00:00
+## aggr.date = 'end', date will be 2023-01-12 00:00 ????
+
+## aggr.period = 'end', 2023-01-01 01:00 to 2023-01-01 12:00
+## aggr.date = 'start', date will be 2023-01-01 00:00 (does it even make sense???)
+## aggr.date = 'end', date will be 2023-01-12 00:00
+
+cdt.index.hour2hour <- function(times, out.step, aggr.date, aggr.period){
+    if(aggr.period == 'start'){
+        ttn <- as.numeric(substr(times, 9, 10))
+        ttn <- floor(ttn / out.step) * out.step
+        ttn <- stringr::str_pad(ttn, 2, pad = "0")
+        index <- split(seq_along(ttn), paste0(substr(times, 1, 8), ttn))
+
+        if(aggr.date == 'end'){
+            obs_d <- as.POSIXct(names(index), tz = "UTC", format = "%Y%m%d%H")
+            names(index) <- format(obs_d + out.step * 3600, "%Y%m%d%H")
+        }
+    }else{
+        ttn <- as.numeric(substr(times, 9, 10))
+        ttn <- ttn - 1/60
+        ttn <- floor(ttn / out.step) * out.step
+        ttn <- (ttn + out.step) %% 24
+        ttn <- stringr::str_pad(ttn, 2, pad = "0")
+        trle <- rle(ttn)
+        ie <- cumsum(trle$lengths)
+        is <- c(1, (ie + 1)[-length(ie)])
+        index <- lapply(seq_along(is), function(j) is[j]:ie[j])
+
+        tth <- times[ie]
+        step <- !substr(tth, 9, 10) %in% unique(trle$values)
+        if(any(step)){
+            td <- as.POSIXct(tth[step], tz = "UTC", format = "%Y%m%d%H")
+            tth[step] <- paste0(format(td + out.step * 3600, "%Y%m%d"), trle$values[step])
+        }
+        names(index) <- tth
+
+        if(aggr.date == 'start'){
+            obs_d <- as.POSIXct(names(index), tz = "UTC", format = "%Y%m%d%H")
+            names(index) <- format(obs_d - out.step * 3600, "%Y%m%d%H")
+        }
+    }
+
+    return(index)
+}
+
+##############
+## Example: 10 minute to 1 hour
+## aggr.period = 'start', 2023-01-01 00:00 to 2023-01-01 00:50
+## aggr.date = 'start', date will be 2023-01-01 00:00
+## aggr.date = 'end', date will be 2023-01-01 01:00 ????
+
+## aggr.period = 'end', 2023-01-01 00:10 to 2023-01-01 01:00
+## aggr.date = 'start', date will be 2023-01-01 00:00 (does it even make sense???)
+## aggr.date = 'end', date will be 2023-01-01 01:00
+
+cdt.index.min2hour <- function(times, out.step, aggr.date, aggr.period){
+    if(aggr.period == 'start'){
+        index <- split(seq_along(times), substr(times, 1, 10))
+        if(out.step > 1){
+            idx <- cdt.index.hour2hour(names(index), out.step, aggr.date, aggr.period)
+            index <- lapply(idx, function(j) unlist(index[j], use.names = FALSE))
+        }else{
+            if(aggr.date == 'end'){
+                obs_d <- as.POSIXct(names(index), tz = "UTC", format = "%Y%m%d%H")
+                names(index) <- format(obs_d + 3600, "%Y%m%d%H")
+            }
+        }
+    }else{
+        ttn <- as.POSIXct(times, tz = "UTC", format = "%Y%m%d%H%M")
+        ttn <- ttn - 1
+        ttn <- format(ttn, "%Y%m%d%H%M")
+        index <- split(seq_along(ttn), substr(ttn, 1, 10))
+
+        tth <- names(index)
+        tth <- as.POSIXct(tth, tz = "UTC", format = "%Y%m%d%H")
+        tth <- format(tth + 3600, "%Y%m%d%H")
+        names(index) <- tth
+
+        if(out.step > 1){
+            idx <- cdt.index.hour2hour(tth, out.step, aggr.date, aggr.period)
+            index <- lapply(idx, function(j) unlist(index[j], use.names = FALSE))
+        }else{
+            if(aggr.date == 'start'){
+                obs_d <- as.POSIXct(names(index), tz = "UTC", format = "%Y%m%d%H")
+                names(index) <- format(obs_d - 3600, "%Y%m%d%H")
+            }
+        }
+    }
+
+    return(index)
+}
+
+##############
+
+## precip obs hour: aggr.period = 'start'; aggr.date = 'start'
+## params aggregation with conversion from UTC to local time: 
+## aggr.period = 'start'; aggr.date = 'end'
+
+## Example: hourly data to daily, times 00 - > 23
+
+## Aggregation period 'aggr.period', 
+## period in which the data will be aggregated
+## available option 'start' and 'end'
+## Example aggr.period: hourly data with obs.hour = 00
+## if aggr.period = 'start', aggregation hours 00 to 23; 2023-01-01 00:00 to 2023-01-01 23:00
+## if aggr.period = 'end', aggregation hours 01 to 00; 2023-01-01 01:00 to 2023-01-02 00:00
+
+## Date of the observation to be taken 'aggr.date': available options 'start' and 'end'
+## Example aggr.date: hourly data with obs.hour = 21 and aggr.period = 'start'
+## aggregation hours 21 to 20; 2022-12-31 21:00 to 2023-01-01 20:00
+## if aggr.date = 'start', date will be 2022-12-31
+## if aggr.date = 'end', date will be 2023-01-01
+
+cdt.index.minhr2daily <- function(times, instep, obs.hour, aggr.date, aggr.period){
     format <- switch(instep, 'minute' = "%Y%m%d%H%M", 'hourly' = "%Y%m%d%H")
     ttn <- as.POSIXct(times, tz = "UTC", format = format)
-    ttn <- ttn  - 3600 * obs.hour
+    if(aggr.period == 'end') ttn <- ttn - 1
+    ttn <- ttn - 3600 * obs.hour
     ttn <- format(ttn, format)
     index <- split(seq_along(ttn), substr(ttn, 1, 8))
-
-    return(index)
-}
-
-cdt.index.minhr2daily.end <- function(times, instep, obs.hour){
-    format <- switch(instep, 'minute' = "%Y%m%d%H%M", 'hourly' = "%Y%m%d%H")
-    ttn <- as.POSIXct(times, tz = "UTC", format = format)
-    ttn <- (ttn - 1) - 3600 * obs.hour
-    ttn <- format(ttn, format)
-    index <- split(seq_along(ttn), substr(ttn, 1, 8))
+    if(aggr.date == 'end'){
+        dates <- as.Date(names(index), '%Y%m%d') + 1
+        names(index) <- format(dates, '%Y%m%d')
+    }
 
     return(index)
 }
@@ -378,33 +434,34 @@ cdt.index.rollSeasonal <- function(dates, seas.len){
 ## Time series aggregation
 cdt.index.aggregate <- function(dates, tstep.in = c("minute", "hourly", "daily", "pentad", "dekadal", "monthly"),
                                 tstep.out = c("minute", "hourly", "daily", "pentad", "dekadal", "monthly", "annual", "seasonal", "roll.seas"),
-                                inMinHour = 5, outMinHour = 30, obs.hour = 0, seasonLength = 3, startMonth = 1)
+                                inMinHour = 5, outMinHour = 30, seasonLength = 3, startMonth = 1,
+                                obs.hour = 0, aggr.date = 'end', aggr.period = 'start')
 {
     tstep.in <- tstep.in[1]
     tstep.out <- tstep.out[1]
 
     if(tstep.out == "minute"){
-        index <- cdt.index.min2min(dates, outMinHour)
-        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6)))[1])
+        index <- cdt.index.min2min(dates, outMinHour, aggr.date, aggr.period)
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6))))
         nbd1 <- lapply(seq_along(pmon), function(j){
                         list(mo = pmon[[j]], nb = outMinHour/inMinHour)
                     })
     }
 
     if(tstep.out == "hourly"){
-        fun <- switch(tstep.in, 'minute' = cdt.index.min2hour, 'hourly' = cdt.index.hour2hour)
+        fun2hour <- switch(tstep.in, 'minute' = cdt.index.min2hour, 'hourly' = cdt.index.hour2hour)
         fac <- switch(tstep.in, 'minute' = 60, 'hourly' = 1)
-        index <- fun(dates, outMinHour)
-        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6)))[1])
+        index <- fun2hour(dates, outMinHour, aggr.date, aggr.period)
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6))))
         nbd1 <- lapply(seq_along(pmon), function(j){
                         list(mo = pmon[[j]], nb = fac * outMinHour/inMinHour)
                     })
     }
 
     if(tstep.out == "daily"){
-        index <- cdt.index.minhr2daily(dates, tstep.in, obs.hour)
+        index <- cdt.index.minhr2daily(dates, tstep.in, obs.hour, aggr.date, aggr.period)
         fac <- switch(tstep.in, 'minute' = 60, 'hourly' = 1)
-        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6)))[1])
+        pmon <- lapply(index, function(x) as.numeric(unique(substr(dates[x], 5, 6))))
         nbd1 <- lapply(seq_along(pmon), function(j){
                         list(mo = pmon[[j]], nb = fac * 24/inMinHour)
                     })
@@ -468,7 +525,7 @@ cdt.index.aggregate <- function(dates, tstep.in = c("minute", "hourly", "daily",
                       )
     }
 
-   if(tstep.out %in% c("seasonal", "roll.seas")){
+    if(tstep.out %in% c("seasonal", "roll.seas")){
         index <- cdt.index.rollSeasonal(dates, seasonLength)
         dmon <- lapply(names(index), function(x){
             mon <- as.Date(paste(strsplit(x, "_")[[1]], 1, sep = '-'))
@@ -510,17 +567,18 @@ cdt.index.aggregate <- function(dates, tstep.in = c("minute", "hourly", "daily",
     nbd1 <- lapply(seq_along(nbd1), function(j){
         mon <- substr(dates[index[[j]]], 5, 6)
         nba <- lapply(split(rep(1, length(mon)), mon), sum)
-        if(tstep.out %in% c("minute", "hourly", "daily")){
-            nm <- names(nba)[1]
-            nba <- list(do.call(sum, nba))
-            names(nba) <- nm
-            mon <- rep(mon[1], length(mon))
-        }
         nba <- nba[match(nbd1[[j]]$mo, as.numeric(names(nba)))]
         nba <- lapply(nba, function(ii) if(is.null(ii)) 0 else ii)
+        imx <- which.max(do.call(c, nba))
         nba <- unlist(nba, use.names = FALSE)
-        list(mo = nbd1[[j]]$mo, nb0 = nbd1[[j]]$nb, nba = nba, tsmo = as.numeric(mon))
+        mo <- nbd1[[j]]$mo
+        if(tstep.out %in% c("minute", "hourly", "daily")){
+            nba <- sum(nba)
+            mo <- mo[imx]
+        }
+        list(mo = mo, nb0 = nbd1[[j]]$nb, nba = nba, tsmo = as.numeric(mon))
     })
+
     nbda <- sapply(lapply(nbd1, '[[', 'nba'), sum)
 
     list(index = index, date = odaty,

@@ -136,10 +136,10 @@
             <text lang="en"> Unable to read station data: </text>
         </content>
         <content id="11">
-            <text lang="en"> No NetCDF files found in: </text>
+            <text lang="en"> No netCDF files found in: </text>
         </content>
         <content id="12">
-            <text lang="en"> No NetCDF data sample found </text>
+            <text lang="en"> No netCDF data sample found </text>
         </content>
         <content id="13">
             <text lang="en"> Dates do not overlap </text>

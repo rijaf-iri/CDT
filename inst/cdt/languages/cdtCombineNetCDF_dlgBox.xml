@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dialog_box>
     <title>
-        <text lang="en"> Combine NetCDF Data </text>
+        <text lang="en"> Combine netCDF Data </text>
     </title>
     <widget>
         <button id="1">
@@ -11,27 +11,27 @@
             <text lang="en"> Time step </text>
         </label>
         <label id="2">
-            <text lang="en"> Directory containing the NetCDF files </text>
+            <text lang="en"> Directory containing the netCDF files </text>
         </label>
         <label id="3">
-            <text lang="en"> File to save the combined NetCDF files </text>
+            <text lang="en"> File to save the combined netCDF files </text>
         </label>
     </widget>
     <message>
         <content id="1">
-            <text lang="en"> Combine NetCDF data ................. </text>
+            <text lang="en"> Combine netCDF data ................. </text>
         </content>
         <content id="2">
-            <text lang="en"> Combining NetCDF data finished successfully </text>
+            <text lang="en"> Combining netCDF data finished successfully </text>
         </content>
         <content id="3">
-            <text lang="en"> Combining NetCDF data failed </text>
+            <text lang="en"> Combining netCDF data failed </text>
         </content>
         <content id="4">
-            <text lang="en"> No NetCDF files found </text>
+            <text lang="en"> No netCDF files found </text>
         </content>
         <content id="5">
-            <text lang="en"> Unable to open the NetCDF sample </text>
+            <text lang="en"> Unable to open the netCDF sample </text>
         </content>
     </message>
 </dialog_box>

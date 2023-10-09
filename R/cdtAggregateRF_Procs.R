@@ -98,7 +98,7 @@ AggregateMWin_Execute <- function(){
 
     ############################
     if(GalParams$data.type == 'cdtnetcdf'){
-        ncinfo <- ncInfo.with.date.range(GalParams$cdtnetcdf, GalParams$Date.Range,
+        ncinfo <- ncInfo.with.date.range(GalParams$cdtnetcdf, GalParams$date.range,
                                          GalParams$tstep, GalParams$minhour)
         if(!any(ncinfo$exist)){
             Insert.Messages.Out(GalParams[['message']][['9']], TRUE, 'e')

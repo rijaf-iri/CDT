@@ -35,13 +35,13 @@
             <text lang="en"> No attributes found </text>
         </content>
         <content id="12">
-            <text lang="en"> Unable to locate NetCDF files </text>
+            <text lang="en"> Unable to locate netCDF files </text>
         </content>
         <content id="13">
-            <text lang="en"> No NetCDF data sample file found </text>
+            <text lang="en"> No netCDF data sample file found </text>
         </content>
         <content id="14">
-            <text lang="en"> NetCDF varid or the order of latlon not correct, it must in the format GeneralParameters$cdtnetcdf$sample = list(varid = 'precip', ilon = 1, ilat = 2) </text>
+            <text lang="en"> netCDF varid or the order of latlon not correct, it must in the format GeneralParameters$cdtnetcdf$sample = list(varid = 'precip', ilon = 1, ilat = 2) </text>
         </content>
         <content id="15">
             <text lang="en"> does not exist </text>
@@ -62,7 +62,7 @@
             <text lang="en"> Read and extract data ..... </text>
         </content>
         <content id="21">
-            <text lang="en"> Reading and extracting NetCDF data finished </text>
+            <text lang="en"> Reading and extracting netCDF data finished </text>
         </content>
     </message>
 </message_proc>

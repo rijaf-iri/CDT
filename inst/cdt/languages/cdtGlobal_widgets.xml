@@ -93,8 +93,8 @@
                 <text lang="fr"> Format de données CDT (gridded) </text>
             </option>
             <option id="3">
-                <text lang="en"> NetCDF gridded data </text>
-                <text lang="fr"> Données NetCDF </text>
+                <text lang="en"> netCDF gridded data </text>
+                <text lang="fr"> Données netCDF </text>
             </option>
         </combobox>
     </widget>

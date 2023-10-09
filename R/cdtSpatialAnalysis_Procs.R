@@ -325,28 +325,24 @@ spatialAnalysisProcs <- function(GeneralParameters){
             AnalysData <- lapply(seq_along(ixm), function(jj){
                 MAT <- AggrData[ixm[[jj]], , drop = FALSE]
                 year <- as.numeric(substr(odaty[[jj]], 1, 4))
-                cdt.data.analysis(MAT, 'trend',
-                                    trend = list(
-                                        year = year,
-                                        min.year = pars.trend$min.year,
-                                        unit = pars.trend$unit
-                                    )
-                                )
+                trend.args <- c(list(year = year), pars.trend)
+                cdt.data.analysis(MAT, analysis$method, trend = trend.args)
             })
-        }else if(analysis$method %in% c('probExc', 'probNExc')){
-            AnalysData <- lapply(ixm, function(ix){
-                MAT <- AggrData[ix, , drop = FALSE]
-                cdt.data.analysis(MAT, analysis$method, probs = analysis$probs)
-            })
-            AnalysData <- do.call(rbind, AnalysData)
         }else{
             AnalysData <- lapply(ixm, function(ix){
                 MAT <- AggrData[ix, , drop = FALSE]
-                cdt.data.analysis(MAT, analysis$method,
-                                    percentile = analysis$percentile,
-                                    freq.args = analysis$frequency
-                                )
+
+                if(analysis$method %in% c('probExc', 'probNExc')){
+                    cdt.data.analysis(MAT, analysis$method, probs.thres = analysis$probs.thres)
+                }else if(analysis$method == "percentile"){
+                    cdt.data.analysis(MAT, analysis$method, percentile = analysis$percentile)
+                }else if(analysis$method == "frequency"){
+                    cdt.data.analysis(MAT, analysis$method, freq.args = analysis$frequency)
+                }else{
+                    cdt.data.analysis(MAT, analysis$method)
+                }
             })
+
             AnalysData <- do.call(rbind, AnalysData)
         }
     }
@@ -435,33 +431,26 @@ spatialAnalysisProcs <- function(GeneralParameters){
 
                 return(NULL)
             }else if(analysis$method == "trend"){
+                trend.args <- c(list(year = yyear), pars.trend)
                 AnalysData <- lapply(ixm, function(ix){
                     MAT <- don[ix, , drop = FALSE]
-                    cdt.data.analysis(MAT, 'trend',
-                                        trend = list(
-                                            year = yyear,
-                                            min.year = pars.trend$min.year,
-                                            unit = pars.trend$unit
-                                        )
-                                    )
+                    cdt.data.analysis(MAT, analysis$method, trend = trend.args)
                 })
-
-                return(list(Data = AnalysData, NonMiss = AggrNA))
-            }else if(analysis$method %in% c('probExc', 'probNExc')){
-                AnalysData <- lapply(ixm, function(ix){
-                    MAT <- don[ix, , drop = FALSE]
-                    cdt.data.analysis(MAT, analysis$method, probs = analysis$probs)
-                })
-                AnalysData <- do.call(rbind, AnalysData)
 
                 return(list(Data = AnalysData, NonMiss = AggrNA))
             }else{
                 AnalysData <- lapply(ixm, function(ix){
                     MAT <- don[ix, , drop = FALSE]
-                    cdt.data.analysis(MAT, analysis$method,
-                                        percentile = analysis$percentile,
-                                        freq.args = analysis$frequency
-                                    )
+
+                    if(analysis$method %in% c('probExc', 'probNExc')){
+                        cdt.data.analysis(MAT, analysis$method, probs.thres = analysis$probs.thres)
+                    }else if(analysis$method == "percentile"){
+                        cdt.data.analysis(MAT, analysis$method, percentile = analysis$percentile)
+                    }else if(analysis$method == "frequency"){
+                        cdt.data.analysis(MAT, analysis$method, freq.args = analysis$frequency)
+                    }else{
+                        cdt.data.analysis(MAT, analysis$method)
+                    }
                 })
                 AnalysData <- do.call(rbind, AnalysData)
 
@@ -522,56 +511,56 @@ spatialAnalysisProcs <- function(GeneralParameters){
             }else{
                 if(analysis$method == "mean"){
                     nc.var <- "mean"
+                    nc.unit <- ""
                     longname.mon <- "Mean"
                 }
                 if(analysis$method == "median"){
                     nc.var <- "med"
+                    nc.unit <- ""
                     longname.mon <- "Median"
                 }
                 if(analysis$method == "min"){
                     nc.var <- "min"
+                    nc.unit <- ""
                     longname.mon <- "Minimum"
                 }
                 if(analysis$method == "max"){
                     nc.var <- "max"
+                    nc.unit <- ""
                     longname.mon <- "Maximum"
                 }
                 if(analysis$method == "std"){
                     nc.var <- "std"
+                    nc.unit <- ""
                     longname.mon <- "Standard deviation"
                 }
                 if(analysis$method == "cv"){
                     nc.var <- "cv"
+                    nc.unit <- ""
                     longname.mon <- "Coefficient of variation"
                 }
                 if(analysis$method == "percentile"){
                     nc.var <- "perc"
+                    nc.unit <- ""
                     longname.mon <- paste0(analysis$percentile, "th Percentile")
                 }
                 if(analysis$method == "frequency"){
                     nc.var <- "ferq"
-                    longname.mon <- "Frequency, number of event every 10 years"
+                    nc.unit <- "%"
+                    longname.mon <- "Frequency in percentage"
                 }
                 if(analysis$method == "probExc"){
                     nc.var <- "prob"
-                    if(analysis$probs$thres.type == 'percentile'){
-                        prob_thres <- paste0(analysis$probs$thres.percent, "th Percentile")
-                    }else{
-                        prob_thres <- paste("value", analysis$probs$thres.value)
-                    }
-                    longname.mon <- paste("Probability of exceeding the", prob_thres)
+                    nc.unit <- "%"
+                    longname.mon <- paste("Probability of exceeding the value", analysis$probs.thres)
                 }
                 if(analysis$method == "probNExc"){
                     nc.var <- "prob"
-                    if(analysis$probs$thres.type == 'percentile'){
-                        prob_thres <- paste0(analysis$probs$thres.percent, "th Percentile")
-                    }else{
-                        prob_thres <- paste("value", analysis$probs$thres.value)
-                    }
-                    longname.mon <- paste("Probability of non exceeding the", prob_thres)
+                    nc.unit <- "%"
+                    longname.mon <- paste("Probability of non exceeding the value", analysis$probs.thres)
                 }
  
-                grdOut <- ncdf4::ncvar_def(nc.var, "", xy.dim, NA, longname = longname.mon, prec = "float", compression = 9)
+                grdOut <- ncdf4::ncvar_def(nc.var, nc.unit, xy.dim, NA, longname = longname.mon, prec = "float", compression = 9)
 
                 out.vars <- list(grdOut, grdNA)
             }
@@ -842,9 +831,9 @@ spatialAnalysisProcs <- function(GeneralParameters){
 
     dirAnalysis <- list.dirs(outputDIR, full.names = FALSE, recursive = FALSE)
     dirAnalysis <- ANALYSIS[ANALYSIS %in% dirAnalysis]
-    outStat <- list(Stats = dirAnalysis, last = analysis.dir)
-    saveRDS(outStat, file = file.path(outputDIR, "SpatialAnalysis.rds"))
-    .cdtData$EnvData$DirStat <- outStat
+    saveOUT <- list(Stats = dirAnalysis, last = analysis.dir, timestep = outstep, use.month = use.month)
+    saveRDS(saveOUT, file = file.path(outputDIR, "SpatialAnalysis.rds"))
+    .cdtData$EnvData$DirStat <- saveOUT
     .cdtData$EnvData$PathStat <- outputDIR
     return(0)
 }

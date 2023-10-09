@@ -639,9 +639,19 @@ graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
     graphics::mtext(ylab, side = 2, line = 3, cex = 1.2)
 
     ####
-    fn <- stats::ecdf(dat)
-    x <- sort(dat)
-    y <- 100 * (1 - fn(x))
+    # fn <- stats::ecdf(dat)
+    # x <- sort(dat)
+    # y <- 100 * (1 - fn(x))
+
+    pexc <- ecdf_plot_ts(dat)
+    x <- pexc$x
+    y <- pexc$y
+
+    # if(smooth){
+    #     pexc <- ecdf_plot_smooth(dat, adj = 0.1)
+    #     x <- pexc$x
+    #     y <- pexc$y
+    # }
 
     ####
     if(plotl$type == 'both') graphics::lines(x, y, type = 'o', col = plotl$col$line, lwd = plotl$lwd,
@@ -1724,5 +1734,3 @@ climdex.plot.line <- function(x, y, trend, xlim = NULL, ylim = NULL,
 
     return(0)
 }
-
-

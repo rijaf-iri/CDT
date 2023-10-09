@@ -11,7 +11,7 @@
             <text lang="en"> Station data file </text>
         </label>
         <label id="2">
-            <text lang="en"> Elevation data (NetCDF) </text>
+            <text lang="en"> Elevation data (netCDF) </text>
         </label>
         <label id="3">
             <text lang="en"> Directory to save result </text>
@@ -52,7 +52,7 @@
         </content>
         <content id="5">
             <status>
-                <text lang="en"> File containing the elevation data in NetCDF format </text>
+                <text lang="en"> File containing the elevation data in netCDF format </text>
             </status>
             <tooltip>
                 <text lang="en"> Select the file from the list </text>
@@ -80,7 +80,7 @@
             <text lang="en"> Select the file containing the gauge data </text>
         </content>
         <content id="2">
-            <text lang="en"> You have to choose DEM data in NetCDF format </text>
+            <text lang="en"> You have to choose DEM data in netCDF format </text>
         </content>
         <content id="3">
             <text lang="en"> Select or enter the path to directory to save results </text>

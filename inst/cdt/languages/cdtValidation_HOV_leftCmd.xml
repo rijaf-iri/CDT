@@ -189,7 +189,7 @@
             <text lang="en"> Station data file </text>
         </label>
         <label id="4">
-            <text lang="en"> Directory of NetCDF files </text>
+            <text lang="en"> Directory of netCDF files </text>
         </label>
         <label id="5">
             <text lang="en"> Directory to save result </text>
@@ -217,7 +217,7 @@
             <text lang="en"> Compute Statistics using </text>
         </label>
         <label id="13">
-            <text lang="en"> Display Statistics Table </text>
+            <text lang="en"> Statistics Table </text>
         </label>
         <label id="14">
             <text lang="en"> Statistics Maps </text>
@@ -278,10 +278,10 @@
         </content>
         <content id="2a">
             <status>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </status>
             <tooltip>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </tooltip>
         </content>
         <content id="3">
@@ -302,10 +302,10 @@
         </content>
         <content id="4">
             <status>
-                <text lang="en"> Enter the full path to the directory containing the NetCDF files </text>
+                <text lang="en"> Enter the full path to the directory containing the netCDF files </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to the directory containing the NetCDF files </text>
+                <text lang="en"> Enter the full path to the directory containing the netCDF files </text>
             </tooltip>
         </content>
         <content id="4a">
@@ -504,19 +504,19 @@
             <text lang="en"> The selection did not contain any stations </text>
         </content>
         <content id="19">
-            <text lang="en"> No NetCDF data sample found </text>
+            <text lang="en"> No netCDF data sample found </text>
         </content>
         <content id="20">
-            <text lang="en"> NetCDF data not found </text>
+            <text lang="en"> netCDF data not found </text>
         </content>
         <content id="21">
-            <text lang="en"> Station and NetCDF dates did not overlap </text>
+            <text lang="en"> Station and netCDF dates did not overlap </text>
         </content>
         <content id="22">
-            <text lang="en"> Read and extract NetCDF data ... </text>
+            <text lang="en"> Read and extract netCDF data ... </text>
         </content>
         <content id="23">
-            <text lang="en"> Reading NetCDF data finished </text>
+            <text lang="en"> Reading netCDF data finished </text>
         </content>
         <content id="24">
             <text lang="en"> Data extraction finished </text>

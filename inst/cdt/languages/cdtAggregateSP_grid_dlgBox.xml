@@ -7,8 +7,8 @@
     <widget>
         <combobox id="1">
             <option id="1">
-                <text lang="en"> NetCDF file </text>
-                <text lang="fr"> Fichier NetCDF </text>
+                <text lang="en"> netCDF file </text>
+                <text lang="fr"> Fichier netCDF </text>
             </option>
             <option id="2">
                 <text lang="en"> CDT Gridded Dataset Format </text>
@@ -20,8 +20,8 @@
             <text lang="fr"> Grille de </text>
         </label>
         <label id="2">
-            <text lang="en"> NetCDF data file </text>
-            <text lang="fr"> Fichier données NetCDF </text>
+            <text lang="en"> netCDF data file </text>
+            <text lang="fr"> Fichier données netCDF </text>
         </label>
         <label id="3">
             <text lang="en"> Path to the index file (*.rds) of the dataset </text>

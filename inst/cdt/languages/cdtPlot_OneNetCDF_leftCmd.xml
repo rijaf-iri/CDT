@@ -2,7 +2,7 @@
 <panel_cmd>
     <tab_title>
         <tab id="1">
-            <text lang="en"> Plot NetCDF Data </text>
+            <text lang="en"> Plot netCDF Data </text>
         </tab>
     </tab_title>
     <widget>
@@ -13,7 +13,7 @@
             <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <label id="1">
-            <text lang="en"> NetCDF data file </text>
+            <text lang="en"> netCDF data file </text>
         </label>
         <label id="2">
             <text lang="en"> Plot Type </text>

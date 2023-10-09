@@ -16,10 +16,10 @@
             <text lang="en"> CDT stations file containing the SWHC data </text>
         </label>
         <label id="3">
-            <text lang="en"> NetCDF file of the Water Balance on day 1 </text>
+            <text lang="en"> netCDF file of the Water Balance on day 1 </text>
         </label>
         <label id="4">
-            <text lang="en"> NetCDF file containing the SWHC data </text>
+            <text lang="en"> netCDF file containing the SWHC data </text>
         </label>
     </widget>
     <message>
@@ -30,10 +30,10 @@
             <text lang="en"> CDT station data format file containing the soil water holding capacity data, the data must have the same stations as the Precipitation and PET data </text>
         </content>
         <content id="3">
-            <text lang="en"> A NetCDF file containing the water balance on the first day of calculation, the grid must have the same resolution and extent as the Precipitation and PET </text>
+            <text lang="en"> A netCDF file containing the water balance on the first day of calculation, the grid must have the same resolution and extent as the Precipitation and PET </text>
         </content>
         <content id="4">
-            <text lang="en"> A NetCDF file containing the soil water holding capacity data, the grid must have the same resolution and extent as the Precipitation and PET </text>
+            <text lang="en"> A netCDF file containing the soil water holding capacity data, the grid must have the same resolution and extent as the Precipitation and PET </text>
         </content>
         <content id="5">
             <text lang="en"> No input data found </text>

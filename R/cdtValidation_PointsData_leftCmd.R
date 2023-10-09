@@ -561,91 +561,6 @@ Validation.STAT.PanelCmd <- function(clim.var){
 
     ##############################################
 
-        frameStatTab <- ttklabelframe(subfr3, text = lang.dlg[['label']][['13']], relief = 'groove')
-
-        STATIONIDS <- ''
-        stn.stat.tab <- tclVar()
-        stateDispSTN <- if(GeneralParameters$stat.data == 'stn') 'normal' else 'disabled'
-
-        bt.stat.prev <- ttkbutton(frameStatTab, text = "<<", state = stateDispSTN, width = largeur7)
-        bt.stat.next <- ttkbutton(frameStatTab, text = ">>", state = stateDispSTN, width = largeur7)
-        cb.stat.sel <- ttkcombobox(frameStatTab, values = STATIONIDS, textvariable = stn.stat.tab, width = largeur3, state = stateDispSTN,  justify = 'center')
-        bt.stat.disp <- ttkbutton(frameStatTab, text = lang.dlg[['button']][['5']])
-
-        tkgrid(bt.stat.prev, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.stat.sel, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.stat.next, row = 0, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.stat.disp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ################
-        .cdtData$EnvData$tab$validStat <- NULL
-
-        tkconfigure(bt.stat.disp, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
-                statsdata <- StatDataT[STATDATATYPE %in% trimws(tclvalue(stat.data))]
-
-                if(statsdata == 'all'){
-                    don <- .cdtData$EnvData$Statistics$ALL
-                    dat2disp <- data.frame(don$statNames, don$statistics, don$description, don$perfect.score)
-                    titleTab <- 'All-Data Statistics'
-                }
-                if(statsdata == 'avg'){
-                    don <- .cdtData$EnvData$Statistics$AVG
-                    dat2disp <- data.frame(don$statNames, don$statistics, don$description, don$perfect.score)
-                    titleTab <- 'Spatial-Average Statistics'
-                }
-                if(statsdata == 'stn'){
-                    don <- .cdtData$EnvData$Statistics$STN
-                    istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
-                    dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
-                    titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
-                }
-
-                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
-                rownames(dat2disp) <- NULL
-
-                .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
-            }
-        })
-
-        tkconfigure(bt.stat.prev, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
-                don <- .cdtData$EnvData$Statistics$STN
-                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
-                istn <- istn - 1
-                if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
-                tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
-
-                dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
-                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
-                rownames(dat2disp) <- NULL
-
-                titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
-
-                .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
-            }
-        })
-
-        tkconfigure(bt.stat.next, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
-                don <- .cdtData$EnvData$Statistics$STN
-                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
-                istn <- istn + 1
-                if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
-                tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
-
-                dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
-                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
-                rownames(dat2disp) <- NULL
-
-                titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
-
-                .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
-            }
-        })
-
-        ##############################################
-
         frameMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['14']], relief = 'groove')
 
         statsCON <- c('CORR', 'BR2', 'BIAS', 'PBIAS', 'ME', 'MAE', 'RMSE', 'NSE', 'MNSE', 'RNSE', 'IOA', 'MIOA', 'RIOA')
@@ -731,10 +646,94 @@ Validation.STAT.PanelCmd <- function(clim.var){
 
         ##############################################
 
+        frameStatTab <- ttklabelframe(subfr3, text = lang.dlg[['label']][['13']], relief = 'groove')
+
+        STATIONIDS <- ''
+        stn.stat.tab <- tclVar()
+        stateDispSTN <- if(GeneralParameters$stat.data == 'stn') 'normal' else 'disabled'
+
+        bt.stat.prev <- ttkbutton(frameStatTab, text = "<<", state = stateDispSTN, width = largeur7)
+        bt.stat.next <- ttkbutton(frameStatTab, text = ">>", state = stateDispSTN, width = largeur7)
+        cb.stat.sel <- ttkcombobox(frameStatTab, values = STATIONIDS, textvariable = stn.stat.tab, width = largeur3, state = stateDispSTN,  justify = 'center')
+        bt.stat.disp <- ttkbutton(frameStatTab, text = lang.dlg[['button']][['5']])
+
+        tkgrid(bt.stat.prev, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stat.sel, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stat.next, row = 0, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stat.disp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ################
+        .cdtData$EnvData$tab$validStat <- NULL
+
+        tkconfigure(bt.stat.disp, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                statsdata <- StatDataT[STATDATATYPE %in% trimws(tclvalue(stat.data))]
+
+                if(statsdata == 'all'){
+                    don <- .cdtData$EnvData$Statistics$ALL
+                    dat2disp <- data.frame(don$statNames, don$statistics, don$description, don$perfect.score)
+                    titleTab <- 'All-Data Statistics'
+                }
+                if(statsdata == 'avg'){
+                    don <- .cdtData$EnvData$Statistics$AVG
+                    dat2disp <- data.frame(don$statNames, don$statistics, don$description, don$perfect.score)
+                    titleTab <- 'Spatial-Average Statistics'
+                }
+                if(statsdata == 'stn'){
+                    don <- .cdtData$EnvData$Statistics$STN
+                    istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
+                    dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
+                    titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
+                }
+
+                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
+                rownames(dat2disp) <- NULL
+
+                .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
+            }
+        })
+
+        tkconfigure(bt.stat.prev, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                don <- .cdtData$EnvData$Statistics$STN
+                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
+                istn <- istn - 1
+                if(istn < 1) istn <- length(.cdtData$EnvData$opDATA$id)
+                tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
+
+                dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
+                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
+                rownames(dat2disp) <- NULL
+
+                titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
+
+                .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
+            }
+        })
+
+        tkconfigure(bt.stat.next, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                don <- .cdtData$EnvData$Statistics$STN
+                istn <- which(.cdtData$EnvData$opDATA$id == trimws(tclvalue(stn.stat.tab)))
+                istn <- istn + 1
+                if(istn > length(.cdtData$EnvData$opDATA$id)) istn <- 1
+                tclvalue(stn.stat.tab) <- .cdtData$EnvData$opDATA$id[istn]
+
+                dat2disp <- data.frame(don$statNames, don$statistics[, istn], don$description, don$perfect.score)
+                names(dat2disp) <- c('Name', 'Statistics', 'Description', 'Perfect.Score')
+                rownames(dat2disp) <- NULL
+
+                titleTab <- paste(tclvalue(stn.stat.tab), 'Statistics')
+
+                .cdtData$EnvData$tab$validStat <- tableNotebookTab_unik(dat2disp, .cdtData$EnvData$tab$validStat, titleTab, 12)
+            }
+        })
+
+        ##############################################
+
         frameGraph <- ttklabelframe(subfr3, text = lang.dlg[['label']][['16']], relief = 'groove')
 
         ############
-        frameGrP <- tkframe(frameGraph)
 
         typeGraphCombo <- lang.dlg[['combobox']][['3']]
         valGraphCombo <- c("Scatter", "CDF", "Lines")
@@ -745,15 +744,12 @@ Validation.STAT.PanelCmd <- function(clim.var){
         ValTypeGRAPH <- valGraphCombo[itype]
         tclvalue(type.graph) <- CbTypeGRAPH[ValTypeGRAPH %in% GeneralParameters$type.graph]
 
-        cb.stats.graph <- ttkcombobox(frameGrP, values = CbTypeGRAPH, textvariable = type.graph, width = largeur2)
-        bt.stats.graph <- ttkbutton(frameGrP, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur9)
-        bt.Opt.graph <- ttkbutton(frameGrP, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur9)
-
-        tkgrid(cb.stats.graph, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.Opt.graph, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.stats.graph, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        cb.stats.graph <- ttkcombobox(frameGraph, values = CbTypeGRAPH, textvariable = type.graph, width = largeur2)
+        bt.stats.graph <- ttkbutton(frameGraph, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur9)
+        bt.Opt.graph <- ttkbutton(frameGraph, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur9)
 
         ############
+
         frameGrS <- tkframe(frameGraph)
 
         STNIDGRAPH <- ""
@@ -768,9 +764,12 @@ Validation.STAT.PanelCmd <- function(clim.var){
         tkgrid(cb.stn.graph, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.stn.graph.next, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
 
-        ##############
-        tkgrid(frameGrP, row = 0, column = 0, sticky = 'we')
-        tkgrid(frameGrS, row = 1, column = 0, sticky = 'we')
+        ############
+
+        tkgrid(cb.stats.graph, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameGrS, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Opt.graph, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stats.graph, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
 
         ##############
         .cdtData$EnvData$tab$Graph <- NULL
@@ -817,8 +816,8 @@ Validation.STAT.PanelCmd <- function(clim.var){
         })
 
         #############################
-        tkgrid(frameStatTab, row = 0, column = 0, sticky = 'we')
-        tkgrid(frameMap, row = 1, column = 0, sticky = 'we', pady = 3)
+        tkgrid(frameMap, row = 0, column = 0, sticky = 'we')
+        tkgrid(frameStatTab, row = 1, column = 0, sticky = 'we', pady = 3)
         tkgrid(frameGraph, row = 2, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################

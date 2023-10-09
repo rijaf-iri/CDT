@@ -30,7 +30,7 @@
             <text lang="en"> Set Date Range </text>
         </button>
         <checkbutton id="1">
-            <text lang="en"> U and V components are in one NetCDF file </text>
+            <text lang="en"> U and V components are in one netCDF file </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Bias method </text>
@@ -39,16 +39,16 @@
             <text lang="en"> Directory of bias files </text>
         </label>
         <label id="3-1">
-            <text lang="en"> Directory of the NetCDF wind speed files </text>
+            <text lang="en"> Directory of the netCDF wind speed files </text>
         </label>
         <label id="3-2">
-            <text lang="en"> Directory of the NetCDF U-component files </text>
+            <text lang="en"> Directory of the netCDF U-component files </text>
         </label>
         <label id="3-3">
-            <text lang="en"> Directory of the NetCDF V-component files </text>
+            <text lang="en"> Directory of the netCDF V-component files </text>
         </label>
         <label id="3-4">
-            <text lang="en"> Directory of the NetCDF U and V data files </text>
+            <text lang="en"> Directory of the netCDF U and V data files </text>
         </label>
         <label id="4">
             <text lang="en"> Directory to save result </text>
@@ -152,10 +152,10 @@
         </content>
         <content id="7">
             <status>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </status>
             <tooltip>
-                <text lang="en"> Setting NetCDF data options </text>
+                <text lang="en"> Setting netCDF data options </text>
             </tooltip>
         </content>
         <content id="8">
@@ -168,49 +168,49 @@
         </content>
         <content id="9-1">
             <status>
-                <text lang="en"> The NetCDF file names format of the wind speed bias corrected data </text>
+                <text lang="en"> The netCDF file names format of the wind speed bias corrected data </text>
             </status>
             <tooltip>
-                <text lang="en"> The NetCDF file names format of the wind speed bias corrected data </text>
+                <text lang="en"> The netCDF file names format of the wind speed bias corrected data </text>
             </tooltip>
         </content>
         <content id="9-2">
             <status>
-                <text lang="en"> The NetCDF file names format of the zonal velocity (U grid) bias corrected data </text>
+                <text lang="en"> The netCDF file names format of the zonal velocity (U grid) bias corrected data </text>
             </status>
             <tooltip>
-                <text lang="en"> The NetCDF file names format of the zonal velocity (U grid) bias corrected data </text>
+                <text lang="en"> The netCDF file names format of the zonal velocity (U grid) bias corrected data </text>
             </tooltip>
         </content>
         <content id="9-3">
             <status>
-                <text lang="en"> The NetCDF file names format of the meridional velocity (V grid) bias corrected data </text>
+                <text lang="en"> The netCDF file names format of the meridional velocity (V grid) bias corrected data </text>
             </status>
             <tooltip>
-                <text lang="en"> The NetCDF file names format of the meridional velocity (V grid) bias corrected data </text>
+                <text lang="en"> The netCDF file names format of the meridional velocity (V grid) bias corrected data </text>
             </tooltip>
         </content>
         <content id="9-4">
             <status>
-                <text lang="en"> The NetCDF file names format of the wind data (U and V grid) bias corrected </text>
+                <text lang="en"> The netCDF file names format of the wind data (U and V grid) bias corrected </text>
             </status>
             <tooltip>
-                <text lang="en"> The NetCDF file names format of the wind data (U and V grid) bias corrected </text>
+                <text lang="en"> The netCDF file names format of the wind data (U and V grid) bias corrected </text>
             </tooltip>
         </content>
     </help>
     <message>
         <content id="1-1">
-            <text lang="en"> Enter the path to the directory containing the wind speed NetCDF files </text>
+            <text lang="en"> Enter the path to the directory containing the wind speed netCDF files </text>
         </content>
         <content id="1-2">
-            <text lang="en"> Enter the path to the directory containing the zonal velocity (U grid) NetCDF files </text>
+            <text lang="en"> Enter the path to the directory containing the zonal velocity (U grid) netCDF files </text>
         </content>
         <content id="1-3">
-            <text lang="en"> Enter the path to the directory containing the meridional velocity (V grid) NetCDF files </text>
+            <text lang="en"> Enter the path to the directory containing the meridional velocity (V grid) netCDF files </text>
         </content>
         <content id="1-4">
-            <text lang="en"> Enter the path to the directory containing the wind data (U and V grid) NetCDF files </text>
+            <text lang="en"> Enter the path to the directory containing the wind data (U and V grid) netCDF files </text>
         </content>
         <content id="2">
             <text lang="en"> Enter the path to the directory containing the bias coefficients </text>
@@ -219,7 +219,7 @@
             <text lang="en"> Browse or enter the path to directory to save results </text>
         </content>
         <content id="4">
-            <text lang="en"> You have to set the NetCDF files parameters </text>
+            <text lang="en"> You have to set the netCDF files parameters </text>
         </content>
         <content id="5">
             <text lang="en"> Bias correction finished successfully </text>
@@ -231,16 +231,16 @@
             <text lang="en"> Bias correction ... </text>
         </content>
         <content id="8">
-            <text lang="en"> No NetCDF data sample found </text>
+            <text lang="en"> No netCDF data sample found </text>
         </content>
         <content id="9">
-            <text lang="en"> NetCDF data not found </text>
+            <text lang="en"> netCDF data not found </text>
         </content>
         <content id="10">
-            <text lang="en"> Bias and NetCDF data are in the different region </text>
+            <text lang="en"> Bias and netCDF data are in the different region </text>
         </content>
         <content id="11">
-            <text lang="en"> Bias and NetCDF data have different grid </text>
+            <text lang="en"> Bias and netCDF data have different grid </text>
         </content>
     </message>
 </dialog_box>

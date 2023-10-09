@@ -675,6 +675,89 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
     ##############################################
 
+        frameMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['14']], relief = 'groove')
+
+        ValStatNAMES0 <- c(statsCON, statsCAT, statsVOL)
+        CbStatNAMES0 <- lang.dlg[['combobox']][['2']]
+        ivarL <- switch(clim.var, "RR" = 1:29, "TT" = 1:19)
+
+        statsVAR <- tclVar()
+        CbStatNAMES <- CbStatNAMES0[ivarL]
+        ValStatNAMES <- ValStatNAMES0[ivarL]
+        tclvalue(statsVAR) <- CbStatNAMES[ValStatNAMES %in% GeneralParameters$statsVar]
+
+        stateMaps <- if(GeneralParameters$stat.data == 'stn') 'normal' else 'disabled'
+
+        cb.stats.maps <- ttkcombobox(frameMap, values = CbStatNAMES, textvariable = statsVAR, width = largeur2, state = stateMaps)
+
+        ##########
+        frMapBt <- tkframe(frameMap)
+
+        bt.stats.maps <- ttkbutton(frMapBt, text = .cdtEnv$tcl$lang$global[['button']][['3']], state = stateMaps, width = largeur9)
+        bt.stats.Opt <- ttkbutton(frMapBt, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateMaps, width = largeur9)
+
+        tkgrid(bt.stats.Opt, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stats.maps, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        
+        ##########
+        frPlotT <- tkframe(frameMap)
+
+        typeMapPLOT <- c("Points", "Pixels")
+        .cdtData$EnvData$typeMap <- tclVar("Points")
+
+        txt.plot.type <- tklabel(frPlotT, text = lang.dlg[['label']][['15']], anchor = "e", justify = "right")
+        cb.plot.type <- ttkcombobox(frPlotT, values = typeMapPLOT, textvariable = .cdtData$EnvData$typeMap, width = largeur8, state = stateMaps)
+
+        tkgrid(txt.plot.type, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.plot.type, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ##########
+        tkgrid(cb.stats.maps, row = 0, column = 0, sticky = 'we')
+        tkgrid(frMapBt, row = 1, column = 0, sticky = 'we')
+        tkgrid(frPlotT, row = 2, column = 0, sticky = '')
+
+        ##############
+
+        tkconfigure(bt.stats.Opt, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                mapstat <- ValStatNAMES[CbStatNAMES %in% trimws(tclvalue(statsVAR))]
+                stat.STN <- .cdtData$EnvData$Statistics$STN[c("cont", "catg", "volume")]
+                istat <- sapply(lapply(stat.STN, '[[', 1), function(x){
+                    ll <- which(rownames(x$statistics) == mapstat)
+                    if(length(ll)) ll else 0
+                })
+                ix <- which(istat != 0)
+                don <- lapply(stat.STN[[ix]], function(x) x$statistics[istat[ix], ])
+                don <- do.call(c, don)
+                atlevel <- pretty(don, n = 10, min.n = 7)
+                if(is.null(.cdtData$EnvData$statMapOp$userLvl$levels)){
+                    .cdtData$EnvData$statMapOp$userLvl$levels <- atlevel
+                }else{
+                    if(!.cdtData$EnvData$statMapOp$userLvl$custom)
+                        .cdtData$EnvData$statMapOp$userLvl$levels <- atlevel
+                }
+            }
+            .cdtData$EnvData$statMapOp <- MapGraph.MapOptions(.cdtData$EnvData$statMapOp)
+
+            if(trimws(tclvalue(.cdtData$EnvData$typeMap)) == "Points")
+                pointSizeI <<- .cdtData$EnvData$statMapOp$pointSize
+        })
+
+        ##############
+
+        .cdtData$EnvData$tab$Maps <- NULL
+
+        tkconfigure(bt.stats.maps, command = function(){
+            if(!is.null(.cdtData$EnvData$Statistics)){
+                .cdtData$EnvData$statVAR <- ValStatNAMES[CbStatNAMES %in% trimws(tclvalue(statsVAR))]
+
+                imgContainer <- CDT.Display.Graph(multiValidation.plotStatMaps, .cdtData$EnvData$tab$Maps, 'Statistics-Maps')
+                .cdtData$EnvData$tab$Maps <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Maps)
+            }
+        })
+
+        ##############################################
+
         frameStatTab <- ttklabelframe(subfr3, text = lang.dlg[['label']][['13']], relief = 'groove')
 
         STATIONIDS <- ''
@@ -847,93 +930,9 @@ Validation.MultiData.PanelCmd <- function(clim.var){
 
         ##############################################
 
-        frameMap <- ttklabelframe(subfr3, text = lang.dlg[['label']][['14']], relief = 'groove')
-
-        ValStatNAMES0 <- c(statsCON, statsCAT, statsVOL)
-        CbStatNAMES0 <- lang.dlg[['combobox']][['2']]
-        ivarL <- switch(clim.var, "RR" = 1:29, "TT" = 1:19)
-
-        statsVAR <- tclVar()
-        CbStatNAMES <- CbStatNAMES0[ivarL]
-        ValStatNAMES <- ValStatNAMES0[ivarL]
-        tclvalue(statsVAR) <- CbStatNAMES[ValStatNAMES %in% GeneralParameters$statsVar]
-
-        stateMaps <- if(GeneralParameters$stat.data == 'stn') 'normal' else 'disabled'
-
-        cb.stats.maps <- ttkcombobox(frameMap, values = CbStatNAMES, textvariable = statsVAR, width = largeur2, state = stateMaps)
-
-        ##########
-        frMapBt <- tkframe(frameMap)
-
-        bt.stats.maps <- ttkbutton(frMapBt, text = .cdtEnv$tcl$lang$global[['button']][['3']], state = stateMaps, width = largeur9)
-        bt.stats.Opt <- ttkbutton(frMapBt, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateMaps, width = largeur9)
-
-        tkgrid(bt.stats.Opt, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.stats.maps, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 1, ipadx = 1, ipady = 1)
-        
-        ##########
-        frPlotT <- tkframe(frameMap)
-
-        typeMapPLOT <- c("Points", "Pixels")
-        .cdtData$EnvData$typeMap <- tclVar("Points")
-
-        txt.plot.type <- tklabel(frPlotT, text = lang.dlg[['label']][['15']], anchor = "e", justify = "right")
-        cb.plot.type <- ttkcombobox(frPlotT, values = typeMapPLOT, textvariable = .cdtData$EnvData$typeMap, width = largeur8, state = stateMaps)
-
-        tkgrid(txt.plot.type, row = 0, column = 0, sticky = 'e', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.plot.type, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ##########
-        tkgrid(cb.stats.maps, row = 0, column = 0, sticky = 'we')
-        tkgrid(frMapBt, row = 1, column = 0, sticky = 'we')
-        tkgrid(frPlotT, row = 2, column = 0, sticky = '')
-
-        ##############
-
-        tkconfigure(bt.stats.Opt, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
-                mapstat <- ValStatNAMES[CbStatNAMES %in% trimws(tclvalue(statsVAR))]
-                stat.STN <- .cdtData$EnvData$Statistics$STN[c("cont", "catg", "volume")]
-                istat <- sapply(lapply(stat.STN, '[[', 1), function(x){
-                    ll <- which(rownames(x$statistics) == mapstat)
-                    if(length(ll)) ll else 0
-                })
-                ix <- which(istat != 0)
-                don <- lapply(stat.STN[[ix]], function(x) x$statistics[istat[ix], ])
-                don <- do.call(c, don)
-                atlevel <- pretty(don, n = 10, min.n = 7)
-                if(is.null(.cdtData$EnvData$statMapOp$userLvl$levels)){
-                    .cdtData$EnvData$statMapOp$userLvl$levels <- atlevel
-                }else{
-                    if(!.cdtData$EnvData$statMapOp$userLvl$custom)
-                        .cdtData$EnvData$statMapOp$userLvl$levels <- atlevel
-                }
-            }
-            .cdtData$EnvData$statMapOp <- MapGraph.MapOptions(.cdtData$EnvData$statMapOp)
-
-            if(trimws(tclvalue(.cdtData$EnvData$typeMap)) == "Points")
-                pointSizeI <<- .cdtData$EnvData$statMapOp$pointSize
-        })
-
-        ##############
-
-        .cdtData$EnvData$tab$Maps <- NULL
-
-        tkconfigure(bt.stats.maps, command = function(){
-            if(!is.null(.cdtData$EnvData$Statistics)){
-                .cdtData$EnvData$statVAR <- ValStatNAMES[CbStatNAMES %in% trimws(tclvalue(statsVAR))]
-
-                imgContainer <- CDT.Display.Graph(multiValidation.plotStatMaps, .cdtData$EnvData$tab$Maps, 'Statistics-Maps')
-                .cdtData$EnvData$tab$Maps <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Maps)
-            }
-        })
-
-        ##############################################
-
         frameGraph <- ttklabelframe(subfr3, text = lang.dlg[['label']][['16']], relief = 'groove')
 
         ############
-        frameGrP <- tkframe(frameGraph)
 
         typeGraphCombo <- lang.dlg[['combobox']][['3']]
         valGraphCombo <- c("Scatter", "CDF", "Lines")
@@ -944,15 +943,12 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         ValTypeGRAPH <- valGraphCombo[itype]
         tclvalue(type.graph) <- CbTypeGRAPH[ValTypeGRAPH %in% GeneralParameters$type.graph]
 
-        cb.stats.graph <- ttkcombobox(frameGrP, values = CbTypeGRAPH, textvariable = type.graph, width = largeur2)
-        bt.stats.graph <- ttkbutton(frameGrP, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur9)
-        bt.Opt.graph <- ttkbutton(frameGrP, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur9)
-
-        tkgrid(cb.stats.graph, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.Opt.graph, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.stats.graph, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        cb.stats.graph <- ttkcombobox(frameGraph, values = CbTypeGRAPH, textvariable = type.graph, width = largeur2)
+        bt.stats.graph <- ttkbutton(frameGraph, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur9)
+        bt.Opt.graph <- ttkbutton(frameGraph, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur9)
 
         ############
+
         frameGrS <- tkframe(frameGraph)
 
         STNIDGRAPH <- ""
@@ -967,9 +963,12 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         tkgrid(cb.stn.graph, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.stn.graph.next, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
 
-        ##############
-        tkgrid(frameGrP, row = 0, column = 0, sticky = 'we')
-        tkgrid(frameGrS, row = 1, column = 0, sticky = 'we')
+        ############
+
+        tkgrid(cb.stats.graph, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameGrS, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.Opt.graph, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.stats.graph, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 1, ipadx = 1, ipady = 1)
 
         ##############
 
@@ -1098,8 +1097,8 @@ Validation.MultiData.PanelCmd <- function(clim.var){
         })
 
         #############################
-        tkgrid(frameStatTab, row = 0, column = 0, sticky = 'we')
-        tkgrid(frameMap, row = 1, column = 0, sticky = 'we', pady = 3)
+        tkgrid(frameMap, row = 0, column = 0, sticky = 'we')
+        tkgrid(frameStatTab, row = 1, column = 0, sticky = 'we', pady = 3)
         tkgrid(frameGraph, row = 2, column = 0, sticky = 'we', pady = 1)
         tkgrid(framePerform, row = 3, column = 0, sticky = 'we', pady = 1)
 

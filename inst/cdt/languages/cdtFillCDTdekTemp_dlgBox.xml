@@ -69,12 +69,12 @@
         </content>
         <content id="5">
             <status>
-                <text lang="en"> NetCDF files settings </text>
-                <text lang="fr"> Paramètres des fichiers NetCDF </text>
+                <text lang="en"> netCDF files settings </text>
+                <text lang="fr"> Paramètres des fichiers netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> NetCDF files settings </text>
-                <text lang="fr"> Paramètres des fichiers NetCDF </text>
+                <text lang="en"> netCDF files settings </text>
+                <text lang="fr"> Paramètres des fichiers netCDF </text>
             </tooltip>
         </content>
         <content id="6">

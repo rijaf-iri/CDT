@@ -34,7 +34,7 @@ cdt.init.params <- function(action, tstep){
                         col.year = 5, col.month = 6, col.day.dek = 7,
                         col.start.data = 8, include.elev = FALSE)
     ret.params <- list(action = action, tstep = tstep,
-                       IO.files = IO.files, Date.Range = date.range,
+                       IO.files = IO.files, date.range = date.range,
                        min.perc = 1, data.type = "Multiple",
                        Multiple.File = Multiple.File,
                        Single.File = Single.File)
@@ -105,7 +105,7 @@ cdt.init.params <- function(action, tstep){
                            formula = "X1 - 273.15",
                            varinfo = list(name = "", units = "", missval = -9999,
                                           longname = "", prec = "float"),
-                           output = "", ncoutformat = "output_%S.nc")
+                           output = "", ncoutformat = "output_%S.nc", dataset.name = "")
     }
 
     #################################################################
@@ -222,13 +222,16 @@ cdt.init.params <- function(action, tstep){
         ret.params <- list(action = action, in.tstep = tstep, out.tstep = "dekadal",
                            data.type = "cdtstation", cdtstation = "", cdtdataset = "",
                            cdtnetcdf = list(dir = "", sample = "", format = "rfe_%s%s%s.nc"),
-                           output = "",
-                           Date.Range = date.range,
+                           output = "", ncout.format = "aggr_ts_%S.nc", dataset.name = "",
+                           date.range = date.range,
+                           aggr.date = "start", aggr.period = "start",
                            Seasonal = list(start.mon = 1, length.mon = 3),
                            HourMin = list(int = 1, out = 1, obs.hour = 9),
                            aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 0,
                                               min.frac = list(unique = TRUE, all = 0.95,
-                                                              month = rep(0.95, 12)))
+                                                              month = rep(0.95, 12))),
+                           varinfo = list(name = "", units = "", missval = -9999,
+                                          longname = "", prec = "float")
                          )
     }
 
@@ -246,7 +249,8 @@ cdt.init.params <- function(action, tstep){
 
     ## Time series rolling aggregation
     if(action == 'aggregate.rf'){
-        ret.params <- list(action = action, tstep = tstep, minhour = 0, Date.Range = date.range,
+        ret.params <- list(action = action, tstep = tstep, minhour = 0, 
+                           date.range = date.range,
                            data.type = "cdtstation", cdtstation = "", cdtdataset = "",
                            cdtnetcdf = list(dir = "", sample = "", format = "rfe_%s%s%s.nc"),
                            output = "",

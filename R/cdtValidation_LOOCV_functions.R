@@ -99,8 +99,7 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
 
     parsL <- doparallel.cond(length(ncInfo$ncfiles) > 10)
     ret <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
-                       progress = TRUE, .packages = "sp",
-                       FUN = function(jj)
+                       progress = TRUE, FUN = function(jj)
     {
         if(ncInfo$exist[jj]){
             nc <- ncdf4::nc_open(ncInfo$ncfiles[jj])
