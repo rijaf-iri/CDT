@@ -118,5 +118,17 @@
         <content id="19">
             <text lang="en"> Provide the dataset name </text>
         </content>
+        <content id="20">
+            <text lang="en"> The datasets have different temporal resolutions </text>
+        </content>
+        <content id="21">
+            <text lang="en"> The datasets have different chunk sizes </text>
+        </content>
+        <content id="22">
+            <text lang="en"> The datasets have different spatial grid </text>
+        </content>
+        <content id="23">
+            <text lang="en"> Unable to read the datasets index files: </text>
+        </content>
     </message>
 </dialog_box>

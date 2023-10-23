@@ -225,7 +225,7 @@ ExtractDataProcs <- function(GeneralParameters, GUI = TRUE, progress = TRUE){
                 Insert.Messages.Out(paste(lang.dlg[['message']][['9']], ":", fileopen), TRUE, "e", GUI)
                 return(NULL)
             }
-            sf::st_crs(shp.opfiles) <- sf::NA_crs_
+            sf::st_crs(shpf) <- sf::NA_crs_
         }else{
             shpf <- getShpOpenData(GeneralParameters$shp.file$shp)[[2]]
             if(is.null(shpf)){

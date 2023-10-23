@@ -165,7 +165,7 @@ dataOperation_Execute <- function(){
         outNCDIR <- file.path(GalParams$output, "dataOperation_Output")
         dir.create(outNCDIR, showWarnings = FALSE, recursive = TRUE)
 
-        outNCFRMT <- .cdtData$GalParams$ncoutformat
+        outNCFRMT <- GalParams$ncoutformat
 
         dx <- ncdf4::ncdim_def("Lon", "degreeE", ncsample[[1]]$lon)
         dy <- ncdf4::ncdim_def("Lat", "degreeN", ncsample[[1]]$lat)
@@ -230,7 +230,7 @@ dataOperation_Execute <- function(){
 
         noEval <- sapply(ret, function(x) x == -2)
         out2 <- NULL
-        if(any(noNC)){
+        if(any(noEval)){
             out <- do.call(cbind, lapply(ncFiles, function(x) x[noEval]))
             out <- apply(out, 1, paste, collapse = " - ")
             out <- paste0(out, collapse = '\n')
@@ -247,7 +247,134 @@ dataOperation_Execute <- function(){
     }
 
     if(GalParams$datatype == "cdtdataset"){
-        ## to do
+        fileRDS <- lapply(seq_along(GalParams$inputs), function(jj){
+            GalParams$inputs[[paste0('file', jj)]]$dir
+        })
+
+        # infoIndex <- lapply(fileRDS, readRDS)
+        infoIndex <- lapply(fileRDS, function(ff){
+            idx <- try(readRDS(ff), silent = TRUE)
+            if(inherits(idx, "try-error")) return(NULL)
+            idx
+        })
+        inull <- sapply(infoIndex, is.null)
+        if(any(inull)){
+            msg <- paste0(unlist(fileRDS[inull]), collapse = '\n')
+            Insert.Messages.Out(GalParams[['message']][['23']], TRUE, "e")
+            Insert.Messages.Out(msg, TRUE, "e")
+            return(NULL)
+        }
+
+        ## check time step
+        if(length(infoIndex) > 1){
+            tsteps <- sapply(infoIndex, '[[', 'TimeStep')
+            if(any(tsteps[1] != tsteps)){
+                Insert.Messages.Out(GalParams[['message']][['20']], TRUE, "e")
+                return(NULL)
+            }
+        }
+
+        ## check chunk size
+        if(length(infoIndex) > 1){
+            chunksize <- sapply(infoIndex, '[[', 'chunksize')
+            if(any(chunksize[1] != chunksize)){
+                Insert.Messages.Out(GalParams[['message']][['21']], TRUE, "e")
+                return(NULL)
+            }
+        }
+
+        ## check grid match
+        if(length(infoIndex) > 1){
+            SP <- lapply(infoIndex, function(x) x$coords$mat[c('x', 'y')])
+            SP <- lapply(SP, function(x){names(x) <- c('lon', 'lat'); x})
+            SP <- lapply(SP, defSpatialPixels)
+            lSP <- sapply(SP[-1], function(x) is.diffSpatialPixelsObj(SP[[1]], x, tol = 1e-04))
+            if(any(lSP)){
+                Insert.Messages.Out(GalParams[['message']][['22']], TRUE, "e")
+                return(NULL)
+            }
+        }
+
+        ## check dates overlap
+        infoDates <- lapply(infoIndex, function(x) x$dateInfo$date)
+        if(length(infoIndex) > 1){
+            daty <- Reduce(intersect, infoDates)
+            if(length(daty) == 0){
+                Insert.Messages.Out(GalParams[['message']][['11']], TRUE, "e")
+                return(NULL)
+            }
+        }else daty <- infoDates[[1]]
+
+        infoIndex <- lapply(seq_along(infoIndex), function(j){
+            x <- infoIndex[[j]]
+            it <- match(daty, x$dateInfo$date)
+            x$dateInfo$date <- x$dateInfo$date[it]
+            x$dateInfo$index <- x$dateInfo$index[it]
+            x
+        })
+
+        #########
+        outDSDIR <- file.path(GalParams$output, GalParams$dataset.name)
+        dataDIR <- file.path(outDSDIR, 'DATA')
+        dir.create(dataDIR, showWarnings = FALSE, recursive = TRUE)
+
+        outIndex <- infoIndex[[1]]
+        outIndex$varInfo <- GalParams$varinfo
+        outIndex$dateInfo$date <- daty
+        outIndex$dateInfo$index <- seq_along(daty)
+
+        outIdxFile <- file.path(outDSDIR, paste0(GalParams$dataset.name, '.rds'))
+        conn <- gzfile(outIdxFile, compression = 6)
+        open(conn, "wb")
+        saveRDS(outIndex, conn)
+        close(conn)
+
+        #########
+        chunkfile <- sort(unique(outIndex$colInfo$index))
+        chunkcalc <- split(chunkfile, ceiling(chunkfile/outIndex$chunkfac))
+
+        do.parChunk <- if(outIndex$chunkfac > length(chunkcalc)) TRUE else FALSE
+        do.parCALC <- if(do.parChunk) FALSE else TRUE
+
+        cdtParallelCond <- .cdtData$Config$parallel
+
+        parsL <- doparallel.cond(do.parCALC & (length(chunkcalc) > 5))
+        ret <- cdt.foreach(seq_along(chunkcalc), parsL, GUI = TRUE,
+                           progress = TRUE, FUN = function(j)
+        {
+            donne <- lapply(seq_along(infoIndex), function(i){
+                x <- readCdtDatasetChunk.sequence(chunkcalc[[j]], fileRDS[[i]], cdtParallelCond, do.par = do.parChunk)
+                x <- x[infoIndex[[i]]$dateInfo$index, , drop = FALSE]
+                x
+            })
+
+            names(donne) <- formulaVar
+            txtFormula <- GalParams$formula
+            for(i in seq_along(formulaVar))
+                txtFormula <- gsub(paste0("X", i), paste0("donne[['X", i, "']]"), txtFormula)
+
+            evalOut <- NULL
+            evalFormula <- paste("evalOut =", txtFormula)
+            res <- try(eval(parse(text = evalFormula)), silent = TRUE)
+            if(inherits(res, "try-error")) return(-2)
+            if(is.null(evalOut)) return(-2)
+
+            evalOut[is.nan(evalOut)] <- NA
+            writeCdtDatasetChunk.sequence(evalOut, chunkcalc[[j]], outIndex, dataDIR, cdtParallelCond, do.par = do.parChunk)
+
+            return(0)
+        })
+
+        noEval <- sapply(ret, function(x) x == -2)
+        if(any(noEval)){
+            out <- do.call(c, chunkcalc[noEval])
+            out <- paste0(out, collapse = ',')
+            out1 <- "chunk numbers:"
+            out <- paste(GalParams[['message']][['12']], out1, out, sep = '\n')
+
+            Insert.Messages.Out(out, TRUE, "e")
+            return(NULL)
+        }
     }
 
     return(0)
