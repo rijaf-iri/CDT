@@ -74,10 +74,12 @@ reanal.need.usrpwd <- function(prod, src){
     usrpwd <- FALSE
     urllog <- ""
 
-    if(prod == "jra55"){
-        usrpwd <- TRUE
-        urllog <- "https://rda.ucar.edu"
-    }
+    # if(prod == "jra55"){
+    #     if(src == "rda.ucar.edu - ds628.8-NRT - 3Hourly"){
+    #         usrpwd <- TRUE
+    #         urllog <- "https://rda.ucar.edu"
+    #     }
+    # }
 
     if(prod == "merra2"){
         if(src != "iridl.ldeo.columbia.edu - Daily"){
@@ -477,6 +479,7 @@ download_Reanalysis <- function(){
             if(testConnection()){
                 Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, "i")
                 ret <- try(exec.download_Reanalysis(), silent = TRUE)
+                # ret <- 0
                 if(!inherits(ret, "try-error")){
                     if(ret == 0)
                         Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "s")

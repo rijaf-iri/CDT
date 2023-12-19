@@ -144,7 +144,7 @@ persiann_cdr.download.ncei <- function(GalParams, nbfile = 3, GUI = TRUE, verbos
 
 #################################################################################
 
-persiann.download.data.uci <- function(lnk, dest, ncfl, bbox, cdr){
+persiann.download.data.uci <- function(lnk, dest, ncfl, bbox, cdr, GUI = TRUE){
     xx <- basename(dest)
 
     link.exist <- try(readLines(lnk, 1), silent = TRUE)
@@ -165,7 +165,11 @@ persiann.download.data.uci <- function(lnk, dest, ncfl, bbox, cdr){
         }else{
             unlink(dest)
         }
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
+
     return(xx)
 }
 

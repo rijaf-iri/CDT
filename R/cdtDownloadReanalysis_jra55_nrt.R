@@ -1,10 +1,5 @@
 
 jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
-    on.exit({
-        curl::handle_reset(handle)
-        curl::handle_reset(handle_down)
-    })
-
     xlon <- seq(-179.9997300, 179.4377600, length.out = 640)
     xlat <- seq(-89.5700900, 89.5700900, length.out = 320)
     ix <- xlon >= GalParams$bbox$minlon & xlon <= GalParams$bbox$maxlon
@@ -233,36 +228,17 @@ jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
 
     ######################
 
-    ### login (no needs just check if the is able to login)
-    login_url <- "https://rda.ucar.edu/cgi-bin/login"
-    postfields <- paste0("email=", GalParams$login$usr,
-                         "&passwd=", GalParams$login$pwd,
-                         "&action=login")
-
-    handle <- curl::new_handle()
-    curl::handle_setopt(handle, postfields = postfields)
-    res <- curl::curl_fetch_memory(login_url, handle)
-    if(res$status_code != 200){
-        Insert.Messages.Out("Unable to login to https://rda.ucar.edu", TRUE, "e", GUI)
-        return(-2)
-    }
-    curl::handle_cookies(handle)
-
-    ### downloading
-    handle_down <- curl::new_handle()
-    curl::handle_setopt(handle_down, username = GalParams$login$usr, password = GalParams$login$pwd)
-
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI,
                              verbose, data.name, jra55_nrt.download.data,
-                             handle = handle_down, ncpars = ncpars, gribpars = gribpars,
+                             ncpars = ncpars, gribpars = gribpars,
                              bbox = GalParams$bbox, pars = pars)
 
     return(ret)
 }
 
-jra55_nrt.download.data <- function(lnk, dest, ncfl, handle, ncpars, gribpars, bbox, pars){
+jra55_nrt.download.data <- function(lnk, dest, ncfl, ncpars, gribpars, bbox, pars){
     xx <- basename(dest)
-    dc <- try(curl::curl_download(lnk, dest, handle = handle), silent = TRUE)
+    dc <- try(curl::curl_download(lnk, dest), silent = TRUE)
 
     if(!inherits(dc, "try-error")){
         if(length(gribpars$var) == 1){
@@ -400,8 +376,8 @@ jra55_nrt.extract.grib <- function(grib_file, variable, level, wgrib_exe){
     ######
 
     tmp <- scan(out.file, skip = 1, quiet = TRUE)
-    if(variable %in% c("EVP", "LTRS")){
-        tmp[tmp > 1e+10] <- NA
+    if(variable %in% c("EVP", "LTRS", "ROF", "SoilT", "SoilW", "TSG")){
+        tmp[tmp > 1e+6] <- NA
     }
     ie <- cumsum(lon_nbpoint)
     is <- c(1, ie[-length(ie)] + 1)

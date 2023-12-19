@@ -45,6 +45,13 @@ AssessDataPanelCmd <- function(){
 
     .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
+    .cdtData$EnvData$availPeriod <- list(start.year = 1981, start.mon = 1,
+                                         start.dek = 1, start.pen = 1, start.day = 1,
+                                         start.hour = 0, start.min = 0,
+                                         end.year = 2022, end.mon = 12,
+                                         end.dek = 3, end.pen = 6, end.day = 31,
+                                         end.hour = 23, end.min = 55)
+
     ###################
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtDataAvailab_leftCmd.xml")
@@ -287,11 +294,13 @@ AssessDataPanelCmd <- function(){
 
         bt.avai.Map <- ttkbutton(frameAvailab, text = .cdtEnv$tcl$lang$global[['button']][['3']])
         bt.avai.MapOpt <- ttkbutton(frameAvailab, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+        # bt.avai.Period <- ttkbutton(frameAvailab, text = "Set period for the percentage")
 
         ###############
 
         tkgrid(bt.avai.Map, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 10, pady = 1, ipadx = 10, ipady = 1)
         tkgrid(bt.avai.MapOpt, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 10, pady = 1, ipadx = 10, ipady = 1)
+        # tkgrid(bt.avai.Period, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 5, ipadx = 10, ipady = 1)
 
         ###############
 
@@ -307,6 +316,18 @@ AssessDataPanelCmd <- function(){
             }
             .cdtData$EnvData$avaiMapOp <- MapGraph.MapOptions(.cdtData$EnvData$avaiMapOp)
         })
+
+        # tkconfigure(bt.avai.Period, command = function(){
+        #     # check
+        #     ## 1st run
+        #     intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
+        #     ## load data
+        #     intstep <- .cdtData$EnvData$output$params$intstep
+            
+        #     .cdtData$EnvData$availPeriod <<- getInfoDateRange(.cdtEnv$tcl$main$win,
+        #                                                       .cdtData$EnvData$availPeriod,
+        #                                                       intstep)
+        # })
 
         ###############
 

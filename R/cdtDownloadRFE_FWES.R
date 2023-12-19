@@ -1,5 +1,5 @@
 
-fews.download.data.tif <- function(lnk, dest, ncfl, bbox, arc){
+fews.download.data.tif <- function(lnk, dest, ncfl, bbox, arc, GUI = TRUE){
     xx <- basename(dest)
 
     link.exist <- try(readLines(lnk, 1), silent = TRUE)
@@ -20,6 +20,9 @@ fews.download.data.tif <- function(lnk, dest, ncfl, bbox, arc){
         }else{
             unlink(dest)
         }
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
     return(xx)
 }
@@ -63,7 +66,7 @@ fews.extract.data.tif <- function(tmpf, ncfl, bbox, arc){
     return(ret)
 }
 
-fews.download.data.bin <- function(lnk, dest, ncfl, bbox, region, arc){
+fews.download.data.bin <- function(lnk, dest, ncfl, bbox, region, arc, GUI = TRUE){
     xx <- basename(dest)
 
     link.exist <- try(readLines(lnk, 1), silent = TRUE)
@@ -84,6 +87,9 @@ fews.download.data.bin <- function(lnk, dest, ncfl, bbox, region, arc){
         }else{
             unlink(dest)
         }
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
     return(xx)
 }

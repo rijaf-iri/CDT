@@ -121,13 +121,16 @@ tamsatv3.0.download.reading <- function(GalParams, nbfile = 3, GUI = TRUE, verbo
 
 #################################################################################
 
-tamsat.download.data <- function(lnk, dest, ncfl, bbox, version){
+tamsat.download.data <- function(lnk, dest, ncfl, bbox, version, GUI = TRUE){
     xx <- basename(dest)
 
     link.exist <- try(readLines(lnk, 1), silent = TRUE)
     if(inherits(link.exist, "try-error")) return(xx)
 
-    dc <- try(curl::curl_download(lnk, dest), silent = TRUE)
+    handle <- curl::new_handle()
+    curl::handle_setopt(handle, ssl_verifyhost = 0, ssl_verifypeer = 0)
+
+    dc <- try(curl::curl_download(lnk, dest, handle = handle), silent = TRUE)
     if(!inherits(dc, "try-error")){
         ret <- tamsat.extract.data(dest, ncfl, bbox, version)
         if(ret == 0){
@@ -135,6 +138,9 @@ tamsat.download.data <- function(lnk, dest, ncfl, bbox, version){
         }else{
             unlink(dest)
         }
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
     return(xx)
 }

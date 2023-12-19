@@ -158,7 +158,7 @@ trmm3b42v7rt.download.dods <- function(GalParams, nbfile = 3, GUI = TRUE, verbos
 
 #################################################################################
 
-trmm3b42v7.download.data <- function(lnk, dest, ncfl, handle, ncgrd, pars){
+trmm3b42v7.download.data <- function(lnk, dest, ncfl, handle, ncgrd, pars, GUI = TRUE){
     on.exit(unlink(dest))
     xx <- basename(dest)
 
@@ -166,7 +166,11 @@ trmm3b42v7.download.data <- function(lnk, dest, ncfl, handle, ncgrd, pars){
     if(!inherits(dc, "try-error")){
         ret <- trmm3b42v7.format.data(dest, ncfl, ncgrd, pars)
         if(ret == 0) xx <- NULL
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
+
     return(xx)
 }
 

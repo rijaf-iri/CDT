@@ -53,7 +53,7 @@ cdt.aggregate <- function(MAT, pars){
                            "mean" = colMeans,
                            "sum" = colSums
                          )
-        res <- aggr.fun(MAT, na.rm = TRUE)        
+        res <- aggr.fun(MAT, na.rm = TRUE)
     }
 
     if(pars$aggr.fun != "count.rle.list")

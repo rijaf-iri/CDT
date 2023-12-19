@@ -5,6 +5,8 @@ cdt.download.data <- function(urls, destfiles, ncfiles, nbfile,
     parsL <- list(condition = if(length(urls) < 50 | nbfile == 1) FALSE else TRUE,
                   dopar = TRUE, detect.cores = FALSE, nb.cores = nbfile)
     f.args <- list(...)
+    name.args <- names(as.list(args(down.fun)))
+    if("GUI" %in% name.args) f.args$GUI <- GUI
 
     ret <- cdt.foreach(seq_along(urls), parsL, GUI, progress = TRUE, FUN = function(j)
     {
@@ -32,7 +34,7 @@ cdt.download.data <- function(urls, destfiles, ncfiles, nbfile,
 
 ##############################################
 
-iridl.download.data <- function(lnk, dest, ncfl = NULL)
+iridl.download.data <- function(lnk, dest, ncfl = NULL, GUI = TRUE)
 {
     ncfl <- ncfl
     xx <- basename(dest)
@@ -48,6 +50,9 @@ iridl.download.data <- function(lnk, dest, ncfl = NULL)
                 xx <- NULL
             }else unlink(dest)
         }else unlink(dest)
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
     return(xx)
 }

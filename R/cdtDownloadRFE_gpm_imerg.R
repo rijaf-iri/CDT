@@ -1,6 +1,6 @@
 
 ## toexport
-gpm_imerg.download.dods <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
+gpm_imerg.download.dods <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
     on.exit(curl::handle_reset(handle))
 
     rdate <- table.format.date.time(GalParams$tstep, GalParams$date.range, GalParams$minhour)
@@ -134,15 +134,21 @@ gpm_imerg.download.dods <- function(GalParams, nbfile = 3, GUI = TRUE, verbose =
 
 #################################################################################
 
-gpm_imerg.download.data <- function(lnk, dest, ncfl, handle, ncgrd, pars){
+gpm_imerg.download.data <- function(lnk, dest, ncfl, handle, ncgrd, pars, GUI = TRUE){
     on.exit(unlink(dest))
     xx <- basename(dest)
+
+    cat(lnk, '\n')
 
     dc <- try(curl::curl_download(lnk, dest, handle = handle), silent = TRUE)
     if(!inherits(dc, "try-error")){
         ret <- gpm_imerg.format.data(dest, ncfl, ncgrd, pars)
         if(ret == 0) xx <- NULL
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
+
     return(xx)
 }
 

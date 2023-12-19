@@ -331,7 +331,7 @@ chirps.6hrAF.download.ucsb <- function(GalParams, nbfile = 3, GUI = TRUE, verbos
 
 #################################################################################
 
-chirps.download.data <- function(lnk, dest, ncfl, bbox, type){
+chirps.download.data <- function(lnk, dest, ncfl, bbox, type, GUI = TRUE){
     xx <- basename(dest)
 
     link.exist <- try(readLines(lnk, 1), silent = TRUE)
@@ -382,7 +382,11 @@ chirps.download.data <- function(lnk, dest, ncfl, bbox, type){
         }else{
             unlink(dest)
         }
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
+
     return(xx)
 }
 
@@ -418,7 +422,7 @@ chirps.extract.data <- function(dest, ncfl, bbox){
     return(ret)
 }
 
-chirps.6hrAF.download.data <- function(lnk, dest, ncfl, bbox){
+chirps.6hrAF.download.data <- function(lnk, dest, ncfl, bbox, GUI = TRUE){
     xx <- basename(dest)
 
     link.exist <- try(readLines(lnk, 1), silent = TRUE)
@@ -438,7 +442,11 @@ chirps.6hrAF.download.data <- function(lnk, dest, ncfl, bbox){
         }else{
             unlink(dest)
         }
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
+
     return(xx)
 }
 

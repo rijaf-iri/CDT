@@ -6,7 +6,9 @@ export(regression.Vector, regression.Matrix)
 
 export(download.oni.cpc.ncep.noaa, oni.cpc.ncep.noaa, oni.iridl.ldeo)
 
-export(cdtMergingPrecipCMD, cdtMergingTempCMD, cdtBiasCorrectPrecipCMD, cdtBiasCorrectTempCMD)
+export(cdtMergingPrecipCMD, cdtMergingTempCMD)
+export(cdtMergingClimDataCMD)
+export(cdtBiasCorrectPrecipCMD, cdtBiasCorrectTempCMD)
 
 export(cdtCrossValidationPrecipCMD, cdtCrossValidationTempCMD)
 export(cdtCrossValidationCMD)
