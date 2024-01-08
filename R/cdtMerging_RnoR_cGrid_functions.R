@@ -64,13 +64,7 @@ coarse_grid_space <- function(res, resCoarseGrid){
     space
 }
 
-create_grid_buffer <- function(locations.stn, newgrid,
-                               saveGridBuffer = FALSE,
-                               fileGridBuffer = "",
-                               useLocalInterpolation = TRUE,
-                               resCoarseGrid = 0.5
-                              )
-{
+coarse_grid_resolution <- function(newgrid, resCoarseGrid){
     nx <- newgrid@grid@cells.dim[1]
     ny <- newgrid@grid@cells.dim[2]
     resx <- newgrid@grid@cellsize[1]
@@ -106,6 +100,24 @@ create_grid_buffer <- function(locations.stn, newgrid,
     resx_c <- resx * rx
     resy_c <- resy * ry
 
+    list(coarsegrid = coarsegrid, radius = radius,
+         resx_c = resx_c, resy_c = resy_c, icoarse = icoarse)  
+}
+
+create_grid_buffer <- function(locations.stn, newgrid,
+                               saveGridBuffer = FALSE,
+                               fileGridBuffer = "",
+                               useLocalInterpolation = TRUE,
+                               resCoarseGrid = 0.5
+                              )
+{
+    tmp <- coarse_grid_resolution(newgrid, resCoarseGrid)
+    coarsegrid <- tmp$coarsegrid
+    radius <- tmp$radius
+    resx_c <- tmp$resx_c
+    resy_c <- tmp$resy_c
+    icoarse <- tmp$icoarse
+
     #####
     if(saveGridBuffer){
         out_grid <- list(stn = locations.stn)
@@ -113,11 +125,13 @@ create_grid_buffer <- function(locations.stn, newgrid,
         out_grid$resx_c <- resx_c
         out_grid$resy_c <- resy_c
     }
-    #####
 
+    #####
     dst <- fields::rdist(locations.stn@coords, coarsegrid@coords)
     dst <- colSums(dst < 0.5 * radius) == 0
     coarsegrid <- coarsegrid[dst, ]
+
+    #####
     icoarse <- icoarse[dst]
     width <- if(useLocalInterpolation) 1.25 * radius else 2.5
 
@@ -149,4 +163,14 @@ create_grid_buffer <- function(locations.stn, newgrid,
 
     list(igrid = igrid, coarse = coarsegrid, icoarse = icoarse,
          resx_c = resx_c, resy_c = resy_c)
+}
+
+create_grid_coarse <- function(locations.stn, newgrid, resCoarseGrid = 0.5){
+    tmp <- coarse_grid_resolution(newgrid, resCoarseGrid)
+    coarsegrid <- tmp$coarsegrid
+    radius <- tmp$radius
+
+    dst <- fields::rdist(locations.stn@coords, coarsegrid@coords)
+    dst <- colSums(dst < 0.5 * radius) == 0
+    coarsegrid[dst, ]
 }

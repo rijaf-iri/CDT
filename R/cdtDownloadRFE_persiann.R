@@ -218,7 +218,7 @@ persiann.extract.data.uci <- function(tmpf, ncfl, bbox, cdr){
     return(ret)
 }
 
-persiann.download.data.ncei <- function(lnk, dest, ncfl, bbox){
+persiann.download.data.ncei <- function(lnk, dest, ncfl, bbox, GUI = TRUE){
     xx <- basename(dest)
     if(is.na(lnk)) return(xx)
 
@@ -233,7 +233,11 @@ persiann.download.data.ncei <- function(lnk, dest, ncfl, bbox){
         }else{
             unlink(dest)
         }
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
+
     return(xx)
 }
 

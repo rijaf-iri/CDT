@@ -549,6 +549,9 @@ ET0_Penman_Monteith_FAO_netcdf <- function(start.date = '1991-01-01', end.date =
     output_pars <- list(dir = "", format = "et0_%S.nc")
     output <- init.default.list.args(output, output_pars)
     output$format <- gsub('%S', '%s', output$format)
+    if(!dir.exists(output$dir)){
+        dir.create(output$dir, recursive = TRUE, showWarnings = FALSE)
+    }
 
     ##########
 

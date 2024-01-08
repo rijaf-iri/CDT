@@ -6,7 +6,10 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, 
     ix <- xlon >= GalParams$bbox$minlon & xlon <= GalParams$bbox$maxlon
     iy <- xlat >= GalParams$bbox$minlat & xlat <= GalParams$bbox$maxlat
 
-    if(!any(ix) | !any(iy)) return(-2)
+    if(!any(ix) | !any(iy)){
+        Insert.Messages.Out("Invalid area of interest", TRUE, "e", GUI)
+        return(-2)
+    }
 
     ilon <- range(which(ix)) - c(2, 1)
     ilat <- range(which(iy)) - 1
@@ -404,7 +407,7 @@ merra2_land.download.earthdata <- function(GalParams, nbfile = 1, GUI = TRUE, ve
     return(ret)
 }
 
-merra2_dods.download.data <- function(lnk, dest, ncfl, pars, login){
+merra2_dods.download.data <- function(lnk, dest, ncfl, pars, login, GUI = TRUE){
     on.exit({
         unlink(dest)
         curl::handle_reset(handle)
@@ -421,6 +424,9 @@ merra2_dods.download.data <- function(lnk, dest, ncfl, pars, login){
     if(!inherits(dc, "try-error")){
         ret <- merra2_dods.format.data(dest, pars)
         if(ret == 0) xx <- NULL
+    }else{
+        msg <- gsub('[\r\n]', '', dc[1])
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
     }
 
     return(xx)

@@ -138,8 +138,6 @@ gpm_imerg.download.data <- function(lnk, dest, ncfl, handle, ncgrd, pars, GUI = 
     on.exit(unlink(dest))
     xx <- basename(dest)
 
-    cat(lnk, '\n')
-
     dc <- try(curl::curl_download(lnk, dest, handle = handle), silent = TRUE)
     if(!inherits(dc, "try-error")){
         ret <- gpm_imerg.format.data(dest, ncfl, ncgrd, pars)

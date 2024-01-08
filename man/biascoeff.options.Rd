@@ -33,5 +33,9 @@ Available options are
             \item{\code{"userdefined"}: }{vector of length 4 in the form \code{c(width_x, by_x, width_y, by_y)}}
        }
    }
+  \item{\code{addCoarseGrid}: }{logical, add a coarse grid to interpolate the multiplicative bias for IDW and Ordinary Kriging method.
+         The coarse grid will be created by resampling the grid of the input data and providing the resolution with \code{resCoarseGrid}.
+         The bias values at the coarse grid will be set to 1}
+  \item{\code{resCoarseGrid}: }{numeric, the resolution of the coarse grid in degree decimal.}
 }
 }

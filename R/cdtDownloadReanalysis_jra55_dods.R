@@ -20,6 +20,7 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     ix <- lapply(seq_along(is), function(j) is[j]:ie[j])
     ilon <- lapply(ix[rix$values], function(x) range(x) - 1 )
     ilat <- range(which(iy)) - 1
+
     query_lon <- lapply(ilon, function(x) paste0("[", x[1], ":", 1, ":", x[2], "]"))
     query_lat <- paste0("[", ilat[1], ":", 1, ":", ilat[2], "]")
 
@@ -271,28 +272,6 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
         })
     })
 
-    # #############
-    # ## def inside urls loop
-    # query_timeOffset <- if(jra_var$timeoffset == 1) '[0:1:0]' else NULL
-    # query_varOffset <- lapply(jra_var$varoffset, function(i) if(i == 1) '[0:1:0]' else NULL)
-
-    # urls <- lapply(seq_along(query_reftime), function(j){
-    #     sapply(seq_along(query_lon), function(i){
-    #         dods <- paste0(jra_dods, "/", jra_var$pth, ".ascii")
-    #         req_time <- paste0("time", query_reftime[j], query_timeOffset)
-    #         # req_time <- utils::URLencode(req_time, reserved = TRUE)
-
-    #         req_var <- sapply(seq_along(jra_var$var), function(v){
-    #             paste0(jra_var$var[v], query_reftime[j], query_varOffset[[v]],
-    #                    query_height[[v]], query_lat, query_lon[[i]])
-    #         })
-
-    #         req_var <- paste(req_var, collapse = ",")
-    #         # req_var <- utils::URLencode(req_var, reserved = TRUE)
-    #         paste0(dods, "?", req_time, ",", req_var)
-    #     })
-    # })
-
     #############
 
     longname <- switch(GalParams$var,
@@ -432,7 +411,7 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     return(ret)
 }
 
-jra55_dods.download.data <- function(lnk, dest, ncfl, pars){
+jra55_dods.download.data <- function(lnk, dest, ncfl, pars, GUI = TRUE){
     on.exit(lapply(dest, unlink))
 
     dest <- dest[[1]]
@@ -441,7 +420,13 @@ jra55_dods.download.data <- function(lnk, dest, ncfl, pars){
 
     dc <- lapply(seq_along(lnk), function(j){
          ret <- try(curl::curl_download(lnk[j], dest[j]), silent = TRUE)
-         if(inherits(ret, "try-error")) 1 else 0
+         rc <- 0
+         if(inherits(ret, "try-error")){
+            msg <- gsub('[\r\n]', '', ret[1])
+            Insert.Messages.Out(msg, TRUE, "w", GUI)
+            rc <- 1
+         }
+         rc
     })
 
     if(all(unlist(dc) == 0)){

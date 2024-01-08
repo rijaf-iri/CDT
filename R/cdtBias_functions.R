@@ -594,6 +594,7 @@ ComputeBiasCoefficients <- function(stnData, ncInfo, params,
                           data = biasData, params = params)
     }
 
+    bias.pars$params$message <- NULL
     saveRDS(bias.pars, file = file.path(outdir, "BIAS_PARAMS.rds"))
 
     Insert.Messages.Out(lang.msg[['6']], TRUE, "s", GUI)
@@ -616,6 +617,20 @@ biasInterpolation <- function(interp.method, locbs, interp.grid,
                 if(!inherits(vgm, "try-error")) vgm <- NULL
                 # vgm <- try(automap::autofitVariogram(bs~1, input_data = locbs, model = vgm.model, cressie = TRUE), silent = TRUE)
                 # vgm <- if(!inherits(vgm, "try-error")) vgm$var_model else NULL
+            }
+        }
+
+        biasOpts <- biascoeff.options()
+
+        if(biasOpts$addCoarseGrid){
+            coarsegrid <- create_grid_coarse(locbs, interp.grid, biasOpts$resCoarseGrid)
+
+            if(length(coarsegrid) > 0){
+                coarsegrid$bs <- rep(1, length(coarsegrid))
+                row.names(locbs) <- 1:length(locbs)
+                row.names(coarsegrid) <- length(locbs) + (1:length(coarsegrid))
+                locbs <- rbind(sf::st_as_sf(locbs), sf::st_as_sf(coarsegrid))
+                locbs <- sf::as_Spatial(locbs)
             }
         }
 
