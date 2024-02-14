@@ -12,11 +12,9 @@ qcPlot_Outliers.Mon <- function(){
     daty <- daty[mo]
 
     ina <- which(!is.na(don))
-    don <- don[ina[1]:ina[length(ina)]]
-    daty <- daty[ina[1]:ina[length(ina)]]
-
-    if(length(daty) > 0 & !all(is.na(don)))
-    {
+    if(length(ina) > 0){
+        don <- don[ina[1]:ina[length(ina)]]
+        daty <- daty[ina[1]:ina[length(ina)]]
         xlim <- c(0, length(daty) + 1)
         ylim <- range(pretty(don))
         plotOK <- TRUE
