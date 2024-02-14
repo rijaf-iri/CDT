@@ -125,32 +125,36 @@ create_grid_buffer <- function(locations.stn, newgrid,
         out_grid$resx_c <- resx_c
         out_grid$resy_c <- resy_c
     }
-
     #####
+
     dst <- fields::rdist(locations.stn@coords, coarsegrid@coords)
     dst <- colSums(dst < 0.5 * radius) == 0
     coarsegrid <- coarsegrid[dst, ]
-
-    #####
     icoarse <- icoarse[dst]
-    width <- if(useLocalInterpolation) 1.25 * radius else 2.5
 
-    xgrd <- lapply(as.list(data.frame(coarsegrid@coords)), unique)
-    # change stn to any temporary variable with new values
-    loc.stn <- cdt.as.image(locations.stn$stn, locations.stn@coords, xgrd, regrid = TRUE)
-    loc.stn <- cbind(do.call(expand.grid, loc.stn[c('x', 'y')]), z = c(loc.stn$z))
-    loc.stn <- loc.stn[!is.na(loc.stn$z), , drop = FALSE]
-    loc.stn <- sf::st_as_sf(loc.stn, coords = c('x', 'y'), dim = "XYZ")
+    if(length(icoarse) > 1){
+        width <- if(useLocalInterpolation) 1.25 * radius else 2.5
 
-    buffer.out <- sf::st_buffer(loc.stn, dist = width)
-    buffer.out <- sf::as_Spatial(sf::st_union(buffer.out))
-    icoarse.out <- as.logical(sp::over(coarsegrid, buffer.out))
-    icoarse.out[is.na(icoarse.out)] <- FALSE
-    coarsegrid <- coarsegrid[icoarse.out, ]
-    icoarse <- icoarse[icoarse.out]
+        xgrd <- lapply(as.list(data.frame(coarsegrid@coords)), unique)
+        # change stn to any temporary variable with new values
+        loc.stn <- cdt.as.image(locations.stn$stn, locations.stn@coords, xgrd, regrid = TRUE)
+        loc.stn <- cbind(do.call(expand.grid, loc.stn[c('x', 'y')]), z = c(loc.stn$z))
+        loc.stn <- loc.stn[!is.na(loc.stn$z), , drop = FALSE]
+        loc.stn <- sf::st_as_sf(loc.stn, coords = c('x', 'y'), dim = "XYZ")
 
-    igrid <- as.logical(sp::over(newgrid, buffer.out))
-    igrid[is.na(igrid)] <- FALSE
+        buffer.out <- sf::st_buffer(loc.stn, dist = width)
+        buffer.out <- sf::as_Spatial(sf::st_union(buffer.out))
+        icoarse.out <- as.logical(sp::over(coarsegrid, buffer.out))
+        icoarse.out[is.na(icoarse.out)] <- FALSE
+        coarsegrid <- coarsegrid[icoarse.out, ]
+        icoarse <- icoarse[icoarse.out]
+
+        igrid <- as.logical(sp::over(newgrid, buffer.out))
+        igrid[is.na(igrid)] <- FALSE
+    }else{
+        buffer.out <- NULL
+        igrid <- rep(TRUE, length(newgrid))
+    }
 
     #####
     if(saveGridBuffer){
