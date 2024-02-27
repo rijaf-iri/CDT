@@ -42,15 +42,6 @@
         <checkbutton id="1">
             <text lang="en"> Load existing QC session </text>
         </checkbutton>
-        <checkbutton id="2">
-            <text lang="en"> Add Shapefile to Map </text>
-        </checkbutton>
-        <checkbutton id="3">
-            <text lang="en"> Add DEM to map </text>
-        </checkbutton>
-        <checkbutton id="4">
-            <text lang="en"> Add gridded data to map </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> Time step of input data </text>
         </label>
@@ -75,9 +66,6 @@
         <label id="8">
             <text lang="en"> Plot Spatial Check </text>
         </label>
-        <label id="9">
-            <text lang="en"> Zoom </text>
-        </label>
         <label id="10">
             <text lang="en"> Plot Type </text>
         </label>
@@ -86,9 +74,6 @@
         </label>
         <label id="12">
             <text lang="en"> Invalid rainfall data </text>
-        </label>
-        <label id="13">
-            <text lang="en"> Directory of the netCDF files </text>
         </label>
     </widget>
     <help>
@@ -164,54 +149,6 @@
                 <text lang="en"> Replaces outliers with the correct values or a missing values </text>
             </tooltip>
         </content>
-        <content id="10">
-            <status>
-                <text lang="en"> Zoom In </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Zoom In </text>
-            </tooltip>
-        </content>
-        <content id="11">
-            <status>
-                <text lang="en"> Zoom Out </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Zoom Out </text>
-            </tooltip>
-        </content>
-        <content id="12">
-            <status>
-                <text lang="en"> Zoom Area </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Zoom Area </text>
-            </tooltip>
-        </content>
-        <content id="13">
-            <status>
-                <text lang="en"> Pan Tool </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Pan Tool </text>
-            </tooltip>
-        </content>
-        <content id="14">
-            <status>
-                <text lang="en"> Redraw Map </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Redraw Map </text>
-            </tooltip>
-        </content>
-        <content id="15">
-            <status>
-                <text lang="en"> Zoom Reset </text>
-            </status>
-            <tooltip>
-                <text lang="en"> Zoom Reset </text>
-            </tooltip>
-        </content>
     </help>
     <message>
         <content id="1">
@@ -231,12 +168,6 @@
         </content>
         <content id="6">
             <text lang="en"> not found </text>
-        </content>
-        <content id="7">
-            <text lang="en"> Unable to read DEM data </text>
-        </content>
-        <content id="8">
-            <text lang="en"> No sample data found </text>
         </content>
         <content id="9">
             <text lang="en"> Unable to save table </text>

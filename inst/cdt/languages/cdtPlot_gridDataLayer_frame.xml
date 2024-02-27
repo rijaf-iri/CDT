@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<frame_box>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Add gridded data to map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> netCDF Dataset </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Directory of the netCDF files </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> No netCDF sample data found </text>
+        </content>
+        <content id="2">
+            <text lang="en"> does not exist </text>
+        </content>
+    </message>
+</frame_box>

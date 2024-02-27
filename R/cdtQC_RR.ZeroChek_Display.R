@@ -38,6 +38,7 @@ qcPlot_FalseZero.Check <- function(){
     if(is.null(xyzoom)) return(NULL)
 
     #######
+    opar <- graphics::par(mar = c(4, 4, 2, 2))
     plot(1, xlim = xyzoom$xlim, ylim = xyzoom$ylim, xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
     axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
     graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tck = -0.01, cex.axis = 1.0)
@@ -62,6 +63,7 @@ qcPlot_FalseZero.Check <- function(){
 
     plt <- graphics::par("plt")
     usr <- graphics::par("usr")
+    graphics::par(opar)
 
     return(list(par = c(plt, usr)))
 }

@@ -1,6 +1,5 @@
 
 qcRROutlierCheckPanelCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 23
         largeur1 <- 31
@@ -42,26 +41,6 @@ qcRROutlierCheckPanelCmd <- function(){
                                     all = list(col = 'darkred', pch = 20, cex = 1.0, txt.col = 'blue', txt.cex = 0.7),
                                     circle = list(draw = TRUE, lwd = 1.5, col = 'red')
                                 )
-
-    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
-
-    .cdtData$EnvData$dem$Opt <- list(
-                                    user.colors = list(custom = FALSE, color = NULL),
-                                    user.levels = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                    preset.colors = list(color = 'qc.gray.colors', reverse = FALSE)
-                                )
-
-    .cdtData$EnvData$sat$dir <- ""
-    .cdtData$EnvData$sat$sample <- ""
-    .cdtData$EnvData$sat$format <- "rfe_%s%s%s.nc"
-    .cdtData$EnvData$sat$sat.data <- NULL
-
-    .cdtData$EnvData$sat$Opt <- list(
-                                    user.colors = list(custom = FALSE, color = NULL),
-                                    user.levels = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                    preset.colors = list(color = 'qcrr.grid.colors', reverse = FALSE)
-                                )
-
     ###################
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtQC_RR.OutlierCheck_leftCmd.xml")
@@ -120,7 +99,7 @@ qcRROutlierCheckPanelCmd <- function(){
         input.file <- tclVar(GeneralParameters$infile)
 
         txt.infile <- tklabel(frameInData, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
-        cb.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
+        cb.infile <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.file, width = largeur1)
         bt.infile <- tkbutton(frameInData, text = "...")
 
         tkgrid(txt.infile, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -136,10 +115,13 @@ qcRROutlierCheckPanelCmd <- function(){
             dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(input.file) <- dat.opfiles[[1]]
-                tkconfigure(cb.infile, values = unlist(listOpenFiles))
+                tkconfigure(cb.infile, values = unlist(openFile_ttkcomboList()))
             }
+        })
+
+        tkbind(cb.infile, "<Button-1>", function(){
+            tkconfigure(cb.infile, values = unlist(openFile_ttkcomboList()))
         })
 
         #######################
@@ -226,7 +208,11 @@ qcRROutlierCheckPanelCmd <- function(){
                     set.station.id()
                     ret <- try(set.date.outliers(), silent = TRUE)
                     if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
-                    set.initialize.Zoom()
+
+                    ###############
+                    xlim <- range(coords$lon, na.rm = TRUE)
+                    ylim <- range(coords$lat, na.rm = TRUE)
+                    initialize_zoom_frame(xlim, ylim)
                 }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
             }else Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, 'e')
         })
@@ -309,7 +295,11 @@ qcRROutlierCheckPanelCmd <- function(){
                 set.station.id()
                 ret <- try(set.date.outliers(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
-                set.initialize.Zoom()
+                
+                ###############
+                xlim <- range(coords$lon, na.rm = TRUE)
+                ylim <- range(coords$lat, na.rm = TRUE)
+                initialize_zoom_frame(xlim, ylim)
             }
         })
 
@@ -811,220 +801,7 @@ qcRROutlierCheckPanelCmd <- function(){
 
         ##############################################
 
-        .cdtData$EnvData$zoom$xx1 <- tclVar()
-        .cdtData$EnvData$zoom$xx2 <- tclVar()
-        .cdtData$EnvData$zoom$yy1 <- tclVar()
-        .cdtData$EnvData$zoom$yy2 <- tclVar()
-
-        .cdtData$EnvData$zoom$pressButP <- tclVar(0)
-        .cdtData$EnvData$zoom$pressButM <- tclVar(0)
-        .cdtData$EnvData$zoom$pressButRect <- tclVar(0)
-        .cdtData$EnvData$zoom$pressButDrag <- tclVar(0)
-
-        ZoomXYval0 <- NULL
-
-        ##############################################
-
-        frameZoom <- ttklabelframe(subfr3, text = lang.dlg[['label']][['9']], relief = 'groove')
-
-        xentr1.zoom <- tkentry(frameZoom, width = 7, justify = "left", textvariable = .cdtData$EnvData$zoom$xx1)
-        xentr2.zoom <- tkentry(frameZoom, width = 7, justify = "left", textvariable = .cdtData$EnvData$zoom$xx2)
-        yentr1.zoom <- tkentry(frameZoom, width = 7, justify = "left", textvariable = .cdtData$EnvData$zoom$yy1)
-        yentr2.zoom <- tkentry(frameZoom, width = 7, justify = "left", textvariable = .cdtData$EnvData$zoom$yy2)
-        bt.centre.zoom <- tklabel(frameZoom, image = .cdtEnv$tcl$zoom$img$centre)
-
-        .cdtData$EnvData$zoom$btZoomP <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$plus, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btZoomM <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$moins, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btZoomRect <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$rect, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btPanImg <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$pan, relief = 'raised', bg = 'lightblue', state = 'normal')
-        .cdtData$EnvData$zoom$btRedraw <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$redraw, relief = 'raised', bg = 'lightblue')
-        .cdtData$EnvData$zoom$btReset <- tkbutton(frameZoom, image = .cdtEnv$tcl$zoom$img$reset, relief = 'raised')
-
-        #####
-        tkgrid(xentr1.zoom, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(xentr2.zoom, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(yentr1.zoom, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(yentr2.zoom, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1)
-        tkgrid(bt.centre.zoom, row = 1, column = 1, sticky = 'nswe', rowspan = 1, columnspan = 1)
-
-        tkgrid(.cdtData$EnvData$zoom$btReset, row = 0, column = 3, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btRedraw, row = 1, column = 3, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btPanImg, row = 2, column = 3, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btZoomP, row = 0, column = 4, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btZoomM, row = 1, column = 4, sticky = 'nswe', rowspan = 1, columnspan = 1)
-        tkgrid(.cdtData$EnvData$zoom$btZoomRect, row = 2, column = 4, sticky = 'nswe', rowspan = 1, columnspan = 1)
-
-        helpWidget(.cdtData$EnvData$zoom$btZoomP, lang.dlg[['tooltip']][['10']], lang.dlg[['status']][['10']])
-        helpWidget(.cdtData$EnvData$zoom$btZoomM, lang.dlg[['tooltip']][['11']], lang.dlg[['status']][['11']])
-        helpWidget(.cdtData$EnvData$zoom$btZoomRect, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
-        helpWidget(.cdtData$EnvData$zoom$btPanImg, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
-        helpWidget(.cdtData$EnvData$zoom$btRedraw, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
-        helpWidget(.cdtData$EnvData$zoom$btReset, lang.dlg[['tooltip']][['15']], lang.dlg[['status']][['15']])
-
-        #################
-        tkconfigure(.cdtData$EnvData$zoom$btRedraw, command = function(){
-            .cdtData$EnvData$ZoomXYval <- as.numeric(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
-                                                    tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
-
-            # ZoomXYval
-            tabid <- as.numeric(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
-            if(length(.cdtData$OpenTab$Type) > 0){
-                if(.cdtData$OpenTab$Type[[tabid]] == "img" & !is.null(.cdtData$EnvData$tab$spoutliers))
-                {
-                    if(.cdtData$OpenTab$Data[[tabid]][[1]][[1]]$ID == .cdtData$EnvData$tab$spoutliers[[2]])
-                    {
-                        refreshPlot(W = .cdtData$OpenTab$Data[[tabid]][[2]][[1]],
-                                    img = .cdtData$OpenTab$Data[[tabid]][[2]][[2]],
-                                    hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
-                                    vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV))))
-                        tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-                    }
-                }
-            }
-        })
-
-        tkconfigure(.cdtData$EnvData$zoom$btReset, command = function(){
-            .cdtData$EnvData$ZoomXYval <- ZoomXYval0
-            tclvalue(.cdtData$EnvData$zoom$xx1) <- ZoomXYval0[1]
-            tclvalue(.cdtData$EnvData$zoom$xx2) <- ZoomXYval0[2]
-            tclvalue(.cdtData$EnvData$zoom$yy1) <- ZoomXYval0[3]
-            tclvalue(.cdtData$EnvData$zoom$yy2) <- ZoomXYval0[4]
-
-            # ZoomXYval
-            tabid <- as.numeric(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
-            if(length(.cdtData$OpenTab$Type) > 0){
-                if(.cdtData$OpenTab$Type[[tabid]] == "img" & !is.null(.cdtData$EnvData$tab$spoutliers))
-                {
-                    if(.cdtData$OpenTab$Data[[tabid]][[1]][[1]]$ID == .cdtData$EnvData$tab$spoutliers[[2]])
-                    {
-                        refreshPlot(W = .cdtData$OpenTab$Data[[tabid]][[2]][[1]],
-                                    img = .cdtData$OpenTab$Data[[tabid]][[2]][[2]],
-                                    hscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinH))),
-                                    vscale = as.numeric(tclvalue(tkget(.cdtEnv$tcl$toolbar$spinV))))
-                        tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-                    }
-                }
-            }
-        })
-
-        ##########################################
-
-        initXYval0 <- NA
-        initializeButZoom <- function(){
-            initXYval0 <<- trimws(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
-                                    tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
-
-            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
-
-            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
-        }
-
-        activateButRedraw <- function(){
-            initXYval1 <- trimws(c(tclvalue(.cdtData$EnvData$zoom$xx1), tclvalue(.cdtData$EnvData$zoom$xx2),
-                                    tclvalue(.cdtData$EnvData$zoom$yy1), tclvalue(.cdtData$EnvData$zoom$yy2)))
-            if(!all(initXYval0 == initXYval1)) tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'red')
-        }
-
-        #################
-        tkbind(xentr1.zoom, "<FocusIn>", initializeButZoom)
-        tkbind(xentr1.zoom, "<FocusOut>", activateButRedraw)
-
-        tkbind(xentr2.zoom, "<FocusIn>", initializeButZoom)
-        tkbind(xentr2.zoom, "<FocusOut>", activateButRedraw)
-
-        tkbind(yentr1.zoom, "<FocusIn>", initializeButZoom)
-        tkbind(yentr1.zoom, "<FocusOut>", activateButRedraw)
-
-        tkbind(yentr2.zoom, "<FocusIn>", initializeButZoom)
-        tkbind(yentr2.zoom, "<FocusOut>", activateButRedraw)
-
-        ####
-        tkbind(.cdtData$EnvData$zoom$btRedraw, "<Button-1>", function(){
-            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
-
-            tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
-        })
-
-        tkbind(.cdtData$EnvData$zoom$btReset, "<Button-1>", function(){
-            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
-
-            tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
-        })
-
-        tkbind(.cdtData$EnvData$zoom$btZoomP, "<Button-1>", function(){
-            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 1
-            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
-
-            tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'red', state = 'disabled')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
-        })
-
-        tkbind(.cdtData$EnvData$zoom$btZoomM, "<Button-1>", function(){
-            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 1
-            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
-
-            tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'red', state = 'disabled')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
-        })
-
-        tkbind(.cdtData$EnvData$zoom$btZoomRect, "<Button-1>", function(){
-            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 1
-            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 0
-
-            tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'red', state = 'disabled')
-            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'lightblue', state = 'normal')
-        })
-
-        tkbind(.cdtData$EnvData$zoom$btPanImg, "<Button-1>", function(){
-            tclvalue(.cdtData$EnvData$zoom$pressButP) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButM) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButRect) <- 0
-            tclvalue(.cdtData$EnvData$zoom$pressButDrag) <- 1
-
-            tkconfigure(.cdtData$EnvData$zoom$btRedraw, relief = 'raised', bg = 'lightblue')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomP, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomM, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btZoomRect, relief = 'raised', bg = 'lightblue', state = 'normal')
-            tkconfigure(.cdtData$EnvData$zoom$btPanImg, relief = 'raised', bg = 'red', state = 'disabled')
-        })
-
-        ##########################################
-
+        frameZoom <- create_zoom_frame(subfr3, .cdtData$EnvData$tab$spoutliers)
         tkgrid(frameZoom, row = 0, column = 0, sticky = '')
 
     #######################################################################################################
@@ -1034,210 +811,9 @@ qcRROutlierCheckPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- tkframe(subfr4, relief = 'groove', borderwidth = 2)
-
-        .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
-        file.plotShp <- tclVar()
-        stateSHP <- "disabled"
-
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-
-        ########
-        tkconfigure(bt.addshp, command = function(){
-            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
-            if(!is.null(shp.opfiles)){
-                update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                tkconfigure(cb.addshp, values = unlist(listOpenFiles))
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-            }
-        })
-
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
-        })
-
-        #################
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
-            else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-            tkconfigure(bt.addshpOpt, state = stateSHP)
-        })
-
-        #######################
-
-        frameDEM <- tkframe(subfr4, relief = 'groove', borderwidth = 2)
-
-        .cdtData$EnvData$dem$add.dem <- tclVar(FALSE)
-        file.plotDem <- tclVar()
-        stateDEM <- "disabled"
-
-        chk.adddem <- tkcheckbutton(frameDEM, variable = .cdtData$EnvData$dem$add.dem, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
-        bt.adddemOpt <- ttkbutton(frameDEM, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateDEM)
-        cb.adddem <- ttkcombobox(frameDEM, values = unlist(listOpenFiles), textvariable = file.plotDem, width = largeur1, state = stateDEM)
-        bt.adddem <- tkbutton(frameDEM, text = "...", state = stateDEM)
-
-        ########
-
-        tkgrid(chk.adddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.adddemOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.adddem, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.adddem, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1)
-
-        ########
-
-        tkconfigure(bt.adddem, command = function(){
-            nc.opfiles <- getOpenNetcdf(.cdtEnv$tcl$main$win, initialdir = getwd())
-            if(!is.null(nc.opfiles)){
-                update.OpenFiles('netcdf', nc.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
-                tclvalue(file.plotDem) <- nc.opfiles[[1]]
-                tkconfigure(cb.adddem, values = unlist(listOpenFiles))
-
-                demInfo <- getNCDFSampleData(trimws(tclvalue(file.plotDem)))
-                if(is.null(demInfo)){
-                    Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
-                    tclvalue(file.plotDem) <- ""
-                    .cdtData$EnvData$dem$dem <- NULL
-                }else{
-                    jfile <- getIndex.AllOpenFiles(trimws(tclvalue(file.plotDem)))
-                    ncdata <- .cdtData$OpenFiles$Data[[jfile]][[2]]
-                    .cdtData$EnvData$dem$dem <- ncdata[c('x', 'y', 'z')]
-                }
-            }
-        })
-
-        tkconfigure(bt.adddemOpt, command = function(){
-            if(!is.null(.cdtData$EnvData$dem$dem)){
-                atlevel <- pretty(.cdtData$EnvData$dem$dem$z, n = 10, min.n = 7)
-                if(is.null(.cdtData$EnvData$dem$Opt$user.levels$levels)){
-                    .cdtData$EnvData$dem$Opt$user.levels$levels <- atlevel
-                }else{
-                    if(!.cdtData$EnvData$dem$Opt$user.levels$custom)
-                        .cdtData$EnvData$dem$Opt$user.levels$levels <- atlevel
-                }
-            }
-
-            .cdtData$EnvData$dem$Opt <- MapGraph.gridDataLayer(.cdtData$EnvData$dem$Opt)
-        })
-
-        ########
-        tkbind(cb.adddem, "<<ComboboxSelected>>", function(){
-            demInfo <- getNCDFSampleData(trimws(tclvalue(file.plotDem)))
-            if(is.null(demInfo)){
-                Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
-                .cdtData$EnvData$dem$dem <- NULL
-            }else{
-                jfile <- getIndex.AllOpenFiles(trimws(tclvalue(file.plotDem)))
-                ncdata <- .cdtData$OpenFiles$Data[[jfile]][[2]]
-                .cdtData$EnvData$dem$dem <- ncdata[c('x', 'y', 'z')]
-            }
-        })
-
-        tkbind(chk.adddem, "<Button-1>", function(){
-            stateDEM <- if(tclvalue(.cdtData$EnvData$dem$add.dem) == "1") "disabled" else "normal"
-            tkconfigure(cb.adddem, state = stateDEM)
-            tkconfigure(bt.adddem, state = stateDEM)
-            tkconfigure(bt.adddemOpt, state = stateDEM)
-        })
-
-        #######################
-
-        frameSAT <- tkframe(subfr4, relief = 'groove', borderwidth = 2)
-
-        .cdtData$EnvData$sat$add.sat <- tclVar(FALSE)
-        dir.plotSat <- tclVar()
-        stateSAT <- "disabled"
-
-        chk.addSat <- tkcheckbutton(frameSAT, variable = .cdtData$EnvData$sat$add.sat, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left')
-        bt.addSatOpt <- ttkbutton(frameSAT, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSAT)
-        txt.addSat <- tklabel(frameSAT, text = lang.dlg[['label']][['13']], anchor = 'w', justify = 'left')
-        bt.addSatSet <- ttkbutton(frameSAT, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSAT)
-        en.addSat <- tkentry(frameSAT, textvariable = dir.plotSat, width = largeur2, state = stateSAT)
-        bt.addSat <- tkbutton(frameSAT, text = "...", state = stateSAT)
-
-        ########
-        tkgrid(chk.addSat, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addSatOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(txt.addSat, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addSatSet, row = 1, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(en.addSat, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addSat, row = 2, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
-
-        ########
-
-        tkconfigure(bt.addSat, command = function(){
-            dirnc <- tk_choose.dir(getwd(), "")
-            tclvalue(dir.plotSat) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-
-            .cdtData$EnvData$sat$dir <- trimws(tclvalue(dir.plotSat))
-        })
-
-        tkconfigure(bt.addSatSet, command = function(){
-            tstep <- .cdtData$EnvData$output$params$intstep
-            TSTEPVAL0 <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
-            periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
-            timeSteps <- if(is.null(tstep)) TSTEPVAL0[1] else TSTEPVAL0[periodVAL %in% tstep]
-
-            .cdtData$EnvData$sat <- getInfoNetCDFData(.cdtEnv$tcl$main$win,
-                                                      .cdtData$EnvData$sat,
-                                                      trimws(tclvalue(dir.plotSat)))
-
-            sdon <- getNCDFSampleData(.cdtData$EnvData$sat$sample)
-            if(is.null(sdon)){
-                Insert.Messages.Out(lang.dlg[['message']][['8']], TRUE, "e")
-                .cdtData$EnvData$sat$sat.data <- NULL
-            }else .cdtData$EnvData$sat$sat.data <- sdon
-        })
-
-        tkconfigure(bt.addSatOpt, command = function(){
-            if(!is.null(.cdtData$EnvData$sat$don.sat)){
-                atlevel <- pretty(.cdtData$EnvData$sat$don.sat$z, n = 10, min.n = 7)
-                if(is.null(.cdtData$EnvData$sat$Opt$user.levels$levels)){
-                    .cdtData$EnvData$sat$Opt$user.levels$levels <- atlevel
-                }else{
-                    if(!.cdtData$EnvData$sat$Opt$user.levels$custom)
-                        .cdtData$EnvData$sat$Opt$user.levels$levels <- atlevel
-                }
-            }
-
-            .cdtData$EnvData$sat$Opt <- MapGraph.gridDataLayer(.cdtData$EnvData$sat$Opt)
-        })
-
-        ########
-        tkbind(chk.addSat, "<Button-1>", function(){
-            stateSAT <- if(tclvalue(.cdtData$EnvData$sat$add.sat) == "1") "disabled" else "normal"
-            tkconfigure(en.addSat, state = stateSAT)
-            tkconfigure(bt.addSat, state = stateSAT)
-            tkconfigure(bt.addSatSet, state = stateSAT)
-            tkconfigure(bt.addSatOpt, state = stateSAT)
-        })
+        frameSHP <- create_shpLayer_frame(subfr4)
+        frameDEM <- create_demLayer_frame(subfr4)
+        frameGRD <- create_gridDataLayer_frame(subfr4)
 
         #######################
 
@@ -1256,7 +832,7 @@ qcRROutlierCheckPanelCmd <- function(){
 
         tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameDEM, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameSAT, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(frameGRD, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(framePlotType, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
@@ -1286,26 +862,6 @@ qcRROutlierCheckPanelCmd <- function(){
         tkconfigure(.cdtData$EnvData$STN$cb.QCSP, values = dateOUT)
         tclvalue(.cdtData$EnvData$STN$dateSP) <- dateOUT[1]
         return(0)
-    }
-
-    set.initialize.Zoom <- function(){
-        donX <- range(.cdtData$EnvData$stn.data$lon, na.rm = TRUE)
-        donY <- range(.cdtData$EnvData$stn.data$lat, na.rm = TRUE)
-        lo1 <- round(donX[1], 4)
-        lo2 <- round(donX[2], 4)
-        la1 <- round(donY[1], 4)
-        la2 <- round(donY[2], 4)
-        ZoomXYval0 <<- c(lo1, lo2, la1, la2)
-
-        tclvalue(.cdtData$EnvData$zoom$xx1) <- lo1
-        tclvalue(.cdtData$EnvData$zoom$xx2) <- lo2
-        tclvalue(.cdtData$EnvData$zoom$yy1) <- la1
-        tclvalue(.cdtData$EnvData$zoom$yy2) <- la2
-
-        .cdtData$EnvData$ZoomXYval <- as.numeric(c(tclvalue(.cdtData$EnvData$zoom$xx1),
-                                                   tclvalue(.cdtData$EnvData$zoom$xx2),
-                                                   tclvalue(.cdtData$EnvData$zoom$yy1),
-                                                   tclvalue(.cdtData$EnvData$zoom$yy2)))
     }
 
     ##########

@@ -1,6 +1,5 @@
 
 qcRRZeroCheckPanelCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur1 <- 31
         largeur2 <- 33
@@ -67,7 +66,7 @@ qcRRZeroCheckPanelCmd <- function(){
         input.file <- tclVar(GeneralParameters$infile)
 
         txt.infile <- tklabel(frameInData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-        cb.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
+        cb.infile <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.file, width = largeur1)
         bt.infile <- tkbutton(frameInData, text = "...")
 
         tkgrid(txt.infile, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -83,10 +82,13 @@ qcRRZeroCheckPanelCmd <- function(){
             dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(input.file) <- dat.opfiles[[1]]
-                tkconfigure(cb.infile, values = unlist(listOpenFiles))
+                tkconfigure(cb.infile, values = unlist(openFile_ttkcomboList()))
             }
+        })
+
+        tkbind(cb.infile, "<Button-1>", function(){
+            tkconfigure(cb.infile, values = unlist(openFile_ttkcomboList()))
         })
 
         #######################
@@ -555,7 +557,7 @@ qcRRZeroCheckPanelCmd <- function(){
 
         #######################
 
-        frameSHP <- create_shapefile_frame(subfr4)
+        frameSHP <- create_shpLayer_frame(subfr4)
         tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################

@@ -1,5 +1,5 @@
 
-create_shapefile_frame <- function(parent_frame){
+create_shpLayer_frame <- function(parent_frame){
     if(WindowsOS()){
         largeur1 <- 31
     }else{
