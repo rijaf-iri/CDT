@@ -1,4 +1,5 @@
 
+#' @exportS3Method NULL
 update.OpenFiles <- function(type, data){
     nopf <- length(.cdtData$OpenFiles$Type)
     .cdtData$OpenFiles$Type[[nopf+1]] <- type

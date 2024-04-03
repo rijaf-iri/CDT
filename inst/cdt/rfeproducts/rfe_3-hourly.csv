@@ -1,0 +1,32 @@
+name,longname,source,iridl,registration
+persiann.pdir-gb,PERSIANN PDIR-Now (Global),https://chrsdata.eng.uci.edu,,
+,,https://persiann.eng.uci.edu/CHRSdata/PDIRNow/,,
+,,,,
+persiann.ccs-gb,PERSIANN-CCS (Global),https://chrsdata.eng.uci.edu,,
+,,https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CCS/,,
+,,,,
+persiann.cdr-gb,PERSIANN-CDR (Global),https://chrsdata.eng.uci.edu,,
+,,https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR/,,
+,,,,
+persiann-gb,PERSIANN (Global),https://chrsdata.eng.uci.edu,,
+,,https://persiann.eng.uci.edu/CHRSdata/PERSIANN/,,
+,,,,
+trmm3b42v7-gb,TRMM 3B42 v7 (Global),https://disc.gsfc.nasa.gov/datasets/TRMM_3B42_7/summary,,https://urs.earthdata.nasa.gov
+,,,,
+trmm3b42rtv7-gb,TRMM 3B42RT v7 (Global),https://disc.gsfc.nasa.gov/datasets/TRMM_3B42RT_7/summary,,https://urs.earthdata.nasa.gov
+,,,,
+cmorphv1.0adj-gb,CMORPH V1.0 CRT (Global),https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/0.25deg-3HLY,,
+,,https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt,,
+,,,,
+cmorphv0.xraw-gb,CMORPH V0.x RAW (Global),https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.CMORPH/.V0px/.RAW/,TRUE,
+,,https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/0.25deg-3HLY,,
+,,https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt,,
+,,,,
+mswep.nrt-gb,MSWEP NRT v2.8 (Global),https://www.gloh2o.org/mswep/,,https://www.gloh2o.org/mswep
+,,https://drive.google.com/drive/u/0/shared-with-me,,
+,,,,
+mswep.past-gb,MSWEP Past v2.8 (Global),https://www.gloh2o.org/mswep/,,https://www.gloh2o.org/mswep
+,,https://drive.google.com/drive/u/0/shared-with-me,,
+,,,,
+mswep.pastng-gb,MSWEP Past nogauge v2.8 (Global),https://www.gloh2o.org/mswep/,,https://www.gloh2o.org/mswep
+,,https://drive.google.com/drive/u/0/shared-with-me,,

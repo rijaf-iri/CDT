@@ -106,11 +106,13 @@ elEqual <- function(x){
 ##############################################
 
 ## Test if all elements of a vector or list are equals
+#' @exportS3Method NULL
 all.equal.elements <- function(v){
     is.eq <- sapply(as.list(v[-1]), function(z) isTRUE(all.equal(z, v[1])))
     all(is.eq)
 }
 
+#' @exportS3Method NULL
 all.equal.elements.num <- function(x, tol = .Machine$double.eps ^ 0.5){
     # isTRUE(all.equal(max(x, na.rm = TRUE), min(x, na.rm = TRUE), tolerance = tol))
     # abs(max(x, na.rm = TRUE) - min(x, na.rm = TRUE)) < tol
@@ -325,6 +327,7 @@ cdt.foreach <- function(loopL, parsL, GUI = TRUE, progress = FALSE, ..., FUN)
 
 ##############################################
 
+#' @exportS3Method NULL
 sort.filename.data <- function(X){
     xo <- lapply(seq(ncol(X)), function(i) sort(unique(X[, i])))
     xo <- do.call(expand.grid, xo)
@@ -603,4 +606,83 @@ init.default.list.args <- function(inupt_args, init_pars){
     }
 
     return(init_pars)
+}
+
+########################################
+
+extract_filename_dates <- function(filenames, fileformat){
+    expr <- gregexpr('%', fileformat)[[1]]
+    # len <- attr(expr, 'match.length') + 1
+    len <- rep(2, length(expr))
+    ret <- NULL
+    if(expr[1] != -1){
+        re <- FALSE
+        ss <- 1
+        se <- nchar(fileformat)
+        nl <- length(expr)
+        for(i in 1:nl){
+            re <- c(re, TRUE, FALSE)
+            ss <- c(ss, expr[i], expr[i] + len[i])
+            j <- nl - i + 1
+            se <- c(expr[j] - 1, expr[j] + len[j] - 1, se)
+        }
+
+        res <- lapply(seq_along(re), function(i){
+            v <- substr(fileformat, ss[i], se[i])
+            if(v == "") v <- NULL
+            if(re[i]) v <- NULL
+            v
+        })
+
+        inul <- sapply(res, is.null)
+        if(!all(inul)){
+            res <- do.call(c, res[!inul])
+            res <- res[!duplicated(res)]
+            res <- double_backslash_non_alnum(res)
+            pattern <- paste0(res, collapse = '|')
+            ret <- gsub(pattern, '', filenames)
+        }
+    }
+
+    return(ret)
+}
+
+########################################
+
+double_backslash_non_alnum <- function(strings){
+    for(i in seq_along(strings)){
+        expr <- gregexpr("[^[:alnum:]]", strings[i])
+        ex <- expr[[1]]
+        if(ex[1] == -1) next
+
+        chr <- rep('', length(ex))
+        for(j in seq_along(chr)){
+            chr[j] <- substr(strings[i], ex[j], ex[j])
+        }
+        chr <- chr[!duplicated(chr)]
+        for(v in chr){
+            pt0 <- paste0('\\', v)
+            pt1 <- paste0('\\', pt0)
+            strings[i] <- gsub(pt0, pt1, strings[i])
+        }
+    }
+
+    return(strings)
+}
+
+########################################
+
+intersect_rectangles <- function(rect1, rect2, border = FALSE){
+    # rect <- c(xmin, xmax, ymin, ymax)
+    xmx <- max(rect1[1], rect2[1])
+    ymx <- max(rect1[3], rect2[3])
+    xmn <- min(rect1[2], rect2[2])
+    ymn <- min(rect1[4], rect2[4])
+    no_inter <- (xmx > xmn) || (ymx > ymn)
+    inter <- !no_inter
+    if(!border){
+        area <- (xmn - xmx) * (ymn - ymx)
+        inter <- inter && area > 0
+    }
+    return(inter)
 }

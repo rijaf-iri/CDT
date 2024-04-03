@@ -1,0 +1,12 @@
+name,longname,source,iridl,registration
+tamsatv3.1-af,TAMSAT v3.1 (Africa),https://research.reading.ac.uk/tamsat/,,
+,,https://data.tamsat.org.uk/data-download/rainfall/,,
+,,,,
+tamsatv3-af,TAMSAT v3.0 (Africa),https://research.reading.ac.uk/tamsat/,,
+,,https://data.tamsat.org.uk/data-download/rainfall/,,
+,,,,
+chirp-gb,CHIRP (Global),https://www.chc.ucsb.edu/data/chirps,,
+,,https://data.chc.ucsb.edu/products/CHIRP/pentads,,
+,,,,
+chirpsv2-gb,CHIRPS v2.0 (Global),https://www.chc.ucsb.edu/data/chirps,,
+,,https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_pentad/,,

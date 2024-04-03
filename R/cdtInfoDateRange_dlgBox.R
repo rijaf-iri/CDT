@@ -1,4 +1,5 @@
 
+#' @exportS3Method NULL
 format.input.InfoDate <- function(x, tstep){
     if(tstep %in% c("monthly", "seasonal")){
         paste(c(unlist(x), 1), collapse = "-")
@@ -48,9 +49,10 @@ check.start.end.InfoDate <- function(tstep, date.range){
 
 ##############################
 
-getInfoDateRange <- function(parent.win, Parameters, tstep)
+getInfoDateRange <- function(parent.win, Parameters, tstep, from_file = FALSE)
 {
     largeur0 <- 40
+    largeur1 <- 35
 
     ###################
 
@@ -68,11 +70,16 @@ getInfoDateRange <- function(parent.win, Parameters, tstep)
 
     ###################
 
-    labelW1 <- tklabel(frMRG0, text = "", width = largeur0)
-    frameDates <- tkframe(frMRG0)
-    labelW2 <- tklabel(frMRG0, text = "", width = largeur0)
+    frameDates <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
+    if(from_file){
+        frameFiles <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
+    }
 
     ###################
+
+    if(from_file){
+        paramsFromFile <- Parameters[c('from.file', 'path.file')]
+    }
 
     dtstart <- c("start.year", "start.mon", "start.dek", "start.pen", "start.day", "start.hour", "start.min")
     dtend <- c("end.year", "end.mon", "end.dek", "end.pen", "end.day", "end.hour", "end.min")
@@ -85,7 +92,7 @@ getInfoDateRange <- function(parent.win, Parameters, tstep)
             pars[[v]] <- if(is.na(Parameters[[v]])) "" else Parameters[[v]]
         }
     }
-    Parameters <- pars
+    paramsDates <- pars
     state[] <- "disabled"
 
     ix <- switch(tstep,
@@ -105,22 +112,23 @@ getInfoDateRange <- function(parent.win, Parameters, tstep)
     ###################
 
     frDatyR <- tkframe(frameDates)
+    labelW <- tklabel(frameDates, text = "", width = largeur0)
 
-    istart.yrs <- tclVar(Parameters$start.year)
-    istart.mon <- tclVar(Parameters$start.mon)
-    istart.dek <- tclVar(Parameters$start.dek)
-    istart.pen <- tclVar(Parameters$start.pen)
-    istart.day <- tclVar(Parameters$start.day)
-    istart.hour <- tclVar(Parameters$start.hour)
-    istart.min <- tclVar(Parameters$start.min)
+    istart.yrs <- tclVar(paramsDates$start.year)
+    istart.mon <- tclVar(paramsDates$start.mon)
+    istart.dek <- tclVar(paramsDates$start.dek)
+    istart.pen <- tclVar(paramsDates$start.pen)
+    istart.day <- tclVar(paramsDates$start.day)
+    istart.hour <- tclVar(paramsDates$start.hour)
+    istart.min <- tclVar(paramsDates$start.min)
 
-    iend.yrs <- tclVar(Parameters$end.year)
-    iend.mon <- tclVar(Parameters$end.mon)
-    iend.dek <- tclVar(Parameters$end.dek)
-    iend.pen <- tclVar(Parameters$end.pen)
-    iend.day <- tclVar(Parameters$end.day)
-    iend.hour <- tclVar(Parameters$end.hour)
-    iend.min <- tclVar(Parameters$end.min)
+    iend.yrs <- tclVar(paramsDates$end.year)
+    iend.mon <- tclVar(paramsDates$end.mon)
+    iend.dek <- tclVar(paramsDates$end.dek)
+    iend.pen <- tclVar(paramsDates$end.pen)
+    iend.day <- tclVar(paramsDates$end.day)
+    iend.hour <- tclVar(paramsDates$end.hour)
+    iend.min <- tclVar(paramsDates$end.min)
 
     deb.txt <- tklabel(frDatyR, text = paste0(lang.dlg[['label']][['1']], ":"), anchor = 'e', justify = 'right')
     fin.txt <- tklabel(frDatyR, text = paste0(lang.dlg[['label']][['2']], ":"), anchor = 'e', justify = 'right')
@@ -190,13 +198,95 @@ getInfoDateRange <- function(parent.win, Parameters, tstep)
         tkgrid(min2.v, row = 2, column = 7, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     }
 
-    tkgrid(frDatyR, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frDatyR, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(labelW, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ###################
 
-    tkgrid(labelW1, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameDates, row = 1, column = 0, sticky = 'w', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(labelW2, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    if(from_file){
+        if(paramsFromFile$from.file){
+            stateDates <- state
+            stateDates[] <- 'disabled'
+            stateFile <- 'normal'
+        }else{
+            stateDates <- state
+            stateFile <- 'disabled'
+        }
+
+        tkconfigure(yrs1.v, state = stateDates$start.year)
+        tkconfigure(mon1.v, state = stateDates$start.mon)
+        tkconfigure(dek1.v, state = stateDates$start.dek)
+        tkconfigure(pen1.v, state = stateDates$start.pen)
+        tkconfigure(day1.v, state = stateDates$start.day)
+        tkconfigure(hour1.v, state = stateDates$start.hour)
+        tkconfigure(min1.v, state = stateDates$start.min)
+
+        tkconfigure(yrs2.v, state = stateDates$end.year)
+        tkconfigure(mon2.v, state = stateDates$end.mon)
+        tkconfigure(dek2.v, state = stateDates$end.dek)
+        tkconfigure(pen2.v, state = stateDates$end.pen)
+        tkconfigure(day2.v, state = stateDates$end.day)
+        tkconfigure(hour2.v, state = stateDates$end.hour)
+        tkconfigure(min2.v, state = stateDates$end.min)
+
+        #####
+
+        dateFromFile <- tclVar(paramsFromFile$from.file)
+        pathFromFile <- tclVar(paramsFromFile$path.file)
+
+        chk.FromFile <- tkcheckbutton(frameFiles, variable = dateFromFile, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
+        txt.FromFile <- tklabel(frameFiles, text = lang.dlg[['label']][['11']], anchor = 'w', justify = 'left')
+        en.FromFile <- tkentry(frameFiles, textvariable = pathFromFile, width = largeur1, state = stateFile)
+        bt.FromFile <- tkbutton(frameFiles, text = "...", state = stateFile)
+
+        tkgrid(chk.FromFile, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(txt.FromFile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(en.FromFile, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+        tkgrid(bt.FromFile, row = 2, column = 6, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+        #####
+
+        tkconfigure(bt.FromFile, command = function(){
+            path.file <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes1))
+            if(path.file %in% c("", "NA") | is.na(path.file)) return(NULL)
+            tclvalue(pathFromFile) <- path.file
+        })
+
+        tkbind(chk.FromFile, "<Button-1>", function(){
+            if(tclvalue(dateFromFile) == '1'){
+                stateDates <- state
+                stateFile <- 'disabled'
+            }else{
+                stateDates <- state
+                stateDates[] <- 'disabled'
+                stateFile <- 'normal'
+            }
+
+            tkconfigure(en.FromFile, state = stateFile)
+            tkconfigure(bt.FromFile, state = stateFile)
+
+            tkconfigure(yrs1.v, state = stateDates$start.year)
+            tkconfigure(mon1.v, state = stateDates$start.mon)
+            tkconfigure(dek1.v, state = stateDates$start.dek)
+            tkconfigure(pen1.v, state = stateDates$start.pen)
+            tkconfigure(day1.v, state = stateDates$start.day)
+            tkconfigure(hour1.v, state = stateDates$start.hour)
+            tkconfigure(min1.v, state = stateDates$start.min)
+
+            tkconfigure(yrs2.v, state = stateDates$end.year)
+            tkconfigure(mon2.v, state = stateDates$end.mon)
+            tkconfigure(dek2.v, state = stateDates$end.dek)
+            tkconfigure(pen2.v, state = stateDates$end.pen)
+            tkconfigure(day2.v, state = stateDates$end.day)
+            tkconfigure(hour2.v, state = stateDates$end.hour)
+            tkconfigure(min2.v, state = stateDates$end.min)
+        })
+    }
+
+    ###################
+
+    tkgrid(frameDates, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    if(from_file) tkgrid(frameFiles, row = 1, column = 0, sticky = 'w', padx = 5, pady = 3, ipadx = 1, ipady = 1)
 
     ################################
 
@@ -219,6 +309,19 @@ getInfoDateRange <- function(parent.win, Parameters, tstep)
         Parameters$end.day <<- as.numeric(trimws(tclvalue(iend.day)))
         Parameters$end.hour <<- as.numeric(trimws(tclvalue(iend.hour)))
         Parameters$end.min <<- as.numeric(trimws(tclvalue(iend.min)))
+
+        if(from_file){
+            Parameters$from.file <<- switch(tclvalue(dateFromFile), '0' = FALSE, '1' = TRUE)
+            Parameters$path.file <<- trimws(tclvalue(pathFromFile))
+
+            if(Parameters$from.file){
+                if(!file.exists(Parameters$path.file) | Parameters$path.file == ""){
+                    msg <- paste0(lang.dlg[['message']][['10']], '\n', Parameters$path.file)
+                    cdt.tkmessageBox(tt, message = msg, icon = "warning", type = "ok")
+                    tkwait.window(tt)
+                }
+            }
+        }
 
         ina <- sapply(Parameters[c(dtstart[ix], dtend[ix])], is.na)
         if(any(ina)){

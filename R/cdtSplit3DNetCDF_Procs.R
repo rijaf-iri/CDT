@@ -69,6 +69,7 @@ get.netcdf.time <- function(time.dim){
     c(time.dim[c('name', 'len')], list(origin = origin, units = units, vals = daty))
 }
 
+#' @exportS3Method NULL
 format.netcdf.time <- function(ncpars, time.dim){
     time.name <- which(ncpars$var.dim == ncpars$dim[[3]]$name)
     ret <- get.netcdf.time(time.dim)

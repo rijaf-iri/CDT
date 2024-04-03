@@ -1,0 +1,31 @@
+name,longname,source,iridl,registration
+cmorphrtv0.xadj-gb,CMORPH RT V0.x ICDR (Global),https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/8km-30min,,
+,,https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt,,
+,,,,
+cmorphv0.xrt-gb,CMORPH V0.x RT (Global),https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/GLOBE/data,,
+,,,,
+cmorphv0.xraw-gb,CMORPH V0.x RAW (Global),https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/8km-30min,,
+,,https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt,,
+,,,,
+cmorph2xnrt-gb,CMORPH2x NRT (Global),https://ftp.cpc.ncep.noaa.gov/precip/CMORPH2/CMORPH2NRT/DATA/,,
+,,https://ftp.cpc.ncep.noaa.gov/precip/CMORPH2/CMORPH2NRT/readme_CMORPH2x_NRT.txt,,
+,,,,
+gpm.imerg.f-gb,GPM L3 IMERG V07 Final (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_07/summary,,https://urs.earthdata.nasa.gov
+,,https://pmm.nasa.gov/data-access/downloads/gpm,,
+,,,,
+gpm.imerg.l-gb,GPM L3 IMERG V06 Late (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_06/summary,,https://urs.earthdata.nasa.gov
+,,https://pmm.nasa.gov/data-access/downloads/gpm,,
+,,,,
+gpm.imerg.e-gb,GPM L3 IMERG V06 Early (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHE_06/summary,,https://urs.earthdata.nasa.gov
+,,https://pmm.nasa.gov/data-access/downloads/gpm,,
+,,,,
+persiann.pdir-gb,PERSIANN PDIR-Now (Global),https://chrsdata.eng.uci.edu,,
+,,https://persiann.eng.uci.edu/CHRSdata/PDIRNow/,,
+,,,,
+gsmap.now-gb,GSMaP NOW (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
+,,https://sharaku.eorc.jaxa.jp/GSMaP_NOW/index.htm,,
+,,https://sharaku.eorc.jaxa.jp/GSMaP/faq/GSMaP_faq18.html,,
+,,,,
+gsmap.g.now-gb,GSMaP Gauge NOW (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
+,,https://sharaku.eorc.jaxa.jp/GSMaP_NOW/index.htm,,
+,,https://sharaku.eorc.jaxa.jp/GSMaP/faq/GSMaP_faq18.html,,

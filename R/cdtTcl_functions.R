@@ -1,8 +1,7 @@
 
 ## error and warning handling
 warningFun <- function(w){
-    txt <- as.character(w)
-    retW <- gsub('[\r\n]', '', txt)
+    retW <- paste("Warning:", conditionMessage(w))
     Insert.Messages.Out(retW, format = TRUE, type = "warning")
     return(-1)
 }
@@ -46,6 +45,17 @@ Insert.Messages.Out <- function(texta, format = FALSE,
         cat(texta, "\n")
     }
 }
+
+Insert.Messages.httr <- function(res, type = "error", GUI = TRUE){
+    msg <- httr::content(res, type = 'text', encoding = 'UTF-8')
+    Insert.Messages.Out(msg, TRUE, type, GUI)
+}
+
+Insert.Messages.curl <- function(res, type = "error", GUI = TRUE){
+    msg <- rawToChar(res$content)
+    Insert.Messages.Out(msg, TRUE, type, GUI)
+}
+
 
 ########################################################################
 

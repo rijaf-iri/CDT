@@ -42,6 +42,8 @@ export(pressure_conversion_netcdf)
 export(ET0_Penman_Monteith_FAO_station)
 export(ET0_Penman_Monteith_FAO_netcdf)
 
+export(connect_tidyverse_api)
+
 ###
 importFrom(latticeExtra, xyplot.list)
 importFrom(doParallel, registerDoParallel)

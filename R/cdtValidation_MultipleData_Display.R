@@ -620,6 +620,7 @@ multiValidation.plotStatMaps <- function(){
 
 ##################################################################################################
 
+#' @exportS3Method NULL
 image.foramtted.table <- function(X, rk, title = "",
                                   pars = list(
                                         col = list(fill = rev(RColorBrewer::brewer.pal(9, "Blues")),

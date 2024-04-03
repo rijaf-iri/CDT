@@ -49,7 +49,8 @@ tclArrayVar <- function(Rarray = NULL){
     return(arr.env)
 }
 
-assign("[.tclArrayVar", function(object, i, j = NULL) {
+#' @exportS3Method NULL
+`[.tclArrayVar` <- function(object, i, j = NULL) {
     if(is.null(j) && object$ndim != 1)
         stop("Object is not a one-dimensional Tclarray")
     if(!is.null(j) && object$ndim != 2)
@@ -57,9 +58,20 @@ assign("[.tclArrayVar", function(object, i, j = NULL) {
     if(object$ndim == 1) j <- 1
     tclArrayName <- ls(object$env)
     tclvalue(paste0(tclArrayName, "(", i, ",", j, ")"))
-})
+}
 
-assign("[<-.tclArrayVar", function(object, i, j = NULL, value) {
+# assign("[.tclArrayVar", function(object, i, j = NULL) {
+#     if(is.null(j) && object$ndim != 1)
+#         stop("Object is not a one-dimensional Tclarray")
+#     if(!is.null(j) && object$ndim != 2)
+#         stop("Object is not a two-dimensional Tclarray")
+#     if(object$ndim == 1) j <- 1
+#     tclArrayName <- ls(object$env)
+#     tclvalue(paste0(tclArrayName, "(", i, ",", j, ")"))
+# })
+
+#' @exportS3Method NULL
+`[<-.tclArrayVar` <- function(object, i, j = NULL, value) {
     if(is.null(j) && object$ndim != 1)
         stop("Object is not a one-dimensional Tclarray")
     if(!is.null(j) && object$ndim != 2)
@@ -72,7 +84,22 @@ assign("[<-.tclArrayVar", function(object, i, j = NULL, value) {
         .Tcl(paste0("set ", tclArrayName, "(", i, ",", j, ") ", value))
     if(i > object$nrow) object$nrow <- i
     return(object)
-})
+}
+
+# assign("[<-.tclArrayVar", function(object, i, j = NULL, value) {
+#     if(is.null(j) && object$ndim != 1)
+#         stop("Object is not a one-dimensional Tclarray")
+#     if(!is.null(j) && object$ndim != 2)
+#         stop("Object is not a two-dimensional Tclarray")
+#     if(object$ndim == 1) j <- 1
+#     tclArrayName <- ls(object$env)
+#     if(is.null(value) || is.na(value) || value == "")
+#         .Tcl(paste0("set ", tclArrayName, "(", i, ",", j, ") \"\""))
+#     else
+#         .Tcl(paste0("set ", tclArrayName, "(", i, ",", j, ") ", value))
+#     if(i > object$nrow) object$nrow <- i
+#     return(object)
+# })
 
 ########################################################################
 
