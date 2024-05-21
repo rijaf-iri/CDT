@@ -240,6 +240,7 @@ axTicks.minor.POSIXct <- function(xlim){
 
 ## format xlim date and time
 # message; 1:pentad, 2:dekad, 3:hour, 4:minute, 5:invalid date
+#' @exportS3Method NULL
 format.xlim.date.range <- function(xlim, timestep, message)
 {
     xx <- strsplit(xlim, "-")[[1]]
@@ -310,6 +311,7 @@ format.xlim.date.range <- function(xlim, timestep, message)
 ########################################################################
 
 ## image.plot colorkey parameters
+#' @exportS3Method NULL
 image.plot_Legend_pars <- function(Zmat, user.levels, user.colors, preset.colors)
 {
     brks0 <- pretty(Zmat, n = 10, min.n = 5)

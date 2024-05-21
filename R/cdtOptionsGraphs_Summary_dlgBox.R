@@ -1,4 +1,5 @@
 
+#' @exportS3Method NULL
 Summary.GraphOptions.Boxplot <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
         largeur1 <- 54
@@ -195,6 +196,7 @@ Summary.GraphOptions.Boxplot <- function(GraphOpt, parent.win = .cdtEnv$tcl$main
 
 ####################################################################################################
 
+#' @exportS3Method NULL
 Summary.GraphOptions.Histogram <- function(GraphOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
         largeur1 <- 59

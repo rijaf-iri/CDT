@@ -173,6 +173,7 @@ Distance.Correlation <- function(data.mat, lonlat){
 
 ##############################################################################
 
+#' @exportS3Method NULL
 summary.Distance.Correlation <- function(x, y){
 	o <- order(x)
 	x <- x[o]

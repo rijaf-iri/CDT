@@ -1,61 +1,6 @@
 
-reanal.product.source <- function(prod){
-    data.source <- switch(prod,
-                          "jra55" = c("rda.ucar.edu - ds628.0 - 3Hourly",
-                                      "rda.ucar.edu - ds628.8-NRT - 3Hourly"),
-                          "merra2" = c("disc.gsfc.nasa.gov - Hourly",
-                                       "disc.gsfc.nasa.gov - Land - Hourly",
-                                       "disc.gsfc.nasa.gov - Daily",
-                                       "iridl.ldeo.columbia.edu - Daily"),
-                          "era5" = c("cds.climate.copernicus.eu - ERA5 - Hourly",
-                                     "cds.climate.copernicus.eu - ERA5-Land - Hourly")
-                        )
-    return(data.source)
-}
-
 reanal.product.info <- function(prod, src){
-    if(prod == "jra55"){
-        urls <- switch(src,
-                    "rda.ucar.edu - ds628.0 - 3Hourly" = c("https://rda.ucar.edu/datasets/ds628.0/",
-                                                           # "https://rda.ucar.edu/datasets/ds628.0/docs/JRA-55.handbook_TL319_en.pdf",
-                                                           "https://jra.kishou.go.jp/JRA-55/document/JRA-55_handbook_TL319_en.pdf"),
-                    "rda.ucar.edu - ds628.8-NRT - 3Hourly" = c("https://rda.ucar.edu/datasets/ds628.8/",
-                                                               # "https://rda.ucar.edu/datasets/ds628.0/docs/JRA-55.handbook_TL319_en.pdf",
-                                                               "https://jra.kishou.go.jp/JRA-55/document/JRA-55_handbook_TL319_en.pdf")
-                )
-    }
-
-    if(prod == "merra2"){
-        urls <- switch(src,
-                    "disc.gsfc.nasa.gov - Hourly" = c("https://disc.gsfc.nasa.gov/datasets/M2T1NXSLV_5.12.4/summary",
-                                                      "https://disc.gsfc.nasa.gov/datasets/M2T1NXFLX_5.12.4/summary",
-                                                      "https://disc.gsfc.nasa.gov/datasets/M2I1NXASM_5.12.4/summary",
-                                                      "https://disc.gsfc.nasa.gov/datasets/M2T1NXRAD_5.12.4/summary",
-                                                      "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"),
-                    "disc.gsfc.nasa.gov - Land - Hourly" = c("https://disc.gsfc.nasa.gov/datasets/M2T1NXLND_5.12.4/summary",
-                                                             "https://daac.gsfc.nasa.gov/information/documents?title=MERRA-2%20Data%20Access%20%E2%80%93%20Quick%20Guide",
-                                                             "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"),
-                    "disc.gsfc.nasa.gov - Daily" = c("https://disc.gsfc.nasa.gov/datasets/M2SDNXSLV_5.12.4/summary",
-                                                     "https://daac.gsfc.nasa.gov/information/documents?title=MERRA-2%20Data%20Access%20%E2%80%93%20Quick%20Guide",
-                                                     "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/"),
-                    "iridl.ldeo.columbia.edu - Daily" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NASA/.GSFC/.MERRA2/.Anl_MonoLev/",
-                                                           "https://gmao.gsfc.nasa.gov/reanalysis/MERRA-2/")
-                )
-    }
-
-    if(prod == "era5"){
-        urls <- switch(src,
-                    "cds.climate.copernicus.eu - ERA5 - Hourly" = c(
-                           "https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview",
-                           "https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels-preliminary-back-extension?tab=overview",
-                           "https://confluence.ecmwf.int/display/CKB/ERA5%3A+data+documentation"
-                        ),
-                    "cds.climate.copernicus.eu - ERA5-Land - Hourly" = c(
-                           "https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview",
-                           "https://confluence.ecmwf.int/display/CKB/ERA5-Land%3A+data+documentation"
-                       )
-                )
-    }
+    urls <- .cdtData$EnvData$rnlProd[[prod]]$pars[[src]]$source
 
     tmpf <- tempfile(fileext = ".html")
     cat("<html>\n<body>\n", file = tmpf)
@@ -71,29 +16,74 @@ reanal.product.info <- function(prod, src){
 }
 
 reanal.need.usrpwd <- function(prod, src){
+    src_opts <- .cdtData$EnvData$rnlProd[[prod]]$pars[[src]]
+
     usrpwd <- FALSE
-    urllog <- ""
-
-    # if(prod == "jra55"){
-    #     if(src == "rda.ucar.edu - ds628.8-NRT - 3Hourly"){
-    #         usrpwd <- TRUE
-    #         urllog <- "https://rda.ucar.edu"
-    #     }
-    # }
-
-    if(prod == "merra2"){
-        if(src != "iridl.ldeo.columbia.edu - Daily"){
-            usrpwd <- TRUE
-            urllog <- "https://urs.earthdata.nasa.gov"
-        }
+    if(length(src_opts$registration) > 0){
+        usrpwd <- if(src_opts$registration == "") FALSE else TRUE
     }
-
-    if(prod == "era5"){
-        usrpwd <- TRUE
-        urllog <- "https://cds.climate.copernicus.eu"
-    }
+    urllog <- src_opts$registration
 
     list(usrpwd = usrpwd, urllog = urllog)
+}
+
+get_reanalysis.products <- function(){
+    optFile <- file.path(.cdtDir$Root, "reanalysis", "reanalysis_options.csv")
+    opts <- utils::read.table(optFile, sep = ',', header = TRUE, na.strings = '',
+                              colClasses = 'character', stringsAsFactors = FALSE,
+                              comment.char = ";")
+    ix <- which(!is.na(opts$name))
+    ie <- c(ix[-1] - 1, nrow(opts))
+    xx <- lapply(seq_along(ix), function(i){
+        x <- opts[ix[i]:ie[i], ]
+        x1 <- trimws(x$name)
+        x1[x1 == ""] <- NA
+        x1 <- x1[!is.na(x1)]
+        x2 <- trimws(x$longname)
+        x2[x2 == ""] <- NA
+        x2 <- x2[!is.na(x2)]
+
+        xs <- which(!is.na(x$opt_name))
+        xe <- c(xs[-1] - 1, length(x$opt_name))
+        yy <- lapply(seq_along(xs), function(j){
+            y <- x[xs[j]:xe[j], ]
+            y1 <- trimws(y$opt_name)
+            y1[y1 == ""] <- NA
+            y1 <- y1[!is.na(y1)]
+            y2 <- trimws(y$par_name)
+            y2[y2 == ""] <- NA
+            y2 <- y2[!is.na(y2)]
+            y3 <- trimws(y$var_name)
+            y3[y3 == ""] <- NA
+            y3 <- y3[!is.na(y3)]
+            y4 <- trimws(y$source)
+            y4[y4 == ""] <- NA
+            y4 <- y4[!is.na(y4)]
+            y5 <- trimws(y$registration)
+            y5[y5 == ""] <- NA
+            y5 <- y5[!is.na(y5)]
+            if(length(y5) == 0) y5 <- ""
+            y6 <- trimws(y$timestep)
+            y6[y6 == ""] <- NA
+            y6 <- y6[!is.na(y6)]
+
+            list(opt_name = y1, par_name = y2, var_name = y3,
+                 source = y4, registration = y5, timestep = y6)
+        })
+
+        opt_name <- sapply(yy, '[[', 'opt_name')
+        yy <- lapply(yy, function(y) y[!names(y) %in% 'opt_name'])
+        names(yy) <- opt_name
+
+        if(length(opt_name) == 1){
+            opt_name <- c(opt_name, '')
+        }
+
+        list(name = x1, longname = x2, opt_name = opt_name, pars = yy)
+    })
+    names(xx) <- sapply(xx, '[[', 'name')
+
+    .cdtData$EnvData$rnlProd <- xx
 }
 
 #######################################
@@ -120,6 +110,9 @@ download_Reanalysis <- function(){
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtDownloadReanalysis_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
 
+    ## load reanalysis products
+    get_reanalysis.products()
+
     #########
     tt <- tktoplevel()
     tkgrab.set(tt)
@@ -130,105 +123,83 @@ download_Reanalysis <- function(){
 
     ###################################################
 
-    frRFE <- tkframe(frGrd0, relief = 'sunken', bd = 2)
+    frRNLPROD <- tkframe(frGrd0, relief = 'sunken', bd = 2)
 
-    downVar <- tclVar()
-
-    CbvarsVAL0 <- lang.dlg[['combobox']][['1']]
-
-    varsVAL0 <- c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres', 'prmsl',
-                  'cloud', 'rad_avg', 'rad_acc', 'prcp', 'evp', 'pet', 'runoff',
-                  'soilm', 'soilt', 'tsg', 'heat_avg', 'heat_acc', 'ghflx'
-                 )
-
-    if(.cdtData$GalParams$prod == "jra55"){
-        excl_vr <- varsVAL0 %in% c('rad_acc', 'heat_acc')
-        CbvarsVAL <- CbvarsVAL0[!excl_vr]
-        varsVAL <- varsVAL0[!excl_vr]
-    }else if(.cdtData$GalParams$prod == "era5"){
-        if(.cdtData$GalParams$src == "cds.climate.copernicus.eu - ERA5 - Hourly"){
-            excl_vr <- varsVAL0 %in% c('ghflx')
-        }else{
-            excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'prmsl', 'cloud',
-                                       'rad_avg', 'heat_avg', 'ghflx')
-        }
-        CbvarsVAL <- CbvarsVAL0[!excl_vr]
-        varsVAL <- varsVAL0[!excl_vr]
-    }else{
-        if(.cdtData$GalParams$src == "disc.gsfc.nasa.gov - Hourly"){
-            excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'rad_acc', 'evp', 'runoff',
-                                       'soilm', 'soilt', 'heat_acc')
-            CbvarsVAL <- CbvarsVAL0[!excl_vr]
-            varsVAL <- varsVAL0[!excl_vr]
-        }else if(.cdtData$GalParams$src == "disc.gsfc.nasa.gov - Land - Hourly"){
-            excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres',
-                                       'prmsl', 'cloud', 'evp', 'rad_acc', 'heat_acc')
-            CbvarsVAL <- CbvarsVAL0[!excl_vr]
-            varsVAL <- varsVAL0[!excl_vr]
-        }else{
-            CbvarsVAL <- CbvarsVAL0[1:3]
-            varsVAL <- varsVAL0[1:3]
-        }
-    }
-
-    tclvalue(downVar) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$var]
-
+    #############
     reanalProd <- tclVar()
-    CbprodVAL <- c("JRA-55", "MERRA-2", "ERA5")
-    prodVAL <- c("jra55", "merra2", "era5")
+    CbprodVAL <- sapply(.cdtData$EnvData$rnlProd, '[[', 'longname')
+    prodVAL <- sapply(.cdtData$EnvData$rnlProd, '[[', 'name')
     tclvalue(reanalProd) <- CbprodVAL[prodVAL %in% .cdtData$GalParams$prod]
 
-    reanalSrc <- tclVar(.cdtData$GalParams$src)
-    CbsrcVAL <- reanal.product.source(.cdtData$GalParams$prod)
+    #######
+    reanal_opts <- .cdtData$EnvData$rnlProd[[.cdtData$GalParams$prod]]
 
+    CbsrcVAL <- reanal_opts$opt_name
+    reanalSrc <- tclVar(.cdtData$GalParams$src)
+
+    #######
+    downVar <- tclVar()
+    CbvarsVAL <- reanal_opts$pars[[.cdtData$GalParams$src]]$var_name
+    varsVAL <- reanal_opts$pars[[.cdtData$GalParams$src]]$par_name
+    tclvalue(downVar) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$var]
+
+    #######
     need.pwd <- reanal.need.usrpwd(.cdtData$GalParams$prod, .cdtData$GalParams$src)
     statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
-
     url.log <- tclVar(need.pwd$urllog)
     username <- tclVar(.cdtData$GalParams$login$usr)
     password <- tclVar(.cdtData$GalParams$login$pwd)
 
     ###########################
 
-    frREAN <- tkframe(frRFE)
+    frREAN <- tkframe(frRNLPROD)
     txt.prod <- tklabel(frREAN, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     cb.prod <- ttkcombobox(frREAN, values = CbprodVAL, textvariable = reanalProd, width = largeur3)
     txt.src <- tklabel(frREAN, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'right')
     cb.src <- ttkcombobox(frREAN, values = CbsrcVAL, textvariable = reanalSrc, width = largeur5)
 
-    frVARDATE <- tkframe(frRFE)
+    frVARDATE <- tkframe(frRNLPROD)
     txt.vars <- tklabel(frVARDATE, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     cb.vars <- ttkcombobox(frVARDATE, values = CbvarsVAL, textvariable = downVar, width = largeur2)
 
-    bt.range <- ttkbutton(frRFE, text = lang.dlg[['button']][['3']])
+    bt.range <- ttkbutton(frRNLPROD, text = lang.dlg[['button']][['3']])
 
-    frLOGIN <- tkframe(frRFE)
+    ####
+    frLOGIN <- tkframe(frRNLPROD)
     txt.log1 <- tklabel(frLOGIN, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
     txt.log2 <- tklabel(frLOGIN, text = tclvalue(url.log), textvariable = url.log, anchor = 'w', justify = 'left')
 
-    frUSER <- tkframe(frRFE)
+    fgKolRegistr <- as.character(tkcget(txt.log2, '-foreground'))
+    bgKolRegistr <- as.character(tkcget(txt.log2, '-background'))
+    if(need.pwd$usrpwd){
+        fgKol <- "blue"
+        bgKol <- "white"
+    }else{
+        fgKol <- fgKolRegistr
+        bgKol <- bgKolRegistr
+    }
+    tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
+
+    ####
+    frUSER <- tkframe(frRNLPROD)
     txt.usr <- tklabel(frUSER, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
     en.usr <- tkentry(frUSER, textvariable = username, state = statepwd, width = largeur6, justify = "left")
     txt.pwd <- tklabel(frUSER, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
     en.pwd <- tkentry(frUSER, textvariable = password, show = "*", state = statepwd, width = largeur7, justify = "left")
 
-    bt.info <- ttkbutton(frRFE, text = lang.dlg[['button']][['4']])
+    ####
+    bt.info <- ttkbutton(frRNLPROD, text = lang.dlg[['button']][['4']])
+    bt.tcover <- ttkbutton(frRNLPROD, text = lang.dlg[['button']][['5']])
 
     ###########################
 
     tkconfigure(bt.range, command = function(){
-         tstep <- switch(trimws(tclvalue(reanalSrc)),
-                         "rda.ucar.edu - ds628.0 - 3Hourly" = "hourly",
-                         "rda.ucar.edu - ds628.8-NRT - 3Hourly" = "hourly",
-                         "disc.gsfc.nasa.gov - Hourly" = "hourly",
-                         "disc.gsfc.nasa.gov - Land - Hourly" = "hourly",
-                         "disc.gsfc.nasa.gov - Daily" = "daily",
-                         "iridl.ldeo.columbia.edu - Daily" = "daily",
-                         "cds.climate.copernicus.eu - ERA5 - Hourly" = "hourly",
-                         "cds.climate.copernicus.eu - ERA5-Land - Hourly" = "hourly")
+        prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
+        src <- trimws(tclvalue(reanalSrc))
+        tstep <- .cdtData$EnvData$rnlProd[[prod]]$pars[[src]]$timestep
 
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep, TRUE)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -237,6 +208,43 @@ download_Reanalysis <- function(){
         src <- trimws(tclvalue(reanalSrc))
         urls <- reanal.product.info(prod, src)
         utils::browseURL(paste0('file://', urls))
+    })
+
+    tkconfigure(bt.tcover, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(.cdtEnv$tcl$main$win)
+        tcl('update')
+
+        .cdtData$GalParams$var <- varsVAL[CbvarsVAL %in% trimws(tclvalue(downVar))]
+        .cdtData$GalParams$prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
+        .cdtData$GalParams$src <- trimws(tclvalue(reanalSrc))
+        .cdtData$GalParams$reanalysis <- trimws(tclvalue(reanalProd))
+
+        .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
+        .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
+
+        if(testConnection()){
+            Insert.Messages.Out(lang.dlg[['message']][['11']], TRUE, "i")
+            ret <- try(check.coverage_Reanalysis(), silent = TRUE)
+            # ret <- NULL
+            # ret$end <- 0
+            if(!inherits(ret, "try-error")){
+                if(is.null(ret$end)){
+                    msg <- paste(ret$name, ret$timestep)
+                    Insert.Messages.Out(msg, TRUE, "e")
+                    Insert.Messages.Out(lang.dlg[['message']][['12']], TRUE, "e")
+                }else{
+                    Insert.Messages.Out(lang.dlg[['message']][['13']], TRUE, "s")
+                }
+            }else{
+                Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), TRUE, "e")
+                Insert.Messages.Out(lang.dlg[['message']][['12']], TRUE, "e")
+            }
+        }else{
+            Insert.Messages.Out(lang.dlg[['message']][['2']], format = TRUE)
+            return(NULL)
+        }
     })
 
     ###########################
@@ -260,10 +268,12 @@ download_Reanalysis <- function(){
     tkgrid(frREAN, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frVARDATE, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.range, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
     tkgrid(frLOGIN, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frUSER, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(bt.info, row = 4, column = 1, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.info, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(bt.tcover, row = 4, column = 4, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
     helpWidget(cb.vars, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(cb.prod, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -274,7 +284,8 @@ download_Reanalysis <- function(){
 
     tkbind(cb.prod, "<<ComboboxSelected>>", function(){
         prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
-        CbsrcVAL <- reanal.product.source(prod)
+        reanal_opts <- .cdtData$EnvData$rnlProd[[prod]]
+        CbsrcVAL <- reanal_opts$opt_name
 
         tkconfigure(cb.src, values = CbsrcVAL)
         tclvalue(reanalSrc) <- CbsrcVAL[1]
@@ -289,36 +300,18 @@ download_Reanalysis <- function(){
         tkconfigure(en.usr, state = statepwd)
         tkconfigure(en.pwd, state = statepwd)
 
-        ########
-        if(prod == "jra55"){
-            excl_vr <- varsVAL0 %in% c('rad_acc', 'heat_acc')
-            CbvarsVAL <<- CbvarsVAL0[!excl_vr]
-            varsVAL <<- varsVAL0[!excl_vr]
-        }else if(prod == "era5"){
-            if(src == "cds.climate.copernicus.eu - ERA5 - Hourly"){
-                excl_vr <- varsVAL0 %in% c('ghflx')
-            }else{
-                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'prmsl', 'cloud',
-                                           'rad_avg', 'heat_avg', 'ghflx')
-            }
-            CbvarsVAL <<- CbvarsVAL0[!excl_vr]
-            varsVAL <<- varsVAL0[!excl_vr]
+        if(need.pwd$usrpwd){
+            fgKol <- "blue"
+            bgKol <- "white"
         }else{
-            if(src == "disc.gsfc.nasa.gov - Hourly"){
-                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'rad_acc', 'evp', 'runoff',
-                                           'soilm', 'soilt', 'heat_acc')
-                CbvarsVAL <<- CbvarsVAL0[!excl_vr]
-                varsVAL <<- varsVAL0[!excl_vr]
-            }else if(src == "disc.gsfc.nasa.gov - Land - Hourly"){
-                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres',
-                                           'prmsl', 'cloud', 'evp', 'rad_acc', 'heat_acc')
-                CbvarsVAL <<- CbvarsVAL0[!excl_vr]
-                varsVAL <<- varsVAL0[!excl_vr]
-            }else{
-                CbvarsVAL <<- CbvarsVAL0[1:3]
-                varsVAL <<- varsVAL0[1:3]
-            }
+            fgKol <- fgKolRegistr
+            bgKol <- bgKolRegistr
         }
+        tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
+
+        ########
+        CbvarsVAL <<- reanal_opts$pars[[src]]$var_name
+        varsVAL <<- reanal_opts$pars[[src]]$par_name
 
         tkconfigure(cb.vars, values = CbvarsVAL)
         if(!trimws(tclvalue(downVar)) %in% CbvarsVAL)
@@ -328,37 +321,10 @@ download_Reanalysis <- function(){
     tkbind(cb.src, "<<ComboboxSelected>>", function(){
         prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
         src <- trimws(tclvalue(reanalSrc))
+        reanal_opts <- .cdtData$EnvData$rnlProd[[prod]]
 
-        ########
-        if(prod == "jra55"){
-            excl_vr <- varsVAL0 %in% c('rad_acc', 'heat_acc')
-            CbvarsVAL <<- CbvarsVAL0[!excl_vr]
-            varsVAL <<- varsVAL0[!excl_vr]
-        }else if(prod == "era5"){
-            if(src == "cds.climate.copernicus.eu - ERA5 - Hourly"){
-                excl_vr <- varsVAL0 %in% c('ghflx')
-            }else{
-                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'prmsl', 'cloud',
-                                           'rad_avg', 'heat_avg', 'ghflx')
-            }
-            CbvarsVAL <<- CbvarsVAL0[!excl_vr]
-            varsVAL <<- varsVAL0[!excl_vr]
-        }else{
-            if(src == "disc.gsfc.nasa.gov - Hourly"){
-                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'rad_acc', 'evp', 'runoff',
-                                           'soilm', 'soilt', 'heat_acc')
-                CbvarsVAL <<- CbvarsVAL0[!excl_vr]
-                varsVAL <<- varsVAL0[!excl_vr]
-            }else if(src == "disc.gsfc.nasa.gov - Land - Hourly"){
-                excl_vr <- varsVAL0 %in% c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres',
-                                           'prmsl', 'cloud', 'evp', 'rad_acc', 'heat_acc')
-                CbvarsVAL <<- CbvarsVAL0[!excl_vr]
-                varsVAL <<- varsVAL0[!excl_vr]
-            }else{
-                CbvarsVAL <<- CbvarsVAL0[1:3]
-                varsVAL <<- varsVAL0[1:3]
-            }
-        }
+        CbvarsVAL <<- reanal_opts$pars[[src]]$var_name
+        varsVAL <<- reanal_opts$pars[[src]]$par_name
 
         tkconfigure(cb.vars, values = CbvarsVAL)
         if(!trimws(tclvalue(downVar)) %in% CbvarsVAL)
@@ -371,6 +337,38 @@ download_Reanalysis <- function(){
         tclvalue(url.log) <- need.pwd$urllog
         tkconfigure(en.usr, state = statepwd)
         tkconfigure(en.pwd, state = statepwd)
+
+        if(need.pwd$usrpwd){
+            fgKol <- "blue"
+            bgKol <- "white"
+        }else{
+            fgKol <- fgKolRegistr
+            bgKol <- bgKolRegistr
+        }
+        tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
+    })
+
+    ####
+    tkbind(txt.log2, "<Button-1>", function(){
+        prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
+        src <- trimws(tclvalue(reanalSrc))
+        need.pwd <- reanal.need.usrpwd(prod, src)
+        if(need.pwd$usrpwd){
+            utils::browseURL(need.pwd$urllog)
+        }
+    })
+
+    tkbind(txt.log2, "<Enter>", function(){
+        prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
+        src <- trimws(tclvalue(reanalSrc))
+        need.pwd <- reanal.need.usrpwd(prod, src)
+        if(need.pwd$usrpwd){
+            tkconfigure(txt.log2, relief = 'groove', borderwidth = 2, cursor = 'hand2')
+        }
+    })
+
+    tkbind(txt.log2, "<Leave>", function(){
+        tkconfigure(txt.log2, relief = 'flat', borderwidth = 0, cursor = '')
     })
 
     ###################################################
@@ -441,7 +439,7 @@ download_Reanalysis <- function(){
 
     ###########################
 
-    tkgrid(frRFE, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(frRNLPROD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
     tkgrid(frRegion, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
     tkgrid(frDirsave, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 5, pady = 5, ipadx = 1, ipady = 1)
 

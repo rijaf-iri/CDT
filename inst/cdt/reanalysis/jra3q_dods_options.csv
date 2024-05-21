@@ -1,0 +1,39 @@
+cdt_var,dap_path,jra_var,jra_code,nc_longname,nc_name,nc_units,units_fun,units_args
+tmax,minmax_surf,tmpmax2m-hgt-fc-gauss,0_0_0,Maximum temperature at 2 m above ground,tmax,degC,-,273.15
+tmin,minmax_surf,tmpmin2m-hgt-fc-gauss,0_0_0,Minimum temperature at 2 m above ground,tmin,degC,-,273.15
+tair,fcst_surf,tmp2m-hgt-fc-gauss,0_0_0,Air temperature at 2 m above ground,tair,degC,-,273.15
+wind,fcst_surf,ugrd10m-hgt-fc-gauss,0_2_2,U-wind at 10 m above ground,ugrd,m/s,,
+,,vgrd10m-hgt-fc-gauss,0_2_3,V-wind at 10 m above ground,vgrd,m/s,,
+hum,fcst_surf,rh2m-hgt-fc-gauss,0_1_1,Relative humidity at 2 m above ground,rh,%,,
+,,spfh2m-hgt-fc-gauss,0_1_0,Specific humidity at 2 m above ground,spfh,kg/kg,,
+pres,fcst_surf,pres-sfc-fc-gauss,0_3_0,Pressure at ground or water surface,pres,hPa,/,100
+prmsl,fcst_surf,prmsl-msl-fc-gauss,0_3_1,Pressure reduced to mean sea level,prmsl,hPa,/,100
+cloud,fcst_surf,tcdc-tcl-fc-gauss,0_6_1,Total cloud cover at 90 - 1100 hPa,tcdc,%,,
+,,hcdc-hcl-fc-gauss,0_6_5,High cloud cover at 90 - 500 hPa,hcdc,%,,
+,,mcdc-mcl-fc-gauss,0_6_4,Medium cloud cover at 500 - 850 hPa,mcdc,%,,
+,,lcdc-lcl-fc-gauss,0_6_3,Low cloud cover at 850 - 1100 hPa,lcdc,%,,
+rad_avg,fcst_phy2m,dlwrfcs1have-sfc-fc-gauss,0_5_8,Clear sky downward longwave radiation flux at ground or water surface,csdlf_sfc,W/m2,,
+,,dswrfcs1have-sfc-fc-gauss,0_4_52,Clear sky downward solar radiation flux at ground or water surface,csdsf_sfc,W/m2,,
+,,nlwrcs1have-toa-fc-gauss,0_5_6,Clear sky net longwave radiation flux at nominal top of atmosphere,csnlf_top,W/m2,,
+,,uswrfcs1have-sfc-fc-gauss,0_4_53,Clear sky upward solar radiation flux at ground or water surface,csusf_sfc,W/m2,,
+,,uswrfcs1have-toa-fc-gauss,0_4_53,Clear sky upward solar radiation flux at nominal top of atmosphere,csusf_top,W/m2,,
+,,dlwrf1have-sfc-fc-gauss,0_5_3,Downward longwave radiation flux at ground or water surface,dlwrf_sfc,W/m2,,
+,,dswrf1have-sfc-fc-gauss,0_4_7,Downward solar radiation flux at ground or water surface,dswrf_sfc,W/m2,,
+,,dswrf1have-toa-fc-gauss,0_4_7,Downward solar radiation flux at nominal top of atmosphere,dswrf_top,W/m2,,
+,,ulwrf1have-sfc-fc-gauss,0_5_4,Upward longwave radiation flux at ground or water surface,ulwrf_sfc,W/m2,,
+,,ulwrf1have-toa-fc-gauss,0_5_4,Upward longwave radiation flux at nominal top of atmosphere,ulwrf_top,W/m2,,
+,,uswrf1have-sfc-fc-gauss,0_4_8,Upward solar radiation flux at ground or water surface,uswrf_sfc,W/m2,,
+,,uswrf1have-toa-fc-gauss,0_4_8,Upward solar radiation flux at nominal top of atmosphere,uswrf_top,W/m2,,
+prcp,fcst_phy2m,tprate1have-sfc-fc-gauss,0_1_52,Total precipitation at ground or water surface,ptot,mm,*,3600
+,,lsprate1have-sfc-fc-gauss,0_1_54,Large scale precipitation at ground or water surface,plrgscl,mm,,
+,,cprat1have-sfc-fc-gauss,0_1_37,Convective precipitation at ground or water surface,pconv,mm,,
+evp,fcst_phy2m,evarate1have-sfc-fc-gauss,0_1_79,Evaporation at ground or water surface,evp,mm,*,3600
+pet,fcst_phyland,ltrs1have-sfc-fc-gauss,2_193_8,Evapotranspiration at ground surface,pet,mm,*,0.035 /24
+runoff,fcst_phyland,rof1have-sfc-fc-gauss,2_193_9,Water run-off at ground surface,ro_sfc,mm,*,3600
+,,rof1have349cm-bg-fc-gauss,2_193_9,Water run-off at the bottom of land surface model,ro_bmod,mm,,
+soilm,fcst_land,soilvic-bg-fc-gauss,2_0_38,Soil volumetric ice content (water equivalent) below ground,soil_ice,m3/m3,,
+,,liqvsm-bg-fc-gauss,2_3_10,Liquid volumetric soil moisture (non-frozen) below ground,soil_moist,m3/m3,,
+soilt,fcst_land,soiltmp-bg-fc-gauss,2_3_18,Soil temperature below ground,soilt,degC,-,273.15
+tsg,fcst_land,tsg-sfc-fc-gauss,2_3_192,Ground temperature,tsg,degC,-,273.15
+heat_avg,fcst_phy2m,lhtfl1have-sfc-fc-gauss,0_0_10,Latent heat flux at ground or water surface,lhflx,W/m2,,
+,,shtfl1have-sfc-fc-gauss,0_0_11,Sensible heat flux at ground or water surface,lsflx,W/m2,,

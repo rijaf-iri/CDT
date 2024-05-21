@@ -1,254 +1,25 @@
 
 rfe.product.list <- function(tstep = "dekadal", minhour = NULL){
-    ## pwd: TRMM 3B42 v7, TRMM 3B42RT v7
-    cbname <- name <- NULL
-    ## minute
-    if(tstep == "minute"){
-        ## 30 min
-        if(minhour == 30){
-            cbname <- c(
-                        # "CMORPH V1.0 CRT (Global)", 
-                        "CMORPH RT V0.x ICDR (Global)",
-                        "CMORPH V0.x RT (Global)", "CMORPH V0.x RAW (Global)",
-                        "GPM L3 IMERG V06 Final (Global)", "GPM L3 IMERG V06 Late (Global)",
-                        "GPM L3 IMERG V06 Early (Global)")
-            name <- c(
-                      # "cmorphv1.0adj-gb", 
-                      "cmorphrtv0.xadj-gb", "cmorphv0.xrt-gb",
-                      "cmorphv0.xraw-gb", "gpm.imerg.f-gb",
-                      "gpm.imerg.l-gb", "gpm.imerg.e-gb")
-        }
+    if(tstep %in% c("minute", "hourly")){
+        nom <- paste0(minhour, '-', tstep)
+    }else{
+        nom <- tstep
     }
+    rfe_cbname <- .cdtData$EnvData$rfeProds[[nom]]$longname
+    rfe_name <- .cdtData$EnvData$rfeProds[[nom]]$name
 
-    ## hourly
-    if(tstep == "hourly"){
-        ## 1 hour
-        if(minhour == 1){
-            cbname <- c("PERSIANN (Global)", "CMORPH RT V0.x ICDR (Global)")
-            name <- c("persiann-gb", "cmorphrtv0.xadj-gb")
-        }
-
-        ## 3 hour
-        if(minhour == 3){
-            cbname <- c("PERSIANN (Global)", "TRMM 3B42 v7 (Global)", "TRMM 3B42RT v7 (Global)",
-                        "CMORPH V1.0 CRT (Global)", "CMORPH V0.x RAW (Global)")
-            name <- c("persiann-gb", "trmm3b42v7-gb", "trmm3b42rtv7-gb",
-                      "cmorphv1.0adj-gb", "cmorphv0.xraw-gb")
-        }
-
-        ## 6 hour
-        if(minhour == 6){
-            cbname <- c("CHIRPS v2.0 (Africa)", "PERSIANN (Global)")
-            name <- c("chirpsv2-af", "persiann-gb")
-        }
-    }
-
-    ## daily
-    if(tstep == "daily"){
-        cbname <- c("TAMSAT v3.1 (Africa)", "TAMSAT v3.0 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
-                    "NOAA-CPC ARC2 (Africa)", "NOAA-CPC RFEv2 (Africa)", "NOAA-CPC RFEv2 (South Asia)",
-                    "PERSIANN-CDR (Global)", "PERSIANN (Global)",
-                    "TRMM 3B42 v7 (Global)", "TRMM 3B42RT v7 (Global)",
-                    "CMORPH V1.0 BLD (Global)", "CMORPH RT V0.x BLD (Global)",
-                    "CMORPH V1.0 CRT (Global)", "CMORPH RT V0.x ICDR (Global)",
-                    "CMORPH V0.x RAW (Global)", "GPM L3 IMERG V06 Final (Global)",
-                    "GPM L3 IMERG V06 Late (Global)", "GPM L3 IMERG V06 Early (Global)")
-        name <- c("tamsatv3.1-af", "tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af", "rfev2-af", "rfev2-sa",
-                  "persianncdr-gb", "persiann-gb", "trmm3b42v7-gb", "trmm3b42rtv7-gb",
-                  "cmorphv1.0bld-gb", "cmorphrtv0.xbld-gb", "cmorphv1.0adj-gb", "cmorphrtv0.xadj-gb",
-                  "cmorphv0.xraw-gb", "gpm.imerg.f-gb", "gpm.imerg.l-gb", "gpm.imerg.e-gb")
-    }
-
-    ## pentad
-    if(tstep == "pentad"){
-        cbname <- c("TAMSAT v3.1 (Africa)", "TAMSAT v3.0 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)")
-        name <- c("tamsatv3.1-af", "tamsatv3-af", "chirp-gb", "chirpsv2-gb")
-    }
-
-    ## dekad
-    if(tstep == "dekadal"){
-        cbname <- c("TAMSAT v3.1 (Africa)", "TAMSAT v3.0 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
-                    "NOAA-CPC ARC2 (Africa)", "NOAA-CPC RFEv2 (Africa)", "NOAA-CPC RFEv2 (South Asia)")
-        name <- c("tamsatv3.1-af", "tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af", "rfev2-af", "rfev2-sa")
-    }
-
-    ## monthly
-    if(tstep == "monthly"){
-        cbname <- c("TAMSAT v3.1 (Africa)", "TAMSAT v3.0 (Africa)", "CHIRP (Global)", "CHIRPS v2.0 (Global)",
-                    "ARC2 (Africa)", "PERSIANN-CDR (Global)", "PERSIANN (Global)",
-                    "GPM L3 IMERG V06 Final (Global)")
-        name <- c("tamsatv3.1-af", "tamsatv3-af", "chirp-gb", "chirpsv2-gb", "arc2-af",
-                  "persianncdr-gb", "persiann-gb", "gpm.imerg.f-gb")
-    }
-
-    return(list(cbname = cbname, name = name))
+    list(cbname = rfe_cbname, name = rfe_name)
 }
 
-################################################
-
 rfe.product.source <- function(src, tstep, minhour = NULL){
-    ## minute
-    if(tstep == "minute"){
-        # if(minhour == 15){
-
-        # }
-
-        if(minhour == 30){
-            urls <- switch(src,
-                # "cmorphv1.0adj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/8km-30min",
-                #                        "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
-                "cmorphrtv0.xadj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/8km-30min",
-                                         "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
-                "cmorphv0.xrt-gb" = "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/GLOBE/data",
-                "cmorphv0.xraw-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/8km-30min",
-                                       "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
-                "gpm.imerg.f-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_V06/summary?keywords=IMERG",
-                                     "https://pmm.nasa.gov/data-access/downloads/gpm"),
-                "gpm.imerg.l-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_V06/summary?keywords=IMERG",
-                                     "https://pmm.nasa.gov/data-access/downloads/gpm"),
-                "gpm.imerg.e-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHE_V06/summary?keywords=IMERG",
-                                     "https://pmm.nasa.gov/data-access/downloads/gpm")
-            )
-        }
+    if(tstep %in% c("minute", "hourly")){
+        nom <- paste0(minhour, '-', tstep)
+    }else{
+        nom <- tstep
     }
-
-    ## hourly
-    if(tstep == "hourly"){
-        ## 1 hour
-        if(minhour == 1){
-            urls <- switch(src,
-                "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/hrly",
-                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/hrly/readme.hrly"),
-                "cmorphrtv0.xadj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/0.25deg-HLY",
-                                         "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt")
-            )
-        }
-
-        ## 3 hour
-        if(minhour == 3){
-            urls <- switch(src,
-                "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/3hrly",
-                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/3hrly/readme.3hrly"),
-                "trmm3b42v7-gb" = "https://disc.gsfc.nasa.gov/datasets/TRMM_3B42_V7/summary?keywords=TRMM_3B42",
-                "trmm3b42rtv7-gb" = "https://disc.gsfc.nasa.gov/datasets/TRMM_3B42RT_V7/summary?keywords=TRMM_3B42",
-                "cmorphv1.0adj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/0.25deg-3HLY",
-                                       "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
-                "cmorphv0.xraw-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.CMORPH/.V0px/.RAW/.3-hourly/.prcp",
-                                       "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/0.25deg-3HLY",
-                                       "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt")
-            )
-        }
-
-        ## 6 hour
-        if(minhour == 6){
-            urls <- switch(src,
-                "chirpsv2-af" = c("https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly",
-                                  "https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly/README.6-hourly.txt",
-                                  "https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly/p1_bin/extra_step/readme_chirps6hrly.txt"
-                                ),
-                "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                                  "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/6hrly")
-            )
-        }
-    }
-
-    ## daily
-    if(tstep == "daily"){
-        urls <- switch(src,
-            "tamsatv3.1-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.daily/.rfe",
-                                "https://www.tamsat.org.uk/sites/data-download/index.html"),
-            "tamsatv3-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.daily/.rfe",
-                              "https://www.tamsat.org.uk/data"),
-            "chirp-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.daily/.prcp",
-                           "https://data.chc.ucsb.edu/products/CHIRP/daily"),
-            "chirpsv2-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.daily-improved/.global/.0p05/.prcp",
-                              "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_daily/tifs/p05"),
-            "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.daily/.est_prcp",
-                          "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
-            "rfev2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.RFEv2/.est_prcp",
-                           "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2",
-                           "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/rfe2/RFE_readme.txt"),
-            "rfev2-sa" = c("http://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.SAsia/.RFEv2/.DAILY/.est_prcp",
-                           "https://ftp.cpc.ncep.noaa.gov/fews/S.Asia",
-                           "https://ftp.cpc.ncep.noaa.gov/fews/S.Asia/SOUTH_ASIA_README.txt"),
-            "persianncdr-gb" = c("https://chrsdata.eng.uci.edu",
-                                 "https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR/daily"),
-            "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                              "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/daily"),
-            "trmm3b42v7-gb" = "https://disc.gsfc.nasa.gov/datasets/TRMM_3B42_Daily_V7/summary?keywords=TRMM_3B42",
-            "trmm3b42rtv7-gb" = "https://disc.gsfc.nasa.gov/datasets/TRMM_3B42RT_Daily_V7/summary?keywords=TRMM_3B42",
-            "cmorphv1.0bld-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/BLD/0.25deg-DLY_EOD/GLB",
-                                   "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
-            "cmorphrtv0.xbld-gb" = "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/BLD",
-            "cmorphv1.0adj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CRT/0.25deg-DLY_00Z",
-                                   "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V1.0/CMORPH_V1.0_README.txt"),
-            "cmorphrtv0.xadj-gb" = c("https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/0.25deg-DLY_00Z",
-                                     "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
-            "cmorphv0.xraw-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.CMORPH/.V0px/.RAW/.daily/.prcp",
-                                   "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/RAW/0.25deg-DLY_00Z",
-                                   "https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt"),
-            "gpm.imerg.f-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_V06/summary?keywords=IMERG",
-                                 "https://pmm.nasa.gov/data-access/downloads/gpm"),
-            "gpm.imerg.l-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDL_V06/summary?keywords=IMERG",
-                                 "https://pmm.nasa.gov/data-access/downloads/gpm"),
-            "gpm.imerg.e-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDE_V06/summary?keywords=IMERG",
-                                 "https://pmm.nasa.gov/data-access/downloads/gpm")
-        )
-    }
-
-    ## pentad
-    if(tstep == "pentad"){
-        urls <- switch(src,
-            "tamsatv3.1-af" = "https://www.tamsat.org.uk/sites/data-download/index.html",
-            "tamsatv3-af" = "https://www.tamsat.org.uk/data",
-            "chirp-gb" = "https://data.chc.ucsb.edu/products/CHIRP/pentads",
-            "chirpsv2-gb" = "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_pentad/tifs"
-        )
-    }
-
-    ## dekad
-    if(tstep == "dekadal"){
-        urls <- switch(src,
-            "tamsatv3.1-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.dekadal/.rfe",
-                                "https://www.tamsat.org.uk/sites/data-download/index.html"),
-            "tamsatv3-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.dekadal/.rfe",
-                              "https://www.tamsat.org.uk/data"),
-            "chirp-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp",
-                           "https://data.chc.ucsb.edu/products/CHIRP/dekads"),
-            "chirpsv2-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.dekad/.prcp",
-                              "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_dekad/tifs"),
-            "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.TEN-DAY/.ARC2/.est_prcp",
-                          "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
-            "rfev2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.TEN-DAY/.RFEv2/.est_prcp",
-                           "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa"),
-            "rfev2-sa" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.SAsia/.RFEv2/.DAILY/.est_prcp/1.0/dekadalAverage/T/differential_mul",
-                           "https://ftp.cpc.ncep.noaa.gov/fews/S.Asia")
-        )
-    }
-
-    ## monthly
-    if(tstep == "monthly"){
-        urls <- switch(src,
-            "tamsatv3.1-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p1/.monthly/.rfe",
-                                "https://www.tamsat.org.uk/sites/data-download/index.html"),
-            "tamsatv3-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.Reading/.Meteorology/.TAMSAT/.TARCAT/.v3p0/.monthly/.rfe",
-                              "https://www.tamsat.org.uk/data"),
-            "chirp-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRP/.v1p0/.dekad/.prcp/monthlyAverage/3.0/mul",
-                           "https://data.chc.ucsb.edu/products/CHIRP/monthly"),
-            "chirpsv2-gb" = c("https://iridl.ldeo.columbia.edu/SOURCES/.UCSB/.CHIRPS/.v2p0/.monthly/.global/.precipitation",
-                              "https://data.chc.ucsb.edu/products/CHIRPS-2.0/global_monthly/tifs"),
-            "arc2-af" = c("https://iridl.ldeo.columbia.edu/SOURCES/.NOAA/.NCEP/.CPC/.FEWS/.Africa/.DAILY/.ARC2/.monthly/.est_prcp",
-                          "https://ftp.cpc.ncep.noaa.gov/fews/fewsdata/africa/arc2"),
-            "persianncdr-gb" = c("https://chrsdata.eng.uci.edu",
-                                 "https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CDR/mthly"),
-            "persiann-gb" = c("https://chrsdata.eng.uci.edu",
-                              "https://persiann.eng.uci.edu/CHRSdata/PERSIANN/mthly"),
-            "gpm.imerg.f-gb" = c("https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGM_V06/summary?keywords=IMERG",
-                                 "https://pmm.nasa.gov/data-access/downloads/gpm")
-        )
-    }
+    rfe_src <- .cdtData$EnvData$rfeProds[[nom]]$source
+    rfe_name <- .cdtData$EnvData$rfeProds[[nom]]$name
+    urls <- rfe_src[[which(rfe_name == src)]]
 
     tmpf <- tempfile(fileext = ".html")
     cat("<html>\n<body>\n", file = tmpf)
@@ -263,30 +34,90 @@ rfe.product.source <- function(src, tstep, minhour = NULL){
     return(tmpf)
 }
 
-rfe.iridl.ulrs <- function(src, tstep){
-    ret <- FALSE
-    if(src == "tamsatv3.1-af" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
-    if(src == "tamsatv3-af" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
-    if(src == "chirp-gb" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
-    if(src == "chirpsv2-gb" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
-    if(src == "arc2-af" & (tstep %in% c("daily", "dekadal", "monthly"))) ret <- TRUE
-    if(src == "rfev2-af" & (tstep %in% c("daily", "dekadal"))) ret <- TRUE
-    if(src == "rfev2-sa" & (tstep %in% c("daily", "dekadal"))) ret <- TRUE
-    if(src == "cmorphv0.xraw-gb" & (tstep %in% c("hourly", "daily"))) ret <- TRUE
+rfe.iridl.ulrs <- function(src, tstep, minhour){
+    if(tstep %in% c("minute", "hourly")){
+        nom <- paste0(minhour, '-', tstep)
+    }else{
+        nom <- tstep
+    }
+
+    rfe_name <- .cdtData$EnvData$rfeProds[[nom]]$name
+    iridl <- .cdtData$EnvData$rfeProds[[nom]]$iridl
+    ret <- iridl[which(rfe_name == src)]
 
     return(ret)
 }
 
-rfe.need.usrpwd <- function(src){
-    usrpwd <- FALSE
-    urllog <- ""
-    if(src %in% c("trmm3b42v7-gb", "trmm3b42rtv7-gb", "gpm.imerg.f-gb",
-                  "gpm.imerg.l-gb", "gpm.imerg.e-gb"))
-    {
-        usrpwd <- TRUE
-        urllog <- "https://urs.earthdata.nasa.gov"
+rfe.need.usrpwd <- function(src, tstep, minhour){
+    if(tstep %in% c("minute", "hourly")){
+        nom <- paste0(minhour, '-', tstep)
+    }else{
+        nom <- tstep
     }
-    list(usrpwd = usrpwd, urllog = urllog)
+
+    rfe_name <- .cdtData$EnvData$rfeProds[[nom]]$name
+    regist <- .cdtData$EnvData$rfeProds[[nom]]$registration
+    urllog <- regist[which(rfe_name == src)]
+
+    usrpwd <- if(urllog == "") FALSE else TRUE
+
+    statepwd <- if(usrpwd) 'normal' else 'disabled'
+
+    if(grepl("^mswep\\.", src)){
+        statepwd <- 'disabled'
+    }
+
+    list(usrpwd = usrpwd, statepwd = statepwd, urllog = urllog)
+}
+
+get_all.rfe.products <- function(){
+    rfeFiles <- file.path(.cdtDir$Root, "rfeproducts")
+    rfeList <- list.files(rfeFiles, "^rfe.+\\.csv$")
+    rfeProds <- gsub('\\.csv', '', rfeList)
+    rfeProds <- gsub('rfe_', '', rfeProds)
+    rfetmp <- lapply(rfeList, function(csv){
+        ff <- file.path(rfeFiles, csv)
+        dat <- utils::read.table(ff, sep = ',', header = TRUE, na.strings = '',
+                                 colClasses = 'character', stringsAsFactors = FALSE)
+        ix <- which(!is.na(dat$name))
+        ie <- c(ix[-1] - 1, nrow(dat))
+        xx <- lapply(seq_along(ix), function(i){
+            x <- dat[ix[i]:ie[i], ]
+            x1 <- trimws(x$name)
+            x1[x1 == ""] <- NA
+            x1 <- x1[!is.na(x1)]
+            x2 <- trimws(x$longname)
+            x2[x2 == ""] <- NA
+            x2 <- x2[!is.na(x2)]
+            x3 <- trimws(x$source)
+            x3[x3 == ""] <- NA
+            x3 <- x3[!is.na(x3)]
+            x4 <- trimws(x$iridl)
+            x4[x4 == ""] <- NA
+            x4 <- x4[!is.na(x4)]
+            x4 <- as.logical(x4)
+            if(length(x4) == 0) x4 <- FALSE
+            x5 <- trimws(x$registration)
+            x5[x5 == ""] <- NA
+            x5 <- x5[!is.na(x5)]
+            if(length(x5) == 0) x5 <- ""
+
+            list(x1 = x1, x2 = x2, x3 = x3,
+                x4 = x4, x5 = x5)
+        })
+        x1 <- sapply(xx, '[[', 'x1')
+        x2 <- sapply(xx, '[[', 'x2')
+        x3 <- lapply(xx, '[[', 'x3')
+        x4 <- sapply(xx, '[[', 'x4')
+        x5 <- sapply(xx, '[[', 'x5')
+
+        list(name = x1, longname = x2,
+             source = x3, iridl = x4,
+             registration = x5)
+    })
+    names(rfetmp) <- rfeProds
+
+    .cdtData$EnvData$rfeProds <- rfetmp
 }
 
 ################################################
@@ -310,6 +141,9 @@ download_RFE <- function(){
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtDownloadRFE_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    ## load rfe products
+    get_all.rfe.products()
 
     #########
     tt <- tktoplevel()
@@ -362,15 +196,19 @@ download_RFE <- function(){
     #################
 
     RFESrc <- tclVar()
-    rfedata <- rfe.product.list(.cdtData$GalParams$tstep, .cdtData$GalParams$minhour)
+    rfedata <- rfe.product.list(.cdtData$GalParams$tstep,
+                                .cdtData$GalParams$minhour)
     CbRFEVAL <- rfedata$cbname
     RFEVAL <- rfedata$name
     tclvalue(RFESrc) <- CbRFEVAL[RFEVAL %in% .cdtData$GalParams$rfe.src]
 
     #################
 
-    need.pwd <- rfe.need.usrpwd(.cdtData$GalParams$rfe.src)
-    statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
+    need.pwd <- rfe.need.usrpwd(.cdtData$GalParams$rfe.src,
+                                .cdtData$GalParams$tstep,
+                                .cdtData$GalParams$minhour)
+    stateusr <- if(need.pwd$usrpwd) "normal" else "disabled"
+    statepwd <- need.pwd$statepwd
 
     url.log <- tclVar(need.pwd$urllog)
     username <- tclVar(.cdtData$GalParams$login$usr)
@@ -378,7 +216,10 @@ download_RFE <- function(){
 
     #################
 
-    if(rfe.iridl.ulrs(.cdtData$GalParams$rfe.src, .cdtData$GalParams$tstep)){
+    is_iridl <- rfe.iridl.ulrs(.cdtData$GalParams$rfe.src,
+                               .cdtData$GalParams$tstep,
+                               .cdtData$GalParams$minhour)
+    if(is_iridl){
         stateiridl <- "normal"
         valiridl <- .cdtData$GalParams$iridl.src
     }else{
@@ -386,6 +227,33 @@ download_RFE <- function(){
         valiridl <- FALSE
     }
     iridl.src <- tclVar(valiridl)
+
+    #################
+
+    chirps_data <- .cdtData$GalParams$rfe.src %in% c("chirp-gb", "chirpsv2-gb") &&
+                   !.cdtData$GalParams$iridl.src
+    chirps.global <- tclVar(.cdtData$GalParams$chirps.global)
+    ##
+    fews_iridl <- .cdtData$GalParams$rfe.src %in% c("arc2-af", "rfev2-af", "rfev2-sa") &&
+                  .cdtData$GalParams$tstep %in% c("dekadal", "monthly")
+    if(fews_iridl){
+        stateiridl <- "disabled"
+        tclvalue(iridl.src) <- TRUE
+    }
+    ##
+    fewsdaily_cpc <- .cdtData$GalParams$rfe.src %in% c("arc2-af", "rfev2-af") &&
+                     .cdtData$GalParams$tstep == "daily" &&
+                     !.cdtData$GalParams$iridl.src
+    fewsDailyCB <- c('Binary', 'GeoTIFF')
+    fewsDailyVAL <- c('bin', 'tif')
+    fewsAFdaily.type <- tclVar()
+    tclvalue(fewsAFdaily.type) <- fewsDailyCB[fewsDailyVAL %in% .cdtData$GalParams$fewsAFdaily.type]
+
+    fewsdaily_fun <- function(frame){
+        txt.fews_type <- tklabel(frame, text = lang.dlg[['label']][['16']], anchor = 'w', justify = 'left')
+        cb.fews_type <- ttkcombobox(frame, values = fewsDailyCB, textvariable = fewsAFdaily.type, justify = 'center', width = 9)
+        tkgrid(txt.fews_type, cb.fews_type)
+    }
 
     #################
 
@@ -398,25 +266,46 @@ download_RFE <- function(){
     txt.mhI <- tklabel(frRFE, text = tclvalue(minhour.txtVar), textvariable = minhour.txtVar, anchor = 'w', justify = 'left')
     bt.range <- ttkbutton(frRFE, text = lang.dlg[['button']][['3']])
 
+    chk.iridl <- tkcheckbutton(frRFE, variable = iridl.src, text = lang.dlg[['label']][['14']], anchor = 'w', justify = 'left', state = stateiridl)
+
+    ####
+    chk.chirps_global <- tkcheckbutton(frRFE, variable = chirps.global, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
+
+    frFEWSdaily <- tkframe(frRFE)
+    fewsdaily_fun(frFEWSdaily)
+
+    ####
     txt.log1 <- tklabel(frRFE, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
     txt.log2 <- tklabel(frRFE, text = tclvalue(url.log), textvariable = url.log, anchor = 'w', justify = 'left')
 
+    ####
+    fgKolRegistr <- as.character(tkcget(txt.log2, '-foreground'))
+    bgKolRegistr <- as.character(tkcget(txt.log2, '-background'))
+    if(need.pwd$usrpwd){
+        fgKol <- "blue"
+        bgKol <- "white"
+    }else{
+        fgKol <- fgKolRegistr
+        bgKol <- bgKolRegistr
+    }
+    tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
+
+    ####
     frUSRPWD <- tkframe(frRFE)
     txt.usr <- tklabel(frUSRPWD, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
-    en.usr <- tkentry(frUSRPWD, textvariable = username, state = statepwd, width = largeur4, justify = "left")
+    en.usr <- tkentry(frUSRPWD, textvariable = username, state = stateusr, width = largeur4, justify = "left")
     txt.pwd <- tklabel(frUSRPWD, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
     en.pwd <- tkentry(frUSRPWD, textvariable = password, show = "*", state = statepwd, width = largeur5, justify = "left")
 
     bt.info <- ttkbutton(frRFE, text = lang.dlg[['button']][['4']])
-
-    chk.iridl <- tkcheckbutton(frRFE, variable = iridl.src, text = lang.dlg[['label']][['14']], anchor = 'w', justify = 'left', state = stateiridl)
+    bt.tcover <- ttkbutton(frRFE, text = lang.dlg[['button']][['5']])
 
     #################
 
     tkconfigure(bt.range, command = function(){
         tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep, TRUE)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -426,6 +315,44 @@ download_RFE <- function(){
         src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
         urls <- rfe.product.source(src, tstep, minhour)
         utils::browseURL(paste0('file://', urls))
+    })
+
+    tkconfigure(bt.tcover, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(.cdtEnv$tcl$main$win)
+        tcl('update')
+
+        .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        .cdtData$GalParams$rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+        .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        .cdtData$GalParams$iridl.src <- switch(tclvalue(iridl.src), '0' = FALSE, '1' = TRUE)
+
+        .cdtData$GalParams$chirps.global <- switch(tclvalue(chirps.global), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$fewsAFdaily.type <- fewsDailyVAL[fewsDailyCB %in% trimws(tclvalue(fewsAFdaily.type))]
+
+        .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
+        .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
+
+        if(testConnection()){
+            Insert.Messages.Out(lang.dlg[['message']][['9']], TRUE, "i")
+            ret <- try(exec.check_coverage_RFE(), silent = TRUE)
+            if(!inherits(ret, "try-error")){
+                if(is.null(ret$end)){
+                    msg <- paste(ret$name, ret$timestep)
+                    Insert.Messages.Out(msg, TRUE, "e")
+                    Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, "e")
+                }else{
+                    Insert.Messages.Out(lang.dlg[['message']][['11']], TRUE, "s")
+                }
+            }else{
+                Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), TRUE, "e")
+                Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, "e")
+            }
+        }else{
+            Insert.Messages.Out(lang.dlg[['message']][['2']], format = TRUE)
+            return(NULL)
+        }
     })
 
     #################
@@ -447,13 +374,19 @@ download_RFE <- function(){
 
     tkgrid(bt.range, row = 2, column = 4, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(txt.log1, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(txt.log2, row = 4, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(frUSRPWD, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(chk.iridl, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
 
-    tkgrid(bt.info, row = 6, column = 3, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
+    ####
+    if(chirps_data) tkgrid(chk.chirps_global, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+    if(fewsdaily_cpc) tkgrid(frFEWSdaily, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
 
-    tkgrid(chk.iridl, row = 7, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+    ####
+    tkgrid(txt.log1, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(txt.log2, row = 5, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frUSRPWD, row = 6, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(bt.info, row = 7, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(bt.tcover, row = 7, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
     helpWidget(cb.tres, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(cb.mhI, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -463,7 +396,6 @@ download_RFE <- function(){
     ######################
 
     tkbind(cb.tres, "<<ComboboxSelected>>", function(){
-        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
         tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
         minhour.val <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
@@ -507,16 +439,28 @@ download_RFE <- function(){
         tkconfigure(cb.sat, values = CbRFEVAL)
         if(!trimws(tclvalue(RFESrc)) %in% CbRFEVAL) tclvalue(RFESrc) <- CbRFEVAL[1]
 
+        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+
         ########
-        need.pwd <- rfe.need.usrpwd(rfe.src)
-        statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
+        need.pwd <- rfe.need.usrpwd(rfe.src, tstep, minhour.val)
+        stateusr <- if(need.pwd$usrpwd) "normal" else "disabled"
+        statepwd <- need.pwd$statepwd
 
         tclvalue(url.log) <- need.pwd$urllog
-        tkconfigure(en.usr, state = statepwd)
+        tkconfigure(en.usr, state = stateusr)
         tkconfigure(en.pwd, state = statepwd)
 
+        if(need.pwd$usrpwd){
+            fgKol <- "blue"
+            bgKol <- "white"
+        }else{
+            fgKol <- fgKolRegistr
+            bgKol <- bgKolRegistr
+        }
+        tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
+
         ########
-        if(rfe.iridl.ulrs(rfe.src, tstep)){
+        if(rfe.iridl.ulrs(rfe.src, tstep, minhour.val)){
             stateiridl <- "normal"
             valiridl <- tclvalue(iridl.src)
         }else{
@@ -525,12 +469,37 @@ download_RFE <- function(){
         }
         tclvalue(iridl.src) <- valiridl
         tkconfigure(chk.iridl, state = stateiridl)
+
+        ########
+        chirps_data <- rfe.src %in% c("chirp-gb", "chirpsv2-gb") &&
+                       tclvalue(iridl.src) == "0"
+
+        tkdestroy(chk.chirps_global)
+        if(chirps_data){
+            chk.chirps_global <<- tkcheckbutton(frRFE, variable = chirps.global, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
+            tkgrid(chk.chirps_global, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        }
+        ####
+        fews_iridl <- rfe.src %in% c("arc2-af", "rfev2-af", "rfev2-sa") &&
+                      tstep %in% c("dekadal", "monthly")
+        if(fews_iridl){
+            tclvalue(iridl.src) <- TRUE
+            tkconfigure(chk.iridl, state = 'disabled')
+        }
+        ####
+        fewsdaily_cpc <- rfe.src %in% c("arc2-af", "rfev2-af") &&
+                         tstep == "daily" && tclvalue(iridl.src) == "0"
+        tkdestroy(frFEWSdaily)
+        if(fewsdaily_cpc){
+            frFEWSdaily <<- tkframe(frRFE)
+            fewsdaily_fun(frFEWSdaily)
+            tkgrid(frFEWSdaily, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        }
     })
 
     ####
     tkbind(cb.mhI, "<<ComboboxSelected>>", function(){
         tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
-        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
         minhour.val <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
         ########
@@ -541,30 +510,53 @@ download_RFE <- function(){
         tkconfigure(cb.sat, values = CbRFEVAL)
         if(!trimws(tclvalue(RFESrc)) %in% CbRFEVAL) tclvalue(RFESrc) <- CbRFEVAL[1]
 
+        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+
         ########
-        need.pwd <- rfe.need.usrpwd(rfe.src)
-        statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
+        need.pwd <- rfe.need.usrpwd(rfe.src, tstep, minhour.val)
+        stateusr <- if(need.pwd$usrpwd) "normal" else "disabled"
+        statepwd <- need.pwd$statepwd
 
         tclvalue(url.log) <- need.pwd$urllog
-        tkconfigure(en.usr, state = statepwd)
+        tkconfigure(en.usr, state = stateusr)
         tkconfigure(en.pwd, state = statepwd)
+
+        if(need.pwd$usrpwd){
+            fgKol <- "blue"
+            bgKol <- "white"
+        }else{
+            fgKol <- fgKolRegistr
+            bgKol <- bgKolRegistr
+        }
+        tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
     })
 
     ####
     tkbind(cb.sat, "<<ComboboxSelected>>", function(){
         rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
         tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
         ########
-        need.pwd <- rfe.need.usrpwd(rfe.src)
-        statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
+        need.pwd <- rfe.need.usrpwd(rfe.src, tstep, minhour)
+        stateusr <- if(need.pwd$usrpwd) "normal" else "disabled"
+        statepwd <- need.pwd$statepwd
 
         tclvalue(url.log) <- need.pwd$urllog
-        tkconfigure(en.usr, state = statepwd)
+        tkconfigure(en.usr, state = stateusr)
         tkconfigure(en.pwd, state = statepwd)
 
+        if(need.pwd$usrpwd){
+            fgKol <- "blue"
+            bgKol <- "white"
+        }else{
+            fgKol <- fgKolRegistr
+            bgKol <- bgKolRegistr
+        }
+        tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
+
         ########
-        if(rfe.iridl.ulrs(rfe.src, tstep)){
+        if(rfe.iridl.ulrs(rfe.src, tstep, minhour)){
             stateiridl <- "normal"
             valiridl <- tclvalue(iridl.src)
         }else{
@@ -573,6 +565,83 @@ download_RFE <- function(){
         }
         tclvalue(iridl.src) <- valiridl
         tkconfigure(chk.iridl, state = stateiridl)
+
+        ########
+        chirps_data <- rfe.src %in% c("chirp-gb", "chirpsv2-gb") &&
+                       tclvalue(iridl.src) == "0"
+
+        tkdestroy(chk.chirps_global)
+        if(chirps_data){
+            chk.chirps_global <<- tkcheckbutton(frRFE, variable = chirps.global, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
+            tkgrid(chk.chirps_global, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        }
+        ####
+        fews_iridl <- rfe.src %in% c("arc2-af", "rfev2-af", "rfev2-sa") &&
+                      tstep %in% c("dekadal", "monthly")
+        if(fews_iridl){
+            tclvalue(iridl.src) <- TRUE
+            tkconfigure(chk.iridl, state = 'disabled')
+        }
+        ####
+        fewsdaily_cpc <- rfe.src %in% c("arc2-af", "rfev2-af") &&
+                         tstep == "daily" && tclvalue(iridl.src) == "0"
+        tkdestroy(frFEWSdaily)
+        if(fewsdaily_cpc){
+            frFEWSdaily <<- tkframe(frRFE)
+            fewsdaily_fun(frFEWSdaily)
+            tkgrid(frFEWSdaily, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        }
+    })
+
+    tkbind(chk.iridl, "<Button-1>", function(){
+        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        chirps_data <- rfe.src %in% c("chirp-gb", "chirpsv2-gb")
+
+        if(chirps_data){
+            if(tstep != 'pentad'){
+                tkdestroy(chk.chirps_global)
+            }
+            if(tclvalue(iridl.src) == "1"){
+                chk.chirps_global <<- tkcheckbutton(frRFE, variable = chirps.global, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
+                tkgrid(chk.chirps_global, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+            }
+        }
+        #####
+        fewsdaily_cpc <- rfe.src %in% c("arc2-af", "rfev2-af") && tstep == "daily"
+        if(fewsdaily_cpc){
+            tkdestroy(frFEWSdaily)
+            if(tclvalue(iridl.src) == "1"){
+                frFEWSdaily <<- tkframe(frRFE)
+                fewsdaily_fun(frFEWSdaily)
+                tkgrid(frFEWSdaily, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+            }
+        }
+    })
+
+    ####
+    tkbind(txt.log2, "<Button-1>", function(){
+        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        minhour.val <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        need.pwd <- rfe.need.usrpwd(rfe.src, tstep, minhour.val)
+        if(need.pwd$usrpwd){
+            utils::browseURL(need.pwd$urllog)
+        }
+    })
+
+    tkbind(txt.log2, "<Enter>", function(){
+        rfe.src <- RFEVAL[CbRFEVAL %in% trimws(tclvalue(RFESrc))]
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        minhour.val <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        need.pwd <- rfe.need.usrpwd(rfe.src, tstep, minhour.val)
+        if(need.pwd$usrpwd){
+            tkconfigure(txt.log2, relief = 'groove', borderwidth = 2, cursor = 'hand2')
+        }
+    })
+
+    tkbind(txt.log2, "<Leave>", function(){
+        tkconfigure(txt.log2, relief = 'flat', borderwidth = 0, cursor = '')
     })
 
     ###################################################
@@ -666,6 +735,9 @@ download_RFE <- function(){
             .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             .cdtData$GalParams$iridl.src <- switch(tclvalue(iridl.src), '0' = FALSE, '1' = TRUE)
 
+            .cdtData$GalParams$chirps.global <- switch(tclvalue(chirps.global), '0' = FALSE, '1' = TRUE)
+            .cdtData$GalParams$fewsAFdaily.type <- fewsDailyVAL[fewsDailyCB %in% trimws(tclvalue(fewsAFdaily.type))]
+
             .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
             .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
 
@@ -681,6 +753,7 @@ download_RFE <- function(){
             if(testConnection()){
                 Insert.Messages.Out(lang.dlg[['message']][['3']], TRUE, "i")
                 ret <- try(exec.download_RFE(), silent = TRUE)
+                # ret <- 0
                 if(!inherits(ret, "try-error")){
                     if(ret == 0)
                         Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, "s")
@@ -690,6 +763,8 @@ download_RFE <- function(){
                         Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "w")
                     if(ret == -2)
                         Insert.Messages.Out(lang.dlg[['message']][['8']], TRUE, "w")
+                    if(ret == -3)
+                        Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "e")
                 }else{
                     Insert.Messages.Out(gsub('[\r\n]', '', ret[1]), TRUE, "e")
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "e")

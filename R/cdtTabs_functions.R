@@ -119,6 +119,7 @@ Display_Output_Console_Tab <- function(out2disp, title, FUN = print){
 ########################################################################
 
 ## Update Open Tab data
+#' @exportS3Method NULL
 update.OpenTabs <- function(type, data){
     ntab <- length(.cdtData$OpenTab$Type)
     .cdtData$OpenTab$Type[[ntab + 1]] <- type

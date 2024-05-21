@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<frame_box>
+    <widget>
+        <label id="1">
+            <text lang="en"> Zoom </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Zoom In </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom In </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Zoom Out </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Out </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Zoom Area </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Area </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Pan Tool </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Pan Tool </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Redraw Map </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Redraw Map </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Zoom Reset </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Zoom Reset </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Longitude min not valid </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Longitude max not valid </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Latitude min not valid </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Latitude max not valid </text>
+        </content>
+    </message>
+</frame_box>

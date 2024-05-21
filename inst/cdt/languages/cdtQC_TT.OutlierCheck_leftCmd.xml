@@ -42,15 +42,6 @@
         <checkbutton id="1">
             <text lang="en"> Load existing QC session </text>
         </checkbutton>
-        <checkbutton id="2">
-            <text lang="en"> Add Shapefile to Map </text>
-        </checkbutton>
-        <checkbutton id="3">
-            <text lang="en"> Add DEM to map </text>
-        </checkbutton>
-        <checkbutton id="4">
-            <text lang="en"> Add gridded data to map </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> Time step of input data </text>
         </label>
@@ -92,9 +83,6 @@
         </label>
         <label id="12">
             <text lang="en"> Invalid temperature data </text>
-        </label>
-        <label id="13">
-            <text lang="en"> Directory of the netCDF files </text>
         </label>
     </widget>
     <help>
@@ -245,12 +233,6 @@
         </content>
         <content id="6">
             <text lang="en"> not found </text>
-        </content>
-        <content id="7">
-            <text lang="en"> Unable to read DEM data </text>
-        </content>
-        <content id="8">
-            <text lang="en"> No sample data found </text>
         </content>
         <content id="9">
             <text lang="en"> Unable to save table </text>

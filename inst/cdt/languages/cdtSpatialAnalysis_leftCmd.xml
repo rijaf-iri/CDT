@@ -505,7 +505,7 @@
             <text lang="en"> No analysis outputs found </text>
         </content>
         <content id="26">
-            <text lang="en"> The old version of saved analysis is no longer compatible with this new version. Please redo your analysis </text>
+            <text lang="en"> The old version of saved analysis is no longer compatible with CDT version 8.x and higher. Please redo your analysis </text>
         </content>
     </message>
 </panel_cmd>

@@ -64,11 +64,39 @@ preview.data.nc <- function(parent.win, openncf){
     }
 
     ######
+
     print.nc <- vector(mode = 'character', length = 0)
     print.nc[[1]] <- paste("file", basename(openncf), "has", ncdim, "dimensions:")
-    for(i in 1:ncdim) print.nc[[i + 1]] <- paste(nc$dim[[i]]$name, "  Size:", nc$dim[[i]]$len)
+    for(i in 1:ncdim){
+        print.nc[[i + 1]] <- paste0(nc$dim[[i]]$name, "\tSize: ", nc$dim[[i]]$len,
+                                "\n\tunits: ", nc$dim[[i]]$units,
+                                local({
+                                    longname <- paste0("\n\tlong_name: ", nc$dim[[i]]$name)
+
+                                    long_name1 <- ncdf4::ncatt_get(nc, nc$dim[[i]]$name, 'long_name')
+                                    long_name2 <- ncdf4::ncatt_get(nc, nc$dim[[i]]$name, 'longname')
+                                    long_name3 <- ncdf4::ncatt_get(nc, nc$dim[[i]]$name, 'LongName')
+                                    long_name <- list(long_name1, long_name2, long_name3)
+                                    nlong <- sapply(long_name, length) > 0
+                                    if(any(nlong)){
+                                        long_name <- long_name[nlong]
+                                        hasatt <- sapply(long_name, '[[', 'hasatt')
+                                        if(any(hasatt)){
+                                            long_name <- long_name[hasatt]
+                                            longname <- paste0("\n\tlong_name: ", long_name[[1]]$value)
+                                        }
+                                    }
+                                    longname
+                                }),
+                                local({
+                                    if(!is.null(nc$dim[[i]]$calendar))
+                                        paste0("\n\tcalendar: ", nc$dim[[i]]$calendar)
+                                })
+                               )
+    }
     print.nc[[ncdim + 2]] <- paste("----------------------------------------")
     print.nc[[ncdim + 3]] <- paste("file", basename(openncf), "has", ncvar, "variables:")
+
     for(i in 1:ncvar){
         nd <- nc$var[[i]]$ndims
         dimstring <- '['
@@ -79,8 +107,12 @@ preview.data.nc <- function(parent.win, openncf){
             }
         }
         dimstring <- paste0(dimstring, '] ')
-        print.nc[[i + ncdim + 3]] <- paste0(nc$var[[i]]$prec, ' ', nc$var[[i]]$name, dimstring,
-                                ' Longname:', nc$var[[i]]$longname, ' Missval:', nc$var[[i]]$missval)
+        print.nc[[i + ncdim + 3]] <- paste0(nc$var[[i]]$prec, '\t', nc$var[[i]]$name, dimstring,
+                                            '\n\tName: ', nc$var[[i]]$name,
+                                            '\n\tPrecision: ', nc$var[[i]]$prec,
+                                            '\n\tUnits: ', nc$var[[i]]$units,
+                                            '\n\tLongname: ', nc$var[[i]]$longname,
+                                            '\n\tMissval: ', nc$var[[i]]$missval)
     }
 
     ####################################

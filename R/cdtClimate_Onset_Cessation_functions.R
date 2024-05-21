@@ -32,8 +32,8 @@ Season.Onset <- function(dates, precip, evapo = NULL, onset.pars, min.frac)
     MATdeb <- MATdeb[, !colID, drop = FALSE]
     if(method == 2) ETPdeb <- ETPdeb[, !colID, drop = FALSE]
     if(ncol(MATdeb) == 0){
-        # return(rep(NA, initCol))
-        return(rep(dates[length(dates)], initCol))
+        return(rep(NA, initCol))
+        # return(rep(dates[length(dates)], initCol))
     }
 
     MATdeb[is.na(MATdeb)] <- 0
@@ -53,8 +53,8 @@ Season.Onset <- function(dates, precip, evapo = NULL, onset.pars, min.frac)
     istotal <- istotal[, !colID, drop = FALSE]
     MATdeb <- MATdeb[, !colID, drop = FALSE]
     if(ncol(istotal) == 0){
-        # return(rep(NA, initCol))
-        return(rep(dates[length(dates)], initCol))
+        return(rep(NA, initCol))
+        # return(rep(dates[length(dates)], initCol))
     }
 
     ## remove 1st day onset
@@ -66,10 +66,10 @@ Season.Onset <- function(dates, precip, evapo = NULL, onset.pars, min.frac)
     if(ncol(istotal) == 0){
         res <- rep(NA, initCol)
         if(length(colDEB) > 0) res[colDEB] <- 1
-        # return(dates[res])
-        ons <- dates[res]
-        ons[is.na(ons)] <- dates[length(dates)]
-        return(ons)
+        return(dates[res])
+        # ons <- dates[res]
+        # ons[is.na(ons)] <- dates[length(dates)]
+        # return(ons)
     }
 
     onset <- lapply(seq(ncol(istotal)), function(j){
@@ -116,15 +116,16 @@ Season.Onset <- function(dates, precip, evapo = NULL, onset.pars, min.frac)
     if(length(colDEB) > 0) res[colDEB] <- 1
     res[colretenu] <- onset
 
-    # if(all(is.na(res))) res else dates[res]
-    if(all(is.na(res))){
-        ons <- rep(dates[length(dates)], initCol)
-    }else{
-        ons <- dates[res]
-        ons[is.na(ons)] <- dates[length(dates)]
-    }
+    if(all(is.na(res))) res else dates[res]
 
-    return(ons)
+    # if(all(is.na(res))){
+    #     ons <- rep(dates[length(dates)], initCol)
+    # }else{
+    #     ons <- dates[res]
+    #     ons[is.na(ons)] <- dates[length(dates)]
+    # }
+
+    # return(ons)
 }
 
 ## Onset date wrapper

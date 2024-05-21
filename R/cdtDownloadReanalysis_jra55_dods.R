@@ -1,5 +1,41 @@
 
-jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
+jra55_dods.coverage.rda.ucar <- function(GalParams){
+    opts <- get_reanalysis.variables('jra55_dods_options.csv')
+    opts <- opts[[GalParams$var]]
+
+    jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/aggregations/g/ds628.0"
+    dods_page <- paste0(jra_dods, "/", opts$dap_path, ".html")
+    dds <- xml2::read_html(dods_page)
+    dds <- xml2::xml_find_all(dds, "//pre")
+    dds <- xml2::xml_text(dds)
+    dds <- strsplit(dds, '\n')[[1]]
+
+    if(opts$search_string == 1) req_search <- "Float64 reftime\\[reftime"
+    if(opts$search_string == 2) req_search <- "Float64 time\\[time"
+    if(opts$time_origin == 1) time_origin <- "1957-12-31T18:00:00Z"
+    if(opts$time_origin == 2) time_origin <- "1958-01-01T00:00:00Z"
+
+    isrch <- grep(req_search, dds)[1]
+    last_incr <- dds[isrch]
+    last_incr <- stringr::str_match(last_incr, "\\[\\s*(.*?)\\s*\\]")
+    last_incr <- last_incr[ ,2]
+    last_incr <- trimws(strsplit(last_incr, "=")[[1]][2])
+    last_incr <- as.numeric(last_incr)
+
+    origin <- as.POSIXct(time_origin, tz = "GMT", format = "%Y-%m-%dT%H:%M:%SZ")
+
+    last_time <- origin + 24 * 3600 * last_incr/opts$time_factor
+    last_time <- last_time - 3 * 3600
+
+    out <- list(name = "Japanese 55-year Reanalysis", timestep = "3 hourly")
+
+    out$end <- format(last_time, '%Y-%m-%d %H:%M:%S')
+    out$start <- format(origin, '%Y-%m-%d %H:%M:%S')
+
+    return(out)
+}
+
+jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 8, GUI = TRUE, verbose = TRUE){
     jracrd0 <- file.path(.cdtDir$Root, "data", "JRA55_Coords.rds")
     jra.crd <- readRDS(jracrd0)
     xlon <- jra.crd$lon
@@ -26,191 +62,19 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     #############
 
-    jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/aggregations/g/ds628.0"
-    jra_var <- switch(GalParams$var,
-                    "tmax" = list(pth = "31/TwoD", 
-                                  var = "Maximum_temperature_height_above_ground_3_Hour",
-                                  origin = 1, fac = 4, height = 1,
-                                  type = 1, 
-                                  timeoffset = 1, varoffset = 1, search = 1),
-                    "tmin" = list(pth = "31/TwoD", 
-                                  var = "Minimum_temperature_height_above_ground_3_Hour",
-                                  origin = 1, fac = 4, height = 1,
-                                  type = 1, 
-                                  varoffset = 1, timeoffset = 1, search = 1),
-                    "tair" = list(pth = "27/TwoD",
-                                  var = "Temperature_height_above_ground",
-                                  origin = 1, fac = 4, height = 1,
-                                  type = 2, 
-                                  varoffset = 1, timeoffset = 1, search = 1),
-                    "wind" = list(pth = "27/TwoD",
-                                  var = c("u-component_of_wind_height_above_ground",
-                                          "v-component_of_wind_height_above_ground"),
-                                  origin = 1, fac = 4, height = c(1, 1),
-                                  type = 2, 
-                                  varoffset = c(1, 1), timeoffset = 1, search = 1),
-                    "hum" = list(pth = "27/TwoD",
-                                 var = c("Relative_humidity_height_above_ground",
-                                         "Specific_humidity_height_above_ground"),
-                                  origin = 1, fac = 4, height = c(1, 1),
-                                  type = 2, 
-                                  varoffset = c(1, 1), timeoffset = 1, search = 1),
-                    "pres" = list(pth = "27/TwoD", var = "Pressure_surface",
-                                  origin = 1, fac = 4, height = 0,
-                                  type = 2, 
-                                  varoffset = 1, timeoffset = 1, search = 1),
-                    "prmsl" = list(pth = "27/TwoD", 
-                                   var = "Pressure_reduced_to_MSL_msl",
-                                  origin = 1, fac = 4, height = 0,
-                                  type = 2, 
-                                  varoffset = 1, timeoffset = 1, search = 1),
-                    "cloud" =  list(pth = "27/TwoD",
-                                    var = c("Total_cloud_cover_layer_between_two_isobaric_layer",
-                                            "High_cloud_cover_layer_between_two_isobaric_layer",
-                                            "Medium_cloud_cover_layer_between_two_isobaric_layer",
-                                            "Low_cloud_cover_layer_between_two_isobaric_layer"),
-                                  origin = 1, fac = 4, height = c(1, 1, 1, 1),
-                                  type = 2, 
-                                  varoffset = c(1, 1, 1, 1), timeoffset = 1, search = 1),
-                    "rad_avg" = list(pth = "21/TP",
-                                     var = c("Clear_sky_downward_longwave_radiation_flux_surface_3_Hour_Average",
-                                             "Clear_sky_downward_solar_radiation_flux_surface_3_Hour_Average",
-                                             "Clear_sky_upward_longwave_radiation_flux_atmosphere_top_3_Hour_Average",
-                                             "Clear_sky_upward_solar_radiation_flux_surface_3_Hour_Average",
-                                             "Clear_sky_upward_solar_radiation_flux_atmosphere_top_3_Hour_Average",
-                                             "Downward_longwave_radiation_flux_surface_3_Hour_Average",
-                                             "Downward_solar_radiation_flux_surface_3_Hour_Average",
-                                             "Downward_solar_radiation_flux_atmosphere_top_3_Hour_Average",
-                                             "Upward_longwave_radiation_flux_surface_3_Hour_Average",
-                                             "Upward_longwave_radiation_flux_atmosphere_top_3_Hour_Average",
-                                             "Upward_solar_radiation_flux_surface_3_Hour_Average",
-                                             "Upward_solar_radiation_flux_atmosphere_top_3_Hour_Average"),
-                                  origin = 2, fac = 8, height = rep(0, 12),
-                                  type = 0, 
-                                  varoffset = rep(0, 12), timeoffset = 0, search = 2),
-                    "prcp" = list(pth = "21/TP",
-                                  var = c("Total_precipitation_surface_3_Hour_Average",
-                                          "Large_scale_precipitation_surface_3_Hour_Average",
-                                          "Convective_precipitation_surface_3_Hour_Average"),
-                                  origin = 2, fac = 8, height = c(0, 0, 0),
-                                  type = 0, 
-                                  varoffset = c(0, 0, 0), timeoffset = 0, search = 2),
-                    "evp" = list(pth = "21/TP",
-                                 var = "Evaporation_surface_3_Hour_Average",
-                                 origin = 2, fac = 8, height = 0,
-                                 type = 0, 
-                                 varoffset = 0, timeoffset = 0, search = 2),
-                    "pet" = list(pth = "25/TP",
-                                 var = "Evapotranspiration_surface_3_Hour_Average",
-                                 origin = 2, fac = 8, height = 0,
-                                 type = 0, 
-                                 varoffset = 0, timeoffset = 0, search = 2),
-                    "runoff" = list(pth = "25/TP",
-                                    var = c("Water_run-off_surface_3_Hour_Average",
-                                            "Water_run-off_bottom_of_model_3_Hour_Average"),
-                                    origin = 2, fac = 8, height = c(0, 1),
-                                    type = 0, 
-                                    varoffset = c(0, 0), timeoffset = 0, search = 2),
-                    "soilm" = list(pth = "16/TwoD",
-                                   var = c("Soil_wetness_underground_layer",
-                                           "Mass_concentration_of_condensed_water_in_soil_underground_layer"),
-                                   origin = 1, fac = 4, height = c(2, 2),
-                                   type = 2, 
-                                   varoffset = c(1, 1), timeoffset = 1, search = 1),
-                    "soilt" = list(pth = "16/TwoD", 
-                                   var = "Soil_temperature_entire_soil",
-                                   origin = 1, fac = 4, height = 1,
-                                   type = 2, 
-                                   varoffset = 1, timeoffset = 1, search = 1),
-                    "tsg" = list(pth = "16/TwoD",
-                                 var = "Ground_temperature_surface",
-                                 origin = 1, fac = 4, height = 0,
-                                 type = 2, 
-                                 varoffset = 1, timeoffset = 1, search = 1),
-                    "heat_avg" = list(pth = "21/TP",
-                                      var = c("Latent_heat_flux_surface_3_Hour_Average",
-                                             "Sensible_heat_flux_surface_3_Hour_Average"),
-                                      origin = 2, fac = 8, height = c(0, 0),
-                                      type = 0, 
-                                      varoffset = c(0, 0), timeoffset = 0, search = 2),
-                    "ghflx" = list(pth = "25/TP",
-                                   var = "Ground_heat_flux_surface_3_Hour_Average",
-                                   origin = 2, fac = 8, height = 0,
-                                   type = 0, 
-                                   varoffset = 0, timeoffset = 0, search = 2),
-                    NULL)
+    seq_times <- seq.format.date.time('hourly', GalParams$date.range, 3)
+    if(is.null(seq_times)) return(-2)
+    start <- min(seq_times)
+    end <- max(seq_times)
 
-    if(is.null(jra_var)){
-        Insert.Messages.Out("Unknown variable", TRUE, "e", GUI)
-        return(-2)
-    }
+    ret <- jra55_dods.coverage.rda.ucar(GalParams)
+    origin <- as.POSIXct(ret$start, format = '%Y-%m-%d %H:%M:%S', tz = 'UTC')
+    last_time <- as.POSIXct(ret$end, format = '%Y-%m-%d %H:%M:%S', tz = 'UTC')
 
-    #############
-    query_height <- lapply(jra_var$height, function(i) {
-        out <- NULL
-        if(i == 0) out <- NULL
-        if(i == 1) out <- '[0:1:0]'
-        if(i == 2) out <- '[0:1:2]'
-        out
-    })
-
-    req_search <- NULL
-    if(jra_var$search == 1) req_search <- "Float64 reftime\\[reftime"
-    if(jra_var$search == 2) req_search <- "Float64 time\\[time"
-    time_origin <- NULL
-    if(jra_var$origin == 1) time_origin <- "1957-12-31T18:00:00Z"
-    if(jra_var$origin == 2) time_origin <- "1958-01-01T00:00:00Z"
-
-    ## type = 0, "21/TP", "25/TP"
-    ## type = 1, "31/TwoD"
-    ## type = 2, "16/TwoD", "27/TwoD"
-
-    ## origin = 1, "1957-12-31T18:00:00Z"
-    ## origin = 2, "1958-01-01T00:00:00Z"
-
-    ## search = 1, "Float64 reftime\\[reftime"
-    ## search = 2, "Float64 time\\[time"
-
-    ## height = 0, NULL
-    ## height = 1, [0:1:0]
-    ## height = 2, [0:1:2]
-
-    ## timeoffset = 0, NULL
-    ## timeoffset = 1, [0:1:0]
-
-    ## varoffset = 0, NULL
-    ## varoffset = 1, [0:1:0]
-
-    #############
-
-    dods_page <- paste0(jra_dods, "/", jra_var$pth, ".html")
-    dds <- xml2::read_html(dods_page)
-    dds <- xml2::xml_find_all(dds, "//pre")
-    dds <- xml2::xml_text(dds)
-    dds <- strsplit(dds, '\n')[[1]]
-
-    isrch <- grep(req_search, dds)[1]
-    last_incr <- dds[isrch]
-    last_incr <- stringr::str_match(last_incr, "\\[\\s*(.*?)\\s*\\]")
-    last_incr <- last_incr[ ,2]
-    last_incr <- trimws(strsplit(last_incr, "=")[[1]][2])
-    last_incr <- as.numeric(last_incr)
-
-    #############
-
-    origin <- as.POSIXct(time_origin, tz = "GMT", format = "%Y-%m-%dT%H:%M:%SZ")
-
-    start <- GalParams$date.range[paste0('start.', c('year', 'mon', 'day', 'hour'))]
-    start <- jra55.start.end.time(start)
-    end <- GalParams$date.range[paste0('end.', c('year', 'mon', 'day', 'hour'))]
-    end <- jra55.start.end.time(end)
-
-    last_time <- origin + 24 * 3600 * last_incr/jra_var$fac
-    last_time <- last_time - 3 * 3600
-    lastT <- format(last_time, "%Y-%m-%d %H:%M:%S")
-    msg <- paste("Last date of available data", lastT)
+    msg <- paste("Last date of available data", ret$end)
     if(end > last_time){
-        end <- last_time
+        seq_times <- seq_times[seq_times <= last_time]
+        end <- max(seq_times)
         Insert.Messages.Out(msg, TRUE, "i", GUI)
     }
     if(start > end){
@@ -218,25 +82,39 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
         return(-2)
     }
 
-    if(jra_var$timeoffset == 1){
-        start <- start - 3 * 3600
-        end <- end - 3 * 3600
-    }
+    #############
 
-    seq_times <- seq(start, end, "3 hours")
+    opts <- get_reanalysis.variables('jra55_dods_options.csv')
+    opts <- opts[[GalParams$var]]
+
+    if(opts$timeoffset == 1){
+        # start <- start - 3 * 3600
+        # end <- end - 3 * 3600
+        seq_times <- seq_times  - 3 * 3600
+    }
 
     #############
 
     split_reftime <- sapply(seq_times, function(x){
-        floor(as.numeric(x - origin, units = "days") * jra_var$fac)
+        floor(as.numeric(x - origin, units = "days") * opts$time_factor)
     })
     query_reftime <- sapply(split_reftime, function(x) paste0("[", x, ":", 1, ":", x, "]"))
 
+    query_height <- lapply(opts$var_height, function(i) {
+        out <- NULL
+        if(i == 0) out <- NULL
+        if(i == 1) out <- '[0:1:0]'
+        if(i == 2) out <- '[0:1:2]'
+        out
+    })
+
     #############
+
+    jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/aggregations/g/ds628.0"
 
     urls <- lapply(seq_along(query_reftime), function(j){
         time_h <- as.numeric(format(seq_times[j], '%H'))
-        if(jra_var$timeoffset == 1){
+        if(opts$timeoffset == 1){
             if((time_h %% 2) == 0){
                 query_timeOffset <- '[0:1:0]'
             }else{
@@ -247,12 +125,12 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
         }
 
         sapply(seq_along(query_lon), function(i){
-            dods <- paste0(jra_dods, "/", jra_var$pth, ".ascii")
+            dods <- paste0(jra_dods, "/", opts$dap_path, ".ascii")
             req_time <- paste0("time", query_reftime[j], query_timeOffset)
             req_time <- utils::URLencode(req_time, reserved = TRUE)
 
-            req_var <- sapply(seq_along(jra_var$var), function(v){
-                if(jra_var$varoffset[v] == 1){
+            req_var <- sapply(seq_along(opts$var_name), function(v){
+                if(opts$varoffset[v] == 1){
                     if((time_h %% 2) == 0){
                         query_varOffset <- '[0:1:0]'
                     }else{
@@ -262,7 +140,7 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
                     query_varOffset <- NULL
                 }
 
-                paste0(jra_var$var[v], query_reftime[j], query_varOffset,
+                paste0(opts$var_name[v], query_reftime[j], query_varOffset,
                        query_height[[v]], query_lat, query_lon[[i]])
             })
 
@@ -272,126 +150,17 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
         })
     })
 
-    #############
-
-    longname <- switch(GalParams$var,
-                       "tmax" = "Maximum temperature at 2 m above ground",
-                       "tmin" = "Minimum temperature at 2 m above ground",
-                       "tair" = "Air temperature at 2 m above ground",
-                       "wind" = c("U-wind at 10 m above ground",
-                                  "V-wind at 10 m above ground"),
-                       "hum" = c("Relative humidity at 2 m above ground",
-                                  "Specific humidity at 2 m above ground"),
-                       "pres" = "Pressure at ground or water surface",
-                       "prmsl" = "Pressure reduced to mean sea level",
-                       "cloud" = c("Total cloud cover at 90 - 1100 hPa",
-                                   "High cloud cover at 90 - 500 hPa",
-                                   "Medium cloud cover at 500 - 850 hPa",
-                                   "Low cloud cover at 850 - 1100 hPa"),
-                       "rad_avg" = c("Clear sky downward longwave radiation flux at ground or water surface",
-                                     "Clear sky downward solar radiation flux at ground or water surface",
-                                     "Clear sky upward longwave radiation flux at nominal top of atmosphere",
-                                     "Clear sky upward solar radiation flux at ground or water surface",
-                                     "Clear sky upward solar radiation flux at nominal top of atmosphere",
-                                     "Downward longwave radiation flux at ground or water surface",
-                                     "Downward solar radiation flux at ground or water surface",
-                                     "Downward solar radiation flux at nominal top of atmosphere",
-                                     "Upward longwave radiation flux at ground or water surface",
-                                     "Upward longwave radiation flux at nominal top of atmosphere",
-                                     "Upward solar radiation flux at ground or water surface",
-                                     "Upward solar radiation flux at nominal top of atmosphere"),
-                       "prcp" = c("Total precipitation at ground or water surface",
-                                  "Large scale precipitation at ground or water surface",
-                                  "Convective precipitation at ground or water surface"),
-                       "evp" = " Evaporation at ground or water surface",
-                       "pet" = "Evapotranspiration at ground surface",
-                       "runoff" = c("Water run-off at ground surface",
-                                    "Water run-off at the bottom of land surface model"),
-                       "soilm" = c("Soil wetness at underground layer 1",
-                                   "Soil wetness at underground layer 2",
-                                   "Soil wetness at underground layer 3",
-                                   "Mass concentration of condensed water in soil at underground layer 1",
-                                   "Mass concentration of condensed water in soil at underground layer 2",
-                                   "Mass concentration of condensed water in soil at underground layer 3"),
-                       "soilt" = "Soil temperature at the entire soil layer",
-                       "tsg" = "Ground temperature at ground surface",
-                       "heat_avg" = c("Latent heat flux at ground or water surface",
-                                      "Sensible heat flux at ground or water surface"),
-                       "ghflx" = "Ground heat flux at ground surface",
-                        NULL)
-
-    units <- switch(GalParams$var,
-                    "tmax" = "degC",
-                    "tmin" = "degC",
-                    "tair" = "degC",
-                    "wind" = c('m/s', 'm/s'),
-                    "hum" = c('%', 'kg/kg'),
-                    "pres" = "hPa",
-                    "prmsl" = "hPa",
-                    "cloud" = c('%', '%', '%', '%'),
-                    "rad_avg" = c("W/m2", "W/m2", "W/m2", "W/m2",
-                                  "W/m2", "W/m2", "W/m2", "W/m2",
-                                  "W/m2", "W/m2", "W/m2", "W/m2"),
-                    "prcp" = c("mm", "mm", "mm"),
-                    "evp" = "mm",
-                    "pet" = "mm",
-                    "runoff" = c("mm", "mm"),
-                    "soilm" = c("proportion", "proportion", "proportion",
-                                "kg/m3", "kg/m3", "kg/m3"),
-                    "soilt" = "degC",
-                    "tsg" = "degC",
-                    "heat_avg" = c("W/m2", "W/m2"),
-                    "ghflx" = "W/m2",
-                    NULL)
-
-    convert_units <- switch(GalParams$var,
-                          "tmax" = list(fun = "-", args = list(273.15)),
-                          "tmin" = list(fun = "-", args = list(273.15)),
-                          "tair" = list(fun = "-", args = list(273.15)),
-                          "wind" = NULL,
-                          "hum" = NULL,
-                          "pres" = list(fun = "/", args = list(100)),
-                          "prmsl" = list(fun = "/", args = list(100)),
-                          "cloud" = NULL,
-                          "rad_avg" = NULL,
-                          "prcp" = list(fun = "*", args = list(3/24)),
-                          "evp" = list(fun = "*", args = list(3/24)),
-                          "pet" = list(fun = "*", args = list(0.035 * 3/24)),
-                          "runoff" = list(fun = "*", args = list(3/24)),
-                          "soilm" = NULL,
-                          "soilt" = list(fun = "-", args = list(273.15)),
-                          "tsg" = list(fun = "-", args = list(273.15)),
-                          "heat_avg" = NULL,
-                          "ghflx" = NULL,
-                          NULL)
-
-    name <- switch(GalParams$var,
-                   "wind" = c('ugrd', 'vgrd'),
-                   "hum" = c('rh', 'spfh'),
-                   "cloud" = c('tcdc', 'hcdc', 'mcdc', 'lcdc'),
-                   "rad_avg" = c('csdlf_sfc', 'csdsf_sfc', 'csulf_top', 'csusf_sfc',
-                                 'csusf_top', 'dlwrf_sfc', 'dswrf_sfc', 'dswrf_top',
-                                 'ulwrf_sfc', 'ulwrf_top', 'uswrf_sfc', 'uswrf_top'),
-                   "prcp" = c('ptot', 'plrgscl', 'pconv'),
-                   "runoff" = c('ro_sfc', 'ro_bmod'),
-                   "soilm" = c("soilw_l1", "soilw_l2", "soilw_l3",
-                               "smc_l1", "smc_l2", "smc_l3"),
-                   "heat_avg" = c("lhflx", "lsflx"),
-                   GalParams$var)
-
-    ncpars <- list(name = name, units = units, longname = longname, prec = "float", missval = -9999)
-    pars <- list(nc = ncpars, convert = convert_units, txtvar = jra_var$var,
-                 var = GalParams$var, origin = jra_var$origin,
-                 timetype = jra_var$type, 
-                 timeoffset = jra_var$timeoffset)
+    ncpars <- list(name = opts$nc_name, units = opts$nc_units, longname = opts$nc_longname, prec = "float", missval = -9999)
+    convert_units <- if(is.null(opts$units_fun)) NULL else list(fun = opts$units_fun, args = opts$units_args)
+    pars <- list(nc = ncpars, convert = convert_units, txtvar = opts$var_name,
+                 var = GalParams$var, origin = opts$time_origin,
+                 timetype = opts$type_path, timeoffset = opts$timeoffset)
 
     ######################
 
     data.name <- "JRA-55 3 Hourly"
     dir.name <- "JRA55_3Hr_data"
     outdir <- file.path(GalParams$dir2save, dir.name)
-    dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
-
     outdir <- file.path(outdir, paste0('JRA55_', GalParams$var))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
@@ -407,7 +176,6 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     ret <- cdt.download.data(urls, destfiles, ncfiles_time, nbfile, GUI, verbose,
                              data.name, jra55_dods.download.data, pars = pars)
-
     return(ret)
 }
 
@@ -442,7 +210,25 @@ jra55_dods.download.data <- function(lnk, dest, ncfl, pars, GUI = TRUE){
 jra55_dods.format.data <- function(dest, pars){
     dat <- lapply(dest, jra55_dods.parse.ascii, pars = pars)
     if(length(dest) == 2){
-        ## merge the 2 data (longitude west & east)
+        tmp1 <- dat[[1]]
+        tmp2 <- dat[[2]]
+        nvars <- names(tmp1$var)
+        tmp <- lapply(seq_along(nvars), function(j){
+            x1 <- tmp1$var[[nvars[j]]]
+            x2 <- tmp2$var[[nvars[j]]]
+            lon <- c(x1$lon, x2$lon)
+            lat <- x1$lat
+            xo <- order(lon)
+            lon <- lon[xo]
+            xdat <- lapply(seq_along(x1$data), function(i){
+                y <- rbind(x1$data[[i]], x2$data[[i]])
+                y[xo, , drop = FALSE]
+            })
+            names(xdat) <- names(x1$data)
+            list(lon = lon, lat = lat, data = xdat)
+        })
+        names(tmp) <- nvars
+        dat <- list(time = dat[[1]]$time, var = tmp)
     }else dat <- dat[[1]]
 
     ncdir <- dirname(dest[1])
@@ -538,8 +324,7 @@ jra55_dods.parse.ascii <- function(filetxt, pars){
 
         if(!is.null(pars$convert)){
             tmp <- lapply(tmp, function(x){
-                convert_args <- c(list(x), pars$convert$args)
-                do.call(pars$convert$fun, convert_args)
+                eval_function(pars$convert$fun, pars$convert$args, x)
             })
         }
 

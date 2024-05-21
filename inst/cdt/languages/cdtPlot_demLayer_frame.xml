@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<frame_box>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Add DEM to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Digital Elevation Model </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Unable to read DEM data </text>
+        </content>
+    </message>
+</frame_box>

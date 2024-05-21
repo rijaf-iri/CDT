@@ -91,6 +91,7 @@ create.polygons <- function(x, y1, y2, xs, ys, xe, ye){
 #     polygon(P$x, P$y, col = 'blue', border = 'red')
 # }
 
+#' @exportS3Method NULL
 split.polygons.non_missing <- function(x, y1, y2){
     nl <- length(x)
     seqx <- seq(nl)
@@ -134,6 +135,7 @@ split.polygons.non_missing <- function(x, y1, y2){
 
 ####
 
+#' @exportS3Method NULL
 split.polygons.with_missing <- function(x, y1, y2){
     ixy <- curve.intersects.points(y1, y2)
     nl <- length(x)
@@ -274,6 +276,7 @@ split.polygons.with_missing <- function(x, y1, y2){
 
 ####
 
+#' @exportS3Method NULL
 split.polygons.gradients.with_missing <- function(polys, breaks){
     POLY <- lapply(seq_along(polys), function(j){
         list(do.call(cbind, polys[[j]][c('x','y')]))

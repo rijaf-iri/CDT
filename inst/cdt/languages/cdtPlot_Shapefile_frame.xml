@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<frame_box>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Add Shapefile to Map </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Shapefile </text>
+        </label>
+    </widget>
+</frame_box>

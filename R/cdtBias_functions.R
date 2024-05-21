@@ -126,6 +126,7 @@ extractDistrParams <- function(X, months = 1:12){
     return(pars)
 }
 
+#' @exportS3Method NULL
 quantile.mapping.BGamma <- function(x, pars.stn, pars.rfe, thres){
     res <- x
     p.rfe <- 1 - pars.rfe$prob
@@ -157,6 +158,7 @@ quantile.mapping.BGamma <- function(x, pars.stn, pars.rfe, thres){
 }
 
 
+#' @exportS3Method NULL
 quantile.mapping.BGamma1 <- function(x, pars.stn, pars.rfe, thres){
     # pr <- qmap::pberngamma(x, prob = pars.rfe$prob, scale = pars.rfe$scale, shape = pars.rfe$shape)
     # res <- qmap::qberngamma(pr, prob = pars.stn$prob, scale = pars.stn$scale, shape = pars.stn$shape)
@@ -184,6 +186,7 @@ quantile.mapping.BGamma1 <- function(x, pars.stn, pars.rfe, thres){
     return(res)
 }
 
+#' @exportS3Method NULL
 quantile.mapping.Gauss <- function(x, pars.stn, pars.reanal){
     p.reanal <- x
     ix <- !is.na(x)

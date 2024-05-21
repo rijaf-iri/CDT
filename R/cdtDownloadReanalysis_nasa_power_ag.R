@@ -1,18 +1,56 @@
+nasa_power_ag_daily.coverage <- function(GalParams){
+    r_name <- "NASA Prediction of Worldwide Energy Resources (POWER)"
+    out <- list(name = r_name, timestep = "daily")
 
-nasa_power_ag_daily.download <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
+    today <- Sys.Date()
+    last_mon <- Sys.Date() - 30
+    date1 <- format(last_mon, '%Y%m%d')
+    date2 <- format(today, '%Y%m%d')
+    url <- "https://power.larc.nasa.gov/api/temporal/daily/point"
+    query <- list(parameters = "T2M", community = "AG",
+                  longitude = 47, latitude = -19,
+                  start = date1, end = date2,
+                  format = "JSON")
+    ret <- httr::GET(url, query = query)
+    if(httr::status_code(ret) != 200){
+        Insert.Messages.httr(ret)
+        return(out)
+    }
+    ret <- httr::content(ret)
+    ret <- ret$properties$parameter$T2M
+    dates <- names(ret)
+    ret <- do.call(c, ret)
+    dates <- dates[ret != -999]
+    end_d <- dates[length(dates)]
+    end_d <- as.Date(end_d, '%Y%m%d')
+    out$end <- format(end_d, '%Y-%m-%d')
+    out$start <- "1981-01-01"
+
+    return(out)
+}
+
+nasa_power_ag_daily.download <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
     slon <- c(GalParams$bbox$minlon, GalParams$bbox$maxlon)
     slat <- c(GalParams$bbox$minlat, GalParams$bbox$maxlat)
 
-    if(diff(slon) > 10){
-        slon <- seq(slon[1], slon[2], 10)
+    if(diff(slon) > 8){
+        slon <- seq(slon[1], slon[2], 8)
         if(slon[length(slon)] != GalParams$bbox$maxlon)
             slon <- c(slon, GalParams$bbox$maxlon)
+        nx <- length(slon)
+        if((slon[nx] - slon[nx - 1]) < 2){
+            slon[nx - 1] <- slon[nx - 1] - 2
+        }
     }
 
-    if(diff(slat) > 10){
-        slat <- seq(slat[1], slat[2], 10)
+    if(diff(slat) > 8){
+        slat <- seq(slat[1], slat[2], 8)
         if(slat[length(slat)] != GalParams$bbox$maxlat)
             slat <- c(slat, GalParams$bbox$maxlat)
+        ny <- length(slat)
+        if((slat[ny] - slat[ny - 1]) < 2){
+            slat[ny - 1] <- slat[ny - 1] - 2
+        }
     }
 
     nlon <- length(slon)
@@ -40,31 +78,20 @@ nasa_power_ag_daily.download <- function(GalParams, nbfile = 1, GUI = TRUE, verb
 
     #################
 
-    start <- GalParams$date.range[paste0('start.', c('year', 'mon', 'day'))]
-    start <- daily.start.end.time(start)
-    end <- GalParams$date.range[paste0('end.', c('year', 'mon', 'day'))]
-    end <- daily.start.end.time(end)
-
-    seqDays <- seq(start, end, "day")
+    seqDays <- seq.format.date.time('daily', GalParams$date.range)
+    if(is.null(seqDays)) return(-2)
     query_dates <- format(seqDays, "%Y%m%d")
 
     #################
 
-    nasap_var <- switch(GalParams$var,
-         "wind" = c('WS10M', 'WS10M_MAX', 'WS10M_MIN',
-                    'WS10M_RANGE', 'WD10M',
-                    'WS50M', 'WS50M_MAX', 'WS50M_MIN',
-                    'WS50M_RANGE', 'WD50M', 'WS2M'),
-         "pres" = "PS",
-         "hum" = c('QV2M', 'RH2M'), 
-         "prcp" = "PRECTOTCORR",
-         "temp" = c('T2M', 'T2MDEW', 'T2MWET', 'TS',
-                    'T2M_RANGE', 'T2M_MAX', 'T2M_MIN'),
-         "rad" = c('ALLSKY_SFC_SW_DWN', 'CLRSKY_SFC_SW_DWN',
-                   'ALLSKY_KT', 'ALLSKY_SFC_LW_DWN', 'ALLSKY_SFC_PAR_TOT',
-                   'CLRSKY_SFC_PAR_TOT', 'ALLSKY_SFC_UVA',
-                   'ALLSKY_SFC_UVB', 'ALLSKY_SFC_UV_INDEX'),
-        NULL)
+    opts <- get_reanalysis.variables('nasa_power_ag_options.csv')
+    opts <- opts[[GalParams$var]]
+
+    opts$convert <- NULL
+    if(!is.null(opts$units_fun)){
+        opts$convert <- list(fun = as.character(opts$units_fun),
+                             args = as.character(opts$units_args))
+    }
 
     #################
 
@@ -72,7 +99,7 @@ nasa_power_ag_daily.download <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     query_comm <- "community=AG"
     query_format <- "format=NETCDF"
 
-    query_pars <- paste0(nasap_var, collapse = ',')
+    query_pars <- paste0(opts$var_name, collapse = ',')
     query_pars <- paste('parameters', query_pars, sep = '=')
 
     query_vars <- sapply(seq_along(query_dates), function(j){
@@ -92,8 +119,6 @@ nasa_power_ag_daily.download <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     data.name <- "NASA POWER Agroclimatology"
     dir.name <- "NASA-POWER_daily_data"
     outdir <- file.path(GalParams$dir2save, dir.name)
-    dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
-
     outdir <- file.path(outdir, paste0('NASA-POWER_', GalParams$var))
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
@@ -109,12 +134,12 @@ nasa_power_ag_daily.download <- function(GalParams, nbfile = 1, GUI = TRUE, verb
     ret <- cdt.download.data(urls, destfiles, ncfiles,
                              nbfile, GUI, verbose, data.name,
                              nasa_power_ag_daily.download.data,
-                             pars = mat_bbx)
+                             pars = mat_bbx, opts = opts)
 
     return(ret)
 }
 
-nasa_power_ag_daily.download.data <- function(lnk, dest, ncfl, pars){
+nasa_power_ag_daily.download.data <- function(lnk, dest, ncfl, pars, opts, GUI = TRUE){
     on.exit(lapply(dest, unlink))
 
     dest <- dest[[1]]
@@ -124,41 +149,38 @@ nasa_power_ag_daily.download.data <- function(lnk, dest, ncfl, pars){
 
     dc <- lapply(seq_along(lnk), function(j){
          ret <- try(curl::curl_download(lnk[j], dest[j]), silent = TRUE)
-         if(inherits(ret, "try-error")) 1 else 0
+         rc <- 0
+         if(inherits(ret, "try-error")){
+            msg <- gsub('[\r\n]', '', ret[1])
+            Insert.Messages.Out(msg, TRUE, "w", GUI)
+            rc <- 1
+         }
+         rc
     })
 
     if(all(unlist(dc) == 0)){
-        ret <- nasa_power_ag_daily.format.data(dest, ncfl, pars)
+        ret <- nasa_power_ag_daily.format.data(dest, ncfl, pars, opts)
         if(ret == 0) xx <- NULL
-        # xx <- NULL
     }
 
     return(xx)
 }
 
-nasa_power_ag_daily.format.data <- function(dest, ncfl, pars){
-    nc <- ncdf4::nc_open(dest[1])
-    nc_vars <- lapply(seq_along(nc$var), function(j){
-        list(name = nc$var[[j]]$name, units = nc$var[[j]]$units,
-             prec = nc$var[[j]]$prec, longname = nc$var[[j]]$longname,
-             missval = nc$var[[j]]$missval,
-             standard_name = ncdf4::ncatt_get(nc, nc$var[[j]]$name, attname = "standard_name")$value
-            )
-    })
-    time_dim <- nc$dim[['time']][c('name', 'units', 'vals')]
-    ncdf4::nc_close(nc)
-
-    don <- lapply(dest, function(ncf){
-        nc <- ncdf4::nc_open(ncf)
+nasa_power_ag_daily.format.data <- function(dest, ncfl, pars, opts){
+    don <- lapply(seq_along(dest), function(j){
+        nc <- ncdf4::nc_open(dest[j])
+        val <- lapply(opts$var_name, function(v){
+            x <- ncdf4::ncvar_get(nc, v)
+            if(!is.null(opts$convert)){
+                x <- eval_function(opts$convert$fun, opts$convert$args, x)
+            }
+            x
+        })
+        names(val) <- opts$var_name
         coords <- list(x = nc$dim[['lon']]$vals,
                        y = nc$dim[['lat']]$vals)
-        data <- lapply(nc_vars, function(vr){
-            ncdf4::ncvar_get(nc, vr$name)
-        })
-        names(data) <- sapply(nc_vars, function(vr) vr$name)
         ncdf4::nc_close(nc)
-
-        list(coords = coords, data = data)
+        list(coords = coords, data = val)
     })
 
     coords <- lapply(don, '[[', 'coords')
@@ -166,50 +188,37 @@ nasa_power_ag_daily.format.data <- function(dest, ncfl, pars){
     lat <- do.call(c, lapply(coords[pars[1, ]], '[[', 'y'))
 
     don <- lapply(don, '[[', 'data')
-    don <- lapply(nc_vars, function(vr){
-        x <- lapply(don, '[[', vr$name)
+    don <- lapply(opts$var_name, function(v){
+        x <- lapply(don, '[[', v)
         x <- lapply(seq(ncol(pars)), function(j){
             do.call(rbind, x[pars[, j]])
         })
         do.call(cbind, x)
     })
 
-    don <- lapply(seq_along(don), function(j){
-        x <- don[[j]]
-        x[is.na(x)] <- nc_vars[[j]]$missval
-        n <- dim(x)
-        dim(x) <- c(n, 1)
-        x
-    })
-
     #######
     dx <- ncdf4::ncdim_def("lon", "degrees_east", lon, longname = "Longitude")
     dy <- ncdf4::ncdim_def("lat", "degrees_north", lat, longname = "Latitude")
-    dt <- ncdf4::ncdim_def(time_dim$name, time_dim$units, time_dim$vals, longname = "Time")
+    dxy <- list(dx, dy)
 
     if(length(don) == 1){
-        ncgrd <- ncdf4::ncvar_def(nc_vars[[1]]$name, nc_vars[[1]]$units,
-                                  list(dx, dy, dt), nc_vars[[1]]$missval,
-                                  nc_vars[[1]]$longname, nc_vars[[1]]$prec,
-                                  compression = 6)
-
+        ncgrd <- ncdf4::ncvar_def(opts$nc_name, opts$nc_units, dxy, -999,
+                                  opts$nc_longname, 'float', compression = 9)
+        tmp <- don[[1]]
+        tmp[is.na(tmp)] <- -999
         nc <- ncdf4::nc_create(ncfl, ncgrd)
-        ncdf4::ncvar_put(nc, ncgrd, don[[1]])
-        ncdf4::ncatt_put(nc, nc_vars[[1]]$name, "standard_name", nc_vars[[1]]$standard_name, prec = "text")
+        ncdf4::ncvar_put(nc, ncgrd, tmp)
         ncdf4::nc_close(nc)
     }else{
-        ncgrd <- lapply(seq_along(nc_vars), function(j){
-            ncdf4::ncvar_def(nc_vars[[j]]$name, nc_vars[[j]]$units,
-                             list(dx, dy, dt), nc_vars[[j]]$missval,
-                             nc_vars[[j]]$longname, nc_vars[[j]]$prec,
-                             compression = 6)
-
+        ncgrd <- lapply(seq_along(opts$var_name), function(j){
+            ncdf4::ncvar_def(opts$nc_name[j], opts$nc_units[j], dxy, -999,
+                             opts$nc_longname[j], 'float', compression = 9)
         })
-
         nc <- ncdf4::nc_create(ncfl, ncgrd)
         for(j in seq_along(ncgrd)){
-            ncdf4::ncvar_put(nc, ncgrd[[j]], don[[j]])
-            ncdf4::ncatt_put(nc, nc_vars[[j]]$name, "standard_name", nc_vars[[j]]$standard_name, prec = "text")
+            tmp <- don[[j]]
+            tmp[is.na(tmp)] <- -999
+            ncdf4::ncvar_put(nc, ncgrd[[j]], tmp)
         }
         ncdf4::nc_close(nc)
     }

@@ -1,0 +1,13 @@
+name,longname,source,iridl
+chirpsv2-af,CHIRPS v2.0 (Africa),https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly,
+,,https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly/README.6-hourly.txt,
+,,https://data.chc.ucsb.edu/products/CHIRPS-2.0/africa_6-hourly/p1_bin/extra_step/readme_chirps6hrly.txt,
+,,,
+persiann.pdir-gb,PERSIANN PDIR-Now (Global),https://chrsdata.eng.uci.edu,
+,,https://persiann.eng.uci.edu/CHRSdata/PDIRNow/,
+,,,
+persiann.ccs-gb,PERSIANN-CCS (Global),https://chrsdata.eng.uci.edu,
+,,https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CCS/,
+,,,
+persiann-gb,PERSIANN (Global),https://chrsdata.eng.uci.edu,
+,,https://persiann.eng.uci.edu/CHRSdata/PERSIANN/,

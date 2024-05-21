@@ -21,6 +21,10 @@
             <text lang="en"> Data Source Info </text>
             <text lang="fr"> Data Source Info </text>
         </button>
+        <button id="5">
+            <text lang="en"> Check Temporal Coverage </text>
+            <text lang="fr"> Couverture Temporelle </text>
+        </button>
         <label id="1">
             <text lang="en"> Minute </text>
             <text lang="fr"> Minute </text>
@@ -75,6 +79,12 @@
         </label>
         <label id="14">
             <text lang="en"> Download from IRI Data Library </text>
+        </label>
+        <label id="15">
+            <text lang="en"> Force to Download CHIRP(S) from Global Dataset </text>
+        </label>
+        <label id="16">
+            <text lang="en"> Data File Format </text>
         </label>
     </widget>
     <help>
@@ -205,6 +215,15 @@
         </content>
         <content id="8">
             <text lang="en"> Wrong area subsetting </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Checking temporal coverage ................. </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Checking temporal coverage failed </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Checking temporal coverage done </text>
         </content>
     </message>
 </dialog_box>

@@ -16,12 +16,17 @@ cdt.init.params <- function(action, tstep){
     ## Disabled toolbars spinbox
     spinbox.state()
 
-    date.range <- list(start.year = 2020, start.mon = 1, start.dek = 1,
-                       start.pen = 1, start.day = 1,
+    ref_dates <- as.Date(Sys.time()) - 60
+    year <- as.numeric(format(ref_dates, '%Y'))
+    month <- as.numeric(format(ref_dates, '%m'))
+    date.range <- list(start.year = year, start.mon = month,
+                       start.dek = 1, start.pen = 1, start.day = 1,
                        start.hour = 0, start.min = 0,
-                       end.year = 2021, end.mon = 12, end.dek = 3,
-                       end.pen = 6, end.day = 31,
-                       end.hour = 23, end.min = 55)
+                       end.year = year, end.mon = month,
+                       end.dek = 3, end.pen = 6,
+                       end.day = Day.Of.Month(year, month),
+                       end.hour = 23, end.min = 55,
+                       from.file = FALSE, path.file = "")
 
     ## Format CDTs Input station Data
     if(action == 'cdtInput.stn'){
@@ -133,6 +138,8 @@ cdt.init.params <- function(action, tstep){
                            tstep = "dekadal",
                            rfe.src = "tamsatv3.1-af",
                            iridl.src = FALSE,
+                           chirps.global = FALSE,
+                           fewsAFdaily.type = 'bin',
                            minhour = 1,
                            date.range = date.range,
                            bbox = .cdtData$Config$region,
@@ -144,8 +151,8 @@ cdt.init.params <- function(action, tstep){
     ## Download Reanalysis
     if(action == 'down.Reanal'){
         ret.params <- list(action = action,
-                           src = "rda.ucar.edu - ds628.0 - 3Hourly",
-                           prod = "jra55",
+                           src = "rda.ucar.edu - ds640.1-NRT - Hourly",
+                           prod = "jra3q",
                            var = "tmax",
                            date.range = date.range,
                            bbox = .cdtData$Config$region,

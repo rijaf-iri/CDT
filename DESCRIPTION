@@ -49,7 +49,6 @@ Imports:
     stringi,
     devtools,
     pkgbuild,
-    abind,
     fitdistrplus,
     ADGofTest,
     qmap,
@@ -58,7 +57,8 @@ Imports:
     units,
     hexbin,
     future,
+    googledrive,
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1

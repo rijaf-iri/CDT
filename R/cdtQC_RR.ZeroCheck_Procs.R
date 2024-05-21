@@ -113,7 +113,36 @@ qcRRZeroCheckProcs <- function(GeneralParameters){
             list(date = names(checkd[[j]]), stat = stat, dist = dist, stn = istn)
         })
         names(checkd) <- stn
-        checkd <- list(res = checkd, stn = stn)
+
+        ###########
+        mon_dates <- lapply(checkd, '[[', 'date')
+        all_dates <- sort(unique(do.call(c, mon_dates)))
+        mon_index <- which(names(index.mon) %in% all_dates)
+        mon_data <- lapply(index.mon[mon_index], function(ix){
+            x0 <- don$data[ix, , drop = FALSE]
+            ina <- colSums(!is.na(x0))
+            na_dat <- rep(NA, length(ina))
+            out <- list(mon = na_dat, nzero = na_dat, nbday = ina)
+            ina <- ina >= params$min.days
+            if(!any(ina)) return(out)
+            x0 <- x0[, ina, drop = FALSE]
+            out$mon[ina] <- round(colSums(x0, na.rm = TRUE), 1)
+            out$nzero[ina] <- colSums(x0 == 0, na.rm = TRUE)
+            out$nbday[!ina] <- NA
+            out
+        })
+
+        stnID <- don$id
+        mon_stnid <- lapply(all_dates, function(d){
+            x <- sapply(mon_dates, function(k) any(k == d))
+            id <- names(x)[x]
+            which(stnID %in% id)
+        })
+        names(mon_stnid) <- all_dates
+
+        ########
+
+        checkd <- list(res = checkd, stn = stn, mon = mon_data, id = mon_stnid)
     }else checkd <- NULL
 
     ###################

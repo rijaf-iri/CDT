@@ -117,6 +117,7 @@ addPentads <- function(daty, n = 1){
 
 ##############################################
 
+#' @exportS3Method NULL
 format.plot.date <- function(dates, tstep){
     if(tstep == "daily")
         daty <- as.Date(dates, "%Y%m%d")
@@ -133,6 +134,7 @@ format.plot.date <- function(dates, tstep){
     return(daty)
 }
 
+#' @exportS3Method NULL
 format.plot.date.label <- function(x, tstep){
     if(is.character(x)){
         daty <- switch(tstep,
@@ -328,10 +330,156 @@ get.format.seq.date.time <- function(date.range, tstep, minhour = NA){
     return(daty)
 }
 
+get.file.date.time <- function(date.range, tstep, minhour = NA){
+    dates0 <- readLines(date.range$path.file, warn = FALSE, skipNul = TRUE)
+
+    dates <- trimws(dates0)
+    dates <- gsub('\"', '', dates)
+    id <- dates != ""
+    dates <- dates[id]
+    dates0 <- dates0[id]
+    dates <- gsub('[^[:digit:]]', '', dates)
+    dates <- trimws(dates)
+    id <- dates == ""
+    if(all(id)){
+        msg <- "Invalid list of dates"
+        Insert.Messages.Out(msg, TRUE, "e", TRUE)
+        return(NULL)
+    }
+    if(any(id)){
+        msg <- paste0(dates0[id], collapse = ", ")
+        msg <- paste0("Invalid dates:\n", msg)
+        Insert.Messages.Out(msg, TRUE, "w", TRUE)
+        dates <- dates[!id]
+        dates0 <- dates0[!id]
+    }
+
+    year <- substr(dates, 1, 4)
+
+    if(tstep == "daily"){
+        mon <- substr(dates, 5, 6)
+        day <- substr(dates, 7, 8)
+        daty <- paste(year, mon, day, sep = '-')
+        daty <- as.Date(daty)
+    }
+
+    if(tstep %in% c("pentad", "dekadal")){
+        mon <- substr(dates, 5, 6)
+        pd <- substr(dates, 7, 8)
+        if(any(nchar(pd) == 2)){
+            msg <- paste("Invalid", tstep, "dates")
+            Insert.Messages.Out(msg, TRUE, "e", TRUE)
+            return(NULL)
+        }
+
+        k <- if(tstep == "pentad") 6 else 3
+        if(any(!as.integer(pd) %in% 1:k)){
+            msg <- paste("Invalid", tstep, "dates")
+            Insert.Messages.Out(msg, TRUE, "e", TRUE)
+            return(NULL)
+        }
+        daty <- paste(year, mon, pd, sep = '-')
+        daty <- as.Date(daty)
+    }
+
+    if(tstep == "monthly"){
+        mon <- substr(dates, 5, 6)
+        daty <- paste(year, mon, '01', sep = '-')
+        daty <- as.Date(daty)
+    }
+
+    if(tstep == "annual"){
+        daty <- paste0(year, '-01-01')
+        daty <- as.Date(daty)
+    }
+
+    if(tstep == "hourly"){
+        mon <- substr(dates, 5, 6)
+        day <- substr(dates, 7, 8)
+        hour <- substr(dates, 9, 10)
+
+        if(minhour > 1){
+            divh <- as.numeric(hour) %% minhour
+            if(any(divh) > 0){
+                hour[divh > 0] <- NA
+            }
+        }
+
+        daty <- paste(year, mon, day, hour, sep = '-')
+        daty <- as.POSIXct(daty, tz = "UTC", format = "%Y-%m-%d-%H")
+    }
+
+    if(tstep == "minute"){
+        mon <- substr(dates, 5, 6)
+        day <- substr(dates, 7, 8)
+        hour <- substr(dates, 9, 10)
+        min <- substr(dates, 11, 12)
+
+        divm <- as.numeric(min) %% minhour
+        if(any(divm > 0)){
+            min[divm > 0] <- NA
+        }
+
+        daty <- paste(year, mon, day, hour, min, sep = '-')
+        daty <- as.POSIXct(daty, tz = "UTC", format = "%Y-%m-%d-%H-%M")
+    }
+
+    if(all(is.na(daty))){
+        msg <- "Invalid list of dates"
+        Insert.Messages.Out(msg, TRUE, "e", TRUE)
+        return(NULL)
+    }
+
+    if(any(is.na(daty))){
+        msg <- paste0(dates0[is.na(daty)], collapse = ", ")
+        msg <- paste0("Invalid dates:\n", msg)
+        Insert.Messages.Out(msg, TRUE, "w", TRUE)
+        daty <- daty[!is.na(daty)]
+    }
+
+    return(daty)
+}
+
 ##############################################
 
+divisible.start.end.time <- function(x, minhour){
+    div <- x %% minhour
+    if(div != 0) x <- x - div
+
+    return(x)
+}
+
+hourly.start.end.time <- function(date.range, minhour = NA){
+    if(is.na(minhour)){
+        date.range$start.hour <- divisible.start.end.time(date.range$start.hour, minhour)
+        date.range$end.hour <- divisible.start.end.time(date.range$end.hour, minhour)
+    }
+
+    start <- date.range[paste0('start.', c('year', 'mon', 'day', 'hour'))]
+    start <- paste(unlist(start), collapse = "-")
+    start <- as.POSIXct(start, tz = "UTC", format = "%Y-%m-%d-%H")
+    end <- date.range[paste0('end.', c('year', 'mon', 'day', 'hour'))]
+    end <- paste(unlist(end), collapse = "-")
+    as.POSIXct(end, tz = "UTC", format = "%Y-%m-%d-%H")
+
+    list(start = start, end = end)
+}
+
+#' @exportS3Method NULL
+seq.format.date.time <- function(tstep, date.range, minhour = NA){
+    if(date.range$from.file){
+        dates <- get.file.date.time(date.range, tstep, minhour)
+        if(is.null(dates)) return(NULL)
+    }else{
+        dates <- get.seq.date.time(date.range, tstep, minhour)
+    }
+
+    return(dates)
+}
+
 table.format.date.time <- function(tstep, date.range, minhour = NA){
-    dates <- get.seq.date.time(date.range, tstep, minhour)
+    dates <- seq.format.date.time(tstep, date.range, minhour)
+    if(is.null(dates)) return(NULL)
 
     if(tstep %in% c("daily", "hourly", "minute")){
         doy <- strftime(dates, format = "%j", tz = "UTC")
@@ -352,11 +500,11 @@ table.format.date.time <- function(tstep, date.range, minhour = NA){
         n <- switch(tstep, "pentad" = 6, "dekadal" = 3)
         xx <- as.numeric(dates[, 3])
         dates <- dates[xx <= n, , drop = FALSE]
-        xx <- cbind(stringr::str_pad(rep(1:12, each = n), 2, pad = "0"),
-                    stringr::str_pad(rep(1:n, 12), 2, pad = "0"))
+        xx <- cbind(sprintf('%02d', rep(1:12, each = n)),
+                    sprintf('%02d', rep(1:n, 12)))
         p1 <- paste(dates[, 2], dates[, 3], sep = "-")
         p2 <- paste(xx[, 1], xx[, 2], sep = "-")
-        xx <- stringr::str_pad(match(p1, p2), 2, pad = "0")
+        xx <- sprintf('%02d', match(p1, p2))
         dates <- cbind(dates[, 1:2, drop = FALSE], as.numeric(dates[, 3]), xx)
     }
 
@@ -397,11 +545,11 @@ table.format.date.time1 <- function(tstep, dates){
         n <- switch(tstep, "pentad" = 6, "dekadal" = 3)
         xx <- as.numeric(dates[, 3])
         dates <- dates[xx <= n, , drop = FALSE]
-        xx <- cbind(stringr::str_pad(rep(1:12, each = n), 2, pad = "0"),
-                    stringr::str_pad(rep(1:n, 12), 2, pad = "0"))
+        xx <- cbind(sprintf('%02d', rep(1:12, each = n)),
+                    sprintf('%02d', rep(1:n, 12)))
         p1 <- paste(dates[, 2], dates[, 3], sep = "-")
         p2 <- paste(xx[, 1], xx[, 2], sep = "-")
-        xx <- stringr::str_pad(match(p1, p2), 2, pad = "0")
+        xx <- sprintf('%02d', match(p1, p2))
         dates <- cbind(dates[, 1:2, drop = FALSE], as.numeric(dates[, 3]), xx)
     }
 
@@ -449,11 +597,11 @@ table.format.date.seasonal <- function(date.range, season.start, season.len){
 
 ##############################################
 
-iridl.format.date <- function(tstep, date.range)
-{
-    mois <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
-              "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+iridl.format.date <- function(tstep, date.range){
+    months <- c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
     dates <- table.format.date.time(tstep, date.range)
+    if(is.null(dates)) return(NULL)
     dates0 <- dates
 
     if(tstep == "dekadal"){
@@ -464,7 +612,7 @@ iridl.format.date <- function(tstep, date.range)
         dates[ix3, 3] <- paste0(21, "-", endm)
     }
 
-    dates[, 2] <- mois[as.numeric(dates[, 2])]
+    dates[, 2] <- months[as.numeric(dates[, 2])]
     if(tstep == "monthly"){
         indate <- paste(dates[, 2], dates[, 1])
         outdate <- paste0(dates0[, 1], dates0[, 2])
@@ -474,6 +622,60 @@ iridl.format.date <- function(tstep, date.range)
     }
 
     list(dates = indate, out = outdate)
+}
+
+iridl.get.end_date <- function(url, timestep){
+    months <- c('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec')
+    tmp <- rvest::read_html(url)
+    tmp <- rvest::html_nodes(tmp, ".infodivinfo")
+    val <- rvest::html_nodes(tmp, "dl dd")
+    val <- rvest::html_text(val)
+    txt <- rvest::html_nodes(tmp, "dl dt")
+    txt <- sapply(txt, function(x){
+        y <- rvest::html_node(x, 'em')
+        rvest::html_text(y)
+    })
+    ix <- !is.na(txt) & (txt == "Time")
+    end_d <- sub(".*\\((.+)\\).*", "\\1", val[ix])
+    end_d <- trimws(strsplit(end_d, " ")[[1]])
+    end_date <- switch(timestep,
+        "hourly" = local({
+            yy <- end_d[4]
+            mo <- which(months == end_d[3])
+            mo <- sprintf('%02d', mo)
+            dy <- as.numeric(end_d[2])
+            dy <- sprintf('%02d', dy)
+            hr <- trimws(strsplit(end_d[1], '-')[[1]])
+            hr <- substr(hr[1], 1, 2)
+            paste0(yy, mo, dy, hr)
+        }),
+        "daily" = local({
+            yy <- end_d[3]
+            mo <- which(months == end_d[2])
+            mo <- sprintf('%02d', mo)
+            dy <- as.numeric(end_d[1])
+            dy <- sprintf('%02d', dy)
+            paste0(yy, mo, dy)
+        }),
+        "dekadal" = local({
+            yy <- end_d[3]
+            mo <- which(months == end_d[2])
+            mo <- sprintf('%02d', mo)
+            dk <- trimws(strsplit(end_d[1], '-')[[1]])
+            dk <- switch(dk[1], '1' = 1, '11' = 2, '21' = 3)
+            paste0(yy, mo, dk)
+        }),
+        "monthly" = local({
+            yy <- end_d[2]
+            mo <- which(months == end_d[1])
+            dd <- as.Date(paste(yy, mo, 1, sep = '-'))
+            # dd <- addMonths(dd, -1)
+            format(dd, '%Y%m')
+        })
+      )
+
+    return(end_date)
 }
 
 ##############################################

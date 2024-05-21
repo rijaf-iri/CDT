@@ -1,0 +1,33 @@
+name,longname,source,iridl,registration
+persiann.pdir-gb,PERSIANN PDIR-Now (Global),https://chrsdata.eng.uci.edu,,
+,,https://persiann.eng.uci.edu/CHRSdata/PDIRNow/,,
+,,,,
+persiann.ccs-gb,PERSIANN-CCS (Global),https://chrsdata.eng.uci.edu,,
+,,https://persiann.eng.uci.edu/CHRSdata/PERSIANN-CCS/,,
+,,,,
+cmorphrtv0.xadj-gb,CMORPH RT V0.x ICDR (Global),https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_RT/ICDR/0.25deg-HLY,,
+,,https://ftp.cpc.ncep.noaa.gov/precip/CMORPH_V0.x/CMORPH_V0.x_README.txt,,
+,,,,
+gsmap.nrtv8-gb,GSMaP NRT V8 (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
+,,https://sharaku.eorc.jaxa.jp/GSMaP/index.htm,,
+,,https://sharaku.eorc.jaxa.jp/GSMaP/faq/GSMaP_faq18.html,,
+,,,,
+gsmap.g.nrtv8-gb,GSMaP Gauge NRT V8 (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
+,,https://sharaku.eorc.jaxa.jp/GSMaP/index.htm,,
+,,https://sharaku.eorc.jaxa.jp/GSMaP/faq/GSMaP_faq18.html,,
+,,,,
+gsmap.nrtv7-gb,GSMaP NRT V7 (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
+,,https://sharaku.eorc.jaxa.jp/GSMaP/index.htm,,
+,,https://sharaku.eorc.jaxa.jp/GSMaP/faq/GSMaP_faq18.html,,
+,,,,
+gsmap.g.nrtv7-gb,GSMaP Gauge NRT V7 (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
+,,https://sharaku.eorc.jaxa.jp/GSMaP/index.htm,,
+,,https://sharaku.eorc.jaxa.jp/GSMaP/faq/GSMaP_faq18.html,,
+,,,,
+gsmap.nrtv6-gb,GSMaP NRT V6 (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
+,,https://sharaku.eorc.jaxa.jp/GSMaP/index.htm,,
+,,https://sharaku.eorc.jaxa.jp/GSMaP/faq/GSMaP_faq18.html,,
+,,,,
+gsmap.g.nrtv6-gb,GSMaP Gauge NRT V6 (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
+,,https://sharaku.eorc.jaxa.jp/GSMaP/index.htm,,
+,,https://sharaku.eorc.jaxa.jp/GSMaP/faq/GSMaP_faq18.html,,

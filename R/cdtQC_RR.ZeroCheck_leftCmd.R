@@ -1,6 +1,5 @@
 
 qcRRZeroCheckPanelCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur1 <- 31
         largeur2 <- 33
@@ -22,6 +21,12 @@ qcRRZeroCheckPanelCmd <- function(){
                                             min.days = 22, max.dist = 120,
                                             min.thrs = 1.8))
 
+    .cdtData$EnvData$STN$Opts <- list(
+                                    stn = list(col = "blue", pch = 23, cex = 1.2, txt.col = 'red', txt.cex = 1.0),
+                                    fz = list(col = 'darkred', pch = 20, cex = 1.0, txt.col = 'red', txt.cex = 0.85),
+                                    all = list(col = 'darkred', pch = 20, cex = 1.0, txt.col = 'blue', txt.cex = 0.7)
+                                )
+
     ###################
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtQC_RR.ZeroCheck_leftCmd.xml")
@@ -34,14 +39,20 @@ qcRRZeroCheckPanelCmd <- function(){
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
     cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
     cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
+    cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab4, 0, weight = 1)
 
     tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab3, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab4, 0, weight = 1)
 
     #######################################################################################################
 
@@ -55,7 +66,7 @@ qcRRZeroCheckPanelCmd <- function(){
         input.file <- tclVar(GeneralParameters$infile)
 
         txt.infile <- tklabel(frameInData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-        cb.infile <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
+        cb.infile <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.file, width = largeur1)
         bt.infile <- tkbutton(frameInData, text = "...")
 
         tkgrid(txt.infile, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -71,10 +82,13 @@ qcRRZeroCheckPanelCmd <- function(){
             dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(input.file) <- dat.opfiles[[1]]
-                tkconfigure(cb.infile, values = unlist(listOpenFiles))
+                tkconfigure(cb.infile, values = unlist(openFile_ttkcomboList()))
             }
+        })
+
+        tkbind(cb.infile, "<Button-1>", function(){
+            tkconfigure(cb.infile, values = unlist(openFile_ttkcomboList()))
         })
 
         #######################
@@ -164,6 +178,14 @@ qcRRZeroCheckPanelCmd <- function(){
                     set.station.id()
                     ret <- try(set.date.false.zeros(), silent = TRUE)
                     if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+
+                    ###############
+                    coords <- .cdtData$EnvData$stn.data[c('lon', 'lat', 'id')]
+                    .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- coords
+
+                    xlim <- range(coords$lon, na.rm = TRUE)
+                    ylim <- range(coords$lat, na.rm = TRUE)
+                    initialize_zoom_frame(xlim, ylim)
                 }else Insert.Messages.Out(msg1, TRUE, "e")
             }else Insert.Messages.Out(msg1, TRUE, "e")
         })
@@ -209,10 +231,12 @@ qcRRZeroCheckPanelCmd <- function(){
                 if(inherits(OutFZ, "try-error")){
                     Insert.Messages.Out(gsub('[\r\n]', '', OutFZ[1]), TRUE, "e")
                     Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "e")
-                    tkconfigure(.cdtData$EnvData$STN$cb.stnID, values = "")
+                    tkconfigure(cb.stnID.disp, values = "")
                     tclvalue(.cdtData$EnvData$STN$stnID) <- ""
-                    tkconfigure(.cdtData$EnvData$STN$cb.stnFZ, values = "")
-                    tclvalue(.cdtData$EnvData$STN$dateFZ) <- ""
+                    tkconfigure(cb.stnFZTable, values = "")
+                    tclvalue(.cdtData$EnvData$STN$dateFZTable) <- ""
+                    tkconfigure(cb.stnFZDateMap, values = "")
+                    tclvalue(.cdtData$EnvData$STN$dateFZMap) <- ""
                     return(NULL)
                 }
 
@@ -243,6 +267,14 @@ qcRRZeroCheckPanelCmd <- function(){
                 set.station.id()
                 ret <- try(set.date.false.zeros(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+
+                ###############
+                coords <- .cdtData$EnvData$stn.data[c('lon', 'lat', 'id')]
+                .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- coords
+
+                xlim <- range(coords$lon, na.rm = TRUE)
+                ylim <- range(coords$lat, na.rm = TRUE)
+                initialize_zoom_frame(xlim, ylim)
             }
         })
 
@@ -264,11 +296,11 @@ qcRRZeroCheckPanelCmd <- function(){
 
         bt.stnID.prev <- ttkbutton(frameStnId, text = "<<", width = largeur5)
         bt.stnID.next <- ttkbutton(frameStnId, text = ">>", width = largeur5)
-        .cdtData$EnvData$STN$cb.stnID <- ttkcombobox(frameStnId, values = "", textvariable = .cdtData$EnvData$STN$stnID, width = largeur3, justify = 'center')
+        cb.stnID.disp <- ttkcombobox(frameStnId, values = "", textvariable = .cdtData$EnvData$STN$stnID, width = largeur3, justify = 'center')
         bt.display.FZ <- ttkbutton(frameStnId, text = lang.dlg[['button']][['3']])
 
         tkgrid(bt.stnID.prev, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(.cdtData$EnvData$STN$cb.stnID, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 3, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(cb.stnID.disp, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 3, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.stnID.next, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
         tkgrid(bt.display.FZ, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 2, pady = 2, ipadx = 1, ipady = 1)
 
@@ -300,7 +332,7 @@ qcRRZeroCheckPanelCmd <- function(){
             }
         })
 
-        tkbind(.cdtData$EnvData$STN$cb.stnID, "<<ComboboxSelected>>", function(){
+        tkbind(cb.stnID.disp, "<<ComboboxSelected>>", function(){
             if(!is.null(.cdtData$EnvData$outzeros)){
                 ret <- try(set.date.false.zeros(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
@@ -315,7 +347,7 @@ qcRRZeroCheckPanelCmd <- function(){
             stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             donFZstat <- .cdtData$EnvData$outzeros$res[[stnid]]$stat
-            tab.title <- paste0(stnid, "-False-Zeros-Check")
+            tab.title <- paste0(stnid, "-FZ-Outputs-Table")
 
             .cdtData$EnvData$tab$TableStat <- tableNotebookTab_unik(donFZstat,
                                                                 .cdtData$EnvData$tab$TableStat,
@@ -326,60 +358,139 @@ qcRRZeroCheckPanelCmd <- function(){
 
         #######################
 
-        frameStnFZ <- ttklabelframe(subfr2, text = lang.dlg[['label']][['6']], relief = 'groove')
+        frameFZTable <- ttklabelframe(subfr2, text = lang.dlg[['label']][['6']], relief = 'groove')
 
-        .cdtData$EnvData$STN$dateFZ <- tclVar()
+        .cdtData$EnvData$STN$dateFZTable <- tclVar()
 
-        frFZDate <- tkframe(frameStnFZ)
-        .cdtData$EnvData$STN$cb.stnFZ <- ttkcombobox(frFZDate, values = "", textvariable = .cdtData$EnvData$STN$dateFZ, width = largeur3, justify = 'center')
+        frFZDateTable <- tkframe(frameFZTable)
+        txt.stnFZTable <- tklabel(frFZDateTable, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
+        cb.stnFZTable <- ttkcombobox(frFZDateTable, values = "", textvariable = .cdtData$EnvData$STN$dateFZTable, width = largeur3, justify = 'center')
 
-        bt.stnFZ.prev <- ttkbutton(frameStnFZ, text = "<<", width = largeur4)
-        bt.stnFZ <- ttkbutton(frameStnFZ, text = lang.dlg[['button']][['4']], width = largeur4)
-        bt.stnFZ.next <- ttkbutton(frameStnFZ, text = ">>", width = largeur4)
+        bt.stnFZTable.prev <- ttkbutton(frameFZTable, text = "<<", width = largeur4)
+        bt.stnFZTable.disp <- ttkbutton(frameFZTable, text = lang.dlg[['button']][['4']], width = largeur4)
+        bt.stnFZTable.next <- ttkbutton(frameFZTable, text = ">>", width = largeur4)
 
         ########  
-        tkgrid(.cdtData$EnvData$STN$cb.stnFZ, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.stnFZTable, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stnFZTable, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-        tkgrid(frFZDate, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stnFZ.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stnFZ, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
-        tkgrid(bt.stnFZ.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(frFZDateTable, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnFZTable.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnFZTable.disp, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnFZTable.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
 
-        helpWidget(frameStnFZ, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
+        helpWidget(frameFZTable, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 
         #########
 
         .cdtData$EnvData$tab$TableNbrs <- NULL
 
-        tkconfigure(bt.stnFZ.prev, command = function(){
+        tkconfigure(bt.stnFZTable.prev, command = function(){
             stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
-            idaty <- which(dateFZ == trimws(tclvalue(.cdtData$EnvData$STN$dateFZ)))
+            idaty <- which(dateFZ == trimws(tclvalue(.cdtData$EnvData$STN$dateFZTable)))
             idaty <- idaty - 1
             if(idaty < 1) idaty <- length(dateFZ)
-            tclvalue(.cdtData$EnvData$STN$dateFZ) <- dateFZ[idaty]
+            tclvalue(.cdtData$EnvData$STN$dateFZTable) <- dateFZ[idaty]
 
-            display.month.neighbors()
+            display.table.neighbors()
         })
 
-        tkconfigure(bt.stnFZ.next, command = function(){
+        tkconfigure(bt.stnFZTable.next, command = function(){
             stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
             dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
-            idaty <- which(dateFZ == trimws(tclvalue(.cdtData$EnvData$STN$dateFZ)))
+            idaty <- which(dateFZ == trimws(tclvalue(.cdtData$EnvData$STN$dateFZTable)))
             idaty <- idaty + 1
             if(idaty > length(dateFZ)) idaty <- 1
-            tclvalue(.cdtData$EnvData$STN$dateFZ) <- dateFZ[idaty]
+            tclvalue(.cdtData$EnvData$STN$dateFZTable) <- dateFZ[idaty]
 
-            display.month.neighbors()
+            display.table.neighbors()
         })
 
-        tkconfigure(bt.stnFZ, command = function(){
+        tkconfigure(bt.stnFZTable.disp, command = function(){
             stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             if(stnid == "") return(NULL)
 
-            display.month.neighbors()
+            display.table.neighbors()
+        })
+
+        #######################
+
+        frameFZMap <- ttklabelframe(subfr2, text = lang.dlg[['label']][['8']], relief = 'groove')
+
+        .cdtData$EnvData$STN$dateFZMap <- tclVar()
+        .cdtData$EnvData$STN$statFZMap <- tclVar('mon')
+
+        stats.FZMAP <- tclVar()
+        CbstatFZMapVAL <- lang.dlg[['combobox']][['1']]
+        statFZMapVAL <- c('mon', 'nzero', 'nbday')
+        tclvalue(stats.FZMAP) <- CbstatFZMapVAL[statFZMapVAL %in% tclvalue(.cdtData$EnvData$STN$statFZMap)]
+
+        frFZDateMap <- tkframe(frameFZMap)
+        txt.stnFZDateMap <- tklabel(frFZDateMap, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
+        cb.stnFZDateMap <- ttkcombobox(frFZDateMap, values = "", textvariable = .cdtData$EnvData$STN$dateFZMap, width = largeur3, justify = 'center')
+
+        bt.stnFZMap.prev <- ttkbutton(frameFZMap, text = "<<", width = largeur4)
+        bt.stnFZMap.disp <- ttkbutton(frameFZMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur4)
+        bt.stnFZMap.next <- ttkbutton(frameFZMap, text = ">>", width = largeur4)
+
+        frFZStatMap <- tkframe(frameFZMap)
+        txt.stnFZStatMap <- tklabel(frFZStatMap, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+        cb.stnFZStatMap <- ttkcombobox(frFZStatMap, values = CbstatFZMapVAL, textvariable = stats.FZMAP, width = largeur3, justify = 'center')
+
+        ########  
+        tkgrid(txt.stnFZDateMap, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stnFZDateMap, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(txt.stnFZStatMap, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.stnFZStatMap, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(frFZDateMap, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnFZMap.prev, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnFZMap.disp, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(bt.stnFZMap.next, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 2, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(frFZStatMap, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+
+        #########
+
+        .cdtData$EnvData$tab$dataFZMap <- NULL
+
+        tkconfigure(bt.stnFZMap.disp, command = function(){
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
+            if(stnid == "") return(NULL)
+
+            display.map.neighbors()
+        })
+
+        tkconfigure(bt.stnFZMap.prev, command = function(){
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
+            if(stnid == "") return(NULL)
+            dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
+            idaty <- which(dateFZ == trimws(tclvalue(.cdtData$EnvData$STN$dateFZMap)))
+            idaty <- idaty - 1
+            if(idaty < 1) idaty <- length(dateFZ)
+            tclvalue(.cdtData$EnvData$STN$dateFZMap) <- dateFZ[idaty]
+
+            display.map.neighbors()
+        })
+
+        tkconfigure(bt.stnFZMap.next, command = function(){
+            stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
+            if(stnid == "") return(NULL)
+            dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
+            idaty <- which(dateFZ == trimws(tclvalue(.cdtData$EnvData$STN$dateFZMap)))
+            idaty <- idaty + 1
+            if(idaty > length(dateFZ)) idaty <- 1
+            tclvalue(.cdtData$EnvData$STN$dateFZMap) <- dateFZ[idaty]
+
+            display.map.neighbors()
+        })
+
+        tkbind(cb.stnFZStatMap, "<<ComboboxSelected>>", function(){
+            stat_fzmap <- statFZMapVAL[CbstatFZMapVAL %in% trimws(tclvalue(stats.FZMAP))]
+            tclvalue(.cdtData$EnvData$STN$statFZMap) <- stat_fzmap
         })
 
         #######################
@@ -425,14 +536,35 @@ qcRRZeroCheckPanelCmd <- function(){
 
         tkgrid(frameZeros, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameStnId, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameStnFZ, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 0, ipady = 1)
-        tkgrid(bt.replace.FZ, row = 4, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
+        tkgrid(frameFZTable, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 0, ipady = 1)
+        tkgrid(frameFZMap, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 0, ipady = 1)
+        tkgrid(bt.replace.FZ, row = 5, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
+
+    #######################################################################################################
+
+    #Tab3
+    subfr3 <- bwTabScrollableFrame(cmd.tab3)
+
+        #######################
+
+        frameZoom <- create_zoom_frame(subfr3, .cdtData$EnvData$tab$dataFZMap)
+        tkgrid(frameZoom, row = 0, column = 0, sticky = '')
+
+    #######################################################################################################
+
+    #Tab4
+    subfr4 <- bwTabScrollableFrame(cmd.tab4)
+
+        #######################
+
+        frameSHP <- create_shpLayer_frame(subfr4)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
 
     set.station.id <- function(){
         STNID <- .cdtData$EnvData$outzeros$stn
-        tkconfigure(.cdtData$EnvData$STN$cb.stnID, values = STNID)
+        tkconfigure(cb.stnID.disp, values = STNID)
         tclvalue(.cdtData$EnvData$STN$stnID) <- STNID[1]
     }
 
@@ -440,14 +572,17 @@ qcRRZeroCheckPanelCmd <- function(){
         stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
         if(stnid == "") return(NULL)
         dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
-        tkconfigure(.cdtData$EnvData$STN$cb.stnFZ, values = dateFZ)
-        tclvalue(.cdtData$EnvData$STN$dateFZ) <- dateFZ[1]
+        tkconfigure(cb.stnFZTable, values = dateFZ)
+        tclvalue(.cdtData$EnvData$STN$dateFZTable) <- dateFZ[1]
+        tkconfigure(cb.stnFZDateMap, values = dateFZ)
+        tclvalue(.cdtData$EnvData$STN$dateFZMap) <- dateFZ[1]
+
         return(0)
     }
 
-    display.month.neighbors <- function(){
+    display.table.neighbors <- function(){
         stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
-        daty <- trimws(tclvalue(.cdtData$EnvData$STN$dateFZ))
+        daty <- trimws(tclvalue(.cdtData$EnvData$STN$dateFZTable))
         index.mon <- .cdtData$EnvData$output$index[[daty]]
         dist <- c(0, .cdtData$EnvData$outzeros$res[[stnid]]$dist[[daty]])
         istn <- which(.cdtData$EnvData$stn.data$id == stnid)
@@ -460,7 +595,7 @@ qcRRZeroCheckPanelCmd <- function(){
 
         .cdtData$EnvData$tab$TableNbrs <- tableNotebookTab_unik(don.disp,
                                                             .cdtData$EnvData$tab$TableNbrs,
-                                                            paste0(stnid, "-neighbors"))
+                                                            paste0(stnid, "-FZ-Neighbors-Table"))
         tabid <- as.integer(tclvalue(tkindex(.cdtEnv$tcl$main$tknotes, 'current'))) + 1
         table1 <- .cdtData$OpenTab$Data[[tabid]][[2]][[1]]
 
@@ -473,6 +608,20 @@ qcRRZeroCheckPanelCmd <- function(){
         .Tcl(paste(table1, 'tag', 'celltag', 'idZchkStn2',
             paste(2, 1:as.integer(tclvalue(tkindex(table1, 'end', 'col'))), sep = ',', collapse = ' ')))
         tcl(table1, "tag", "configure", "idZchkStn2", bg = "lightcyan1")
+    }
+
+    display.map.neighbors <- function(){
+        if(!is.null(.cdtData$EnvData$outzeros) &
+           is.null(.cdtData$EnvData$outzeros$mon))
+        {
+            Insert.Messages.Out(lang.dlg[['message']][['9']], TRUE, "e")
+            return(NULL)
+        }
+
+        stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
+        tab.title <- paste0(stnid, "-FZ-Neighbors-Map")
+        imgContainer <- CDT.Display.Points.Zoom(qcPlot_FalseZero.Check, .cdtData$EnvData$tab$dataFZMap, tab.title)
+        .cdtData$EnvData$tab$dataFZMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataFZMap)
     }
 
     #######################################################################################################
@@ -511,13 +660,13 @@ qcRRZeroCheckPanelCmd <- function(){
         saveRDS(.cdtData$EnvData$outzeros, file.checkd)
 
         if(is.null(.cdtData$EnvData$outzeros)){
-            tkconfigure(.cdtData$EnvData$STN$cb.stnID, values = "")
+            tkconfigure(cb.stnID.disp, values = "")
             tclvalue(.cdtData$EnvData$STN$stnID) <- ""
-            tkconfigure(.cdtData$EnvData$STN$cb.stnFZ, values = "")
-            tclvalue(.cdtData$EnvData$STN$dateFZ) <- ""
+            tkconfigure(cb.stnFZTable, values = "")
+            tclvalue(.cdtData$EnvData$STN$dateFZTable) <- ""
         }else{
             STNID <- .cdtData$EnvData$outzeros$stn
-            tkconfigure(.cdtData$EnvData$STN$cb.stnID, values = STNID)
+            tkconfigure(cb.stnID.disp, values = STNID)
             stnid <- trimws(tclvalue(.cdtData$EnvData$STN$stnID))
             STN <- .cdtData$EnvData$stn.data$id
             while(!stnid %in% STNID){
@@ -528,10 +677,10 @@ qcRRZeroCheckPanelCmd <- function(){
             tclvalue(.cdtData$EnvData$STN$stnID) <- stnid
 
             dateFZ <- .cdtData$EnvData$outzeros$res[[stnid]]$date
-            tkconfigure(.cdtData$EnvData$STN$cb.stnFZ, values = dateFZ)
-            idaty <- trimws(tclvalue(.cdtData$EnvData$STN$dateFZ))
+            tkconfigure(cb.stnFZTable, values = dateFZ)
+            idaty <- trimws(tclvalue(.cdtData$EnvData$STN$dateFZTable))
             if(!idaty %in% dateFZ) idaty <- dateFZ[1]
-            tclvalue(.cdtData$EnvData$STN$dateFZ) <- idaty
+            tclvalue(.cdtData$EnvData$STN$dateFZTable) <- idaty
         }
     }
 
