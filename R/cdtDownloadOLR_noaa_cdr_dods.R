@@ -70,12 +70,8 @@ noaa_olr_cdr.ncei.noaa.gov <- function(GalParams, nbfile = 1, GUI = TRUE, verbos
     #############
     opendap_url <- "https://www.ncei.noaa.gov/thredds/dodsC/cdr/olr-daily"
 
-    start <- GalParams$date.range[paste0('start.', c('year', 'mon', 'day'))]
-    start <- daily.start.end.time(start)
-    end <- GalParams$date.range[paste0('end.', c('year', 'mon', 'day'))]
-    end <- daily.start.end.time(end)
-
-    seqDays <- seq(start, end, "day")
+    seqDays <- seq.format.date.time('daily', GalParams$date.range)
+    if(is.null(seqDays)) return(-2)
     years <- format(seqDays, '%Y')
 
     format <- "%Y-%m-%d %H:%M:%S"

@@ -686,3 +686,31 @@ intersect_rectangles <- function(rect1, rect2, border = FALSE){
     }
     return(inter)
 }
+
+########################################
+
+# # (val - 32) * 5/9
+# fun_def <- "function(x, a, b){(x - a) * b}"
+# fun_args <- "32;5/9"
+# val <- 65
+# eval_function(fun_def, fun_args, val)
+
+# # val - 273.15
+# fun_def <- "-"
+# fun_args <- "273.15"
+# val <- 295.3
+# eval_function(fun_def, fun_args, val)
+
+eval_function <- function(fun_def, fun_args, val){
+    if(grepl("function", fun_def)){
+        eval(parse(text = paste("tmp_fun <- ", fun_def)))
+    }else{
+        tmp_fun <- get(fun_def, mode = 'function')
+    }
+
+    f_args <- strsplit(fun_args, ';')[[1]]
+    f_args <- lapply(f_args, function(x) eval(parse(text = x)))
+    f_args <- c(list(val), f_args)
+
+    do.call(tmp_fun, f_args)
+}

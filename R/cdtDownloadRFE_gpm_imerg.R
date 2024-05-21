@@ -64,34 +64,34 @@ gpm_imerg.coverage.gesdisc <- function(GalParams){
 
     baseurl <- file.path(info$opendap, info$level, info$dataset)
     url <- file.path(baseurl, 'contents.html')
-    end_d <- gpm_imerg.gesdisc.dates(url, 'directory', datetype = 'year')
+    end_d <- opendap.gesdisc.dates(url, 'directory', datetype = 'year')
     if(is.null(end_d)) return(out)
     end_year <- end_d[length(end_d)]
 
     if(GalParams$tstep == 'minute'){
         url <- file.path(baseurl, end_year, 'contents.html')
-        end_d <- gpm_imerg.gesdisc.dates(url, 'directory', datetype = 'doy', diryear = end_year)
+        end_d <- opendap.gesdisc.dates(url, 'directory', datetype = 'doy', diryear = end_year)
         if(is.null(end_d)) return(out)
         end_doy <- end_d[length(end_d)]
         url <- file.path(baseurl, end_year, end_doy, 'contents.html')
         fileformat <- tools::file_path_sans_ext(info$nc4format)
-        end_d <- gpm_imerg.gesdisc.dates(url, 'file', fileformat)
+        end_d <- opendap.gesdisc.dates(url, 'file', fileformat)
         if(is.null(end_d)) return(out)
         out$end <- substr(end_d[length(end_d)], 1, 12)
     }else if(GalParams$tstep == 'daily'){
         url <- file.path(baseurl, end_year, 'contents.html')
-        end_d <- gpm_imerg.gesdisc.dates(url, 'directory', datetype = 'month', diryear = end_year)
+        end_d <- opendap.gesdisc.dates(url, 'directory', datetype = 'month', diryear = end_year)
         if(is.null(end_d)) return(out)
         end_mon <- end_d[length(end_d)]
         url <- file.path(baseurl, end_year, end_mon, 'contents.html')
         fileformat <- tools::file_path_sans_ext(info$nc4format)
-        end_d <- gpm_imerg.gesdisc.dates(url, 'file', fileformat)
+        end_d <- opendap.gesdisc.dates(url, 'file', fileformat)
         if(is.null(end_d)) return(out)
         out$end <- end_d[length(end_d)]
     }else{
         url <- file.path(baseurl, end_year, 'contents.html')
         fileformat <- tools::file_path_sans_ext(info$nc4format)
-        end_d <- gpm_imerg.gesdisc.dates(url, 'file', fileformat)
+        end_d <- opendap.gesdisc.dates(url, 'file', fileformat)
         if(is.null(end_d)) return(out)
         out$end <- substr(end_d[length(end_d)], 1, 6)
     }
@@ -236,54 +236,6 @@ gpm_imerg.info.gesdisc <- function(GalParams){
     list(opendap = opendap, level = level, dataset = dataset,
          nc4format = nc4format, urls = urls, ncfiles = ncfiles,
          data.tres = data.tres, pars = pars, version = version)
-}
-
-gpm_imerg.gesdisc.table <- function(url){
-    ret <- httr::GET(url)
-    if(httr::status_code(ret) != 200){
-        Insert.Messages.httr(ret)
-        return(NULL)
-    }
-    ret <- httr::content(ret)
-
-    tmp <- rvest::html_table(ret, fill = TRUE)[[1]]
-    tmp <- as.data.frame(tmp[-1, ])
-    tmp <- tmp[tmp[, 1] != "", 1]
-    tmp <- tmp[tmp != "-"]
-    tmp <- tmp[tmp != "ddx"]
-    tmp <- gsub('/', '', tmp)
-    tmp <- tmp[!grepl('\\.xml$', tmp)]
-    return(tmp)
-}
-
-gpm_imerg.gesdisc.dates <- function(url, type, fileformat = NA, datetype = NA, diryear = NA){
-    tmp <- gpm_imerg.gesdisc.table(url)
-    if(length(tmp) == 0) return(NULL)
-
-    if(type == 'file'){
-        ret <- extract_filename_dates(tmp, fileformat)
-        if(is.null(ret)) return(NULL)
-        ret <- gsub('[^[:digit:]]', '', ret)
-    }else if(type == 'directory'){
-        if(datetype == 'year'){
-            tmp <- as.Date(paste0(tmp, '-01-01'))
-            frmt <- '%Y'
-        }else if(datetype == 'month'){
-            tmp <- as.Date(paste0(diryear, '-', tmp, '-01'))
-            frmt <- '%m'
-        }else if(datetype == 'doy'){
-            tmp <- as.Date(paste0(diryear, tmp), '%Y%j')
-            frmt <- '%j'
-        }else return(NULL)
-
-        ret <- tmp[!is.na(tmp)]
-        if(length(ret) == 0) return(NULL)
-        ret <- format(ret, frmt)
-    }else return(NULL)
-
-    ret <- sort(ret)
-
-    return(ret)
 }
 
 #########################################################

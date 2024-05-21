@@ -1,0 +1,31 @@
+cdt_var,api_var,varid,nc_longname,nc_name,nc_units,units_fun,units_args
+tair,2m_temperature,t2m,Air temperature at 2 meter,tair,degC,-,273.15
+wind,10m_u_component_of_wind,u10,U-wind at 10 m above ground,ugrd,m/s,,
+,10m_v_component_of_wind,v10,V-wind at 10 m above ground,vgrd,m/s,,
+hum,2m_temperature,t2m,Air temperature at 2 meter,tm,degC,,
+,2m_dewpoint_temperature,d2m,Dewpoint temperature at 2 meter,td,degC,,
+,surface_pressure,sp,Surface pressure,pr,hPa,,
+,,,Relative humidity at 2 meter,rh,%,,
+,,,Specific humidity at 2 meter,q,kg/kg,,
+pres,surface_pressure,sp,Surface pressure,pres,hPa,/,100
+rad_acc,surface_net_solar_radiation,ssr,Surface net solar radiation,ssr,J/m2,,
+,surface_net_thermal_radiation,str,Surface net thermal radiation,str,J/m2,,
+,surface_solar_radiation_downwards,ssrd,Surface solar radiation downwards,ssrd,J/m2,,
+,surface_thermal_radiation_downwards,strd,Surface thermal radiation downwards,strd,J/m2,,
+prcp,total_precipitation,tp,Total precipitation,ptot,mm,*,1000
+evp,total_evaporation,e,Total evaporation,evp,mm,*,1000
+pet,potential_evaporation,pev,Potential evaporation,pev,mm,*,1000
+runoff,runoff,ro,Runoff,ro,mm,*,1000
+,surface_runoff,sro,Surface runoff,sro,mm,,
+,sub_surface_runoff,ssro,Sub-surface runoff,ssro,mm,,
+soilm,volumetric_soil_water_layer_1,swvl1,Volumetric soil water layer 1: 0 - 7cm,swvl1,m3/m3,,
+,volumetric_soil_water_layer_2,swvl2,Volumetric soil water layer 2: 7 - 28cm,swvl2,m3/m3,,
+,volumetric_soil_water_layer_3,swvl3,Volumetric soil water layer 3: 28 - 100cm,swvl3,m3/m3,,
+,volumetric_soil_water_layer_4,swvl4,Volumetric soil water layer 4: 100 - 289cm,swvl4,m3/m3,,
+soilt,soil_temperature_level_1,stl1,Soil temperature level 1: 0 - 7cm,stl1,degC,-,273.15
+,soil_temperature_level_2,stl2,Soil temperature level 2: 7 - 28cm,stl2,degC,,
+,soil_temperature_level_3,stl3,Soil temperature level 3: 28 - 100cm,stl3,degC,,
+,soil_temperature_level_4,stl4,Soil temperature level 4: 100 - 289cm,stl4,degC,,
+tsg,skin_temperature,skt,Skin temperature,tsg,degC,-,273.15
+heat_acc,surface_latent_heat_flux,slhf,Surface latent heat flux,slhf,J/m2,,
+,surface_sensible_heat_flux,sshf,Surface sensible heat flux,sshf,J/m2,,

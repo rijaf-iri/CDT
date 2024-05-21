@@ -1,0 +1,44 @@
+cdt_var,dap_path,var_name,time_origin,time_factor,var_height,type_path,timeoffset,varoffset,search_string,nc_longname,nc_name,nc_units,units_fun,units_args
+tmax,31/TwoD,Maximum_temperature_height_above_ground_3_Hour,1,4,1,1,1,1,1,Maximum temperature at 2 m above ground,tmax,degC,-,273.15
+tmin,31/TwoD,Minimum_temperature_height_above_ground_3_Hour,1,4,1,1,1,1,1,Minimum temperature at 2 m above ground,tmin,degC,-,273.15
+tair,27/TwoD,Temperature_height_above_ground,1,4,1,2,1,1,1,Air temperature at 2 m above ground,tair,degC,-,273.15
+wind,27/TwoD,u-component_of_wind_height_above_ground,1,4,1,2,1,1,1,U-wind at 10 m above ground,ugrd,m/s,,
+,,v-component_of_wind_height_above_ground,,,1,,,1,,V-wind at 10 m above ground,vgrd,m/s,,
+hum,27/TwoD,Relative_humidity_height_above_ground,1,4,1,2,1,1,1,Relative humidity at 2 m above ground,rh,%,,
+,,Specific_humidity_height_above_ground,,,1,,,1,,Specific humidity at 2 m above ground,spfh,kg/kg,,
+pres,27/TwoD,Pressure_surface,1,4,0,2,1,1,1,Pressure at ground or water surface,pres,hPa,/,100
+prmsl,27/TwoD,Pressure_reduced_to_MSL_msl,1,4,0,2,1,1,1,Pressure reduced to mean sea level,prmsl,hPa,/,100
+cloud,27/TwoD,Total_cloud_cover_layer_between_two_isobaric_layer,1,4,1,2,1,1,1,Total cloud cover at 90 - 1100 hPa,tcdc,%,,
+,,High_cloud_cover_layer_between_two_isobaric_layer,,,1,,,1,,High cloud cover at 90 - 500 hPa,hcdc,%,,
+,,Medium_cloud_cover_layer_between_two_isobaric_layer,,,1,,,1,,Medium cloud cover at 500 - 850 hPa,mcdc,%,,
+,,Low_cloud_cover_layer_between_two_isobaric_layer,,,1,,,1,,Low cloud cover at 850 - 1100 hPa,lcdc,%,,
+rad_avg,21/TP,Clear_sky_downward_longwave_radiation_flux_surface_3_Hour_Average,2,8,0,0,0,0,2,Clear sky downward longwave radiation flux at ground or water surface,csdlf_sfc,W/m2,,
+,,Clear_sky_downward_solar_radiation_flux_surface_3_Hour_Average,,,0,,,0,,Clear sky downward solar radiation flux at ground or water surface,csdsf_sfc,W/m2,,
+,,Clear_sky_upward_longwave_radiation_flux_atmosphere_top_3_Hour_Average,,,0,,,0,,Clear sky upward longwave radiation flux at nominal top of atmosphere,csulf_top,W/m2,,
+,,Clear_sky_upward_solar_radiation_flux_surface_3_Hour_Average,,,0,,,0,,Clear sky upward solar radiation flux at ground or water surface,csusf_sfc,W/m2,,
+,,Clear_sky_upward_solar_radiation_flux_atmosphere_top_3_Hour_Average,,,0,,,0,,Clear sky upward solar radiation flux at nominal top of atmosphere,csusf_top,W/m2,,
+,,Downward_longwave_radiation_flux_surface_3_Hour_Average,,,0,,,0,,Downward longwave radiation flux at ground or water surface,dlwrf_sfc,W/m2,,
+,,Downward_solar_radiation_flux_surface_3_Hour_Average,,,0,,,0,,Downward solar radiation flux at ground or water surface,dswrf_sfc,W/m2,,
+,,Downward_solar_radiation_flux_atmosphere_top_3_Hour_Average,,,0,,,0,,Downward solar radiation flux at nominal top of atmosphere,dswrf_top,W/m2,,
+,,Upward_longwave_radiation_flux_surface_3_Hour_Average,,,0,,,0,,Upward longwave radiation flux at ground or water surface,ulwrf_sfc,W/m2,,
+,,Upward_longwave_radiation_flux_atmosphere_top_3_Hour_Average,,,0,,,0,,Upward longwave radiation flux at nominal top of atmosphere,ulwrf_top,W/m2,,
+,,Upward_solar_radiation_flux_surface_3_Hour_Average,,,0,,,0,,Upward solar radiation flux at ground or water surface,uswrf_sfc,W/m2,,
+,,Upward_solar_radiation_flux_atmosphere_top_3_Hour_Average,,,0,,,0,,Upward solar radiation flux at nominal top of atmosphere,uswrf_top,W/m2,,
+prcp,21/TP,Total_precipitation_surface_3_Hour_Average,2,8,0,0,0,0,2,Total precipitation at ground or water surface,ptot,mm,*,1 * 3/24
+,,Large_scale_precipitation_surface_3_Hour_Average,,,0,,,0,,Large scale precipitation at ground or water surface,plrgscl,mm,,
+,,Convective_precipitation_surface_3_Hour_Average,,,0,,,0,,Convective precipitation at ground or water surface,pconv,mm,,
+evp,21/TP,Evaporation_surface_3_Hour_Average,2,8,0,0,0,0,2, Evaporation at ground or water surface,evp,mm,*,1 * 3/24
+pet,25/TP,Evapotranspiration_surface_3_Hour_Average,2,8,0,0,0,0,2,Evapotranspiration at ground surface,pet,mm,*,0.035 * 3/24
+runoff,25/TP,Water_run-off_surface_3_Hour_Average,2,8,0,0,0,0,2,Water run-off at ground surface,ro_sfc,mm,*,1 * 3/24
+,,Water_run-off_bottom_of_model_3_Hour_Average,,,1,,,0,,Water run-off at the bottom of land surface model,ro_bmod,mm,,
+soilm,16/TwoD,Soil_wetness_underground_layer,1,4,2,2,1,1,1,Soil wetness at underground layer 1,soilw_l1,proportion,,
+,,,,,,,,,,Soil wetness at underground layer 2,soilw_l2,proportion,,
+,,,,,,,,,,Soil wetness at underground layer 3,soilw_l3,proportion,,
+,,Mass_concentration_of_condensed_water_in_soil_underground_layer,,,2,,,1,,Mass concentration of condensed water in soil at underground layer 1,smc_l1,kg/m3,,
+,,,,,,,,,,Mass concentration of condensed water in soil at underground layer 2,smc_l2,kg/m3,,
+,,,,,,,,,,Mass concentration of condensed water in soil at underground layer 3,smc_l3,kg/m3,,
+soilt,16/TwoD,Soil_temperature_entire_soil,1,4,1,2,1,1,1,Soil temperature at the entire soil layer,soilt,degC,-,273.15
+tsg,16/TwoD,Ground_temperature_surface,1,4,0,2,1,1,1,Ground temperature at ground surface,tsg,degC,-,273.15
+heat_avg,21/TP,Latent_heat_flux_surface_3_Hour_Average,2,8,0,0,0,0,2,Latent heat flux at ground or water surface,lhflx,W/m2,,
+,,Sensible_heat_flux_surface_3_Hour_Average,,,0,,,0,,Sensible heat flux at ground or water surface,lsflx,W/m2,,
+ghflx,25/TP,Ground_heat_flux_surface_3_Hour_Average,2,8,0,0,0,0,2,Ground heat flux at ground surface,ghflx,W/m2,,

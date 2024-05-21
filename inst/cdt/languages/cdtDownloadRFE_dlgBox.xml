@@ -23,7 +23,7 @@
         </button>
         <button id="5">
             <text lang="en"> Check Temporal Coverage </text>
-            <text lang="fr"> Vérifier Couverture Temporelle </text>
+            <text lang="fr"> Couverture Temporelle </text>
         </button>
         <label id="1">
             <text lang="en"> Minute </text>

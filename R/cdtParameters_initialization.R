@@ -151,8 +151,8 @@ cdt.init.params <- function(action, tstep){
     ## Download Reanalysis
     if(action == 'down.Reanal'){
         ret.params <- list(action = action,
-                           src = "rda.ucar.edu - ds628.0 - 3Hourly",
-                           prod = "jra55",
+                           src = "rda.ucar.edu - ds640.1-NRT - Hourly",
+                           prod = "jra3q",
                            var = "tmax",
                            date.range = date.range,
                            bbox = .cdtData$Config$region,

@@ -1,0 +1,68 @@
+cdt_var,api_var,varid,nc_longname,nc_name,nc_units,units_fun,units_args
+tmax,maximum_2m_temperature_since_previous_post_processing,mx2t,Maximum temperature at 2 meter,tmax,degC,-,273.15
+tmin,minimum_2m_temperature_since_previous_post_processing,mn2t,Minimum temperature at 2 meter,tmin,degC,-,273.15
+tair,2m_temperature,t2m,Air temperature at 2 meter,tair,degC,-,273.15
+wind,10m_u_component_of_wind,u10,U-wind at 10 m above ground,ugrd,m/s,,
+,10m_v_component_of_wind,v10,V-wind at 10 m above ground,vgrd,m/s,,
+hum,2m_temperature,t2m,Air temperature at 2 meter,tm,degC,,
+,2m_dewpoint_temperature,d2m,Dewpoint temperature at 2 meter,td,degC,,
+,surface_pressure,sp,Surface pressure,pr,hPa,,
+,,,Relative humidity at 2 meter,rh,%,,
+,,,Specific humidity at 2 meter,q,kg/kg,,
+pres,surface_pressure,sp,Surface pressure,pres,hPa,/,100
+prmsl,mean_sea_level_pressure,msl,Mean sea level pressure,prmsl,hPa,/,100
+cloud,total_cloud_cover,tcc,Total cloud cover,tcc,fraction,,
+,high_cloud_cover,hcc,High cloud cover,hcc,fraction,,
+,medium_cloud_cover,mcc,Medium cloud cover,mcc,fraction,,
+,low_cloud_cover,lcc,Low cloud cover,lcc,fraction,,
+,cloud_base_height,cbh,Cloud base height,cbh,m,,
+rad_avg,mean_surface_downward_long_wave_radiation_flux_clear_sky,msdwlwrfcs,Clear sky mean surface downward longwave radiation flux,msdwlwrfcs,W/m2,,
+,mean_surface_downward_short_wave_radiation_flux_clear_sky,msdwswrfcs,Clear sky mean surface downward shortwave radiation flux,msdwswrfcs,W/m2,,
+,mean_surface_direct_short_wave_radiation_flux_clear_sky,msdrswrfcs,Clear sky mean surface direct shortwave radiation flux,msdrswrfcs,W/m2,,
+,mean_surface_net_long_wave_radiation_flux_clear_sky,msnlwrfcs,Clear sky mean surface net longwave radiation flux,msnlwrfcs,W/m2,,
+,mean_surface_net_short_wave_radiation_flux_clear_sky,msnswrfcs,Clear sky mean surface net shortwave radiation flux,msnswrfcs,W/m2,,
+,mean_top_net_long_wave_radiation_flux_clear_sky,mtnlwrfcs,Clear sky mean top net longwave radiation flux,mtnlwrfcs,W/m2,,
+,mean_top_net_short_wave_radiation_flux_clear_sky,mtnswrfcs,Clear sky mean top net shortwave radiation flux,mtnswrfcs,W/m2,,
+,mean_surface_downward_short_wave_radiation_flux,msdwswrf,Mean surface downward shortwave radiation flux,msdwswrf,W/m2,,
+,mean_surface_downward_long_wave_radiation_flux,msdwlwrf,Mean surface downward longwave radiation flux,msdwlwrf,W/m2,,
+,mean_surface_net_short_wave_radiation_flux,msnswrf,Mean surface net shortwave radiation flux,msnswrf,W/m2,,
+,mean_surface_net_long_wave_radiation_flux,msnlwrf,Mean surface net longwave radiation flux,msnlwrf,W/m2,,
+,mean_top_net_short_wave_radiation_flux,mtnswrf,Mean top net shortwave radiation flux,mtnswrf,W/m2,,
+,mean_top_net_long_wave_radiation_flux,mtnlwrf,Mean top net longwave radiation flux,mtnlwrf,W/m2,,
+,mean_top_downward_short_wave_radiation_flux,mtdwswrf,Mean top downward shortwave radiation flux,mtdwswrf,W/m2,,
+,mean_surface_direct_short_wave_radiation_flux,msdrswrf,Mean surface direct shortwave radiation flux,msdrswrf,W/m2,,
+rad_acc,clear_sky_direct_solar_radiation_at_surface,cdir,Clear sky direct solar radiation at surface,cdir,J/m2,,
+,surface_net_solar_radiation_clear_sky,ssrc,Clear sky surface net solar radiation,ssrc,J/m2,,
+,surface_net_thermal_radiation_clear_sky,strc,Clear sky surface net thermal radiation,strc,J/m2,,
+,surface_solar_radiation_downward_clear_sky,ssrdc,Clear sky surface solar radiation downward,ssrdc,J/m2,,
+,surface_thermal_radiation_downward_clear_sky,strdc,Clear sky surface thermal radiation downward,strdc,J/m2,,
+,top_net_solar_radiation_clear_sky,tsrc,Clear sky top net solar radiation,tsrc,J/m2,,
+,top_net_thermal_radiation_clear_sky,ttrc,Clear sky top net thermal radiation,ttrc,J/m2,,
+,surface_net_solar_radiation,ssr,Surface net solar radiation,ssr,J/m2,,
+,surface_net_thermal_radiation,str,Surface net thermal radiation,str,J/m2,,
+,surface_solar_radiation_downwards,ssrd,Surface solar radiation downwards,ssrd,J/m2,,
+,surface_thermal_radiation_downwards,strd,Surface thermal radiation downwards,strd,J/m2,,
+,top_net_solar_radiation,tsr,Top net solar radiation,tsr,J/m2,,
+,top_net_thermal_radiation,ttr,Top net thermal radiation,ttr,J/m2,,
+,total_sky_direct_solar_radiation_at_surface,fdir,Total sky direct solar radiation at surface,fdir,J/m2,,
+prcp,total_precipitation,tp,Total precipitation,ptot,mm,*,1000
+,large_scale_precipitation,lsp,Large-scale precipitation,plrgscl,mm,,
+,convective_precipitation,cp,Convective precipitation,pconv,mm,,
+evp,evaporation,e,Evaporation,evp,mm,*,1000
+pet,potential_evaporation,pev,Potential evaporation,pev,mm,*,1000
+runoff,runoff,ro,Runoff,ro,mm,*,1000
+,surface_runoff,sro,Surface runoff,sro,mm,,
+,sub_surface_runoff,ssro,Sub-surface runoff,ssro,mm,,
+soilm,volumetric_soil_water_layer_1,swvl1,Volumetric soil water layer 1: 0 - 7cm,swvl1,m3/m3,,
+,volumetric_soil_water_layer_2,swvl2,Volumetric soil water layer 2: 7 - 28cm,swvl2,m3/m3,,
+,volumetric_soil_water_layer_3,swvl3,Volumetric soil water layer 3: 28 - 100cm,swvl3,m3/m3,,
+,volumetric_soil_water_layer_4,swvl4,Volumetric soil water layer 4: 100 - 289cm,swvl4,m3/m3,,
+soilt,soil_temperature_level_1,stl1,Soil temperature level 1: 0 - 7cm,stl1,degC,-,273.15
+,soil_temperature_level_2,stl2,Soil temperature level 2: 7 - 28cm,stl2,degC,,
+,soil_temperature_level_3,stl3,Soil temperature level 3: 28 - 100cm,stl3,degC,,
+,soil_temperature_level_4,stl4,Soil temperature level 4: 100 - 289cm,stl4,degC,,
+tsg,skin_temperature,skt,Skin temperature,tsg,degC,-,273.15
+heat_avg,mean_surface_latent_heat_flux,mslhf,Mean surface latent heat flux,mslhf,W/m2,,
+,mean_surface_sensible_heat_flux,msshf,Mean surface sensible heat flux,msshf,W/m2,,
+heat_acc,surface_latent_heat_flux,slhf,Surface latent heat flux,slhf,J/m2,,
+,surface_sensible_heat_flux,sshf,Surface sensible heat flux,sshf,J/m2,,

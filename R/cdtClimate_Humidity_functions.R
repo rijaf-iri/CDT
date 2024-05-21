@@ -38,7 +38,9 @@ relative_humidity <- function(tm, td){
     # relative humidity in %
     es <- saturation_vapour_pressure(tm)
     ea <- saturation_vapour_pressure(td)
-    100 * ea/es
+    rh <- 100 * ea/es
+    rh[!is.na(rh) & (rh > 100)] <- 100
+    rh
 }
 
 #' Specific humidity.

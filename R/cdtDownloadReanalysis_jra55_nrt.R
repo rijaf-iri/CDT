@@ -1,4 +1,33 @@
 
+jra55_nrt.coverage.rda.ucar <- function(GalParams){
+    out <- list(name = "Japanese 55-year Reanalysis, Near Real-Time", timestep = "3 hourly")
+    url_nrt <- "https://rda.ucar.edu/datasets/ds628.8/"
+    ret <- httr::GET(url_nrt)
+    if(httr::status_code(ret) != 200){
+        Insert.Messages.httr(ret)
+        return(out)
+    }
+    ret <- httr::content(ret)
+    ret <- rvest::html_nodes(ret, xpath = "//span[@id='DP1']")
+    ret <- rvest::html_nodes(ret, ".ms-3")
+    ret <- as.list(rvest::html_text(ret))
+    ret <- lapply(ret, function(x){
+        if(!grepl('Minimum-Maximum', x)) return(NULL)
+        x <- strsplit(x, '\\(')
+        x <- x[[1]][1]
+        x <- strsplit(x, 'to')
+        x <- trimws(x[[1]])
+        as.POSIXct(x, format = '%Y-%m-%d %H:%M +%S', tz = 'GMT')
+    })
+    inull <- sapply(ret, is.null)
+    if(all(inull)) return(out)
+    ret <- ret[!inull]
+    ret <- format(ret[[1]], '%Y-%m-%d %H:%M:%S')
+    out$start <- ret[1]
+    out$end <- ret[2]
+    return(out)
+}
+
 jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
     xlon <- seq(-179.9997300, 179.4377600, length.out = 640)
     xlat <- seq(-89.5700900, 89.5700900, length.out = 320)
@@ -10,215 +39,41 @@ jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
         return(-2)
     }
 
-    ######################
-
+    ###########
+    wgrib <- if(WindowsOS()) 'wgrib.exe' else 'wgrib'
     wgrib_exe <- file.path(.cdtDir$dirLocal, 'wgrib', 'wgrib')
     if(!file.exists(wgrib_exe)){
-        if(WindowsOS()){
-            wgrib_exe <- file.path(.cdtDir$dirLocal, 'wgrib', 'wgrib.exe')
-            if(!file.exists(wgrib_exe)){
-                Insert.Messages.Out("wgrib not found", TRUE, "e", GUI)
-                return(-2)
-            }
-        }else{
-            Insert.Messages.Out("wgrib not found", TRUE, "e", GUI)
-            return(-2)
-        }
+        Insert.Messages.Out("wgrib not found", TRUE, "e", GUI)
+        return(-2)
     }
 
-    ######################
-
-    start <- GalParams$date.range[paste0('start.', c('year', 'mon', 'day', 'hour'))]
-    start <- jra55.start.end.time(start)
-    end <- GalParams$date.range[paste0('end.', c('year', 'mon', 'day', 'hour'))]
-    end <- jra55.start.end.time(end)
-
-    rtimes <- seq(start, end, "3 hours")
+    ############
+    rtimes <- seq.format.date.time('hourly', GalParams$date.range, 3)
+    if(is.null(rtimes)) return(-2)
     yrmo <- format(rtimes, '%Y%m')
     ymdh <- format(rtimes, '%Y%m%d%H')
 
-    ######################
+    ############
+    opts <- get_reanalysis.variables('jra55_nrt_options.csv')
+    opts <- opts[[GalParams$var]]
 
-    # jra_nrt <- "https://rda.ucar.edu/data/ds628.8"
     jra_nrt <- "https://data.rda.ucar.edu/ds628.8"
-    jra_pth <- switch(GalParams$var,
-                      "tmax" = "minmax_surf",
-                      "tmin" = "minmax_surf",
-                      "tair" = "fcst_surf",
-                      "wind" = "fcst_surf",
-                      "hum" = "fcst_surf",
-                      "pres" = "fcst_surf",
-                      "prmsl" = "fcst_surf",
-                      "cloud" = "fcst_surf",
-                      "rad_avg" = "fcst_phy2m",
-                      "prcp" = "fcst_phy2m",
-                      "evp" = "fcst_phy2m",
-                      "pet" = "fcst_phyland",
-                      "runoff" = "fcst_phyland",
-                      "soilm" = "fcst_land",
-                      "soilt" = "fcst_land",
-                      "tsg" = "fcst_land",
-                      "heat_avg" = "fcst_phy2m",
-                      "ghflx" = "fcst_phyland",
-                      NULL)
-
-    filenames <- paste0(jra_pth, ".", ymdh)
-    urls <- file.path(jra_nrt, jra_pth, yrmo, filenames)
+    filenames <- paste0(opts$grib_path, ".", ymdh)
+    urls <- file.path(jra_nrt, opts$grib_path, yrmo, filenames)
     ncfiles <- sprintf(paste0(GalParams$var, "_%s.nc"), ymdh)
 
     pars <- list(wgrib = wgrib_exe, GUI = GUI)
-
-    ######################
-
-    longname <- switch(GalParams$var,
-                       "tmax" = "Maximum temperature at 2 m above ground",
-                       "tmin" = "Minimum temperature at 2 m above ground",
-                       "tair" = "Air temperature at 2 m above ground",
-                       "wind" = c("U-wind at 10 m above ground",
-                                  "V-wind at 10 m above ground"),
-                       "hum" = c("Relative humidity at 2 m above ground",
-                                  "Specific humidity at 2 m above ground"),
-                       "pres" = "Pressure at ground or water surface",
-                       "prmsl" = "Pressure reduced to mean sea level",
-                       "cloud" = c("Total cloud cover at 90 - 1100 hPa",
-                                   "High cloud cover at 90 - 500 hPa",
-                                   "Medium cloud cover at 500 - 850 hPa",
-                                   "Low cloud cover at 850 - 1100 hPa"),
-                       "rad_avg" = c("Clear sky downward longwave radiation flux at ground or water surface",
-                                     "Clear sky downward solar radiation flux at ground or water surface",
-                                     "Clear sky upward longwave radiation flux at nominal top of atmosphere",
-                                     "Clear sky upward solar radiation flux at ground or water surface",
-                                     "Clear sky upward solar radiation flux at nominal top of atmosphere",
-                                     "Downward longwave radiation flux at ground or water surface",
-                                     "Downward solar radiation flux at ground or water surface",
-                                     "Downward solar radiation flux at nominal top of atmosphere",
-                                     "Upward longwave radiation flux at ground or water surface",
-                                     "Upward longwave radiation flux at nominal top of atmosphere",
-                                     "Upward solar radiation flux at ground or water surface",
-                                     "Upward solar radiation flux at nominal top of atmosphere"),
-                       "prcp" = c("Total precipitation at ground or water surface",
-                                  "Large scale precipitation at ground or water surface",
-                                  "Convective precipitation at ground or water surface"),
-                       "evp" = "Evaporation at ground or water surface",
-                       "pet" = "Evapotranspiration at ground surface",
-                       "runoff" = c("Water run-off at ground surface",
-                                    "Water run-off at the bottom of land surface model"),
-                       "soilm" = c("Soil wetness at underground layer 1",
-                                   "Soil wetness at underground layer 2",
-                                   "Soil wetness at underground layer 3",
-                                   "Mass concentration of condensed water in soil at underground layer 1",
-                                   "Mass concentration of condensed water in soil at underground layer 2",
-                                   "Mass concentration of condensed water in soil at underground layer 3"),
-                       "soilt" = "Soil temperature at the entire soil layer",
-                       "tsg" = "Ground temperature at ground surface",
-                       "heat_avg" = c("Latent heat flux at ground or water surface",
-                                      "Sensible heat flux at ground or water surface"),
-                       "ghflx" = "Ground heat flux at ground surface",
-                        NULL)
-
-    units <- switch(GalParams$var,
-                    "tmax" = "degC",
-                    "tmin" = "degC",
-                    "tair" = "degC",
-                    "wind" = c('m/s', 'm/s'),
-                    "hum" = c('%', 'kg/kg'),
-                    "pres" = "hPa",
-                    "prmsl" = "hPa",
-                    "cloud" = c('%', '%', '%', '%'),
-                    "rad_avg" = c("W/m2", "W/m2", "W/m2", "W/m2",
-                                  "W/m2", "W/m2", "W/m2", "W/m2",
-                                  "W/m2", "W/m2", "W/m2", "W/m2"),
-                    "prcp" = c("mm", "mm", "mm"),
-                    "evp" = "mm",
-                    "pet" = "mm",
-                    "runoff" = c("mm", "mm"),
-                    "soilm" = c("proportion", "proportion", "proportion",
-                                "kg/m3", "kg/m3", "kg/m3"),
-                    "soilt" = "degC",
-                    "tsg" = "degC",
-                    "heat_avg" = c("W/m2", "W/m2"),
-                    "ghflx" = "W/m2",
-                    NULL)
-
-    convert_units <- switch(GalParams$var,
-                          "tmax" = list(fun = "-", args = list(273.15)),
-                          "tmin" = list(fun = "-", args = list(273.15)),
-                          "tair" = list(fun = "-", args = list(273.15)),
-                          "wind" = NULL,
-                          "hum" = NULL,
-                          "pres" = list(fun = "/", args = list(100)),
-                          "prmsl" = list(fun = "/", args = list(100)),
-                          "cloud" = NULL,
-                          "rad_avg" = NULL,
-                          "prcp" = list(fun = "*", args = list(3/24)),
-                          "evp" = list(fun = "*", args = list(3/24)),
-                          "pet" = list(fun = "*", args = list(0.035 * 3/24)),
-                          "runoff" = list(fun = "*", args = list(3/24)),
-                          "soilm" = NULL,
-                          "soilt" = list(fun = "-", args = list(273.15)),
-                          "tsg" = list(fun = "-", args = list(273.15)),
-                          "heat_avg" = NULL,
-                          "ghflx" = NULL,
-                          NULL)
-
-    name <- switch(GalParams$var,
-                   "wind" = c('ugrd', 'vgrd'),
-                   "hum" = c('rh', 'spfh'),
-                   "cloud" = c('tcdc', 'hcdc', 'mcdc', 'lcdc'),
-                   "rad_avg" = c('csdlf_sfc', 'csdsf_sfc', 'csulf_top', 'csusf_sfc',
-                                 'csusf_top', 'dlwrf_sfc', 'dswrf_sfc', 'dswrf_top',
-                                 'ulwrf_sfc', 'ulwrf_top', 'uswrf_sfc', 'uswrf_top'),
-                   "prcp" = c('ptot', 'plrgscl', 'pconv'),
-                   "runoff" = c('ro_sfc', 'ro_bmod'),
-                   "soilm" = c("soilw_l1", "soilw_l2", "soilw_l3",
-                               "smc_l1", "smc_l2", "smc_l3"),
-                   "heat_avg" = c("lhflx", "lsflx"),
-                   GalParams$var)
-
-    ncpars <- list(name = name, units = units, longname = longname,
+    convert_units <- if(is.null(opts$units_fun)) NULL else list(fun = opts$units_fun, args = opts$units_args)
+    ncpars <- list(name = opts$nc_name, units = opts$nc_units, longname = opts$nc_longname,
                    prec = "float", missval = -9999, convert = convert_units)
+    gribpars <- list(var = opts$grib_name, hgt = opts$grib_height)
 
-    gribpars <- switch(GalParams$var,
-                       "tmax" = list(var = "TMAX", hgt = "2 m above gnd"),
-                       "tmin" = list(var = "TMIN", hgt = "2 m above gnd"),
-                       "tair" = list(var = "TMP", hgt = "2 m above gnd"),
-                       "wind" = list(var = c("UGRD", "VGRD"),
-                                     hgt = c("10 m above gnd", "10 m above gnd")),
-                       "hum" = list(var = c("RH", "SPFH"),
-                                    hgt = c("2 m above gnd", "2 m above gnd")),
-                       "pres" = list(var = "PRES", hgt = "sfc"),
-                       "prmsl" = list(var = "PRMSL", hgt = "MSL"),
-                       "cloud" = list(var = c("TCDC", "HCDC", "MCDC", "LCDC"),
-                                      hgt = c("90-1100 mb", "90-500 mb",
-                                              "500-850 mb", "850-1100 mb")),
-                       "rad_avg" = list(var = c("CSDLF", "CSDSF", "CSULF", "CSUSF",
-                                                "CSUSF", "DLWRF", "DSWRF", "DSWRF",
-                                                "ULWRF", "ULWRF", "USWRF", "USWRF"),
-                                        hgt = c("sfc", "sfc", "nom. top", "sfc",
-                                                "nom. top", "sfc", "sfc", "nom. top",
-                                                "sfc", "nom. top", "sfc", "nom. top")),
-                       "prcp" = list(var = c("TPRAT", "LPRAT", "CPRAT"),
-                                     hgt = c("sfc", "sfc", "sfc")),
-                       "evp" = list(var = "EVP", hgt = "sfc"),
-                       "pet" = list(var = "LTRS", hgt = "sfc"),
-                       "runoff" = list(var = c("ROF", "ROF"), hgt = c("sfc", "bot land sfc model")),
-                       "soilm" = list(var = c("SoilW", "SoilW", "SoilW", "SMC", "SMC", "SMC"),
-                                      hgt = c("soil layer 1", "soil layer 2", "soil layer 3",
-                                              "soil layer 1", "soil layer 2", "soil layer 3")),
-                       "soilt" = list(var = "SoilT", hgt = "soil column"),
-                       "tsg" = list(var = "TSG", hgt = "sfc"),
-                       "heat_avg" = list(var = c("LHTFL", "SHTFL"), hgt = c("sfc", "sfc")),
-                       "ghflx" = list(var = "GFLX", hgt = "sfc"),
-                        NULL)
-
-    ######################
+    ############
 
     data.name <- "JRA-55 NRT 3 Hourly"
     dir.name <- "JRA55_NRT_3Hr_data"
     outdir <- file.path(GalParams$dir2save, dir.name)
-    dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
-
-    gribdir <- file.path(outdir, paste0('GRIB_', jra_pth))
+    gribdir <- file.path(outdir, paste0('GRIB_', opts$grib_path))
     extrdir <- file.path(outdir, paste0('Extracted_', GalParams$var))
     dir.create(gribdir, showWarnings = FALSE, recursive = TRUE)
     dir.create(extrdir, showWarnings = FALSE, recursive = TRUE)
@@ -226,13 +81,12 @@ jra55_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
     destfiles <- file.path(gribdir, filenames)
     ncfiles <- file.path(extrdir, ncfiles)
 
-    ######################
+    ############
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI,
                              verbose, data.name, jra55_nrt.download.data,
                              ncpars = ncpars, gribpars = gribpars,
                              bbox = GalParams$bbox, pars = pars)
-
     return(ret)
 }
 
@@ -264,14 +118,6 @@ jra55_nrt.download.data <- function(lnk, dest, ncfl, ncpars, gribpars, bbox, par
                     Insert.Messages.Out(msg[[j]], TRUE, "e", pars$GUI)
 
                 return(xx)
-
-                ## if some data are null
-
-                # if(all(inull)) return(xx)
-                # dat <- dat[!inull]
-                # tmp <- ncpars[c('name', 'units', 'longname')]
-                # tmp <- lapply(tmp, function(x) x[!inull])
-                # ncpars[c('name', 'units', 'longname')] <- tmp
             }
 
             dat <- list(x = dat[[1]]$x, y = dat[[1]]$y,
@@ -296,16 +142,14 @@ jra55_nrt.format.grib <- function(dat, bbox, ncpars, ncfl){
     if(length(ncpars$name) == 1){
         don <- dat$z[ix, iy]
         if(!is.null(ncpars$convert)){
-            ncpars$convert$args <- c(list(don), ncpars$convert$args)
-            don <- do.call(ncpars$convert$fun, ncpars$convert$args)
+            don <- eval_function(ncpars$convert$fun, ncpars$convert$args, don)
         }
         don <- jra55.regrid.data(lon, lat, don)
     }else{
         don <- lapply(dat$z, function(x) x[ix, iy])
         if(!is.null(ncpars$convert)){
             don <- lapply(don, function(x){
-                ncpars$convert$args <- c(list(x), ncpars$convert$args)
-                do.call(ncpars$convert$fun, ncpars$convert$args)
+                eval_function(ncpars$convert$fun, ncpars$convert$args, x)
             })
         }
         don <- lapply(don, function(x){
@@ -331,6 +175,10 @@ jra55_nrt.extract.grib <- function(grib_file, variable, level, wgrib_exe){
 
     inv.file <- file.path(tempdir(), 'invetory_file')
     out.file <- file.path(tempdir(), 'grib_text')
+    on.exit({
+       unlink(inv.file)
+       unlink(out.file)
+    })
 
     ivr <- grep(var_lvl, inventory)
     inventory <- inventory[ivr]
@@ -344,8 +192,6 @@ jra55_nrt.extract.grib <- function(grib_file, variable, level, wgrib_exe){
     if(inherits(ret, "try-error")){
         msg <- paste("Unable to extract the variable", variable,
                      "from GRIB file", grib_file)
-       unlink(inv.file)
-       unlink(out.file)
        return(list(data = NULL, msg = msg))
     }
 
@@ -397,6 +243,7 @@ jra55_nrt.extract.grib <- function(grib_file, variable, level, wgrib_exe){
 
         return(x)
     })
+
     tmp <- do.call(rbind, tmp)
 
     lon <- crd_gauss$lon
@@ -409,9 +256,6 @@ jra55_nrt.extract.grib <- function(grib_file, variable, level, wgrib_exe){
     lat <- lat[yo]
     tmp <- t(tmp[yo, xo])
     dat <- list(x = lon, y = lat, z = tmp)
-
-   unlink(inv.file)
-   unlink(out.file)
 
     return(list(data = dat, msg = NULL))
 }

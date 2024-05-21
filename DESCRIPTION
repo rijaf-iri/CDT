@@ -49,7 +49,6 @@ Imports:
     stringi,
     devtools,
     pkgbuild,
-    abind,
     fitdistrplus,
     ADGofTest,
     qmap,

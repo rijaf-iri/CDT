@@ -4,10 +4,20 @@
 \alias{install_wgrib}
 \title{Install wgrib.}
 \usage{
-install_wgrib()
+install_wgrib(cc = "gcc")
+}
+\arguments{
+\item{cc}{the \code{C} compiler to be used or the full path to the \code{C} compiler.}
 }
 \description{
-Function to download and install wgrib into CDT local folder.
+Function to download and compile wgrib into CDT local folder.
+}
+\examples{
+
+\dontrun{
+install_wgrib()
+}
+
 }
 \references{
 \url{https://www.cpc.ncep.noaa.gov/products/wesley/wgrib.html}

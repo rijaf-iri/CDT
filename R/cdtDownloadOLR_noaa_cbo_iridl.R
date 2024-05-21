@@ -55,6 +55,7 @@ noaa_olr_cbo.download.iridl <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
     rlat <- paste(c('Y', rlat, 'RANGE'), collapse = "/")
 
     rdate <- iridl.format.date(GalParams$tstep, GalParams$date.range)
+    if(is.null(rdate)) return(-2)
     urls <- urltools::url_encode(paste0("(", rdate$dates, ")"))
     urls <- paste0("T", "/", urls, "/", "VALUE")
 

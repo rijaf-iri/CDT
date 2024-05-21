@@ -1,0 +1,44 @@
+cdt_var,grib_path,grib_name,grib_height,nc_longname,nc_name,nc_units,units_fun,units_args
+tmax,minmax_surf,TMAX,2 m above gnd,Maximum temperature at 2 m above ground,tmax,degC,-,273.15
+tmin,minmax_surf,TMIN,2 m above gnd,Minimum temperature at 2 m above ground,tmin,degC,-,273.15
+tair,fcst_surf,TMP,2 m above gnd,Air temperature at 2 m above ground,tair,degC,-,273.15
+wind,fcst_surf,UGRD,10 m above gnd,U-wind at 10 m above ground,ugrd,m/s,,
+,,VGRD,10 m above gnd,V-wind at 10 m above ground,vgrd,m/s,,
+hum,fcst_surf,RH,2 m above gnd,Relative humidity at 2 m above ground,rh,%,,
+,,SPFH,2 m above gnd,Specific humidity at 2 m above ground,spfh,kg/kg,,
+pres,fcst_surf,PRES,sfc,Pressure at ground or water surface,pres,hPa,/,100
+prmsl,fcst_surf,PRMSL,MSL,Pressure reduced to mean sea level,prmsl,hPa,/,100
+cloud,fcst_surf,TCDC,90-1100 mb,Total cloud cover at 90 - 1100 hPa,tcdc,%,,
+,,HCDC,90-500 mb,High cloud cover at 90 - 500 hPa,hcdc,%,,
+,,MCDC,500-850 mb,Medium cloud cover at 500 - 850 hPa,mcdc,%,,
+,,LCDC,850-1100 mb,Low cloud cover at 850 - 1100 hPa,lcdc,%,,
+rad_avg,fcst_phy2m,CSDLF,sfc,Clear sky downward longwave radiation flux at ground or water surface,csdlf_sfc,W/m2,,
+,,CSDSF,sfc,Clear sky downward solar radiation flux at ground or water surface,csdsf_sfc,W/m2,,
+,,CSULF,nom. top,Clear sky upward longwave radiation flux at nominal top of atmosphere,csulf_top,W/m2,,
+,,CSUSF,sfc,Clear sky upward solar radiation flux at ground or water surface,csusf_sfc,W/m2,,
+,,CSUSF,nom. top,Clear sky upward solar radiation flux at nominal top of atmosphere,csusf_top,W/m2,,
+,,DLWRF,sfc,Downward longwave radiation flux at ground or water surface,dlwrf_sfc,W/m2,,
+,,DSWRF,sfc,Downward solar radiation flux at ground or water surface,dswrf_sfc,W/m2,,
+,,DSWRF,nom. top,Downward solar radiation flux at nominal top of atmosphere,dswrf_top,W/m2,,
+,,ULWRF,sfc,Upward longwave radiation flux at ground or water surface,ulwrf_sfc,W/m2,,
+,,ULWRF,nom. top,Upward longwave radiation flux at nominal top of atmosphere,ulwrf_top,W/m2,,
+,,USWRF,sfc,Upward solar radiation flux at ground or water surface,uswrf_sfc,W/m2,,
+,,USWRF,nom. top,Upward solar radiation flux at nominal top of atmosphere,uswrf_top,W/m2,,
+prcp,fcst_phy2m,TPRAT,sfc,Total precipitation at ground or water surface,ptot,mm,*,1 * 3/24
+,,LPRAT,sfc,Large scale precipitation at ground or water surface,plrgscl,mm,,
+,,CPRAT,sfc,Convective precipitation at ground or water surface,pconv,mm,,
+evp,fcst_phy2m,EVP,sfc,Evaporation at ground or water surface,evp,mm,*,1 * 3/24
+pet,fcst_phyland,LTRS,sfc,Evapotranspiration at ground surface,pet,mm,*,0.035 * 3/24
+runoff,fcst_phyland,ROF,sfc,Water run-off at ground surface,ro_sfc,mm,*,1 * 3/24
+,,ROF,bot land sfc model,Water run-off at the bottom of land surface model,ro_bmod,mm,,
+soilm,fcst_land,SoilW,soil layer 1,Soil wetness at underground layer 1,soilw_l1,proportion,,
+,,SoilW,soil layer 2,Soil wetness at underground layer 2,soilw_l2,proportion,,
+,,SoilW,soil layer 3,Soil wetness at underground layer 3,soilw_l3,proportion,,
+,,SMC,soil layer 1,Mass concentration of condensed water in soil at underground layer 1,smc_l1,kg/m3,,
+,,SMC,soil layer 2,Mass concentration of condensed water in soil at underground layer 2,smc_l2,kg/m3,,
+,,SMC,soil layer 3,Mass concentration of condensed water in soil at underground layer 3,smc_l3,kg/m3,,
+soilt,fcst_land,SoilT,soil column,Soil temperature at the entire soil layer,soilt,degC,-,273.15
+tsg,fcst_land,TSG,sfc,Ground temperature at ground surface,tsg,degC,-,273.15
+heat_avg,fcst_phy2m,LHTFL,sfc,Latent heat flux at ground or water surface,lhflx,W/m2,,
+,,SHTFL,sfc,Sensible heat flux at ground or water surface,lsflx,W/m2,,
+ghflx,fcst_phyland,GFLX,sfc,Ground heat flux at ground surface,ghflx,W/m2,,

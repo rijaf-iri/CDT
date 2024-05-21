@@ -442,13 +442,44 @@ get.file.date.time <- function(date.range, tstep, minhour = NA){
 
 ##############################################
 
-table.format.date.time <- function(tstep, date.range, minhour = NA){
+divisible.start.end.time <- function(x, minhour){
+    div <- x %% minhour
+    if(div != 0) x <- x - div
+
+    return(x)
+}
+
+hourly.start.end.time <- function(date.range, minhour = NA){
+    if(is.na(minhour)){
+        date.range$start.hour <- divisible.start.end.time(date.range$start.hour, minhour)
+        date.range$end.hour <- divisible.start.end.time(date.range$end.hour, minhour)
+    }
+
+    start <- date.range[paste0('start.', c('year', 'mon', 'day', 'hour'))]
+    start <- paste(unlist(start), collapse = "-")
+    start <- as.POSIXct(start, tz = "UTC", format = "%Y-%m-%d-%H")
+    end <- date.range[paste0('end.', c('year', 'mon', 'day', 'hour'))]
+    end <- paste(unlist(end), collapse = "-")
+    as.POSIXct(end, tz = "UTC", format = "%Y-%m-%d-%H")
+
+    list(start = start, end = end)
+}
+
+#' @exportS3Method NULL
+seq.format.date.time <- function(tstep, date.range, minhour = NA){
     if(date.range$from.file){
         dates <- get.file.date.time(date.range, tstep, minhour)
         if(is.null(dates)) return(NULL)
     }else{
         dates <- get.seq.date.time(date.range, tstep, minhour)
     }
+
+    return(dates)
+}
+
+table.format.date.time <- function(tstep, date.range, minhour = NA){
+    dates <- seq.format.date.time(tstep, date.range, minhour)
+    if(is.null(dates)) return(NULL)
 
     if(tstep %in% c("daily", "hourly", "minute")){
         doy <- strftime(dates, format = "%j", tz = "UTC")

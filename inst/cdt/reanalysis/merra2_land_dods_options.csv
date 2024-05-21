@@ -1,0 +1,25 @@
+cdt_var,dap_path,var_path,var_name,nc_longname,nc_name,nc_units,units_fun,units_args
+rad_avg,M2T1NXLND,tavg1_2d_lnd_Nx,SWLAND,Net shortwave land,swland,W/m2,,
+,,,LWLAND,Net longwave land,lwland,W/m2,,
+,,,PARDFLAND,Surface downwelling par diffuse flux,pardfland,W/m2,,
+,,,PARDRLAND,Surface downwelling par beam flux,pardrland,W/m2,,
+prcp,M2T1NXLND,tavg1_2d_lnd_Nx,PRECTOTLAND,Total precipitation land; bias corrected,prcp,mm,*,3600
+pet,M2T1NXLND,tavg1_2d_lnd_Nx,EVLAND,Evapotranspiration land,pet,mm,*,3600
+runoff,M2T1NXLND,tavg1_2d_lnd_Nx,RUNOFF,Overland runoff including throughflow,runoff,mm,*,3600
+,,,BASEFLOW,Baseflow,baseflow,mm,,
+soilm,M2T1NXLND,tavg1_2d_lnd_Nx,GWETTOP,Surface soil wetness, 0-5 cm,soilw_l1,fraction,,
+,,,GWETROOT,Root zone soil wetness, 0-100 cm,soilw_l2,fraction,,
+,,,GWETPROF,Average profile soil moisture, surface-bedrock,soilw_l3,fraction,,
+,,,SFMC,Water surface layer, 0-5 cm,smc_l1,m3/m3,,
+,,,RZMC,Water root zone, 0-100 cm,smc_l2,m3/m3,,
+,,,PRMC,Water profile, surface-bedrock,smc_l3,m3/m3,,
+soilt,M2T1NXLND,tavg1_2d_lnd_Nx,TSOIL1,Soil temperatures layer 1,tsoil1,degC,-,273.15
+,,,TSOIL2,Soil temperatures layer 2,tsoil2,degC,,
+,,,TSOIL3,Soil temperatures layer 3,tsoil3,degC,,
+,,,TSOIL4,Soil temperatures layer 4,tsoil4,degC,,
+,,,TSOIL5,Soil temperatures layer 5,tsoil5,degC,,
+,,,TSOIL6,Soil temperatures layer 6,tsoil6,degC,,
+tsg,M2T1NXLND,tavg1_2d_lnd_Nx,TSURF,Surface temperature of land including snow,tsurf,degC,-,273.15
+heat_avg,M2T1NXLND,tavg1_2d_lnd_Nx,LHLAND,Latent heat flux land,lhland,W/m2,,
+,,,SHLAND,Sensible heat flux land,shland,W/m2,,
+ghflx,M2T1NXLND,tavg1_2d_lnd_Nx,GHLAND,Ground heating land,ghland,W/m2,,

@@ -1,0 +1,57 @@
+cdt_var,grib_path,grib_name,grib_height,grib_search,nc_longname,nc_name,nc_units,units_fun,units_args
+tmax,minmax_surf,TMP,2 m above ground,max,Maximum temperature at 2 m above ground,tmax,degC,-,273.15
+tmin,minmax_surf,TMP,2 m above ground,min,Minimum temperature at 2 m above ground,tmin,degC,-,273.15
+tair,fcst_surf,TMP,2 m above ground,,Air temperature at 2 m above ground,tair,degC,-,273.15
+wind,fcst_surf,UGRD,10 m above ground,,U-wind at 10 m above ground,ugrd,m/s,,
+,,VGRD,10 m above ground,,V-wind at 10 m above ground,vgrd,m/s,,
+hum,fcst_surf,RH,2 m above ground,,Relative humidity at 2 m above ground,rh,%,,
+,,SPFH,2 m above ground,,Specific humidity at 2 m above ground,spfh,kg/kg,,
+pres,fcst_surf,PRES,surface,,Pressure at ground or water surface,pres,hPa,/,100
+prmsl,fcst_surf,PRMSL,mean sea level,,Pressure reduced to mean sea level,prmsl,hPa,/,100
+cloud,fcst_surf,TCDC,1100-90 mb,,Total cloud cover at 90 - 1100 hPa,tcdc,%,,
+,,HCDC,500-90 mb,,High cloud cover at 90 - 500 hPa,hcdc,%,,
+,,MCDC,850-500 mb,,Medium cloud cover at 500 - 850 hPa,mcdc,%,,
+,,LCDC,1100-850 mb,,Low cloud cover at 850 - 1100 hPa,lcdc,%,,
+rad_avg,fcst_phy2m,DLWRFCS,surface,,Clear sky downward longwave radiation flux at ground or water surface,csdlf_sfc,W/m2,,
+,,DSWRFCS,surface,,Clear sky downward solar radiation flux at ground or water surface,csdsf_sfc,W/m2,,
+,,NLWRCS,top of atmosphere,,Clear sky net longwave radiation flux at nominal top of atmosphere,csnlf_top,W/m2,,
+,,USWRFCS,surface,,Clear sky upward solar radiation flux at ground or water surface,csusf_sfc,W/m2,,
+,,USWRFCS,top of atmosphere,,Clear sky upward solar radiation flux at nominal top of atmosphere,csusf_top,W/m2,,
+,,DLWRF,surface,,Downward longwave radiation flux at ground or water surface,dlwrf_sfc,W/m2,,
+,,DSWRF,surface,,Downward solar radiation flux at ground or water surface,dswrf_sfc,W/m2,,
+,,DSWRF,top of atmosphere,,Downward solar radiation flux at nominal top of atmosphere,dswrf_top,W/m2,,
+,,ULWRF,surface,,Upward longwave radiation flux at ground or water surface,ulwrf_sfc,W/m2,,
+,,ULWRF,top of atmosphere,,Upward longwave radiation flux at nominal top of atmosphere,ulwrf_top,W/m2,,
+,,USWRF,surface,,Upward solar radiation flux at ground or water surface,uswrf_sfc,W/m2,,
+,,USWRF,top of atmosphere,,Upward solar radiation flux at nominal top of atmosphere,uswrf_top,W/m2,,
+prcp,fcst_phy2m,TPRATE,surface,,Total precipitation at ground or water surface,ptot,mm,*,3600
+,,LSPRATE,surface,,Large scale precipitation at ground or water surface,plrgscl,mm,,
+,,CPRAT,surface,,Convective precipitation at ground or water surface,pconv,mm,,
+evp,fcst_phy2m,EVARATE,surface,,Evaporation at ground or water surface,evp,mm,*,3600
+pet,fcst_phyland,var discipline=2 center=34 local_table=1 parmcat=193 parm=8,surface,,Evapotranspiration at ground surface,pet,mm,*,0.035 /24
+runoff,fcst_phyland,var discipline=2 center=34 local_table=1 parmcat=193 parm=9,surface,,Water run-off at ground surface,ro_sfc,mm,*,3600
+,,var discipline=2 center=34 local_table=1 parmcat=193 parm=9,3.49 m underground,,Water run-off at the bottom of land surface model,ro_bmod,mm,,
+soilm,fcst_land,SOILVIC,0-0.02 m below ground,,Soil volumetric ice content (water equivalent) 0-0.02 m below ground,soil_ice_l1,m3/m3,,
+,,SOILVIC,0.02-0.07 m below ground,,Soil volumetric ice content (water equivalent) 0.02-0.07 m below ground,soil_ice_l2,m3/m3,,
+,,SOILVIC,0.07-0.19 m below ground,,Soil volumetric ice content (water equivalent) 0.07-0.19 m below ground,soil_ice_l3,m3/m3,,
+,,SOILVIC,0.19-0.49 m below ground,,Soil volumetric ice content (water equivalent) 0.19-0.49 m below ground,soil_ice_l4,m3/m3,,
+,,SOILVIC,0.49-0.99 m below ground,,Soil volumetric ice content (water equivalent) 0.49-0.99 m below ground,soil_ice_l5,m3/m3,,
+,,SOILVIC,0.99-1.99 m below ground,,Soil volumetric ice content (water equivalent) 0.99-1.99 m below ground,soil_ice_l6,m3/m3,,
+,,SOILVIC,1.99-3.49 m below ground,,Soil volumetric ice content (water equivalent) 1.99-3.49 m below ground,soil_ice_l7,m3/m3,,
+,,LIQVSM,0-0.02 m below ground,,Liquid volumetric soil moisture (non-frozen) 0-0.02 m below ground,soil_moist_l1,m3/m3,,
+,,LIQVSM,0.02-0.07 m below ground,,Liquid volumetric soil moisture (non-frozen) 0.02-0.07 m below ground,soil_moist_l2,m3/m3,,
+,,LIQVSM,0.07-0.19 m below ground,,Liquid volumetric soil moisture (non-frozen) 0.07-0.19 m below ground,soil_moist_l3,m3/m3,,
+,,LIQVSM,0.19-0.49 m below ground,,Liquid volumetric soil moisture (non-frozen) 0.19-0.49 m below ground,soil_moist_l4,m3/m3,,
+,,LIQVSM,0.49-0.99 m below ground,,Liquid volumetric soil moisture (non-frozen) 0.49-0.99 m below ground,soil_moist_l5,m3/m3,,
+,,LIQVSM,0.99-1.99 m below ground,,Liquid volumetric soil moisture (non-frozen) 0.99-1.99 m below ground,soil_moist_l6,m3/m3,,
+,,LIQVSM,1.99-3.49 m below ground,,Liquid volumetric soil moisture (non-frozen) 1.99-3.49 m below ground,soil_moist_l7,m3/m3,,
+soilt,fcst_land,SOILTMP,0-0.02 m below ground,,Soil Temperature 0-0.02 m below ground,soilt_l1,degC,-,273.15
+,,SOILTMP,0.02-0.07 m below ground,,Soil Temperature 0.02-0.07 m below ground,soilt_l2,degC,,
+,,SOILTMP,0.07-0.19 m below ground,,Soil Temperature 0.07-0.19 m below ground,soilt_l3,degC,,
+,,SOILTMP,0.19-0.49 m below ground,,Soil Temperature 0.19-0.49 m below ground,soilt_l4,degC,,
+,,SOILTMP,0.49-0.99 m below ground,,Soil Temperature 0.49-0.99 m below ground,soilt_l5,degC,,
+,,SOILTMP,0.99-1.99 m below ground,,Soil Temperature 0.99-1.99 m below ground,soilt_l6,degC,,
+,,SOILTMP,1.99-3.49 m below ground,,Soil Temperature 1.99-3.49 m below ground,soilt_l7,degC,,
+tsg,fcst_land,var discipline=2 center=34 local_table=1 parmcat=3 parm=192,surface,,Ground temperature,tsg,degC,-,273.15
+heat_avg,fcst_phy2m,LHTFL,surface,,Latent heat flux at ground or water surface,lhflx,W/m2,,
+,,SHTFL,surface,,Sensible heat flux at ground or water surface,lsflx,W/m2,,

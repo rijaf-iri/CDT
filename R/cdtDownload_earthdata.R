@@ -51,3 +51,53 @@ earthdata.curlopts <- function(work_dir, login){
 
     list(cookie = cfile, netrc = nfile)
 }
+
+#########################################################
+
+opendap.gesdisc.table <- function(url){
+    ret <- httr::GET(url)
+    if(httr::status_code(ret) != 200){
+        Insert.Messages.httr(ret)
+        return(NULL)
+    }
+    ret <- httr::content(ret)
+
+    tmp <- rvest::html_table(ret, fill = TRUE)[[1]]
+    tmp <- as.data.frame(tmp[-1, ])
+    tmp <- tmp[tmp[, 1] != "", 1]
+    tmp <- tmp[tmp != "-"]
+    tmp <- tmp[tmp != "ddx"]
+    tmp <- gsub('/', '', tmp)
+    tmp <- tmp[!grepl('\\.xml$', tmp)]
+    return(tmp)
+}
+
+opendap.gesdisc.dates <- function(url, type, fileformat = NA, datetype = NA, diryear = NA){
+    tmp <- opendap.gesdisc.table(url)
+    if(length(tmp) == 0) return(NULL)
+
+    if(type == 'file'){
+        ret <- extract_filename_dates(tmp, fileformat)
+        if(is.null(ret)) return(NULL)
+        ret <- gsub('[^[:digit:]]', '', ret)
+    }else if(type == 'directory'){
+        if(datetype == 'year'){
+            tmp <- as.Date(paste0(tmp, '-01-01'))
+            frmt <- '%Y'
+        }else if(datetype == 'month'){
+            tmp <- as.Date(paste0(diryear, '-', tmp, '-01'))
+            frmt <- '%m'
+        }else if(datetype == 'doy'){
+            tmp <- as.Date(paste0(diryear, tmp), '%Y%j')
+            frmt <- '%j'
+        }else return(NULL)
+
+        ret <- tmp[!is.na(tmp)]
+        if(length(ret) == 0) return(NULL)
+        ret <- format(ret, frmt)
+    }else return(NULL)
+
+    ret <- sort(ret)
+
+    return(ret)
+}

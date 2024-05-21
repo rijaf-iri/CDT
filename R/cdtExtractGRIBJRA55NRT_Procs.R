@@ -193,12 +193,8 @@ jra55_nrt.extract.downloaded.grib <- function(GUI = TRUE){
 
     ######################
 
-    start <- .cdtData$GalParams$date.range[paste0('start.', c('year', 'mon', 'day', 'hour'))]
-    start <- jra55.start.end.time(start)
-    end <- .cdtData$GalParams$date.range[paste0('end.', c('year', 'mon', 'day', 'hour'))]
-    end <- jra55.start.end.time(end)
-
-    rtimes <- seq(start, end, "3 hours")
+    rtimes <- seq.format.date.time('hourly', .cdtData$GalParams$date.range, 3)
+    if(is.null(rtimes)) return(-2)
     ymdh <- format(rtimes, '%Y%m%d%H')
 
     gribfiles <- paste0(jra_prefix, ".", ymdh)
