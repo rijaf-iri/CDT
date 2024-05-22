@@ -253,8 +253,8 @@ cdtMainContextMenu <- function(){
                   command = function()
             {
                 refreshCDT(staterun = "normal")
-                initialize.parameters('exGRIB.JRA55.NRT')
-                extractGRIB_JRA55NRT()
+                initialize.parameters('exGRIB.JRA.NRT')
+                extractGRIB_JRA_NRT()
             })
 
             ########

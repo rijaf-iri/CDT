@@ -1,17 +1,20 @@
 
-extractGRIB_JRA55NRT <- function(){
+extractGRIB_JRA_NRT <- function(){
     if(WindowsOS()){
         largeur0 <- 47
         largeur1 <- 48
         largeur2 <- 25
+        largeur3 <- 27
     }else{
         largeur0 <- 44
         largeur1 <- 45
         largeur2 <- 25
+        largeur3 <- 24
     }
 
-    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtExtractGRIBJRA55NRT_dlgBox.xml")
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtExtractGRIB_jra_nrt_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    get_reanalysis.products()
 
     ###################
 
@@ -24,19 +27,90 @@ extractGRIB_JRA55NRT <- function(){
 
     ############################################
 
+    frJRA <- tkframe(frMRG0, relief = "sunken", borderwidth = 2)
+
+    cbJRAProd <- lang.dlg[['combobox']][['1']]
+    valJRAProd <- c('jra3q', 'jra55')
+    jra.prod <- tclVar()
+    tclvalue(jra.prod) <- cbJRAProd[valJRAProd %in% .cdtData$GalParams$jra.prod]
+
+    txt.jra <- tklabel(frJRA, text = lang.dlg[['label']][['9']], anchor = 'w', justify = 'right')
+    cb.jra <- ttkcombobox(frJRA, values = cbJRAProd, textvariable = jra.prod, justify = 'center', width = largeur3)
+
+    tkgrid(txt.jra, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.jra, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ########
+    tkbind(cb.jra, "<<ComboboxSelected>>", function(){
+        prod <- valJRAProd[cbJRAProd %in% trimws(tclvalue(jra.prod))]
+        r_prod <- reanal_prod[[prod]]
+        CbvarsVAL <<- .cdtData$EnvData$rnlProd[[prod]]$pars[[r_prod]]$var_name
+        varsVAL <<- .cdtData$EnvData$rnlProd[[prod]]$pars[[r_prod]]$par_name
+        tkconfigure(cb.exVar, values = CbvarsVAL)
+        tclvalue(extractVar) <- CbvarsVAL[1]
+
+        rvar <- varsVAL[CbvarsVAL %in% trimws(tclvalue(extractVar))]
+        dir_text <- opts_var[[prod]][[rvar]]$grib_path
+        tclvalue(dir.jra) <- paste0("GRIB_", dir_text)
+    })
+
+    ############################################
+
+    frVAR <- tkframe(frMRG0, relief = "sunken", borderwidth = 2)
+
+    reanal_prod <- list(
+                jra3q = 'rda.ucar.edu - ds640.1-NRT - Hourly',
+                jra55 = 'rda.ucar.edu - ds628.8-NRT - 3Hourly'
+              )
+    r_prod <- reanal_prod[[.cdtData$GalParams$jra.prod]]
+
+    CbvarsVAL <- .cdtData$EnvData$rnlProd[[.cdtData$GalParams$jra.prod]]$pars[[r_prod]]$var_name
+    varsVAL <- .cdtData$EnvData$rnlProd[[.cdtData$GalParams$jra.prod]]$pars[[r_prod]]$par_name
+    extractVar <- tclVar()
+    tclvalue(extractVar) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$var]
+
+    txt.exVar <- tklabel(frVAR, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
+    lab.exVar <- tklabel(frVAR, text = "", width = 2)
+    cb.exVar <- ttkcombobox(frVAR, values = CbvarsVAL, textvariable = extractVar, justify = 'center', width = largeur0)
+
+    tkgrid(txt.exVar, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(lab.exVar, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.exVar, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    helpWidget(cb.exVar, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
+
+    ########
+    tkbind(cb.exVar, "<<ComboboxSelected>>", function(){
+        prod <- valJRAProd[cbJRAProd %in% trimws(tclvalue(jra.prod))]
+        rvar <- varsVAL[CbvarsVAL %in% trimws(tclvalue(extractVar))]
+        dir_text <- opts_var[[prod]][[rvar]]$grib_path
+        tclvalue(dir.jra) <- paste0("GRIB_", dir_text)
+    })
+
+    ############################################
+
     frGRIB <- tkframe(frMRG0, relief = "sunken", borderwidth = 2)
+
+    opts_var <- list(
+        jra3q = get_reanalysis.variables("jra3q_nrt_options.csv"),
+        jra55 = get_reanalysis.variables("jra55_nrt_options.csv")
+    )
+    dir_text <- opts_var[[.cdtData$GalParams$jra.prod]][[.cdtData$GalParams$var]]$grib_path
+    dir.jra <- tclVar(paste0("GRIB_", dir_text))
 
     dir.grib <- tclVar(.cdtData$GalParams$dir.grib)
 
-    txt.grib <- tklabel(frGRIB, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-    cb.grib <- tkentry(frGRIB, textvariable = dir.grib, width = largeur1)
+    txt.grib1 <- tklabel(frGRIB, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
+    txt.grib2 <- tklabel(frGRIB, text = tclvalue(dir.jra), textvariable = dir.jra, anchor = 'w', justify = 'left', foreground = "blue", background = "white")
+    en.grib <- tkentry(frGRIB, textvariable = dir.grib, width = largeur1)
     bt.grib <- tkbutton(frGRIB, text = "...")
 
-    tkgrid(txt.grib, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.grib, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.grib, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.grib1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.grib2, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.grib, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.grib, row = 1, column = 8, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
-    helpWidget(cb.grib, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(en.grib, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(bt.grib, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     ########
@@ -49,33 +123,11 @@ extractGRIB_JRA55NRT <- function(){
 
     ############################################
 
-    frVAR <- tkframe(frMRG0, relief = "sunken", borderwidth = 2)
-
-    extractVar <- tclVar()
-
-    CbvarsVAL <- lang.dlg[['combobox']][['1']]
-
-    varsVAL <- c('tmax', 'tmin', 'tair', 'wind', 'hum', 'pres', 'prmsl',
-                  'cloud', 'rad_avg', 'prcp', 'evp', 'pet', 'runoff',
-                  'soilm', 'soilt', 'tsg', 'heat_avg', 'ghflx')
-
-    tclvalue(extractVar) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$var]
-
-    txt.exVar <- tklabel(frVAR, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-    cb.exVar <- ttkcombobox(frVAR, values = CbvarsVAL, textvariable = extractVar, width = largeur0)
-
-    tkgrid(txt.exVar, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.exVar, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    helpWidget(cb.exVar, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
-
-    ############################################
-
     btRange <- ttkbutton(frMRG0, text = lang.dlg[['button']][['1']])
 
     tkconfigure(btRange, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], "hourly")
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], "hourly", TRUE)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -143,11 +195,13 @@ extractGRIB_JRA55NRT <- function(){
     helpWidget(bt.dirsave, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
     ############################################
-    tkgrid(frGRIB, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(frJRA, row = 0, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
     tkgrid(frVAR, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(btRange, row = 2, column = 0, sticky = 'we', padx = 1, pady = 6, ipadx = 1, ipady = 1)
-    tkgrid(frRegion, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frSave, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frGRIB, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(btRange, row = 3, column = 0, sticky = 'we', padx = 1, pady = 6, ipadx = 1, ipady = 1)
+    tkgrid(frRegion, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frSave, row = 5, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
 
@@ -171,6 +225,7 @@ extractGRIB_JRA55NRT <- function(){
             .cdtData$GalParams$bbox$minlat <- as.numeric(tclvalue(minLat))
             .cdtData$GalParams$bbox$maxlat <- as.numeric(tclvalue(maxLat))
 
+            .cdtData$GalParams$jra.prod <- valJRAProd[cbJRAProd %in% trimws(tclvalue(jra.prod))]
             .cdtData$GalParams$var <- varsVAL[CbvarsVAL %in% trimws(tclvalue(extractVar))]
 
             .cdtData$GalParams$message <- lang.dlg[['message']]

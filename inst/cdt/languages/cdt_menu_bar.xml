@@ -96,8 +96,8 @@
             <text lang="fr"> Télécharger les données Réanalyse </text>
         </submenu>
         <submenu id="6-5">
-            <text lang="en"> Extract GRIB data from JRA-55 NRT Reanalysis </text>
-            <text lang="fr"> Extraire données GRIB pour le Réanalyse JRA-55 NRT</text>
+            <text lang="en"> Extract GRIB data from JRA NRT Reanalysis </text>
+            <text lang="fr"> Extraire données GRIB pour le Réanalyse JRA NRT</text>
         </submenu>
         <submenu id="6-6">
             <text lang="en"> Download Reanalysis Elevation data </text>
