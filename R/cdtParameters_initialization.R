@@ -161,9 +161,10 @@ cdt.init.params <- function(action, tstep){
                         )
     }
 
-    ## Extract data from JRA55 NRT GRIB
-    if(action == 'exGRIB.JRA55.NRT'){
+    ## Extract data from JRA NRT GRIB data
+    if(action == 'exGRIB.JRA.NRT'){
         ret.params <- list(action = action,
+                           jra.prod = "jra3q",
                            dir.grib = "",
                            var = "tmax",
                            date.range = date.range,

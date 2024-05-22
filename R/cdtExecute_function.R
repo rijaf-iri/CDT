@@ -317,9 +317,9 @@ Execute_Function <- function(){
 
     ###############################
 
-    ## Extract GRIB JRA-55 NRT
-    if(.cdtData$GalParams$action == 'exGRIB.JRA55.NRT'){
-        ret <- try(jra55_nrt.extract.downloaded.grib(), silent = TRUE)
+    ## Extract data from JRA NRT GRIB data
+    if(.cdtData$GalParams$action == 'exGRIB.JRA.NRT'){
+        ret <- try(extract.jra_nrt.grib.data(), silent = TRUE)
         msg0 <- .cdtData$GalParams[['message']][['9']]
         msg1 <- .cdtData$GalParams[['message']][['10']]
         Execute_end_msg(ret, msg0, msg1)
