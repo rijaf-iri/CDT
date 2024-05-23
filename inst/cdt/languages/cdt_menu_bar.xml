@@ -103,6 +103,9 @@
             <text lang="en"> Download Reanalysis Elevation data </text>
             <text lang="fr"> Télécharger les données d'Elevation de Réanalyse </text>
         </submenu>
+        <submenu id="6-7">
+            <text lang="en"> Build wgrib and wgrib2 </text>
+        </submenu>
         <submenu id="7">
             <text lang="en"> Aggregate Data </text>
             <text lang="fr"> Agrégation des Données </text>

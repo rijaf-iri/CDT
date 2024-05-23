@@ -269,6 +269,18 @@ cdtMainContextMenu <- function(){
                 download_Elevation_Reanalysis()
             })
 
+            ########
+            tkadd(menu.dataDown, "separator")
+
+            ##########
+            tkadd(menu.dataDown, "command", label = lang.menu[["data.preparation"]][["6-7"]],
+                  command = function()
+            {
+                refreshCDT(staterun = "disabled")
+                initialize.parameters('build.wgrib')
+                build_wgrib_info()
+            })
+
         ##########
         tkadd(menu.dataprep, "separator")
 
