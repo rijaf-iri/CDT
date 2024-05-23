@@ -2,15 +2,15 @@
 AggregateTS_GetInfo <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 53
-        largeur1 <- 51
-        largeur2 <- 37
-        wtkcombo <- 21
+        largeur0 <- 56
+        largeur1 <- 53
+        largeur2 <- 42
+        wtkcombo <- 23
     }else{
-        largeur0 <- 46
-        largeur1 <- 45
-        largeur2 <- 34
-        wtkcombo <- 20
+        largeur0 <- 48
+        largeur1 <- 47
+        largeur2 <- 40
+        wtkcombo <- 22
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtAggregateTS_dlgBox.xml")
