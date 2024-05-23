@@ -579,3 +579,46 @@ cdt.tkmessageBox <- function(parent, message, ...){
     tcl('wm', 'attributes', parent, topmost = TRUE)
 }
 
+########################################################################
+
+ttkcombobox_search <- function(parent, values, textvariable, ...,
+                               placeholder = "Search or select")
+{
+    cb_widget <- ttkcombobox(parent, values = values, textvariable = textvariable, ...)
+    tclvalue(textvariable) <- placeholder
+    cb_val <- gsub('[^[:alnum:][:space:]]', '', tolower(values))
+
+    tkbind(cb_widget, "<FocusIn>", function(){
+        input <- tclvalue(tkget(cb_widget))
+        if(input == placeholder){
+            tkconfigure(cb_widget, values = values)
+            tclvalue(textvariable) <- ''
+        }
+    })
+
+    tkbind(cb_widget, "<FocusOut>", function(){
+        input <- tclvalue(tkget(cb_widget))
+        if(!input %in% values){
+            tclvalue(textvariable) <- placeholder
+        }
+    })
+
+    tkbind(cb_widget, "<KeyRelease>", function(){
+        input <- tclvalue(tkget(cb_widget))
+        if(nchar(input) < 3){
+            isrch <- grep(paste0('^', input), cb_val, ignore.case = TRUE)
+        }else{
+            isrch <- grep(input, cb_val, ignore.case = TRUE)
+        }
+        if(length(isrch) == 0){
+            tkconfigure(cb_widget, values = values)
+            return(NULL)
+        }
+        vals <- values[isrch]
+        vals <- if(length(vals) == 1) c(vals, '') else vals
+        tkconfigure(cb_widget, values = vals)
+    })
+
+    return(cb_widget)
+}
+
