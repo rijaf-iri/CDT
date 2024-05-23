@@ -16,6 +16,10 @@ cdtUserInfo <- function(){
 
     #####################
 
+    user_cntr_file <- file.path(.cdtDir$Root, "data", "UserInfo_Countries.rds")
+    user_countries <- readRDS(user_cntr_file)
+    placeholder <- 'Select or search country'
+
     var.fullname <- tclVar()
     var.email <- tclVar()
     var.institution <- tclVar()
@@ -31,7 +35,7 @@ cdtUserInfo <- function(){
     txt.position <- tklabel(frDialog, text = "Position", anchor = 'w', justify = 'left')
     en.position <- tkentry(frDialog, textvariable = var.position)
     txt.country <- tklabel(frDialog, text = "Country", anchor = 'w', justify = 'left')
-    en.country <- tkentry(frDialog, textvariable = var.country)
+    cb.country <- ttkcombobox_search(frDialog, values = user_countries, textvariable = var.country, placeholder = placeholder)
     frameDescrp <- tkframe(frDialog, relief = 'groove', borderwidth = 2)
 
     tkgrid(txt.fullname, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -43,7 +47,7 @@ cdtUserInfo <- function(){
     tkgrid(txt.position, row = 6, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.position, row = 7, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.country, row = 8, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.country, row = 9, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.country, row = 9, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(tklabel(frDialog, text = ""), row = 10)
     tkgrid(frameDescrp, row = 11, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
@@ -105,8 +109,8 @@ cdtUserInfo <- function(){
         }else if(rep.position == "" | nchar(rep.position) < 4){
             cdt.tkmessageBox(tt, message = "Please provide your position", icon = "warning", type = "ok")
             tkwait.window(tt)
-        }else if(rep.country == "" | nchar(rep.country) < 3){
-            cdt.tkmessageBox(tt, message = "Please provide your country", icon = "warning", type = "ok")
+        }else if(!rep.country %in% user_countries){
+            cdt.tkmessageBox(tt, message = "Please select your country", icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             user_info$fullname <<- rep.fullname
