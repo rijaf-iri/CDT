@@ -57,7 +57,7 @@ cdtUserInfo <- function(){
     #                     command = function(...) tkxview(txta, ...))
     yscr <- tkscrollbar(frameDescrp, repeatinterval = 5,
                         command = function(...) tkyview(txta, ...))
-    txta <- tktext(frameDescrp, bg = "white", font = "courier",
+    txta <- tktext(frameDescrp, bg = "white", font = "courier", wrap = "none",
                    height = 4, width = largeur0,
                    # xscrollcommand = function(...) tkset(xscr, ...),
                    yscrollcommand = function(...) tkset(yscr, ...))
@@ -68,14 +68,18 @@ cdtUserInfo <- function(){
     tkgrid.configure(txta, sticky = "nsew")
     tkgrid.configure(yscr, sticky = "ns")
     # tkgrid.configure(xscr, sticky = "ew")
+    tcl("update", "idletasks")
 
     ####
-
-    infos <- "We would like to ask you to fill the forms above to identify all CDT users, with the objective of improving CDT functions."
+    infos <- c("We would like to ask you to fill the",
+               "forms above to identify all CDT users,",
+               "with the objective of improving",
+               "CDT functions.")
 
     font4 <- tkfont.create(family = "courier", size = 11)
     tktag.configure(txta, "font4f", font = font4)
-    tkinsert(txta, "end", infos, "font4f")
+    for(i in seq_along(infos))
+        tkinsert(txta, "end", paste(infos[i], "\n"), "font4f")
     tkconfigure(txta, state = 'disabled')
 
     #####################
@@ -129,7 +133,7 @@ cdtUserInfo <- function(){
 
     #####################
 
-    tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 4, pady = 1, ipadx = 2, ipady = 1)
     tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     tkwm.withdraw(tt)
