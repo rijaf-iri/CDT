@@ -124,12 +124,12 @@ get_all.rfe.products <- function(){
 
 download_RFE <- function(){
     if(WindowsOS()){
-        largeur0 <- 54
+        largeur0 <- 55
         largeur1 <- 27
         largeur2 <- 18
         largeur3 <- 33
         largeur4 <- 22
-        largeur5 <- 15
+        largeur5 <- 16
     }else{
         largeur0 <- 52
         largeur1 <- 27
