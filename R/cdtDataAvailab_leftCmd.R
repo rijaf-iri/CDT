@@ -2,11 +2,11 @@
 AssessDataPanelCmd <- function(){
     listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 31
-        largeur2 <- 33
+        largeur1 <- 34
+        largeur2 <- 37
         largeur3 <- 16
         largeur4 <- 14
-        largeur5 <- 11
+        largeur5 <- 12
         largeur6 <- 22
     }else{
         largeur1 <- 32

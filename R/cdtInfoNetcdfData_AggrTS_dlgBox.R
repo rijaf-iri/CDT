@@ -3,7 +3,7 @@ AggregateTS_ncdfData <- function(parent.win, ncDIR,
                                 tstep = .cdtEnv$tcl$lang$global[['combobox']][['1']][3])
 {
     listOpenFiles <- openFile_ttkcomboList()
-    largeur1 <- if(WindowsOS()) 56 else 38
+    largeur1 <- if(WindowsOS()) 44 else 38
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtInfoNetcdfData_AggrTS_dlgBox.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)

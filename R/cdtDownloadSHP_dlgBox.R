@@ -1,7 +1,7 @@
 
 download_CountryShapefile <- function(){
     if(WindowsOS()){
-        largeur <- 56
+        largeur <- 57
         largeur1 <- 27
     }else{
         largeur <- 53

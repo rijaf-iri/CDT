@@ -1,7 +1,7 @@
 merge2CDTdata_getParams <- function(){
     if(WindowsOS()){
-        largeur1 <- 45
-        largeur2 <- 30
+        largeur1 <- 52
+        largeur2 <- 34
         data.w <- 410
         data.h <- 320
     }else{
