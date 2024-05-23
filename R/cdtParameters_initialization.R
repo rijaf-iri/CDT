@@ -181,6 +181,15 @@ cdt.init.params <- function(action, tstep){
                            dir2save = getwd())
     }
 
+    ## Build wgrib and wgrib2
+    if(action == 'build.wgrib'){
+        ret.params <- list(action = action,
+                           wgrib = "wgrib2",
+                           cc = "gcc",
+                           fc = "gfortran",
+                           make = "make")
+    }
+
     #################################################################
 
     ## Filling missing dekadal temperature values
