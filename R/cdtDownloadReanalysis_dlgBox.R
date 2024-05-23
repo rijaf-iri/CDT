@@ -90,13 +90,13 @@ get_reanalysis.products <- function(){
 
 download_Reanalysis <- function(){
     if(WindowsOS()){
-        largeur0 <- 64
+        largeur0 <- 65
         largeur1 <- 27
         largeur2 <- 37
         largeur3 <- 20
         largeur5 <- 42
         largeur6 <- 30
-        largeur7 <- 15
+        largeur7 <- 18
     }else{
         largeur0 <- 61
         largeur1 <- 27

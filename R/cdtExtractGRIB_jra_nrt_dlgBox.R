@@ -2,7 +2,7 @@
 extractGRIB_JRA_NRT <- function(){
     if(WindowsOS()){
         largeur0 <- 47
-        largeur1 <- 48
+        largeur1 <- 50
         largeur2 <- 25
         largeur3 <- 27
     }else{

@@ -51,8 +51,13 @@ check.start.end.InfoDate <- function(tstep, date.range){
 
 getInfoDateRange <- function(parent.win, Parameters, tstep, from_file = FALSE)
 {
-    largeur0 <- 40
-    largeur1 <- 35
+    if(WindowsOS()){
+        largeur0 <- 40
+        largeur1 <- 43
+    }else{
+        largeur0 <- 40
+        largeur1 <- 35
+    }
 
     ###################
 
