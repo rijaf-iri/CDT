@@ -568,7 +568,7 @@ split_path <- function(path){
 set.hour.minute <- function(intstep, minhour){
     if(intstep %in% c("minute", "hourly")){
         minhourVAL <- switch(intstep,
-                               "minute" = c(5, 10, 15, 30),
+                               "minute" = c(5, 10, 15, 20, 30),
                                "hourly" = c(1, 3, 6, 12)
                              )
         if(is.na(minhour)){
@@ -713,4 +713,28 @@ eval_function <- function(fun_def, fun_args, val){
     f_args <- c(list(val), f_args)
 
     do.call(tmp_fun, f_args)
+}
+
+########################################
+
+## tryCatch handling warning message
+## do not stop when warning
+
+tryCatch2 <- function(expr, ...){
+    warning_msg <- NULL
+    res <- tryCatch(
+        expr = {
+            withCallingHandlers(
+                expr = expr,
+                warning = function(w){
+                    env_fun <- parent.env(environment())
+                    env_fun$warning_msg <- w
+                } 
+            )
+        },
+        ...
+    )
+    if(!is.null(warning_msg)) warningFun(warning_msg)
+
+    return(res)
 }
