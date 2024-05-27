@@ -13,7 +13,7 @@ build_wgrib_gui <- function(){
 
     if(.cdtData$GalParams$wgrib == "wgrib2"){
         Insert.Messages.Out(.cdtData$GalParams$message[['1']], TRUE, "i")
-        ret <- tryCatch({
+        ret <- tryCatch2({
                         build_wgrib2(make = .cdtData$GalParams$make,
                                      cc = .cdtData$GalParams$cc,
                                      fc = .cdtData$GalParams$fc,
@@ -21,19 +21,17 @@ build_wgrib_gui <- function(){
                                      GUI = TRUE)
                         },
                          error = function(e) errorFun(e),
-                         warning = function(w) warningFun(w),
                          finally = {
                             Insert.Messages.Out(out_msg, TRUE, "i")
                         })
     }else{
         Insert.Messages.Out(.cdtData$GalParams$message[['2']], TRUE, "i")
-        ret <- tryCatch({
+        ret <- tryCatch2({
                         compile_wgrib(cc = .cdtData$GalParams$cc,
                                       messages = .cdtData$GalParams$message,
                                       GUI = TRUE)
                         },
                          error = function(e) errorFun(e),
-                         warning = function(w) warningFun(w),
                          finally = {
                             Insert.Messages.Out(out_msg, TRUE, "i")
                         })
@@ -160,7 +158,11 @@ build_wgrib2 <- function(make, cc, fc, messages, GUI){
     ####
     grib2_dir <- file.path(wgrib_dir, 'grib2')
     if(dir.exists(grib2_dir)) unlink(grib2_dir, recursive = TRUE)
-    utils::untar(wgrib_dest, exdir = wgrib_dir)
+    res <- utils::untar(wgrib_dest, exdir = wgrib_dir)
+    if(res != 0){
+        res <- utils::untar(wgrib_dest, exdir = wgrib_dir,
+                            tar = Sys.getenv("R_INSTALL_TAR", "internal"))
+    }
 
     ####
     makefile <- file.path(grib2_dir, 'makefile')
