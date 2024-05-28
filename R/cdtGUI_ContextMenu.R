@@ -23,6 +23,12 @@ cdtMainContextMenu <- function(){
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
 
+            ## refresh to avoid the errors
+            ## Error in try(<environment>()) : attempt to apply non-function
+            ## Error in (function () : 'rho' must be an environment not language: detected in C-level eval
+            ## Error in try(NULL()) : attempt to apply non-function
+            refreshCDT(staterun = "disabled")
+
             dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
             if(!is.null(dat.opfiles)) update.OpenFiles('ascii', dat.opfiles)
         })
@@ -37,6 +43,7 @@ cdtMainContextMenu <- function(){
             })
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
+            refreshCDT(staterun = "disabled")
 
             nc.opfiles <- getOpenNetcdf(.cdtEnv$tcl$main$win)
             if(!is.null(nc.opfiles)) update.OpenFiles('netcdf', nc.opfiles)
@@ -52,6 +59,7 @@ cdtMainContextMenu <- function(){
             })
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
+            refreshCDT(staterun = "disabled")
 
             shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
             if(!is.null(shp.opfiles)) update.OpenFiles('shp', shp.opfiles)
@@ -105,6 +113,7 @@ cdtMainContextMenu <- function(){
         tkadd(menu.file, "command", label = lang.menu[["file"]][["7"]],
               command = function()
         {
+            refreshCDT(staterun = "disabled")
             cdtConfiguration(.cdtEnv$tcl$main$win)
         })
 
@@ -120,6 +129,10 @@ cdtMainContextMenu <- function(){
                 .cdtEnv$tcl <- NULL
                 options(warn = 0)
             })
+
+            ## stop openFiles listener
+            tcl("after", "cancel", .cdtEnv$tcl$task_openFiles$id)
+
             refreshCDT()
             tkdestroy(.cdtEnv$tcl$main$win)
         })

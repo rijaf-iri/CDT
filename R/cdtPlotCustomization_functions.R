@@ -119,7 +119,7 @@ axTicks.POSIXct <- function(x, side = 1){
         zz <- pretty(z/sc)
         z <- zz * sc
         z <- .POSIXct(z, attr(x, "tzone"))
-        if(sc == 60 * 60 * 24) z <- as.POSIXct(round(z, "days"))
+        if(sc == 60 * 60 * 24) z <- as.POSIXct(round(z, "days"), tz = attr(x, "tzone"))
         format <- "%b %d"
     }else if(d < 1.1 * 60 * 60 * 24 * 365){
         z <- .POSIXct(z, attr(x, "tzone"))
@@ -134,7 +134,7 @@ axTicks.POSIXct <- function(x, side = 1){
         zz$year <- c(m, m + 1)
         zz <- lapply(zz, function(x) rep(x, length.out = M))
         zz <- .POSIXlt(zz, attr(x, "tzone"))
-        z <- as.POSIXct(zz)
+        z <- as.POSIXct(zz, tz = attr(x, "tzone"))
         format <- "%b"
     }else{
         z <- .POSIXct(z, attr(x, "tzone"))
@@ -145,7 +145,7 @@ axTicks.POSIXct <- function(x, side = 1){
         zz$year <- pretty(zz$year)
         M <- length(zz$year)
         zz <- lapply(zz, function(x) rep(x, length.out = M))
-        z <- as.POSIXct(.POSIXlt(zz))
+        z <- as.POSIXct(.POSIXlt(zz), tz = attr(x, "tzone"))
         format <- "%Y"
     }
 
@@ -187,6 +187,7 @@ axTicks.minor.Date <- function(xlim){
 ########################################################################
 
 axTicks.minor.POSIXct <- function(xlim){
+    tz <- attr(xlim, "tzone")
     df <- diff(xlim)
     units <- attr(df, 'units')
     df <- as.numeric(df)
@@ -198,7 +199,7 @@ axTicks.minor.POSIXct <- function(xlim){
             # start <- format(xlim[1] - 3600, "%Y-%m-%d %H:00")
             start <- format(xlim[1], "%Y-%m-%d %H:00")
             end <- format(xlim[2] + 3600, "%Y-%m-%d %H:00")
-            xminor <- seq(as.POSIXct(start), as.POSIXct(end), "hour")
+            xminor <- seq(as.POSIXct(start, tz = tz), as.POSIXct(end, tz = tz), "hour")
             return(xminor)
         }
     }
@@ -206,31 +207,31 @@ axTicks.minor.POSIXct <- function(xlim){
         if(df < 6){
             start <- format(xlim[1] - 6 * 3600, "%Y-%m-%d %H:00")
             end <- format(xlim[2] + 6 * 3600, "%Y-%m-%d %H:00")
-            xminor <- seq(as.POSIXct(start), as.POSIXct(end), "6 hours")
+            xminor <- seq(as.POSIXct(start, tz = tz), as.POSIXct(end, tz = tz), "6 hours")
             return(xminor)
         }
         if(df < 47){
             start <- format(xlim[1] - 24 * 3600, "%Y-%m-%d %H:00")
             end <- format(xlim[2] + 24 * 3600, "%Y-%m-%d %H:00")
-            xminor <- seq(as.POSIXct(start), as.POSIXct(end), "day")
+            xminor <- seq(as.POSIXct(start, tz = tz), as.POSIXct(end, tz = tz), "day")
             return(xminor)
         }
         if(df < 372){
             start <- format(xlim[1], "%Y-%m-%d %H:00")
             end <- format(xlim[2] + 16 * 24 * 3600, "%Y-%m-%d %H:00")
-            xminor <- seq(as.POSIXct(start), as.POSIXct(end), "month")
+            xminor <- seq(as.POSIXct(start, tz = tz), as.POSIXct(end, tz = tz), "month")
             return(xminor)
         }
         if(df < 2459){
             start <- format(xlim[1], "%Y-%m-%d %H:00")
             end <- format(xlim[2] + 3 * 31 * 24 * 3600, "%Y-%m-%d %H:00")
-            xminor <- seq(as.POSIXct(start), as.POSIXct(end), "3 months")
+            xminor <- seq(as.POSIXct(start, tz = tz), as.POSIXct(end, tz = tz), "3 months")
             return(xminor)
         }
         if(df >= 2459){
             start <- format(xlim[1], "%Y-%m-%d %H:00")
             end <- format(xlim[2] + 366 * 24 * 3600, "%Y-%m-%d %H:00")
-            xminor <- seq(as.POSIXct(start), as.POSIXct(end), "year")
+            xminor <- seq(as.POSIXct(start, tz = tz), as.POSIXct(end, tz = tz), "year")
             return(xminor)
         }
     }else return(NULL)

@@ -19,5 +19,8 @@
         <label id="5">
             <text lang="en"> longname </text>
         </label>
+        <label id="6">
+            <text lang="en"> Go to the online documentation </text>
+        </label>
     </widget>
 </dialog_box>

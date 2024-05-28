@@ -1,6 +1,5 @@
 
 PlotCDTDatasetCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 36
         largeur1 <- 33
@@ -98,7 +97,8 @@ PlotCDTDatasetCmd <- function(){
         shpAttr <- tclVar()
 
         txt.addshp <- tklabel(frameSHP, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = shpFile, width = largeur1)
+        cb.addshp <- ttkcombobox(frameSHP, values = unlist(openFile_ttkcomboList()), textvariable = shpFile, width = largeur1)
+        addTo_all_Combobox_List(cb.addshp)
         bt.addshp <- tkbutton(frameSHP, text = "...")
 
         txt.attrshp <- tklabel(frameSHP, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
@@ -125,8 +125,6 @@ PlotCDTDatasetCmd <- function(){
             if(!is.null(shp.opfiles)){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(shpFile) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                tkconfigure(cb.addshp, values = unlist(listOpenFiles))
 
                 shpf <- getShpOpenData(shpFile)
                 if(is.null(shpf)){

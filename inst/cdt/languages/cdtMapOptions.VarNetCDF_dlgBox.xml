@@ -25,6 +25,9 @@
         <label id="6">
             <text lang="en"> Map title </text>
         </label>
+        <label id="7">
+            <text lang="en"> Plot Type </text>
+        </label>
     </widget>
     <message>
         <content id="1">

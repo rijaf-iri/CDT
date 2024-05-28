@@ -9,9 +9,6 @@
         </tab>
     </tab_title>
     <widget>
-        <checkbutton id="1">
-            <text lang="en"> Add Shapefile to Map </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> Directory containing the netCDF data </text>
         </label>
@@ -23,12 +20,6 @@
         </label>
         <label id="4">
             <text lang="en"> Map </text>
-        </label>
-        <label id="5">
-            <text lang="en"> Plot Type </text>
-        </label>
-        <label id="6">
-            <text lang="en"> Shapefile </text>
         </label>
     </widget>
     <help>

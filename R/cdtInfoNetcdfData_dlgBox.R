@@ -24,6 +24,7 @@ getInfoNetCDFData <- function(parent.win, Parameters, ncDIR, stateFormat = 'norm
 
     txt.ncsample <- tklabel(frFF, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     cb.ncsample <- ttkcombobox(frFF, values = unlist(openFile_ttkcomboList()), textvariable = rfesample, width = largeur1)
+    addTo_all_Combobox_List(cb.ncsample)
     bt.ncsample <- tkbutton(frFF, text = "...")
     txt.inrfeff <- tklabel(frFF, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     en.inrfeff <- tkentry(frFF, textvariable = inrfeff, width = largeur1, state = stateFormat)
@@ -38,7 +39,6 @@ getInfoNetCDFData <- function(parent.win, Parameters, ncDIR, stateFormat = 'norm
         if(!is.null(nc.opfiles)){
             update.OpenFiles('netcdf', nc.opfiles)
             tclvalue(rfesample) <- nc.opfiles[[1]]
-            tkconfigure(cb.ncsample, values = unlist(openFile_ttkcomboList()))
         }
     })
 

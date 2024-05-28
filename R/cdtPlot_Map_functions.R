@@ -40,8 +40,11 @@ cdt.plotmap.args0 <- function(don,
 }
 
 cdt.plotmap.args <- function(don, MapOp, shpf, 
-                        mar.h = c(7, 4, 2.5, 2.5), mar.v = c(4, 4, 2.5, 7),
-                        legend.text = NULL, label.fun = identity, ...)
+                             mar.h = c(7, 4, 2.5, 2.5),
+                             mar.v = c(4, 4, 2.5, 7),
+                             legend.text = NULL,
+                             label.fun = identity,
+                             ...)
 {
     ## colorscale title
     if(MapOp$colkeyLab$user){
@@ -65,16 +68,27 @@ cdt.plotmap.args <- function(don, MapOp, shpf,
 
     #################
     ### shape files
-    ocrds <- if(tclvalue(shpf$add.shp) == "1" & !is.null(shpf$ocrds)) shpf$ocrds else matrix(NA, 1, 2)
+    if(!is.null(shpf$addshp)){
+        ocrds <- if(tclvalue(shpf$addshp) == "1" & !is.null(shpf$ocrds)) shpf$ocrds else matrix(NA, 1, 2)
+    }else{
+        ## to remove
+        ocrds <- if(tclvalue(shpf$add.shp) == "1" & !is.null(shpf$ocrds)) shpf$ocrds else matrix(NA, 1, 2)
+    }
 
     #################
 
-    if(all(is.na(ocrds[, 1])) | all(is.na(ocrds[, 2]))){
-        xlim <- range(don$x, na.rm = TRUE)
-        ylim <- range(don$y, na.rm = TRUE)
+    if(!is.null(MapOp$bbox)){
+        xlim <- c(MapOp$bbox$minlon, MapOp$bbox$maxlon)
+        ylim <- c(MapOp$bbox$minlat, MapOp$bbox$maxlat)
     }else{
-        xlim <- range(range(don$x, na.rm = TRUE), range(ocrds[, 1], na.rm = TRUE))
-        ylim <- range(range(don$y, na.rm = TRUE), range(ocrds[, 2], na.rm = TRUE))
+        ## to remove
+        if(all(is.na(ocrds[, 1])) | all(is.na(ocrds[, 2]))){
+            xlim <- range(don$x, na.rm = TRUE)
+            ylim <- range(don$y, na.rm = TRUE)
+        }else{
+            xlim <- range(range(don$x, na.rm = TRUE), range(ocrds[, 1], na.rm = TRUE))
+            ylim <- range(range(don$y, na.rm = TRUE), range(ocrds[, 2], na.rm = TRUE))
+        }
     }
 
     #################
@@ -95,26 +109,31 @@ cdt.plotmap.args <- function(don, MapOp, shpf,
     }
 
     list(don = don, horizontal = horizontal, kolor = kolor,
-        mar = mar, xlim = xlim, ylim = ylim, zlim = zlim, ocrds = ocrds,
-        breaks = breaks, breaks1 = breaks1, breaks2 = breaks2,
-        legend.mar = legend.mar, legend.width = legend.width,
-        legend.args = legend.args, legendLabel = legendLabel)
+         mar = mar, xlim = xlim, ylim = ylim, zlim = zlim,
+         MapOp = MapOp, ocrds = ocrds, SHPOp = shpf$options,
+         breaks = breaks, breaks1 = breaks1, breaks2 = breaks2,
+         legend.mar = legend.mar, legend.width = legend.width,
+         legend.args = legend.args, legendLabel = legendLabel)
 }
 
-cdt.plotmap.args.ncvar <- function(don, mapops, PlotType, shpf, SHPOp,
-                                mar.h = c(5.5, 4, 2.5, 1), mar.v = c(3.5, 4, 2.5, 6),
-                                legend.text = NULL, label.fun = identity, ...)
+cdt.plotmap.args.ncvar <- function(don, MapOp, shpf,
+                                   mar.h = c(5.5, 4, 2.5, 1),
+                                   mar.v = c(3.5, 4, 2.5, 6),
+                                   legend.text = NULL,
+                                   label.fun = identity,
+                                   ...)
 {
-    if(!mapops$title$user){
+    if(!MapOp$title$user){
         .titre <- don$title
-    }else .titre <- mapops$title$title
+    }else .titre <- MapOp$title$title
 
-    map.args <- cdt.plotmap.args(don, mapops, shpf, mar.h, mar.v, legend.text, label.fun, ...)
+    map.args <- cdt.plotmap.args(don, MapOp, shpf, mar.h, mar.v, legend.text, label.fun, ...)
     mar <- map.args$mar
-    map.args.add <- list(titre = .titre,
-                        SHPOp = SHPOp,
-                        data.type = "Grid",
-                        plot.type = PlotType)
+    map.args.add <- list(titre = .titre, data.type = "Grid")
+    # map.args.add <- list(titre = .titre,
+    #                     SHPOp = SHPOp,
+    #                     data.type = "Grid",
+    #                     plot.type = PlotType)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     list(mar = mar, map.args = map.args)
@@ -132,13 +151,20 @@ cdt.plotmap.fun <- function(don, horizontal, kolor,
                             legend.mar, legend.width,
                             legend.args, legendLabel,
                             titre, ocrds, SHPOp, MapOp = NULL,
-                            data.type = "Points", plot.type = "Pixels")
+                            data.type = "Points",
+                            plot.type = "Pixels")
 {
     plot(1, xlim = xlim, ylim = ylim, xlab = "", ylab = "", type = "n", xaxt = 'n', yaxt = 'n')
     axlabs <- LatLonAxisLabels(graphics::axTicks(1), graphics::axTicks(2))
     graphics::axis(side = 1, at = graphics::axTicks(1), labels = axlabs$xaxl, tcl = -0.2, cex.axis = 1.0)
     graphics::axis(side = 2, at = graphics::axTicks(2), labels = axlabs$yaxl, tcl = -0.2, las = 1, cex.axis = 1.0)
     graphics::title(main = titre, cex.main = 1.3, font.main = 2)
+
+    ## to remove
+    ## remove plot.type from args and replace by MapOp$plotType$var
+    if(missing(plot.type)){
+        plot.type <- MapOp$plotType$var
+    }
 
     if(plot.type %in% c("Pixels", "FilledContour")){
         if(plot.type == "Pixels")

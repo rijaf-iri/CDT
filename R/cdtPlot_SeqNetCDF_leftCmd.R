@@ -1,6 +1,5 @@
 
 PlotSeqNetCDFFilesCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 36
         largeur1 <- 33
@@ -28,9 +27,9 @@ PlotSeqNetCDFFilesCmd <- function(){
                                      userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                      title = list(user = FALSE, title = ''),
                                      colkeyLab = list(user = FALSE, label = ''),
-                                     scalebar = list(add = FALSE, pos = 'bottomleft'))
-
-    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+                                     scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                     plotType = list(values = c("Pixels", "FilledContour"), var = "Pixels"),
+                                     bbox = .cdtData$Config$region)
 
     .cdtData$EnvData$plot.maps$data.type <- "cdtnetcdf"
 
@@ -73,7 +72,8 @@ PlotSeqNetCDFFilesCmd <- function(){
         en.ncdr <- tkentry(frameNC, textvariable = ncDIR, width = largeur0)
         bt.ncdr <- tkbutton(frameNC, text = "...")
         txt.ncfl <- tklabel(frameNC, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-        cb.ncfl <- ttkcombobox(frameNC, values = unlist(listOpenFiles), textvariable = ncSample, width = largeur1)
+        cb.ncfl <- ttkcombobox(frameNC, values = unlist(openFile_ttkcomboList()), textvariable = ncSample, width = largeur1)
+        addTo_all_Combobox_List(cb.ncfl)
         bt.ncfl <- tkbutton(frameNC, text = "...")
         txt.ncff <- tklabel(frameNC, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
         en.ncff <- tkentry(frameNC, textvariable = ncFormat, width = largeur2)
@@ -103,9 +103,7 @@ PlotSeqNetCDFFilesCmd <- function(){
             nc.opfiles <- getOpenNetcdf(.cdtEnv$tcl$main$win, initialdir = initialdir)
             if(!is.null(nc.opfiles)){
                 update.OpenFiles('netcdf', nc.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                 tclvalue(ncSample) <- nc.opfiles[[1]]
-                lapply(list(cb.ncfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -202,25 +200,10 @@ PlotSeqNetCDFFilesCmd <- function(){
             }
         })
 
-        ##############################################
-
-        framePlotType <- tkframe(subfr1)
-
-        .cdtData$EnvData$plot.maps$.data.type <- "Grid"
-        plot.type <- c("Pixels", "FilledContour")
-        .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
-
-        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = plot.type, textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur6, justify = 'center')
-
-        tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
         ############################################
 
         tkgrid(frameNC, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(framePlotType, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -229,65 +212,8 @@ PlotSeqNetCDFFilesCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr2, text = lang.dlg[['label']][['6']], relief = 'groove')
-
-        .cdtData$EnvData$shp$add.shp <- tclVar(0)
-        file.plotShp <- tclVar()
-        stateSHP <- "disabled"
-
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
-
-        ########
-        tkconfigure(bt.addshp, command = function(){
-            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
-            if(!is.null(shp.opfiles)){
-                update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                lapply(list(cb.ncfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-            }
-        })
-
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
-        })
-
-        #################
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
-            else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-            tkconfigure(bt.addshpOpt, state = stateSHP)
-        })
-
-        ############################################
-
-        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        frameSHP <- create_shpLayer_frame(subfr2)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
 

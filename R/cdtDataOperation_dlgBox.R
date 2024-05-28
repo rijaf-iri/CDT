@@ -1,23 +1,15 @@
 
 dataOperation_GetInfo <- function(){
     if(WindowsOS()){
-        largeur0 <- 42
-        largeur1 <- 44
         largeur2 <- 33
         largeur3 <- 43
         largeur4 <- 46
         largeur5 <- 23
-        data.w <- 410
-        data.h <- 200
     }else{
-        largeur0 <- 42
-        largeur1 <- 43
         largeur2 <- 30
         largeur3 <- 43
         largeur4 <- 45
         largeur5 <- 23
-        data.w <- 410
-        data.h <- 200
     }
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtDataOperation_dlgBox.xml")
@@ -32,17 +24,6 @@ dataOperation_GetInfo <- function(){
     frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2)
     frMRG1 <- tkframe(tt)
 
-    cbLists <- new.env()
-    cbLists$cb <- list()
-
-    ############################################
-
-    frameHaut <- tkframe(frMRG0)
-    tkgrid(frameHaut, sticky = 'nwe', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    frInput <- bwTabScrollableFrame(frMRG0, hscrlwin = data.h, wscrlwin = data.w)
-    frameBas <- tkframe(frMRG0)
-    tkgrid(frameBas, sticky = 'swe', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
     ############################################
 
     saveFun <- function(data.type){
@@ -51,10 +32,12 @@ dataOperation_GetInfo <- function(){
 
         #########
         if(data.type == 'cdtstation'){
-            txtSaveDir <- lang.dlg[['label']][['7']]
+            txtSaveDir <- lang.dlg[['label']][['3']]
+            helpE <- '3'
             isFile <- TRUE
         }else{
-            txtSaveDir <- lang.dlg[['label']][['8']]
+            txtSaveDir <- lang.dlg[['label']][['4']]
+            helpE <- '4'
             isFile <- FALSE
         }
         fileORdir <- tclVar(txtSaveDir)
@@ -67,6 +50,9 @@ dataOperation_GetInfo <- function(){
         tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
         tkgrid(bt.file.save, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
+        helpWidget(en.file.save, lang.dlg[['tooltip']][[helpE]], lang.dlg[['status']][[helpE]])
+        helpWidget(bt.file.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+
         #########
 
         tkconfigure(bt.file.save, command = function(){
@@ -78,34 +64,40 @@ dataOperation_GetInfo <- function(){
         #########
 
         if(data.type == 'cdtnetcdf'){
-            txt.ncout.frmt <- tklabel(frSaveIn, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
+            txt.ncout.frmt <- tklabel(frSaveIn, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
             en.ncout.frmt <- tkentry(frSaveIn, textvariable = ncout.format, width = largeur4)
 
             tkgrid(txt.ncout.frmt, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
             tkgrid(en.ncout.frmt, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+            helpWidget(en.ncout.frmt, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
         }
 
         if(data.type == 'cdtdataset'){
-            txt.dset.name <- tklabel(frSaveIn, text = lang.dlg[['label']][['11']], anchor = 'w', justify = 'left')
+            txt.dset.name <- tklabel(frSaveIn, text = lang.dlg[['label']][['7']], anchor = 'w', justify = 'left')
             en.dset.name <- tkentry(frSaveIn, textvariable = dataset.name, width = largeur4)
 
             tkgrid(txt.dset.name, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 0, ipadx = 1, ipady = 1)
             tkgrid(en.dset.name, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
+
+            helpWidget(en.dset.name, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
         }
 
         #########
 
         if(data.type %in% c('cdtnetcdf', 'cdtdataset')){
-            bt.Varinfo <- tkbutton(frSaveIn, text = lang.dlg[['button']][['3']])
+            bt.Varinfo <- tkbutton(frSaveIn, text = lang.dlg[['button']][['2']])
 
             tkgrid(bt.Varinfo, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+            helpWidget(bt.Varinfo, lang.dlg[['tooltip']][['8']], lang.dlg[['status']][['8']])
 
             tkconfigure(bt.Varinfo, command = function(){
                 initVar <- .cdtData$GalParams$varinfo
                 varInfo <- NULL
 
                 if(data.type == "cdtnetcdf"){
-                    inputFile <- .cdtData$GalParams$DATASETs[[1]]$pars$sample
+                    inputFile <- .cdtData$GalParams$inputs$file1$sample
                     if(inputFile != ""){
                         varInfo <- getNCDFSampleData(inputFile)
                         varInfo <- varInfo$varinfo
@@ -113,8 +105,8 @@ dataOperation_GetInfo <- function(){
                 }
 
                 if(data.type == "cdtdataset"){
-                    inputFile <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[1]]$tcl$input.file))
-                    if(inputFile != "" & file.exists(inputFile)){
+                    inputFile <- .cdtData$GalParams$inputs$file1$dir
+                    if(inputFile != "" && file.exists(inputFile)){
                         varInfo <- readRDS(inputFile)
                         varInfo <- varInfo$varInfo
                     }
@@ -139,114 +131,9 @@ dataOperation_GetInfo <- function(){
         tkgrid(frSaveIn)
     }
 
-    #############
-
-    add.new.datasets <- function(jj, data.type, state){
-        .cdtData$GalParams$DATASETs[[jj]]$tcl$frame <- ttklabelframe(frInput, text = paste(lang.dlg[['label']][['2']], paste0("X", jj)), relief = 'groove')
-
-        .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file <- tclVar(.cdtData$GalParams$DATASETs[[jj]]$pars$dir)
-
-        if(data.type == 'cdtstation'){
-            txt.Label <- lang.dlg[['label']][['3']]
-            stateSetNC <- "disabled"
-        }else if(data.type == 'cdtdataset'){
-            txt.Label <- lang.dlg[['label']][['5']]
-            stateSetNC <- "disabled"
-        }else{
-            txt.Label <- lang.dlg[['label']][['4']]
-            stateSetNC <- "normal"
-        }
-        txt.Label.var <- tclVar(txt.Label)
-
-        txt.Input <- tklabel(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, text = tclvalue(txt.Label.var), textvariable = txt.Label.var, anchor = 'w', justify = 'left')
-        set.Input <- ttkbutton(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
-
-        if(data.type == 'cdtstation'){
-            cb.en.Input <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame,
-                                       values = unlist(openFile_ttkcomboList()),
-                                       textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file,
-                                       width = largeur0)
-        }else{
-            cb.en.Input <- tkentry(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame,
-                                   textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file,
-                                   width = largeur1)
-        }
-        bt.en.Input <- tkbutton(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, text = "...")
-        bt.Remove <- ttkbutton(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, text = lang.dlg[['button']][['2']], state = state)
-
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.en.Input
-
-        tkgrid(txt.Input, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(set.Input, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(cb.en.Input, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(bt.en.Input, row = 1, column = 4, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
-        tkgrid(bt.Remove, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
-
-        tkgrid(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
-
-        tcl("update")
-
-        #####
-
-        tkconfigure(set.Input, command = function(){
-            tcl('wm', 'attributes', tt, topmost = FALSE)
-            .cdtData$GalParams$DATASETs[[jj]]$pars <- getInfoNetCDFData(tt, .cdtData$GalParams$DATASETs[[jj]]$pars,
-                                                                        trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
-            tcl('wm', 'attributes', tt, topmost = TRUE)
-        })
-
-        tkconfigure(bt.en.Input, command = function(){
-            if(data.type == 'cdtstation'){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                dat.opfiles <- getOpenFiles(tt)
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                if(!is.null(dat.opfiles)){
-                    update.OpenFiles('ascii', dat.opfiles)
-                    tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- dat.opfiles[[1]]
-                    lapply(cbLists$cb, function(x){
-                        if(as.integer(tkwinfo('exists', x)) == 1)
-                            tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                    })
-                }
-            }else if(data.type == 'cdtdataset'){
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
-            }else{
-                tcl('wm', 'attributes', tt, topmost = FALSE)
-                dirnc <- tk_choose.dir(getwd(), "")
-                tcl('wm', 'attributes', tt, topmost = TRUE)
-                tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-            }
-        })
-
-        ####
-
-        id.fr <- NULL
-        tkbind(bt.Remove, "<Button-1>", function(){
-            id.fr <<- tclvalue(tkwinfo("parent", bt.Remove))
-        })
-
-        tkconfigure(bt.Remove, command = function(){
-            id.frame <- sapply(.cdtData$GalParams$DATASETs, function(x) x$tcl$frame$ID)
-
-            ii <- which(id.frame == id.fr)
-            tkdestroy(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame)
-            .cdtData$GalParams$DATASETs[[ii]] <- NULL
-
-            for(ii in seq_along(.cdtData$GalParams$DATASETs)){
-                textLab <- paste(lang.dlg[['label']][['2']], paste0("X", ii))
-                tkconfigure(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame, text = textLab)
-            }
-
-            tcl("update")
-        })
-    }
-
     ############################################
 
-    frTstep <- tkframe(frameHaut, relief = "sunken", borderwidth = 2)
+    frTstep <- tkframe(frMRG0, relief = "sunken", borderwidth = 2)
 
     timeStep <- tclVar()
     CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][c(1:6, 10)]
@@ -256,7 +143,7 @@ dataOperation_GetInfo <- function(){
     retminhr <- set.hour.minute(.cdtData$GalParams$tstep, .cdtData$GalParams$minhour)
     minhour.tclVar <- tclVar(retminhr$val)
 
-    txt.tstep <- tklabel(frTstep, text = lang.dlg[['label']][['9']], anchor = 'w', justify = 'left')
+    txt.tstep <- tklabel(frTstep, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
     cb.tstep <- ttkcombobox(frTstep, values = CbperiodVAL, textvariable = timeStep, justify = 'center', width = largeur5)
     cb.minhour <- ttkcombobox(frTstep, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
 
@@ -276,7 +163,7 @@ dataOperation_GetInfo <- function(){
 
     ############################################
 
-    frdatatype <- tkframe(frameHaut, relief = 'sunken', borderwidth = 2)
+    frdatatype <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
     DataType <- tclVar()
     CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:3]
@@ -294,19 +181,13 @@ dataOperation_GetInfo <- function(){
     tkbind(cb.datatyp, "<<ComboboxSelected>>", function(){
         data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-        ######
-        for(jj in seq_along(.cdtData$GalParams$DATASETs))
-            tkdestroy(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
+        .cdtData$GalParams$inputs <- list(file1 = list(dir = "", sample = "", format = "rr_mrg_%s%s%s.nc"))
+        .cdtData$GalParams$constant <- list(const1 = FALSE)
 
         .cdtData$GalParams$DATASETs <- NULL
-
         .cdtData$GalParams$DATASETs[[1]] <- list()
-        inputFile <- .cdtData$GalParams$inputs[[paste0('file', 1)]]
-        .cdtData$GalParams$DATASETs[[1]]$pars <- inputFile
-
-        add.new.datasets(1, data.type, 'disabled')
-
-        ######
+        .cdtData$GalParams$DATASETs[[1]]$pars <- .cdtData$GalParams$inputs[[paste0('file', 1)]]
+        .cdtData$GalParams$DATASETs[[1]]$const <- .cdtData$GalParams$constant[[paste0('const', 1)]]
 
         saveFun(data.type)
         tkfocus(tt)
@@ -319,35 +200,23 @@ dataOperation_GetInfo <- function(){
 
     ############################################
 
-    for(jj in 1:length(.cdtData$GalParams$inputs)){
-        .cdtData$GalParams$DATASETs[[jj]] <- list()
-        inputFile <- .cdtData$GalParams$inputs[[paste0('file', jj)]]
-        .cdtData$GalParams$DATASETs[[jj]]$pars <- inputFile
+    bt.AddData <- tkbutton(frMRG0, text = lang.dlg[['button']][['1']], bg = 'lightgreen')
 
-        stateRem <- if(jj == 1) "disabled" else "normal"
-        add.new.datasets(jj, .cdtData$GalParams$datatype, stateRem)
-    }
-
-    ############################################
-
-    bt.AddData <- tkbutton(frameBas, text = lang.dlg[['button']][['1']], bg = 'lightgreen')
+    helpWidget(bt.AddData, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     tkconfigure(bt.AddData, command = function(){
         data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
-
-        jj <- length(.cdtData$GalParams$DATASETs) + 1
-        .cdtData$GalParams$DATASETs[[jj]] <- list()
-        .cdtData$GalParams$DATASETs[[jj]]$pars <- list(dir = "", sample = "", format = "rr_mrg_%s%s%s.nc")
-
-        add.new.datasets(jj, data.type, 'normal')
+        dataOperation_Inputs(tt, data.type)
     })
 
     ############################################
 
-    frFormula <- tkframe(frameBas, relief = 'sunken', borderwidth = 2)
+    labFormula <- tklabel(frMRG0, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
+
+    frFormula <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
     yscr.Formula <- tkscrollbar(frFormula, repeatinterval = 4, command = function(...) tkyview(text.Formula, ...))
-    text.Formula <- tktext(frFormula, bg = "white", wrap = "word", height = 4, width = largeur3,
+    text.Formula <- tktext(frFormula, bg = "white", wrap = "word", height = 7, width = largeur3,
                             yscrollcommand = function(...) tkset(yscr.Formula, ...))
 
     tkgrid(text.Formula, yscr.Formula)
@@ -360,7 +229,7 @@ dataOperation_GetInfo <- function(){
 
     ############################################
 
-    frSave <- tkframe(frameBas, relief = 'sunken', borderwidth = 2)
+    frSave <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
     frSaveIn <- tkframe(frSave)
 
@@ -372,9 +241,12 @@ dataOperation_GetInfo <- function(){
 
     ############################################
 
-    tkgrid(bt.AddData, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(frFormula, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frSave, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frTstep, row = 0, column = 0, sticky = 'e', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frdatatype, row = 1, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(bt.AddData, row = 2, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(labFormula, row = 3, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(frFormula, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frSave, row = 5, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
 
@@ -405,28 +277,6 @@ dataOperation_GetInfo <- function(){
             }
         }
 
-        inputFiles <- lapply(.cdtData$GalParams$DATASETs, function(don){
-                trimws(tclvalue(don$tcl$input.file))
-        })
-        numFiles <- seq_along(.cdtData$GalParams$DATASETs)
-        nonFiles <- sapply(inputFiles, function(x) x %in% c("", "NA"))
-
-        if(any(nonFiles)){
-            nbf <- paste0(numFiles[nonFiles], collapse = ", ")
-            msg <- paste(lang.dlg[['message']][['4']], "-", lang.dlg[['message']][['5']], ":", nbf)
-            cdt.tkmessageBox(tt, message = msg, icon = "warning", type = "ok")
-            tkwait.window(tt)
-        }
-
-        for(jj in seq_along(.cdtData$GalParams$DATASETs)){
-            .cdtData$GalParams$inputs[[paste0('file', jj)]]$dir <- inputFiles[[jj]]
-
-            if(.cdtData$GalParams$datatype == "cdtnetcdf"){
-                .cdtData$GalParams$inputs[[paste0('file', jj)]]$sample <- .cdtData$GalParams$DATASETs[[jj]]$pars$sample
-                .cdtData$GalParams$inputs[[paste0('file', jj)]]$format <- .cdtData$GalParams$DATASETs[[jj]]$pars$format
-            }
-        }
-
         txtFormula <- trimws(tclvalue(tkget(text.Formula, "0.0", "end")))
         txtFormula <- gsub("[\t\r\n]", "", txtFormula)
         posVar <- gregexpr('X[0-9]+', txtFormula)
@@ -438,12 +288,23 @@ dataOperation_GetInfo <- function(){
             tkwait.window(tt)
         }
 
+        is_crds <- grepl('lat|lon', txtFormula, ignore.case = TRUE)
+        if(is_crds){
+            txtFormula <- gsub('lon|Lon', 'LON', txtFormula)
+            txtFormula <- gsub('lat|Lat', 'LAT', txtFormula)
+        }
+
         .cdtData$GalParams$formula <- txtFormula
 
         #### test formula
         testData <- lapply(seq_along(valVar), function(j) j + 1)
         names(testData) <- valVar
         testOut <- NULL
+
+        if(is_crds){
+            txtFormula <- gsub('LON', 10, txtFormula)
+            txtFormula <- gsub('LAT', 10, txtFormula)
+        }
 
         for(j in seq_along(valVar))
             txtFormula <- gsub(paste0("X", j), paste0("testData[['X", j, "']]"), txtFormula)
@@ -471,22 +332,12 @@ dataOperation_GetInfo <- function(){
 
         .cdtData$GalParams$message <- lang.dlg[['message']]
 
-        for(jj in seq_along(.cdtData$GalParams$DATASETs))
-            tkdestroy(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
-
-        .cdtData$GalParams$DATASETs <- NULL
-
         tkgrab.release(tt)
         tkdestroy(tt)
         tkfocus(.cdtEnv$tcl$main$win)
     })
 
     tkconfigure(bt.prm.CA, command = function(){
-        for(jj in seq_along(.cdtData$GalParams$DATASETs))
-            tkdestroy(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
-
-        .cdtData$GalParams$DATASETs <- NULL
-
         tkgrab.release(tt)
         tkdestroy(tt)
         tkfocus(.cdtEnv$tcl$main$win)

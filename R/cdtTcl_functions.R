@@ -60,9 +60,22 @@ Insert.Messages.curl <- function(res, type = "error", GUI = TRUE){
 ########################################################################
 
 ## BWidget info-bulle help
+## https://core.tcl-lang.org/bwidget/doc/bwidget/BWman/DynamicHelp.html
+## https://wiki.tcl-lang.org/page/interp+alias
+## Tcl command: interp alias {} new_name {} existing_command
+# infobulle <- function(widget, text){
+#     tcl("interp", "alias", "", "help", "", "DynamicHelp::register") 
+#     tcl('help', widget, 'balloon', text)
+#     # delay in millisecond of mouse inactivity
+#     # before displaying the balloon
+#     tcl("DynamicHelp::configure", delay = 100)
+# }
+
+##  DynamicHelp::register is deprecated.
+
 infobulle <- function(widget, text){
-    tcl("interp", "alias", "", "help", "", "DynamicHelp::register") 
-    tcl('help', widget, 'balloon', text)
+    tcl('DynamicHelp::add', widget, type = 'balloon', text = text)
+    tcl("DynamicHelp::configure", delay = 100)
 }
 
 ## Binding event in toolbar and display on status bar
@@ -77,7 +90,9 @@ status.bar.display <- function(widget, text){
 
 helpWidget <- function(widget, text_balloon, text_statusbar){
     status.bar.display(widget, text_statusbar)
-    tcl("DynamicHelp::register", widget, 'balloon', text_balloon)
+    # tcl("DynamicHelp::register", widget, 'balloon', text_balloon)
+    tcl("DynamicHelp::add", widget, type = 'balloon', text = text_balloon)
+    tcl("DynamicHelp::configure", delay = 100)
 }
 
 ########################################################################
@@ -468,6 +483,66 @@ openFile_ttkcomboList <- function(){
         listOpenFiles[[1]] <- ""
     }
     return(listOpenFiles)
+}
+
+openFile_ttkcomboList1 <- function(){
+    nb_files <- as.integer(tclvalue(tcl(.cdtEnv$tcl$main$Openfiles, 'size')))
+    if(nb_files > 0){
+        listOpenFiles <- lapply(seq(nb_files) - 1, function(i){
+            tclvalue(tkget(.cdtEnv$tcl$main$Openfiles, i))
+        })
+    }else{
+        listOpenFiles <- list()
+        listOpenFiles[[1]] <- ""
+    }
+
+    return(listOpenFiles)
+}
+
+########################################################################
+
+Listen_OpenFiles_Change <- function(){
+    # after 1000 ms execute Listen_OpenFiles_Change() again
+    .cdtEnv$tcl$task_openFiles$id <- tcl("after", 1000, Listen_OpenFiles_Change)
+    open_files <- unlist(openFile_ttkcomboList1())
+
+    if(length(.cdtEnv$tcl$task_openFiles$openFiles) != length(open_files)){
+        Set_Combobox_Values(open_files)
+    }else{
+        if(!all(.cdtEnv$tcl$task_openFiles$openFiles %in% open_files)){
+            Set_Combobox_Values(open_files)
+        }
+    }
+    .cdtEnv$tcl$task_openFiles$openFiles <- open_files
+}
+
+Set_Combobox_Values <- function(open_files){
+    if(length(open_files) == 1){
+        if(open_files != "") open_files <- c("", open_files)
+    }
+    nc <- length(.cdtEnv$tcl$task_openFiles$all_Combobox)
+    if(nc > 0){
+        for(j in 1:nc){
+            ret <- try(tkget(.cdtEnv$tcl$task_openFiles$all_Combobox[[j]]), silent = TRUE)
+            if(!inherits(ret, "try-error")){
+                tkconfigure(.cdtEnv$tcl$task_openFiles$all_Combobox[[j]], values = open_files)
+            }
+        }
+    }
+}
+
+addTo_all_Combobox_List <- function(cb){
+    nc <- length(.cdtEnv$tcl$task_openFiles$all_Combobox)
+    if(nc > 0){
+        cb_existsL <- rep(TRUE, nc)
+        for(j in 1:nc){
+            ret <- try(tkget(.cdtEnv$tcl$task_openFiles$all_Combobox[[j]]), silent = TRUE)
+            if(inherits(ret, "try-error")) cb_existsL[j] <- FALSE
+        }
+        .cdtEnv$tcl$task_openFiles$all_Combobox[!cb_existsL] <- NULL
+        nc <- length(.cdtEnv$tcl$task_openFiles$all_Combobox)
+    }
+    .cdtEnv$tcl$task_openFiles$all_Combobox[[nc + 1]] <- cb
 }
 
 ########################################################################

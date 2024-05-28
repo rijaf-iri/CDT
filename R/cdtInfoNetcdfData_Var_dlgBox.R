@@ -54,7 +54,33 @@ getNetCDFvarInfo <- function(parent.win, Parameters){
     tkgrid(txt.long, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.long, row = 2, column = 1, columnspan = 3, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
+    #####################
+
+    frHelp <- tkframe(frMRG0) 
+
+    txt.help <- tklabel(frHelp, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
+    tkconfigure(txt.help, foreground = "blue", background = "white")
+
+    tkgrid(txt.help, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ########
+    tkbind(txt.help, "<Button-1>", function(){
+        url <- "https://search.r-project.org/CRAN/refmans/ncdf4/html/ncvar_def.html"
+        utils::browseURL(url)
+    })
+
+    tkbind(txt.help, "<Enter>", function(){
+        tkconfigure(txt.help, relief = 'groove', borderwidth = 2, cursor = 'hand2')
+    })
+
+    tkbind(txt.help, "<Leave>", function(){
+        tkconfigure(txt.help, relief = 'flat', borderwidth = 0, cursor = '')
+    })
+
+    #####################
+
     tkgrid(frInfo, row = 0, column = 0, sticky = '', padx = 1, pady = 5, ipadx = 1, ipady = 5)
+    tkgrid(frHelp, row = 1, column = 0, sticky = 'e', padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
     ############################################
 

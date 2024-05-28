@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Input Datasets </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Add Data/Variables </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Remove </text>
+        </button>
+        <checkbutton id="1">
+            <text lang="en"> Constant 2D </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Data/Variable </text>
+        </label>
+        <label id="2">
+            <text lang="en"> File containing the CDT station data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Directory containing the netCDF data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Path to the index file (*.rds) of the dataset </text>
+        </label>
+        <label id="5">
+            <text lang="en"> CDT station data format of the 2D constant </text>
+        </label>
+        <label id="6">
+            <text lang="en"> A netCDF file of the 2D constant </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Click this button to add a new variable (dataset) \nor a 2D constant data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Click here to add a new variable (dataset) </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the data (in CDT station data format) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the station data </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to the file &lt;dataset name&gt;.rds </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory containing the netCDF data </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> Click this button to the remove the variable (dataset) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Click here to the remove this variable (dataset) </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Provide a netCDF sample file and format the netCDF filename </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Click here for the netCDF dataset settings </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Check this box if the data is a 2D constant, for example: elevation data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if the data is a 2D constant, for example: elevation data </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Select the file containing the constant 2D data (in CDT station data format) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the constant 2D data (in CDT station data format) </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Select the netCDF file containing the constant 2D data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the netCDF file containing the constant 2D data </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Invalid data input </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Variable number </text>
+        </content>
+    </message>
+</dialog_box>

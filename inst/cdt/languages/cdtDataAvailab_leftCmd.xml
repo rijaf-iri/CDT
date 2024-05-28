@@ -21,8 +21,11 @@
         <button id="2">
             <text lang="en"> DISPLAY </text>
         </button>
-        <button id="3">
+        <button id="3-1">
             <text lang="en"> Non-Missing Data Annual Average </text>
+        </button>
+        <button id="3-2">
+            <text lang="en"> Non-Missing Data Monthly Average </text>
         </button>
         <button id="4">
             <text lang="en"> Non-Missing Data Summary </text>
@@ -30,11 +33,11 @@
         <button id="5">
             <text lang="en"> Distance - Correlation </text>
         </button>
+        <button id="6">
+            <text lang="en"> Period to compute the percentage </text>
+        </button>
         <checkbutton id="1">
             <text lang="en"> Data already computed </text>
-        </checkbutton>
-        <checkbutton id="2">
-            <text lang="en"> Add Shapefile to Map </text>
         </checkbutton>
         <label id="1">
             <text lang="en"> Time step of input data </text>
@@ -54,20 +57,32 @@
         <label id="6">
             <text lang="en"> Availability in Percentage </text>
         </label>
-        <label id="7">
+        <label id="7-1">
             <text lang="en"> Yearly-Chart </text>
         </label>
-        <label id="8">
+        <label id="7-2">
+            <text lang="en"> Monthly-Chart </text>
+        </label>
+        <label id="8-1">
             <text lang="en"> Monthly-Table </text>
+        </label>
+        <label id="8-2">
+            <text lang="en"> Daily-Table </text>
         </label>
         <label id="9">
             <text lang="en"> Availability-Map </text>
         </label>
-        <label id="10">
+        <label id="10-1">
             <text lang="en"> Yearly-Map </text>
         </label>
-        <label id="11">
+        <label id="10-2">
+            <text lang="en"> Monthly-Map </text>
+        </label>
+        <label id="11-1">
             <text lang="en"> Yearly Maps </text>
+        </label>
+        <label id="11-2">
+            <text lang="en"> Monthly Maps </text>
         </label>
         <label id="12">
             <text lang="en"> Plot Type </text>
@@ -75,17 +90,20 @@
         <label id="13">
             <text lang="en"> Non-Missing Data Summary </text>
         </label>
-        <label id="14">
+        <label id="14-1">
             <text lang="en"> Annual-Average </text>
+        </label>
+        <label id="14-2">
+            <text lang="en"> Monthly-Average </text>
         </label>
         <label id="15">
             <text lang="en"> Distance-Correlation </text>
         </label>
         <label id="16">
-            <text lang="en"> Shapefile </text>
+            <text lang="en"> Stations </text>
         </label>
         <label id="17">
-            <text lang="en"> Stations </text>
+            <text lang="en"> Station-Activities </text>
         </label>
     </widget>
     <help>
@@ -154,4 +172,45 @@
             <text lang="en"> Station not found </text>
         </content>
     </message>
+    <plottext>
+        <content id="1">
+            <text lang="en"> Data Availability </text>
+        </content>
+        <content id="2">
+            <text lang="en"> in </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Period </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Number of observations each </text>
+        </content>
+        <content id="5">
+            <text lang="en"> month </text>
+        </content>
+        <content id="6">
+            <text lang="en"> year </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Data Availability </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Station </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Number of stations </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Active Stations </text>
+        </content>
+        <content id="11">
+            <text lang="en"> Reported Data </text>
+        </content>
+        <content id="12">
+            <text lang="en"> Average number of stations reporting each </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Number of stations </text>
+        </content>
+    </plottext>
 </panel_cmd>

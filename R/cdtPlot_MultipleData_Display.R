@@ -3,19 +3,18 @@ MultipleData.Plot.Map <- function(){
     MapOp <- .cdtData$EnvData$dataMapOp
     data.Obj <- .cdtData$EnvData$data.Obj
 
-    SHPOp <- .cdtData$EnvData$SHPOp
-    ocrds <- .cdtData$EnvData$shp$ocrds
-    ocrds <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1" & !is.null(ocrds)) ocrds else matrix(NA, 1, 2)
+    SHPOp <- .cdtData$EnvData$shapefile$options
+    ocrds <- .cdtData$EnvData$shapefile$ocrds
+    ocrds <- if(tclvalue(.cdtData$EnvData$shapefile$addshp) == "1" & !is.null(ocrds)) ocrds else matrix(NA, 1, 2)
 
     #######
     titre <- if(MapOp$title$user) MapOp$title$title else .cdtData$GalParams$donnees$date2plot
     colorkey.Title <- if(MapOp$colkeyLab$user) MapOp$colkeyLab$label else ""
 
     #######
-    ## range ocrds
-    pars.x <- parAxisPlotFun(.cdtData$EnvData$data.range[, 1])
-    pars.y <- parAxisPlotFun(.cdtData$EnvData$data.range[, 2])
-    brks <- image.plot_Legend_pars(.cdtData$EnvData$data.range[, 3], MapOp$userLvl, MapOp$userCol, MapOp$presetCol)
+    pars.x <- parAxisPlotFun(c(MapOp$bbox$minlon, MapOp$bbox$maxlon))
+    pars.y <- parAxisPlotFun(c(MapOp$bbox$minlat, MapOp$bbox$maxlat))
+    brks <- image.plot_Legend_pars(.cdtData$EnvData$data.range, MapOp$userLvl, MapOp$userCol, MapOp$presetCol)
 
     #######
     xylabs <- LatLonAxisLabels(pars.x$axp, pars.y$axp)
@@ -114,8 +113,8 @@ MultipleData.Plot.Map <- function(){
 
     #######
     print(stats::update(Plot.Obj, col.regions = brks$colors, aspect = 'fill', as.table = TRUE,
-                xlim = pars.x$usr, ylim = pars.y$usr, xlab = '', ylab = '', main = titre,
-                par.settings = par.Settings, par.strip.text = par.StripText, strip = par.stripCust,
-                scales = list(x = Xaxis, y = Yaxis), legend = lezandy))
+          xlim = pars.x$usr, ylim = pars.y$usr, xlab = '', ylab = '', main = titre,
+          par.settings = par.Settings, par.strip.text = par.StripText, strip = par.stripCust,
+          scales = list(x = Xaxis, y = Yaxis), legend = lezandy))
     return(0)
 }

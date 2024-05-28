@@ -1,5 +1,4 @@
 PlotOneNetCDFFileCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 32
         largeur1 <- 18
@@ -17,11 +16,12 @@ PlotOneNetCDFFileCmd <- function(){
                                      userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                      title = list(user = FALSE, title = ''),
                                      colkeyLab = list(user = FALSE, label = ''),
-                                     scalebar = list(add = FALSE, pos = 'bottomleft'))
-
-    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
-
+                                     scalebar = list(add = FALSE, pos = 'bottomleft'),
+                                     plotType = list(values = c("Pixels", "FilledContour"), var = "Pixels"),
+                                     bbox = .cdtData$Config$region)
     .cdtData$EnvData$plot.maps$data.type <- "cdtnetcdf"
+
+    .cdtData$EnvData$shapefile$options <- list(col = "black", lwd = 1.5)
 
     ###################
 
@@ -53,7 +53,8 @@ PlotOneNetCDFFileCmd <- function(){
         ncdf.file <- tclVar()
 
         txt.ncfl <- tklabel(frameNC, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-        cb.ncfl <- ttkcombobox(frameNC, values = unlist(listOpenFiles), textvariable = ncdf.file, width = largeur0)
+        cb.ncfl <- ttkcombobox(frameNC, values = unlist(openFile_ttkcomboList()), textvariable = ncdf.file, width = largeur0)
+        addTo_all_Combobox_List(cb.ncfl)
         bt.ncfl <- tkbutton(frameNC, text = "...")
 
         tkgrid(txt.ncfl, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 0, ipadx = 1, ipady = 1)
@@ -73,9 +74,7 @@ PlotOneNetCDFFileCmd <- function(){
             nc.opfiles <- getOpenNetcdf(.cdtEnv$tcl$main$win)
             if(!is.null(nc.opfiles)){
                 update.OpenFiles('netcdf', nc.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                 tclvalue(ncdf.file) <- nc.opfiles[[1]]
-                lapply(list(cb.ncfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -121,20 +120,6 @@ PlotOneNetCDFFileCmd <- function(){
 
         ##############################################
 
-        framePlotType <- tkframe(subfr1)
-
-        .cdtData$EnvData$plot.maps$.data.type <- "Grid"
-        plot.type <- c("Pixels", "FilledContour")
-        .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
-
-        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = plot.type, textvariable = .cdtData$EnvData$plot.maps$plot.type, width = largeur2, justify = 'center')
-
-        tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ##############################################
-
         frameBlank <- tkframe(subfr1)
 
         blankGrid <- tclVar(0)
@@ -144,7 +129,7 @@ PlotOneNetCDFFileCmd <- function(){
 
         tkbind(chk.grid, "<Button-1>", function(){
             if(tclvalue(blankGrid) == "1"){
-                stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "0") "disabled" else "normal"
+                stateSHP <- if(tclvalue(.cdtData$EnvData$shapefile$addshp) == "0") "disabled" else "normal"
             }else stateSHP <- "normal"
             tkconfigure(cb.addshp, state = stateSHP)
             tkconfigure(bt.addshp, state = stateSHP)
@@ -152,15 +137,16 @@ PlotOneNetCDFFileCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr1, text = lang.dlg[['label']][['3']], relief = 'groove')
+        frameSHP <- ttklabelframe(subfr1, text = lang.dlg[['label']][['2']], relief = 'groove')
 
-        .cdtData$EnvData$shp$add.shp <- tclVar(0)
+        .cdtData$EnvData$shapefile$addshp <- tclVar(0)
         file.plotShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shapefile$addshp, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
         bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur0, state = stateSHP)
+        cb.addshp <- ttkcombobox(frameSHP, values = unlist(openFile_ttkcomboList()), textvariable = file.plotShp, width = largeur0, state = stateSHP)
+        addTo_all_Combobox_List(cb.addshp)
         bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
 
         ########
@@ -180,40 +166,38 @@ PlotOneNetCDFFileCmd <- function(){
             if(!is.null(shp.opfiles)){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                lapply(list(cb.ncfl, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
 
                 shpofile <- getShpOpenData(file.plotShp)
                 if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
+                    .cdtData$EnvData$shapefile$ocrds <- NULL
                 else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+                    .cdtData$EnvData$shapefile$ocrds <- getBoundaries(shpofile[[2]])
             }
         })
 
         ########
 
         tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
+            .cdtData$EnvData$shapefile$options <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$shapefile$options)
         })
 
         #################
         tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
             shpofile <- getShpOpenData(file.plotShp)
             if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
+                .cdtData$EnvData$shapefile$ocrds <- NULL
             else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
+                .cdtData$EnvData$shapefile$ocrds <- getBoundaries(shpofile[[2]])
         })
 
         tkbind(chk.addshp, "<Button-1>", function(){
-            if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1"){
+            if(tclvalue(.cdtData$EnvData$shapefile$addshp) == "1"){
                 stateSHP <- if(tclvalue(blankGrid) == "0") "disabled" else "normal"
             }else stateSHP <- "normal"
             tkconfigure(cb.addshp, state = stateSHP)
             tkconfigure(bt.addshp, state = stateSHP)
 
-            stateSHP1 <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
+            stateSHP1 <- if(tclvalue(.cdtData$EnvData$shapefile$addshp) == "1") "disabled" else "normal"
             tkconfigure(bt.addshpOpt, state = stateSHP1)
         })
 
@@ -221,9 +205,8 @@ PlotOneNetCDFFileCmd <- function(){
 
         tkgrid(frameNC, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameMap, row = 1, column = 0, sticky = '', padx = 1, pady = 5, ipadx = 1, ipady = 1)
-        tkgrid(framePlotType, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(frameBlank, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameSHP, row = 4, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameBlank, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameSHP, row = 3, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 

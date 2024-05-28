@@ -16,6 +16,18 @@ getIndex.AllOpenFiles <- function(nomfile){
     return(NULL)
 }
 
+#########################################################
+## get data from open files and add class "cdtstationdata"
+getCDTStationData <- function(infile, intstep){
+    don <- getStnOpenData(infile)
+    if(is.null(don)) return(NULL)
+    don <- getCDTdataAndDisplayMsg(don, intstep, infile)
+    if(is.null(don)) return(NULL)
+    don <- don[c('id', 'lon', 'lat', 'elv', 'dates', 'data')]
+    class(don) <- append(class(don), "cdtstationdata")
+    return(don)
+}
+
 ##############################################
 ## Get stn data in the list (all open files)
 ## return CDT data format

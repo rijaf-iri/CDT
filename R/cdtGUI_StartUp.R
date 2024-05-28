@@ -24,6 +24,13 @@
 #' @export
 
 startCDT <- function(wd = NA, lang = NA){
+    check_win <- try(tclvalue(tkwinfo('exists', .cdtEnv$tcl$main$win)), silent = TRUE)
+    if(!inherits(check_win, 'try-error')){
+        if(check_win == "1"){
+            stop('CDT GUI is already running.')
+        }
+    }
+
     cdt.file.conf <- file.path(.cdtDir$dirLocal, "config", "cdt_config.json")
     Config <- jsonlite::fromJSON(cdt.file.conf)
     Config <- rapply(Config, trimws, classes = "character", how = "replace")
@@ -58,6 +65,11 @@ startCDT <- function(wd = NA, lang = NA){
     cdtMainWindow()
     cdtImagesZoom()
     cdtUserInformation()
+
+    ### set combobox values
+    .cdtEnv$tcl$task_openFiles$all_Combobox <- list()
+    .cdtEnv$tcl$task_openFiles$openFiles <- ""
+    Listen_OpenFiles_Change()
 
     invisible()
 }

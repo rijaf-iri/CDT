@@ -5,26 +5,19 @@ plotCDTStation.Maps <- function(){
 
     ## titre
     if(!dataMapOp$title$user){
-        .titre <- paste("Observation:", don$t)
+        .titre <- paste0(.cdtData$EnvData$plottext[['2']], ": ", don$t)
     }else .titre <- dataMapOp$title$title
 
     #################
 
-    map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp)
+    map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shapefile)
     opar <- graphics::par(mar = map.args$mar)
-
-    map.args.add <- list(titre = .titre,
-                         SHPOp = .cdtData$EnvData$SHPOp,
-                         MapOp = dataMapOp,
-                         data.type = "Points",
-                         plot.type = don$p)
+    map.args.add <- list(titre = .titre, data.type = "Points")
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)
-
     ## scale bar
     cdt.plotmap.scalebar(dataMapOp$scalebar)
-
     graphics::par(opar)
 
     return(par.plot)
@@ -38,8 +31,8 @@ plotCDTStation.Graph <- function(){
     don <- .cdtData$EnvData$stndata$series$ts
     timestep <- .cdtData$EnvData$tstep
 
-    titre <- paste("Station:", .cdtData$EnvData$stndata$series$id)
-    location <- paste0("Station: ", .cdtData$EnvData$stndata$series$id)
+    titre <- paste0(.cdtData$EnvData$plottext[['1']], ": ", .cdtData$EnvData$stndata$series$id)
+    location <- paste0(.cdtData$EnvData$plottext[['1']], ": ", .cdtData$EnvData$stndata$series$id)
 
     #######
 
@@ -138,7 +131,7 @@ CDTdataStation.Display.Maps <- function(){
     if(is.null(.cdtData$EnvData)) return(NULL)
     if(is.null(.cdtData$EnvData$stndata)) return(NULL)
 
-    titre <- paste('Map -', .cdtData$EnvData$stndata$map$t)
+    titre <- paste(.cdtData$EnvData$plottext[['3']], '-', .cdtData$EnvData$stndata$map$t)
     imgContainer <- CDT.Display.Map.inter(plotCDTStation.Maps, .cdtData$EnvData$tab$dataMap, titre)
     .cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
 
@@ -160,7 +153,7 @@ CDTdataStation.Display.Maps <- function(){
                 .cdtData$EnvData$stndata$series$id <- xyid$crd
             }
 
-            titre1 <- paste('Station -', .cdtData$EnvData$stndata$series$id)
+            titre1 <- paste(.cdtData$EnvData$plottext[['1']], '-', .cdtData$EnvData$stndata$series$id)
             imgContainer1 <- CDT.Display.Graph(plotCDTStation.Graph, .cdtData$EnvData$tab$dataGraph, titre1)
             .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer1, .cdtData$EnvData$tab$dataGraph)
         }
