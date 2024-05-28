@@ -1,8 +1,8 @@
 
 cdtStatusBar <- function(){
     wbstatus1 <- .cdtEnv$tcl$fun$w.widgets(58)
-    wbstatus2a <- .cdtEnv$tcl$fun$w.widgets(11)
-    wbstatus2b <- .cdtEnv$tcl$fun$w.widgets(11)
+    wbstatus2a <- .cdtEnv$tcl$fun$w.widgets(13)
+    wbstatus2b <- .cdtEnv$tcl$fun$w.widgets(13)
     wbstatus3 <- .cdtEnv$tcl$fun$w.widgets(13)
     wbpbar <- .cdtEnv$tcl$fun$w.scale(11)
 

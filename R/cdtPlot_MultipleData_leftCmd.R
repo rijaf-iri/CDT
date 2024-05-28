@@ -1,6 +1,5 @@
 
 PlotMulitpleDataCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 22
         largeur1 <- 33
@@ -25,13 +24,11 @@ PlotMulitpleDataCmd <- function(){
                               date = list(year = 2021, mon = 1, day = 1, hour = 1, min = 0))
 
     .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
-                                        userCol = list(custom = FALSE, color = NULL),
-                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
-                                        title = list(user = FALSE, title = ''),
-                                        colkeyLab = list(user = FALSE, label = ''))
-
-    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
-
+                                       userCol = list(custom = FALSE, color = NULL),
+                                       userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
+                                       title = list(user = FALSE, title = ''),
+                                       colkeyLab = list(user = FALSE, label = ''),
+                                       bbox = .cdtData$Config$region)
     ###################
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPlot_MultipleData_leftCmd.xml")
@@ -105,24 +102,33 @@ PlotMulitpleDataCmd <- function(){
         }
     })
 
+    get.id.datasets <- function(widget){
+        id.widget <- tclvalue(tkwinfo("parent", widget))
+        id.frame <- sapply(.cdtData$GalParams$DATASETs, function(x) x$tcl$frame$ID)
+        which(id.frame == id.widget)
+    }
+
     add.new.datasets <- function(jj, ids){
         .cdtData$GalParams$DATASETs[[jj]]$tcl$frame <- ttklabelframe(subfr1, text = paste0(lang.dlg[['label']][['2']], ids), relief = 'groove')
 
+        data_type <- .cdtData$GalParams$DATASETs[[jj]]$pars$data.type
+
         .cdtData$GalParams$DATASETs[[jj]]$tcl$data.type <- tclVar()
-        tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type) <- CbdatatypeVAL[datatypeVAL %in% .cdtData$GalParams$DATASETs[[jj]]$pars$data.type]
+        tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type) <- CbdatatypeVAL[datatypeVAL %in% data_type]
 
         .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file <- tclVar(.cdtData$GalParams$DATASETs[[jj]]$pars$input$dir)
 
-        stateSetNC <- if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]) "disabled" else "normal"
+        stateSetNC <- if(data_type == 'cdtstation') "disabled" else "normal"
 
         cb.datatype <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, values = CbdatatypeVAL,
                                    textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$data.type, width = largeur0)
         bt.datatype <- ttkbutton(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame,
                                  text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateSetNC)
 
-        if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
-            cb.en.datafile <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, values = unlist(listOpenFiles),
+        if(data_type == 'cdtstation'){
+            cb.en.datafile <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, values = unlist(openFile_ttkcomboList()),
                                           textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur1)
+            addTo_all_Combobox_List(cb.en.datafile)
         }else{
             cb.en.datafile <- tkentry(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame,
                                       textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur2)
@@ -133,49 +139,40 @@ PlotMulitpleDataCmd <- function(){
         bt.Remove <- ttkbutton(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, text = lang.dlg[['button']][['2']])
 
         ####
-
         tkconfigure(bt.datatype, command = function(){
-            .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]] <- getInfoNetCDFData(.cdtEnv$tcl$main$win,
-                                                                                   .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]],
-                                                                                   trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
+            ii <- get.id.datasets(bt.datatype)
+            .cdtData$GalParams$DATASETs[[ii]]$pars[["input"]] <- getInfoNetCDFData(.cdtEnv$tcl$main$win,
+                                                                                   .cdtData$GalParams$DATASETs[[ii]]$pars[["input"]],
+                                                                                   trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file)))
         })
 
         ####
-
         tkconfigure(bt.datafile, command = function(){
-            if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
+            ii <- get.id.datasets(bt.datafile)
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$data.type))]
+            if(data_type == 'cdtstation'){
                 dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-                    tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- dat.opfiles[[1]]
-                    tkconfigure(cb.en.datafile, values = unlist(openFile_ttkcomboList()))
-                    .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                    tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file) <- dat.opfiles[[1]]
+                    .cdtData$GalParams$DATASETs[[ii]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file))
                 }
             }else{
                 dirnc <- tk_choose.dir(getwd(), "")
-                tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-                .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
+                .cdtData$GalParams$DATASETs[[ii]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file))
             }
         })
 
         ####
-
         tkconfigure(bt.Options, command = function(){
-            .cdtData$GalParams$DATASETs[[jj]]$pars <- MapGraph.MultiDatasets(.cdtData$GalParams$DATASETs[[jj]]$pars)
+            ii <- get.id.datasets(bt.Options)
+            .cdtData$GalParams$DATASETs[[ii]]$pars <- MapGraph.MultiDatasets(.cdtData$GalParams$DATASETs[[ii]]$pars)
         })
 
         ####
-
-        id.fr <- NULL
-        tkbind(bt.Remove, "<Button-1>", function(){
-            id.fr <<- tclvalue(tkwinfo("parent", bt.Remove))
-        })
-
         tkconfigure(bt.Remove, command = function(){
-            id.frame <- sapply(.cdtData$GalParams$DATASETs, function(x) x$tcl$frame$ID)
-
-            ii <- which(id.frame == id.fr)
+            ii <- get.id.datasets(bt.Remove)
             tkdestroy(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame)
             .cdtData$GalParams$DATASETs[[ii]] <- NULL
             tcl("update")
@@ -192,7 +189,6 @@ PlotMulitpleDataCmd <- function(){
         tkgrid(bt.Options, row = 2, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.Remove, row = 2, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-
         tkgrid(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
 
         ####
@@ -200,61 +196,63 @@ PlotMulitpleDataCmd <- function(){
         helpWidget(cb.datatype, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
         helpWidget(bt.datatype, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
-        if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
+        if(data_type == 'cdtstation'){
             helpWidget(cb.en.datafile, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
         }else{
             helpWidget(cb.en.datafile, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
         }
-
         helpWidget(bt.datafile, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
 
         ####
 
         tkbind(cb.datatype, "<<ComboboxSelected>>", function(){
             tkdestroy(cb.en.datafile)
-            tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- ''
+            ii <- get.id.datasets(cb.datatype)
 
-            stateSetNC <- if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]) "disabled" else "normal"
+            tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file) <- ''
+
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$data.type))]
+            stateSetNC <- if(data_type == 'cdtstation') "disabled" else "normal"
             tkconfigure(bt.datatype, state = stateSetNC)
 
-            if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[1]){
-                cb.en.datafile <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, values = unlist(listOpenFiles), textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur1)
+            if(data_type == 'cdtstation'){
+                cb.en.datafile <<- ttkcombobox(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame, values = unlist(openFile_ttkcomboList()),
+                                              textvariable = .cdtData$GalParams$DATASETs[[ii]]$tcl$input.file, width = largeur1)
+                addTo_all_Combobox_List(cb.en.datafile)
 
                 tkconfigure(bt.datafile, command = function(){
                     dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                     if(!is.null(dat.opfiles)){
                         update.OpenFiles('ascii', dat.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
-                        tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- dat.opfiles[[1]]
-                        tkconfigure(cb.en.datafile, values = unlist(openFile_ttkcomboList()))
-                        .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                        tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file) <- dat.opfiles[[1]]
+                        .cdtData$GalParams$DATASETs[[ii]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file))
                     }
                 })
 
                 helpWidget(cb.en.datafile, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
 
-                .cdtData$GalParams$DATASETs[[jj]]$pars$data.type <- 'cdtstation'
-                .cdtData$GalParams$DATASETs[[jj]]$pars$map.type <- "Points"
+                .cdtData$GalParams$DATASETs[[ii]]$pars$data.type <- 'cdtstation'
+                .cdtData$GalParams$DATASETs[[ii]]$pars$map.type <- "Points"
             }
 
-            if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$data.type)) == CbdatatypeVAL[2]){
-                cb.en.datafile <- tkentry(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur2)
+            if(data_type == 'cdtnetcdf'){
+                cb.en.datafile <<- tkentry(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame, textvariable = .cdtData$GalParams$DATASETs[[ii]]$tcl$input.file, width = largeur2)
 
                 tkconfigure(bt.datatype, command = function(){
-                    .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]] <- getInfoNetCDFData(.cdtEnv$tcl$main$win, .cdtData$GalParams$DATASETs[[jj]]$pars[["input"]],
-                                                                                            trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file)))
+                    .cdtData$GalParams$DATASETs[[ii]]$pars[["input"]] <- getInfoNetCDFData(.cdtEnv$tcl$main$win, .cdtData$GalParams$DATASETs[[ii]]$pars[["input"]],
+                                                                                            trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file)))
                 })
 
                 tkconfigure(bt.datafile, command = function(){
                     dirnc <- tk_choose.dir(getwd(), "")
-                    tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
-                    .cdtData$GalParams$DATASETs[[jj]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                    tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file) <- if(dirnc %in% c("", "NA") | is.na(dirnc)) "" else dirnc
+                    .cdtData$GalParams$DATASETs[[ii]]$pars$input$dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file))
                 })
 
                 helpWidget(cb.en.datafile, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
 
-                .cdtData$GalParams$DATASETs[[jj]]$pars$data.type <- 'cdtnetcdf'
-                .cdtData$GalParams$DATASETs[[jj]]$pars$map.type <- "Grid"
+                .cdtData$GalParams$DATASETs[[ii]]$pars$data.type <- 'cdtnetcdf'
+                .cdtData$GalParams$DATASETs[[ii]]$pars$map.type <- "Grid"
             }
 
             tkgrid(cb.en.datafile, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 9, padx = 0, pady = 1, ipadx = 1, ipady = 1)
@@ -282,7 +280,7 @@ PlotMulitpleDataCmd <- function(){
         minhour.tclVar <- tclVar(retminhr$val)
 
         txt.tstep <- tklabel(frameTS, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-        cb.tstep <- ttkcombobox(frameTS, values = CbperiodVAL, textvariable = timeSteps, width = largeur3)
+        cb.tstep <- ttkcombobox(frameTS, values = CbperiodVAL, textvariable = timeSteps, width = largeur3, justify = 'center')
         cb.minhour <- ttkcombobox(frameTS, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
 
         ########
@@ -401,7 +399,7 @@ PlotMulitpleDataCmd <- function(){
             ret <- try(getData2Plot(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-            imgContainer <- CDT.Display.Graph(MultipleData.Plot.Map, .cdtData$EnvData$tab$multidataMap, "Multiple_Datasets")
+            imgContainer <- CDT.Display.Graph(MultipleData.Plot.Map, .cdtData$EnvData$tab$multidataMap, lang.dlg[['label']][['13']])
             .cdtData$EnvData$tab$multidataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$multidataMap)
         })
 
@@ -426,11 +424,10 @@ PlotMulitpleDataCmd <- function(){
                     tclvalue(date.min) <- as.numeric(substr(date2plot, 11, 12))
             }
 
-
             ret <- try(getData2Plot(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
-            imgContainer <- CDT.Display.Graph(MultipleData.Plot.Map, .cdtData$EnvData$tab$multidataMap, "Multiple_Datasets")
+            imgContainer <- CDT.Display.Graph(MultipleData.Plot.Map, .cdtData$EnvData$tab$multidataMap, lang.dlg[['label']][['13']])
             .cdtData$EnvData$tab$multidataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$multidataMap)
         })
 
@@ -438,7 +435,7 @@ PlotMulitpleDataCmd <- function(){
 
         tkconfigure(bt.Map.Opt, command = function(){
             if(!is.null(.cdtData$EnvData$data.range)){
-                atlevel <- pretty(.cdtData$EnvData$data.range[, 3], n = 10, min.n = 7)
+                atlevel <- pretty(.cdtData$EnvData$data.range, n = 10, min.n = 7)
                 if(is.null(.cdtData$EnvData$dataMapOp$userLvl$levels)){
                     .cdtData$EnvData$dataMapOp$userLvl$levels <- atlevel
                 }else{
@@ -472,49 +469,51 @@ PlotMulitpleDataCmd <- function(){
             })
 
             ####
-
             intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
 
             datasets <- lapply(seq_along(.cdtData$GalParams$DATASETs), function(j){
-                if(trimws(tclvalue(.cdtData$GalParams$DATASETs[[j]]$tcl$data.type)) == CbdatatypeVAL[1]){
-                    filename <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[j]]$tcl$input.file))
+                data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(.cdtData$GalParams$DATASETs[[j]]$tcl$data.type))]
+                input_dir_file <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[j]]$tcl$input.file))
+
+                if(data_type == 'cdtstation'){
+                    file_name <- input_dir_file
                 }else{
-                    filename <- .cdtData$GalParams$DATASETs[[j]]$pars$input$sample
+                    file_name <- .cdtData$GalParams$DATASETs[[j]]$pars$input$sample
                 }
 
-                jfile <- getIndex.AllOpenFiles(filename)
+                jfile <- getIndex.AllOpenFiles(file_name)
                 ## test if exist
                 Type <- .cdtData$OpenFiles$Type[[jfile]]
                 Data <- .cdtData$OpenFiles$Data[[jfile]]
                 nom <- .cdtData$OpenFiles$Data[[jfile]][[1]]
                 PARS <- .cdtData$GalParams$DATASETs[[j]]$pars
+                PARS$input$dir <- input_dir_file
 
                 list(names = nom, PARS = PARS, Data = Data, Type = Type)
             })
 
             shp.data <- NULL
-            if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1"){
-                nom <- trimws(tclvalue(file.plotShp))
-                if(nom != "" & !is.null(.cdtData$EnvData$shp$ocrds)){
+            if(tclvalue(.cdtData$EnvData$shapefile$addshp) == "1"){
+                if(!is.null(.cdtData$EnvData$shapefile$ocrds)){
+                    nom <- .cdtData$EnvData$shapefile$filename
                     jfile <- getIndex.AllOpenFiles(nom)
                     Type <- .cdtData$OpenFiles$Type[[jfile]]
                     Data <- .cdtData$OpenFiles$Data[[jfile]]
-                    PARS <- .cdtData$EnvData$SHPOp
-                    ocrds <- .cdtData$EnvData$shp$ocrds
-                    shp.data <- list(names = nom, PARS = PARS, Data = Data, Type = Type, ocrds = ocrds)
+                    shp.data <- list(names = nom, Data = Data, Type = Type)
                 }
             }
 
             minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             dates <- list(
-                            year = as.numeric(trimws(tclvalue(date.year))),
-                            mon = as.numeric(trimws(tclvalue(date.mon))),
-                            day = as.numeric(trimws(tclvalue(date.day))),
-                            hour = as.numeric(trimws(tclvalue(date.hour))),
-                            min = as.numeric(trimws(tclvalue(date.min)))
+                          year = as.numeric(trimws(tclvalue(date.year))),
+                          mon = as.numeric(trimws(tclvalue(date.mon))),
+                          day = as.numeric(trimws(tclvalue(date.day))),
+                          hour = as.numeric(trimws(tclvalue(date.hour))),
+                          min = as.numeric(trimws(tclvalue(date.min)))
                         )
 
-            tosave <- list(type = "multiplot", intstep = intstep, minhour = minhour,
+            tosave <- list(newVersion = TRUE, type = "multiplot", 
+                           intstep = intstep, minhour = minhour,
                            data = datasets, shp.data = shp.data,
                            dates = dates, Options = .cdtData$EnvData$dataMapOp)
             saveRDS(tosave, filename)
@@ -550,6 +549,11 @@ PlotMulitpleDataCmd <- function(){
                 return(NULL)
             }
 
+            if(is.null(don$newVersion)){
+                Insert.Messages.Out(lang.dlg[['message']][['16']], TRUE, 'e')
+                return(NULL)
+            }
+
             ###
             tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% don$intstep]
             retminhr <- set.hour.minute(don$intstep, don$minhour)
@@ -558,12 +562,20 @@ PlotMulitpleDataCmd <- function(){
             tclvalue(minhour.tclVar) <- retminhr$val
 
             ###
+            rds_file <- tools::file_path_sans_ext(basename(fileopen))
+            rds_file <- paste0("[", rds_file, "]")
 
-            lapply(don$data, function(x){
+            ret <- lapply(don$data, function(x){
                 listOpFiles <- sapply(.cdtData$OpenFiles$Data, "[[", 1)
+                insert_openfile <- TRUE
                 if(x$name %in% listOpFiles){
-                    x$name <- paste0(x$name, ".1")
-                    x$Data[[1]] <- paste0(x$Data[[1]], ".1")
+                    new_openfile <- paste(x$name, "-", rds_file)
+                    insert_openfile <- FALSE
+                    if(!new_openfile %in% listOpFiles){
+                        x$name <- new_openfile
+                        x$Data[[1]] <- paste(x$Data[[1]], "-", rds_file)
+                        insert_openfile <- TRUE
+                    }
                 }
 
                 jj <- length(.cdtData$GalParams$DATASETs) + 1
@@ -576,31 +588,34 @@ PlotMulitpleDataCmd <- function(){
 
                 add.new.datasets(jj, ids)
 
-                jfile <- length(.cdtData$OpenFiles$Type) + 1
-                .cdtData$OpenFiles$Type[[jfile]] <- x$Type
-                .cdtData$OpenFiles$Data[[jfile]] <- x$Data
-                tkinsert(.cdtEnv$tcl$main$Openfiles, "end", x$name)
+                if(insert_openfile){
+                    jfile <- length(.cdtData$OpenFiles$Type) + 1
+                    .cdtData$OpenFiles$Type[[jfile]] <- x$Type
+                    .cdtData$OpenFiles$Data[[jfile]] <- x$Data
+                    tkinsert(.cdtEnv$tcl$main$Openfiles, "end", x$name)
+                }
             })
 
             ###
             if(!is.null(don$shp.data)){
                 listOpFiles <- sapply(.cdtData$OpenFiles$Data, "[[", 1)
+                insert_openfile <- TRUE
                 if(don$shp.data$names %in% listOpFiles){
-                    don$shp.data$names <- paste0(don$shp.data$names, ".1")
-                    don$shp.data$Data[[1]] <- paste0(don$shp.data$Data[[1]], ".1")
+                    new_openfile <- paste(don$shp.data$names, "-", rds_file)
+                    insert_openfile <- FALSE
+                    if(!new_openfile %in% listOpFiles){
+                        don$shp.data$names <- new_openfile
+                        don$shp.data$Data[[1]] <- paste(don$shp.data$Data[[1]], "-", rds_file)
+                        insert_openfile <- TRUE
+                    }
                 }
-                .cdtData$EnvData$SHPOp <- don$shp.data$PARS
-                .cdtData$EnvData$shp$ocrds <- don$shp.data$ocrds
 
-                jfile <- length(.cdtData$OpenFiles$Type) + 1
-                .cdtData$OpenFiles$Type[[jfile]] <- don$shp.data$Type
-                .cdtData$OpenFiles$Data[[jfile]] <- don$shp.data$Data
-                tkinsert(.cdtEnv$tcl$main$Openfiles, "end", don$shp.data$names)
-
-                tclvalue(.cdtData$EnvData$shp$add.shp) <- TRUE
-                lapply(list(bt.addshpOpt, cb.addshp, bt.addshp), tkconfigure, state = "normal")
-                tkconfigure(cb.addshp, values = unlist(openFile_ttkcomboList()))
-                tclvalue(file.plotShp) <- don$shp.data$names
+                if(insert_openfile){
+                    jfile <- length(.cdtData$OpenFiles$Type) + 1
+                    .cdtData$OpenFiles$Type[[jfile]] <- don$shp.data$Type
+                    .cdtData$OpenFiles$Data[[jfile]] <- don$shp.data$Data
+                    tkinsert(.cdtEnv$tcl$main$Openfiles, "end", don$shp.data$names)
+                }
             }
 
             ###
@@ -630,66 +645,8 @@ PlotMulitpleDataCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr3, text = lang.dlg[['label']][['13']], relief = 'groove')
-
-        .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
-        file.plotShp <- tclVar()
-        stateSHP <- "disabled"
-
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
-
-        ########
-        tkconfigure(bt.addshp, command = function(){
-            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
-            if(!is.null(shp.opfiles)){
-                update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-
-                tkconfigure(cb.addshp, values = unlist(listOpenFiles))
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-            }
-        })
-
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
-        })
-
-        #################
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
-            else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-            tkconfigure(bt.addshpOpt, state = stateSHP)
-        })
-
-        ##############################################
-
-        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        frameSHP <- create_shpLayer_frame(subfr3)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
 
@@ -863,7 +820,7 @@ PlotMulitpleDataCmd <- function(){
 
         .cdtData$GalParams$donnees$date2plot <- daty2plot
         .cdtData$EnvData$data.Obj <- Obj
-        .cdtData$EnvData$data.range <- do.call(rbind, lapply(Obj, function(x) sapply(x[c('x', 'y', 'z')], range, na.rm = TRUE)))
+        .cdtData$EnvData$data.range <- do.call(c, lapply(Obj, function(x) range(x$z, na.rm = TRUE)))
 
         return(0)
     }

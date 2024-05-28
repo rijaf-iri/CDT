@@ -81,11 +81,10 @@ CDT.Display.Map.inter <- function(plot.map, notebookTab, tab.title){
 
     tkbind(img, "<Motion>", function(W, x, y){
         if(is.null(.cdtData$EnvData$plot.maps$data.type)) return(NULL)
-        if(.cdtData$EnvData$plot.maps$data.type == "cdtstation")
+        if(.cdtData$EnvData$plot.maps$data.type == "cdtstation"){
             displayCursorPosition3Var(W, x, y, parPltCrd, getStnIDLabel,
                                     stn.coords = .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')])
-        else
-        {
+        }else{
             display.shp.attr <- FALSE
             if(!is.null(.cdtData$EnvData$plot.maps$shp))
                 if(.cdtData$EnvData$plot.maps$shp$display) display.shp.attr <- TRUE

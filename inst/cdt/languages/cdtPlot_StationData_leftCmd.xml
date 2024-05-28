@@ -17,9 +17,6 @@
                 <text lang="en"> Bar Plot </text>
             </option>
         </combobox>
-        <checkbutton id="1">
-            <text lang="en"> Add Shapefile to Map </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> Station Data </text>
         </label>
@@ -62,9 +59,6 @@
         <label id="14">
             <text lang="en"> Stations </text>
         </label>
-        <label id="15">
-            <text lang="en"> Shapefile </text>
-        </label>
     </widget>
     <message>
         <content id="1">
@@ -93,4 +87,15 @@
             <text lang="en"> xlim must be a numeric value </text>
         </content>
     </message>
+    <plottext>
+        <content id="1">
+            <text lang="en"> Station </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Observation </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Map </text>
+        </content>
+    </plottext>
 </panel_cmd>

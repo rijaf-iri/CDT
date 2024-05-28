@@ -1,6 +1,5 @@
 
 PlotCDTStationCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 22
         largeur1 <- 32
@@ -23,14 +22,15 @@ PlotCDTStationCmd <- function(){
                               cdtstation = "",
                               date = list(year = 2021, mon = 1, day = 1,
                                           hour = 1, min = 0, other = ""))
-    pointSizeI <- 1.0
+
     .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
                                        userCol = list(custom = FALSE, color = NULL),
                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
                                        scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                       pointSize = pointSizeI, bbox = .cdtData$Config$region)
+                                       plotType = list(values = c("Pixels", "Points"), var = "Pixels"),
+                                       pointSize = 1.0, bbox = .cdtData$Config$region)
 
     .cdtData$EnvData$TSGraphOp <- list(
                                     bar = list(
@@ -51,8 +51,6 @@ PlotCDTStationCmd <- function(){
                                             legend = NULL)
                                         )
 
-    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
-
     .cdtData$EnvData$plot.maps$data.type <- "cdtstation"
 
     ###################
@@ -60,6 +58,7 @@ PlotCDTStationCmd <- function(){
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtPlot_StationData_leftCmd.xml")
     lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
     .cdtData$EnvData$message <- lang.dlg[['message']]
+    .cdtData$EnvData$plottext <- lang.dlg[['plottext']]
 
     ###################
 
@@ -206,11 +205,12 @@ PlotCDTStationCmd <- function(){
         ############
 
         txt.cdtdata1 <- tklabel(frameCDTdata, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-        cb.cdtdata1 <- ttkcombobox(frameCDTdata, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
+        cb.cdtdata1 <- ttkcombobox(frameCDTdata, values = CbperiodVAL, textvariable = timeSteps, width = largeur0, justify = 'center')
         cb.minhour <- ttkcombobox(frameCDTdata, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2, justify = 'center')
 
         txt.cdtdata2 <- tklabel(frameCDTdata, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
-        cb.cdtdata2 <- ttkcombobox(frameCDTdata, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
+        cb.cdtdata2 <- ttkcombobox(frameCDTdata, values = unlist(openFile_ttkcomboList()), textvariable = input.file, width = largeur1)
+        addTo_all_Combobox_List(cb.cdtdata2)
         bt.cdtdata <- tkbutton(frameCDTdata, text = "...")
 
         ############
@@ -229,9 +229,7 @@ PlotCDTStationCmd <- function(){
             dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(input.file) <- dat.opfiles[[1]]
-                tkconfigure(cb.cdtdata2, values = unlist(listOpenFiles))
 
                 ret <- try(splitStnData(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)){
@@ -279,9 +277,6 @@ PlotCDTStationCmd <- function(){
 
         frameMap <- ttklabelframe(subfr1, text = lang.dlg[['label']][['4']], relief = 'groove')
 
-        typeMapPLOT <- c("Points", "Pixels")
-        .cdtData$EnvData$map$typeMap <- tclVar("Points")
-
         date.year <- tclVar(GeneralParameters$date$year)
         date.mon <- tclVar(GeneralParameters$date$mon)
         date.day <- tclVar(GeneralParameters$date$day)
@@ -300,27 +295,17 @@ PlotCDTStationCmd <- function(){
         bt.date.prev <- ttkbutton(frameMap, text = "<<", width = largeur5)
         bt.Map.plot <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
         bt.date.next <- ttkbutton(frameMap, text = ">>", width = largeur5)
-
-        frOPTS0 <- tkframe(frameMap)
-        cb.Map.type <- ttkcombobox(frOPTS0, values = typeMapPLOT, textvariable = .cdtData$EnvData$map$typeMap, justify = 'center', width = largeur3)
-        bt.Map.Opt <- ttkbutton(frOPTS0, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
+        bt.Map.Opt <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
 
         ##############
 
         tkgrid(frTS1, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, rowspan = 1, columnspan = 1)
 
-        ##############
-
-        tkgrid(cb.Map.type, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(bt.Map.Opt, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-
-        ##############
-
         tkgrid(frTS0, row = 0, column = 0, sticky = '', padx = 1, pady = 1, columnspan = 3)
         tkgrid(bt.date.prev, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
         tkgrid(bt.Map.plot, row = 1, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
         tkgrid(bt.date.next, row = 1, column = 2, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(frOPTS0, row = 2, column = 0, sticky = '', padx = 1, pady = 1, columnspan = 3)
+        tkgrid(bt.Map.Opt, row = 2, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
 
         ##############
 
@@ -335,9 +320,6 @@ PlotCDTStationCmd <- function(){
                 }
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
-
-            if(trimws(tclvalue(.cdtData$EnvData$map$typeMap)) == "Points")
-                pointSizeI <<- .cdtData$EnvData$dataMapOp$pointSize
         })
 
         ##############
@@ -416,17 +398,6 @@ PlotCDTStationCmd <- function(){
             CDTdataStation.Display.Maps()
         })
 
-        ##############
-
-        tkbind(cb.Map.type, "<<ComboboxSelected>>", function(){
-            if(trimws(tclvalue(.cdtData$EnvData$map$typeMap)) == "Points"){
-                .cdtData$EnvData$dataMapOp$pointSize <- pointSizeI
-            }else .cdtData$EnvData$dataMapOp$pointSize <- NULL
-
-            if(is.null(.cdtData$EnvData$don)) return(NULL)
-            getStnMap()
-        })
-
         ##############################################
 
         frameGraph <- ttklabelframe(subfr1, text = lang.dlg[['label']][['13']], relief = 'groove')
@@ -490,7 +461,7 @@ PlotCDTStationCmd <- function(){
             getStnTS()
 
             ####
-            titre <- paste('Station -', .cdtData$EnvData$stndata$series$id)
+            titre <- paste(lang.dlg[['plottext']][['1']], '-', .cdtData$EnvData$stndata$series$id)
             imgContainer <- CDT.Display.Graph(plotCDTStation.Graph, .cdtData$EnvData$tab$dataGraph, titre)
             .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
         })
@@ -507,7 +478,7 @@ PlotCDTStationCmd <- function(){
             getStnTS()
 
             ####
-            titre <- paste('Station -', .cdtData$EnvData$stndata$series$id)
+            titre <- paste(lang.dlg[['plottext']][['1']], '-', .cdtData$EnvData$stndata$series$id)
             imgContainer <- CDT.Display.Graph(plotCDTStation.Graph, .cdtData$EnvData$tab$dataGraph, titre)
             .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
         })
@@ -524,7 +495,7 @@ PlotCDTStationCmd <- function(){
             getStnTS()
 
             ####
-            titre <- paste('Station -', .cdtData$EnvData$stndata$series$id)
+            titre <- paste(lang.dlg[['plottext']][['1']], '-', .cdtData$EnvData$stndata$series$id)
             imgContainer <- CDT.Display.Graph(plotCDTStation.Graph, .cdtData$EnvData$tab$dataGraph, titre)
             .cdtData$EnvData$tab$dataGraph <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataGraph)
         })
@@ -546,65 +517,7 @@ PlotCDTStationCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr2, text = lang.dlg[['label']][['15']], relief = 'groove')
-
-        .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
-        file.plotShp <- tclVar()
-        stateSHP <- "disabled"
-
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
-
-        ########
-        tkconfigure(bt.addshp, command = function(){
-            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
-            if(!is.null(shp.opfiles)){
-                update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                tkconfigure(cb.addshp, values = unlist(listOpenFiles))
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-            }
-        })
-
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
-        })
-
-        #################
-
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
-            else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-            tkconfigure(bt.addshpOpt, state = stateSHP)
-        })
-
-        ##############################################
-
+        frameSHP <- create_shpLayer_frame(subfr2)
         tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
@@ -755,7 +668,7 @@ PlotCDTStationCmd <- function(){
             tcl('update')
         })
 
-        typemap <- trimws(tclvalue(.cdtData$EnvData$map$typeMap))
+        typemap <- .cdtData$EnvData$dataMapOp$plotType$var
 
         if(.cdtData$EnvData$tstep != "others"){
             yrs <- as.numeric(trimws(tclvalue(date.year)))
@@ -819,7 +732,6 @@ PlotCDTStationCmd <- function(){
                 }
 
                 .cdtData$EnvData$stndata$map$t <- daty
-                .cdtData$EnvData$stndata$map$p <- typemap
             }
 
             .cdtData$EnvData$stndata$spatial <- getSpat

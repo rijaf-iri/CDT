@@ -63,7 +63,7 @@ cdtLanguageParse <- function(xml.path, lang = "en"){
             })
             names(ret) <- type.wdg
         }
-        if(name.list %in% c("tab_title", "message")){
+        if(name.list %in% c("tab_title", "message", "plottext")){
             id.msg <- unname(sapply(obj.list[[1]], "[[", ".attrs"))
             obj.list <- lapply(obj.list[[1]], function(n) n[!names(n) %in% ".attrs"])
             ret <- lapply(seq_along(obj.list), function(i){

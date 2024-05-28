@@ -16,9 +16,6 @@
             <text lang="en"> netCDF data file </text>
         </label>
         <label id="2">
-            <text lang="en"> Plot Type </text>
-        </label>
-        <label id="3">
             <text lang="en"> Shapefile </text>
         </label>
     </widget>

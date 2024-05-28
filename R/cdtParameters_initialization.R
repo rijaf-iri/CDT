@@ -107,6 +107,7 @@ cdt.init.params <- function(action, tstep){
         ret.params <- list(action = action,
                            tstep = "daily", minhour = 1, datatype = "cdtstation",
                            inputs = list(file1 = list(dir = "", sample = "", format = "rr_mrg_%s%s%s.nc")),
+                           constant = list(const1 = FALSE),
                            formula = "X1 - 273.15",
                            varinfo = list(name = "", units = "", missval = -9999,
                                           longname = "", prec = "float"),

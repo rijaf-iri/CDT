@@ -1,17 +1,21 @@
 
-MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
+MapGraph.MapOptions <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
         largeur1 <- 21
         largeur2 <- 46
         largeur3 <- 429
         largeur4 <- 57
         largeur5 <- 21
+        largeur6 <- 60
+        largeur7 <- 32
     }else{
         largeur1 <- 20
         largeur2 <- 46
         largeur3 <- 426
         largeur4 <- 50
         largeur5 <- 20
+        largeur6 <- 54
+        largeur7 <- 32
     }
 
     #####################
@@ -34,12 +38,22 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
     preview.canvasf2 <- function(cond){
         if(cond){
-            kolor <- getGradientColor(climMapOpt$userCol$color, 0:largeur3)
+            kolor <- getGradientColor(mapOpt$userCol$color, 0:largeur3)
             tkdelete(canvas.preview, 'gradlines0')
             for(i in 0:largeur3)
                 tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
         }
         else tkdelete(canvas.preview, 'gradlines0')
+    }
+
+    pointSize_fun <- function(fr){
+        txt <- tklabel(fr, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+        spin <- ttkspinbox(fr, from = 0.3, to = 4.0, increment = 0.1, justify = 'center', width = 4)
+        tkset(spin, mapOpt$pointSize)
+        tkgrid(txt, spin)
+        tkgrid(fr, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        return(spin)
     }
 
     #####################
@@ -54,30 +68,65 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
     #####################
 
+    if(!is.null(mapOpt$plotType)){
+        framePlotType <- tkframe(frDialog, relief = 'groove', borderwidth = 2)
+
+        plot.type <- tclVar(mapOpt$plotType$var)
+
+        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+        cb.plotType <- ttkcombobox(framePlotType, values = mapOpt$plotType$values, textvariable = plot.type, justify = 'center', width = largeur1)
+
+        tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        ## move point size in this frame
+        is_pointsData <- "Points" %in% mapOpt$plotType$values
+
+        if(is_pointsData){
+            framePointSize <- tkframe(framePlotType)
+            if(mapOpt$plotType$var == "Points"){
+                spin.pointSize <- pointSize_fun(framePointSize)
+            }
+        }
+
+        tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
+            if(is_pointsData){
+                tkdestroy(framePointSize)
+                framePointSize <<- tkframe(framePlotType)
+                if(trimws(tclvalue(plot.type)) == "Points"){
+                    spin.pointSize <<- pointSize_fun(framePointSize)
+                }
+            }
+        })
+    }
+
+    #####################
+
     frameColkey <- ttklabelframe(frDialog, text = lang.dlg[['label']][['1a']], relief = 'groove')
 
     preset.colkey <- c('tim.colors', 'rainbow', 'heat.colors', 'cm.colors', 'topo.colors',
                        'terrain.colors', 'spi.colors', 'precip.colors', 'decile.colors')
 
-    preset.color <- tclVar(climMapOpt$presetCol$color)
-    reverse.color <- tclVar(climMapOpt$presetCol$reverse)
-    custom.color <- tclVar(climMapOpt$userCol$custom)
+    preset.color <- tclVar(mapOpt$presetCol$color)
+    reverse.color <- tclVar(mapOpt$presetCol$reverse)
+    custom.color <- tclVar(mapOpt$userCol$custom)
 
-    stateKol1 <- if(climMapOpt$userCol$custom) "disabled" else "normal"
-    stateKol2 <- if(climMapOpt$userCol$custom) "normal" else "disabled"
+    stateKol1 <- if(mapOpt$userCol$custom) "disabled" else "normal"
+    stateKol2 <- if(mapOpt$userCol$custom) "normal" else "disabled"
 
-    cb.colkey <- ttkcombobox(frameColkey, values = preset.colkey, textvariable = preset.color, width = largeur1, state = stateKol1)
+    cb.colkey <- ttkcombobox(frameColkey, values = preset.colkey, textvariable = preset.color, justify = 'center', width = largeur1, state = stateKol1)
     chk.colkey <- tkcheckbutton(frameColkey, variable = reverse.color, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left', state = stateKol1)
     chk.userKol <- tkcheckbutton(frameColkey, variable = custom.color, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     bt.userKol <- ttkbutton(frameColkey, text = lang.dlg[['button']][['1']], state = stateKol2)
     canvas.preview <- tkcanvas(frameColkey, width = largeur3, height = 20, bg = 'white')
 
-    if(!is.null(climMapOpt$pointSize)){
+    ### remove when all are done
+    if(!is.null(mapOpt$pointSize)){
         framePtSz <- tkframe(frameColkey)
 
         txt.PointSz <- tklabel(framePtSz, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
         spin.PointSz <- ttkspinbox(framePtSz, from = 0.3, to = 2.5, increment = 0.1, justify = 'center', width = 4)
-        tkset(spin.PointSz, climMapOpt$pointSize)
+        tkset(spin.PointSz, mapOpt$pointSize)
 
         tkgrid(txt.PointSz, spin.PointSz)
     }
@@ -86,13 +135,14 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     if(tclvalue(custom.color) == "0"){
         preview.canvasf1('1')
     }else{
-        preview.canvasf2(!is.null(climMapOpt$userCol$color) &
-                         length(climMapOpt$userCol$color) > 0)
+        preview.canvasf2(!is.null(mapOpt$userCol$color) &
+                         length(mapOpt$userCol$color) > 0)
     }
 
     tkgrid(cb.colkey, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(chk.colkey, row = 0, column = 2, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    if(!is.null(climMapOpt$pointSize))
+    ### remove when all are done
+    if(!is.null(mapOpt$pointSize))
         tkgrid(framePtSz, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(chk.userKol, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.userKol, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -102,10 +152,9 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
     tkconfigure(bt.userKol, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        climMapOpt$userCol$color <<- createColorkey(.cdtEnv$tcl$main$win,
-                                                    climMapOpt$userCol$color)
+        mapOpt$userCol$color <<- createColorkey(.cdtEnv$tcl$main$win, mapOpt$userCol$color)
         tcl('wm', 'attributes', tt, topmost = TRUE)
-        preview.canvasf2(!is.null(climMapOpt$userCol$color))
+        preview.canvasf2(!is.null(mapOpt$userCol$color))
     })
 
     tkbind(chk.userKol, "<Button-1>", function(){
@@ -116,7 +165,7 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
         tkconfigure(bt.userKol, state = stateKol2)
 
         if(tclvalue(custom.color) == '0'){
-            preview.canvasf2(!is.null(climMapOpt$userCol$color))
+            preview.canvasf2(!is.null(mapOpt$userCol$color))
         }else{
             preview.canvasf1('1')
         }
@@ -129,9 +178,9 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
     frameLevel <- ttklabelframe(frDialog, text = lang.dlg[['label']][['4']], relief = 'groove')
 
-    equidist.level <- tclVar(climMapOpt$userLvl$equidist)
-    custom.level <- tclVar(climMapOpt$userLvl$custom)
-    stateEditLvl <- if(climMapOpt$userLvl$custom) 'normal' else 'disabled'
+    equidist.level <- tclVar(mapOpt$userLvl$equidist)
+    custom.level <- tclVar(mapOpt$userLvl$custom)
+    stateEditLvl <- if(mapOpt$userLvl$custom) 'normal' else 'disabled'
 
     chk.Level <- tkcheckbutton(frameLevel, variable = custom.level, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
     yscrLevel <- tkscrollbar(frameLevel, repeatinterval = 4, command = function(...) tkyview(textLevel, ...))
@@ -145,9 +194,9 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     tkgrid.configure(textLevel, sticky = 'nswe')
     tkgrid(chk.Equidist, sticky = "we")
 
-    if(length(climMapOpt$userLvl$levels) > 0)
-        for(j in seq_along(climMapOpt$userLvl$levels))
-            tkinsert(textLevel, "end", paste0(climMapOpt$userLvl$levels[j], ', '))
+    if(length(mapOpt$userLvl$levels) > 0)
+        for(j in seq_along(mapOpt$userLvl$levels))
+            tkinsert(textLevel, "end", paste0(mapOpt$userLvl$levels[j], ', '))
     tkconfigure(textLevel, state = stateEditLvl)
 
     #########
@@ -161,10 +210,10 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
     frameMapTitle <- ttklabelframe(frDialog, text = lang.dlg[['label']][['7']], relief = 'groove')
 
-    user.title <- tclVar(climMapOpt$title$user)
-    text.title <- tclVar(climMapOpt$title$title)
+    user.title <- tclVar(mapOpt$title$user)
+    text.title <- tclVar(mapOpt$title$title)
 
-    stateMpTlt <- if(climMapOpt$title$user) 'normal' else 'disabled'
+    stateMpTlt <- if(mapOpt$title$user) 'normal' else 'disabled'
 
     chk.MpTlt <- tkcheckbutton(frameMapTitle, variable = user.title, anchor = 'e', justify = 'right')
     en.MpTlt <- tkentry(frameMapTitle, textvariable = text.title, width = largeur4, state = stateMpTlt)
@@ -183,10 +232,10 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
 
     frameColKeyLab <- ttklabelframe(frDialog, text = lang.dlg[['label']][['8']], relief = 'groove')
 
-    user.clLab <- tclVar(climMapOpt$colkeyLab$user)
-    text.clLab <- tclVar(climMapOpt$colkeyLab$label)
+    user.clLab <- tclVar(mapOpt$colkeyLab$user)
+    text.clLab <- tclVar(mapOpt$colkeyLab$label)
 
-    stateColLab <- if(climMapOpt$colkeyLab$user) 'normal' else 'disabled'
+    stateColLab <- if(mapOpt$colkeyLab$user) 'normal' else 'disabled'
 
     chk.clLab <- tkcheckbutton(frameColKeyLab, variable = user.clLab, anchor = 'e', justify = 'right')
     en.clLab <- tkentry(frameColKeyLab, textvariable = text.clLab, width = largeur4, state = stateColLab)
@@ -202,21 +251,62 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     })
 
     #####################
+    frameBox2 <- tkframe(frDialog)
 
-    if(!is.null(climMapOpt$scalebar)){
-        frameMpScale <- ttklabelframe(frDialog, text = lang.dlg[['label']][['9']], relief = 'groove')
+    tkgrid(tklabel(frameBox2, text = "", width = largeur6), row = 0, sticky = "we", columnspan = 2)
+
+    #########
+
+    if(!is.null(mapOpt$bbox)){
+        frameBbox <- ttklabelframe(frameBox2, text = lang.dlg[['label']][['12']], relief = 'groove')
+
+        minlonV <- tclVar(mapOpt$bbox$minlon)
+        maxlonV <- tclVar(mapOpt$bbox$maxlon)
+        minlatV <- tclVar(mapOpt$bbox$minlat)
+        maxlatV <- tclVar(mapOpt$bbox$maxlat)
+
+        width_lon <- if(!is.null(mapOpt$scalebar)) 0 else largeur7
+
+        txt.lon <- tklabel(frameBbox, text = "Longitude", anchor = 'e', justify = 'right', width = width_lon)
+        txt.lat <- tklabel(frameBbox, text = "Latitude", anchor = 'e', justify = 'right')
+        txt.min <- tklabel(frameBbox, text = "Minimum")
+        txt.max <- tklabel(frameBbox, text = "Maximum")
+        en.nlon <- tkentry(frameBbox, textvariable = minlonV, width = 8, justify = "right")
+        en.xlon <- tkentry(frameBbox, textvariable = maxlonV, width = 8, justify = "right")
+        en.nlat <- tkentry(frameBbox, textvariable = minlatV, width = 8, justify = "right")
+        en.xlat <- tkentry(frameBbox, textvariable = maxlatV, width = 8, justify = "right")
+
+        tkgrid(txt.min, row = 0, column = 1, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.max, row = 0, column = 2, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.lon, row = 1, column = 0, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.nlon, row = 1, column = 1, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.xlon, row = 1, column = 2, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.lat, row = 2, column = 0, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.nlat, row = 2, column = 1, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.xlat, row = 2, column = 2, sticky = "ew", rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        col_span <- if(!is.null(mapOpt$scalebar)) 1 else 2
+        tkgrid(frameBbox, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = col_span, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    }
+
+    #####################
+
+    if(!is.null(mapOpt$scalebar)){
+        frameMpScale <- ttklabelframe(frameBox2, text = lang.dlg[['label']][['9']], relief = 'groove')
 
         place.scale <- c('bottomleft', 'bottomcenter', 'bottomright')
-        add.scale <- tclVar(climMapOpt$scalebar$add)
-        pos.scale <- tclVar(climMapOpt$scalebar$pos)
+        add.scale <- tclVar(mapOpt$scalebar$add)
+        pos.scale <- tclVar(mapOpt$scalebar$pos)
 
-        stateSclBr <- if(climMapOpt$scalebar$add) 'normal' else 'disabled'
+        stateSclBr <- if(mapOpt$scalebar$add) 'normal' else 'disabled'
 
         chk.MpScl <- tkcheckbutton(frameMpScale, variable = add.scale, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
-        cb.MpScl <- ttkcombobox(frameMpScale, values = place.scale, textvariable = pos.scale, width = largeur5, state = stateSclBr)
+        cb.MpScl <- ttkcombobox(frameMpScale, values = place.scale, textvariable = pos.scale, justify = 'center', width = largeur5, state = stateSclBr)
 
         tkgrid(chk.MpScl, row = 0, column = 0, sticky = 'we', padx = 1)
-        tkgrid(cb.MpScl, row = 0, column = 1, sticky = 'e', padx = 1)
+        tkgrid(cb.MpScl, row = 1, column = 0, sticky = 'we', padx = 1)
+
+        tkgrid(frameMpScale, row = 1, column = 1, sticky = 'ne', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         #########
 
@@ -227,24 +317,25 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     }
 
     #####################
-    tkgrid(frameColkey, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameLevel, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameMapTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameColKeyLab, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    if(!is.null(climMapOpt$scalebar))
-        tkgrid(frameMpScale, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    if(!is.null(mapOpt$plotType))
+        tkgrid(framePlotType, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 5, ipadx = 1, ipady = 5)
+    tkgrid(frameColkey, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameLevel, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameMapTitle, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameColKeyLab, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameBox2, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
     bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.opt.OK, command = function(){
-        climMapOpt$presetCol$color <<- trimws(tclvalue(preset.color))
-        climMapOpt$presetCol$reverse <<- switch(tclvalue(reverse.color), '0' = FALSE, '1' = TRUE)
-        climMapOpt$userCol$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
-        climMapOpt$userLvl$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
-        climMapOpt$userLvl$equidist <<- switch(tclvalue(equidist.level), '0' = FALSE, '1' = TRUE)
-        if(climMapOpt$userLvl$custom){
+        mapOpt$presetCol$color <<- trimws(tclvalue(preset.color))
+        mapOpt$presetCol$reverse <<- switch(tclvalue(reverse.color), '0' = FALSE, '1' = TRUE)
+        mapOpt$userCol$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
+        mapOpt$userLvl$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
+        mapOpt$userLvl$equidist <<- switch(tclvalue(equidist.level), '0' = FALSE, '1' = TRUE)
+        if(mapOpt$userLvl$custom){
             vlevel <- tclvalue(tkget(textLevel, "0.0", "end"))
             vlevel <- gsub("[\t\r\n]", "", vlevel)
             vlevel <- gsub('\\s+', '', vlevel)
@@ -254,20 +345,37 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
-            climMapOpt$userLvl$levels <<- as.numeric(vlevel)
+            mapOpt$userLvl$levels <<- as.numeric(vlevel)
         }
-        climMapOpt$title$user <<- switch(tclvalue(user.title), '0' = FALSE, '1' = TRUE)
-        climMapOpt$title$title <<- trimws(tclvalue(text.title))
-        climMapOpt$colkeyLab$user <<- switch(tclvalue(user.clLab), '0' = FALSE, '1' = TRUE)
-        climMapOpt$colkeyLab$label <<- trimws(tclvalue(text.clLab))
+        mapOpt$title$user <<- switch(tclvalue(user.title), '0' = FALSE, '1' = TRUE)
+        mapOpt$title$title <<- trimws(tclvalue(text.title))
+        mapOpt$colkeyLab$user <<- switch(tclvalue(user.clLab), '0' = FALSE, '1' = TRUE)
+        mapOpt$colkeyLab$label <<- trimws(tclvalue(text.clLab))
 
-        if(!is.null(climMapOpt$scalebar)){
-            climMapOpt$scalebar$add <<- switch(tclvalue(add.scale), '0' = FALSE, '1' = TRUE)
-            climMapOpt$scalebar$pos <<- trimws(tclvalue(pos.scale))
+        ### remove when all are done
+        if(!is.null(mapOpt$pointSize))
+            mapOpt$pointSize <<- as.numeric(trimws(tclvalue(tkget(spin.PointSz))))
+
+        if(!is.null(mapOpt$plotType)){
+            mapOpt$plotType$var <<- trimws(tclvalue(plot.type))
+            if(is_pointsData){
+                if(mapOpt$plotType$var == "Points"){
+                    mapOpt$pointSize <<- as.numeric(trimws(tclvalue(tkget(spin.pointSize))))
+                }
+            }
         }
 
-        if(!is.null(climMapOpt$pointSize))
-            climMapOpt$pointSize <<- as.numeric(trimws(tclvalue(tkget(spin.PointSz))))
+        if(!is.null(mapOpt$bbox)){
+            mapOpt$bbox$minlon <<- as.numeric(trimws(tclvalue(minlonV)))
+            mapOpt$bbox$maxlon <<- as.numeric(trimws(tclvalue(maxlonV)))
+            mapOpt$bbox$minlat <<- as.numeric(trimws(tclvalue(minlatV)))
+            mapOpt$bbox$maxlat <<- as.numeric(trimws(tclvalue(maxlatV)))
+        }
+
+        if(!is.null(mapOpt$scalebar)){
+            mapOpt$scalebar$add <<- switch(tclvalue(add.scale), '0' = FALSE, '1' = TRUE)
+            mapOpt$scalebar$pos <<- trimws(tclvalue(pos.scale))
+        }
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -300,19 +408,19 @@ MapGraph.MapOptions <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 
-    ##################################################################
+    #####################
     tkfocus(tt)
     tkbind(tt, "<Destroy>", function(){
         tkgrab.release(tt)
         tkfocus(parent.win)
     })
     tkwait.window(tt)
-    return(climMapOpt)
+    return(mapOpt)
 }
 
 #######################################################################################################
 
-MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$main$win){
+MapGraph.MapOptions.VarNetCDF <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
     if(WindowsOS()){
         largeur1 <- 30
         largeur2 <- 46
@@ -341,17 +449,29 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
 
     #####################
 
+    framePlotType <- tkframe(frDialog, relief = 'groove', borderwidth = 2)
+
+    plot.type <- tclVar(mapOpt$plotType$var)
+
+    txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
+    cb.plotType <- ttkcombobox(framePlotType, values = mapOpt$plotType$values, textvariable = plot.type, justify = 'center', width = largeur1)
+
+    tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+
     frameColkey <- ttklabelframe(frDialog, text = "Colorkey", relief = 'groove')
 
     preset.colkey <- c('tim.colors', 'rainbow', 'heat.colors', 'cm.colors', 'topo.colors',
                        'terrain.colors', 'spi.colors', 'precip.colors', 'decile.colors')
 
-    preset.color <- tclVar(climMapOpt$presetCol$color)
-    reverse.color <- tclVar(climMapOpt$presetCol$reverse)
-    custom.color <- tclVar(climMapOpt$userCol$custom)
+    preset.color <- tclVar(mapOpt$presetCol$color)
+    reverse.color <- tclVar(mapOpt$presetCol$reverse)
+    custom.color <- tclVar(mapOpt$userCol$custom)
 
-    stateKol1 <- if(climMapOpt$userCol$custom) "disabled" else "normal"
-    stateKol2 <- if(climMapOpt$userCol$custom) "normal" else "disabled"
+    stateKol1 <- if(mapOpt$userCol$custom) "disabled" else "normal"
+    stateKol2 <- if(mapOpt$userCol$custom) "normal" else "disabled"
 
     cb.colkey <- ttkcombobox(frameColkey, values = preset.colkey, textvariable = preset.color, width = largeur1, state = stateKol1)
     chk.colkey <- tkcheckbutton(frameColkey, variable = reverse.color, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left', state = stateKol1)
@@ -376,8 +496,8 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
         for(i in 0:largeur3)
             tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
     }else{
-        if(!is.null(climMapOpt$userCol$color) & length(climMapOpt$userCol$color) > 0){
-            kolor <- getGradientColor(climMapOpt$userCol$color, 0:largeur3)
+        if(!is.null(mapOpt$userCol$color) & length(mapOpt$userCol$color) > 0){
+            kolor <- getGradientColor(mapOpt$userCol$color, 0:largeur3)
             tkdelete(canvas.preview, 'gradlines0')
             for(i in 0:largeur3)
                 tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
@@ -386,12 +506,11 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
 
     tkconfigure(bt.userKol, command = function(){
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        climMapOpt$userCol$color <<- createColorkey(.cdtEnv$tcl$main$win,
-                                                    climMapOpt$userCol$color)
+        mapOpt$userCol$color <<- createColorkey(.cdtEnv$tcl$main$win, mapOpt$userCol$color)
         tcl('wm', 'attributes', tt, topmost = TRUE)
 
-        if(!is.null(climMapOpt$userCol$color)){
-            kolor <- getGradientColor(climMapOpt$userCol$color, 0:largeur3)
+        if(!is.null(mapOpt$userCol$color)){
+            kolor <- getGradientColor(mapOpt$userCol$color, 0:largeur3)
             tkdelete(canvas.preview, 'gradlines0')
             for(i in 0:largeur3)
                 tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
@@ -408,8 +527,8 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
         tkconfigure(bt.userKol, state = stateKol2)
 
         if(tclvalue(custom.color) == '0'){
-            if(!is.null(climMapOpt$userCol$color)){
-                kolor <- getGradientColor(climMapOpt$userCol$color, 0:largeur3)
+            if(!is.null(mapOpt$userCol$color)){
+                kolor <- getGradientColor(mapOpt$userCol$color, 0:largeur3)
                 tkdelete(canvas.preview, 'gradlines0')
                 for(i in 0:largeur3)
                     tkcreate(canvas.preview, "line", i, 0, i, 20, fill = kolor[i], tags = 'gradlines0')
@@ -449,9 +568,9 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
 
     frameLevel <- ttklabelframe(frDialog, text = lang.dlg[['label']][['3']], relief = 'groove')
 
-    equidist.level <- tclVar(climMapOpt$userLvl$equidist)
-    custom.level <- tclVar(climMapOpt$userLvl$custom)
-    stateEditLvl <- if(climMapOpt$userLvl$custom) 'normal' else 'disabled'
+    equidist.level <- tclVar(mapOpt$userLvl$equidist)
+    custom.level <- tclVar(mapOpt$userLvl$custom)
+    stateEditLvl <- if(mapOpt$userLvl$custom) 'normal' else 'disabled'
 
     chk.Level <- tkcheckbutton(frameLevel, variable = custom.level, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
     yscrLevel <- tkscrollbar(frameLevel, repeatinterval = 4, command = function(...) tkyview(textLevel, ...))
@@ -465,9 +584,9 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
     tkgrid.configure(textLevel, sticky = 'nswe')
     tkgrid(chk.Equidist, sticky = "we")
 
-    if(length(climMapOpt$userLvl$levels) > 0)
-        for(j in seq_along(climMapOpt$userLvl$levels))
-            tkinsert(textLevel, "end", paste0(climMapOpt$userLvl$levels[j], ', '))
+    if(length(mapOpt$userLvl$levels) > 0)
+        for(j in seq_along(mapOpt$userLvl$levels))
+            tkinsert(textLevel, "end", paste0(mapOpt$userLvl$levels[j], ', '))
     tkconfigure(textLevel, state = stateEditLvl)
 
     #########
@@ -481,10 +600,10 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
 
     frameMapTitle <- ttklabelframe(frDialog, text = lang.dlg[['label']][['6']], relief = 'groove')
 
-    user.title <- tclVar(climMapOpt$title$user)
-    text.title <- tclVar(climMapOpt$title$title)
+    user.title <- tclVar(mapOpt$title$user)
+    text.title <- tclVar(mapOpt$title$title)
 
-    stateMpTlt <- if(climMapOpt$title$user) 'normal' else 'disabled'
+    stateMpTlt <- if(mapOpt$title$user) 'normal' else 'disabled'
 
     chk.MpTlt <- tkcheckbutton(frameMapTitle, variable = user.title, anchor = 'e', justify = 'right')
     en.MpTlt <- tkentry(frameMapTitle, textvariable = text.title, width = largeur4, state = stateMpTlt)
@@ -500,21 +619,23 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
     })
 
     #####################
-    tkgrid(frameColkey, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameLevel, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameMapTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(framePlotType, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 5, ipadx = 1, ipady = 5)
+    tkgrid(frameColkey, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameLevel, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameMapTitle, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
     bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     tkconfigure(bt.opt.OK, command = function(){
-        climMapOpt$presetCol$color <<- trimws(tclvalue(preset.color))
-        climMapOpt$presetCol$reverse <<- switch(tclvalue(reverse.color), '0' = FALSE, '1' = TRUE)
-        climMapOpt$userCol$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
-        climMapOpt$userLvl$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
-        climMapOpt$userLvl$equidist <<- switch(tclvalue(equidist.level), '0' = FALSE, '1' = TRUE)
-        if(climMapOpt$userLvl$custom){
+        mapOpt$plotType$var <<- trimws(tclvalue(plot.type))
+        mapOpt$presetCol$color <<- trimws(tclvalue(preset.color))
+        mapOpt$presetCol$reverse <<- switch(tclvalue(reverse.color), '0' = FALSE, '1' = TRUE)
+        mapOpt$userCol$custom <<- switch(tclvalue(custom.color), '0' = FALSE, '1' = TRUE)
+        mapOpt$userLvl$custom <<- switch(tclvalue(custom.level), '0' = FALSE, '1' = TRUE)
+        mapOpt$userLvl$equidist <<- switch(tclvalue(equidist.level), '0' = FALSE, '1' = TRUE)
+        if(mapOpt$userLvl$custom){
             vlevel <- tclvalue(tkget(textLevel, "0.0", "end"))
             vlevel <- gsub("[\t\r\n]", "", vlevel)
             vlevel <- gsub('\\s+', '', vlevel)
@@ -524,10 +645,10 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
-            climMapOpt$userLvl$levels <<- as.numeric(vlevel)
+            mapOpt$userLvl$levels <<- as.numeric(vlevel)
         }
-        climMapOpt$title$user <<- switch(tclvalue(user.title), '0' = FALSE, '1' = TRUE)
-        climMapOpt$title$title <<- trimws(tclvalue(text.title))
+        mapOpt$title$user <<- switch(tclvalue(user.title), '0' = FALSE, '1' = TRUE)
+        mapOpt$title$title <<- trimws(tclvalue(text.title))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -567,7 +688,7 @@ MapGraph.MapOptions.VarNetCDF <- function(climMapOpt, parent.win = .cdtEnv$tcl$m
         tkfocus(parent.win)
     })
     tkwait.window(tt)
-    return(climMapOpt)
+    return(mapOpt)
 }
 
 #######################################################################################################

@@ -13,9 +13,6 @@
     </tab_title>
     <widget>
         <checkbutton id="1">
-            <text lang="en"> Add Shapefile to Maps </text>
-        </checkbutton>
-        <checkbutton id="2">
             <text lang="en"> Draw a box around plots </text>
         </checkbutton>
         <label id="1">
@@ -37,16 +34,13 @@
             <text lang="en"> Latitude </text>
         </label>
         <label id="7">
-            <text lang="en"> Select variable to plot </text>
+            <text lang="en"> Select variables to plot </text>
         </label>
         <label id="8">
             <text lang="en"> Map </text>
         </label>
         <label id="9">
-            <text lang="en"> Plot Type </text>
-        </label>
-        <label id="10">
-            <text lang="en"> Shapefile </text>
+            <text lang="en"> Bounding box </text>
         </label>
     </widget>
     <help>
@@ -76,10 +70,10 @@
         </content>
         <content id="4">
             <status>
-                <text lang="en"> Enter the filename format of netCDF data, example: Bernoulli-Gamma_Pars.STN_2.nc\nReplace the whole string representing the date or sequence by %S\nBernoulli-Gamma_Pars.STN_2.nc becomes Bernoulli-Gamma_Pars.STN_%S.nc </text>
+                <text lang="en"> Enter the filename format of netCDF data, example: rad_avg_2024010112.nc\nReplace the whole string representing the date or sequence by %S\nrad_avg_2024010112.nc becomes rad_avg_%S.nc </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the filename format of netCDF data, example: Bernoulli-Gamma_Pars.STN_2.nc </text>
+                <text lang="en"> Enter the filename format of netCDF data, example: rad_avg_%S.nc </text>
             </tooltip>
         </content>
     </help>
@@ -107,6 +101,9 @@
         </content>
         <content id="8">
             <text lang="en"> No netCDF file found </text>
+        </content>
+        <content id="9">
+            <text lang="en"> All data NULL </text>
         </content>
     </message>
 </panel_cmd>

@@ -19,7 +19,7 @@ filterCDTdata <- function(){
 
     if(!GalParams$all.period){
         dateRange <- get.range.date.time(GalParams$date.range, GalParams$tstep, GalParams$minhour)
-        dates <- get.date.time.cdt.station(donne$dates, GalParams$tstep)
+        dates <- get.datetime.cdtstation(donne$dates, GalParams$tstep)
         idate <- dates >= dateRange$start & dates <= dateRange$end
         idate[is.na(idate)] <- FALSE
         if(!any(idate)){

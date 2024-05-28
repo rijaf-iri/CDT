@@ -16,7 +16,7 @@ AggregateMWin_Execute <- function(){
         if(is.null(donne)) return(NULL)
         miss.val <- getStnOpenDataInfo(GalParams$cdtstation)[[3]]$miss.val
 
-        date.range <- get.date.time.range.cdt.station(donne$dates, GalParams$tstep)
+        date.range <- get.range.datetime.cdtstation(donne$dates, GalParams$tstep)
         daty <- get.format.seq.date.time(date.range, GalParams$tstep, GalParams$minhour)
         idaty <- match(daty, donne$dates)
         if(all(is.na(idaty))){
@@ -49,7 +49,7 @@ AggregateMWin_Execute <- function(){
         }
         # dates <- donne$dateInfo$date
 
-        date.range <- get.date.time.range.cdt.station(donne$dateInfo$date, GalParams$tstep)
+        date.range <- get.range.datetime.cdtstation(donne$dateInfo$date, GalParams$tstep)
         daty <- get.format.seq.date.time(date.range, GalParams$tstep, GalParams$minhour)
         idaty <- match(daty, donne$dateInfo$date)
         if(all(is.na(idaty))){
@@ -116,7 +116,7 @@ AggregateMWin_Execute <- function(){
         ncINFO <- ncsample[c('ilon', 'ilat', 'varid')]
 
         ######
-        date.range <- get.date.time.range.cdt.station(dates, GalParams$tstep)
+        date.range <- get.range.datetime.cdtstation(dates, GalParams$tstep)
         daty <- get.format.seq.date.time(date.range, GalParams$tstep, GalParams$minhour)
         idaty <- match(daty, dates)
         index <- lapply(seq(length(idaty) - win + 1), function(k) seq(k, k + win - 1, 1))

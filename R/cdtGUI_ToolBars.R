@@ -121,6 +121,10 @@ cdtDrawToolbars <- function(){
             .cdtEnv$tcl <- NULL
             options(warn = 0)
         })
+
+        ## stop openFiles listener
+        tcl("after", "cancel", .cdtEnv$tcl$task_openFiles$id)
+
         refreshCDT()
         tkdestroy(.cdtEnv$tcl$main$win)
     })

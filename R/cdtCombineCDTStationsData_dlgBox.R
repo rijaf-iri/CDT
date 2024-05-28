@@ -20,9 +20,6 @@ merge2CDTdata_getParams <- function(){
     frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2)
     frMRG1 <- tkframe(tt)
 
-    cbLists <- new.env()
-    cbLists$cb <- list()
-
     ############################################
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCombineCDTStationsData_dlgBox.xml")
@@ -36,6 +33,12 @@ merge2CDTdata_getParams <- function(){
 
     #############
 
+    get.id.datasets <- function(widget){
+        id.widget <- tclvalue(tkwinfo("parent", widget))
+        id.frame <- sapply(.cdtData$GalParams$DATASETs, function(x) x$tcl$frame$ID)
+        which(id.frame == id.widget)
+    }
+
     add.new.datasets <- function(jj, state){
         .cdtData$GalParams$DATASETs[[jj]]$tcl$frame <- ttklabelframe(frInput, text = paste0(lang.dlg[['label']][['1']], " #", jj), relief = 'groove')
 
@@ -43,6 +46,7 @@ merge2CDTdata_getParams <- function(){
 
         cb.datafile <- ttkcombobox(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, values = unlist(openFile_ttkcomboList()),
                                    textvariable = .cdtData$GalParams$DATASETs[[jj]]$tcl$input.file, width = largeur2)
+        addTo_all_Combobox_List(cb.datafile)
         bt.datafile <- tkbutton(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, text = "...")
         bt.Remove <- ttkbutton(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame, text = lang.dlg[['button']][['2']], state = state)
 
@@ -52,45 +56,30 @@ merge2CDTdata_getParams <- function(){
 
         tkgrid(.cdtData$GalParams$DATASETs[[jj]]$tcl$frame)
 
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.datafile
-
         #####
 
         tkconfigure(bt.datafile, command = function(){
+            ii <- get.id.datasets(bt.datafile)
             dat.opfiles <- getOpenFiles(tt)
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
-                tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file) <- dat.opfiles[[1]]
+                tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file) <- dat.opfiles[[1]]
 
-                lapply(cbLists$cb, function(x){
-                    if(as.integer(tkwinfo('exists', x)) == 1)
-                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                })
-
-                .cdtData$GalParams$DATASETs[[jj]]$pars$file <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[jj]]$tcl$input.file))
+                .cdtData$GalParams$DATASETs[[ii]]$pars$file <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file))
             }
         })
 
         ####
 
-        id.fr <- NULL
-        tkbind(bt.Remove, "<Button-1>", function(){
-            id.fr <<- tclvalue(tkwinfo("parent", bt.Remove))
-            # jj <<- jj - 1
-        })
-
         tkconfigure(bt.Remove, command = function(){
-            id.frame <- sapply(.cdtData$GalParams$DATASETs, function(x) x$tcl$frame$ID)
-
-            ii <- which(id.frame == id.fr)
+            ii <- get.id.datasets(bt.Remove)
             tkdestroy(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame)
             .cdtData$GalParams$DATASETs[[ii]] <- NULL
 
-            for(ii in seq_along(.cdtData$GalParams$DATASETs)){
-                textLab <- paste0(lang.dlg[['label']][['1']], " #", ii)
-                tkconfigure(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame, text = textLab)
+            for(i in seq_along(.cdtData$GalParams$DATASETs)){
+                textLab <- paste0(lang.dlg[['label']][['1']], " #", i)
+                tkconfigure(.cdtData$GalParams$DATASETs[[i]]$tcl$frame, text = textLab)
             }
-
             tcl("update")
         })
     }

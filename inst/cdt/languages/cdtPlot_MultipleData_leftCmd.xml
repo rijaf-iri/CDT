@@ -24,9 +24,6 @@
         <button id="4">
             <text lang="en"> Load </text>
         </button>
-        <checkbutton id="1">
-            <text lang="en"> Add Shapefile to Map </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> Time step </text>
         </label>
@@ -58,7 +55,7 @@
             <text lang="en"> Minute </text>
         </label>
         <label id="13">
-            <text lang="en"> Shapefile </text>
+            <text lang="en"> Multiple-Datasets </text>
         </label>
     </widget>
     <help>
@@ -130,7 +127,7 @@
             <text lang="en"> Plot data saved successfully. </text>
         </content>
         <content id="9">
-            <text lang="en"> Not multiple data sets plot </text>
+            <text lang="en"> Not a multiple data sets plot saved object </text>
         </content>
         <content id="10">
             <text lang="en"> Unable to read station data: </text>
@@ -149,6 +146,9 @@
         </content>
         <content id="15">
             <text lang="en"> No data to plot </text>
+        </content>
+        <content id="16">
+            <text lang="en"> This saved object does not work with this new version. Please redo the plot </text>
         </content>
     </message>
 </panel_cmd>

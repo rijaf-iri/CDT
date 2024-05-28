@@ -1,7 +1,7 @@
 
 create_shpLayer_frame <- function(parent_frame){
     if(WindowsOS()){
-        largeur1 <- 31
+        largeur1 <- 34
     }else{
         largeur1 <- 32
     }
@@ -22,6 +22,7 @@ create_shpLayer_frame <- function(parent_frame){
     chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shapefile$addshp, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
     bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
     cb.addshp <- ttkcombobox(frameSHP, values = unlist(openFile_ttkcomboList()), textvariable = file.plotShp, width = largeur1, state = stateSHP)
+    addTo_all_Combobox_List(cb.addshp)
     bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
 
     ########
@@ -33,19 +34,18 @@ create_shpLayer_frame <- function(parent_frame){
     ########
 
     tkconfigure(bt.addshp, command = function(){
-        listOpenFiles <- openFile_ttkcomboList()
         shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
         if(!is.null(shp.opfiles)){
             update.OpenFiles('shp', shp.opfiles)
             tclvalue(file.plotShp) <- shp.opfiles[[1]]
-            listOpenFiles[[length(listOpenFiles) + 1]] <- shp.opfiles[[1]]
-            tkconfigure(cb.addshp, values = unlist(listOpenFiles))
 
             shpofile <- getShpOpenData(file.plotShp)
             if(is.null(shpofile)){
                 .cdtData$EnvData$shapefile$ocrds <- NULL
+                .cdtData$EnvData$shapefile$filename <- NULL
             }else{
                 .cdtData$EnvData$shapefile$ocrds <- getBoundaries(shpofile[[2]])
+                .cdtData$EnvData$shapefile$filename <- trimws(tclvalue(file.plotShp))
             }
         }
     })
@@ -58,8 +58,10 @@ create_shpLayer_frame <- function(parent_frame){
         shpofile <- getShpOpenData(file.plotShp)
         if(is.null(shpofile)){
             .cdtData$EnvData$shapefile$ocrds <- NULL
+            .cdtData$EnvData$shapefile$filename <- NULL
         }else{
             .cdtData$EnvData$shapefile$ocrds <- getBoundaries(shpofile[[2]])
+            .cdtData$EnvData$shapefile$filename <- trimws(tclvalue(file.plotShp))
         }
     })
 
