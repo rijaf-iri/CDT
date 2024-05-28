@@ -138,6 +138,8 @@ format.plot.date <- function(dates, tstep){
 format.plot.date.label <- function(x, tstep){
     if(is.character(x)){
         daty <- switch(tstep,
+                    "minute" = as.POSIXct(x, format = "%Y%m%d%H%M", tz = "UTC"),
+                    "hourly" = as.POSIXct(x, format = "%Y%m%d%H", tz = "UTC"),
                     "daily" = as.Date(x, "%Y%m%d"),
                     "pentad" = local({
                         pen <- c(1, 6, 11, 16, 21, 26)[as.numeric(substr(x, 7, 7))]
@@ -148,12 +150,20 @@ format.plot.date.label <- function(x, tstep){
                         as.Date(paste0(substr(x, 1, 6), dek), "%Y%m%d")
                     }),
                     "monthly" = as.Date(paste0(x, 1), "%Y%m%d"))
+    }else if(methods::is(x, "Date") | methods::is(x, "POSIXct")){
+        daty <- x
+    }else if(is.numeric(x)){
+        if(tstep %in% c('minute', 'hourly')){
+            daty <- as.POSIXct(x, origin = '1970-1-1', tz = 'UTC')
+        }else{
+            daty <- as.Date(x, origin = '1970-1-1')
+        }
     }
-    if(is.numeric(x))
-        daty <- as.Date(x, origin = '1970-1-1')
-    if(is.date(x)) daty <- x
 
     #######
+    if(tstep %in% c('minute', 'hourly'))
+        labdates <- format(daty, '%Y-%m-%d %H:%M:%S')
+
     if(tstep == 'daily')
         labdates <- format(daty, '%d-%b-%Y')
 
@@ -172,7 +182,28 @@ format.plot.date.label <- function(x, tstep){
 
 ##############################################
 
-get.date.time.cdt.station <- function(dates, tstep){
+format.datetime.cdtstation <- function(dates, tstep){
+    switch(tstep,
+           "minute" = as.POSIXct(dates, format = "%Y%m%d%H%M", tz = "UTC"),
+           "hourly" = as.POSIXct(dates, format = "%Y%m%d%H", tz = "UTC"),
+           "daily" = as.Date(dates, "%Y%m%d"),
+           "pentad" = local({
+                        seqtime <- as.Date(dates, "%Y%m%d")
+                        pen <- c(1, 6, 11, 16, 21, 26)[as.numeric(format(seqtime, "%d"))]
+                        as.Date(paste0(format(seqtime, "%Y-%m-"), pen))
+                    }),
+           "dekadal" = local({
+                        seqtime <- as.Date(dates, "%Y%m%d")
+                        dek <- c(1, 11, 21)[as.numeric(format(seqtime, "%d"))]
+                        as.Date(paste0(format(seqtime, "%Y-%m-"), dek))
+                    }),
+           "monthly" = as.Date(paste0(dates, "01"), "%Y%m%d"),
+           "yearly" = as.Date(paste0(dates, "0101"), "%Y%m%d"),
+           "annual" = as.Date(paste0(dates, "0101"), "%Y%m%d")
+        )
+}
+
+get.datetime.cdtstation <- function(dates, tstep){
     format <- switch(tstep,
                      "minute" = "%Y%m%d%H%M",
                      "hourly" = "%Y%m%d%H",
@@ -185,15 +216,13 @@ get.date.time.cdt.station <- function(dates, tstep){
     return(dates)
 }
 
-##############################################
-
-get.date.time.range.cdt.station <- function(dates, tstep){
+get.range.datetime.cdtstation <- function(dates, tstep){
     format <- switch(tstep,
                      "minute" = "%Y-%m-%d-%H-%M",
                      "hourly" = "%Y-%m-%d-%H",
                                 "%Y-%m-%d")
     tmp <- c('year', 'mon', 'dek', 'pen', 'day', 'hour', 'min')
-    dates <- get.date.time.cdt.station(dates, tstep)
+    dates <- get.datetime.cdtstation(dates, tstep)
     rgDate <- format(range(dates, na.rm = TRUE), format)
     date.range <- as.numeric(unlist(strsplit(rgDate, "-")))
     date.range <- as.list(date.range)
@@ -467,11 +496,14 @@ hourly.start.end.time <- function(date.range, minhour = NA){
 
 #' @exportS3Method NULL
 seq.format.date.time <- function(tstep, date.range, minhour = NA){
-    if(date.range$from.file){
-        dates <- get.file.date.time(date.range, tstep, minhour)
-        if(is.null(dates)) return(NULL)
-    }else{
+    if(is.null(date.range$from.file)){
         dates <- get.seq.date.time(date.range, tstep, minhour)
+    }else{
+        if(date.range$from.file){
+            dates <- get.file.date.time(date.range, tstep, minhour)
+        }else{
+            dates <- get.seq.date.time(date.range, tstep, minhour)
+        }
     }
 
     return(dates)
