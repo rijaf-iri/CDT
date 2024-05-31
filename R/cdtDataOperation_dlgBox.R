@@ -216,7 +216,7 @@ dataOperation_GetInfo <- function(){
     frFormula <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
     yscr.Formula <- tkscrollbar(frFormula, repeatinterval = 4, command = function(...) tkyview(text.Formula, ...))
-    text.Formula <- tktext(frFormula, bg = "white", wrap = "word", height = 7, width = largeur3,
+    text.Formula <- tktext(frFormula, bg = "white", wrap = "word", height = 10, width = largeur3,
                             yscrollcommand = function(...) tkset(yscr.Formula, ...))
 
     tkgrid(text.Formula, yscr.Formula)

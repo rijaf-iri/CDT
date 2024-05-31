@@ -165,5 +165,8 @@
         <content id="23">
             <text lang="en"> Unable to read the datasets index files: </text>
         </content>
+        <content id="24">
+            <text lang="en"> For constant 2D data, do not include elevation data in the coordinates of CDT station data </text>
+        </content>
     </message>
 </dialog_box>

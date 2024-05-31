@@ -218,7 +218,8 @@ AggregateSpNc_Execute <- function(){
 
         if(match.var) z.out <- transposeNCDFData.inv(z.out, ncinfo0)
 
-        outfl <- file.path(outputNC, basename(ncfile))
+        nc_file <- tools::file_path_sans_ext(basename(ncfile))
+        outfl <- file.path(outputNC, paste0(nc_file, '_regrid.nc'))
         nc2 <- ncdf4::nc_create(outfl, grd.nc.out)
         ncdf4::ncvar_put(nc2, grd.nc.out, z.out)
         ncdf4::nc_close(nc2)

@@ -164,8 +164,8 @@ dataOperation_Inputs <- function(parent, data.type){
         tkconfigure(set.Input, command = function(){
             tcl('wm', 'attributes', tt, topmost = FALSE)
             ii <- get.id.datasets(set.Input)
-            .cdtData$GalParams$DATASETs[[ii]]$pars <- getInfoNetCDFData(tt, .cdtData$GalParams$DATASETs[[ii]]$pars,
-                                                                        trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file)))
+            nc_dir <- trimws(tclvalue(.cdtData$GalParams$DATASETs[[ii]]$tcl$input.file))
+            .cdtData$GalParams$DATASETs[[ii]]$pars <- getInfoNetCDFData(tt, .cdtData$GalParams$DATASETs[[ii]]$pars, nc_dir)
             tcl('wm', 'attributes', tt, topmost = TRUE)
         })
 

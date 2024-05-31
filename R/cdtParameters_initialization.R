@@ -72,7 +72,7 @@ cdt.init.params <- function(action, tstep){
     if(action == 'create.CdtDataset'){
         NCDF <- list(dir = "", format = "rr_mrg_%s%s%s_ALL.nc", sample = "")
         output <- list(dir = getwd(), data.name = "PRECIP")
-        ret.params <- list(action = action, tstep = tstep, date.range = date.range,
+        ret.params <- list(action = action, tstep = tstep, minhour = 1, date.range = date.range,
                            NCDF = NCDF, output = output, Update = FALSE, cdtDataSet = "",
                            chunk = .cdtData$Config$cdtDataset.chunk
                           )

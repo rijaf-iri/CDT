@@ -34,6 +34,7 @@ cdtDataset_readData <- function(){
             dir.create(datadir, showWarnings = FALSE, recursive = TRUE)
         cdtTmpVar <- NULL
         cdtTmpVar$TimeStep <- .cdtData$GalParams$tstep
+        cdtTmpVar$minhour <- .cdtData$GalParams$minhour
         chunksize <- .cdtData$GalParams$chunk$chunksize
         cdtTmpVar$chunkfac <- .cdtData$GalParams$chunk$chunkfac
     }
@@ -49,13 +50,13 @@ cdtDataset_readData <- function(){
 
     ncInfo <- ncInfo.with.date.range(.cdtData$GalParams$NCDF,
                                      .cdtData$GalParams$date.range,
-                                     .cdtData$GalParams$tstep)
+                                     .cdtData$GalParams$tstep,
+                                     .cdtData$GalParams$minhour)
     if(is.null(ncInfo)){
         Insert.Messages.Out(.cdtData$GalParams[['message']][['13']], TRUE, "e")
         return(NULL)
     }
     ncInfo$ncinfo <- ncDataInfo
-
     # ncInfo$ncinfo <- ncDataInfo[c('ilon', 'ilat', 'varid')]
 
     ncInfo$dates <- ncInfo$dates[ncInfo$exist]
