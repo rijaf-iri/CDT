@@ -26,8 +26,8 @@ CDTdataset.Plot.Map <- function(){
         breaks <- pretty(don$z, n = 10, min.n = 5)
         breaks <- if(length(breaks) > 0) breaks else c(0, 1) 
         kolor <- tim.colors(length(breaks) - 1)
-        # image(don, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
-        graphics::.filled.contour(don$x, don$y, don$z, levels = breaks, col = kolor)
+        graphics::image(don, breaks = breaks, col = kolor, xaxt = 'n', yaxt = 'n', add = TRUE)
+        # graphics::.filled.contour(don$x, don$y, don$z, levels = breaks, col = kolor)
     }
 
     graphics::abline(h = graphics::axTicks(2), v = graphics::axTicks(1), col = "lightgray", lty = 3)
@@ -68,8 +68,8 @@ CDTdataset.Plot.Graph <- function(){
     known.data.tstep <- known.data.tstep && !grepl("[^[:digit:]]", daty[1])
 
     if(known.data.tstep){
-        if(cdtdataset$TimeStep == "minute") daty <- as.POSIXct(daty, format = "%Y%m%d%H%M")
-        if(cdtdataset$TimeStep == "hourly") daty <- as.POSIXct(daty, "%Y%m%d%H")
+        if(cdtdataset$TimeStep == "minute") daty <- as.POSIXct(daty, format = "%Y%m%d%H%M", tz = 'UTC')
+        if(cdtdataset$TimeStep == "hourly") daty <- as.POSIXct(daty, format = "%Y%m%d%H", tz = 'UTC')
         if(cdtdataset$TimeStep == "daily") daty <- as.Date(daty, "%Y%m%d")
         if(cdtdataset$TimeStep == "pentad"){
             pen <- c(1, 6, 11, 16, 21, 26)[as.numeric(substr(daty, 7, 7))]
@@ -213,7 +213,7 @@ CDTdataset.Plot.Graph <- function(){
 ##############################################################################
 
 CDTdataset.Display.Map <- function(){
-    imgContainer <- CDT.Display.Map.inter(CDTdataset.Plot.Map, .cdtData$EnvData$tab$MapSelect, 'CDT Dataset - Mean')
+    imgContainer <- CDT.Display.Map.inter(CDTdataset.Plot.Map, .cdtData$EnvData$tab$MapSelect, 'CDT Dataset - Map')
     .cdtData$EnvData$tab$MapSelect <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$MapSelect)
 
     ###############

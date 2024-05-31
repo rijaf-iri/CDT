@@ -1,12 +1,11 @@
 
 cdtDataset_getParams <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur1 <- 29
+        largeur1 <- 26
         largeur2 <- 60
         largeur3 <- 50
     }else{
-        largeur1 <- 29
+        largeur1 <- 26
         largeur2 <- 56
         largeur3 <- 49
     }
@@ -28,26 +27,37 @@ cdtDataset_getParams <- function(){
 
     frtimestep <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
 
-    file.period <- tclVar()
-    cb.periodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
-    periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
-    tclvalue(file.period) <- cb.periodVAL[periodVAL %in% .cdtData$GalParams$tstep]
+    timeStep <- tclVar()
+    CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:6]
+    periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
+    tclvalue(timeStep) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$tstep]
 
-    cb.period <- ttkcombobox(frtimestep, values = cb.periodVAL, textvariable = file.period, width = largeur1)
+    retminhr <- set.hour.minute(.cdtData$GalParams$tstep, .cdtData$GalParams$minhour)
+    minhour.tclVar <- tclVar(retminhr$val)
+
+    cb.tstep <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = timeStep, justify = 'center', width = largeur1)
+    cb.minhour <- ttkcombobox(frtimestep, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 3)
     bt.period <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur1)
 
+    tkgrid(cb.tstep, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(cb.minhour, row = 0, column = 1, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(bt.period, row = 0, column = 2, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+    helpWidget(cb.tstep, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.period, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+
     tkconfigure(bt.period, command = function(){
-        months <- .cdtData$GalParams$date.range$Months
-        tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
-        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
-        .cdtData$GalParams$date.range$Months <- months
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], intstep)
     })
 
-    tkgrid(cb.period, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(bt.period, row = 0, column = 1, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-
-    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
-    helpWidget(bt.period, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+    tkbind(cb.tstep, "<<ComboboxSelected>>", function(){
+        intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        retminhr <- set.hour.minute(intstep, minhour)
+        tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
+        tclvalue(minhour.tclVar) <- retminhr$val
+    })
 
     ############################################
 
@@ -178,7 +188,7 @@ cdtDataset_getParams <- function(){
     tkgrid(frOutput, row = 3, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     ############################################
-    
+
     tkgrid(frLeft, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
@@ -197,7 +207,8 @@ cdtDataset_getParams <- function(){
             cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
-            .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
+            .cdtData$GalParams$tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeStep))]
+            .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             .cdtData$GalParams$NCDF$dir <- trimws(tclvalue(dir.NCDF))
 
             .cdtData$GalParams$Update <- switch(tclvalue(update.data), '0' = FALSE, '1' = TRUE)

@@ -681,7 +681,7 @@ mSLP_corrections <- function(pres, temp, elev, lat){
     # delta: altitude difference. Sea level 0m
     dZ <- elev - 0
     # average temperature of air column
-    at = temp + (lr * dZ) / 2;
+    at <- temp + (lr * dZ) / 2
     # vapor pressure [hPa]
     e <- 10^(7.5 * at / (237.3 + at)) * 6.1078
     # correction for atmospheric temperature

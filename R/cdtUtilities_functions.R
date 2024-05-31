@@ -647,6 +647,18 @@ extract_filename_dates <- function(filenames, fileformat){
     return(ret)
 }
 
+extract_filename_dates.1 <- function(filenames, fileformat){
+    txt <- strsplit(fileformat, "%s")[[1]]
+    txt <- txt[txt != ""]
+    ret <- gsub(txt[1], "", filenames)
+    if(length(txt) > 1){
+        for(j in 2:length(txt))
+            ret <- gsub(txt[j], "", ret)
+    }
+
+    return(ret)
+}
+
 ########################################
 
 double_backslash_non_alnum <- function(strings){

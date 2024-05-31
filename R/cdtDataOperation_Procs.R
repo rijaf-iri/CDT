@@ -7,6 +7,8 @@ dataOperation_Execute <- function(){
     formulaVar <- regmatches(GalParams$formula, posVar)
     formulaVar <- sort(unique(formulaVar[[1]]))
 
+    const <- do.call(c, GalParams$constant)
+
     if(GalParams$datatype == "cdtstation"){
         fileSTNs <- lapply(seq_along(GalParams$inputs), function(jj){
             GalParams$inputs[[paste0('file', jj)]]$dir
@@ -22,12 +24,24 @@ dataOperation_Execute <- function(){
             return(NULL)
         }
 
-        donne <- lapply(donne, splitCDTData0)
+        donne <- lapply(seq_along(donne), function(j){
+            if(const[j])
+                splitCDTData1(donne[[j]])
+            else
+                splitCDTData0(donne[[j]])
+        })
+
         inull <- sapply(donne, is.null)
         if(any(inull)){
             msg <- paste0(unlist(fileSTNs[inull]), collapse = ", ")
             msg <- paste(GalParams[['message']][['9-2']], ":", msg)
             Insert.Messages.Out(msg, TRUE, "e")
+            return(NULL)
+        }
+
+        izeros <- sapply(donne[const], function(x) nrow(x$data) == 0)
+        if(any(izeros)){
+            Insert.Messages.Out(GalParams[['message']][['24']], TRUE, "e")
             return(NULL)
         }
 
@@ -48,7 +62,7 @@ dataOperation_Execute <- function(){
             }
         }
 
-        donDates <- lapply(donne, "[[", "dates")
+        donDates <- lapply(donne[!const], "[[", "dates")
         daty <- sort(unique(do.call(c, donDates)))
         intD <- lapply(donDates, function(x){
             it <- match(daty, x)
@@ -62,10 +76,19 @@ dataOperation_Execute <- function(){
             return(NULL)
         }
 
-        donne <- lapply(seq_along(donne), function(j){
-            x <- donne[[j]]
+        donne[!const] <- lapply(seq_along(donne[!const]), function(j){
+            x <- donne[!const][[j]]
             x$dates <- daty
             x$data <- x$data[intD[[j]], , drop = FALSE]
+            x
+        })
+
+        ndim <- dim(donne[[1]]$data)
+        donne[const] <- lapply(donne[const], function(x){
+            tmp <- matrix(x$data[1, , drop = FALSE],
+                          nrow = ndim[1], ncol = ndim[2],
+                          byrow = TRUE)
+            x$data <- tmp
             x
         })
 
@@ -75,10 +98,26 @@ dataOperation_Execute <- function(){
         donne <- lapply(donne, '[[', 'data')
         names(donne) <- formulaVar
 
+        ######
         txtFormula <- GalParams$formula
+
+        is_latlon <- grepl('LAT|LON', txtFormula)
+        if(is_latlon){
+            ndim <- dim(donne[[1]])
+            if(grepl('LON', txtFormula)){
+                donne[['LON']] <- matrix(outSTN$lon, nrow = ndim[1], ncol = ndim[2], byrow = TRUE)
+                txtFormula <- gsub("LON", "donne[['LON']]", txtFormula)
+            }
+            if(grepl('LAT', txtFormula)){
+                donne[['LAT']] <- matrix(outSTN$lat, nrow = ndim[1], ncol = ndim[2], byrow = TRUE)
+                txtFormula <- gsub("LAT", "donne[['LAT']]", txtFormula)
+            }
+        }
+
         for(j in seq_along(formulaVar))
             txtFormula <- gsub(paste0("X", j), paste0("donne[['X", j, "']]"), txtFormula)
 
+        ######
         evalOut <- NULL
         evalFormula <- paste("evalOut =", txtFormula)
         ret <- try(eval(parse(text = evalFormula)), silent = TRUE)
@@ -98,7 +137,10 @@ dataOperation_Execute <- function(){
 
     if(GalParams$datatype == "cdtnetcdf"){
         ncFiles <- lapply(seq_along(GalParams$inputs), function(jj){
-            GalParams$inputs[[paste0('file', jj)]]$sample
+            if(const[jj])
+                GalParams$inputs$file3$dir
+            else
+                GalParams$inputs[[paste0('file', jj)]]$sample
         })
 
         ncsample <- lapply(ncFiles, getNCDFSampleData)
@@ -121,25 +163,20 @@ dataOperation_Execute <- function(){
         }
 
         ## check dates overlap
-        ncInfo <- lapply(seq_along(GalParams$inputs), function(i){
-            ncIn <- GalParams$inputs[[paste0('file', i)]]
+        ncInfo <- lapply(names(GalParams$inputs[!const]), function(n){
+            ncIn <- GalParams$inputs[[n]]
             ncFiles <- list.files(ncIn$dir, gsub("%s", "[[:digit:]]+", ncIn$format))
             if(length(ncFiles) == 0) return(NULL)
 
-            txt <- strsplit(ncIn$format, "%s")[[1]]
-            txt <- txt[txt != ""]
-            daty <- gsub(txt[1], "", ncFiles)
-            if(length(txt) > 1){
-                for(j in 2:length(txt))
-                    daty <- gsub(txt[j], "", daty)
-            }
+            daty <- extract_filename_dates.1(ncFiles, ncIn$format)
+            # daty <- extract_filename_dates(ncFiles, ncIn$format)
 
             list(dates = daty, files = ncFiles)
         })
 
         inull <- sapply(ncInfo, is.null)
         if(any(inull)){
-            msg <- paste0('X', which(inull))
+            msg <- paste0('X', which(!const)[which(inull)], collapse = ' - ')
             msg <- paste(GalParams[['message']][['17']], "; variables :", msg)
             Insert.Messages.Out(msg, TRUE, "e")
             return(NULL)
@@ -162,9 +199,47 @@ dataOperation_Execute <- function(){
         }else ncDates <- ncDates[[1]]
 
         #########
-        outNCDIR <- file.path(GalParams$output, "dataOperation_Output")
-        dir.create(outNCDIR, showWarnings = FALSE, recursive = TRUE)
+        constData <- NULL
+        if(any(const)){
+            constData <- lapply(names(GalParams$inputs[const]), function(n){
+                tmp <- getNcdfOpenData(GalParams$inputs[[n]]$dir)
+                tmp[[2]]$z
+            })
+            names(constData) <- formulaVar[const]
+        }
 
+        ######
+        txtFormula <- GalParams$formula
+
+        is_latlon <- grepl('LAT|LON', txtFormula)
+        if(is_latlon){
+            ndim <- sapply(ncsample[[1]][c('lon', 'lat')], length)
+            if(grepl('LON', txtFormula)){
+                constData[['LON']] <- matrix(ncsample[[1]]$lon, nrow = ndim[1], ncol = ndim[2])
+                txtFormula <- gsub("LON", "donne[['LON']]", txtFormula)
+            }
+            if(grepl('LAT', txtFormula)){
+                constData[['LAT']] <- matrix(ncsample[[1]]$lat, nrow = ndim[1], ncol = ndim[2], byrow = TRUE)
+                txtFormula <- gsub("LAT", "donne[['LAT']]", txtFormula)
+            }
+        }
+
+        for(j in seq_along(formulaVar))
+            txtFormula <- gsub(paste0("X", j), paste0("donne[['X", j, "']]"), txtFormula)
+
+        #########
+        outNCDIR <- file.path(GalParams$output, "dataOperation_Output")
+        if(dir.exists(outNCDIR)){
+            tmp <- list.files(GalParams$output, "dataOperation\\_Output\\_[0-9]+", include.dirs = TRUE)
+            if(length(tmp) == 0){
+                tmp <- 1
+            }else{
+                tmp <- gsub("dataOperation_Output_", "", tmp)
+                tmp <- max(as.numeric(tmp)) + 1
+            }
+            outNCDIR <- file.path(GalParams$output, paste0("dataOperation_Output_", tmp))
+        }
+        dir.create(outNCDIR, showWarnings = FALSE, recursive = TRUE)
         outNCFRMT <- GalParams$ncoutformat
 
         dx <- ncdf4::ncdim_def("Lon", "degreeE", ncsample[[1]]$lon)
@@ -196,11 +271,8 @@ dataOperation_Execute <- function(){
             inull <- sapply(donne, is.null)
             if(any(inull)) return(-1)
 
-            names(donne) <- formulaVar
-
-            txtFormula <- GalParams$formula
-            for(j in seq_along(formulaVar))
-                txtFormula <- gsub(paste0("X", j), paste0("donne[['X", j, "']]"), txtFormula)
+            names(donne) <- formulaVar[!const]
+            if(!is.null(constData)) donne <- c(donne, constData)
 
             evalOut <- NULL
             evalFormula <- paste("evalOut =", txtFormula)
@@ -247,11 +319,25 @@ dataOperation_Execute <- function(){
     }
 
     if(GalParams$datatype == "cdtdataset"){
-        fileRDS <- lapply(seq_along(GalParams$inputs), function(jj){
-            GalParams$inputs[[paste0('file', jj)]]$dir
+        if(any(const)){
+            ncFiles <- lapply(names(GalParams$inputs[const]), function(n){
+                    GalParams$inputs[[n]]$dir
+            })
+
+            ncsample <- lapply(ncFiles, getNCDFSampleData)
+            inull <- sapply(ncsample, is.null)
+            if(any(inull)){
+                msg <- paste0(unlist(ncFiles[inull]), collapse = ", ")
+                msg <- paste(GalParams[['message']][['15']], ":", msg)
+                Insert.Messages.Out(msg, TRUE, "e")
+                return(NULL)
+            }
+        }
+
+        fileRDS <- lapply(names(GalParams$inputs[!const]), function(n){
+            GalParams$inputs[[n]]$dir
         })
 
-        # infoIndex <- lapply(fileRDS, readRDS)
         infoIndex <- lapply(fileRDS, function(ff){
             idx <- try(readRDS(ff), silent = TRUE)
             if(inherits(idx, "try-error")) return(NULL)
@@ -295,6 +381,22 @@ dataOperation_Execute <- function(){
             }
         }
 
+        if(any(const)){
+            if(length(infoIndex) == 1){
+                SP0 <- infoIndex[[1]]$coords$mat[c('x', 'y')]
+                names(SP0) <- c('lon', 'lat')
+                SP0 <- defSpatialPixels(SP0)
+            }else{
+                SP0 <- SP[[1]]
+            }
+            SP1 <- lapply(ncsample, function(x) defSpatialPixels(x[c('lon', 'lat')]))
+            lSP <- sapply(SP1, function(x) is.diffSpatialPixelsObj(SP0, x, tol = 1e-04))
+            if(any(lSP)){
+                Insert.Messages.Out(GalParams[['message']][['16']], TRUE, "e")
+                return(NULL)
+            }
+        }
+
         ## check dates overlap
         infoDates <- lapply(infoIndex, function(x) x$dateInfo$date)
         if(length(infoIndex) > 1){
@@ -330,6 +432,35 @@ dataOperation_Execute <- function(){
         close(conn)
 
         #########
+        constData <- NULL
+        if(any(const)){
+            constData <- lapply(names(GalParams$inputs[const]), function(n){
+                tmp <- getNcdfOpenData(GalParams$inputs[[n]]$dir)
+                tmp[[2]]$z
+            })
+            names(constData) <- formulaVar[const]
+        }
+
+        ######
+        txtFormula <- GalParams$formula
+
+        is_latlon <- grepl('LAT|LON', txtFormula)
+        if(is_latlon){
+            ndim <- sapply(ncsample[[1]][c('lon', 'lat')], length)
+            if(grepl('LON', txtFormula)){
+                constData[['LON']] <- matrix(ncsample[[1]]$lon, nrow = ndim[1], ncol = ndim[2])
+                txtFormula <- gsub("LON", "donne[['LON']]", txtFormula)
+            }
+            if(grepl('LAT', txtFormula)){
+                constData[['LAT']] <- matrix(ncsample[[1]]$lat, nrow = ndim[1], ncol = ndim[2], byrow = TRUE)
+                txtFormula <- gsub("LAT", "donne[['LAT']]", txtFormula)
+            }
+        }
+
+        for(j in seq_along(formulaVar))
+            txtFormula <- gsub(paste0("X", j), paste0("donne[['X", j, "']]"), txtFormula)
+
+        #########
         chunkfile <- sort(unique(outIndex$colInfo$index))
         chunkcalc <- split(chunkfile, ceiling(chunkfile/outIndex$chunkfac))
 
@@ -347,11 +478,18 @@ dataOperation_Execute <- function(){
                 x <- x[infoIndex[[i]]$dateInfo$index, , drop = FALSE]
                 x
             })
+            names(donne) <- formulaVar[!const]
 
-            names(donne) <- formulaVar
-            txtFormula <- GalParams$formula
-            for(i in seq_along(formulaVar))
-                txtFormula <- gsub(paste0("X", i), paste0("donne[['X", i, "']]"), txtFormula)
+            if(!is.null(constData)){
+                ix <- infoIndex[[1]]$colInfo$index %in% chunkcalc[[j]]
+                id <- infoIndex[[1]]$colInfo$id[ix]
+                nr <- length(infoIndex[[1]]$dateInfo$index)
+                nc <- length(id)
+                tmp <- lapply(constData, function(x){
+                    matrix(x[id], nrow = nr, ncol = nc, byrow = TRUE)
+                })
+                donne <- c(donne, tmp)
+            }
 
             evalOut <- NULL
             evalFormula <- paste("evalOut =", txtFormula)
