@@ -11,7 +11,7 @@ cdtDataset_readData_multiDim(
   extra_ncdim = NULL,
   conversion_fun = NULL,
   bbox = NULL,
-  chunk = list(size = 100, fac = 2)
+  chunk = list(size = 100, fac = 5)
 )
 }
 \arguments{
@@ -37,12 +37,16 @@ cdtDataset_readData_multiDim(
 }}
 
 \item{extra_ncdim}{named list, providing the values of the dimensions other than the longitude,
-latitude and time to be extracted if the netCDF data contains more than 3 dimensions.
+latitude and time to be extracted if the netCDF data contains more than 3 dimensions. For example,
+if the data has a pressure level (dimension name \code{level}) and from ensemble data (dimension name \code{member}),
+to extract the data at 1000 hPa and for member 5: \code{extra_ncdim = list(level = 1000, member = 5)}.
 Default \code{NULL}, the data does not have extra dimension.}
 
 \item{conversion_fun}{a function to transform the data or to convert the units.}
 
-\item{bbox}{named list, providing the region to be extracted in the form list(minlon, maxlon, minlat, maxlat). Default \code{NULL}.}
+\item{bbox}{named list, providing the region to be extracted in the form \code{list(minlon, maxlon, minlat, maxlat)}.
+Example: \code{bbox = list(minlon = 33, maxlon = 48, minlat = 3, maxlat = 15)}
+Default \code{NULL}.}
 
 \item{chunk}{named list containing the size of the chunk \code{size} and the number of chunk to be used for each computation \code{fac}.}
 }

@@ -6,14 +6,12 @@ export(regression.Vector, regression.Matrix)
 
 export(download.oni.cpc.ncep.noaa, oni.cpc.ncep.noaa, oni.iridl.ldeo)
 
-export(cdtMergingPrecipCMD, cdtMergingTempCMD)
-export(cdtMergingClimDataCMD)
+export(cdtMergingClimDataCMD, cdtCrossValidationClimDataCMD)
+
 export(cdtBiasCorrectPrecipCMD, cdtBiasCorrectTempCMD)
 
-export(cdtCrossValidationPrecipCMD, cdtCrossValidationTempCMD)
-export(cdtCrossValidationCMD)
+export(merging.options, merging.options.netcdf, biascoeff.options, blanking.options)
 
-export(merging.options, biascoeff.options, blanking.options)
 export(readCDTStationData, writeCDTStationData, matchCDTStationsData, matchCDTStationsIDs)
 export(extractGeomPoints, extractGeomPolys, extractGeomRect)
 export(plotMultipleData)
@@ -47,9 +45,4 @@ export(connect_tidyverse_api)
 importFrom(latticeExtra, xyplot.list)
 importFrom(doParallel, registerDoParallel)
 importFrom(doSNOW, registerDoSNOW)
-
-###
-#importFrom("fGarch", "dsnorm", "psnorm", "qsnorm", "rsnorm")
-#importFrom("evd", "dgumbel", "pgumbel", "qgumbel", "rgumbel")
-
 

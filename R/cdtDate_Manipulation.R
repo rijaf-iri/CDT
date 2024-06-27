@@ -182,6 +182,7 @@ format.plot.date.label <- function(x, tstep){
 
 ##############################################
 
+#' @exportS3Method NULL
 format.datetime.cdtstation <- function(dates, tstep){
     switch(tstep,
            "minute" = as.POSIXct(dates, format = "%Y%m%d%H%M", tz = "UTC"),
@@ -217,12 +218,16 @@ get.datetime.cdtstation <- function(dates, tstep){
 }
 
 get.range.datetime.cdtstation <- function(dates, tstep){
+    dates <- get.datetime.cdtstation(dates, tstep)
+    get.range.datetime(dates, tstep)
+}
+
+get.range.datetime <- function(dates, tstep){
     format <- switch(tstep,
                      "minute" = "%Y-%m-%d-%H-%M",
                      "hourly" = "%Y-%m-%d-%H",
                                 "%Y-%m-%d")
     tmp <- c('year', 'mon', 'dek', 'pen', 'day', 'hour', 'min')
-    dates <- get.datetime.cdtstation(dates, tstep)
     rgDate <- format(range(dates, na.rm = TRUE), format)
     date.range <- as.numeric(unlist(strsplit(rgDate, "-")))
     date.range <- as.list(date.range)
@@ -235,6 +240,20 @@ get.range.datetime.cdtstation <- function(dates, tstep){
                   "monthly" = c(1:2, 5))
     names(date.range) <- c(paste0('start.', tmp[idx]), paste0('end.', tmp[idx]))
     return(date.range)
+}
+
+#' @exportS3Method NULL
+format.datetime.2character <- function(dates, tstep){
+    switch(tstep,
+           "minute" = format(dates, "%Y%m%d%H%M"),
+           "hourly" = format(dates, "%Y%m%d%H"),
+           "daily" = format(dates, "%Y%m%d"),
+           "pentad" = paste0(format(dates, "%Y%m"), as.integer(format(dates, '%d'))),
+           "dekadal" = paste0(format(dates, "%Y%m"), as.integer(format(dates, '%d'))),
+           "monthly" = format(dates, "%Y%m"),
+           "yearly" = format(dates, "%Y"),
+           "annual" = format(dates, "%Y")
+        )
 }
 
 ##############################################
@@ -252,6 +271,7 @@ rename_date.range <- function(date.range){
     as.list(unlist(date.range))
 }
 
+# date.range = list(start = "201801010000", end = "201812312355")
 split_date.range <- function(tstep, date.range){
     year <- lapply(date.range, substr, start = 1, stop = 4)
     names(year) <- paste0(names(year), ".year")
@@ -260,9 +280,19 @@ split_date.range <- function(tstep, date.range){
     out <- c(year, mon)
     if(tstep != "monthly"){
         dd <- lapply(date.range, substr, start = 7, stop = 8)
-        nm <- if(tstep == "daily") "day" else substr(tstep, 1, 3)
+        nm <- if(tstep %in% c("pentad", "dekadal")) substr(tstep, 1, 3) else "day"
         names(dd) <- paste0(names(dd), ".", nm)
         out <- c(out, dd)
+        if(tstep %in% c("minute", "hourly")){
+            hh <- lapply(date.range, substr, start = 9, stop = 10)
+            names(hh) <- paste0(names(hh), ".hour")
+            out <- c(out, hh)
+            if(tstep == "minute"){
+                mm <- lapply(date.range, substr, start = 11, stop = 12)
+                names(mm) <- paste0(names(mm), ".min")
+                out <- c(out, mm)
+            }
+        }
     }
 
     lapply(out, as.numeric)
@@ -359,9 +389,12 @@ get.format.seq.date.time <- function(date.range, tstep, minhour = NA){
     return(daty)
 }
 
-get.file.date.time <- function(date.range, tstep, minhour = NA){
+get.file.date.time <- function(date.range, tstep, minhour = NA, GUI = TRUE){
     dates0 <- readLines(date.range$path.file, warn = FALSE, skipNul = TRUE)
+    format_file_datetime(dates0, tstep, minhour, GUI)
+}
 
+format_file_datetime <- function(dates0, tstep, minhour, GUI){
     dates <- trimws(dates0)
     dates <- gsub('\"', '', dates)
     id <- dates != ""
@@ -372,13 +405,13 @@ get.file.date.time <- function(date.range, tstep, minhour = NA){
     id <- dates == ""
     if(all(id)){
         msg <- "Invalid list of dates"
-        Insert.Messages.Out(msg, TRUE, "e", TRUE)
+        Insert.Messages.Out(msg, TRUE, "e", GUI)
         return(NULL)
     }
     if(any(id)){
         msg <- paste0(dates0[id], collapse = ", ")
         msg <- paste0("Invalid dates:\n", msg)
-        Insert.Messages.Out(msg, TRUE, "w", TRUE)
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
         dates <- dates[!id]
         dates0 <- dates0[!id]
     }
@@ -397,14 +430,14 @@ get.file.date.time <- function(date.range, tstep, minhour = NA){
         pd <- substr(dates, 7, 8)
         if(any(nchar(pd) == 2)){
             msg <- paste("Invalid", tstep, "dates")
-            Insert.Messages.Out(msg, TRUE, "e", TRUE)
+            Insert.Messages.Out(msg, TRUE, "e", GUI)
             return(NULL)
         }
 
         k <- if(tstep == "pentad") 6 else 3
         if(any(!as.integer(pd) %in% 1:k)){
             msg <- paste("Invalid", tstep, "dates")
-            Insert.Messages.Out(msg, TRUE, "e", TRUE)
+            Insert.Messages.Out(msg, TRUE, "e", GUI)
             return(NULL)
         }
         daty <- paste(year, mon, pd, sep = '-')
@@ -455,14 +488,14 @@ get.file.date.time <- function(date.range, tstep, minhour = NA){
 
     if(all(is.na(daty))){
         msg <- "Invalid list of dates"
-        Insert.Messages.Out(msg, TRUE, "e", TRUE)
+        Insert.Messages.Out(msg, TRUE, "e", GUI)
         return(NULL)
     }
 
     if(any(is.na(daty))){
         msg <- paste0(dates0[is.na(daty)], collapse = ", ")
         msg <- paste0("Invalid dates:\n", msg)
-        Insert.Messages.Out(msg, TRUE, "w", TRUE)
+        Insert.Messages.Out(msg, TRUE, "w", GUI)
         daty <- daty[!is.na(daty)]
     }
 

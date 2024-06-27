@@ -59,12 +59,12 @@
         </content>
         <content id="4">
             <status>
-                <text lang="en"> Setting netcdf data options </text>
-                <text lang="fr"> Définition des options de données netcdf </text>
+                <text lang="en"> Setting netCDF data options </text>
+                <text lang="fr"> Définition des options de données netCDF </text>
             </status>
             <tooltip>
-                <text lang="en"> Setting netcdf data options </text>
-                <text lang="fr"> Définition des options de données netcdf </text>
+                <text lang="en"> Setting netCDF data options </text>
+                <text lang="fr"> Définition des options de données netCDF </text>
             </tooltip>
         </content>
         <content id="5">
@@ -164,8 +164,8 @@
             <text lang="fr"> Création des jeux de données CDT en cours ..... </text>
         </content>
         <content id="12">
-            <text lang="en"> No netcdf data sample found </text>
-            <text lang="fr"> Aucun exemple de données netcdf trouvé </text>
+            <text lang="en"> No netCDF data sample found </text>
+            <text lang="fr"> Aucun exemple de données netCDF trouvé </text>
         </content>
         <content id="13">
             <text lang="en"> netCDF data not found </text>
@@ -194,6 +194,20 @@
         <content id="19">
             <text lang="en"> Creating CDT gridded dataset done </text>
             <text lang="fr"> Création des données sur grille en format CDT terminée </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Unable to open </text>
+            <text lang="fr"> Impossible d'ouvrire </text>
+        </content>
+        <content id="21">
+            <text lang="en"> netCDF grids do not match </text>
+            <text lang="fr"> Les grilles des données netCDF sont différents </text>
+        </content>
+        <content id="22">
+            <text lang="en"> Reading netCDF data into chunks failed </text>
+        </content>
+        <content id="23">
+            <text lang="en"> CDT dataset already exists </text>
         </content>
     </message>
 </dialog_box>

@@ -1,14 +1,13 @@
 
 mergeGetInfoClimData <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 23
+        largeur0 <- 21
         largeur1 <- 47
         largeur2 <- 49
         largeur3 <- 32
         largeur4 <- 18
     }else{
-        largeur0 <- 23
+        largeur0 <- 21
         largeur1 <- 43
         largeur2 <- 45
         largeur3 <- 32
@@ -47,18 +46,23 @@ mergeGetInfoClimData <- function(){
 
         frtimestep <- tkframe(frTab1, relief = 'sunken', borderwidth = 2)
 
+        CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:6]
+        periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
         file.period <- tclVar()
-        CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
-        periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
         tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$period]
 
-        cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, width = largeur0)
+        retminhr <- set.hour.minute(.cdtData$GalParams$period, .cdtData$GalParams$minhour)
+        minhour.tclVar <- tclVar(retminhr$val)
+
+        cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, justify = 'center', width = largeur0)
+        cb.minhour <- ttkcombobox(frtimestep, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
         bt.DateRange <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
         #######
 
         tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.DateRange, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.minhour, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.DateRange, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
         helpWidget(bt.DateRange, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -68,8 +72,16 @@ mergeGetInfoClimData <- function(){
         tkconfigure(bt.DateRange, command = function(){
             tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+            .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep, TRUE)
             tcl('wm', 'attributes', tt, topmost = TRUE)
+        })
+
+        tkbind(cb.period, "<<ComboboxSelected>>", function(){
+            tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
+            minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+            retminhr <- set.hour.minute(tstep, minhour)
+            tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
+            tclvalue(minhour.tclVar) <- retminhr$val
         })
 
         ############################################
@@ -80,7 +92,8 @@ mergeGetInfoClimData <- function(){
         dir.InNCDF <- tclVar(.cdtData$GalParams$INPUT$dir)
 
         txt.stnfl <- tklabel(frInputData, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-        cb.stnfl <- ttkcombobox(frInputData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
+        cb.stnfl <- ttkcombobox(frInputData, values = unlist(openFile_ttkcomboList()), textvariable = file.stnfl, width = largeur1)
+        addTo_all_Combobox_List(cb.stnfl)
         bt.stnfl <- tkbutton(frInputData, text = "...")
         txt.InNCDF <- tklabel(frInputData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
         set.InNCDF <- ttkbutton(frInputData, text = .cdtEnv$tcl$lang$global[['button']][['5']])
@@ -110,9 +123,7 @@ mergeGetInfoClimData <- function(){
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(file.stnfl) <- dat.opfiles[[1]]
-                lapply(list(cb.stnfl, cb.blank, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -187,8 +198,6 @@ mergeGetInfoClimData <- function(){
 
         ####################################
 
-        cb.grddem <- NULL
-
         auxiliary.variables <- function(mrgmethod){
             tkdestroy(frauxvar)
 
@@ -222,9 +231,10 @@ mergeGetInfoClimData <- function(){
                 statedem <- if(tclvalue(dem.auxvar) == "1" |
                                tclvalue(slope.auxvar) == "1" |
                                tclvalue(aspect.auxvar) == "1") "normal" else "disabled"
-
+ 
                 txt.grddem <- tklabel(frDEM, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
-                cb.grddem <<- ttkcombobox(frDEM, values = unlist(listOpenFiles), textvariable = demfile.var, width = largeur1, state = statedem)
+                cb.grddem <- ttkcombobox(frDEM, values = unlist(openFile_ttkcomboList()), textvariable = demfile.var, width = largeur1, state = statedem)
+                addTo_all_Combobox_List(cb.grddem)
                 bt.grddem <- tkbutton(frDEM, text = "...", state = statedem)
 
                 tkgrid(txt.grddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, ipady = 1)
@@ -247,9 +257,7 @@ mergeGetInfoClimData <- function(){
                     tcl('wm', 'attributes', tt, topmost = TRUE)
                     if(!is.null(nc.opfiles)){
                         update.OpenFiles('netcdf', nc.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                         tclvalue(demfile.var) <- nc.opfiles[[1]]
-                        lapply(list(cb.stnfl, cb.blank, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
@@ -369,12 +377,15 @@ mergeGetInfoClimData <- function(){
         stateSHP <- if(.cdtData$GalParams$blank$data) "normal" else "disabled"
 
         chk.blank <- tkcheckbutton(frBlank, variable = blank.data, text = lang.dlg[['checkbutton']][['6']], anchor = 'w', justify = 'left')
-        cb.blank <- ttkcombobox(frBlank, values = unlist(listOpenFiles), textvariable = blank.shpf, width = largeur1, state = stateSHP)
+        bt.blankOpt <- ttkbutton(frBlank, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
+        cb.blank <- ttkcombobox(frBlank, values = unlist(openFile_ttkcomboList()), textvariable = blank.shpf, width = largeur1, state = stateSHP)
+        addTo_all_Combobox_List(cb.blank)
         bt.blank <- tkbutton(frBlank, text = "...", state = stateSHP)
 
-        tkgrid(chk.blank, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.blank, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.blank, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.blank, row = 0, column = 0, sticky = 'w', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.blankOpt, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.blank, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.blank, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(cb.blank, lang.dlg[['tooltip']][['21']], lang.dlg[['status']][['21']])
         helpWidget(bt.blank, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
@@ -388,8 +399,6 @@ mergeGetInfoClimData <- function(){
             if(!is.null(shp.opfiles)){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(blank.shpf) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                lapply(list(cb.stnfl, cb.blank, cb.grddem), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -397,6 +406,11 @@ mergeGetInfoClimData <- function(){
             stateSHP <- if(tclvalue(blank.data) == "1") "disabled" else "normal"
             tkconfigure(cb.blank, state = stateSHP)
             tkconfigure(bt.blank, state = stateSHP)
+            tkconfigure(bt.blankOpt, state = stateSHP)
+        })
+
+        tkconfigure(bt.blankOpt, command = function(){
+            blankNcdf_Options(tt)
         })
 
         ############################################
@@ -453,10 +467,19 @@ mergeGetInfoClimData <- function(){
 
     ############################################
 
+    bt.prm.Opt <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['4']])
     bt.prm.OK <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['1']])
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     #######
+
+    tkconfigure(bt.prm.Opt, command = function(){
+        variable <- gsub("merge\\.", "", .cdtData$GalParams$action)
+        if(variable == "pres"){
+            if(tclvalue(prmsl) == '1') variable <- "prmsl"
+        }
+        mergingData_Options(tt, 'merge', variable)
+    })
 
     tkconfigure(bt.prm.OK, command = function(){
         if(trimws(tclvalue(file.stnfl)) == ""){
@@ -476,10 +499,29 @@ mergeGetInfoClimData <- function(){
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
+            .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
             .cdtData$GalParams$STN.file <- trimws(tclvalue(file.stnfl))
             .cdtData$GalParams$INPUT$dir <- trimws(tclvalue(dir.InNCDF))
             .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
+
+            len_format <- switch(.cdtData$GalParams$period,
+                                 'minute' = 5, 'hourly' = 4,
+                                 'daily' = 3, 'pentad' = 3,
+                                 'dekadal' = 3, 'monthly' = 2)
+
+            out_format <- gregexpr('%', trimws(tclvalue(outmrgff)))[[1]]
+            if(length(out_format) < 2 || out_format[1] == -1){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['20']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }
+            if(length(out_format) != len_format){
+                msg <- paste0(lang.dlg[['message']][['20']], '.',
+                              lang.dlg[['message']][['21']], ': ',
+                              len_format)
+                cdt.tkmessageBox(tt, message = msg, icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }
             .cdtData$GalParams$output$format <- trimws(tclvalue(outmrgff))
 
             .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
@@ -537,8 +579,9 @@ mergeGetInfoClimData <- function(){
         tkfocus(.cdtEnv$tcl$main$win)
     })
 
-    tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.Opt, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.OK, row = 0, column = 1, sticky = '', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.CA, row = 0, column = 2, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
     
@@ -557,7 +600,6 @@ mergeGetInfoClimData <- function(){
     tcl("update", "idletasks")
 
     ## update the form
-    cb.grddem <- ttkcombobox(frMrgP, values = "")
     auxiliary.variables(.cdtData$GalParams$MRG$method)
 
     ############################################

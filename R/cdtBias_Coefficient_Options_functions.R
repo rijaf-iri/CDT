@@ -9,9 +9,11 @@
 #' Available options are
 #' \itemize{ 
 #'   \item{\code{mulBiasFunction}: }{character, the function to be used to compute the multiplicative bias coefficients. Options are "mean" (default), "median"}
-#'   \item{\code{qmecdfBoxInterp}: }{character, the interpolation method to use in case of \strong{Quantile Mapping with Empirical Distribution}. Options are "idw" (default), "means"}
-#'   \item{\code{qmecdfBoxMaxdist}: }{numeric, maximum distance to use if \code{qmecdfBoxInterp} is \code{TRUE}}
-#'   \item{\code{qmdistRainyDayThres}: }{numeric, rainy day threshold to use when computing the occurrence of rainy days in case of \strong{Quantile Mapping with Fitted Distribution}}
+#'   \item{\code{aggrBoxMethodStation}: }{character, the interpolation method to use to aggregate stations data within the grid box. Options are "idw" (default), "mean"}
+#'   \item{\code{aggrBoxMethodGrid}: }{character, the interpolation method to use to aggregate gridded data within the grid box. Options are "bilinear" (default), "weightedAverage".
+#'         The method \code{"weightedAverage"} is a spatially weighted averages of the pixels within the box, the weights are the area of the pixel falling inside the box}
+#'   \item{\code{maxBoxNeighbor}: }{numeric, maximum number of nearest neighbor boxes to use when fitting and interpolating a grid point.}
+#'   \item{\code{rainyEventThres}: }{numeric, the rain threshold to use when computing the occurrence of rainy event in case of \strong{Quantile Mapping with Fitted Distribution}}
 #'   \item{\code{blockType}: }{character, the method to use to create the block estimation when the argument \code{use.block} from \code{interp.method} is \code{TRUE}.
 #'          Available options are \code{"gaussian"} and \code{"userdefined"}
 #'          \itemize{
@@ -25,10 +27,10 @@
 #'             \item{\code{"userdefined"}: }{vector of length 4 in the form \code{c(width_x, by_x, width_y, by_y)}}
 #'        }
 #'    }
-#'   \item{\code{addCoarseGrid}: }{logical, add a coarse grid to interpolate the multiplicative bias for IDW and Ordinary Kriging method.
-#'          The coarse grid will be created by resampling the grid of the input data and providing the resolution with \code{resCoarseGrid}.
-#'          The bias values at the coarse grid will be set to 1}
-#'   \item{\code{resCoarseGrid}: }{numeric, the resolution of the coarse grid in degree decimal.}
+#'   \item{\code{addCoarseGrid}: }{logical, add a coarse grid to interpolate the bias coefficients or the parameters of the distribution for IDW and Ordinary Kriging method.
+#'          The coarse grid will be created by resampling the grid of the input data.
+#'          The values at the coarse grid will be set to 1 for multiplicative bias method and the values of the distribution parameters from gridded data for the fitted distribution method.}
+#'   \item{\code{saveCoarseGrid}: }{logical, save the buffer of coarse grid used to interpolate the bias coefficients or the parameters of the distribution. Default is \code{FALSE}}
 #' }
 #' 
 #' @export
@@ -63,18 +65,19 @@ biascoeff.getOption <- function(name)
     list(
          ## mulBiasFunction "mean" or "median"
          mulBiasFunction = "mean",
-         ## qmecdfBoxInterp "idw" or "means"
-         qmecdfBoxInterp = "idw",
-         ## if qmecdfBoxInterp = "idw"
-         qmecdfBoxMaxdist = 4,
-         ## Rainy day threshold
-         qmdistRainyDayThres = 1,
-         qmdistTest = 1,
+         ## aggrBoxStation "idw" or "mean"
+         aggrBoxMethodStation = "idw",
+         # aggrBoxMethodGrid "bilinear" or "weightedAverage"
+         aggrBoxMethodGrid = "bilinear",
+         ## maxBoxNeighbor
+         maxBoxNeighbor = 4,
+         ## Rainy event threshold
+         rainyEventThres = 1,
          ## blockType "gaussian" or "userdefined"
          blockType = "gaussian",
          blockSize = c(1, 1),
          ## add coarse grid
          addCoarseGrid = TRUE,
-         resCoarseGrid = 0.75
+         saveCoarseGrid = FALSE
         )
 }

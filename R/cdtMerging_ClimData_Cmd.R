@@ -3,8 +3,24 @@
 #'
 #' Function to merge stations observation and reanalysis data.
 #' 
-#' @param variable character, name of the climate variable to merge. Available options: \code{"rain"}, \code{"temp"}, \code{"rh"}, \code{"pres"}, \code{"prmsl"}, \code{"rad"}.
-#' @param time.step character, the time step of the data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}.
+#' @param variable character, name of the climate variable to merge. Available options: \code{"rain"}, \code{"temp"}, \code{"rh"}, \code{"pres"}, \code{"prmsl"}, \code{"rad"}, \code{"wspd"}, \code{"ugrd"}, \code{"vgrd"}.
+#' \itemize{
+#' \item{\code{"rain"}: }{rainfall data}
+#' \item{\code{"temp"}: }{temperature data}
+#' \item{\code{"rh"}: }{relative humidity data}
+#' \item{\code{"pres"}: }{surface pressure data}
+#' \item{\code{"prmsl"}: }{pressure at mean sea level}
+#' \item{\code{"rad"}: }{radiation data}
+#' \item{\code{"wspd"}: }{wind speed data}
+#' \item{\code{"ugrd"}: }{zonal wind components, E-W speed}
+#' \item{\code{"vgrd"}: }{meridional wind components, N-S speed}
+#' }
+#' @param time.step character, the time step of the data. Available options: \code{"minute"}, \code{"hourly"}, \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}.
+#' @param minhour integer, the step for \code{"minute"} and \code{"hourly"}.
+#' \itemize{
+#' \item{\code{"minute"}: }{can have the value 1, 5, 10, 15, 20 or 30}
+#' \item{\code{"hourly"}: }{can take the value 1, 3, 6 or 12}
+#' }
 #' @param dates named list, providing the dates to merge.
 #' The list includes an element \code{from} with available options \code{"range"}, \code{"file"} or \code{"dates"}, and 
 #'  an element \code{pars} which is a named list specifying the parameters related to \code{from}:
@@ -120,7 +136,7 @@
 #' 
 #' @export
 
-cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
+cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal", minhour = 1,
                                   dates = list(from = "range", pars = list(start = "2018011", end = "2018123")),
                                   station.data = list(file = "", sep = ",", na.strings = "-99"),
                                   netcdf.data = list(dir = "", format = "tmax_adj_%s%s%s.nc",
@@ -149,7 +165,7 @@ cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
 
     if(!is.null(netcdf.data$dir)){
         if(!dir.exists(netcdf.data$dir)){
-            msg <- paste("Folder containing the netCDF data does not exist", ":", netcdf.data$dir)
+            msg <- paste(message[['22']], ":", netcdf.data$dir)
             Insert.Messages.Out(msg, TRUE, "e", GUI)
             return(NULL)
         }else{
@@ -158,14 +174,14 @@ cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
             netcdf.data <- init.default.list.args(netcdf.data, ncdata_pars)
         }
     }else{
-        Insert.Messages.Out("No folder containing the netCDF data provided", TRUE, "e", GUI)
+        Insert.Messages.Out(message[['23']], TRUE, "e", GUI)
         return(NULL)
     }
 
     #######
     if(!is.null(station.data$file)){
         if(!file.exists(station.data$file)){
-            msg <- paste("File containing the station data does not exist", ":", station.data$file)
+            msg <- paste(message[['24']], ":", station.data$file)
             Insert.Messages.Out(msg, TRUE, "e", GUI)
             return(NULL)
         }else{
@@ -173,7 +189,7 @@ cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
             station.data <- init.default.list.args(station.data, stndata_pars)
         }
     }else{
-        Insert.Messages.Out("No station data file provided", TRUE, "e", GUI)
+        Insert.Messages.Out(message[['25']], TRUE, "e", GUI)
         return(NULL)
     }
 
@@ -210,7 +226,7 @@ cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
             grid$pars <- init.default.list.args(grid$pars, grid_pars)
         }
     }else{
-       Insert.Messages.Out("Unknown grid for interpolation", TRUE, "e", GUI)
+       Insert.Messages.Out(message[['26']], TRUE, "e", GUI)
        return(NULL)
     }
 
@@ -234,54 +250,62 @@ cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
 
     if(is.null(dates$from)) dates$from <- "range"
 
-    dirMrgClim <- paste('MERGED', toupper(variable), 'Data', sep = '_')
-
     if(dates$from %in% c("file", "dates")){
         if(dates$from == "file"){
             if(!file.exists(dates$pars$file)){
-                msg <- paste("File containing the date does not exist", ":", dates$pars$file)
+                msg <- paste(message[['27']], ":", dates$pars$file)
                 Insert.Messages.Out(msg, TRUE, "e", GUI)
                 return(NULL)
             }
-            daty <- utils::read.table(dates$pars$file, stringsAsFactors = FALSE, colClasses = "character")
-            daty <- daty[, 1]
-
-            dirMrg <- paste0(dirMrgClim, '_', tools::file_path_sans_ext(basename(dates$pars$file)))
+            daty <- readLines(dates$pars$file, warn = FALSE, skipNul = TRUE)
+            daty <- format_file_datetime(daty, time.step, minhour, GUI)
         }else{
-            daty <- dates$pars$dates
-            if(is.null(daty)){
-                Insert.Messages.Out("No vector dates", TRUE, "e", GUI)
+            if(is.null(dates$pars$dates)){
+                Insert.Messages.Out(message[['28']], TRUE, "e", GUI)
                 return(NULL)
             }
-            daty <- daty[order(daty)]
-
-            dirMrg <- paste(dirMrgClim, daty[1], daty[length(daty)], sep = '_')
+            daty <- get.datetime.cdtstation(dates$pars$dates, time.step)
         }
-
-        ncInfo <- ncInfo.from.date.vector(netcdf.data, daty, time.step)
     }else{
         date.range <- split_date.range(time.step, dates$pars)
-        # date.range <- rename_date.range(dates$pars)
-        daty <- get.range.date.time(date.range, time.step)
-        if(time.step == 'monthly'){
-            xdeb <- format(daty$start, "%b%Y")
-            xfin <- format(daty$end, "%b%Y")
-        }else{
-            xdeb <- paste0(as.numeric(format(daty$start, "%d")), format(daty$start, "%b%Y"))
-            xfin <- paste0(as.numeric(format(daty$end, "%d")), format(daty$end, "%b%Y"))
-        }
-
-        dirMrg <- paste(dirMrgClim, xdeb, xfin, sep = '_')
-        ncInfo <- ncInfo.with.date.range(netcdf.data, date.range, time.step)
+        daty <- get.seq.date.time(date.range, time.step, minhour)
     }
+
+    dtrg <- merged_date_range_filename(daty, time.step)
+    dirMrg <- paste('MERGED', toupper(variable), 'Data', dtrg$start, dtrg$end, sep = '_')
+
+    outdir <- file.path(output$dir, dirMrg)
+    dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
+    dir.create(file.path(outdir, 'DATA'), showWarnings = FALSE, recursive = TRUE)
+
+    mrgOpts <- merging.options()
+
+    if(mrgOpts$saveGridBuffer)
+        dir.create(file.path(outdir, "GRID_BUFFER"), showWarnings = FALSE, recursive = TRUE)
+
+    if(variable == 'rain'){
+        if(RnoR$use && mrgOpts$saveRnoR)
+            dir.create(file.path(outdir, 'RAIN-NO-RAIN'), showWarnings = FALSE, recursive = TRUE)
+    }
+
+    if(interp.method$method == "okr"){
+        interp.method$vgm_dir <- "VARIOGRAM"
+        interp.method$vgm_save <- TRUE
+        dir.create(file.path(outdir, "VARIOGRAM"), showWarnings = FALSE, recursive = TRUE)
+    }
+
+    ##################
+
+    daty <- format.datetime.2character(daty, time.step)
+    ncInfo <- ncInfo.from.date.vector(netcdf.data, daty, time.step)
+    ## if dates from range only
+    # date.range <- get.range.datetime(daty, time.step)
+    # ncInfo <- ncInfo.with.date.range(netcdf.data, date.range, time.step, minhour)
 
     if(is.null(ncInfo)){
         Insert.Messages.Out(message[['15']], TRUE, "e", GUI)
         return(NULL)
     }
-
-    outdir <- file.path(output$dir, dirMrg)
-    dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     Insert.Messages.Out(message[['11']], TRUE, "i", GUI)
 
@@ -386,7 +410,7 @@ cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
 
     if(blank$data){
         if(!file.exists(blank$shapefile)){
-            msg <- paste("The shapefile not found", ":", blank$shapefile)
+            msg <- paste(message[['29']], ":", blank$shapefile)
             Insert.Messages.Out(msg, TRUE, "e", GUI)
             return(NULL)
         }
@@ -403,9 +427,9 @@ cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
 
     Insert.Messages.Out(message[['17']], TRUE, "i", GUI)
 
-    params <- list(period = time.step, MRG = merge.method,
-                   interp = interp.method, output = output,
-                   auxvar = auxvar, RnoR = RnoR, prec = precision)
+    params <- list(period = time.step, minhour = minhour, MRG = merge.method,
+                   interp = interp.method, output = output, auxvar = auxvar,
+                   RnoR = RnoR, prec = precision)
 
     ret <- cdtMerging(stnData = stnData, ncInfo = ncInfo,
                       xy.grid = xy.grid, params = params,
@@ -414,8 +438,8 @@ cdtMergingClimDataCMD <- function(variable = "temp", time.step = "dekadal",
 
     if(!is.null(ret)){
         if(ret != 0){
-          Insert.Messages.Out(paste(message[['18']],
-                              file.path(outdir, "log_file.txt")), TRUE, "w", GUI)
+          file_log <- file.path(outdir, "log_file.txt")
+          Insert.Messages.Out(paste(message[['18']], file_log), TRUE, "w", GUI)
         }
     }else return(NULL)
 

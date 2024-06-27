@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<function_msg>
+    <message>
+        <content id="1">
+            <text lang="en"> Compute bias coefficients ... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Read and extract gridded data ... </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Reading gridded data finished </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Fit distribution ... </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Fitting distribution done </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Computing bias coefficients finished </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Fitting distribution parameters for gridded data ... </text>
+        </content>
+        <content id="8">
+            <text lang="en"> Interpolate bias coefficients ... </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Interpolating bias coefficients finished </text>
+        </content>
+        <content id="10">
+            <text lang="en"> The folder "NCDATA_CHUNKS" does not exist </text>
+        </content>
+        <content id="11">
+            <text lang="en"> The file "index.rds" not found in "NCDATA_CHUNKS" </text>
+        </content>
+    </message>
+</function_msg>

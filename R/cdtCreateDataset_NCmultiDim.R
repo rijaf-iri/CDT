@@ -21,10 +21,14 @@
 #' \item{\code{time_dim}: }{character, the name of the time dimension.}
 #' }
 #' @param extra_ncdim named list, providing the values of the dimensions other than the longitude,
-#'latitude and time to be extracted if the netCDF data contains more than 3 dimensions.
+#' latitude and time to be extracted if the netCDF data contains more than 3 dimensions. For example,
+#' if the data has a pressure level (dimension name \code{level}) and from ensemble data (dimension name \code{member}),
+#' to extract the data at 1000 hPa and for member 5: \code{extra_ncdim = list(level = 1000, member = 5)}.
 #' Default \code{NULL}, the data does not have extra dimension.
 #' @param conversion_fun a function to transform the data or to convert the units.
-#' @param bbox named list, providing the region to be extracted in the form list(minlon, maxlon, minlat, maxlat). Default \code{NULL}.
+#' @param bbox named list, providing the region to be extracted in the form \code{list(minlon, maxlon, minlat, maxlat)}.
+#' Example: \code{bbox = list(minlon = 33, maxlon = 48, minlat = 3, maxlat = 15)}
+#' Default \code{NULL}.
 #' @param chunk named list containing the size of the chunk \code{size} and the number of chunk to be used for each computation \code{fac}.
 #'
 #' @return A directory named after the element \code{name} of \code{cdtdata_info}, containing the CDT dataset.
@@ -49,7 +53,7 @@
 
 cdtDataset_readData_multiDim <- function(cdtdata_info, netcdf_data, ncvar_info,
                                          extra_ncdim = NULL, conversion_fun = NULL,
-                                         bbox = NULL, chunk = list(size = 100, fac = 2))
+                                         bbox = NULL, chunk = list(size = 100, fac = 5))
 {
     pattern <- get_ncfile_pattern(netcdf_data$format)
     ncfiles <- list.files(netcdf_data$dir, pattern)

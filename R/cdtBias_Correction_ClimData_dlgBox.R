@@ -1,6 +1,5 @@
 
 removeBiasGetInfoClimData <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 22
         largeur1 <- 46
@@ -50,7 +49,7 @@ removeBiasGetInfoClimData <- function(){
     tkconfigure(bt.DateRange, command = function(){
         tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep, TRUE)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -210,6 +209,7 @@ removeBiasGetInfoClimData <- function(){
 
             .cdtData$GalParams$settingSNC <- settingSNC
             .cdtData$GalParams$message <- lang.dlg[['message']]
+            .cdtData$GalParams$bias_list <- list(val = val.biasMthd, txt = cb.biasMthd)
 
             tkgrab.release(tt)
             tkdestroy(tt)

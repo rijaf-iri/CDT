@@ -24,7 +24,11 @@ nasa_power_ag_daily.coverage <- function(GalParams){
     end_d <- dates[length(dates)]
     end_d <- as.Date(end_d, '%Y%m%d')
     out$end <- format(end_d, '%Y-%m-%d')
-    out$start <- "1981-01-01"
+    if(GalParams$var){
+        out$start <- "1984-01-01"
+    }else{
+        out$start <- "1981-01-01"
+    }
 
     return(out)
 }

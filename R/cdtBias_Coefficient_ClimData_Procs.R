@@ -1,8 +1,20 @@
 
 computeBiasCoeffClimData <- function(){
     message <- .cdtData$GalParams[['message']]
-    outdir <- file.path(.cdtData$GalParams$output$dir, paste0('BIAS_Data_',
-                        tools::file_path_sans_ext(.cdtData$GalParams$STN.file)))
+
+    varClim <- gsub("coefbias\\.", "", .cdtData$GalParams$action)
+    dirBias <- paste0('BIAS_DATA_', toupper(varClim))
+    outdir <- file.path(.cdtData$GalParams$output$dir, dirBias)
+    if(dir.exists(outdir)){
+        tmp <- list.files(.cdtData$GalParams$output$dir, paste0('^', dirBias, '_[0-9]+'), include.dirs = TRUE)
+        if(length(tmp) == 0){
+            tmp <- 1
+        }else{
+            tmp <- gsub(paste0(dirBias, "_"), "", tmp)
+            tmp <- max(as.numeric(tmp)) + 1
+        }
+        outdir <- file.path(.cdtData$GalParams$output$dir, paste0(dirBias, "_", tmp))
+    }
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     Insert.Messages.Out(message[['7']], TRUE, "i")
@@ -71,8 +83,9 @@ computeBiasCoeffClimData <- function(){
         is.regridDEM <- is.diffSpatialPixelsObj(defSpatialPixels(xy.grid),
                                                 defSpatialPixels(demData),
                                                 tol = 1e-07)
-        if(is.regridDEM)
+        if(is.regridDEM){
             demData <- cdt.interp.surface.grid(demData, xy.grid)
+        }else demData <- demData[c('x', 'y', 'z')]
         demData$z[demData$z < 0] <- 0
     }
 
@@ -105,8 +118,8 @@ computeBiasCoeffClimData <- function(){
     minyear <- .cdtData$GalParams$base.period$min.year
 
     years.stn <- as.numeric(substr(stnData$dates, 1, 4))
-    years.rfe <- as.numeric(substr(ncInfoBias$dates[ncInfoBias$exist], 1, 4))
-    years <- intersect(years.stn, years.rfe)
+    years.nc <- as.numeric(substr(ncInfoBias$dates[ncInfoBias$exist], 1, 4))
+    years <- intersect(years.stn, years.nc)
 
     if(length(unique(years)) < minyear){
         Insert.Messages.Out(message[['12']], TRUE, 'e')
@@ -115,26 +128,21 @@ computeBiasCoeffClimData <- function(){
 
     iyrUse <- if(allyears) rep(TRUE, length(years)) else years >= year1 & years <= year2
     ystn <- years.stn %in% years[iyrUse]
-    yrfe <- years.rfe %in% years[iyrUse]
+    ync <- years.nc %in% years[iyrUse]
 
     stnData$data <- stnData$data[ystn, , drop = FALSE]
     stnData$dates <- stnData$dates[ystn]
-    ncInfoBias$dates <- ncInfoBias$dates[yrfe]
-    ncInfoBias$ncfiles <- ncInfoBias$ncfiles[yrfe]
-    ncInfoBias$exist <- ncInfoBias$exist[yrfe]
-
-    varClim <- gsub("coefbias\\.", "", .cdtData$GalParams$action)
+    ncInfoBias$dates <- ncInfoBias$dates[ync]
+    ncInfoBias$ncfiles <- ncInfoBias$ncfiles[ync]
+    ncInfoBias$exist <- ncInfoBias$exist[ync]
 
     ##################
 
-    bias.pars <- ComputeBiasCoefficients(stnData = stnData, ncInfo = ncInfoBias,
-                                         params = .cdtData$GalParams, variable = varClim,
-                                         outdir = outdir)
-    ret <- InterpolateBiasCoefficients(bias.pars, xy.grid, variable = varClim,
-                                       outdir = outdir, demData = demData)
+    ret <- cdtBiasCoefficients(stnData = stnData, ncInfo = ncInfoBias, demData = demData,
+                               params = .cdtData$GalParams, variable = varClim, outdir = outdir)
+
     if(!is.null(ret)){
         if(ret == 0) return(0)
         else return(ret)
     }else return(NULL)
 }
-

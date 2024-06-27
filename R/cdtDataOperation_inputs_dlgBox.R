@@ -211,6 +211,8 @@ dataOperation_Inputs <- function(parent, data.type){
             ii <- get.id.datasets(bt.Remove)
             tkdestroy(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame)
             .cdtData$GalParams$DATASETs[[ii]] <- NULL
+            .cdtData$GalParams$inputs[[paste0('file', ii)]] <- NULL
+            .cdtData$GalParams$constant[[paste0('const', ii)]] <- NULL
 
             for(i in seq_along(.cdtData$GalParams$DATASETs)){
                 textLab <- paste(lang.dlg[['label']][['1']], paste0("X", i))
@@ -281,7 +283,7 @@ dataOperation_Inputs <- function(parent, data.type){
         for(jj in seq_along(.cdtData$GalParams$DATASETs)){
             .cdtData$GalParams$inputs[[paste0('file', jj)]]$dir <- inputFiles[[jj]]
 
-            if(.cdtData$GalParams$datatype == "cdtnetcdf"){
+            if(data.type == "cdtnetcdf"){
                 .cdtData$GalParams$inputs[[paste0('file', jj)]]$sample <- .cdtData$GalParams$DATASETs[[jj]]$pars$sample
                 .cdtData$GalParams$inputs[[paste0('file', jj)]]$format <- .cdtData$GalParams$DATASETs[[jj]]$pars$format
             }

@@ -317,5 +317,26 @@
         <content id="21">
             <text lang="en"> Stations discarded, not found in the input station data </text>
         </content>
+        <content id="22">
+            <text lang="en"> Folder containing the netCDF data does not exist </text>
+        </content>
+        <content id="23">
+            <text lang="en"> No folder containing the netCDF data provided </text>
+        </content>
+        <content id="24">
+            <text lang="en"> File containing the station data does not exist </text>
+        </content>
+        <content id="25">
+            <text lang="en"> No station data file provided </text>
+        </content>
+        <content id="26">
+            <text lang="en"> File containing the stations, to be used for the cross-validation, does not exist </text>
+        </content>
+        <content id="27">
+            <text lang="en"> File containing the date does not exist </text>
+        </content>
+        <content id="28">
+            <text lang="en"> No vector dates </text>
+        </content>
     </message>
 </dialog_box>

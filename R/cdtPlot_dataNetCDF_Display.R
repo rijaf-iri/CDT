@@ -2,11 +2,17 @@
 PlotNetCDFdataMaps <- function(){
     don <- .cdtData$EnvData$ncData$map
     dataMapOp <- .cdtData$EnvData$ncMapOp
+    varinfo <- .cdtData$EnvData$varinfo
 
     ## titre
     if(!dataMapOp$title$user){
-        .titre <- .cdtData$EnvData$ncData$file2plot
+        .titre <- paste(.cdtData$EnvData$ncData$file2plot, '-', varinfo$name)
     }else .titre <- dataMapOp$title$title
+
+    if(!dataMapOp$colkeyLab$user){
+        dataMapOp$colkeyLab$user <- TRUE
+        dataMapOp$colkeyLab$label <- paste0(varinfo$longname, " (", varinfo$units, ")")
+    }
 
     #################
 

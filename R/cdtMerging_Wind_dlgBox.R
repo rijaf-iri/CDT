@@ -1,13 +1,13 @@
 
 mergeGetInfoWind <- function(){
     if(WindowsOS()){
-        largeur0 <- 23
+        largeur0 <- 21
         largeur1 <- 47
         largeur2 <- 49
         largeur3 <- 32
         largeur4 <- 18
     }else{
-        largeur0 <- 23
+        largeur0 <- 21
         largeur1 <- 43
         largeur2 <- 45
         largeur3 <- 32
@@ -28,9 +28,6 @@ mergeGetInfoWind <- function(){
     frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2, padx = 2, pady = 2)
     frMRG1 <- tkframe(tt)
 
-    cbLists <- new.env()
-    cbLists$cb <- list()
-
     ####################################
 
     getwindSpeed <- function(){
@@ -39,13 +36,12 @@ mergeGetInfoWind <- function(){
 
         txt.stnS <- tklabel(fr.windVar, text = lang.dlg[['label']][['1-1']], anchor = 'w', justify = 'left')
         cb.stnS <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_S, width = largeur1)
+        addTo_all_Combobox_List(cb.stnS)
         bt.stnS <- tkbutton(fr.windVar, text = "...")
         txt.ncS <- tklabel(fr.windVar, text = lang.dlg[['label']][['2-1']], anchor = 'w', justify = 'left')
         set.ncS <- ttkbutton(fr.windVar, text = .cdtEnv$tcl$lang$global[['button']][['5']])
         en.ncS <- tkentry(fr.windVar, textvariable = dir.NC_S, width = largeur2)
         bt.ncS <- tkbutton(fr.windVar, text = "...")
-
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnS
 
         tkgrid(txt.stnS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.stnS, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
@@ -71,11 +67,6 @@ mergeGetInfoWind <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(file.STN_S) <- dat.opfiles[[1]]
-
-                lapply(cbLists$cb, function(x){
-                    if(as.integer(tkwinfo('exists', x)) == 1)
-                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                })
             }
         })
 
@@ -207,17 +198,16 @@ mergeGetInfoWind <- function(){
 
         txt.stnU <- tklabel(fr.windVar, text = lang.dlg[['label']][['1-2']], anchor = 'w', justify = 'left')
         cb.stnU <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_U, width = largeur1)
+        addTo_all_Combobox_List(cb.stnU)
         bt.stnU <- tkbutton(fr.windVar, text = "...")
 
         txt.stnV <- tklabel(fr.windVar, text = lang.dlg[['label']][['1-3']], anchor = 'w', justify = 'left')
         cb.stnV <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_V, width = largeur1)
+        addTo_all_Combobox_List(cb.stnV)
         bt.stnV <- tkbutton(fr.windVar, text = "...")
 
         chk.windUV <- tkcheckbutton(fr.windVar, variable = windUV, text = lang.dlg[['checkbutton']][['7']], anchor = 'w', justify = 'left')
         fr.windUV <- tkframe(fr.windVar)
-
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnU
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnV
 
         #####
         tkgrid(txt.stnU, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -245,11 +235,6 @@ mergeGetInfoWind <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(file.STN_U) <- dat.opfiles[[1]]
-
-                lapply(cbLists$cb, function(x){
-                    if(as.integer(tkwinfo('exists', x)) == 1)
-                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                })
             }
         })
 
@@ -260,11 +245,6 @@ mergeGetInfoWind <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(file.STN_V) <- dat.opfiles[[1]]
-
-                lapply(cbLists$cb, function(x){
-                    if(as.integer(tkwinfo('exists', x)) == 1)
-                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                })
             }
         })
 
@@ -344,18 +324,23 @@ mergeGetInfoWind <- function(){
 
         frtimestep <- tkframe(frTab1, relief = 'sunken', borderwidth = 2)
 
+        CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:6]
+        periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
         file.period <- tclVar()
-        CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
-        periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
         tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$period]
 
+        retminhr <- set.hour.minute(.cdtData$GalParams$period, .cdtData$GalParams$minhour)
+        minhour.tclVar <- tclVar(retminhr$val)
+
         cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, justify = 'center', width = largeur0)
+        cb.minhour <- ttkcombobox(frtimestep, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
         bt.DateRange <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
         #######
 
         tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.DateRange, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.minhour, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.DateRange, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
         helpWidget(bt.DateRange, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -365,8 +350,16 @@ mergeGetInfoWind <- function(){
         tkconfigure(bt.DateRange, command = function(){
             tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+            .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep, TRUE)
             tcl('wm', 'attributes', tt, topmost = TRUE)
+        })
+
+        tkbind(cb.period, "<<ComboboxSelected>>", function(){
+            tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
+            minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+            retminhr <- set.hour.minute(tstep, minhour)
+            tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
+            tclvalue(minhour.tclVar) <- retminhr$val
         })
 
         ############################################
@@ -397,7 +390,13 @@ mergeGetInfoWind <- function(){
 
         tkbind(cb.windVar, "<<ComboboxSelected>>", function(){
             wvar <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
-            if(wvar == "speed") getwindSpeed() else getwindData()
+            if(wvar == "speed"){
+                getwindSpeed()
+                frmtWindSpeed()
+            }else{
+                getwindData()
+                if(tclvalue(windUV) == "1") frmtWindDataOne() else frmtWindDataSep()
+            }
         })
 
         ############################################
@@ -455,8 +454,6 @@ mergeGetInfoWind <- function(){
 
         ####################################
 
-        cb.grddem <- NULL
-
         auxiliary.variables <- function(mrgmethod){
             tkdestroy(frauxvar)
 
@@ -492,10 +489,9 @@ mergeGetInfoWind <- function(){
                                tclvalue(aspect.auxvar) == "1") "normal" else "disabled"
 
                 txt.grddem <- tklabel(frDEM, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
-                cb.grddem <<- ttkcombobox(frDEM, values = unlist(openFile_ttkcomboList()), textvariable = demfile.var, width = largeur1, state = statedem)
+                cb.grddem <- ttkcombobox(frDEM, values = unlist(openFile_ttkcomboList()), textvariable = demfile.var, width = largeur1, state = statedem)
+                addTo_all_Combobox_List(cb.grddem)
                 bt.grddem <- tkbutton(frDEM, text = "...", state = statedem)
-
-                cbLists$cb[[length(cbLists$cb) + 1]] <- cb.grddem
 
                 tkgrid(txt.grddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, ipady = 1)
                 tkgrid(cb.grddem, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, ipady = 1)
@@ -518,11 +514,6 @@ mergeGetInfoWind <- function(){
                     if(!is.null(nc.opfiles)){
                         update.OpenFiles('netcdf', nc.opfiles)
                         tclvalue(demfile.var) <- nc.opfiles[[1]]
-
-                        lapply(cbLists$cb, function(x){
-                            if(as.integer(tkwinfo('exists', x)) == 1)
-                                tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                        })
                     }
                 })
 
@@ -642,14 +633,15 @@ mergeGetInfoWind <- function(){
         stateSHP <- if(.cdtData$GalParams$blank$data) "normal" else "disabled"
 
         chk.blank <- tkcheckbutton(frBlank, variable = blank.data, text = lang.dlg[['checkbutton']][['6']], anchor = 'w', justify = 'left')
+        bt.blankOpt <- ttkbutton(frBlank, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.blank <- ttkcombobox(frBlank, values = unlist(openFile_ttkcomboList()), textvariable = blank.shpf, width = largeur1, state = stateSHP)
+        addTo_all_Combobox_List(cb.blank)
         bt.blank <- tkbutton(frBlank, text = "...", state = stateSHP)
 
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.blank
-
-        tkgrid(chk.blank, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.blank, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(bt.blank, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(chk.blank, row = 0, column = 0, sticky = 'w', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.blankOpt, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.blank, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.blank, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
         helpWidget(cb.blank, lang.dlg[['tooltip']][['21']], lang.dlg[['status']][['21']])
         helpWidget(bt.blank, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
@@ -663,11 +655,6 @@ mergeGetInfoWind <- function(){
             if(!is.null(shp.opfiles)){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(blank.shpf) <- shp.opfiles[[1]]
-
-                lapply(cbLists$cb, function(x){
-                    if(as.integer(tkwinfo('exists', x)) == 1)
-                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                })
             }
         })
 
@@ -675,6 +662,11 @@ mergeGetInfoWind <- function(){
             stateSHP <- if(tclvalue(blank.data) == "1") "disabled" else "normal"
             tkconfigure(cb.blank, state = stateSHP)
             tkconfigure(bt.blank, state = stateSHP)
+            tkconfigure(bt.blankOpt, state = stateSHP)
+        })
+
+        tkconfigure(bt.blankOpt, command = function(){
+            blankNcdf_Options(tt)
         })
 
         ############################################
@@ -689,72 +681,171 @@ mergeGetInfoWind <- function(){
 
     ############################################
 
+    bt.prm.Opt <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['4']])
     bt.prm.OK <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['1']])
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     #######
 
+    tkconfigure(bt.prm.Opt, command = function(){
+        action <- 'merge'
+        variable <- 'wind'
+        wind <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
+        mergingData_Options(tt, action, variable, wind)
+    })
+
     tkconfigure(bt.prm.OK, command = function(){
-        # if(trimws(tclvalue(file.stnfl)) == ""){
-        #     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
-        #     tkwait.window(tt)
-        # }else if(trimws(tclvalue(dir.InNCDF)) %in% c("", "NA")){
-        #     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
-        #     tkwait.window(tt)
-        # }else if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
-        #     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
-        #     tkwait.window(tt)
-        # }else if(is.null(settingSNC)){
-        #     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
-        #     tkwait.window(tt)
-        # }else if(tclvalue(blank.data) == "1" & trimws(tclvalue(blank.shpf)) == ""){
-        #     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
-        #     tkwait.window(tt)
-        # }else{
-            .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
+        .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
+        .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
-            # .cdtData$GalParams$STN.file <- trimws(tclvalue(file.stnfl))
-            # .cdtData$GalParams$INPUT$dir <- trimws(tclvalue(dir.InNCDF))
-            .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
-            # .cdtData$GalParams$output$format <- trimws(tclvalue(outmrgff))
+        len_format <- switch(.cdtData$GalParams$period,
+                             'minute' = 5, 'hourly' = 4,
+                             'daily' = 3, 'pentad' = 3,
+                             'dekadal' = 3, 'monthly' = 2)
 
-            .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
-            .cdtData$GalParams$MRG$nrun <- as.numeric(trimws(tclvalue(nb.run)))
-             pass <- trimws(strsplit(tclvalue(pass.ratio), ",")[[1]])
-            .cdtData$GalParams$MRG$pass <- as.numeric(pass[pass != ""])
-            if(.cdtData$GalParams$MRG$nrun != length(.cdtData$GalParams$MRG$pass)){
+        .cdtData$GalParams$wvar <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
+
+        if(.cdtData$GalParams$wvar == 'speed'){
+            if(trimws(tclvalue(file.STN_S)) == ""){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }else if(trimws(tclvalue(dir.NC_S)) %in% c("", "NA")){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }else{
+                .cdtData$GalParams$STN.S <- trimws(tclvalue(file.STN_S))
+                .cdtData$GalParams$INPUT.S$dir <- trimws(tclvalue(dir.NC_S))
+
+                out_format <- gregexpr('%', trimws(tclvalue(outFrmtS)))[[1]]
+                if(length(out_format) < 2 || out_format[1] == -1){
+                    cdt.tkmessageBox(tt, message = lang.dlg[['message']][['9']], icon = "warning", type = "ok")
+                    tkwait.window(tt)
+                }
+                if(length(out_format) != len_format){
+                    msg <- paste0(lang.dlg[['message']][['9']], '.', lang.dlg[['message']][['10']], ': ', len_format)
+                    cdt.tkmessageBox(tt, message = msg, icon = "warning", type = "ok")
+                    tkwait.window(tt)
+                }
+
+                .cdtData$GalParams$output$format.S <- trimws(tclvalue(outFrmtS))
+            }
+        }else{
+            if(trimws(tclvalue(file.STN_U)) == ""){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }else if(trimws(tclvalue(file.STN_V)) == ""){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }else if(tclvalue(windUV) == '1' && (trimws(tclvalue(dir.NC_UV)) %in% c("", "NA"))){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
                 tkwait.window(tt)
-            }
-
-            .cdtData$GalParams$auxvar$dem <- switch(tclvalue(dem.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$slope <- switch(tclvalue(slope.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$aspect <- switch(tclvalue(aspect.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$lon <- switch(tclvalue(lon.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$lat <- switch(tclvalue(lat.auxvar), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$auxvar$demfile <- trimws(tclvalue(demfile.var))
-
-            if(.cdtData$GalParams$MRG$method == "RK" &
-               (.cdtData$GalParams$auxvar$dem |
-                .cdtData$GalParams$auxvar$slope |
-                .cdtData$GalParams$auxvar$aspect) &
-               .cdtData$GalParams$auxvar$demfile == ""
-              )
-            {
+            }else if(tclvalue(windUV) == '0' && (trimws(tclvalue(dir.NC_U)) %in% c("", "NA"))){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['7']], icon = "warning", type = "ok")
                 tkwait.window(tt)
+            }else if(tclvalue(windUV) == '0' && (trimws(tclvalue(dir.NC_V)) %in% c("", "NA"))){
+                cdt.tkmessageBox(tt, message = lang.dlg[['message']][['8']], icon = "warning", type = "ok")
+                tkwait.window(tt)
+            }else{
+                .cdtData$GalParams$one.ncdf <- if(tclvalue(windUV) == '1') TRUE else FALSE
+                .cdtData$GalParams$STN.U <- trimws(tclvalue(file.STN_U))
+                .cdtData$GalParams$STN.V <- trimws(tclvalue(file.STN_V))
+
+                if(.cdtData$GalParams$one.ncdf){
+                    .cdtData$GalParams$INPUT.UV$dir <- trimws(tclvalue(dir.NC_UV))
+
+                    out_format <- gregexpr('%', trimws(tclvalue(outFrmtUV)))[[1]]
+                    if(length(out_format) < 2 || out_format[1] == -1){
+                        cdt.tkmessageBox(tt, message = lang.dlg[['message']][['9']], icon = "warning", type = "ok")
+                        tkwait.window(tt)
+                    }
+                    if(length(out_format) != len_format){
+                        msg <- paste0(lang.dlg[['message']][['9']], '.', lang.dlg[['message']][['10']], ': ', len_format)
+                        cdt.tkmessageBox(tt, message = msg, icon = "warning", type = "ok")
+                        tkwait.window(tt)
+                    }
+
+                    .cdtData$GalParams$output$format.UV <- trimws(tclvalue(outFrmtUV))
+                }else{
+                    .cdtData$GalParams$INPUT.U$dir <- trimws(tclvalue(dir.NC_U))
+                    .cdtData$GalParams$INPUT.V$dir <- trimws(tclvalue(dir.NC_V))
+
+                    out_format <- gregexpr('%', trimws(tclvalue(outFrmtU)))[[1]]
+                    if(length(out_format) < 2 || out_format[1] == -1){
+                        cdt.tkmessageBox(tt, message = lang.dlg[['message']][['9']], icon = "warning", type = "ok")
+                        tkwait.window(tt)
+                    }
+                    if(length(out_format) != len_format){
+                        msg <- paste0(lang.dlg[['message']][['9']], '.', lang.dlg[['message']][['10']], ': ', len_format)
+                        cdt.tkmessageBox(tt, message = msg, icon = "warning", type = "ok")
+                        tkwait.window(tt)
+                    }
+
+                    .cdtData$GalParams$output$format.U <- trimws(tclvalue(outFrmtU))
+
+                    out_format <- gregexpr('%', trimws(tclvalue(outFrmtV)))[[1]]
+                    if(length(out_format) < 2 || out_format[1] == -1){
+                        cdt.tkmessageBox(tt, message = lang.dlg[['message']][['9']], icon = "warning", type = "ok")
+                        tkwait.window(tt)
+                    }
+                    if(length(out_format) != len_format){
+                        msg <- paste0(lang.dlg[['message']][['9']], '.', lang.dlg[['message']][['10']], ': ', len_format)
+                        cdt.tkmessageBox(tt, message = msg, icon = "warning", type = "ok")
+                        tkwait.window(tt)
+                    }
+
+                    .cdtData$GalParams$output$format.V <- trimws(tclvalue(outFrmtV))
+                }
             }
+        }
 
-            .cdtData$GalParams$blank$data <- switch(tclvalue(blank.data), '0' = FALSE, '1' = TRUE)
-            .cdtData$GalParams$blank$shpf <- trimws(tclvalue(blank.shpf))
+        if(trimws(tclvalue(dir2save)) %in% c("", "NA")){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }
 
-            # .cdtData$GalParams$settingSNC <- settingSNC
-            .cdtData$GalParams$message <- lang.dlg[['message']]
+        .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
 
-            tkgrab.release(tt)
-            tkdestroy(tt)
-            tkfocus(.cdtEnv$tcl$main$win)
-        # }
+        ###
+        .cdtData$GalParams$MRG$method  <- val.mrgMthd[cb.mrgMthd %in% trimws(tclvalue(merge.method))]
+        .cdtData$GalParams$MRG$nrun <- as.numeric(trimws(tclvalue(nb.run)))
+         pass <- trimws(strsplit(tclvalue(pass.ratio), ",")[[1]])
+        .cdtData$GalParams$MRG$pass <- as.numeric(pass[pass != ""])
+        if(.cdtData$GalParams$MRG$nrun != length(.cdtData$GalParams$MRG$pass)){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['11']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }
+
+        .cdtData$GalParams$auxvar$dem <- switch(tclvalue(dem.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$slope <- switch(tclvalue(slope.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$aspect <- switch(tclvalue(aspect.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$lon <- switch(tclvalue(lon.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$lat <- switch(tclvalue(lat.auxvar), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$auxvar$demfile <- trimws(tclvalue(demfile.var))
+
+        if(.cdtData$GalParams$MRG$method == "RK" &
+           (.cdtData$GalParams$auxvar$dem |
+            .cdtData$GalParams$auxvar$slope |
+            .cdtData$GalParams$auxvar$aspect) &
+           .cdtData$GalParams$auxvar$demfile == ""
+          )
+        {
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['12']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }
+
+        if(tclvalue(blank.data) == "1" & trimws(tclvalue(blank.shpf)) == ""){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['13']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }
+
+        .cdtData$GalParams$blank$data <- switch(tclvalue(blank.data), '0' = FALSE, '1' = TRUE)
+        .cdtData$GalParams$blank$shpf <- trimws(tclvalue(blank.shpf))
+
+        .cdtData$GalParams$message <- lang.dlg[['message']]
+
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(.cdtEnv$tcl$main$win)
     })
 
     tkconfigure(bt.prm.CA, command = function(){
@@ -763,8 +854,9 @@ mergeGetInfoWind <- function(){
         tkfocus(.cdtEnv$tcl$main$win)
     })
 
-    tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.Opt, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.OK, row = 0, column = 1, sticky = '', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.CA, row = 0, column = 2, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
     
@@ -786,16 +878,16 @@ mergeGetInfoWind <- function(){
     tcl("update", "idletasks")
 
     ## update the form
-    cb.grddem <- ttkcombobox(frMrgP, values = "")
     auxiliary.variables(.cdtData$GalParams$MRG$method)
 
     tclvalue(windUV) <- .cdtData$GalParams$one.ncdf
-    if(.cdtData$GalParams$wvar == "speed") getwindSpeed() else getwindData()
-
-    if(.cdtData$GalParams$wvar != "speed"){
+    if(.cdtData$GalParams$wvar == "speed"){
+        getwindSpeed()
+        frmtWindSpeed()
+    }else{
+        getwindData()
         if(.cdtData$GalParams$one.ncdf) frmtWindDataOne() else frmtWindDataSep()
-    }else frmtWindSpeed()
-
+    }
 
     ############################################
 

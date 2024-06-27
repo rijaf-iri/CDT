@@ -135,7 +135,7 @@ crossValidationExecWind <- function(){
         df <- as.data.frame(stnData[c("id", 'lon', 'lat')])
         df <- df[istn, , drop = FALSE]
 
-        stn.valid <- select.Station.Validation(df, perc = 80)
+        stn.valid <- select.Station.Validation(df, perc = 20)
         stn.valid <- as.character(stn.valid$id)
     }
 

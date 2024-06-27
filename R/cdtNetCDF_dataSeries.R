@@ -52,8 +52,8 @@ ncInfo.from.date.vector <- function(ncdf, dates, tstep){
     ncInfo.dates.table(ncdf, dates)
 }
 
-get.ncInfo.params <-function(netcdf.data, date.range, tstep){
-    ncInfo <- ncInfo.with.date.range(netcdf.data, date.range, tstep)
+get.ncInfo.params <-function(netcdf.data, date.range, tstep, minhour = NA){
+    ncInfo <- ncInfo.with.date.range(netcdf.data, date.range, tstep, minhour)
     if(is.null(ncInfo)) return(NULL)
 
     varid <- netcdf.data$varid
@@ -213,191 +213,232 @@ ncFilesInfo <- function(Tstep, start.date, end.date, months,
 
 ##############################################
 
-## used by fill dek temp, remplacer
-## Read ncdf files, extract at a set points
-read.NetCDF.Data2Points <- function(read.ncdf.parms, list.lonlat.pts){
-    Insert.Messages.Out(read.ncdf.parms$msg$start, TRUE, "i")
-
-    ncInfo <- do.call(ncFilesInfo, c(read.ncdf.parms$ncfiles, error.msg = read.ncdf.parms$errmsg))
-    if(is.null(ncInfo)) return(NULL)
-
-    ncinfo <- read.ncdf.parms$ncinfo
-    lon <- ncinfo$lon
-    lat <- ncinfo$lat
-    nlon <- ncinfo$nx
-    nlat <- ncinfo$ny
-
-    ijx <- grid2pointINDEX(list.lonlat.pts, list(lon = lon, lat = lat))
-
-    parsL <- doparallel.cond(length(which(ncInfo$exist)) >= 100)
-    ncdata <- cdt.foreach(seq_along(ncInfo$nc.files), parsL = parsL, FUN = function(jj)
-    {
-        xvar <- NULL
-        if(ncInfo$exist[jj]){
-            nc <- try(ncdf4::nc_open(ncInfo$nc.files[jj]), silent = TRUE)
-            if(inherits(nc, "try-error")) return(NULL)
-            xvar <- ncdf4::ncvar_get(nc, varid = ncinfo$varid)
-            ncdf4::nc_close(nc)
-            if(nlon != nrow(xvar) | nlat != ncol(xvar)) return(NULL)
-            xvar <- transposeNCDFData(xvar, ncinfo)
-            xvar <- xvar[ijx]
-        }
-        xvar
-    })
-
-    ret <- list(dates = ncInfo$dates, data = ncdata, lon = lon, lat = lat,
-                lon.pts = list.lonlat.pts$lon, lat.pts = list.lonlat.pts$lat)
-    Insert.Messages.Out(read.ncdf.parms$msg$end, TRUE, "s")
-    return(ret)
-}
-
-##############################################
-
-readNetCDFData2Points <- function(ncInfo, lonlatpts, GUI = TRUE){
-    ijx <- grid2pointINDEX(lonlatpts,
-                           list(lon = ncInfo$ncinfo$lon,
-                                lat = ncInfo$ncinfo$lat)
-                           )
-    
-    # #%REMOVE
-    transposeNCDFData <- transposeNCDFData
-    # #%REMOVE
+readNetCDFData2Points <- function(ncInfo, stnCoords, GUI = TRUE){
+    ncCoords <- ncInfo$ncinfo[c('lon', 'lat')]
+    ijx <- grid2pointINDEX(stnCoords, ncCoords)
 
     ncInfo <- ncInfo
-    parsL <- doparallel.cond(length(which(ncInfo$exist)) >= 180)
+    checkerFile <- file.path(dirname(ncInfo$ncfiles[1]), '.checker')
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    parsL <- doparallel.cond(length(which(ncInfo$exist)) >= 50)
     ncdata <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
                           progress = TRUE, FUN = function(jj)
     {
+        if(file.exists(checkerFile)) return(list(data = NULL, msg = NULL))
+
         xvar <- NA
         if(ncInfo$exist[jj]){
             nc <- try(ncdf4::nc_open(ncInfo$ncfiles[jj]), silent = TRUE)
-            if(inherits(nc, "try-error")) return(NA)
+            if(inherits(nc, "try-error")){
+                write('', checkerFile)
+                msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo$ncfiles[jj])
+                return(list(data = NULL, msg = msg))
+            }
             xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varid)
             ncdf4::nc_close(nc)
             if(ncInfo$ncinfo$nx != nrow(xvar) |
-               ncInfo$ncinfo$ny != ncol(xvar)) return(NA)
+               ncInfo$ncinfo$ny != ncol(xvar)){
+                write('', checkerFile)
+                msg <- paste('Grids do not match', ncInfo$ncfiles[jj])
+                return(list(data = NULL, msg = msg))
+            }
             xvar <- transposeNCDFData(xvar, ncInfo$ncinfo)
             xvar <- xvar[ijx]
         }
-        return(xvar)
+
+        return(list(data = xvar, msg = NULL))
     })
 
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    msgs <- lapply(ncdata, '[[', 'msg')
+    inull <- !sapply(msgs, is.null)
+    if(any(inull)){
+        msgs <- unlist(msgs[inull])
+        for(j in seq_along(msgs)) Insert.Messages.Out(msgs[j], TRUE, "e", GUI)
+        stop('Extracting netCDF data at station locations failed.')
+    }
+
+    ncdata <- lapply(ncdata, '[[', 'data')
     do.call(rbind, ncdata)
 }
 
-
-readNetCDFData2AggrBox <- function(ncInfo, boxregion, GUI = TRUE){
+readNetCDFData2AggrBox <- function(ncInfo, boxregion, spmethod = 'bilinear', GUI = TRUE){
     rlon <- range(ncInfo$ncinfo$lon)
+    dlon <- floor(diff(rlon)/boxregion$blon)
     rlat <- range(ncInfo$ncinfo$lat)
-    xlon <- seq(rlon[1], rlon[2], boxregion$blon)
-    xlat <- seq(rlat[1], rlat[2], boxregion$blat)
+    dlat <- floor(diff(rlat)/boxregion$blat)
+    xlon <- seq(rlon[1], rlon[2], length.out = dlon)
+    xlat <- seq(rlat[1], rlat[2], length.out = dlat)
 
-    spxygrd <- defSpatialPixels(ncInfo$ncinfo[c('lon', 'lat')])
-    spxygrd$z <- seq_along(spxygrd)
-    spxygrd <- raster::raster(spxygrd)
-    spxybox <- defSpatialPixels(list(lon = xlon, lat = xlat))
+    boxCoords <- list(lon = xlon, lat = xlat)
+    ncCoords <- ncInfo$ncinfo[c('lon', 'lat')]
+    spxybox <- defSpatialPixels(boxCoords)
     spxybox <- methods::as(spxybox, "SpatialPolygons")
-    ij2xtr <- raster::extract(spxygrd, spxybox, weights = TRUE,
-                              normalizeWeights = TRUE, cellnumbers = TRUE)
 
-    # #%REMOVE
-    transposeNCDFData <- transposeNCDFData
-    # #%REMOVE
+    if(spmethod == 'weightedAverage'){
+        spxygrd <- defSpatialPixels(ncCoords)
+        spxygrd$z <- seq_along(spxygrd)
+        spxygrd <- raster::raster(spxygrd)
+        ij2xtr <- raster::extract(spxygrd, spxybox, weights = TRUE,
+                                  normalizeWeights = TRUE, cellnumbers = TRUE)
+    }
 
+    ####
     ncInfo <- ncInfo
-    parsL <- doparallel.cond(length(which(ncInfo$exist)) >= 180)
+    spmethod <- spmethod
+    checkerFile <- file.path(dirname(ncInfo$ncfiles[1]), '.checker')
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    parsL <- doparallel.cond(length(which(ncInfo$exist)) >= 50)
     ncdata <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
                           progress = TRUE, FUN = function(jj)
     {
+        if(file.exists(checkerFile)) return(list(data = NULL, msg = NULL))
+
         xvar <- NA
         if(ncInfo$exist[jj]){
             nc <- try(ncdf4::nc_open(ncInfo$ncfiles[jj]), silent = TRUE)
-            if(inherits(nc, "try-error")) return(NA)
+            if(inherits(nc, "try-error")){
+                write('', checkerFile)
+                msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo$ncfiles[jj])
+                return(list(data = NULL, msg = msg))
+            }
             xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varid)
             ncdf4::nc_close(nc)
             if(ncInfo$ncinfo$nx != nrow(xvar) |
-               ncInfo$ncinfo$ny != ncol(xvar)) return(NA)
-
+               ncInfo$ncinfo$ny != ncol(xvar)){
+                write('', checkerFile)
+                msg <- paste('Grids do not match', ncInfo$ncfiles[jj])
+                return(list(data = NULL, msg = msg))
+            }
             xvar <- transposeNCDFData(xvar, ncInfo$ncinfo)
-            xvar <- sapply(seq_along(ij2xtr), function(ii){
-                ix <- ij2xtr[[ii]]
-                mat <- xvar[ix[, "value"]]
-                if(nrow(ix) > 1){
-                    mat <- mat * ix[, "weight"]
-                    mat <- mat[!is.na(mat)]
-                    mat <- if(length(mat) > 0) sum(mat) else NA
-                }
-                return(mat)
-            })
+
+            if(spmethod == 'bilinear'){
+                tmp <- c(ncCoords, list(z = xvar))
+                xvar <- cdt.interp.surface.grid(tmp, boxCoords)
+                xvar <- c(xvar$z)
+            }else{
+                xvar <- sapply(seq_along(ij2xtr), function(ii){
+                    ix <- ij2xtr[[ii]]
+                    mat <- xvar[ix[, "value"]]
+                    if(nrow(ix) > 1){
+                        mat <- mat * ix[, "weight"]
+                        mat <- mat[!is.na(mat)]
+                        mat <- if(length(mat) > 0) sum(mat) else NA
+                    }
+                    return(mat)
+                })
+            }
         }
-        return(xvar)
+
+        return(list(data = xvar, msg = NULL))
     })
 
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    msgs <- lapply(ncdata, '[[', 'msg')
+    inull <- !sapply(msgs, is.null)
+    if(any(inull)){
+        msgs <- unlist(msgs[inull])
+        for(j in seq_along(msgs)) Insert.Messages.Out(msgs[j], TRUE, "e", GUI)
+        stop('Aggregating netCDF data into box failed.')
+    }
+
+    ncdata <- lapply(ncdata, '[[', 'data')
     ncdata <- do.call(rbind, ncdata)
+
     list(lon = xlon, lat = xlat, spbox = spxybox, data = ncdata)
 }
 
-readNetCDFData2PtsAggrBox <- function(ncInfo, lonlatpts, boxregion, GUI = TRUE){
-    ijx <- grid2pointINDEX(lonlatpts,
-                           list(lon = ncInfo$ncinfo$lon,
-                                lat = ncInfo$ncinfo$lat)
-                           )
-    rlon <- range(ncInfo$ncinfo$lon)
-    rlat <- range(ncInfo$ncinfo$lat)
-    xlon <- seq(rlon[1], rlon[2], boxregion$blon)
-    xlat <- seq(rlat[1], rlat[2], boxregion$blat)
+readNetCDFData2Directory <- function(ncInfo, datadir, GUI = TRUE){
+    ncCoords <- ncInfo$ncinfo[c('lon', 'lat')]
+    newCoords <- ncInfo$ncgrid[c('lon', 'lat')]
+    crdGRD <- expand.grid(newCoords)
+    seqGRD <- seq(nrow(crdGRD))
+    chunks <- split(seqGRD, ceiling(seqGRD / 500))
 
-    spxygrd <- defSpatialPixels(ncInfo$ncinfo[c('lon', 'lat')])
-    spxygrd$z <- seq_along(spxygrd)
-    spxygrd <- raster::raster(spxygrd)
-    spxybox <- defSpatialPixels(list(lon = xlon, lat = xlat))
-    spxybox <- methods::as(spxybox, "SpatialPolygons")
-    ij2xtr <- raster::extract(spxygrd, spxybox, weights = TRUE,
-                              normalizeWeights = TRUE, cellnumbers = TRUE)
-
-    # #%REMOVE
-    transposeNCDFData <- transposeNCDFData
-    # #%REMOVE
-
+    ####
     ncInfo <- ncInfo
-    parsL <- doparallel.cond(length(which(ncInfo$exist)) >= 180)
-    ncdata <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
+    datadir <- datadir
+    checkerFile <- file.path(dirname(ncInfo$ncfiles[1]), '.checker')
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    parsL <- doparallel.cond(length(which(ncInfo$exist)) >= 50)
+    msgs <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
                           progress = TRUE, FUN = function(jj)
     {
-        xvar <- NA
+        if(file.exists(checkerFile)) return(NULL)
+
         if(ncInfo$exist[jj]){
             nc <- try(ncdf4::nc_open(ncInfo$ncfiles[jj]), silent = TRUE)
-            if(inherits(nc, "try-error")) return(NA)
+            if(inherits(nc, "try-error")){
+                write('', checkerFile)
+                msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo$ncfiles[jj])
+                return(msg)
+            }
             xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varid)
             ncdf4::nc_close(nc)
             if(ncInfo$ncinfo$nx != nrow(xvar) |
-               ncInfo$ncinfo$ny != ncol(xvar)) return(NA)
-
+               ncInfo$ncinfo$ny != ncol(xvar)){
+                write('', checkerFile)
+                msg <- paste('Grids do not match', ncInfo$ncfiles[jj])
+                return(msg)
+            }
             xvar <- transposeNCDFData(xvar, ncInfo$ncinfo)
 
-            xvar1 <- xvar[ijx]
-            xvar2 <- sapply(seq_along(ij2xtr), function(ii){
-                ix <- ij2xtr[[ii]]
-                mat <- xvar[ix[, "value"]]
-                if(nrow(ix) > 1){
-                    mat <- mat * ix[, "weight"]
-                    mat <- mat[!is.na(mat)]
-                    mat <- if(length(mat) > 0) sum(mat) else NA
-                }
-                return(mat)
-            })
+            if(ncInfo$ncgrid$regrid){
+                tmp <- c(ncCoords, list(z = xvar))
+                xvar <- cdt.interp.surface.grid(tmp, newCoords)
+                xvar <- xvar$z
+            }
 
-            xvar <- c(xvar1, xvar2)
+            lchunks <- sample(seq_along(chunks), length(chunks))
+            for(l in lchunks){
+                tmp <- round(xvar[chunks[[l]]], 2)
+                tmp <- c(ncInfo$dates[jj], tmp)
+                tmp <- paste0(tmp, collapse = ',')
+                tmp <- paste0(tmp, '\n')
+                datafile <- file.path(datadir, paste0('chunk_', l))
+                cat(tmp, file = datafile, sep = '\n', append = TRUE)
+            }
         }
-        return(xvar)
+
+        return(NULL)
     })
 
-    ncdata <- do.call(rbind, ncdata)
-    xy <- expand.grid(xlon, xlat)
-    lon <- c(lonlatpts$lon, xy[, 1])
-    lat <- c(lonlatpts$lat, xy[, 2])
-    index <- c(rep(1, length(lonlatpts$lon)), rep(2, length(xlon) * length(xlat)))
+    if(file.exists(checkerFile)) unlink(checkerFile)
 
-    list(lon = lon, lat = lat, index = index, data = ncdata)
+    inull <- !sapply(msgs, is.null)
+    if(any(inull)){
+        msgs <- unlist(msgs[inull])
+        for(j in seq_along(msgs)) Insert.Messages.Out(msgs[j], TRUE, "e", GUI)
+        stop('Formatting netCDF data into chunks failed.')
+    }
+
+    Insert.Messages.Out("Compress chunks data", TRUE, "i", GUI)
+
+    parsL <- doparallel.cond(length(chunks) >= 50)
+    ret <- cdt.foreach(seq_along(chunks), parsL, GUI,
+                       progress = TRUE, FUN = function(j)
+    {
+        datafile <- file.path(datadir, paste0('chunk_', j))
+        tmp <- readLines(datafile)
+        unlink(datafile)
+        tmp <- trimws(tmp)
+        tmp <- tmp[tmp != ""]
+        con <- gzfile(datafile, open = "wb", compression = 9)
+        cat(tmp, file = con, sep = '\n')
+        close(con)
+    })
+
+    Insert.Messages.Out("Compressing chunks data done", TRUE, "s", GUI)
+
+    out <- list(lon = ncInfo$ncgrid$lon, lat = ncInfo$ncgrid$lat, chunks = chunks)
+
+    indexfile <- file.path(datadir, 'index.rds')
+    saveRDS(out, file = indexfile)
+
+    return(out)
 }
-

@@ -75,6 +75,7 @@ merge2CDTdata_getParams <- function(){
             ii <- get.id.datasets(bt.Remove)
             tkdestroy(.cdtData$GalParams$DATASETs[[ii]]$tcl$frame)
             .cdtData$GalParams$DATASETs[[ii]] <- NULL
+            .cdtData$GalParams$inputs[[paste0('file', ii)]] <- NULL
 
             for(i in seq_along(.cdtData$GalParams$DATASETs)){
                 textLab <- paste0(lang.dlg[['label']][['1']], " #", i)
