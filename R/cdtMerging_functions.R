@@ -1,247 +1,8 @@
 
-cdtMerging <- function(stnData, ncInfo, xy.grid, params, variable,
-                       demData, outdir, mask = NULL, GUI = TRUE)
+merging.functions <- function(locations.stn, newgrid, params, formuleRK,
+                              nc.date, outdir, mrgOpts, gridBuffer)
 {
     log.file <- file.path(outdir, "log_file.txt")
-    ncinfo <- ncInfo$ncinfo
-    varinfo <- switch(variable,
-                      "rain" = list(name = "precip",
-                                    units = "mm",
-                                    missval = -99,
-                                    longname = "Merged Station-Satellite Rainfall",
-                                    prec = {
-                                            if(params$prec$from.data)
-                                                ncinfo$varinfo$prec
-                                            else
-                                                params$prec$prec
-                                           }
-                                    ),
-                      "temp" = list(name = "temp",
-                                    units = "C",
-                                    missval = -99,
-                                    longname = "Downscaled Temperature Reanalysis merged with station",
-                                    prec = ncinfo$varinfo$prec
-                                    ),
-                      "rh" = list(name = "rh",
-                                  units = "%",
-                                  missval = -99,
-                                  longname = "Downscaled Relative Humidity Reanalysis merged with station",
-                                  prec = ncinfo$varinfo$prec
-                                 ),
-                      "pres" = list(name = "pres",
-                                    units = "hPa",
-                                    missval = -99,
-                                    longname = "Downscaled Surface Pressure Reanalysis merged with station",
-                                    prec = ncinfo$varinfo$prec
-                                   ),
-                      "prmsl" = list(name = "prmsl",
-                                    units = "hPa",
-                                    missval = -99,
-                                    longname = "Downscaled MSL Pressure Reanalysis merged with station",
-                                    prec = ncinfo$varinfo$prec
-                                   ),
-                      "rad" = list(name = "rad",
-                                   units = "W/m2",
-                                   missval = -99,
-                                   longname = "Downscaled Radiation Reanalysis merged with station",
-                                   prec = ncinfo$varinfo$prec
-                                 )
-                    )
-
-    params$MRG$limits <- switch(variable,
-                                "rain" = c(0, 5000),
-                                "temp" = c(-40, 50),
-                                "rh" = c(0, 100),
-                                "pres" = c(700, 1100),
-                                "prmsl" = c(850, 1100),
-                                "rad" = c(0, 1300),
-                                NULL)
-
-    ##################
-
-    dx <- ncdf4::ncdim_def("Lon", "degree_east", xy.grid$lon)
-    dy <- ncdf4::ncdim_def("Lat", "degree_north", xy.grid$lat)
-    shuffle <- if(varinfo$prec %in% c("integer", "short")) TRUE else FALSE
-    grd.nc.out <- ncdf4::ncvar_def(varinfo$name, varinfo$units, list(dx, dy), varinfo$missval,
-                                   longname = varinfo$longname, prec = varinfo$prec,
-                                   shuffle = shuffle, compression = 9)
-
-    ##################
-
-    newgrid <- defSpatialPixels(xy.grid)
-
-    nmin <- ceiling(params$MRG$pass * params$interp$nmin)
-    nmax <- ceiling(params$MRG$pass * params$interp$nmax)
-    nmax <- ifelse(nmax - nmin < 2, nmax + 2, nmax)
-    params$interp$nmin <- nmin
-    params$interp$nmax <- nmax
-
-    if(!params$interp$vargrd){
-        maxdist <- params$MRG$pass * params$interp$maxdist
-        params$interp$maxdist <- maxdist
-    }else{
-        bx <- diff(sapply(stnData[c('lon', 'lat')], range))
-        # dg <- sqrt(bx[1]^2 + bx[2]^2) / 4
-        dg <- sqrt(bx[1]^2 + bx[2]^2)
-        dg <- 0.08 * dg + 0.199
-        params$interp$maxdist <- params$MRG$pass * dg
-    }
-
-    locations.stn <- as.data.frame(stnData[c('lon', 'lat')])
-    sp::coordinates(locations.stn) <- c('lon', 'lat')
-    ijs <- sp::over(locations.stn, newgrid)
-    locations.stn$stn <- rep(NA, length(locations.stn))
-
-    ##################
-
-    xy.data <- defSpatialPixels(ncinfo[c('lon', 'lat')])
-
-    is.regridNCDF <- is.diffSpatialPixelsObj(newgrid, xy.data, tol = 1e-07)
-    ijnc <- NULL
-    if(is.regridNCDF) ijnc <- sp::over(newgrid, xy.data)
-
-    ##################
-
-    is.auxvar <- rep(FALSE, 5)
-    formuleRK <- NULL
-    if(params$MRG$method == "RK"){
-        auxvar <- c('dem', 'slp', 'asp', 'alon', 'alat')
-        is.auxvar <- unlist(params$auxvar[1:5])
-        if(any(is.auxvar)){
-            formuleRK <- stats::formula(paste0('stn', '~', 'grd', '+',
-                                 paste(auxvar[is.auxvar], collapse = '+')))
-        }else{
-            formuleRK <- stats::formula(paste0('stn', '~', 'grd'))
-        }
-
-        if(is.auxvar['dem']) newgrid$dem <- c(demData$z)
-        if(is.auxvar['slope'] | is.auxvar['aspect']){
-            slpasp <- raster.slope.aspect(demData)
-            if(is.auxvar['slope']) newgrid$slp <- c(slpasp$slope)
-            if(is.auxvar['aspect']) newgrid$asp <- c(slpasp$aspect)
-        }
-        if(is.auxvar['lon']) newgrid$alon <- newgrid@coords[, 'lon']
-        if(is.auxvar['lat']) newgrid$alat <- newgrid@coords[, 'lat']
-        if(any(is.auxvar))
-            locations.stn@data <- newgrid@data[ijs, , drop = FALSE]
-    }
-
-    ##################
-
-    args <- methods::formalArgs(cdtMerging)
-    for(v in args) assign(v, get(v), envir = environment())
-
-    mrgOpts <- merging.options()
-
-    parsL <- doparallel.cond(length(ncInfo$ncfiles) > 20)
-    ret <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
-                       progress = TRUE, FUN = function(jj)
-    {
-        if(ncInfo$exist[jj]){
-            nc <- ncdf4::nc_open(ncInfo$ncfiles[jj])
-            nc.val <- ncdf4::ncvar_get(nc, varid = ncinfo$varid)
-            ncdf4::nc_close(nc)
-            nc.val <- transposeNCDFData(nc.val, ncinfo)
-        }else{
-            msg <- paste(ncInfo$dates[jj], ":", "no NetCDF data",
-                         "|", "no file generated", "\n")
-            cat(msg, file = log.file, append = TRUE)
-            return(-1)
-        }
-
-        if(all(is.na(nc.val))){
-            msg <- paste(ncInfo$dates[jj], ":", "all NetCDF data are missing",
-                         "|", "no file generated", "\n")
-            cat(msg, file = log.file, append = TRUE)
-            return(-1)
-        }
-
-        ######
-
-        newgrid$grd <- if(is.null(ijnc)) c(nc.val) else nc.val[ijnc]
-
-        donne.stn <- stnData$data[which(stnData$date == ncInfo$dates[jj]), , drop = FALSE]
-        if(nrow(donne.stn) == 0){
-            msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
-                         "No merging performed, output equals to the input NetCDF data", "\n")
-            cat(msg, file = log.file, append = TRUE)
-
-            nc.val <- newgrid$grd
-            dim(nc.val) <- newgrid@grid@cells.dim
-            write.merging.output(jj, nc.val, grd.nc.out, outdir,
-                                 varinfo, ncInfo, params, mask)
-            return(0)
-        }
-
-        locations.stn$stn <- as.numeric(donne.stn[1, ])
-        noNA <- !is.na(locations.stn$stn)
-        locations.stn <- locations.stn[noNA, ]
-        donne.len <- length(locations.stn)
-
-        if(donne.len == 0){
-            msg <- paste(ncInfo$dates[jj], ":", "no station data", "|",
-                         "No merging performed, output equals to the input NetCDF data", "\n")
-            cat(msg, file = log.file, append = TRUE)
-
-            nc.val <- newgrid$grd
-            dim(nc.val) <- newgrid@grid@cells.dim
-            write.merging.output(jj, nc.val, grd.nc.out, outdir,
-                                 varinfo, ncInfo, params, mask)
-            return(0)
-        }
-
-        if(donne.len > 0 & donne.len < mrgOpts$mrgMinNumberSTN){
-            msg <- paste(ncInfo$dates[jj], ":", "not enough station data", "|",
-                         "No merging performed, output equals to the input NetCDF data", "\n")
-            cat(msg, file = log.file, append = TRUE)
-
-            nc.val <- newgrid$grd
-            dim(nc.val) <- newgrid@grid@cells.dim
-            write.merging.output(jj, nc.val, grd.nc.out, outdir,
-                                 varinfo, ncInfo, params, mask)
-            return(0)
-        }
-
-        if(params$MRG$method == "RK" & any(is.auxvar)){
-            loc.data <- !is.na(locations.stn@data)
-            loc.data <- split(loc.data, col(loc.data))
-            nna <- Reduce("&", loc.data)
-            if(length(which(nna)) < mrgOpts$rkMinNumberSTN){
-                msg <- paste(ncInfo$dates[jj], ":", "not enough spatial points data", "|",
-                             "No merging performed, output equals to the input NetCDF data", "\n")
-                cat(msg, file = log.file, append = TRUE)
-
-                nc.val <- newgrid$grd
-                dim(nc.val) <- newgrid@grid@cells.dim
-                write.merging.output(jj, nc.val, grd.nc.out, outdir,
-                                     varinfo, ncInfo, params, mask)
-                return(0)
-            }
-        }
-
-        ######
-
-        out.mrg <- merging.functions(locations.stn, newgrid, params,
-                                     formuleRK, ncInfo$dates[jj],
-                                     log.file, mrgOpts)
-
-        write.merging.output(jj, out.mrg, grd.nc.out, outdir,
-                             varinfo, ncInfo, params, mask)
-
-        return(0)
-    })
-
-    ret <- do.call(c, ret)
-    if(any(ret == -1)) return(-1)
-    return(0)
-}
-
-###############################
-
-merging.functions <- function(locations.stn, newgrid, params,
-                              formuleRK, nc.date, log.file,
-                              mrgOpts)
-{
     spheric <- FALSE
     interp.method <- switch(params$MRG$method,
                             "CSc" = "cressman",
@@ -266,30 +27,9 @@ merging.functions <- function(locations.stn, newgrid, params,
         }
     }
 
-    ###############
-
-    saveGridBuffer <- mrgOpts$saveGridBuffer
-    dirGridBuffer <- mrgOpts$dirGridBuffer
-    fileGridBuffer <- ""
-
-    if(saveGridBuffer){
-        dirMthd <- paste0(params$MRG$method, "-", interp.method)
-        dirBuff <- file.path(dirGridBuffer, paste0("MRG_GRID_BUFFER_", dirMthd))
-        if(!dir.exists(dirBuff))
-            dir.create(dirBuff, showWarnings = FALSE, recursive = TRUE)
-
-        fileGridBuffer <- file.path(dirBuff, paste0("grid_buffer_", nc.date, ".rds"))
-    }
-
-    xy.grid <- create_grid_buffer(locations.stn, newgrid,
-                                  saveGridBuffer, fileGridBuffer,
-                                  mrgOpts$useLocalInterpolation,
-                                  mrgOpts$resCoarseGrid
-                                )
-
-    igrid <- xy.grid$igrid
-    icoarse <- xy.grid$icoarse
-    coarsegrid <- xy.grid$coarse
+    igrid <- gridBuffer$igrid
+    icoarse <- gridBuffer$icoarse
+    coarsegrid <- gridBuffer$coarse
 
     ###############
 
@@ -331,10 +71,11 @@ merging.functions <- function(locations.stn, newgrid, params,
                     sp.trend[ina.out] <- newdata0@data$grd[ina.out]
                     # sp.trend[ina.out] <- newgrid@data$grd[ina.out]
                     xres <- rep(NA, length(locations.stn))
-                    if(length(glm.stn$na.action) > 0)
+                    if(length(glm.stn$na.action) > 0){
                         xres[-glm.stn$na.action] <- glm.stn$residuals
-                    else
+                    }else{
                         xres <- glm.stn$residuals
+                    }
                 
                     # sp.trend <- sp.trend[igrid]
                     # xres <- xres[igrid]
@@ -349,7 +90,17 @@ merging.functions <- function(locations.stn, newgrid, params,
         loc.stn <- loc.stn['res']
 
         #########
+        ## move down to exclude coarse grid when computing vgm
+        if(mrgOpts$addCoarseGrid && length(coarsegrid) > 0){
+            coarse_interp <- coarsegrid
+            coarse_interp$res <- rep(0, length(coarse_interp))
+            row.names(loc.stn) <- 1:length(loc.stn)
+            row.names(coarse_interp) <- length(loc.stn) + (1:length(coarse_interp))
+            loc.stn <- rbind(sf::st_as_sf(loc.stn), sf::st_as_sf(coarse_interp))
+            loc.stn <- sf::as_Spatial(loc.stn)
+        }
 
+        #########
         vgm <- NULL
         if(interp.method == "okr"){
             calc.vgm <- if(length(loc.stn$res) > mrgOpts$vgmMinNumberSTN &
@@ -357,12 +108,21 @@ merging.functions <- function(locations.stn, newgrid, params,
             if(calc.vgm){
                 exp.var <- gstat::variogram(res~1, locations = loc.stn, cressie = TRUE)
                 vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(params$interp$vgm.model)), silent = TRUE)
+                msgErr <- NULL
                 if(inherits(vgm, "try-error")){
                     cat(paste(nc.date, ":", paste("Unable to compute variogram ( Error ) pass#", pass), "|",
                         "Interpolation using IDW", "\n"), file = log.file, append = TRUE)
                     interp.method <- "idw"
                     vgm <- NULL
+                    msgErr <- as.character(vgm)
                 }
+
+                if(params$interp$vgm_save){
+                    fileVgm <- file.path(outdir, params$interp$vgm_dir, paste0("variogram_", nc.date, "_", pass, ".rds"))
+                    outVgm <- list(data = loc.stn, sample = exp.var, vgm = vgm, valid = vgm$range[2] >= 0, msg = msgErr)
+                    saveRDS(outVgm, fileVgm)
+                }
+
                 if(vgm$range[2] < 0){
                     cat(paste(nc.date, ":", paste("Variogram range is negative pass#", pass), "|",
                         "Interpolation using IDW", "\n"), file = log.file, append = TRUE)
@@ -381,18 +141,6 @@ merging.functions <- function(locations.stn, newgrid, params,
         }
 
         #########
-
-        if(mrgOpts$addCoarseGrid & length(coarsegrid) > 0){
-            coarse_interp <- coarsegrid
-            coarse_interp$res <- rep(0, length(coarse_interp))
-            row.names(loc.stn) <- 1:length(loc.stn)
-            row.names(coarse_interp) <- length(loc.stn) + (1:length(coarse_interp))
-            loc.stn <- rbind(sf::st_as_sf(loc.stn), sf::st_as_sf(coarse_interp))
-            loc.stn <- sf::as_Spatial(loc.stn)
-        }
-
-        #########
-
         ## change maxdist Inf to finite value for interp other than idw and okr
         if(mrgOpts$useLocalInterpolation){
             nmin <- params$interp$nmin[pass]
@@ -432,7 +180,7 @@ merging.functions <- function(locations.stn, newgrid, params,
                 ## rfe data: fresh merged data
                 newdata0$grd <- out.mrg[igrid]
             }else{
-                ## rfe data: input gridded data
+                ## rfe data: input gridded data (default)
                 newdata0$grd <- newgrid@data$grd[igrid]
             }
             newdata0$rnr.grd <- ifelse(newdata0$grd < wet.day, 0, 1)
@@ -453,7 +201,7 @@ merging.functions <- function(locations.stn, newgrid, params,
                         ## rfe data: merged data
                         coarse_rnr$grd <- out.mrg[icoarse]
                     }else{
-                        ## rfe data: input data
+                        ## rfe data: input data (default)
                         coarse_rnr$grd <- newgrid@data$grd[icoarse]
                     }
 
@@ -499,13 +247,8 @@ merging.functions <- function(locations.stn, newgrid, params,
 
     #########
 
-    if(params$RnoR$use & mrgOpts$saveRnoR){
-        dirRnoR <- file.path(mrgOpts$dirRnoR, paste0('RnoR_DATA_', RnoRCutOff))
-        if(!dir.exists(dirRnoR))
-            dir.create(dirRnoR, showWarnings = FALSE, recursive = TRUE)
-
-        rnrfile <- file.path(dirRnoR, paste0('rnr_', nc.date, '.rds'))
-
+    if(params$RnoR$use && mrgOpts$saveRnoR){
+        rnrfile <- file.path(outdir, 'RAIN-NO-RAIN', paste0('rnr_', nc.date, '.rds'))
         xygrd <- lapply(as.list(data.frame(newgrid@coords)), unique)
         rnor <- list(x = xygrd$lon, y = xygrd$lat, z = RnoR_out, pass = RnoR_get)
         saveRDS(rnor, file = rnrfile)
@@ -565,29 +308,4 @@ merging.residuals.interp <- function(locations, newdata, interp.method,
     }
 
     return(interp.res)
-}
-
-###############################
-
-write.merging.output <- function(jj, out.mrg, grd.nc.out, outdir, 
-                                 varinfo, ncInfo, params, mask)
-{
-    if(!is.null(mask)) out.mrg[is.na(mask)] <- varinfo$missval
-
-    out.mrg[is.na(out.mrg)] <- varinfo$missval
-
-    year <- substr(ncInfo$dates[jj], 1, 4)
-    month <- substr(ncInfo$dates[jj], 5, 6)
-    if(params$period == 'daily'){
-        ncfile <- sprintf(params$output$format, year, month, substr(ncInfo$dates[jj], 7, 8))
-    }else if(params$period %in% c('pentad', 'dekadal')){
-        ncfile <- sprintf(params$output$format, year, month, substr(ncInfo$dates[jj], 7, 7))
-    }else ncfile <- sprintf(params$output$format, year, month)
-
-    out.nc.file <- file.path(outdir, ncfile)
-    nc <- ncdf4::nc_create(out.nc.file, grd.nc.out)
-    ncdf4::ncvar_put(nc, grd.nc.out, out.mrg)
-    ncdf4::nc_close(nc)
-
-    return(0)
 }

@@ -228,6 +228,7 @@ PlotOneNetCDFFileCmd <- function(){
             ncdata <- getNcdfOpenData(trimws(tclvalue(ncdf.file)))
             .cdtData$EnvData$ncData$map$x <- ncdata[[2]]$x
             .cdtData$EnvData$ncData$map$y <- ncdata[[2]]$y
+            .cdtData$EnvData$varinfo <- ncdata[[2]]$varinfo
 
             if(tclvalue(blankGrid) == "1"){
                 shpdata <- getShpOpenData(file.plotShp)[[2]]

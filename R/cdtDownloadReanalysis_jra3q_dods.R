@@ -136,6 +136,7 @@ jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 4, GUI = TRUE, verb
     query_time <- unname(do.call(c, lapply(req_time, '[[', 'qtime')))
     filenames <- unname(do.call(c, lapply(req_time, '[[', 'fname')))
     ncfiles_time <- filenames
+    pth_yrmo <- substr(start_mon, 1, 6)
 
     #############
 
@@ -147,7 +148,7 @@ jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 4, GUI = TRUE, verb
             endpoints <- paste0('jra3q.', opts$dap_path, '.', opts$jra_code[l], '.', opts$jra_var[l],
                                 '.', start_mon[j], '_', end_mon[j], '.nc.ascii?', opts$jra_var[l])
             endpoints <- paste0(endpoints, query_time[j], req_depth, query_lat)
-            dods <- paste(jra_dods, opts$dap_path, yrmo[j], endpoints, sep = '/')
+            dods <- paste(jra_dods, opts$dap_path, pth_yrmo[j], endpoints, sep = '/')
             sapply(seq_along(query_lon), function(i){
                 paste0(dods, query_lon[[i]])
             })

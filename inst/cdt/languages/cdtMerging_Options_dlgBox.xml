@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Merging Options </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Gaussian quadrature </text>
+            </option>
+            <option id="2">
+                <text lang="en"> User defined block </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Logit model </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Additive model </text>
+            </option>
+        </combobox>
+        <checkbutton id="1">
+            <text lang="en"> Use local interpolation </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Add coarse grid to interpolate the residuals </text>
+        </checkbutton>
+        <checkbutton id="3">
+            <text lang="en"> Save the coarse grid data into files </text>
+        </checkbutton>
+        <checkbutton id="4">
+            <text lang="en"> Add coarse grid to interpolate the mask </text>
+        </checkbutton>
+        <checkbutton id="5">
+            <text lang="en"> Use the merged data from previous run </text>
+        </checkbutton>
+        <checkbutton id="6">
+            <text lang="en"> Save the Rain-no-Rain mask into files </text>
+        </checkbutton>
+        <button id="1">
+            <text lang="en"> netCDF Variables Definition </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Minimum number of stations to perform the merging </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Minimum number of stations to perform the regression kriging </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Minimum number of stations to compute the variogram </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Inverse distance weighting power </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Modified Shepard weighting power </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Barnes interpolation weighting power </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Method for the block mean value </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Latitude </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Width </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Step </text>
+        </label>
+        <label id="12">
+            <text lang="en"> Rain-no-Rain mask model </text>
+        </label>
+        <label id="13">
+            <text lang="en"> Decision boundaries method </text>
+        </label>
+        <label id="14">
+            <text lang="en"> Number of pixels to smooth the mask </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> If the number of stations is less than this value,\n then no merging will be performed and the input netCDF will be taken </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of stations to perform the merging </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> If the number of stations is less than this value,\n then the merging method will be replaced by a simple bias adjustment </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of stations to perform a regression kriging </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> If the number of stations is less than this value,\n then the variogram will not be computed and the interpolation method will be replaced by IDW </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Minimum number of station to compute the empirical variogram </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> If unchecked a global interpolation will be use and the arguments "nmin", "nmax" and "maxdist" \n from interpolation method will not be considered </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to use a local interpolation </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> The coarse grid will be created by resampling the grid of the input data.\n CDT uses an additive model, the residual values at the coarse grid will be set to zero </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to add coarse grid around the station locations convex hull </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Check the box save the buffer of coarse grid used to interpolate the residuals </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box save the buffer of coarse grid used to interpolate the residuals </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> The method to use to create the block estimation \n when the box for block mean values from the interpolation method is checked </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The method to use to create the block estimation \n when the box for block mean values from the interpolation method is checked </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Width in decimal degrees for longitude </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Width in decimal degrees for longitude </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Width in decimal degrees for latitude </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Width in decimal degrees for latitude </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Step in decimal degrees for longitude. The width will be divided by the step </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Step in decimal degrees for longitude </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Step in decimal degrees for latitude. The width will be divided by the step </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Step in decimal degrees for latitude </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Model to use to compute the rain-no-rain mask </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Model to use to compute the rain-no-rain mask </text>
+            </tooltip>
+        </content>
+        <content id="13">
+            <status>
+                <text lang="en"> The method to be used to define the decision boundaries of the rain-no-rain mask.\n Option 1: mask = if(rnr &lt; 0.5) 0 else 1 \n Option 2: mask = if(rnr &lt; 0.1) 0 else rnr \n Option 3: mask = if(rnr &lt; 0.25) 0 else if(rnr &gt;= 0.25 &amp; rnr &lt; 0.75) rnr else 1 </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The method to be used to define the decision boundaries of the rain-no-rain mask </text>
+            </tooltip>
+        </content>
+        <content id="14">
+            <status>
+                <text lang="en"> Use the coarse grid to create the rain-no-rain mask.\n If checked, the option "Add coarse grid" must be checked </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Use the coarse grid to create the rain-no-rain mask.\n If checked, the option "Add coarse grid" must be checked </text>
+            </tooltip>
+        </content>
+        <content id="15">
+            <status>
+                <text lang="en"> Check the box to use the merged data from the previous run to compute the rain-no-rain mask.\n If unchecked the input gridded rainfall data is used </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to use the merged data from the previous run to compute the rain-no-rain mask.\n If unchecked the input gridded rainfall data is used </text>
+            </tooltip>
+        </content>
+        <content id="16">
+            <status>
+                <text lang="en"> The number of pixels from the target pixel to be used to smooth the rain-no-rain mask </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The number of pixels from the target pixel to be used to smooth the rain-no-rain mask </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> The width must be greater than or equal to the step </text>
+        </content>
+        <content id="2">
+            <text lang="en"> "Add coarse grid to interpolate the residuals" must be checked, if you want to use the coarse grid to create the mask </text>
+        </content>
+    </message>
+</dialog_box>

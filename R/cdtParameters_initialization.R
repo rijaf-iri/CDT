@@ -193,19 +193,6 @@ cdt.init.params <- function(action, tstep){
 
     #################################################################
 
-    ## Filling missing dekadal temperature values
-    if(action == 'fill.temp'){
-        ret.params <- list(action = action, tstep = tstep,
-                           NCDF = list(dir = "", format = "tmax_adj_%s%s%s.nc", sample = ""),
-                           STN.file = "", out.file = "",
-                           Fill.Date.Range = date.range,
-                           Fill.Months = 1:12,
-                           Fill.Params = list(min.length = 15, dek.windows = 10)
-                        )
-    }
-
-    #################################################################
-
     ## Conversion to CPT data format
     if(action == 'convert.CPTdata'){
         ret.params <- list(action = action,
@@ -347,15 +334,15 @@ cdt.init.params <- function(action, tstep){
         ret.params <- list(action = action, period = tstep, STN.file = '',
                            base.period = list(all.years = TRUE, start.year = 1991, end.year = 2020, min.year = 15),
                            INPUT = list(dir = "", sample = "", format = input_format[1]),
-                           BIAS = list(method = "mbvar", min.length = 10,
-                                       distr.name = input_format[2],
-                                       blon = 1, blat = 1),
+                           BIAS = list(method = "mbvar", min.length = 10, distr.name = input_format[2],
+                                       ts.support = 'rectbox', blon = 1, blat = 1,
+                                       chunks.exist = FALSE, chunks.dir = ""),
                            interp = list(method = "idw", nmin = 3, nmax = 9, maxdist = 2.5,
                                          minstn = 10, use.block = TRUE, demfile = "",
                                          vgm.model = c("Sph", "Exp", "Gau", "Pen")),
                            grid = list(from = 'data', ncfile = "",
                                        bbox = c(.cdtData$Config$region, reslon = 0.1, reslat = 0.1)),
-                           output = list(dir = getwd(), format = "STN_GRID_Bias_%s")
+                           output = list(dir = getwd())
                           )
 
         if(action == 'coefbias.wind'){
@@ -390,8 +377,7 @@ cdt.init.params <- function(action, tstep){
 
         ret.params <- list(action = action, period = tstep, date.range = date.range,
                            INPUT = list(dir = "", sample = "", format = io_format[1]),
-                           BIAS = list(method = "mbvar", dir = "",
-                                       format = "STN_GRID_Bias_%s.nc"),
+                           BIAS = list(method = "mbvar", dir = ""),
                            output = list(dir = getwd(), format = io_format[2])
                           )
 
@@ -422,7 +408,7 @@ cdt.init.params <- function(action, tstep){
                             'merge.wind' = c("wspd_adj_%s%s%s.nc", "wspd_mrg_%s%s%s.nc"),
                             NULL)
 
-        ret.params <- list(action = action, period = tstep,
+        ret.params <- list(action = action, period = tstep, minhour = 1,
                            date.range = date.range, STN.file = '',
                            INPUT = list(dir = "", sample = "", format = io_format[1]),
                            MRG = list(method = "SBA", nrun = 3, pass = c(1, 0.75, 0.5)),
@@ -479,7 +465,7 @@ cdt.init.params <- function(action, tstep){
                                'crossv.wind' = "wspd_adj_%s%s%s.nc",
                                NULL)
 
-        ret.params <- list(action = action, period = tstep,
+        ret.params <- list(action = action, period = tstep, minhour = 1,
                            date.range = date.range, STN.file = '', outdir = "",
                            INPUT = list(dir = "", sample = "", format = "rr_adj_%s%s%s.nc"),
                            MRG = list(method = "SBA", nrun = 3, pass = c(1, 0.75, 0.5)),

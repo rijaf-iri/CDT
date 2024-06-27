@@ -25,7 +25,7 @@
             <text lang="en"> Bias method </text>
         </label>
         <label id="2">
-            <text lang="en"> Directory of bias files </text>
+            <text lang="en"> Directory of bias files (BIAS_DATA) </text>
         </label>
         <label id="3">
             <text lang="en"> Directory containing the netCDF files </text>
@@ -64,10 +64,10 @@
         </content>
         <content id="4">
             <status>
-                <text lang="en"> Enter the full path to the directory containing the bias files </text>
+                <text lang="en"> Enter the full path to the directory "BIAS_DATA" containing the bias files </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to the directory containing the bias files </text>
+                <text lang="en"> Enter the full path to the directory "BIAS_DATA" containing the bias files </text>
             </tooltip>
         </content>
         <content id="5">

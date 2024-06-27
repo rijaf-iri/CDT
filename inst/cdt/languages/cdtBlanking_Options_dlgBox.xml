@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Blanking Options </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> CDT default buffer </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Defined by user </text>
+            </option>
+        </combobox>
+        <label id="1">
+            <text lang="en"> Buffer method </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Buffer width </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> CDT default buffer: a buffer of 4 times of the spatial resolution of the gridded data is used.\n Defined by user: the width of the buffer will be specified by the user </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the method to set the width of buffer outside the polygons boundaries </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Specify the width of the buffer outside the polygons (in decimal degree) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Specify the width of the buffer outside the polygons (in decimal degree) </text>
+            </tooltip>
+        </content>
+    </help>
+</dialog_box>

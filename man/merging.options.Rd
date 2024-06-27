@@ -28,13 +28,10 @@ Available options are
   \item{\code{powerWeightShepard}: }{numeric, modified Shepard weighting power}
   \item{\code{powerWeightBarnes}: }{numeric, Barnes interpolation weighting power}
   \item{\code{addCoarseGrid}: }{logical, add a coarse grid to interpolate the residuals.
-         The coarse grid will be created by resampling the grid of the input data and providing the resolution with \code{resCoarseGrid}.
+         The coarse grid will be created by resampling the grid of the input data.
          As CDT uses an additive model, the residual values at the coarse grid will be set to zero}
-  \item{\code{resCoarseGrid}: }{numeric, the resolution of the coarse grid in degree decimal.}
   \item{\code{saveGridBuffer}: }{logical, save the buffer of coarse grid used to interpolate the residuals. Default is \code{FALSE}}
-  \item{\code{dirGridBuffer}: }{character, in case \code{saveGridBuffer} is \code{TRUE}, the full path to the directory to save the buffer data}
   \item{\code{saveRnoR}: }{logical, save the rain-no-rain mask. Default is \code{FALSE}}
-  \item{\code{dirRnoR}: }{character, in case \code{saveRnoR} is \code{TRUE}, the full path to the directory to save the mask data}
   \item{\code{RnoRModel}: }{character, model to use to compute the rain-no-rain mask. Options are: \code{"logit"}, \code{"additive"}. Default is \code{"logit"}}
   \item{\code{RnoRCutOff}: }{integer, the method to be used to define the decision boundaries of the rain-no-rain mask. Options are: \code{1, 2, 3}
        \itemize{
@@ -88,5 +85,6 @@ Available options are
             \item{\code{"userdefined"}: }{vector of length 4 in the form \code{c(width_x, by_x, width_y, by_y)}}
        }
    }
+   \item{\code{netCDFDataDef}: }{named list, netCDF variable definition}
 }
 }

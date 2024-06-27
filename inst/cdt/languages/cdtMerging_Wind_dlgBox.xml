@@ -369,61 +369,112 @@
     </help>
     <message>
         <content id="1">
-            <text lang="en"> Select the file containing the station data </text>
+            <text lang="en"> Select the file containing the station wind speed data </text>
         </content>
         <content id="2">
-            <text lang="en"> Browse or enter the directory containing the RFE files </text>
+            <text lang="en"> Browse or enter the directory containing the netCDF files for the wind speed </text>
         </content>
         <content id="3">
             <text lang="en"> Browse or enter the path to directory to save results </text>
         </content>
         <content id="4">
-            <text lang="en"> You have to set the netCDF files parameters </text>
+            <text lang="en"> Select the file containing the station data for the U-component of wind </text>
         </content>
         <content id="5">
-            <text lang="en"> No shapefile provided </text>
+            <text lang="en"> Select the file containing the station data for the V-component of wind </text>
         </content>
         <content id="6">
-            <text lang="en"> Number of run is not equal to the number of pass ratio </text>
+            <text lang="en"> Browse or enter the directory containing the netCDF files for U and V components of wind </text>
         </content>
         <content id="7">
-            <text lang="en"> You have to provide DEM data in netCDF format </text>
+            <text lang="en"> Browse or enter the directory containing the netCDF files for the U-component of wind </text>
         </content>
         <content id="8">
-            <text lang="en"> Rainfall merging finished successfully </text>
+            <text lang="en"> Browse or enter the directory containing the netCDF files for the V-component of wind </text>
         </content>
         <content id="9">
-            <text lang="en"> Rainfall merging failed </text>
+            <text lang="en"> Invalid output netCDF filename format </text>
         </content>
         <content id="10">
-            <text lang="en"> Merging data ... </text>
+            <text lang="en"> The number of %s must be </text>
         </content>
         <content id="11">
-            <text lang="en"> Data preparation ... </text>
+            <text lang="en"> Number of run is not equal to the number of pass ratio </text>
         </content>
         <content id="12">
-            <text lang="en"> No RFE data sample found </text>
+            <text lang="en"> You have to provide DEM data in netCDF format </text>
         </content>
         <content id="13">
-            <text lang="en"> No elevation data found </text>
+            <text lang="en"> No shapefile provided </text>
         </content>
         <content id="14">
-            <text lang="en"> Unable to read the netCDF file to use to extract the grid </text>
+            <text lang="en"> Merging finished successfully </text>
         </content>
         <content id="15">
-            <text lang="en"> RFE data not found </text>
+            <text lang="en"> Merging failed </text>
         </content>
         <content id="16">
-            <text lang="en"> Data preparation done </text>
+            <text lang="en"> Merging data ... </text>
         </content>
         <content id="17">
-            <text lang="en"> Merge data ... </text>
+            <text lang="en"> Data preparation ... </text>
         </content>
-        <content id="18">
-            <text lang="en"> Unable to merge some files, for details see </text>
+        <content id="18-1">
+            <text lang="en"> No wind speed netCDF data sample found </text>
+        </content>
+        <content id="18-2">
+            <text lang="en"> No wind U and V components netCDF data sample found </text>
+        </content>
+        <content id="18-3">
+            <text lang="en"> No wind U component netCDF data sample found </text>
+        </content>
+        <content id="18-4">
+            <text lang="en"> No wind V component netCDF data sample found </text>
         </content>
         <content id="19">
+            <text lang="en"> No elevation data found </text>
+        </content>
+        <content id="20">
+            <text lang="en"> Unable to read the netCDF file to use to extract the grid </text>
+        </content>
+        <content id="21-1">
+            <text lang="en"> Wind speed netCDF files not found </text>
+        </content>
+        <content id="21-2">
+            <text lang="en"> Wind U and V components netCDF files not found </text>
+        </content>
+        <content id="21-3">
+            <text lang="en"> Wind U component netCDF files not found </text>
+        </content>
+        <content id="21-4">
+            <text lang="en"> Wind V component netCDF files not found </text>
+        </content>
+        <content id="22">
+            <text lang="en"> Data preparation done </text>
+        </content>
+        <content id="23">
+            <text lang="en"> Merge data ... </text>
+        </content>
+        <content id="24">
+            <text lang="en"> Unable to merge some files, for details see </text>
+        </content>
+        <content id="25">
             <text lang="en"> Merging data done </text>
+        </content>
+        <content id="26">
+            <text lang="en"> Unable to open file containing the station data for the U-component of wind </text>
+        </content>
+        <content id="27">
+            <text lang="en"> Unable to open file containing the station data for the V-component of wind </text>
+        </content>
+        <content id="28">
+            <text lang="en"> The stations ID of the wind U and V components do not match </text>
+        </content>
+        <content id="29">
+            <text lang="en"> The stations dates of the wind U and V components do not overlap </text>
+        </content>
+        <content id="30">
+            <text lang="en"> The grid of the wind U and V components do not match </text>
         </content>
     </message>
 </dialog_box>

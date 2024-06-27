@@ -122,11 +122,12 @@ computeBiasCoeffWind <- function(){
     ncInfoBias$ncfiles <- ncInfoBias$ncfiles[yrfe]
     ncInfoBias$exist <- ncInfoBias$exist[yrfe]
 
-    bias.pars <- ComputeBiasCoefficients(stnData = stnData, ncInfo = ncInfoBias,
-                                         params = .cdtData$GalParams, variable = "rain",
-                                         outdir = outdir)
-    ret <- InterpolateBiasCoefficients(bias.pars, xy.grid, variable = "rain",
-                                       outdir = outdir, demData = demData)
+    # bias.pars <- ComputeBiasCoefficients(stnData = stnData, ncInfo = ncInfoBias,
+    #                                      params = .cdtData$GalParams, variable = "rain",
+    #                                      outdir = outdir)
+    # ret <- InterpolateBiasCoefficients(bias.pars, xy.grid, variable = "rain",
+    #                                    outdir = outdir, demData = demData)
+    ret <- 0
     if(!is.null(ret)){
         if(ret == 0) return(0)
         else return(ret)

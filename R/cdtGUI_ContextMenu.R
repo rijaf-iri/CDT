@@ -461,18 +461,6 @@ cdtMainContextMenu <- function(){
                 grads_create.ctl_getParams()
             })
 
-        # ##########
-        # tkadd(menu.dataprep, "separator")
-
-        # ##########
-        # tkadd(menu.dataprep, "command", label = lang.menu[["data.preparation"]][["8"]],
-        #       command = function()
-        # {
-        #     refreshCDT(staterun = "normal")
-        #     initialize.parameters('fill.temp', 'dekadal')
-        #     fill_Miss_DekTemp()
-        # })
-
     ####################################
 
     menu.qchom <- tkmenu(top.menu, tearoff = FALSE, relief = "flat")
@@ -970,6 +958,49 @@ cdtMainContextMenu <- function(){
                 initialize.parameters('crossv.wind', 'dekadal')
                 crossValidationInfoWind()
             })
+
+        # ##########
+        # tkadd(menu.mrg, "separator")
+
+        # ##########
+        # tkadd(menu.mrg, "command", label = lang.menu[["merging.data"]][["7"]],
+        #       command = function()
+        # {
+        #     refreshCDT()
+        #     spinbox.state(state = 'normal')
+        #     if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+        #         # PlotSeqNetCDFFilesCmd()
+        #         .cdtEnv$tcl$data$lcmd.frame <- 1
+        #     }
+        # })
+
+        # ##########
+        # tkadd(menu.mrg, "separator")
+
+        # tkadd(menu.mrg, "command", label = lang.menu[["merging.data"]][["8"]],
+        #       command = function()
+        # {
+        #     refreshCDT()
+        #     spinbox.state(state = 'normal')
+        #     if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+        #         # PlotSeqNetCDFFilesCmd()
+        #         .cdtEnv$tcl$data$lcmd.frame <- 1
+        #     }
+        # })
+
+        # ##########
+        # tkadd(menu.mrg, "separator")
+
+        # tkadd(menu.mrg, "command", label = lang.menu[["merging.data"]][["9"]],
+        #       command = function()
+        # {
+        #     refreshCDT()
+        #     spinbox.state(state = 'normal')
+        #     if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+        #         # PlotSeqNetCDFFilesCmd()
+        #         .cdtEnv$tcl$data$lcmd.frame <- 1
+        #     }
+        # })
 
     ####################################
 

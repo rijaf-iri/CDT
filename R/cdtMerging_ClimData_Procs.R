@@ -3,30 +3,41 @@ mergingClimData <- function(){
     message <- .cdtData$GalParams[['message']]
     Insert.Messages.Out(message[['10']], TRUE, "i")
 
-    daty <- get.range.date.time(.cdtData$GalParams$date.range,
-                                .cdtData$GalParams$period)
-    if(.cdtData$GalParams$period == 'monthly'){
-        xdeb <- format(daty$start, "%b%Y")
-        xfin <- format(daty$end, "%b%Y")
-    }else{
-        xdeb <- paste0(as.numeric(format(daty$start, "%d")), format(daty$start, "%b%Y"))
-        xfin <- paste0(as.numeric(format(daty$end, "%d")), format(daty$end, "%b%Y"))
-    }
-
     varClim <- gsub("merge\\.", "", .cdtData$GalParams$action)
     if(varClim == 'pres'){
         if(.cdtData$GalParams$prmsl) varClim <- "prmsl"
     }
 
-    dirMRGClim <- paste('MERGED', toupper(varClim), 'Data', xdeb, xfin, sep = '_')
+    daty <- seq.format.date.time(.cdtData$GalParams$period,
+                                 .cdtData$GalParams$date.range,
+                                 .cdtData$GalParams$minhour)
+    dtrg <- merged_date_range_filename(daty, .cdtData$GalParams$period)
+
+    dirMRGClim <- paste('MERGED', toupper(varClim), 'Data', dtrg$start, dtrg$end, sep = '_')
     outdir <- file.path(.cdtData$GalParams$output$dir, dirMRGClim)
-    dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
+    dir.create(file.path(outdir, 'DATA'), showWarnings = FALSE, recursive = TRUE)
+
+    mrgOpts <- merging.options()
+
+    if(.cdtData$GalParams$action != "merge.rain")
+        .cdtData$GalParams$RnoR <- list(use = FALSE, wet = 1.0, smooth = FALSE)
+
+    if(mrgOpts$saveGridBuffer)
+        dir.create(file.path(outdir, "GRID_BUFFER"), showWarnings = FALSE, recursive = TRUE)
+
+    if(.cdtData$GalParams$RnoR$use && mrgOpts$saveRnoR)
+        dir.create(file.path(outdir, 'RAIN-NO-RAIN'), showWarnings = FALSE, recursive = TRUE)
+
+    if(.cdtData$GalParams$interp$method == "okr"){
+        .cdtData$GalParams$interp$vgm_dir <- "VARIOGRAM"
+        .cdtData$GalParams$interp$vgm_save <- TRUE
+        dir.create(file.path(outdir, "VARIOGRAM"), showWarnings = FALSE, recursive = TRUE)
+    }
 
     ##################
 
     Insert.Messages.Out(message[['11']], TRUE, "i")
 
-    ##################
     ## station data
     stnData <- getStnOpenData(.cdtData$GalParams$STN.file)
     stnData <- getCDTdataAndDisplayMsg(stnData, .cdtData$GalParams$period,
@@ -105,7 +116,8 @@ mergingClimData <- function(){
 
     ncInfo <- ncInfo.with.date.range(.cdtData$GalParams$INPUT,
                                      .cdtData$GalParams$date.range,
-                                     .cdtData$GalParams$period)
+                                     .cdtData$GalParams$period,
+                                     .cdtData$GalParams$minhour)
     if(is.null(ncInfo)){
         Insert.Messages.Out(message[['15']], TRUE, "e")
         return(NULL)
@@ -127,19 +139,40 @@ mergingClimData <- function(){
 
     Insert.Messages.Out(message[['17']], TRUE, "i")
 
-    if(.cdtData$GalParams$action != "merge.rain")
-        .cdtData$GalParams$RnoR <- list(use = FALSE, wet = 1.0, smooth = FALSE)
-
     ret <- cdtMerging(stnData = stnData, ncInfo = ncInfo, xy.grid = xy.grid, params = .cdtData$GalParams,
                       variable = varClim, demData = demData, outdir = outdir, mask = outMask)
 
+    out_params <- .cdtData$GalParams
+    out_params <- out_params[!names(out_params) %in% c("settingSNC", "message")]
+    out_params$options <- mrgOpts
+    saveRDS(out_params, file.path(outdir, 'merging_parameters.rds'))
+
     if(!is.null(ret)){
         if(ret != 0){
-          Insert.Messages.Out(paste(message[['18']],
-                              file.path(outdir, "log_file.txt")), TRUE, "w")
+          file_log <- file.path(outdir, "log_file.txt")
+          Insert.Messages.Out(paste(message[['18']], file_log), TRUE, "w")
         }
     }else return(NULL)
 
     Insert.Messages.Out(message[['19']], TRUE, "s")
     return(0)
+}
+
+merged_date_range_filename <- function(dates, tstep){
+    daty <- range(dates)
+    if(tstep == 'monthly'){
+        xdeb <- format(daty[1], "%b%Y")
+        xfin <- format(daty[2], "%b%Y")
+    }else if(tstep == 'hourly'){
+        xdeb <- format(daty[1], '%Y%m%d%H')
+        xfin <- format(daty[2], '%Y%m%d%H')
+    }else if(tstep == 'minute'){
+        xdeb <- format(daty[1], '%Y%m%d%H%M')
+        xfin <- format(daty[2], '%Y%m%d%H%M')
+    }else{
+        xdeb <- paste0(as.numeric(format(daty[1], "%d")), format(daty[1], "%b%Y"))
+        xfin <- paste0(as.numeric(format(daty[2], "%d")), format(daty[2], "%b%Y"))
+    }
+
+    list(start = xdeb, end = xfin)
 }

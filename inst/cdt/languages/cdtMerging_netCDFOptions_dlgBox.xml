@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> netCDF Variables Definition </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> netCDF variable name </text>
+        </label>
+        <label id="2">
+            <text lang="en"> netCDF variable units </text>
+        </label>
+        <label id="3">
+            <text lang="en"> netCDF variable longname </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Data minimum limit </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Data maximum limit </text>
+        </label>
+    </widget>
+</dialog_box>

@@ -1,135 +1,4 @@
 
-#' Vectorization, regression
-#'
-#' Regression with a matrix and a vector performed by column \code{lm(Y~X)}.
-#' 
-#' @param X A vector of length N.
-#' @param Y A numeric NxK matrix.
-#' @param min.len An integer specify the minimum length of non missing data.
-#' 
-#' @return Returns a numeric 10xK matrix.
-#' 
-#' @examples
-#' library(CDT)
-#' 
-#' set.seed(1)
-#' X <- rnorm(20)
-#' Y <- matrix(rnorm(200), nrow = 20, ncol = 10)
-#' res <- regression.Vector(X, Y, 10)
-#' 
-#' @export
-
-regression.Vector <- function(X, Y, min.len){
-    Y[is.na(X) | is.na(Y)] <- NA
-    nbY <- colSums(!is.na(Y))
-    ix <- nbY >= min.len
-    RES <- matrix(NA, nrow = 10, ncol = ncol(Y))
-    dimnames(RES)[[1]] <- c("slope", "std.slope", "t-value.slope",
-                            "p-value.slope", "intercept",
-                            "std.intercept", "t-value.intercept",
-                            "p-value.intercept", "R2", "sigma")
-    if(!any(ix)) return(RES)
-    Y <- Y[, ix, drop = FALSE]
-    nbY <- nbY[ix]
-
-    mX <- mean(X, na.rm = TRUE)
-    mY <- colMeans(Y, na.rm = TRUE)
-    vX <- stats::var(X, na.rm = TRUE)
-    vY <- matrixStats::colVars(Y, na.rm = TRUE)
-
-    X1 <- X - mX
-    Y1 <- sweep(Y, 2, mY, FUN = "-")
-    COV <- colSums(X1 * Y1, na.rm = TRUE) / (nbY - 1)
-    alpha <- COV / vX
-    beta <- mY - alpha * mX
-
-    hatY <- t(sapply(X, `*`, e2 = alpha) + beta)
-    SSE <- colSums((hatY - Y)^2, na.rm = TRUE)
-    MSE <- SSE / (nbY - 2)
-    sigma <- sqrt(MSE)
-    std.alpha <- sigma / (sqrt(nbY - 1) * sqrt(vX))
-    std.beta <- sigma * sqrt((1 / nbY) + (mX^2 / ((nbY - 1) * vX)))
-    SXX <- (nbY - 1) * vX
-    tvalue.alpha <- alpha / sqrt(MSE / SXX)
-    tvalue.beta <- beta / sqrt(MSE * ((1 / nbY) + (mX^2/SXX)))
-    pvalue.alpha <- 2 * stats::pt(-abs(tvalue.alpha), nbY - 2)
-    pvalue.beta <- 2 * stats::pt(-abs(tvalue.beta), nbY - 2)
-    R2 <- COV^2 / (vX * vY)
-    RES[, ix] <- rbind(alpha, std.alpha, tvalue.alpha, pvalue.alpha,
-                       beta, std.beta, tvalue.beta, pvalue.beta, R2, sigma)
-    return(RES)
-}
-
-#############################################
-
-#' Vectorization, regression
-#'
-#' Regression between two matrices performed by column \code{lm(Y~X)}.
-#' 
-#' @param X A numeric NxK matrix.
-#' @param Y A numeric NxK matrix.
-#' @param min.len An integer specify the minimum length of non missing data.
-#' 
-#' @return Returns a numeric 10xK matrix.
-#' 
-#' @examples
-#' library(CDT)
-#' 
-#' set.seed(1)
-#' X <- matrix(rnorm(200), nrow = 20, ncol = 10)
-#' set.seed(2)
-#' Y <- matrix(rnorm(200), nrow = 20, ncol = 10)
-#' res <- regression.Matrix(X, Y, 10)
-#' 
-#' @export
-
-regression.Matrix <- function(X, Y, min.len){
-    ina <- is.na(X) | is.na(Y)
-    X[ina] <- NA
-    Y[ina] <- NA
-    nbY <- colSums(!is.na(Y))
-    ix <- nbY >= min.len
-    RES <- matrix(NA, nrow = 10, ncol = ncol(Y))
-    dimnames(RES)[[1]] <- c("slope", "std.slope", "t-value.slope",
-                            "p-value.slope", "intercept",
-                            "std.intercept", "t-value.intercept",
-                            "p-value.intercept", "R2", "sigma")
-    if(!any(ix)) return(RES)
-    Y <- Y[, ix, drop = FALSE]
-    X <- X[, ix, drop = FALSE]
-    nbY <- nbY[ix]
-
-    mX <- colMeans(X, na.rm = TRUE)
-    mY <- colMeans(Y, na.rm = TRUE)
-    vX <- matrixStats::colVars(X, na.rm = TRUE)
-    vY <- matrixStats::colVars(Y, na.rm = TRUE)
-
-    X1 <- sweep(X, 2, mX, FUN = "-")
-    Y1 <- sweep(Y, 2, mY, FUN = "-")
-    COV <- colSums(X1 * Y1, na.rm = TRUE) / (nbY - 1)
-    alpha <- COV / vX
-    beta <- mY - alpha * mX
-
-    hatY <- sweep(sweep(X, 2, alpha, FUN = "*"), 2, beta, FUN = "+")
-    SSE <- colSums((hatY - Y)^2, na.rm = TRUE)
-    MSE <- SSE / (nbY - 2)
-    sigma <- sqrt(MSE)
-    std.alpha <- sigma / (sqrt(nbY - 1) * sqrt(vX))
-    std.beta <- sigma * sqrt((1 / nbY) + (mX^2 / ((nbY - 1) * vX)))
-    SXX <- (nbY - 1) * vX
-    tvalue.alpha <- alpha / sqrt(MSE/SXX)
-    tvalue.beta <- beta / sqrt(MSE * ((1 / nbY) + (mX^2 / SXX)))
-    pvalue.alpha <- 2 * stats::pt(-abs(tvalue.alpha), nbY - 2)
-    pvalue.beta <- 2 * stats::pt(-abs(tvalue.beta), nbY - 2)
-    R2 <- COV^2 / (vX * vY)
-
-    RES[, ix] <- rbind(alpha, std.alpha, tvalue.alpha, pvalue.alpha,
-                       beta, std.beta, tvalue.beta, pvalue.beta, R2, sigma)
-    return(RES)
-}
-
-#############################################
-
 ## Sample Quantiles Type 8
 quantile8 <- function(x, probs){
     x <- x[!is.na(x)]
@@ -144,7 +13,7 @@ quantile8 <- function(x, probs){
         xs[ix] + (xq - ix) * (xs[ix + 1] - xs[ix])
 }
 
-#############################################
+###############
 
 skewnessV <- function(x){
     x <- x[!is.na(x)]
@@ -162,7 +31,7 @@ skewnessM <- function(mat){
     sqrt(nr) * S3/(S2^(3/2))
 }
 
-#############################################
+###############
 
 ## Initial values of parameters
 
@@ -221,27 +90,28 @@ startweibull <- function(x){
     list(shape = shape, scale = scale)
 }
 
-## Gumbel
+# ## Gumbel
+# startgumbel <- function(x){
+#     m <- mean(x)
+#     s <- stats::sd(x)
+#     # euler <- 0.5772156649015323
+
+#     scale <- s * sqrt(6) / pi
+#     ## maximum
+#     loc <- m - 0.45006 * s
+#     ## or
+#     ## loc <- m - euler * scale
+
+#     ## minimum
+#     # loc <- m + 0.45006 * s
+#     ## or
+#     ## loc <- m + euler * scale
+
+#     list(loc = loc, scale = scale)
+# }
+
 startgumbel <- function(x){
-    m <- mean(x)
-    s <- stats::sd(x)
-    # euler <- 0.5772156649015323
-
-    scale <- s * sqrt(6) / pi
-    ## maximum
-    loc <- m - 0.45006 * s
-    ## or
-    ## loc <- m - euler * scale
-
-    ## minimum
-    # loc <- m + 0.45006 * s
-    ## or
-    ## loc <- m + euler * scale
-
-    list(loc = loc, scale = scale)
-}
-
-startgumbel_lmom <- function(x){
+    ## using L-moments
     euler <- 0.5772156649015323
 
     lmom <- lmomco::TLmoms(x, nmom = 2)
@@ -251,38 +121,58 @@ startgumbel_lmom <- function(x){
     list(loc = loc, scale = scale)
 }
 
+#######
+startberngamma <- function(x, thres = 1){
+    x[x < thres] <- 0
+    qmap::startberngamma(x)
+}
+
+startbernexp <- function(x, thres = 1){
+    x[x < thres] <- 0
+    qmap::startbernexp(x)
+}
+
+startbernlnorm <- function(x, thres = 1){
+    x[x < thres] <- 0
+    qmap::startbernlnorm(x)
+}
+
+startbernweibull <- function(x, thres = 1){
+    x[x < thres] <- 0
+    qmap::startbernweibull(x)
+}
+
+pberngamma <- function(...) qmap::pberngamma(...)
+qberngamma <- function(...) qmap::qberngamma(...)
+pbernexp <- function(...) qmap::pbernexp(...)
+qbernexp <- function(...) qmap::qbernexp(...)
+pbernlnorm <- function(...) qmap::pbernlnorm(...)
+qbernlnorm <- function(...) qmap::qbernlnorm(...)
+pbernweibull <- function(...) qmap::pbernweibull(...)
+qbernweibull <- function(...) qmap::qbernweibull(...)
+
 #############################################
-## distribution name
-## norm, lnorm, snorm, gamma, exp, weibull, gumbel
-## berngamma, bernexp, bernlnorm, bernweibull
 
-get_distr_parameters <- function(dat, distr, min_length, thres = NA){
-    ## dat: matrix of data
-    ## distr: list(name = "norm", pars = c('mean', 'sd'))
-    ## min_length: minimum length of data
-    ## thres: threshold for mixture distr 
+# mat = matrix (row: dates, column: stations/points/grid)
+# distr = list(name = "norm", pars = c('mean', 'sd'), longname = 'Normal')
+# distr = list(name = "lnorm", pars = c('meanlog', 'sdlog'), longname = "Log-Normal")
+# distr = list(name = "snorm", pars = c('mean', 'sd', 'xi'), longname = "Skew Normal")
+# distr = list(name = "gamma", pars = c('shape', 'scale'), longname = "Gamma")
+# distr = list(name = "exp", pars = 'rate', longname = "Exponential")
+# distr = list(name = "weibull", pars = c('shape', 'scale'), longname = "Weibull")
+# distr = list(name = "gumbel", pars = c('loc', 'scale'), longname = "Gumbel")
+# distr = list(name = "berngamma", pars = c('prob', 'shape', 'scale'), longname = 'Bernoulli-Gamma', thres = 1)
+# distr = list(name = "bernexp", pars = c('prob', 'rate'), longname = "Bernoulli-Exponential", thres = 1)
+# distr = list(name = "bernlnorm", pars = c('prob', 'meanlog', 'sdlog'), longname = "Bernoulli-Log-Normal", thres = 1)
+# distr = list(name = "bernweibull", pars = c('prob', 'shape', 'scale'), longname = "Bernoulli-Weibull", thres = 1)
 
-    coef <- lapply(seq_along(distr$pars), function(i) rep(NA, ncol(dat)))
-    names(coef) <- distr$pars
-
-    ina <- colSums(!is.na(dat))
-    ix <- ina >= min_length
-    if(!any(ix)) return(coef)
-    dat <- dat[, ix, drop = FALSE]
-
-    dname <- paste0(distr$name, '_distr_params')
-    args <- list(mat = dat)
-    if(!is.na(thres)) args$thres <- thres
-    out <- do.call(dname, args)
-
-    coef <- lapply(seq_along(coef), function(i){
-        x <- coef[[i]]
-        x[ix] <- out[[i]]
-        x
-    })
-    names(coef) <- distr$pars
-
-    return(coef)
+get_distr_parameters <- function(mat, distr){
+    params_fun <- paste0(distr$name, '_distr_params')
+    args <- list(mat = mat)
+    if(!is.null(distr$thres)){
+        args$thres <- distr$thres
+    }
+    do.call(params_fun, args)
 }
 
 ######################
@@ -404,7 +294,7 @@ berngamma_distr_params <- function(mat, thres = 1){
     V[V == 0] <- 0.001
 
     coef <- list()
-    coef$proba <- P
+    coef$prob <- P
     coef$scale <- V / M
     coef$shape <- M^2 / V
 
@@ -426,7 +316,7 @@ bernexp_distr_params <- function(mat, thres = 1){
     M[miss] <- NA
 
     coef <- list()
-    coef$proba <- P
+    coef$prob <- P
     coef$rate <- 1 / M
 
     return(coef)
@@ -453,7 +343,7 @@ bernlnorm_distr_params <- function(mat, thres = 1){
     SL <- sqrt(SL)
 
     coef <- list()
-    coef$proba <- P
+    coef$prob <- P
     coef$meanlog <- ML
     coef$sdlog <- SL
 
@@ -487,69 +377,9 @@ bernweibull_distr_params <- function(mat, thres = 1){
     # scale <- exp(M + 0.572/shape)
 
     coef <- list()
-    coef$proba <- P
+    coef$prob <- P
     coef$scale <- scale
     coef$shape <- shape
-
-    return(coef)
-}
-
-#############################################
-## replace berngamma_dist_params & normal_dist_params by get_distr_parameters
-
-## Bernoulli-Gamma distribution
-berngamma_dist_params <- function(dat, min.length, thres = 1){
-    ## dat matrix of data
-    nadat <- rep(NA, ncol(dat))
-    coef <- list(proba = nadat, shape = nadat, scale = nadat)
-
-    ina <- colSums(!is.na(dat))
-    ix <- ina >= min.length
-
-    if(!any(ix)) return(coef)
-
-    dat <- dat[, ix, drop = FALSE]
-    nb <- ina[ix]
-
-    if(thres == 0) thres <- 1e-2
-
-    P <- colSums(dat >= thres, na.rm = TRUE) / nb
-    P[P == 0] <- 1e-6
-
-    dat[dat < thres] <- NA
-    nna <- colSums(!is.na(dat))
-    miss <- nna < 7
-
-    M <- colMeans(dat, na.rm = TRUE)
-    V <- matrixStats::colVars(dat, na.rm = TRUE)
-    M[miss] <- NA
-    V[miss] <- NA
-    V[V == 0] <- 0.075
-
-    coef$proba[ix] <- P
-    coef$shape[ix] <- M^2 / V
-    coef$scale[ix] <- V / M
-
-    return(coef)
-}
-
-##
-normal_dist_params <- function(dat, min.length){
-    nadat <- rep(NA, ncol(dat))
-    coef <- list(mean = nadat, sd = nadat)
-
-    ina <- colSums(!is.na(dat))
-    ix <- ina >= min.length
-
-    if(!any(ix)) return(coef)
-    dat <- dat[, ix, drop = FALSE]
-
-    M <- colMeans(dat, na.rm = TRUE)
-    S <- matrixStats::colSds(dat, na.rm = TRUE)
-    S[S == 0] <- 1e-3
-
-    coef$mean[ix] <- M
-    coef$sd[ix] <- S
 
     return(coef)
 }
@@ -573,7 +403,7 @@ fit.distributions <- function(x, distr = c("norm", "snorm", "lnorm",
 }
 
 #############################################
-
+## remove
 ## Fit Bernoulli-Gamma distribution
 fit.berngamma.rain <- function(x, min.len = 7, alpha = 0.05, method = 'mle',
                                lower = c(0, 1e-10, 1e-10), upper = c(1, Inf, Inf),
@@ -611,7 +441,7 @@ fit.berngamma.rain <- function(x, min.len = 7, alpha = 0.05, method = 'mle',
 }
 
 #############################################
-
+## remove
 ## Fit normal distribution for temp
 fit.norm.temp <- function(x, min.len, alpha = 0.05, method = 'mle',
                           lower = c(-20, 0), upper = c(60, 10),

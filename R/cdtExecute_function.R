@@ -58,7 +58,14 @@ Execute_Function <- function(){
 
     ## Create cdt dataset from ncdf files
     if(.cdtData$GalParams$action == "create.CdtDataset"){
-        ret <- try(cdtDataset_readData(), silent = TRUE)
+        cfun <- .cdtData$Config$cdtDataset.chunk$chunkfun
+        ii <- 1
+        if(!is.null(cfun)){
+            if(cfun %in% 1:2) ii <- cfun
+        }
+        create_cdtDataset <- paste0('cdtDataset_readData_', ii)
+        create_cdtDataset <- get(create_cdtDataset, mode = "function")
+        ret <- try(create_cdtDataset(), silent = TRUE)
 
         msg0 <- .cdtData$GalParams[['message']][['4']]
         msg1 <- .cdtData$GalParams[['message']][['5']]
@@ -116,15 +123,6 @@ Execute_Function <- function(){
 
         msg0 <- .cdtData$GalParams[['message']][['4']]
         msg1 <- .cdtData$GalParams[['message']][['5']]
-        Execute_end_msg(ret, msg0, msg1)
-    }
-
-    ## Filling missing dekadal temperature values
-    if(.cdtData$GalParams$action == "fill.temp"){
-        ret <- try(fill_DekTemp_MissVal(), silent = TRUE)
-
-        msg0 <- .cdtData$GalParams[['message']][['5']]
-        msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
 
@@ -223,7 +221,7 @@ Execute_Function <- function(){
 
     ###############################
 
-    climData <- c('rain', 'temp', 'rh', 'pres', 'rad')
+    climData <- c('rain', 'temp', 'rh', 'pres', 'rad', 'wspd', 'ugrd', 'vgrd')
 
     ## Compute bias coefficients
     if(.cdtData$GalParams$action %in% paste0('coefbias.', climData))
@@ -278,13 +276,13 @@ Execute_Function <- function(){
         Execute_end_msg(ret, msg0, msg1)
     }
 
-    # ## wind
-    # if(.cdtData$GalParams$action == 'merge.wind'){
-    #     ret <- try(mergingWind(), silent = TRUE)
-    #     msg0 <- .cdtData$GalParams[['message']][['8']]
-    #     msg1 <- .cdtData$GalParams[['message']][['9']]
-    #     Execute_end_msg(ret, msg0, msg1)
-    # }
+    ## wind
+    if(.cdtData$GalParams$action == 'merge.wind'){
+        ret <- try(mergingWindData(), silent = TRUE)
+        msg0 <- .cdtData$GalParams[['message']][['14']]
+        msg1 <- .cdtData$GalParams[['message']][['15']]
+        Execute_end_msg(ret, msg0, msg1)
+    }
 
     ###############################
 

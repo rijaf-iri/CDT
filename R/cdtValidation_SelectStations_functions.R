@@ -1,4 +1,24 @@
- 
+
+select.Station.Validation <- function(df, perc = 20){
+    nb <- ceiling(length(df$id) * perc/100)
+    stnID <- df$id
+    stnSel <- as.matrix(df[, c('lon', 'lat')])
+    mdist <- as.matrix(stats::dist(stnSel))
+    mdist[upper.tri(mdist)] <- NA
+    diag(mdist) <- NA
+
+    while(nrow(stnSel) > nb){
+        dst <- min(mdist, na.rm = TRUE)
+        im <- which(mdist == dst, arr.ind = TRUE)
+        im <- im[1, 1]
+        stnSel <- stnSel[-im, , drop = FALSE]
+        mdist <- mdist[-im, -im, drop = FALSE]
+        stnID <- stnID[-im]
+    }
+
+    df[df$id %in% stnID, ]
+}
+
 ## stn: a CDT stations data objects
 ## min.dist: distance in decimal degree
 ## min.prec: minimum percentage
@@ -64,46 +84,3 @@ select.Station.DistPerc <- function(stn, min.dist = 1.0, min.perc = 80,
 
     return(stn)
 }
-
-
-select.Station.Validation <- function(df, perc = 20){
-    dst <- stats::dist(df[, c('lon', 'lat')], method = "euclidean")
-    dmat <- as.matrix(dst)
-    hklust <- stats::hclust(dst, method = 'average')
-
-    nl <- length(df$id)
-    n0 <- round(nl * perc/100)
-    minSize <- floor(nl / n0)
-    repeat{
-        df$k <- dynamicTreeCut::cutreeDynamic(hklust, minClusterSize = minSize, method = "hybrid",
-                                                distM = dmat, deepSplit = 4, verbose = 0)
-        nClust <- length(unique(df$k))
-        minSize <- minSize - 1
-       if(minSize < 3) break
-       if(n0 <= nClust) break
-    }
-
-    ipt <- lapply(seq(nClust), function(j){
-        ij <- df$k == j
-        io <- order(df$k[ij], decreasing = TRUE)
-        which(ij)[io[1:2]]
-    })
-    ipt <- sort.int(do.call(c, ipt))
-    dp <- df[ipt, , drop = FALSE]
-
-    dmat <- dmat[ipt, ipt]
-    dimnames(dmat) <- list(seq(nrow(dmat)), seq(ncol(dmat)))
-    ir <- sample.int(nrow(dmat), nClust)
-    repeat{
-        ir0 <- ir
-        for (i in 1:nClust){
-            mm <- dmat[ir[-i], -ir[-i], drop = FALSE]
-            k <- which.max(mm[(1:ncol(mm) - 1) * nrow(mm) + max.col(t(-mm))])
-            ir[i] <- as.numeric(dimnames(mm)[[2]][k])
-        }
-        if(identical(ir0, ir)) break
-    }
-
-    dp[ir, c("id", 'lon', 'lat'), drop = FALSE]
-}
-

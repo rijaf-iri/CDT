@@ -198,7 +198,19 @@ cdtDrawToolbars <- function(){
         tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
         tcl('update')
 
-        if(!is.null(.cdtData$GalParams)) Execute_Function()
+        exec_time <- .cdtData$Config$execution.time
+        print_exeT <- FALSE
+        if(!is.null(exec_time)) print_exeT <- exec_time
+
+        if(!is.null(.cdtData$GalParams)){
+            if(print_exeT) t0 <- Sys.time()
+            Execute_Function()
+            if(print_exeT){
+                t1 <- difftime(Sys.time(), t0, units = "mins")
+                msg <- paste('Execution time:', t1, 'minutes')
+                Insert.Messages.Out(msg, TRUE, "i")
+            }
+        }
     })
 
     ##################

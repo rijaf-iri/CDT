@@ -36,7 +36,9 @@
         // Number of pixels per chunk
         "chunksize": 100,
         // Number of chunk files to be used for each calculation
-        "chunkfac": 5
+        "chunkfac": 5,
+        // function to use to create the dataset: 1 or 2
+        "chunkfun": 1
     },
     "parallel":
     {
@@ -48,5 +50,7 @@
         "nb.cores": 3
     },
     // to use Google Maps API key, put null if you do not have api key
-    "Google.Maps.API.key": null
+    "Google.Maps.API.key": null,
+    // display execution time
+    "execution.time": false
 }

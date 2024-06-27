@@ -4,15 +4,15 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
 {
     log.file <- file.path(outdir, "log_file.txt")
     ncinfo <- ncInfo$ncinfo
+    mrgOpts <- merging.options()
+    datainfo <- mrgOpts$netCDFDataDef[[variable]]
+    params$MRG$limits <- c(datainfo$min, datainfo$max)
 
-    params$MRG$limits <- switch(variable,
-                                "rain" = c(0, 5000),
-                                "temp" = c(-40, 50),
-                                "rh" = c(0, 100),
-                                "pres" = c(700, 1100),
-                                "prmsl" = c(850, 1100),
-                                "rad" = c(0, 1300),
-                                NULL)
+    if(variable %in% c("ugrd", "vgrd")){
+        missval <- "-9999"
+    }else{
+        missval <- "-99"
+    }
 
     ##################
     tmpdir <- file.path(outdir, "tmp")
@@ -27,8 +27,8 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
     stndat <- stnData$data[which(stnData$date %in% ncInfo$dates), stnVID, drop = FALSE]
     stndat <- cbind(ncInfo$dates, stndat)
     stndat <- rbind(stnInfo, stndat)
-    outstnf <- file.path(outdir, "STATIONS_DATA.csv")
-    utils::write.table(stndat, outstnf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+    outstnf <- file.path(outdir, "DATA", "STATIONS_DATA.csv")
+    utils::write.table(stndat, outstnf, sep = ",", na = missval, col.names = FALSE, row.names = FALSE, quote = FALSE)
 
     ##################
 
@@ -45,25 +45,19 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         params$interp$maxdist <- maxdist
     }else{
         bx <- diff(sapply(stnData[c('lon', 'lat')], range))
-        # dg <- sqrt(bx[1]^2 + bx[2]^2) / 4
         dg <- sqrt(bx[1]^2 + bx[2]^2)
-        dg <- 0.08 * dg + 0.199
+        dg <- 0.1 * dg + 2
         params$interp$maxdist <- params$MRG$pass * dg
     }
 
     locations.stn <- as.data.frame(stnData[c('lon', 'lat')])
     sp::coordinates(locations.stn) <- c('lon', 'lat')
-    ijs <- sp::over(locations.stn, newgrid)
-    locations.stn$stn <- rep(NA,  length(locations.stn))
+    ijs <- sp::over(locations.stn[stnVID], newgrid)
+    locations.stn$stn <- rep(NA, length(locations.stn))
 
     xy.data <- defSpatialPixels(ncinfo[c('lon', 'lat')])
-    # ijgs <- over(locations.stn, xy.data)
-
-    ##################
-
     is.regridNCDF <- is.diffSpatialPixelsObj(newgrid, xy.data, tol = 1e-07)
-    ijnc <- NULL
-    if(is.regridNCDF) ijnc <- sp::over(newgrid, xy.data)
+    gridBuffer <- list(igrid = rep(TRUE, length(newgrid)), icoarse = NULL, coarsegrid = NULL)
 
     ##################
 
@@ -95,8 +89,6 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
     args <- methods::formalArgs(cdtMergingLOOCV)
     for(v in args) assign(v, get(v), envir = environment())
 
-    mrgOpts <- merging.options()
-
     parsL <- doparallel.cond(length(ncInfo$ncfiles) > 10)
     ret <- cdt.foreach(seq_along(ncInfo$ncfiles), parsL, GUI,
                        progress = TRUE, FUN = function(jj)
@@ -120,8 +112,12 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
 
         ######
 
-        # locations.stn$grd <- nc.val[ijgs]
-        newgrid$grd <- if(is.null(ijnc)) c(nc.val) else nc.val[ijnc]
+        if(is.regridNCDF){
+            nc.val <- c(ncinfo[c('lon', 'lat')], list(z = nc.val))
+            nc.val <- cdt.interp.surface.grid(nc.val, xy.grid)
+            nc.val <- nc.val$z
+        }
+        newgrid$grd <- c(nc.val)
 
         donne.stn <- stnData$data[which(stnData$date == ncInfo$dates[jj]), , drop = FALSE]
         if(nrow(donne.stn) == 0){
@@ -131,11 +127,8 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
         }
 
         locations.stn$stn <- as.numeric(donne.stn[1, ])
-        noNA <- !is.na(locations.stn$stn)
+        noNA <- which(!is.na(locations.stn$stn))
         locations.stn <- locations.stn[noNA, ]
-
-        ijv <- which(which(noNA) %in% stnVID)
-        ijout <- ijs[noNA][ijv]
 
         if(length(locations.stn) < mrgOpts$mrgMinNumberSTN){
             cat(paste(ncInfo$dates[jj], ":", "not enough station data", "|",
@@ -156,23 +149,25 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
 
         ######
 
-        xstn <- lapply(seq_along(ijv), function(ii){
-            loc.stn <- locations.stn[-ijv[ii], ]
+        out <- lapply(seq_along(stnVID), function(ii){
+            irm <- which(noNA == stnVID[ii])
+            if(length(irm) == 0) return(NA)
+            loc.stn <- locations.stn[-irm, ]
+            if(mrgOpts$addCoarseGrid){
+                gridBuffer <- create_grid_buffer(loc.stn, newgrid)
+            }
             out.mrg <- merging.functions(loc.stn, newgrid, params,
                                          formuleRK, ncInfo$dates[jj],
-                                         log.file, mrgOpts)
-
-            out.mrg[ijout[ii]]
+                                         outdir, mrgOpts, gridBuffer)
+            out.mrg[ijs[ii]]
         })
 
-        out <- rep(NA, length(stnVID))
-        ix <- which(stnVID %in% as.integer(names(ijout)))
-        out[ix] <- do.call(c, xstn)
+        out <- do.call(c, out)
         out <- round(out, 1)
 
         tmpf <- file.path(tmpdir, paste0(ncInfo$dates[jj], '.txt'))
         tmp <- matrix(c(ncInfo$dates[jj], out), nrow = 1)
-        utils::write.table(tmp, tmpf, sep = ',', na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+        utils::write.table(tmp, tmpf, sep = ',', na = missval, col.names = FALSE, row.names = FALSE, quote = FALSE)
 
         return(out)
     })
@@ -183,12 +178,11 @@ cdtMergingLOOCV <- function(stnData, stnVID, ncInfo, xy.grid, params,
 
     ret <- cbind(ncInfo$dates, ret)
     ret <- rbind(stnInfo, ret)
-    outcvf <- file.path(outdir, "CROSS-VALIDATION_DATA.csv")
-    utils::write.table(ret, outcvf, sep = ",", na = "-99", col.names = FALSE, row.names = FALSE, quote = FALSE)
+    outcvf <- file.path(outdir, "DATA", "CROSS-VALIDATION_DATA.csv")
+    utils::write.table(ret, outcvf, sep = ",", na = missval, col.names = FALSE, row.names = FALSE, quote = FALSE)
 
     unlink(tmpdir, recursive = TRUE)
 
     if(any(inull)) return(-1)
     return(0)
 }
-

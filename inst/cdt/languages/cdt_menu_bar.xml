@@ -258,6 +258,15 @@
             <text lang="en"> Merging - Cross-Validation </text>
             <text lang="fr"> Merging - Cross-Validation </text>
         </submenu>
+        <submenu id="7">
+            <text lang="en"> Plot Multiplicative Bias Coefficients </text>
+        </submenu>
+        <submenu id="8">
+            <text lang="en"> Plot Coarse Grid Buffer </text>
+        </submenu>
+        <submenu id="9">
+            <text lang="en"> Plot Rain-No-Rain Mask </text>
+        </submenu>
     </menu>
     <menu id="validation">
         <submenu id="0">

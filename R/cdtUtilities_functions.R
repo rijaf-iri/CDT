@@ -448,6 +448,8 @@ raster.slope.aspect <- function(dem){
     aspect <- t(aspect)
     revCol <- rev(seq(ncol(aspect)))
     aspect <- aspect[, revCol]
+    slope[is.nan(slope)] <- NA
+    aspect[is.nan(aspect)] <- NA
     list(slope = slope, aspect = aspect)
 }
 

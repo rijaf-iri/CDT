@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<function_msg>
+    <message>
+        <content id="1">
+            <text lang="en"> Read bias data ... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> The directory "BIAS_DATA" not found </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Parameters files not found </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Bias method is not </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Bias bias data is not </text>
+        </content>
+        <content id="6">
+            <text lang="en"> No bias factors files found </text>
+        </content>
+        <content id="7">
+            <text lang="en"> No distribution parameters files not found </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No bias data for the </text>
+        </content>
+        <content id="9">
+            <text lang="en"> No correction will be made for the corresponding dates </text>
+        </content>
+        <content id="10">
+            <text lang="en"> Reading bias data finished </text>
+        </content>
+        <content id="11">
+            <text lang="en"> days of the year </text>
+        </content>
+        <content id="12">
+            <text lang="en"> pentads </text>
+        </content>
+        <content id="13">
+            <text lang="en"> dekads </text>
+        </content>
+        <content id="14">
+            <text lang="en"> months </text>
+        </content>
+    </message>
+</function_msg>

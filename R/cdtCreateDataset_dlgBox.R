@@ -21,11 +21,11 @@ cdtDataset_getParams <- function(){
 
     frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2)
     frMRG1 <- tkframe(tt)
-    frLeft <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
+    frDialog <- tkframe(frMRG0, relief = "groove", borderwidth = 2)
 
     ############################################
 
-    frtimestep <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+    frtimestep <- tkframe(frDialog, relief = 'sunken', borderwidth = 2)
 
     timeStep <- tclVar()
     CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:6]
@@ -61,7 +61,7 @@ cdtDataset_getParams <- function(){
 
     ############################################
 
-    frameNCDF <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+    frameNCDF <- tkframe(frDialog, relief = 'sunken', borderwidth = 2)
 
     dir.NCDF <- tclVar(.cdtData$GalParams$NCDF$dir)
 
@@ -97,7 +97,7 @@ cdtDataset_getParams <- function(){
 
     ############################################
 
-    frUpdate <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+    frUpdate <- tkframe(frDialog, relief = 'sunken', borderwidth = 2)
 
     update.data <- tclVar(.cdtData$GalParams$Update)
     file.dataRDS <- tclVar(.cdtData$GalParams$cdtDataSet)
@@ -143,7 +143,7 @@ cdtDataset_getParams <- function(){
 
     ############################################
 
-    frOutput <- tkframe(frLeft, relief = 'sunken', borderwidth = 2)
+    frOutput <- tkframe(frDialog, relief = 'sunken', borderwidth = 2)
 
     dir2save <- tclVar(.cdtData$GalParams$output$dir)
     nom.data <- tclVar(.cdtData$GalParams$output$data.name)
@@ -189,7 +189,7 @@ cdtDataset_getParams <- function(){
 
     ############################################
 
-    tkgrid(frLeft, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frDialog, row = 0, column = 0, sticky = 'news', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
 

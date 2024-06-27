@@ -3,24 +3,21 @@ crossValidationExecClimData <- function(){
     message <- .cdtData$GalParams[['message']]
     Insert.Messages.Out(message[['10']], TRUE, "i")
 
-    daty <- get.range.date.time(.cdtData$GalParams$date.range,
-                                .cdtData$GalParams$period)
-    if(.cdtData$GalParams$period == 'monthly'){
-        xdeb <- format(daty$start, "%b%Y")
-        xfin <- format(daty$end, "%b%Y")
-    }else{
-        xdeb <- paste0(as.numeric(format(daty$start, "%d")), format(daty$start, "%b%Y"))
-        xfin <- paste0(as.numeric(format(daty$end, "%d")), format(daty$end, "%b%Y"))
-    }
-
     varClim <- gsub("crossv\\.", "", .cdtData$GalParams$action)
     if(varClim == 'pres'){
         if(.cdtData$GalParams$prmsl) varClim <- "prmsl"
     }
 
-    dirMRGClim <- paste('CrossValidation', toupper(varClim), 'Data', xdeb, xfin, sep = '_')
+    daty <- seq.format.date.time(.cdtData$GalParams$period,
+                                 .cdtData$GalParams$date.range,
+                                 .cdtData$GalParams$minhour)
+    dtrg <- merged_date_range_filename(daty, .cdtData$GalParams$period)
+
+    dirMRGClim <- paste('CrossValidation', toupper(varClim), 'Data', dtrg$start, dtrg$end, sep = '_')
     outdir <- file.path(.cdtData$GalParams$outdir, dirMRGClim)
-    dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
+    dir.create(file.path(outdir, 'DATA'), showWarnings = FALSE, recursive = TRUE)
+
+    merging.options(saveGridBuffer = FALSE, saveRnoR = FALSE)
 
     ##################
     ## station data
@@ -82,7 +79,8 @@ crossValidationExecClimData <- function(){
 
     ncInfo <- ncInfo.with.date.range(.cdtData$GalParams$INPUT,
                                      .cdtData$GalParams$date.range,
-                                     .cdtData$GalParams$period)
+                                     .cdtData$GalParams$period,
+                                     .cdtData$GalParams$minhour)
     if(is.null(ncInfo)){
         Insert.Messages.Out(message[['14']], TRUE, "e")
         return(NULL)
@@ -140,7 +138,7 @@ crossValidationExecClimData <- function(){
         df <- as.data.frame(stnData[c("id", 'lon', 'lat')])
         df <- df[istn, , drop = FALSE]
 
-        stn.valid <- select.Station.Validation(df, perc = 80)
+        stn.valid <- select.Station.Validation(df, perc = 20)
         stn.valid <- as.character(stn.valid$id)
     }
 
@@ -163,10 +161,15 @@ crossValidationExecClimData <- function(){
                            params = .cdtData$GalParams, variable = varClim, demData = demData,
                            outdir = outdir)
 
+    out_params <- .cdtData$GalParams
+    out_params <- out_params[!names(out_params) %in% c("settingSNC", "message")]
+    out_params$options <- merging.options()
+    saveRDS(out_params, file.path(outdir, 'merging_parameters.rds'))
+
     if(!is.null(ret)){
         if(ret != 0){
-          Insert.Messages.Out(paste(message[['17']],
-                              file.path(outdir, "log_file.txt")), TRUE, "w")
+          file_log <- file.path(outdir, "log_file.txt")
+          Insert.Messages.Out(paste(message[['17']], file_log), TRUE, "w")
         }
     }else return(NULL)
 

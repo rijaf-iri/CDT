@@ -53,6 +53,14 @@
                 <text lang="en"> Bernoulli-Weibull </text>
             </option>
         </combobox>
+        <combobox id="3">
+            <option id="1">
+                <text lang="en"> Rectangular box </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Station locations </text>
+            </option>
+        </combobox>
         <button id="1">
             <text lang="en"> Set Bias Base Period </text>
         </button>
@@ -62,6 +70,9 @@
         <button id="3">
             <text lang="en"> Create Grid for Interpolation </text>
         </button>
+        <checkbutton id="1">
+            <text lang="en"> netCDF chunks data already exist </text>
+        </checkbutton>
         <label id="1">
             <text lang="en"> Box dimension </text>
         </label>
@@ -89,14 +100,20 @@
         <label id="9">
             <text lang="en"> Probability Distribution </text>
         </label>
+        <label id="10">
+            <text lang="en"> Spatial Aggregation </text>
+        </label>
+        <label id="11">
+            <text lang="en"> Path to the directory NCDATA_CHUNKS </text>
+        </label>
     </widget>
     <help>
         <content id="1">
             <status>
-                <text lang="en"> Nonparametric cumulative distribution functions of the gridded and \n observations data are estimated at every rectangular box region (in decimal degree) </text>
+                <text lang="en"> Non-parametric cumulative distribution functions of the gridded and \n observations data are estimated over a rectangular box region (units: in decimal degree) </text>
             </status>
             <tooltip>
-                <text lang="en"> Nonparametric cumulative distribution functions of the gridded and \n observations data are estimated at every rectangular box region (in decimal degree) </text>
+                <text lang="en"> Non-parametric cumulative distribution functions of the gridded and \n observations data are estimated over a rectangular box region (units: in decimal degree) </text>
             </tooltip>
         </content>
         <content id="2">
@@ -203,13 +220,53 @@
                 <text lang="en"> Create the grid to interpolate the bias factor or distribution parameters </text>
             </tooltip>
         </content>
+        <content id="15">
+            <status>
+                <text lang="en"> Select the method to aggregate the station data to create \n the time series to compute the parameters of the distribution </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the method to aggregate the station data to create \n the time series to compute the parameters of the distribution </text>
+            </tooltip>
+        </content>
+        <content id="16">
+            <status>
+                <text lang="en"> The distribution parameters of the station data are fitted \n over rectangular box region (units: in decimal degree) </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The distribution parameters of the station data are fitted \n over rectangular box region (units: in decimal degree) </text>
+            </tooltip>
+        </content>
+        <content id="17">
+            <status>
+                <text lang="en"> Check the box if the netCDF dataset is already splitted into chunks </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box if the netCDF dataset is already splitted into chunks </text>
+            </tooltip>
+        </content>
+        <content id="18">
+            <status>
+                <text lang="en"> Enter the full path to the directory "NCDATA_CHUNKS" </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter here the full path to the directory "NCDATA_CHUNKS" </text>
+            </tooltip>
+        </content>
+        <content id="19">
+            <status>
+                <text lang="en"> Browse the full path to the directory "NCDATA_CHUNKS" </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse here the full path to the directory "NCDATA_CHUNKS" </text>
+            </tooltip>
+        </content>
     </help>
     <message>
         <content id="1">
             <text lang="en"> Select the file containing the station data </text>
         </content>
         <content id="2">
-            <text lang="en"> Browse or enter the directory containing the downscaled files </text>
+            <text lang="en"> Browse or enter the directory containing the netCDF files </text>
         </content>
         <content id="3">
             <text lang="en"> You have to set the netCDF files parameters </text>
@@ -240,6 +297,9 @@
         </content>
         <content id="12">
             <text lang="en"> No enough data to calculate the coefficients </text>
+        </content>
+        <content id="13">
+            <text lang="en"> Browse or enter the path to the directory "NCDATA_CHUNKS" </text>
         </content>
     </message>
 </dialog_box>

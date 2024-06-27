@@ -258,6 +258,7 @@ PlotSeqNetCDFFilesCmd <- function(){
                 return(NULL)
             }
 
+            .cdtData$EnvData$varinfo <- rfeDataInfo$varinfo
             ncinfo <- list(xo = rfeDataInfo$ilon, yo = rfeDataInfo$ilat, varid = rfeDataInfo$varid)
 
             ncfileInit <- file.path(nc.dir, nc.files[1])

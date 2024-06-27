@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Bias Coefficient Options </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Inverse Distance Weighted </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Box Average </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Bilinear Interpolation </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Area Weighted Average </text>
+            </option>
+        </combobox>
+        <combobox id="3">
+            <option id="1">
+                <text lang="en"> Gaussian quadrature </text>
+            </option>
+            <option id="2">
+                <text lang="en"> User defined block </text>
+            </option>
+        </combobox>
+        <checkbutton id="1">
+            <text lang="en"> Add coarse grid for interpolation </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Save the coarse grid data into files </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Multiplicative bias coefficients function </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Station data box aggregation method </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Gridded data box aggregation method </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Rainy event threshold </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Method for the block mean value </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Longitude </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Latitude </text>
+        </label>
+        <label id="8">
+            <text lang="en"> Width </text>
+        </label>
+        <label id="9">
+            <text lang="en"> Step </text>
+        </label>
+        <label id="10">
+            <text lang="en"> Maximum number of neighbor boxes </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> The function to be used to compute the multiplicative bias coefficients </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The function to be used to compute the multiplicative bias coefficients </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> The interpolation method to use to aggregate stations data within the grid box </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The interpolation method to use to aggregate stations data within the grid box </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> The interpolation method to use to aggregate gridded data within the grid box.\n The "Area Weighted Average" method is a spatially weighted averages of the pixels within the box,\n the weights are the area of the pixel falling inside the box </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The interpolation method to use to aggregate gridded data within the grid box.\n The "Area Weighted Average" method is a spatially weighted averages of the pixels within the box,\n the weights are the area of the pixel falling inside the box </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> The rain threshold to use when computing the occurrence of rainy event \n in case of "Quantile Mapping with Fitted Distribution" </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The rain threshold to use when computing the occurrence of rainy event \n in case of "Quantile Mapping with Fitted Distribution" </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> The coarse grid will be created by resampling the grid of the input data.\n The values at the coarse grid will be set to 1 for multiplicative bias method \n and the values of the distribution parameters from gridded data for the fitted distribution method </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box to add coarse grid around the station locations convex hull </text>
+            </tooltip>
+        </content>
+        <content id="6">
+            <status>
+                <text lang="en"> Check the box save the buffer of coarse grid used \n to interpolate the bias coefficients or the parameters of the distribution </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Check this box save the buffer of coarse grid used \n to interpolate the bias coefficients or the parameters of the distribution </text>
+            </tooltip>
+        </content>
+        <content id="7">
+            <status>
+                <text lang="en"> The method to use to create the block estimation \n when the box for block mean values from the interpolation method is checked </text>
+            </status>
+            <tooltip>
+                <text lang="en"> The method to use to create the block estimation \n when the box for block mean values from the interpolation method is checked </text>
+            </tooltip>
+        </content>
+        <content id="8">
+            <status>
+                <text lang="en"> Width in decimal degrees for longitude </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Width in decimal degrees for longitude </text>
+            </tooltip>
+        </content>
+        <content id="9">
+            <status>
+                <text lang="en"> Width in decimal degrees for latitude </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Width in decimal degrees for latitude </text>
+            </tooltip>
+        </content>
+        <content id="10">
+            <status>
+                <text lang="en"> Step in decimal degrees for longitude. The width will be divided by the step </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Step in decimal degrees for longitude </text>
+            </tooltip>
+        </content>
+        <content id="11">
+            <status>
+                <text lang="en"> Step in decimal degrees for latitude. The width will be divided by the step </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Step in decimal degrees for latitude </text>
+            </tooltip>
+        </content>
+        <content id="12">
+            <status>
+                <text lang="en"> Maximum number of nearest neighbor boxes to use when fitting and interpolating a grid point </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Maximum number of nearest neighbor boxes to use when fitting and interpolating a grid point </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> The width must be greater than or equal to the step </text>
+        </content>
+    </message>
+</dialog_box>

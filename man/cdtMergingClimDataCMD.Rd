@@ -7,6 +7,7 @@
 cdtMergingClimDataCMD(
   variable = "temp",
   time.step = "dekadal",
+  minhour = 1,
   dates = list(from = "range", pars = list(start = "2018011", end = "2018123")),
   station.data = list(file = "", sep = ",", na.strings = "-99"),
   netcdf.data = list(dir = "", format = "tmax_adj_\%s\%s\%s.nc", varid = "temp", ilon =
@@ -25,9 +26,26 @@ cdtMergingClimDataCMD(
 )
 }
 \arguments{
-\item{variable}{character, name of the climate variable to merge. Available options: \code{"rain"}, \code{"temp"}, \code{"rh"}, \code{"pres"}, \code{"prmsl"}, \code{"rad"}.}
+\item{variable}{character, name of the climate variable to merge. Available options: \code{"rain"}, \code{"temp"}, \code{"rh"}, \code{"pres"}, \code{"prmsl"}, \code{"rad"}, \code{"wspd"}, \code{"ugrd"}, \code{"vgrd"}.
+\itemize{
+\item{\code{"rain"}: }{rainfall data}
+\item{\code{"temp"}: }{temperature data}
+\item{\code{"rh"}: }{relative humidity data}
+\item{\code{"pres"}: }{surface pressure data}
+\item{\code{"prmsl"}: }{pressure at mean sea level}
+\item{\code{"rad"}: }{radiation data}
+\item{\code{"wspd"}: }{wind speed data}
+\item{\code{"ugrd"}: }{zonal wind components, E-W speed}
+\item{\code{"vgrd"}: }{meridional wind components, N-S speed}
+}}
 
-\item{time.step}{character, the time step of the data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}.}
+\item{time.step}{character, the time step of the data. Available options: \code{"minute"}, \code{"hourly"}, \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}.}
+
+\item{minhour}{integer, the step for \code{"minute"} and \code{"hourly"}.
+\itemize{
+\item{\code{"minute"}: }{can have the value 1, 5, 10, 15, 20 or 30}
+\item{\code{"hourly"}: }{can take the value 1, 3, 6 or 12}
+}}
 
 \item{dates}{named list, providing the dates to merge.
 The list includes an element \code{from} with available options \code{"range"}, \code{"file"} or \code{"dates"}, and 

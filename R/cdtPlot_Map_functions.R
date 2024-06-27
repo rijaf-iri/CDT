@@ -41,7 +41,7 @@ cdt.plotmap.args0 <- function(don,
 
 cdt.plotmap.args <- function(don, MapOp, shpf, 
                              mar.h = c(7, 4, 2.5, 2.5),
-                             mar.v = c(4, 4, 2.5, 7),
+                             mar.v = c(4, 4, 2.5, 7.5),
                              legend.text = NULL,
                              label.fun = identity,
                              ...)
@@ -130,10 +130,6 @@ cdt.plotmap.args.ncvar <- function(don, MapOp, shpf,
     map.args <- cdt.plotmap.args(don, MapOp, shpf, mar.h, mar.v, legend.text, label.fun, ...)
     mar <- map.args$mar
     map.args.add <- list(titre = .titre, data.type = "Grid")
-    # map.args.add <- list(titre = .titre,
-    #                     SHPOp = SHPOp,
-    #                     data.type = "Grid",
-    #                     plot.type = PlotType)
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     list(mar = mar, map.args = map.args)

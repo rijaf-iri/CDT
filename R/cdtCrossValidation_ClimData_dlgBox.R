@@ -1,15 +1,14 @@
 
 crossValidationInfoClimData <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
-        largeur0 <- 23
+        largeur0 <- 21
         largeur1 <- 47
         largeur2 <- 49
         largeur3 <- 32
         largeur4 <- 18
         largeur5 <- 28
     }else{
-        largeur0 <- 23
+        largeur0 <- 21
         largeur1 <- 43
         largeur2 <- 45
         largeur3 <- 32
@@ -35,18 +34,23 @@ crossValidationInfoClimData <- function(){
 
     frtimestep <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
+    CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][1:6]
+    periodVAL <- c('minute', 'hourly', 'daily', 'pentad', 'dekadal', 'monthly')
     file.period <- tclVar()
-    CbperiodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][3:6]
-    periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
     tclvalue(file.period) <- CbperiodVAL[periodVAL %in% .cdtData$GalParams$period]
 
-    cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, width = largeur0)
+    retminhr <- set.hour.minute(.cdtData$GalParams$period, .cdtData$GalParams$minhour)
+    minhour.tclVar <- tclVar(retminhr$val)
+
+    cb.period <- ttkcombobox(frtimestep, values = CbperiodVAL, textvariable = file.period, justify = 'center', width = largeur0)
+    cb.minhour <- ttkcombobox(frtimestep, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
     bt.DateRange <- ttkbutton(frtimestep, text = lang.dlg[['button']][['1']], width = largeur0)
 
     #######
 
     tkgrid(cb.period, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.DateRange, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.minhour, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.DateRange, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(bt.DateRange, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -56,8 +60,16 @@ crossValidationInfoClimData <- function(){
     tkconfigure(bt.DateRange, command = function(){
         tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep, TRUE)
         tcl('wm', 'attributes', tt, topmost = TRUE)
+    })
+
+    tkbind(cb.period, "<<ComboboxSelected>>", function(){
+        tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        retminhr <- set.hour.minute(tstep, minhour)
+        tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
+        tclvalue(minhour.tclVar) <- retminhr$val
     })
 
     ############################################
@@ -68,7 +80,8 @@ crossValidationInfoClimData <- function(){
     dir.InNCDF <- tclVar(.cdtData$GalParams$INPUT$dir)
 
     txt.stnfl <- tklabel(frInputData, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-    cb.stnfl <- ttkcombobox(frInputData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
+    cb.stnfl <- ttkcombobox(frInputData, values = unlist(openFile_ttkcomboList()), textvariable = file.stnfl, width = largeur1)
+    addTo_all_Combobox_List(cb.stnfl)
     bt.stnfl <- tkbutton(frInputData, text = "...")
     txt.InNCDF <- tklabel(frInputData, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     set.InNCDF <- ttkbutton(frInputData, text = .cdtEnv$tcl$lang$global[['button']][['5']])
@@ -98,9 +111,7 @@ crossValidationInfoClimData <- function(){
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(!is.null(dat.opfiles)){
             update.OpenFiles('ascii', dat.opfiles)
-            listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
             tclvalue(file.stnfl) <- dat.opfiles[[1]]
-            lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
         }
     })
 
@@ -190,7 +201,8 @@ crossValidationInfoClimData <- function(){
                                tclvalue(aspect.auxvar) == "1") "normal" else "disabled"
 
                 txt.grddem <- tklabel(frDEM, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
-                cb.grddem <<- ttkcombobox(frDEM, values = unlist(listOpenFiles), textvariable = demfile.var, width = largeur1, state = statedem)
+                cb.grddem <<- ttkcombobox(frDEM, values = unlist(openFile_ttkcomboList()), textvariable = demfile.var, width = largeur1, state = statedem)
+                addTo_all_Combobox_List(cb.grddem)
                 bt.grddem <- tkbutton(frDEM, text = "...", state = statedem)
 
                 tkgrid(txt.grddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, ipady = 1)
@@ -213,9 +225,7 @@ crossValidationInfoClimData <- function(){
                     tcl('wm', 'attributes', tt, topmost = TRUE)
                     if(!is.null(nc.opfiles)){
                         update.OpenFiles('netcdf', nc.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                         tclvalue(demfile.var) <- nc.opfiles[[1]]
-                        lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
@@ -386,7 +396,8 @@ crossValidationInfoClimData <- function(){
                 txt.INData.var <- tclVar(txt.INData)
 
                 txt.infile <- tklabel(fr.datastn, text = tclvalue(txt.INData.var), textvariable = txt.INData.var, anchor = 'w', justify = 'left')
-                cb.infile <<- ttkcombobox(fr.datastn, values = unlist(listOpenFiles), textvariable = selstn.filestn, width = largeur1 - 1)
+                cb.infile <<- ttkcombobox(fr.datastn, values = unlist(openFile_ttkcomboList()), textvariable = selstn.filestn, width = largeur1 - 1)
+                addTo_all_Combobox_List(cb.infile)
                 bt.infile <- tkbutton(fr.datastn, text = "...")
 
                 tkgrid(txt.infile, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -399,9 +410,7 @@ crossValidationInfoClimData <- function(){
                     tcl('wm', 'attributes', tt, topmost = TRUE)
                     if(!is.null(dat.opfiles)){
                         update.OpenFiles('ascii', dat.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(selstn.filestn) <- dat.opfiles[[1]]
-                        lapply(list(cb.stnfl, cb.grddem, cb.infile), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
@@ -471,10 +480,19 @@ crossValidationInfoClimData <- function(){
 
     ############################################
 
+    bt.prm.Opt <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['4']])
     bt.prm.OK <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['1']])
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     #######
+
+    tkconfigure(bt.prm.Opt, command = function(){
+        variable <- gsub("crossv\\.", "", .cdtData$GalParams$action)
+        if(variable == "pres"){
+            if(tclvalue(prmsl) == '1') variable <- "prmsl"
+        }
+        mergingData_Options(tt, 'crossv', variable)
+    })
 
     tkconfigure(bt.prm.OK, command = function(){
         if(trimws(tclvalue(file.stnfl)) == ""){
@@ -491,6 +509,7 @@ crossValidationInfoClimData <- function(){
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
+            .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
 
             .cdtData$GalParams$STN.file <- trimws(tclvalue(file.stnfl))
             .cdtData$GalParams$INPUT$dir <- trimws(tclvalue(dir.InNCDF))
@@ -559,8 +578,9 @@ crossValidationInfoClimData <- function(){
         tkfocus(.cdtEnv$tcl$main$win)
     })
 
-    tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.Opt, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.OK, row = 0, column = 1, sticky = '', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.CA, row = 0, column = 2, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
     
