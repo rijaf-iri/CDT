@@ -179,19 +179,23 @@ jra55_dods.download.rda.ucar <- function(GalParams, nbfile = 8, GUI = TRUE, verb
     return(ret)
 }
 
-jra55_dods.download.data <- function(lnk, dest, ncfl, pars, GUI = TRUE){
+jra55_dods.download.data <- function(lnk, dest, ncfl, pars){
     on.exit(lapply(dest, unlink))
 
     dest <- dest[[1]]
     lnk <- lnk[[1]]
     xx <- ncfl
 
+    tmpdir <- dirname(dirname(dest[1]))
+    error_files <- paste0(basename(dirname(dest[1])), '_error.txt')
+    error_files <- file.path(tmpdir, error_files)
+
     dc <- lapply(seq_along(lnk), function(j){
          ret <- try(curl::curl_download(lnk[j], dest[j]), silent = TRUE)
          rc <- 0
          if(inherits(ret, "try-error")){
             msg <- gsub('[\r\n]', '', ret[1])
-            Insert.Messages.Out(msg, TRUE, "w", GUI)
+            cat(msg, file = error_files, sep = '\n', append = TRUE)
             rc <- 1
          }
          rc

@@ -1,5 +1,5 @@
 
-gpm_imerg.download.gesdisc <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
+gpm_imerg.download.gesdisc <- function(GalParams, GUI = TRUE, verbose = TRUE){
     info <- gpm_imerg.info.gesdisc(GalParams)
     if(is.null(info)) return(-3)
 
@@ -43,6 +43,7 @@ gpm_imerg.download.gesdisc <- function(GalParams, nbfile = 3, GUI = TRUE, verbos
         unlink(auth$cookie)
         unlink(auth$netrc)
     })
+    nbfile <- 1
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI, verbose,
                              data.name, gpm_imerg.download.data,
@@ -240,7 +241,7 @@ gpm_imerg.info.gesdisc <- function(GalParams){
 
 #########################################################
 
-gpm_imerg.download.data <- function(lnk, dest, ncfl, pars, handle, GUI = TRUE){
+gpm_imerg.download.data <- function(lnk, dest, ncfl, pars, handle){
     on.exit(unlink(dest))
     xx <- basename(dest)
 
@@ -251,7 +252,10 @@ gpm_imerg.download.data <- function(lnk, dest, ncfl, pars, handle, GUI = TRUE){
         if(ret == 0) xx <- NULL
     }else{
         msg <- gsub('[\r\n]', '', dc[1])
-        Insert.Messages.Out(msg, TRUE, "e", GUI)
+        tmpdir <- dirname(dest)
+        error_files <- paste0(basename(tmpdir), '_error.txt')
+        error_files <- file.path(dirname(tmpdir), error_files)
+        cat(msg, file = error_files, sep = '\n', append = TRUE)
     }
 
     return(xx)

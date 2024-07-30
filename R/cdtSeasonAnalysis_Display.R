@@ -80,8 +80,8 @@ SeasonAnalysis.plot.TSMaps <- function(){
 
     opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                         SHPOp = .cdtData$EnvData$SHPOp,
-                         MapOp = TSMapOp,
+                         # SHPOp = .cdtData$EnvData$SHPOp,
+                         # MapOp = TSMapOp,
                          data.type = .data.type,
                          plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
@@ -179,8 +179,8 @@ SeasonAnalysis.plot.ClimMaps <- function(){
 
     opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                         SHPOp = .cdtData$EnvData$SHPOp,
-                         MapOp = climMapOp,
+                         # SHPOp = .cdtData$EnvData$SHPOp,
+                         # MapOp = climMapOp,
                          data.type = .data.type,
                          plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]

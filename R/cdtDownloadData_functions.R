@@ -27,6 +27,13 @@ cdt.download.data <- function(urls, destfiles, ncfiles, nbfile,
         }else{
             cat(xx, "\n")
         }
+
+        tmpdir <- dirname(destfiles[[1]][[1]][1])
+        miss_files <- paste0(basename(tmpdir), '_missing_files.txt')
+        miss_files <- file.path(dirname(tmpdir), miss_files)
+        miss_data <- do.call(c, ret)
+        cat(miss_data, file = miss_files, sep = '\n')
+
         return(1)
     }
     return(0)

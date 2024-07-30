@@ -415,8 +415,7 @@ gsmap.jaxa.dates <- function(url, login, type, fileformat = NA){
 
 #################################################################################
 
-gsmap.download.data <- function(lnk, dest, ncfl, bbox,
-                                handle, pars, GUI = TRUE)
+gsmap.download.data <- function(lnk, dest, ncfl, bbox, handle, pars)
 {
     xx <- basename(dest)
 
@@ -435,7 +434,9 @@ gsmap.download.data <- function(lnk, dest, ncfl, bbox,
         }
     }else{
         msg <- gsub('[\r\n]', '', dc[1])
-        Insert.Messages.Out(msg, TRUE, "e", GUI)
+        tmpdir <- dirname(dirname(dest))
+        error_files <- file.path(tmpdir, 'error.txt')
+        cat(msg, file = error_files, sep = '\n', append = TRUE)
     }
 
     return(xx)

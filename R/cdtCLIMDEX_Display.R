@@ -20,8 +20,8 @@ Climdex.plotMapTrend <- function(){
     map.args$mar[3] <- map.args$mar[3] + 2
     opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                         SHPOp = .cdtData$EnvData$SHPOp,
-                         MapOp = dataMapOp,
+                         # SHPOp = .cdtData$EnvData$SHPOp,
+                         # MapOp = dataMapOp,
                          data.type = .data.type,
                          plot.type = .plot.type)
     map.args <- map.args[!(names(map.args) %in% "mar")]
@@ -125,7 +125,7 @@ Climdex.plotMapYear <- function(){
     map.args$mar[3] <- map.args$mar[3] + 2
     opar <- graphics::par(mar = map.args$mar)
     map.args.add <- list(titre = .titre,
-                         SHPOp = .cdtData$EnvData$SHPOp,
+                         # SHPOp = .cdtData$EnvData$SHPOp,
                          # MapOp = dataMapOp,
                          data.type = .data.type,
                          plot.type = .plot.type)

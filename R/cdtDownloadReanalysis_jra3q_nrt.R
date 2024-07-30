@@ -71,11 +71,10 @@ jra3q_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
     urls <- file.path(jra_nrt, opts$grib_path, yrmo, filenames)
     ncfiles <- sprintf(paste0(GalParams$var, "_%s.nc"), ymdh)
 
-    pars <- list(wgrib = wgrib_exe, GUI = GUI)
     convert_units <- if(is.null(opts$units_fun)) NULL else list(fun = opts$units_fun, args = opts$units_args)
     ncpars <- list(name = opts$nc_name, units = opts$nc_units, longname = opts$nc_longname,
                    prec = "float", missval = -9999, convert = convert_units)
-    gribpars <- list(var = opts$grib_name, hgt = opts$grib_height, srch = opts$grib_search)
+    gribpars <- list(var = opts$grib_name, hgt = opts$grib_height, srch = opts$grib_search, wgrib = wgrib_exe)
 
     ############
     data.name <- "JRA-3Q NRT Hourly"
@@ -93,31 +92,33 @@ jra3q_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
 
     ret <- cdt.download.data(urls, destfiles, ncfiles, nbfile, GUI,
                              verbose, data.name, jra3q_nrt.download.data,
-                             ncpars = ncpars, gribpars = gribpars,
-                             bbox = bbox_coords, pars = pars)
+                             ncpars = ncpars, gribpars = gribpars, bbox = bbox_coords)
     return(ret)
-
 }
 
-jra3q_nrt.download.data <- function(lnk, dest, ncfl, ncpars, gribpars, bbox, pars){
+jra3q_nrt.download.data <- function(lnk, dest, ncfl, ncpars, gribpars, bbox){
     xx <- basename(dest)
     dc <- try(curl::curl_download(lnk, dest), silent = TRUE)
+
+    tmpdir <- dirname(dirname(dest))
+    error_files <- paste0(basename(dirname(dest)), '_error.txt')
+    error_files <- file.path(tmpdir, error_files)
 
     if(!inherits(dc, "try-error")){
         if(length(gribpars$var) == 1){
             don <- jra3q_nrt.extract.grib2(dest, gribpars$var, gribpars$hgt,
-                                           gribpars$srch, bbox, pars$wgrib)
+                                           gribpars$srch, bbox, gribpars$wgrib)
             dat <- don$data
             msg <- don$msg
 
             if(is.null(dat)){
-                Insert.Messages.Out(msg, TRUE, "e", pars$GUI)
+                cat(msg, file = error_files, sep = '\n', append = TRUE)
                 return(xx)
             }
         }else{
             don <- lapply(seq_along(gribpars$var), function(j){
                 jra3q_nrt.extract.grib2(dest, gribpars$var[j], gribpars$hgt[j],
-                                        gribpars$srch[j], bbox, pars$wgrib)
+                                        gribpars$srch[j], bbox, gribpars$wgrib)
             })
             dat <- lapply(don, '[[', 'data')
             msg <- lapply(don, '[[', 'msg')
@@ -126,7 +127,7 @@ jra3q_nrt.download.data <- function(lnk, dest, ncfl, ncpars, gribpars, bbox, par
             if(any(inull)){
                 msg <- msg[inull]
                 for(j in seq_along(msg))
-                    Insert.Messages.Out(msg[[j]], TRUE, "e", pars$GUI)
+                    cat(msg[[j]], file = error_files, sep = '\n', append = TRUE)
 
                 return(xx)
             }

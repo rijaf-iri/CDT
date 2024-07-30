@@ -73,6 +73,7 @@ cdt.plotmap.args <- function(don, MapOp, shpf,
     }else{
         ## to remove
         ocrds <- if(tclvalue(shpf$add.shp) == "1" & !is.null(shpf$ocrds)) shpf$ocrds else matrix(NA, 1, 2)
+        shpf$options <- .cdtData$EnvData$SHPOp
     }
 
     #################
