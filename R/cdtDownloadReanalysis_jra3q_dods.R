@@ -183,12 +183,16 @@ jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 4, GUI = TRUE, verb
     return(ret)
 }
 
-jra3q_dods.download.data <- function(lnk, dest, ncfl, opts, GUI = TRUE){
+jra3q_dods.download.data <- function(lnk, dest, ncfl, opts){
     on.exit(lapply(dest, unlink))
 
     dest <- dest[[1]]
     lnk <- lnk[[1]]
     xx <- ncfl
+
+    tmpdir <- dirname(dirname(dest[[1]][1]))
+    error_files <- paste0(basename(dirname(dest[[1]][1])), '_error.txt')
+    error_files <- file.path(tmpdir, error_files)
 
     dc <- lapply(seq_along(lnk), function(j){
         lapply(seq_along(lnk[[j]]), function(i){
@@ -196,7 +200,7 @@ jra3q_dods.download.data <- function(lnk, dest, ncfl, opts, GUI = TRUE){
             rc <- 0
             if(inherits(ret, "try-error")){
                 msg <- gsub('[\r\n]', '', ret[1])
-                Insert.Messages.Out(msg, TRUE, "w", GUI)
+                cat(msg, file = error_files, sep = '\n', append = TRUE)
                 rc <- 1
             }
             rc
