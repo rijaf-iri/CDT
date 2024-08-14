@@ -29,7 +29,9 @@ assign("blanking.options", list(), envir = .cdtMRG)
     if(!dir.exists(.cdtDir$dirLocal)){
         dir.create(.cdtDir$dirLocal, recursive = TRUE, showWarnings = FALSE)
         cdtDirRoot <- file.path(.cdtDir$Root, c("config", "languages"))
-        ret <- file.copy(cdtDirRoot, .cdtDir$dirLocal, recursive = TRUE, copy.mode = TRUE)
+        cdtDirLocal <- file.path(.cdtDir$dirLocal, c("config", "languages"))
+        ret <- file.copy(cdtDirRoot[1:2], cdtDirLocal[1:2], recursive = TRUE, copy.mode = TRUE)
+        # ret <- file.copy(cdtDirRoot, .cdtDir$dirLocal, recursive = TRUE, copy.mode = TRUE)
         if(any(!ret)){
             warning("Unable to copy")
             for(i in which(!ret))
