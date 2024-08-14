@@ -1,6 +1,5 @@
 
 OnsetCalcPanelCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 29
         largeur1 <- 33
@@ -45,14 +44,14 @@ OnsetCalcPanelCmd <- function(){
                                              ),
                               output = "")
 
-    .cdtData$EnvData$tab$pointSize <- NULL
     .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
                                        userCol = list(custom = FALSE, color = NULL),
                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
                                        scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                       pointSize = .cdtData$EnvData$tab$pointSize)
+                                       plotType = list(values = c("Pixels", "Points"), var = "Pixels"),
+                                       pointSize = 1.0, bbox = .cdtData$Config$region)
 
     .cdtData$EnvData$TSGraphOp <- list(
                                     bar = list(
@@ -73,8 +72,6 @@ OnsetCalcPanelCmd <- function(){
                                         legend = NULL)
                                     )
 
-    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
-
     ###################
 
     xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtCompute_Onset_leftCmd.xml")
@@ -86,13 +83,14 @@ OnsetCalcPanelCmd <- function(){
     .cdtEnv$tcl$main$cmd.frame <- tkframe(.cdtEnv$tcl$main$panel.left)
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
-    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
     cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
+    cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
     cmd.tab3 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['3']])
     cmd.tab4 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['4']])
     cmd.tab5 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['5']])
 
-    bwRaiseTab(tknote.cmd, cmd.tab1)
+    bwRaiseTab(tknote.cmd, cmd.tab2)
+
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
     tkgrid.columnconfigure(cmd.tab3, 0, weight = 1)
@@ -140,7 +138,8 @@ OnsetCalcPanelCmd <- function(){
 
         txt.INPrec <- tklabel(frameInData, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
         if(GeneralParameters$data.type == 'cdtstation'){
-            cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
+            cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Prec, width = largeur1)
+            addTo_all_Combobox_List(cb.en.INPrec)
         }else{
             cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
         }
@@ -148,7 +147,8 @@ OnsetCalcPanelCmd <- function(){
 
         txt.INEtp <- tklabel(frameInData, text = tclvalue(txt.INEtp.var), textvariable = txt.INEtp.var, anchor = 'w', justify = 'left')
         if(GeneralParameters$data.type == 'cdtstation'){
-            cb.en.INEtp <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Etp, width = largeur1, state = stateETP)
+            cb.en.INEtp <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Etp, width = largeur1, state = stateETP)
+            addTo_all_Combobox_List(cb.en.INEtp)
         }else{
             cb.en.INEtp <- tkentry(frameInData, textvariable = input.Etp, width = largeur2, state = stateETP)
         }
@@ -183,13 +183,12 @@ OnsetCalcPanelCmd <- function(){
         ############
 
         tkconfigure(bt.INPrec, command = function(){
-            if(GeneralParameters$data.type == 'cdtstation'){
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            if(data_type == 'cdtstation'){
                 dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(input.Prec) <- dat.opfiles[[1]]
-                    lapply(list(cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
                 }
             }else{
                 path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -198,13 +197,12 @@ OnsetCalcPanelCmd <- function(){
         })
 
         tkconfigure(bt.INEtp, command = function(){
-            if(GeneralParameters$data.type == 'cdtstation'){
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            if(data_type == 'cdtstation'){
                 dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(input.Etp) <- dat.opfiles[[1]]
-                    lapply(list(cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
                 }
             }else{
                 path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -223,13 +221,18 @@ OnsetCalcPanelCmd <- function(){
 
             stateETP <- 'disabled'
 
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            set.plot.type(data_type)
+
             ###
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(data_type == 'cdtstation'){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['3']]
                 tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['4']]
 
-                cb.en.INPrec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
-                cb.en.INEtp <<- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Etp, width = largeur1, state = stateETP)
+                cb.en.INPrec <<- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Prec, width = largeur1)
+                addTo_all_Combobox_List(cb.en.INPrec)
+                cb.en.INEtp <<- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Etp, width = largeur1, state = stateETP)
+                addTo_all_Combobox_List(cb.en.INEtp)
 
                 ######
                 helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -242,9 +245,7 @@ OnsetCalcPanelCmd <- function(){
                     dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                     if(!is.null(dat.opfiles)){
                         update.OpenFiles('ascii', dat.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(input.Prec) <- dat.opfiles[[1]]
-                        lapply(list(cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
@@ -252,19 +253,17 @@ OnsetCalcPanelCmd <- function(){
                     dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                     if(!is.null(dat.opfiles)){
                         update.OpenFiles('ascii', dat.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(input.Etp) <- dat.opfiles[[1]]
-                        lapply(list(cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
             }
 
             ###
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(data_type == 'cdtdataset'){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['5']]
                 tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['6']]
 
-                cb.en.INPrec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
+                cb.en.INPrec <<- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
                 cb.en.INEtp <<- tkentry(frameInData, textvariable = input.Etp, width = largeur2, state = stateETP)
 
                 ######
@@ -315,8 +314,114 @@ OnsetCalcPanelCmd <- function(){
 
         ############################################
 
+        bt.CalcOnset <- ttkbutton(subfr1, text = lang.dlg[['button']][['3']])
+
+        tkconfigure(bt.CalcOnset, command = function(){
+            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+
+            if(GeneralParameters$data.type == 'cdtstation'){
+                GeneralParameters$cdtstation$prec <- trimws(tclvalue(input.Prec))
+                GeneralParameters$cdtstation$etp <- trimws(tclvalue(input.Etp))
+            }
+
+            if(GeneralParameters$data.type == 'cdtdataset'){
+                GeneralParameters$cdtdataset$prec <- trimws(tclvalue(input.Prec))
+                GeneralParameters$cdtdataset$etp <- trimws(tclvalue(input.Etp))
+            }
+
+            GeneralParameters$output <- trimws(tclvalue(dir.save))
+
+            GeneralParameters$onset.reg$region <- trimws(tclvalue(onset.region))
+            GeneralParameters$onset.reg$subdiv <- trimws(tclvalue(onset.subdiv))
+
+            if(GeneralParameters$onset.reg$region == "Multiple"){
+                if(GeneralParameters$onset.reg$subdiv == "Latitude"){
+                    GeneralParameters$onset.reg$lat$nb <- as.numeric(trimws(tclvalue(lat.nbdiv)))
+                    GeneralParameters$onset.reg$lat$div <- lapply(lat.subdiv, function(x) as.numeric(trimws(tclvalue(x))))
+                }
+
+                if(GeneralParameters$onset.reg$subdiv == "Shapefile"){
+                    GeneralParameters$onset.reg$shp$file <- trimws(tclvalue(shp.file))
+                    GeneralParameters$onset.reg$shp$attr <- trimws(tclvalue(shp.attr))
+                }
+            }
+
+            GeneralParameters$onset.criteria <- lapply(ONSET.vars, function(x){
+                                                        x <- x$onset.def
+                                                        list(
+                                                            method = as.numeric(trimws(tclvalue(x$method))),
+                                                            total.days = as.numeric(trimws(tclvalue(x$total.days))),
+                                                            rain.total = as.numeric(trimws(tclvalue(x$rain.total))),
+                                                            thres.rain.day = as.numeric(trimws(tclvalue(x$thres.rain.day))),
+                                                            min.rain.day = as.numeric(trimws(tclvalue(x$min.rain.day))),
+                                                            dryspell = as.numeric(trimws(tclvalue(x$dryspell))),
+                                                            dryspell.days = as.numeric(trimws(tclvalue(x$dryspell.days))),
+                                                            evapo.frac = as.numeric(trimws(tclvalue(x$evapo.frac))),
+                                                            earliest = list(month = which(MOIS %in% trimws(tclvalue(x$earliest$month))),
+                                                                            day = as.numeric(trimws(tclvalue(x$earliest$day)))),
+                                                            latest = list(month = which(MOIS %in% trimws(tclvalue(x$latest$month))),
+                                                                            day = as.numeric(trimws(tclvalue(x$latest$day))))
+                                                        )
+                                                    })
+
+            nbcriteria <- length(unlist(GeneralParameters$onset.def)) * length(GeneralParameters$onset.criteria)
+            criteria <- unlist(GeneralParameters$onset.criteria)
+            if(any(is.na(criteria)) | length(criteria) != nbcriteria){
+                Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, 'e')
+                return(NULL)
+            }
+
+            etp.data <- FALSE
+            omethods <- sapply(GeneralParameters$onset.criteria, "[[", "method")
+            if(any(omethods == 2)){
+                if(GeneralParameters$data.type == 'cdtstation'){
+                    if(GeneralParameters$cdtstation$etp == "") etp.data <- TRUE
+                }else{
+                    if(GeneralParameters$cdtdataset$etp == "") etp.data <- TRUE
+                }
+            }
+
+            if(etp.data){
+                tkmessageBox(message = lang.dlg[['message']][['15']], icon = "warning", type = "ok")
+                return(NULL)
+            }
+
+            # assign("GeneralParameters", GeneralParameters, envir = .GlobalEnv)
+
+            Insert.Messages.Out(lang.dlg[['message']][['8']], TRUE, "i")
+
+            tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
+            tcl('update')
+            ret <- tryCatch2({
+                                compute_SeasonOnset_Procs(GeneralParameters)
+                            },
+                            error = function(e) errorFun(e),
+                            finally = {
+                                tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
+                                tcl('update')
+                            })
+
+            if(!is.null(ret)){
+                if(ret == 0){
+                    Insert.Messages.Out(lang.dlg[['message']][['9']], TRUE, "s")
+
+                    .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
+                    set.plot.type(.cdtData$EnvData$output$params$data.type)
+                    ###################
+
+                    set.Data.Dates()
+                    widgets.Station.Pixel()
+                    res <- try(read.Data.Map(), silent = TRUE)
+                    if(inherits(res, "try-error") | is.null(res)) return(NULL)
+                }else Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, 'e')
+            }else Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, 'e')
+        })
+
+        ############################################
+
         tkgrid(frameInData, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
         tkgrid(frameDirSav, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        tkgrid(bt.CalcOnset, row = 2, column = 0, sticky = 'we')
 
     #######################################################################################################
 
@@ -332,11 +437,14 @@ OnsetCalcPanelCmd <- function(){
             tcl('update')
             ONSET.vars <<- NULL
 
+            onset_region <- regionDIV[CbregionDIV %in% trimws(tclvalue(onset.region))]
+
             ########
 
             innerRegDef <<- tkframe(frameRegDef, relief = 'groove', borderwidth = 2)
-            if(trimws(tclvalue(onset.region)) == CbregionDIV[2]){
-                if(trimws(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
+            if(onset_region == "Multiple"){
+                onset_subdiv <- regionSUBDIV[CbregionSUBDIV %in% trimws(tclvalue(onset.subdiv))]
+                if(onset_subdiv == "Latitude"){
                     txt.lat.sep <- tklabel(innerRegDef, text = '', width = largeur9)
 
                     ######
@@ -381,7 +489,8 @@ OnsetCalcPanelCmd <- function(){
                     tkgrid(fr.lat.sub1, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, ipadx = 1)
                 }else{
                     txt.shp.file <- tklabel(innerRegDef, text = lang.dlg[['label']][['12']], anchor = 'w', justify = 'left')
-                    cb.shp.file <- ttkcombobox(innerRegDef, values = unlist(listOpenFiles), textvariable = shp.file, width = largeur1)
+                    cb.shp.file <- ttkcombobox(innerRegDef, values = unlist(openFile_ttkcomboList()), textvariable = shp.file, width = largeur1)
+                    addTo_all_Combobox_List(cb.shp.file)
                     bt.shp.file <- tkbutton(innerRegDef, text = "...")
 
                     txt.shp.attr <- tklabel(innerRegDef, text = lang.dlg[['label']][['13']], anchor = 'w', justify = 'left')
@@ -400,12 +509,10 @@ OnsetCalcPanelCmd <- function(){
                         if(!is.null(shp.opfiles)){
                             update.OpenFiles('shp', shp.opfiles)
                             tclvalue(shp.file) <- shp.opfiles[[1]]
-                            listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                            lapply(list(cb.shp.file, cb.en.INPrec, cb.en.INEtp), tkconfigure, values = unlist(listOpenFiles))
                             tcl('update')
 
                             shpf <- getShpOpenData(shp.file)
-                            SHPDATA <<- shpf[[2]]@data
+                            SHPDATA <<- sf::st_drop_geometry(shpf[[2]])
                             AttrTable <- names(SHPDATA)
                             tkconfigure(cb.shp.attr, values = AttrTable, textvariable = shp.attr)
                             tclvalue(shp.attr) <- AttrTable[1]
@@ -417,7 +524,7 @@ OnsetCalcPanelCmd <- function(){
                     ######
                     tkbind(cb.shp.file, "<<ComboboxSelected>>", function(){
                         shpf <- getShpOpenData(shp.file)
-                        SHPDATA <<- shpf[[2]]@data
+                        SHPDATA <<- sf::st_drop_geometry(shpf[[2]])
                         AttrTable <- names(SHPDATA)
                         tkconfigure(cb.shp.attr, values = AttrTable, textvariable = shp.attr)
                         tclvalue(shp.attr) <- AttrTable[1]
@@ -439,7 +546,7 @@ OnsetCalcPanelCmd <- function(){
 
                 ######
                 tkconfigure(bt.create.subdv, command = function(){
-                    if(trimws(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
+                    if(onset_subdiv == "Latitude"){
                         lat <- rep(NA, length(lat.subdiv))
                         for(i in seq_along(lat.subdiv)) lat[i] <- as.numeric(trimws(tclvalue(lat.subdiv[[i]])))
                         lat <- ifelse(lat > 60 | lat < -60, NA, lat)
@@ -609,6 +716,9 @@ OnsetCalcPanelCmd <- function(){
                     tkgrid(txt.evapo1, en.evapo, txt.evapo2)
 
                     tkgrid(frEvapo, row = 4, sticky = 'we')
+
+                    tkconfigure(cb.en.INEtp, state = 'normal')
+                    tkconfigure(bt.INEtp, state = 'normal')
                 }
                 if(trimws(tclvalue(onset.method)) %in% c('3', '4', '5')){
                     if(trimws(tclvalue(onset.method)) %in% c('3', '5')){
@@ -637,6 +747,15 @@ OnsetCalcPanelCmd <- function(){
                         tkgrid(frDrySpell1, row = 7, sticky = 'we')
                     }
                 }
+            
+                if(length(ONSET.vars) > 0){
+                    onset_method <- sapply(seq_along(ONSET.vars), function(l){
+                        trimws(tclvalue(ONSET.vars[[l]]$onset.def$method))
+                    })
+                    stateETP <- if(any(onset_method == '2')) 'normal' else 'disabled'
+                    tkconfigure(cb.en.INEtp, state = stateETP)
+                    tkconfigure(bt.INEtp, state = stateETP)
+                }
             })
 
             ########
@@ -646,12 +765,12 @@ OnsetCalcPanelCmd <- function(){
             ########
             return(list(frame = frameOnset,
                         onset.def = list(method = onset.method,
-                                        total.days = total.days, rain.total = total.rain,
-                                        thres.rain.day = thres.rain.day, min.rain.day = min.rain.day,
-                                        dryspell = dryspell, dryspell.days = dryspell.days,
-                                        evapo.frac = evapo.frac,
-                                        earliest = list(month = onset.start.mon, day = onset.start.day),
-                                        latest = list(month = onset.late.mon, day = onset.late.day))
+                                         total.days = total.days, rain.total = total.rain,
+                                         thres.rain.day = thres.rain.day, min.rain.day = min.rain.day,
+                                         dryspell = dryspell, dryspell.days = dryspell.days,
+                                         evapo.frac = evapo.frac,
+                                         earliest = list(month = onset.start.mon, day = onset.start.day),
+                                         latest = list(month = onset.late.mon, day = onset.late.day))
                 ))
         }
 
@@ -718,124 +837,9 @@ OnsetCalcPanelCmd <- function(){
 
         ##############################################
 
-        bt.CalcOnset <- ttkbutton(subfr2, text = lang.dlg[['button']][['3']])
-
-        tkconfigure(bt.CalcOnset, command = function(){
-            GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
-
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
-                GeneralParameters$cdtstation$prec <- trimws(tclvalue(input.Prec))
-                GeneralParameters$cdtstation$etp <- trimws(tclvalue(input.Etp))
-            }
-
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
-                GeneralParameters$cdtdataset$prec <- trimws(tclvalue(input.Prec))
-                GeneralParameters$cdtdataset$etp <- trimws(tclvalue(input.Etp))
-            }
-
-            GeneralParameters$output <- trimws(tclvalue(dir.save))
-
-            GeneralParameters$onset.reg$region <- trimws(tclvalue(onset.region))
-            GeneralParameters$onset.reg$subdiv <- trimws(tclvalue(onset.subdiv))
-
-            if(trimws(tclvalue(onset.region)) == CbregionDIV[2]){
-                if(trimws(tclvalue(onset.subdiv)) == CbregionSUBDIV[1]){
-                    GeneralParameters$onset.reg$lat$nb <- as.numeric(trimws(tclvalue(lat.nbdiv)))
-                    GeneralParameters$onset.reg$lat$div <- lapply(lat.subdiv, function(x) as.numeric(trimws(tclvalue(x))))
-                }
-
-                if(trimws(tclvalue(onset.subdiv)) == CbregionSUBDIV[2]){
-                    GeneralParameters$onset.reg$shp$file <- trimws(tclvalue(shp.file))
-                    GeneralParameters$onset.reg$shp$attr <- trimws(tclvalue(shp.attr))
-                }
-            }
-
-            GeneralParameters$onset.criteria <- lapply(ONSET.vars, function(x){
-                                                        x <- x$onset.def
-                                                        list(
-                                                            method = as.numeric(trimws(tclvalue(x$method))),
-                                                            total.days = as.numeric(trimws(tclvalue(x$total.days))),
-                                                            rain.total = as.numeric(trimws(tclvalue(x$rain.total))),
-                                                            thres.rain.day = as.numeric(trimws(tclvalue(x$thres.rain.day))),
-                                                            min.rain.day = as.numeric(trimws(tclvalue(x$min.rain.day))),
-                                                            dryspell = as.numeric(trimws(tclvalue(x$dryspell))),
-                                                            dryspell.days = as.numeric(trimws(tclvalue(x$dryspell.days))),
-                                                            evapo.frac = as.numeric(trimws(tclvalue(x$evapo.frac))),
-                                                            earliest = list(month = which(MOIS %in% trimws(tclvalue(x$earliest$month))),
-                                                                            day = as.numeric(trimws(tclvalue(x$earliest$day)))),
-                                                            latest = list(month = which(MOIS %in% trimws(tclvalue(x$latest$month))),
-                                                                            day = as.numeric(trimws(tclvalue(x$latest$day))))
-                                                        )
-                                                    })
-
-            nbcriteria <- length(unlist(GeneralParameters$onset.def)) * length(GeneralParameters$onset.criteria)
-            criteria <- unlist(GeneralParameters$onset.criteria)
-            if(any(is.na(criteria)) | length(criteria) != nbcriteria){
-                Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, 'e')
-                return(NULL)
-            }
-
-            etp.data <- FALSE
-            omethods <- sapply(GeneralParameters$onset.criteria, "[[", "method")
-            if(any(omethods == 2)){
-                if(GeneralParameters$data.type == 'cdtstation'){
-                    if(GeneralParameters$cdtstation$etp == "") etp.data <- TRUE
-                }else{
-                    if(GeneralParameters$cdtdataset$etp == "") etp.data <- TRUE
-                }
-            }
-
-            if(etp.data){
-                tkmessageBox(message = lang.dlg[['message']][['15']], icon = "warning", type = "ok")
-                tkconfigure(cb.en.INEtp, state = 'normal')
-                tkconfigure(bt.INEtp, state = 'normal')
-                return(NULL)
-            }else{
-                tkconfigure(cb.en.INEtp, state = 'disabled')
-                tkconfigure(bt.INEtp, state = 'disabled')
-            }
-
-            # assign("GeneralParameters", GeneralParameters, envir = .GlobalEnv)
-
-            Insert.Messages.Out(lang.dlg[['message']][['8']], TRUE, "i")
-
-            tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
-            tcl('update')
-            ret <- tryCatch({
-                                compute_SeasonOnset_Procs(GeneralParameters)
-                            },
-                            warning = function(w){
-                                warningFun(w)
-                                return(0)
-                            },
-                            error = function(e) errorFun(e),
-                            finally = {
-                                tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
-                                tcl('update')
-                            })
-
-            if(!is.null(ret)){
-                if(ret == 0){
-                    Insert.Messages.Out(lang.dlg[['message']][['9']], TRUE, "s")
-
-                    .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
-                    .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
-                    ###################
-                    set.Data.Dates()
-                    widgets.Station.Pixel()
-                    set.plot.type()
-                    res <- try(read.Data.Map(), silent = TRUE)
-                    if(inherits(res, "try-error") | is.null(res)) return(NULL)
-                }else Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, 'e')
-            }else Insert.Messages.Out(lang.dlg[['message']][['10']], TRUE, 'e')
-        })
-
-        ##############################################
-
         tkgrid(frameRegion, row = 0, column = 0, sticky = 'we')
         tkgrid(frameRegDef, row = 1, column = 0, sticky = 'we')
         tkgrid(frameOnsetDEF, row = 2, column = 0, sticky = 'we')
-        tkgrid(bt.CalcOnset, row = 3, column = 0, sticky = 'we')
 
     #######################################################################################################
 
@@ -878,12 +882,12 @@ OnsetCalcPanelCmd <- function(){
 
                 .cdtData$EnvData$output <- OutIndexdata
                 .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
-                .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
+                set.plot.type(.cdtData$EnvData$output$params$data.type)
                 ###################
+
                 set.Data.Dates()
                 widgets.Station.Pixel()
-                set.plot.type()
                 ret <- try(read.Data.Map(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
             }
@@ -932,18 +936,18 @@ OnsetCalcPanelCmd <- function(){
                 }
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
-
-            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
-                .cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$dataMapOp$pointSize
         })
 
         #########
         .cdtData$EnvData$tab$dataMap <- NULL
 
         tkconfigure(bt.data.maps, command = function(){
-            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != "" &
-                !is.null(.cdtData$EnvData$varData))
-                    OnsetCalc.Display.Maps()
+            if(trimws(tclvalue(.cdtData$EnvData$donDate)) != ""){
+                ret <- try(read.Data.Map(), silent = TRUE)
+                if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
+
+                OnsetCalc.Display.Maps()
+            }
         })
 
         tkconfigure(bt.data.Index.prev, command = function(){
@@ -987,30 +991,8 @@ OnsetCalcPanelCmd <- function(){
 
         ##############################################
 
-        framePlotType <- tkframe(subfr3)
-
-        .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
-
-        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['38']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur3)
-
-        tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ###############
-
-        tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
-            if(!is.null(.cdtData$EnvData$varData)){
-                ret <- try(read.Data.Map(), silent = TRUE)
-                if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
-            }
-        })
-
-        ##############################################
-
         tkgrid(frameDataExist, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameDataMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(framePlotType, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -1077,65 +1059,7 @@ OnsetCalcPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr5, text = lang.dlg[['label']][['33']], relief = 'groove')
-
-        .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
-        file.plotShp <- tclVar()
-        stateSHP <- "disabled"
-
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
-
-        ########
-        tkconfigure(bt.addshp, command = function(){
-            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
-            if(!is.null(shp.opfiles)){
-                update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-
-                tkconfigure(cb.addshp, values = unlist(listOpenFiles))
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-            }
-        })
-
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
-        })
-
-        #################
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
-            else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-            tkconfigure(bt.addshpOpt, state = stateSHP)
-        })
-
-        ##############################################
-
+        frameSHP <- create_shpLayer_frame(subfr5)
         tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
@@ -1203,18 +1127,20 @@ OnsetCalcPanelCmd <- function(){
 
     #################
 
-    set.plot.type <- function(){
-        if(.cdtData$EnvData$output$params$data.type == "cdtstation")
-        {
-            plot.type <- c("Pixels", "Points")
-            .cdtData$EnvData$plot.maps$.data.type <- "Points"
-
-            .cdtData$EnvData$dataMapOp$pointSize <- 1.0
-        }else{
-            plot.type <- c("Pixels", "FilledContour")
-            .cdtData$EnvData$plot.maps$.data.type <- "Grid"
+    set.plot.type <- function(data_type){
+        if(data_type == 'cdtstation'){
+            .data.type <- "Points"
+            plot_type <- list(values = c("Pixels", "Points"), var = "Pixels")
         }
-        tkconfigure(cb.plotType, values = plot.type)
+
+        if(data_type == 'cdtdataset'){
+            .data.type <- "Grid"
+            plot_type <- list(values = c("Pixels", "FilledContour"), var = "Pixels")
+        }
+
+        .cdtData$EnvData$dataMapOp$plotType <- plot_type
+        .cdtData$EnvData$plot.maps$.data.type <- .data.type
+        .cdtData$EnvData$plot.maps$data.type <- data_type
     }
 
     #################
@@ -1246,7 +1172,7 @@ OnsetCalcPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- .cdtData$EnvData$dataMapOp$plotType$var
 
             ########
             readVarData <- TRUE

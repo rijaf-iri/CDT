@@ -68,8 +68,9 @@ cdt.plotmap.args <- function(don, MapOp, shpf,
 
     #################
     ### shape files
+    ocrds <- matrix(NA, 1, 2)
     if(!is.null(shpf$addshp)){
-        ocrds <- if(tclvalue(shpf$addshp) == "1" & !is.null(shpf$ocrds)) shpf$ocrds else matrix(NA, 1, 2)
+        if(tclvalue(shpf$addshp) == "1" & !is.null(shpf$ocrds)) ocrds <- shpf$ocrds
     }else{
         ## to remove
         ocrds <- if(tclvalue(shpf$add.shp) == "1" & !is.null(shpf$ocrds)) shpf$ocrds else matrix(NA, 1, 2)

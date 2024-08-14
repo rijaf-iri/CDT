@@ -178,7 +178,7 @@ PlotOneNetCDFFileCmd <- function(){
         ########
 
         tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$shapefile$options <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$shapefile$options)
+            .cdtData$EnvData$shapefile$options <- MapGraph.LineSHPOptions(.cdtData$EnvData$shapefile$options)
         })
 
         #################

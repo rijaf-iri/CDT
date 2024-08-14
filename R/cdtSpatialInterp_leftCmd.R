@@ -1,6 +1,5 @@
 
 SpatialInterpPanelCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 20
         largeur1 <- 32
@@ -10,6 +9,7 @@ SpatialInterpPanelCmd <- function(){
         largeur5 <- 11
         largeur6 <- 30
         largeur7 <- 38
+        largeur8 <- 15
     }else{
         largeur0 <- 23
         largeur1 <- 32
@@ -19,6 +19,7 @@ SpatialInterpPanelCmd <- function(){
         largeur5 <- 11
         largeur6 <- 30
         largeur7 <- 38
+        largeur8 <- 15
     }
 
     ###################
@@ -46,16 +47,13 @@ SpatialInterpPanelCmd <- function(){
                              date = list(year = 2021, mon = 1, day = 1,
                                           hour = 1, min = 0, other = ""))
 
-    pointSizeI <- 1.0
     .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
                                        userCol = list(custom = FALSE, color = NULL),
                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
-                                       pointCol = 'black',
-                                       pointSize = pointSizeI)
-
-    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
+                                       pointCol = 'black', pointSize = 1.0,
+                                       bbox = .cdtData$Config$region)
 
     ###################
 
@@ -209,11 +207,12 @@ SpatialInterpPanelCmd <- function(){
         minhour.tclVar <- tclVar(retminhr$val)
 
         txt.cdtdata1 <- tklabel(frameCDTdata, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left')
-        cb.cdtdata1 <- ttkcombobox(frameCDTdata, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
+        cb.cdtdata1 <- ttkcombobox(frameCDTdata, values = CbperiodVAL, textvariable = timeSteps, width = largeur0, justify = 'center')
         cb.minhour <- ttkcombobox(frameCDTdata, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2)
 
         txt.cdtdata2 <- tklabel(frameCDTdata, text = lang.dlg[['label']][['11']], anchor = 'w', justify = 'left')
-        cb.cdtdata2 <- ttkcombobox(frameCDTdata, values = unlist(listOpenFiles), textvariable = input.file, width = largeur1)
+        cb.cdtdata2 <- ttkcombobox(frameCDTdata, values = unlist(openFile_ttkcomboList()), textvariable = input.file, width = largeur1)
+        addTo_all_Combobox_List(cb.cdtdata2)
         bt.cdtdata <- tkbutton(frameCDTdata, text = "...")
 
         ############
@@ -232,9 +231,7 @@ SpatialInterpPanelCmd <- function(){
             dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                 tclvalue(input.file) <- dat.opfiles[[1]]
-                lapply(list(cb.cdtdata2, cb.blankgrid, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -324,7 +321,8 @@ SpatialInterpPanelCmd <- function(){
         stateSHP <- if(GeneralParameters$blank$blank) "normal" else "disabled"
 
         chk.blankgrid <- tkcheckbutton(frameBlank, variable = blankGrid, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
-        cb.blankgrid <- ttkcombobox(frameBlank, values = unlist(listOpenFiles), textvariable = file.blankShp, width = largeur1, state = stateSHP)
+        cb.blankgrid <- ttkcombobox(frameBlank, values = unlist(openFile_ttkcomboList()), textvariable = file.blankShp, width = largeur1, state = stateSHP)
+        addTo_all_Combobox_List(cb.blankgrid)
         bt.blankgrid <- tkbutton(frameBlank, text = "...", state = stateSHP)
 
         ########
@@ -339,8 +337,6 @@ SpatialInterpPanelCmd <- function(){
             if(!is.null(shp.opfiles)){
                 update.OpenFiles('shp', shp.opfiles)
                 tclvalue(file.blankShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                lapply(list(cb.cdtdata2, cb.blankgrid, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
             }
         })
 
@@ -394,11 +390,10 @@ SpatialInterpPanelCmd <- function(){
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch(
+            ret <- tryCatch2(
                         {
                             interpStationsProcs(GeneralParameters)
                         },
-                        warning = function(w) warningFun(w),
                         error = function(e) errorFun(e),
                         finally = {
                             tkconfigure(.cdtEnv$tcl$main$win, cursor = '')
@@ -407,8 +402,12 @@ SpatialInterpPanelCmd <- function(){
                     )
 
             if(!is.null(ret)){
-                if(ret %in% c(-1, 0)){
-                    Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "s")
+                if(ret %in% -1:1){
+                    if(ret == 1){
+                        Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, "w")
+                    }else{
+                        Insert.Messages.Out(lang.dlg[['message']][['5']], TRUE, "s")
+                    }
 
                     if(GeneralParameters$intstep == "others"){
                         tkconfigure(cb.other, values = .cdtData$EnvData$stnData$dates)
@@ -421,8 +420,6 @@ SpatialInterpPanelCmd <- function(){
                         tclvalue(date.hour) <- as.numeric(format(daty, '%H'))
                         tclvalue(date.min) <- as.numeric(format(daty, '%M'))
                     }
-                }else if(ret == 1){
-                    Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, "w")
                 }else Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
             }else Insert.Messages.Out(lang.dlg[['message']][['7']], TRUE, "e")
         })
@@ -523,115 +520,27 @@ SpatialInterpPanelCmd <- function(){
         ##############
 
         frTS0 <- tkframe(frameMap)
-        frTS1 <- tkframe(frTS0)
 
         cb.other <- NULL
+
+        frTS1 <- tkframe(frTS0)
         date.time.selection(GeneralParameters$intstep, frTS1)
-
-        bt.date.prev <- ttkbutton(frameMap, text = "<<", width = largeur5)
-        bt.Map.plot <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
-        bt.date.next <- ttkbutton(frameMap, text = ">>", width = largeur5)
-        bt.Map.Opt <- ttkbutton(frameMap, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur5)
-
-        ##############
-
-        frPLOTpanel <- tkframe(frameMap)
-
-        .cdtData$EnvData$map$panelMap <- 'two'
-        panelMapVar <- tclVar()
-        panelMaps <- lang.dlg[['combobox']][['1']]
-        panelNumber <- c('one', 'two')
-        tclvalue(panelMapVar) <- panelMaps[panelNumber %in% .cdtData$EnvData$map$panelMap]
-
-        txt.Map.panel <- tklabel(frPLOTpanel, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
-        cb.Map.panel <- ttkcombobox(frPLOTpanel, values = panelMaps, textvariable = panelMapVar, width = largeur0)
-
-        tkgrid(txt.Map.panel, row = 0, column = 0, sticky = 'e', padx = 0, pady = 1, columnspan = 1)
-        tkgrid(cb.Map.panel, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-
-        ##############
-
-        tkbind(cb.Map.panel, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$map$panelMap <- panelNumber[panelMaps %in% trimws(tclvalue(panelMapVar))]
-
-            statetypeMapPLOT1 <- if(.cdtData$EnvData$map$panelMap == "one") "disabled" else "normal"
-            tkconfigure(cb.Map.type1, state = statetypeMapPLOT1)
-        })
-
-        ##############
-
-        frOPTS0 <- tkframe(frameMap)
-
-        .cdtData$EnvData$map$typeMap1 <- "Points"
-        typeMapPLOT1 <- c("Points", "Pixels")
-        typeMap1Var <- tclVar(.cdtData$EnvData$map$typeMap1)
-
-        statetypeMapPLOT1 <- if(.cdtData$EnvData$map$panelMap == "one") "disabled" else "normal"
-
-        .cdtData$EnvData$map$typeMap2 <- "Pixels"
-        typeMapPLOT2 <- c("Pixels", "FilledContour")
-        typeMap2Var <- tclVar(.cdtData$EnvData$map$typeMap2)
-
-        txt.Map.type1 <- tklabel(frOPTS0, text = lang.dlg[['label']][['16']], anchor = 'w', justify = 'left')
-        cb.Map.type1 <- ttkcombobox(frOPTS0, values = typeMapPLOT1, textvariable = typeMap1Var, width = largeur3, state = statetypeMapPLOT1)
-
-        txt.Map.type2 <- tklabel(frOPTS0, text = lang.dlg[['label']][['17']], anchor = 'w', justify = 'left')
-        cb.Map.type2 <- ttkcombobox(frOPTS0, values = typeMapPLOT2, textvariable = typeMap2Var, width = largeur3)
-
-        ##############
-
-        tkbind(cb.Map.type1, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$map$typeMap1 <- trimws(tclvalue(typeMap1Var))
-            if(.cdtData$EnvData$map$typeMap1 == "Points"){
-                .cdtData$EnvData$dataMapOp$pointSize <- pointSizeI
-            }else .cdtData$EnvData$dataMapOp$pointSize <- NULL
-        })
-
-        tkbind(cb.Map.type2, "<<ComboboxSelected>>", function(){
-            .cdtData$EnvData$map$typeMap2 <- trimws(tclvalue(typeMap2Var))
-        })
-
-        ##############
 
         tkgrid(frTS1, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, rowspan = 1, columnspan = 1)
 
         ##############
 
-        tkgrid(txt.Map.type1, row = 0, column = 0, sticky = 'e', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(cb.Map.type1, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+        frPlotB <- tkframe(frameMap)
 
-        tkgrid(txt.Map.type2, row = 1, column = 0, sticky = 'e', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(cb.Map.type2, row = 1, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+        bt.date.prev <- ttkbutton(frPlotB, text = "<<", width = largeur5)
+        bt.Map.plot <- ttkbutton(frPlotB, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
+        bt.date.next <- ttkbutton(frPlotB, text = ">>", width = largeur5)
 
-        ##############
+        tkgrid(bt.date.prev, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+        tkgrid(bt.Map.plot, row = 0, column = 1, sticky = 'we', padx = 5, pady = 1, columnspan = 1)
+        tkgrid(bt.date.next, row = 0, column = 2, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
 
-        tkgrid(frTS0, row = 0, column = 0, sticky = '', padx = 1, pady = 1, columnspan = 3)
-        tkgrid(bt.date.prev, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(bt.Map.plot, row = 1, column = 1, sticky = 'we', padx = 5, pady = 1, columnspan = 1)
-        tkgrid(bt.date.next, row = 1, column = 2, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
-        tkgrid(frPLOTpanel, row = 2, column = 0, sticky = '', padx = 1, pady = 5, columnspan = 3)
-        tkgrid(frOPTS0, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 2)
-        tkgrid(bt.Map.Opt, row = 3, column = 2, sticky = 'we', padx = 1, pady = 1, rowspan = 2, columnspan = 1)
-
-        ##############
-
-        tkconfigure(bt.Map.Opt, command = function(){
-            if(!is.null(.cdtData$EnvData$mapdata$mapstn)){
-                atlevel <- pretty(.cdtData$EnvData$mapdata$mapstn$z, n = 10, min.n = 7)
-                if(is.null(.cdtData$EnvData$dataMapOp$userLvl$levels)){
-                    .cdtData$EnvData$dataMapOp$userLvl$levels <- atlevel
-                }else{
-                    if(!.cdtData$EnvData$dataMapOp$userLvl$custom)
-                        .cdtData$EnvData$dataMapOp$userLvl$levels <- atlevel
-                }
-            }
-            .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
-
-            if(.cdtData$EnvData$map$typeMap1 == "Points")
-                pointSizeI <<- .cdtData$EnvData$dataMapOp$pointSize
-        })
-
-        ##############
+        ########
 
         .cdtData$EnvData$tab$dataMap <- NULL
 
@@ -710,6 +619,108 @@ SpatialInterpPanelCmd <- function(){
             .cdtData$EnvData$tab$dataMap <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$dataMap)
         })
 
+        ##############
+
+        frPLOTpanel <- tkframe(frameMap)
+
+        .cdtData$EnvData$map$panelMap <- 'two'
+        panelMapVar <- tclVar()
+        panelMaps <- lang.dlg[['combobox']][['1']]
+        panelNumber <- c('one', 'two')
+        tclvalue(panelMapVar) <- panelMaps[panelNumber %in% .cdtData$EnvData$map$panelMap]
+
+        txt.Map.panel <- tklabel(frPLOTpanel, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
+        cb.Map.panel <- ttkcombobox(frPLOTpanel, values = panelMaps, textvariable = panelMapVar, justify = 'center', width = largeur0)
+
+        tkgrid(txt.Map.panel, row = 0, column = 0, sticky = 'e', padx = 0, pady = 1, columnspan = 1)
+        tkgrid(cb.Map.panel, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+
+        ######
+
+        tkbind(cb.Map.panel, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$map$panelMap <- panelNumber[panelMaps %in% trimws(tclvalue(panelMapVar))]
+
+            statetypeMapPLOT1 <- if(.cdtData$EnvData$map$panelMap == "one") "disabled" else "normal"
+            tkconfigure(cb.Map.type1, state = statetypeMapPLOT1)
+            tkconfigure(bt.Map.pOpt, state = statetypeMapPLOT1)
+        })
+
+        ##############
+
+        frOPTS0 <- tkframe(frameMap)
+
+        .cdtData$EnvData$map$typeMap1 <- "Points"
+        typeMapPLOT1 <- c("Points", "Pixels")
+        typeMap1Var <- tclVar(.cdtData$EnvData$map$typeMap1)
+
+        statetypeMapPLOT1 <- if(.cdtData$EnvData$map$panelMap == "one") "disabled" else "normal"
+
+        .cdtData$EnvData$map$typeMap2 <- "Pixels"
+        typeMapPLOT2 <- c("Pixels", "FilledContour")
+        typeMap2Var <- tclVar(.cdtData$EnvData$map$typeMap2)
+
+        txt.Map.type1 <- tklabel(frOPTS0, text = lang.dlg[['label']][['16']], anchor = 'w', justify = 'left')
+        cb.Map.type1 <- ttkcombobox(frOPTS0, values = typeMapPLOT1, textvariable = typeMap1Var, width = largeur3, justify = 'center', state = statetypeMapPLOT1)
+
+        txt.Map.type2 <- tklabel(frOPTS0, text = lang.dlg[['label']][['17']], anchor = 'w', justify = 'left')
+        cb.Map.type2 <- ttkcombobox(frOPTS0, values = typeMapPLOT2, textvariable = typeMap2Var, width = largeur3, justify = 'center')
+
+        tkgrid(txt.Map.type1, row = 0, column = 0, sticky = 'e', padx = 1, pady = 1, columnspan = 1)
+        tkgrid(cb.Map.type1, row = 0, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+
+        tkgrid(txt.Map.type2, row = 1, column = 0, sticky = 'e', padx = 1, pady = 1, columnspan = 1)
+        tkgrid(cb.Map.type2, row = 1, column = 1, sticky = 'we', padx = 1, pady = 1, columnspan = 1)
+
+        ######
+
+        tkbind(cb.Map.type1, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$map$typeMap1 <- trimws(tclvalue(typeMap1Var))
+        })
+
+        tkbind(cb.Map.type2, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$map$typeMap2 <- trimws(tclvalue(typeMap2Var))
+        })
+
+        ##############
+
+        frOPTS1 <- tkframe(frameMap)
+
+        bt.Map.pOpt <- ttkbutton(frOPTS1, text = lang.dlg[['button']][['6']], width = largeur8, state = statetypeMapPLOT1)
+        bt.Map.Opt <- ttkbutton(frOPTS1, text = .cdtEnv$tcl$lang$global[['button']][['4']], width = largeur8)
+
+        tkgrid(bt.Map.pOpt, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, rowspan = 1, columnspan = 1)
+        tkgrid(bt.Map.Opt, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, rowspan = 1, columnspan = 1)
+
+        ########
+
+        tkconfigure(bt.Map.pOpt, command = function(){
+            pointsOpt <- .cdtData$EnvData$dataMapOp[c('pointSize', 'pointCol')]
+            pointsOpt <- MapGraph.PointsOptions(pointsOpt, stateCol = 'disabled')
+            .cdtData$EnvData$dataMapOp$pointSize <- pointsOpt$pointSize
+            .cdtData$EnvData$dataMapOp$pointCol <- pointsOpt$pointCol
+        })
+
+        tkconfigure(bt.Map.Opt, command = function(){
+            if(!is.null(.cdtData$EnvData$mapdata$mapstn)){
+                atlevel <- pretty(.cdtData$EnvData$mapdata$mapstn$z, n = 10, min.n = 7)
+                if(is.null(.cdtData$EnvData$dataMapOp$userLvl$levels)){
+                    .cdtData$EnvData$dataMapOp$userLvl$levels <- atlevel
+                }else{
+                    if(!.cdtData$EnvData$dataMapOp$userLvl$custom)
+                        .cdtData$EnvData$dataMapOp$userLvl$levels <- atlevel
+                }
+            }
+            .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
+        })
+
+        ##############
+
+        tkgrid(frTS0, row = 0, column = 0, sticky = '', padx = 1, pady = 1, columnspan = 3)
+        tkgrid(frPlotB, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 3)
+        tkgrid(frPLOTpanel, row = 2, column = 0, sticky = '', padx = 1, pady = 5, columnspan = 3)
+        tkgrid(frOPTS0, row = 3, column = 0, sticky = 'we', padx = 1, pady = 1, columnspan = 2)
+        tkgrid(frOPTS1, row = 3, column = 2, sticky = 'we', padx = 1, pady = 1, rowspan = 2, columnspan = 1)
+
         ############################################
 
         tkgrid(frameINTRP, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -722,65 +733,7 @@ SpatialInterpPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr3, text = lang.dlg[['label']][['18']], relief = 'groove')
-
-        .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
-        file.plotShp <- tclVar()
-        stateSHP <- "disabled"
-
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['4']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
-
-        ########
-        tkconfigure(bt.addshp, command = function(){
-            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
-            if(!is.null(shp.opfiles)){
-                update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                lapply(list(cb.cdtdata2, cb.blankgrid, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-            }
-        })
-
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
-        })
-
-        #################
-
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
-            else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-            tkconfigure(bt.addshpOpt, state = stateSHP)
-        })
-
-        ##############################################
-
+        frameSHP <- create_shpLayer_frame(subfr3)
         tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
@@ -882,7 +835,13 @@ SpatialInterpPanelCmd <- function(){
                     .cdtData$EnvData$mapdata$mapncdf$z <- ncdf4::ncvar_get(nc, "var")
                     ncdf4::nc_close(nc)
                 }else{
-                    .cdtData$EnvData$mapdata$mapncdf <- NULL
+                    rlon <- range(.cdtData$EnvData$stnData$lon, na.rm = TRUE)
+                    rlat <- range(.cdtData$EnvData$stnData$lat, na.rm = TRUE)
+                    lon <- seq(rlon[1], rlon[2], length.out = 10)
+                    lat <- seq(rlat[1], rlat[2], length.out = 10)
+                    .cdtData$EnvData$mapdata$mapncdf$x <- lon
+                    .cdtData$EnvData$mapdata$mapncdf$y <- lat
+                    .cdtData$EnvData$mapdata$mapncdf$z <- matrix(NA, 10, 10)
                     Insert.Messages.Out(paste(ncpath, lang.dlg[['message']][['10']]), TRUE, "e")
                 }
 

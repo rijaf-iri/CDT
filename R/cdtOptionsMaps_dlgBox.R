@@ -2050,3 +2050,221 @@ MapGraph.gridDataLayer <- function(mapOpt, parent.win = .cdtEnv$tcl$main$win){
     tkwait.window(tt)
     return(mapOpt)
 }
+
+#######################################################################################################
+
+MapGraph.PointsOptions <- function(pointsOpt, stateCol = 'normal', parent.win = .cdtEnv$tcl$main$win){
+    if(WindowsOS()){
+        size.col <- 3
+        size.spin <- 4
+        largeur0 <- 30
+    }else{
+        size.col <- 1
+        size.spin <- 4
+        largeur0 <- 30
+    }
+
+    #####################
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtMapOptions.Points_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    #####################
+    tt <- tktoplevel()
+    tkgrab.set(tt)
+    tkfocus(tt)
+
+    #####################
+    frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
+    frButt <- tkframe(tt)
+
+    #####################
+
+    frPointsProp <- tkframe(frDialog, relief = 'sunken', borderwidth = 2)
+
+    plot.col.point <- tclVar(pointsOpt$pointCol)
+
+    txt.pltPoint <- tklabel(frPointsProp, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left', width = largeur0)
+    txt.pltPointC <- tklabel(frPointsProp, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
+    bt.pltPointC <- tkbutton(frPointsProp, bg = tclvalue(plot.col.point), width = size.col, state = stateCol)
+    txt.pltPointS <- tklabel(frPointsProp, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+    spin.pltPointS <- ttkspinbox(frPointsProp, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = size.spin)
+    tkset(spin.pltPointS, pointsOpt$pointSize)
+
+    tkgrid(txt.pltPoint, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.pltPointC, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.pltPointC, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.pltPointS, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.pltPointS, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ########
+    tkconfigure(bt.pltPointC, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.point), title = lang.dlg[['label']][['4']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.pltPointC, bg = loko)
+            tclvalue(plot.col.point) <- loko
+        }
+    })
+
+    #####################
+
+    tkgrid(frPointsProp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 10, ipadx = 1, ipady = 1)
+
+    #####################
+    bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+    bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+
+    tkconfigure(bt.opt.OK, command = function(){
+        pointsOpt$pointCol <<- tclvalue(plot.col.point)
+        pointsOpt$pointSize <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS))))
+
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkconfigure(bt.opt.CA, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkgrid(bt.opt.OK, row = 0, column = 0, padx = 5, pady = 1, ipadx = 1, sticky = 'w')
+    tkgrid(bt.opt.CA, row = 0, column = 1, padx = 5, pady = 1, ipadx = 1, sticky = 'e')
+
+    ###############################################################
+
+    tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkwm.withdraw(tt)
+    tcl('update')
+    tt.w <- as.integer(tkwinfo("reqwidth", tt))
+    tt.h <- as.integer(tkwinfo("reqheight", tt))
+    tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+    tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+    tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+    tkwm.transient(tt)
+    tkwm.title(tt, lang.dlg[['title']])
+    tkwm.deiconify(tt)
+    tcl('wm', 'attributes', tt, topmost = TRUE)
+
+    ##################################################################
+    tkfocus(tt)
+    tkbind(tt, "<Destroy>", function(){
+        tkgrab.release(tt)
+        tkfocus(parent.win)
+    })
+    tkwait.window(tt)
+    return(pointsOpt)
+}
+
+#######################################################################################################
+
+MapGraph.LineSHPOptions <- function(shpLineOpt, parent.win = .cdtEnv$tcl$main$win){
+    if(WindowsOS()){
+        width.col <- 3
+        width.spin <- 4
+        largeur0 <- 30
+    }else{
+        width.col <- 1
+        width.spin <- 4
+        largeur0 <- 30
+    }
+
+    #####################
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtGraphOptions.LineSHP_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    #####################
+    tt <- tktoplevel()
+    tkgrab.set(tt)
+    tkfocus(tt)
+
+    #####################
+    frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
+    frButt <- tkframe(tt)
+
+    #####################
+
+    frLinesProp <- tkframe(frDialog, relief = 'sunken', borderwidth = 2)
+
+    plot.col.line <- tclVar(shpLineOpt$col)
+
+    txt.pltLineSHP <- tklabel(frLinesProp, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left', width = largeur0)
+    txt.pltLineC <- tklabel(frLinesProp, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
+    bt.pltLineC <- tkbutton(frLinesProp, bg = tclvalue(plot.col.line), width = width.col)
+    txt.pltLineW <- tklabel(frLinesProp, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+    spin.pltLineW <- ttkspinbox(frLinesProp, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.pltLineW, shpLineOpt$lwd)
+
+    tkgrid(txt.pltLineSHP, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.pltLineC, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.pltLineC, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.pltLineW, row = 1, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(spin.pltLineW, row = 1, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    ########
+    tkconfigure(bt.pltLineC, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(plot.col.line), title = lang.dlg[['label']][['4']])))
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        if(nchar(loko) > 0){
+            tkconfigure(bt.pltLineC, bg = loko)
+            tclvalue(plot.col.line) <- loko
+        }
+    })
+
+    #####################
+
+    tkgrid(frLinesProp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 10, ipadx = 1, ipady = 1)
+
+    #####################
+    bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+    bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+
+    tkconfigure(bt.opt.OK, command = function(){
+        shpLineOpt$col <<- tclvalue(plot.col.line)
+        shpLineOpt$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
+
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkconfigure(bt.opt.CA, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkgrid(bt.opt.OK, row = 0, column = 0, padx = 5, pady = 1, ipadx = 1, sticky = 'w')
+    tkgrid(bt.opt.CA, row = 0, column = 1, padx = 5, pady = 1, ipadx = 1, sticky = 'e')
+
+    ###############################################################
+
+    tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkwm.withdraw(tt)
+    tcl('update')
+    tt.w <- as.integer(tkwinfo("reqwidth", tt))
+    tt.h <- as.integer(tkwinfo("reqheight", tt))
+    tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+    tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+    tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+    tkwm.transient(tt)
+    tkwm.title(tt, lang.dlg[['title']])
+    tkwm.deiconify(tt)
+    tcl('wm', 'attributes', tt, topmost = TRUE)
+
+    ##################################################################
+    tkfocus(tt)
+    tkbind(tt, "<Destroy>", function(){
+        tkgrab.release(tt)
+        tkfocus(parent.win)
+    })
+    tkwait.window(tt)
+    return(shpLineOpt)
+}

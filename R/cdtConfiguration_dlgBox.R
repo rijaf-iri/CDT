@@ -271,21 +271,28 @@ cdtConfiguration <- function(parent.win){
 
         chunkSize <- tclVar(cdtConfig$cdtDataset.chunk$chunksize)
         chunkFac <- tclVar(cdtConfig$cdtDataset.chunk$chunkfac)
+        chunkFun <- tclVar(cdtConfig$cdtDataset.chunk$chunkfun)
 
         txt.cdtD <- tklabel(frTab4, text = lang.dlg[['label']][['15']], anchor = 'w', justify = 'left')
         txt.chkS <- tklabel(frTab4, text = lang.dlg[['label']][['13']], anchor = 'e', justify = 'right')
         en.chkS <- tkentry(frTab4, textvariable = chunkSize, width = 6)
         txt.chkF <- tklabel(frTab4, text = lang.dlg[['label']][['14']], anchor = 'e', justify = 'right')
         en.chkF <- tkentry(frTab4, textvariable = chunkFac, width = 3)
+        txt.chkFo <- tklabel(frTab4, text = lang.dlg[['label']][['14-a']], anchor = 'e', justify = 'right')
+        cb.chkFo <- ttkcombobox(frTab4, values = 1:2, textvariable = chunkFun, width = 3, justify = 'center')
 
         helpWidget(en.chkS, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
         helpWidget(en.chkF, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
+        helpWidget(cb.chkFo, lang.dlg[['tooltip']][['14-a']], lang.dlg[['status']][['14-a']])
 
         tkgrid(txt.cdtD, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 3, ipadx = 1, ipady = 3)
         tkgrid(txt.chkS, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(en.chkS, row = 1, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(txt.chkF, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(en.chkF, row = 2, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        tkgrid(txt.chkFo, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.chkFo, row = 3, column = 1, sticky = 'w', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
         ####################################
 
@@ -386,6 +393,7 @@ cdtConfiguration <- function(parent.win){
 
             cdtConfig$cdtDataset.chunk$chunksize <- as.integer(trimws(tclvalue(chunkSize)))
             cdtConfig$cdtDataset.chunk$chunkfac <- as.integer(trimws(tclvalue(chunkFac)))
+            cdtConfig$cdtDataset.chunk$chunkfun <- as.integer(trimws(tclvalue(chunkFun)))
 
             cdtConfig$parallel$dopar <- switch(tclvalue(doparVar), '0' = FALSE, '1' = TRUE)
             cdtConfig$parallel$detect.cores <- switch(tclvalue(coresVar), '0' = FALSE, '1' = TRUE)

@@ -44,10 +44,6 @@
             <text lang="en"> Data already computed </text>
             <text lang="fr"> Données déjà calculées </text>
         </checkbutton>
-        <checkbutton id="2">
-            <text lang="en"> Add Shapefile to Map </text>
-            <text lang="fr"> Ajouter Shapefile à la carte </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> Input Data </text>
             <text lang="fr"> Données d'entrée </text>
@@ -102,10 +98,6 @@
         <label id="17">
             <text lang="en"> Station/Coordinates </text>
             <text lang="fr"> Station/Coordonnées </text>
-        </label>
-        <label id="18">
-            <text lang="en"> Shapefile </text>
-            <text lang="fr"> Shapefile </text>
         </label>
         <label id="19">
             <text lang="en"> Select station to plot </text>

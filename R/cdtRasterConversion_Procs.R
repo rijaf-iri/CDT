@@ -4,7 +4,7 @@ rasterData.convert_Proc <- function(){
 
     regex.in <- switch(.cdtData$GalParams$type.in,
                        "nc" = c("*\\.nc$", "\\.nc$"),
-                       "tif" = c("*\\.tif$", "\\.tif$"),
+                       "tif" = c("*\\.tif$|*\\.tiff$", "\\.tif$|\\.tiff$"),
                        "bil" = c("*\\.bil$", "\\.bil$"))
     sub.out <- switch(.cdtData$GalParams$type.out, "nc" = ".nc", "tif" = ".tif", "bil" = ".bil")
     format.out <- switch(.cdtData$GalParams$type.out, "nc" = "CDF", "tif" = "GTiff", "bil" = "EHdr")

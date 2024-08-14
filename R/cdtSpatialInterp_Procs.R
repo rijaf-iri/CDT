@@ -19,7 +19,7 @@ readStnDataInterp <- function(GeneralParameters){
             }else readstnData1 <- FALSE
         }else readstnData1 <- TRUE
 
-        if(readstnData1){
+        if(readstnData1 || readstnData){
             don <- getStnOpenData(stnFile)
             if(is.null(don)) return(NULL)
 
@@ -258,7 +258,47 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
             }
 
             exp.var <- gstat::variogram(stn~1, locations = locations.stn, cressie = TRUE)
-            vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
+
+            ######
+            kappa <- c(0.05, seq(0.2, 2, 0.1), 5, 10)
+            nugget0 <- min(exp.var$gamma)
+            range0 <- 0.5 * max(exp.var$dist)
+            sill0 <- mean(c(max(exp.var$gamma), median(exp.var$gamma)))
+            psill0 <- sill0 - nugget0
+
+            vgm_list <- lapply(interp$vgm.model, function(vg){
+                # vm <- gstat::vgm(vg, psill = psill0, range = range0,
+                #                  nugget = nugget0, kappa = 0.5)
+                # try(gstat::fit.variogram(exp.var, vm, fit.kappa = TRUE), silent = TRUE)
+
+                vm <- gstat::vgm(vg, psill = psill0, range = range0, nugget = nugget0)
+                try(gstat::fit.variogram(exp.var, vm, fit.kappa = kappa), silent = TRUE)
+            })
+            names(vgm_list) <- interp$vgm.model
+            vgm_error <- sapply(vgm_list, function(v) inherits(v, "try-error"))
+            if(all(vgm_error)){
+                msg <- sapply(vgm_list, function(v) gsub('[\r\n]', '', as.character(v)))
+                msg <- paste0(msg, collapse = '\n')
+                msg <- paste(message[['18']], ":", msg)
+                msg <- list(msg = msg, status = NULL)
+                return(msg)
+            }
+            vgm_list <- vgm_list[!vgm_error]
+            vgm_range <- sapply(vgm_list, function(v) if(v$range[2] <= 0) FALSE else TRUE)
+            if(!any(vgm_range)){
+                msg1 <- "All variogram model,"
+                msg2 <- 'variogram range can never be negative'
+                msg <- paste(msg1, msg2)
+                msg <- paste(message[['18']], ":", msg)
+                msg <- list(msg = msg, status = NULL)
+                return(msg)
+            }
+            class(vgm_list) <- c("variogramModelList", "list")
+            vgm <- try(gstat::fit.variogram(exp.var, vgm_list, fit.kappa = TRUE), silent = TRUE)
+
+            ######
+            # vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
+
             if(inherits(vgm, "try-error")){
                 msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
                 msg <- list(msg = msg, status = NULL)
@@ -288,7 +328,47 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
             }
 
             exp.var <- gstat::variogram(formuleUK, locations = locations.stn, cressie = TRUE)
-            vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
+
+            ######
+            kappa <- c(0.05, seq(0.2, 2, 0.1), 5, 10)
+            nugget0 <- min(exp.var$gamma)
+            range0 <- 0.5 * max(exp.var$dist)
+            sill0 <- mean(c(max(exp.var$gamma), median(exp.var$gamma)))
+            psill0 <- sill0 - nugget0
+
+            vgm_list <- lapply(interp$vgm.model, function(vg){
+                # vm <- gstat::vgm(vg, psill = psill0, range = range0,
+                #                  nugget = nugget0, kappa = 0.5)
+                # try(gstat::fit.variogram(exp.var, vm, fit.kappa = TRUE), silent = TRUE)
+
+                vm <- gstat::vgm(vg, psill = psill0, range = range0, nugget = nugget0)
+                try(gstat::fit.variogram(exp.var, vm, fit.kappa = kappa), silent = TRUE)
+            })
+            names(vgm_list) <- interp$vgm.model
+            vgm_error <- sapply(vgm_list, function(v) inherits(v, "try-error"))
+            if(all(vgm_error)){
+                msg <- sapply(vgm_list, function(v) gsub('[\r\n]', '', as.character(v)))
+                msg <- paste0(msg, collapse = '\n')
+                msg <- paste(message[['18']], ":", msg)
+                msg <- list(msg = msg, status = NULL)
+                return(msg)
+            }
+            vgm_list <- vgm_list[!vgm_error]
+            vgm_range <- sapply(vgm_list, function(v) if(v$range[2] <= 0) FALSE else TRUE)
+            if(!any(vgm_range)){
+                msg1 <- "All variogram model,"
+                msg2 <- 'variogram range can never be negative'
+                msg <- paste(msg1, msg2)
+                msg <- paste(message[['18']], ":", msg)
+                msg <- list(msg = msg, status = NULL)
+                return(msg)
+            }
+            class(vgm_list) <- c("variogramModelList", "list")
+            vgm <- try(gstat::fit.variogram(exp.var, vgm_list, fit.kappa = TRUE), silent = TRUE)
+
+            ######
+            # vgm <- try(gstat::fit.variogram(exp.var, gstat::vgm(interp$vgm.model)), silent = TRUE)
+
             if(inherits(vgm, "try-error")){
                 msg <- paste(message[['18']], ":", gsub('[\r\n]', '', as.character(vgm)))
                 msg <- list(msg = msg, status = NULL)

@@ -694,7 +694,7 @@ Validation.GriddedData.PanelCmd <- function(clim.var){
         })
 
         tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$Options$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$Options$SHPOp)
+            .cdtData$EnvData$Options$SHPOp <- MapGraph.LineSHPOptions(.cdtData$EnvData$Options$SHPOp)
         })
 
         #################

@@ -1,6 +1,5 @@
 
 SeasonAnalysisPanelCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 36
         largeur1 <- 27
@@ -43,23 +42,23 @@ SeasonAnalysisPanelCmd <- function(){
                                        low.thres = "0", up.thres = "200")
     GeneralParameters$graph <- list(varTSp = 'maps', typeTSp = 'line')
 
-    .cdtData$EnvData$tab$pointSize.TSMap <- NULL
     .cdtData$EnvData$TSMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
                                      userCol = list(custom = FALSE, color = NULL),
                                      userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                      title = list(user = FALSE, title = ''),
                                      colkeyLab = list(user = FALSE, label = ''),
                                      scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                     pointSize = .cdtData$EnvData$tab$pointSize.TSMap)
+                                     plotType = list(values = c("Pixels", "Points"), var = "Pixels"),
+                                     pointSize = 1.0, bbox = .cdtData$Config$region)
 
-    .cdtData$EnvData$tab$pointSize.climMap <- NULL
     .cdtData$EnvData$climMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
                                        userCol = list(custom = FALSE, color = NULL),
                                        userLvl = list(custom = FALSE, levels = NULL, equidist = FALSE),
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
                                        scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                       pointSize = .cdtData$EnvData$tab$pointSize.climMap)
+                                       plotType = list(values = c("Pixels", "Points"), var = "Pixels"),
+                                       pointSize = 1.0, bbox = .cdtData$Config$region)
 
     .cdtData$EnvData$TSGraphOp <- list(
                             anomaly = list(
@@ -135,8 +134,6 @@ SeasonAnalysisPanelCmd <- function(){
                                     nino = list(line = "red", points = "lightpink"))
                                 )
                             )
-
-    .cdtData$EnvData$SHPOp <- list(col = "black", lwd = 1.5)
 
     ###################
 
@@ -225,12 +222,10 @@ SeasonAnalysisPanelCmd <- function(){
         periodVAL <- c('pentad', 'dekadal', 'monthly')
         tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$seastot$Tstep]
 
-
         DataType <- tclVar()
         CbdatatypeVAL <- .cdtEnv$tcl$lang$global[['combobox']][['2']][1:2]
         datatypeVAL <- c('cdtstation', 'cdtdataset')
         tclvalue(DataType) <- CbdatatypeVAL[datatypeVAL %in% GeneralParameters$seastot$data.type]
-
 
         if(GeneralParameters$seastot$data.type == 'cdtstation'){
             input.Prec <- tclVar(GeneralParameters$seastot$cdtstation$prec)
@@ -251,7 +246,8 @@ SeasonAnalysisPanelCmd <- function(){
 
         txt.INPrec <- tklabel(frameSeasTot, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
         if(GeneralParameters$seastot$data.type == 'cdtstation'){
-            cb.en.INPrec <- ttkcombobox(frameSeasTot, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur2, state = stateSEAS)
+            cb.en.INPrec <- ttkcombobox(frameSeasTot, values = unlist(openFile_ttkcomboList()), textvariable = input.Prec, width = largeur2, state = stateSEAS)
+            addTo_all_Combobox_List(cb.en.INPrec)
         }else{
             cb.en.INPrec <- tkentry(frameSeasTot, textvariable = input.Prec, width = largeur0, state = stateSEAS)
         }
@@ -287,13 +283,12 @@ SeasonAnalysisPanelCmd <- function(){
         ############
 
         tkconfigure(bt.INPrec, command = function(){
-            if(GeneralParameters$seastot$data.type == 'cdtstation'){
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            if(data_type == 'cdtstation'){
                 dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(input.Prec) <- dat.opfiles[[1]]
-                    tkconfigure(cb.en.INPrec, values = unlist(listOpenFiles))
                 }
             }else{
                 path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -317,13 +312,17 @@ SeasonAnalysisPanelCmd <- function(){
             tkdestroy(cb.en.INPrec)
             tclvalue(input.Prec) <- ''
 
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            set.plot.type(data_type)
+
             stateSEAS <- if(tclvalue(useTotal) == '1') 'normal' else 'disabled'
 
             ###
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(data_type == 'cdtstation'){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['5']]
 
-                cb.en.INPrec <- ttkcombobox(frameSeasTot, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur2, state = stateSEAS)
+                cb.en.INPrec <<- ttkcombobox(frameSeasTot, values = unlist(openFile_ttkcomboList()), textvariable = input.Prec, width = largeur2, state = stateSEAS)
+                addTo_all_Combobox_List(cb.en.INPrec)
 
                 ######
                 helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
@@ -334,18 +333,16 @@ SeasonAnalysisPanelCmd <- function(){
                     dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                     if(!is.null(dat.opfiles)){
                         update.OpenFiles('ascii', dat.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(input.Prec) <- dat.opfiles[[1]]
-                        tkconfigure(cb.en.INPrec, values = unlist(listOpenFiles))
                     }
                 })
             }
 
             ###
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(data_type == 'cdtdataset'){
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['6']]
 
-                cb.en.INPrec <- tkentry(frameSeasTot, textvariable = input.Prec, width = largeur0, state = stateSEAS)
+                cb.en.INPrec <<- tkentry(frameSeasTot, textvariable = input.Prec, width = largeur0, state = stateSEAS)
 
                 ######
                 helpWidget(cb.en.INPrec, lang.dlg[['tooltip']][['7']], lang.dlg[['status']][['7']])
@@ -441,10 +438,10 @@ SeasonAnalysisPanelCmd <- function(){
                 GeneralParameters$seastot$Tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
                 GeneralParameters$seastot$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-                if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1])
+                if(GeneralParameters$seastot$data.type == 'cdtstation')
                     GeneralParameters$seastot$cdtstation$prec <- trimws(tclvalue(input.Prec))
 
-                if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2])
+                if(GeneralParameters$seastot$data.type == 'cdtdataset')
                     GeneralParameters$seastot$cdtdataset$prec <- trimws(tclvalue(input.Prec))
             }
 
@@ -454,12 +451,8 @@ SeasonAnalysisPanelCmd <- function(){
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch({
+            ret <- tryCatch2({
                             compute_RainySeasonData(GeneralParameters)
-                        },
-                        warning = function(w){
-                            warningFun(w)
-                            return(0)
                         },
                         error = function(e) errorFun(e),
                         finally = {
@@ -471,7 +464,6 @@ SeasonAnalysisPanelCmd <- function(){
                 if(ret == 0){
                     Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
-                    .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$data.type
                     .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                     ###################
 
@@ -531,7 +523,6 @@ SeasonAnalysisPanelCmd <- function(){
 
                 .cdtData$EnvData$output <- OutPicsa
                 .cdtData$EnvData$PathPicsa <- dirname(trimws(tclvalue(file.PICSAIndex)))
-                .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
                 ###################
 
@@ -616,9 +607,6 @@ SeasonAnalysisPanelCmd <- function(){
                 }
             }
             .cdtData$EnvData$TSMapOp <- MapGraph.MapOptions(.cdtData$EnvData$TSMapOp)
-
-            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
-                .cdtData$EnvData$tab$pointSize.TSMap <- .cdtData$EnvData$TSMapOp$pointSize
         })
 
         #################
@@ -688,41 +676,41 @@ SeasonAnalysisPanelCmd <- function(){
 
         ##############################################
 
-            funClimMapStat <- function(analysis.mthd){
-                tkdestroy(fr.ClimMap.Stat)
-                fr.ClimMap.Stat <<- tkframe(framePICSACLMMap)
+        funClimMapStat <- function(analysis.mthd){
+            tkdestroy(fr.ClimMap.Stat)
+            fr.ClimMap.Stat <<- tkframe(framePICSACLMMap)
 
-                ############
+            ############
 
-                if(analysis.mthd == 'perc'){
-                    en.Percent <- tkentry(fr.ClimMap.Stat, textvariable = percentClimAna, width = 4, justify = 'center')
-                    th.Percent <- tklabel(fr.ClimMap.Stat, text = lang.dlg[['label']][['17']], anchor = 'w', justify = 'left')
-                    txt.Percent <- tklabel(fr.ClimMap.Stat, text = lang.dlg[['label']][['18']])
+            if(analysis.mthd == 'perc'){
+                en.Percent <- tkentry(fr.ClimMap.Stat, textvariable = percentClimAna, width = 4, justify = 'center')
+                th.Percent <- tklabel(fr.ClimMap.Stat, text = lang.dlg[['label']][['17']], anchor = 'w', justify = 'left')
+                txt.Percent <- tklabel(fr.ClimMap.Stat, text = lang.dlg[['label']][['18']])
 
-                    tkgrid(en.Percent, th.Percent, txt.Percent)
+                tkgrid(en.Percent, th.Percent, txt.Percent)
 
-                    helpWidget(en.Percent, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
-                }
-                if(analysis.mthd == 'freq'){
-                    txt.Freq1 <- tklabel(fr.ClimMap.Stat, text = "Between", anchor = 'e', justify = 'right')
-                    en.Freq1 <- tkentry(fr.ClimMap.Stat, textvariable = freqLowClimAna, width = 7, justify = 'center')
-                    txt.Freq2 <- tklabel(fr.ClimMap.Stat, text = "And")
-                    en.Freq2 <- tkentry(fr.ClimMap.Stat, textvariable = freqUpClimAna, width = 7, justify = 'center')
-
-                    tkgrid(txt.Freq1, en.Freq1, txt.Freq2, en.Freq2)
-
-                    helpWidget(en.Freq1, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
-                    helpWidget(en.Freq2, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
-                }
-                if(analysis.mthd == 'trend'){
-                    cb.Trend <- ttkcombobox(fr.ClimMap.Stat, values = CbtrendAnalVAL, textvariable = trendClimAna, width = largeur8)
-
-                    tkgrid(cb.Trend)
-                }
-
-                ############
-                tkgrid(fr.ClimMap.Stat, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 10, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+                helpWidget(en.Percent, lang.dlg[['tooltip']][['12']], lang.dlg[['status']][['12']])
             }
+            if(analysis.mthd == 'freq'){
+                txt.Freq1 <- tklabel(fr.ClimMap.Stat, text = "Between", anchor = 'e', justify = 'right')
+                en.Freq1 <- tkentry(fr.ClimMap.Stat, textvariable = freqLowClimAna, width = 7, justify = 'center')
+                txt.Freq2 <- tklabel(fr.ClimMap.Stat, text = "And")
+                en.Freq2 <- tkentry(fr.ClimMap.Stat, textvariable = freqUpClimAna, width = 7, justify = 'center')
+
+                tkgrid(txt.Freq1, en.Freq1, txt.Freq2, en.Freq2)
+
+                helpWidget(en.Freq1, lang.dlg[['tooltip']][['13']], lang.dlg[['status']][['13']])
+                helpWidget(en.Freq2, lang.dlg[['tooltip']][['14']], lang.dlg[['status']][['14']])
+            }
+            if(analysis.mthd == 'trend'){
+                cb.Trend <- ttkcombobox(fr.ClimMap.Stat, values = CbtrendAnalVAL, textvariable = trendClimAna, width = largeur8)
+
+                tkgrid(cb.Trend)
+            }
+
+            ############
+            tkgrid(fr.ClimMap.Stat, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 10, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+        }
 
         ##############################################
 
@@ -780,9 +768,6 @@ SeasonAnalysisPanelCmd <- function(){
                 }
             }
             .cdtData$EnvData$climMapOp <- MapGraph.MapOptions(.cdtData$EnvData$climMapOp)
-
-            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
-                .cdtData$EnvData$tab$pointSize.climMap <- .cdtData$EnvData$climMapOp$pointSize
         })
 
         #################
@@ -807,36 +792,9 @@ SeasonAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        framePlotType <- tkframe(subfr3)
-
-        .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
-
-        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['20']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur3)
-
-        tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ###############
-
-        tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
-            get.analysis.method()
-
-            ############
-            ret <- read.PicsaTSData()
-            if(is.null(ret)) return(NULL)
-
-            ########
-            ret <- calculate.ClimStat()
-            if(is.null(ret)) return(NULL)
-        })
-
-        ##############################################
-
         tkgrid(framePICSADat, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(framePICSATSMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(framePICSACLMMap, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(framePlotType, row = 3, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -990,64 +948,7 @@ SeasonAnalysisPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr5, text = lang.dlg[['label']][['23']], relief = 'groove')
-
-        .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
-        file.plotShp <- tclVar()
-        stateSHP <- "disabled"
-
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['6']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur2, state = stateSHP)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
-
-        ########
-        tkconfigure(bt.addshp, command = function(){
-            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
-            if(!is.null(shp.opfiles)){
-                update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-                lapply(list(cb.en.INPrec, cb.addshp), tkconfigure, values = unlist(listOpenFiles))
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-            }
-        })
-
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
-        })
-
-        #################
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
-            else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-            tkconfigure(bt.addshpOpt, state = stateSHP)
-        })
-
-        ##############################################
-
+        frameSHP <- create_shpLayer_frame(subfr5)
         tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
@@ -1121,19 +1022,21 @@ SeasonAnalysisPanelCmd <- function(){
 
     #####################
 
-    set.plot.type <- function(){
-        if(.cdtData$EnvData$output$data.type == "cdtstation")
-        {
-            plot.type <- c("Pixels", "Points")
-            .cdtData$EnvData$plot.maps$.data.type <- "Points"
-
-            .cdtData$EnvData$climMapOp$pointSize <- 1.0
-            .cdtData$EnvData$TSMapOp$pointSize <- 1.0
-        }else{
-            plot.type <- c("Pixels", "FilledContour")
-            .cdtData$EnvData$plot.maps$.data.type <- "Grid"
+    set.plot.type <- function(data_type){
+        if(data_type == 'cdtstation'){
+            .data.type <- "Points"
+            plot_type <- list(values = c("Pixels", "Points"), var = "Pixels")
         }
-        tkconfigure(cb.plotType, values = plot.type)
+
+        if(data_type == 'cdtdataset'){
+            .data.type <- "Grid"
+            plot_type <- list(values = c("Pixels", "FilledContour"), var = "Pixels")
+        }
+
+        .cdtData$EnvData$climMapOp$plotType <- plot_type
+        .cdtData$EnvData$TSMapOp$plotType <- plot_type
+        .cdtData$EnvData$plot.maps$.data.type <- .data.type
+        .cdtData$EnvData$plot.maps$data.type <- data_type
     }
 
     #####################
@@ -1189,7 +1092,7 @@ SeasonAnalysisPanelCmd <- function(){
         ###################
         # widgets.Station.Pixel
         widgets.Station.Pixel()
-        set.plot.type()
+        set.plot.type(.cdtData$EnvData$output$data.type)
 
         ###################
         # load daily precip
@@ -1241,7 +1144,7 @@ SeasonAnalysisPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- .cdtData$EnvData$TSMapOp$plotType$var
 
             ########
             readTsData <- TRUE
@@ -1396,7 +1299,7 @@ SeasonAnalysisPanelCmd <- function(){
                 return(NULL)
             }
 
-            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- .cdtData$EnvData$climMapOp$plotType$var
 
             ########
             calcClim <- TRUE

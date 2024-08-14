@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Options </text>
+    </title>
+    <widget>
+        <label id="1">
+            <text lang="en"> Map Points Options </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Color </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Size </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Color Selection </text>
+        </label>
+    </widget>
+</dialog_box>
