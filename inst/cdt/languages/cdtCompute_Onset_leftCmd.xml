@@ -355,8 +355,8 @@
             <text lang="fr"> Coordonnées hors de la plage de données </text>
         </content>
         <content id="15">
-            <text lang="en"> Provide the potential evapotranspiration data </text>
-            <text lang="fr"> Fournissez les données d'ETP </text>
+            <text lang="en"> Provide the potential evapotranspiration data from the tab "Input" </text>
+            <text lang="fr"> Fournissez les données d'ETP dans l'Onglet "Input" </text>
         </content>
         <content id="16">
             <text lang="en"> not find </text>

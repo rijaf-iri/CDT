@@ -51,7 +51,7 @@ create_shpLayer_frame <- function(parent_frame){
     })
 
     tkconfigure(bt.addshpOpt, command = function(){
-        .cdtData$EnvData$shapefile$options <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$shapefile$options)
+        .cdtData$EnvData$shapefile$options <- MapGraph.LineSHPOptions(.cdtData$EnvData$shapefile$options)
     })
 
     tkbind(cb.addshp, "<<ComboboxSelected>>", function(){

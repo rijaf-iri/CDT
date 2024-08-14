@@ -38,7 +38,7 @@
         // Number of chunk files to be used for each calculation
         "chunkfac": 5,
         // function to use to create the dataset: 1 or 2
-        "chunkfun": 1
+        "chunkfun": 2
     },
     "parallel":
     {

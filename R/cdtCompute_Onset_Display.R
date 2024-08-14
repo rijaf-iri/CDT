@@ -11,28 +11,25 @@ legendLabel.plotOnsetMaps <- function(lab.breaks, donDate, start.date){
 OnsetCalc.plotOnsetMaps <- function(){
     don <- .cdtData$EnvData$varData$map
     dataMapOp <- .cdtData$EnvData$dataMapOp
+    don_date <- trimws(tclvalue(.cdtData$EnvData$donDate))
 
     ## titre
     if(!dataMapOp$title$user){
-        .titre <- paste("Starting dates of the rainy season:", trimws(tclvalue(.cdtData$EnvData$donDate)))
+        .titre <- paste("Starting dates of the rainy season:", don_date)
     }else .titre <- dataMapOp$title$title
 
     #################
 
     .data.type <- .cdtData$EnvData$plot.maps$.data.type
-    .plot.type <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
-    map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shp,
+    map.args <- cdt.plotmap.args(don, dataMapOp, .cdtData$EnvData$shapefile,
                                  label.fun = legendLabel.plotOnsetMaps,
-                                 donDate = trimws(tclvalue(.cdtData$EnvData$donDate)),
+                                 donDate = don_date,
                                  start.date = .cdtData$EnvData$output$start.date
-                            )
+                                )
 
     opar <- graphics::par(mar = map.args$mar)
-    map.args.add <- list(titre = .titre,
-                         # SHPOp = .cdtData$EnvData$SHPOp,
-                         # MapOp = dataMapOp,
-                         data.type = .data.type,
-                         plot.type = .plot.type)
+    map.args.add <- list(titre = .titre, data.type = .data.type)
+
     map.args <- map.args[!(names(map.args) %in% "mar")]
     map.args <- c(map.args, map.args.add)
     par.plot <- do.call(cdt.plotmap.fun, map.args)

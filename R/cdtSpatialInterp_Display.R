@@ -5,9 +5,11 @@ spatialInterp.plotMap <- function(){
 
     ###########
 
-    SHPOp <- .cdtData$EnvData$SHPOp
-    ocrds <- .cdtData$EnvData$shp$ocrds
-    ocrds <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1" & !is.null(ocrds)) ocrds else matrix(NA, 1, 2)
+    shpf <- .cdtData$EnvData$shapefile
+    ocrds <- matrix(NA, 1, 2)
+    if(!is.null(shpf$addshp)){
+        if(tclvalue(shpf$addshp) == "1" & !is.null(shpf$ocrds)) ocrds <- shpf$ocrds
+    }
 
     titre <- if(dataMapOp$title$user) dataMapOp$title$title else don$t
     legend.texta <- NULL
@@ -57,7 +59,7 @@ spatialInterp.plotMap <- function(){
             graphics::.filled.contour(don$mapncdf$x, don$mapncdf$y, don$mapncdf$z, levels = brks$breaks, col = brks$colors)
 
         graphics::abline(h = pars.y$axp, v = pars.x$axp, col = "lightgray", lty = 3, lwd = 1.3)
-        graphics::lines(ocrds[, 1], ocrds[, 2], lwd = SHPOp$lwd, col = SHPOp$col)
+        graphics::lines(ocrds[, 1], ocrds[, 2], lwd = shpf$options$lwd, col = shpf$options$col)
 
         kolor.p <- brks$colors[findInterval(don$mapstn$z + 1e-15, brks$breaks,
                                             rightmost.closed = TRUE, left.open = TRUE)]
@@ -102,7 +104,7 @@ spatialInterp.plotMap <- function(){
                         prepanel = lattice::prepanel.default.levelplot,
                         panel = function(...){
                             lattice::panel.levelplot(...)
-                            lattice::panel.lines(ocrds, col = SHPOp$col, lwd = SHPOp$lwd)
+                            lattice::panel.lines(ocrds, col = shpf$options$col, lwd = shpf$options$lwd)
                             lattice::panel.abline(h = pars.y$axp, v = pars.x$axp, col = "lightgray", lty = 3)
                         },
                         colorkey = FALSE)
@@ -114,7 +116,7 @@ spatialInterp.plotMap <- function(){
                         prepanel = lattice::prepanel.default.levelplot,
                         panel = function(...){
                             panel.filledcontour(...)
-                            lattice::panel.lines(ocrds, col = SHPOp$col, lwd = SHPOp$lwd)
+                            lattice::panel.lines(ocrds, col = shpf$options$col, lwd = shpf$options$lwd)
                             lattice::panel.abline(h = pars.y$axp, v = pars.x$axp, col = "lightgray", lty = 3, lwd = 1.3)
                         },
                         colorkey = FALSE)
@@ -125,7 +127,7 @@ spatialInterp.plotMap <- function(){
                 ret <- lattice::levelplot(z.val ~ obj$x + obj$y, at = brks$breaks,
                         prepanel = lattice::prepanel.default.xyplot,
                         panel = function(x, y, ...){
-                            lattice::panel.lines(ocrds, col = SHPOp$col, lwd = SHPOp$lwd)
+                            lattice::panel.lines(ocrds, col = shpf$options$col, lwd = shpf$options$lwd)
                             lattice::panel.abline(h = pars.y$axp, v = pars.x$axp, col = "lightgray", lty = 3, lwd = 1.3)
                             lattice::panel.points(x, y, pch = 20, col = kolor.p, cex = dataMapOp$pointSize)
                         },
@@ -176,6 +178,3 @@ spatialInterp.plotMap <- function(){
 
     return(0)
 }
-
-
-

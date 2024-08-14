@@ -35,6 +35,9 @@
         <button id="5">
             <text lang="en"> Distance - Correlation </text>
         </button>
+        <button id="6">
+            <text lang="en"> Points Options </text>
+        </button>
         <checkbutton id="1">
             <text lang="en"> Change negative values to </text>
         </checkbutton>
@@ -97,9 +100,6 @@
         </label>
         <label id="17">
             <text lang="en"> Grid </text>
-        </label>
-        <label id="18">
-            <text lang="en"> Shapefile </text>
         </label>
     </widget>
     <help>

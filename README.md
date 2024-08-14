@@ -235,14 +235,14 @@ CDT requires R version 4.0.0 or higher. We recommend that you have the latest ve
 ```
 
 ```bash
-sudo add-apt-repository "deb http://cran.rstudio.com/bin/linux/ubuntu $(lsb_release -sc)/"
+sudo add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -sc)/"
 sudo apt-get update
 ```
 
 Add GPG key
 
 ```bash
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
 ```
 
 Install R

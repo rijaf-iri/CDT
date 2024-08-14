@@ -101,6 +101,9 @@
         <label id="14">
             <text lang="en"> Chunk Factor </text>
         </label>
+        <label id="14-a">
+            <text lang="en"> Chunk Function </text>
+        </label>
         <label id="15">
             <text lang="en"> Chunk properties to use to create the CDT Dataset Format </text>
         </label>
@@ -260,6 +263,14 @@
             </status>
             <tooltip>
                 <text lang="en"> Number of chunk per computation</text>
+            </tooltip>
+        </content>
+        <content id="14-a">
+            <status>
+                <text lang="en"> Integer value indicating the function to use to create the dataset </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Function to use to create the dataset</text>
             </tooltip>
         </content>
     </help>

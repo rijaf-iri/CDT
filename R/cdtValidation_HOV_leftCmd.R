@@ -1388,7 +1388,7 @@ Validation.HOV.PanelCmd <- function(clim.var){
         })
 
         tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
+            .cdtData$EnvData$SHPOp <- MapGraph.LineSHPOptions(.cdtData$EnvData$SHPOp)
         })
 
         #################

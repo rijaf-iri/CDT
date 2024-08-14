@@ -1,6 +1,5 @@
 
 SPEICalcPanelCmd <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 29
         largeur1 <- 33
@@ -46,14 +45,14 @@ SPEICalcPanelCmd <- function(){
                                          end.pen = 6, end.day = 30,
                                          end.hour = 23, end.min = 55)
 
-    .cdtData$EnvData$tab$pointSize <- NULL
     .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = TRUE),
                                        userCol = list(custom = FALSE, color = NULL),
                                        userLvl = list(custom = TRUE, levels = c(-2, -1.5, -1, 0, 1, 1.5, 2), equidist = TRUE),
                                        title = list(user = FALSE, title = ''),
                                        colkeyLab = list(user = FALSE, label = ''),
                                        scalebar = list(add = FALSE, pos = 'bottomleft'),
-                                       pointSize = .cdtData$EnvData$tab$pointSize)
+                                       plotType = list(values = c("Pixels", "Points"), var = "Pixels"),
+                                       pointSize = 1.0, bbox = .cdtData$Config$region)
 
     .cdtData$EnvData$TSGraphOp <- list(
                                     bar.line = list(
@@ -171,7 +170,8 @@ SPEICalcPanelCmd <- function(){
         txt.prec <- tklabel(frameInData, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
 
         if(GeneralParameters$data.type == 'cdtstation'){
-            cb.en.prec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
+            cb.en.prec <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Prec, width = largeur1)
+            addTo_all_Combobox_List(cb.en.prec)
         }else{
             cb.en.prec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
         }
@@ -181,7 +181,8 @@ SPEICalcPanelCmd <- function(){
         txt.etp <- tklabel(frameInData, text = tclvalue(txt.INEtp.var), textvariable = txt.INEtp.var, anchor = 'w', justify = 'left')
 
         if(GeneralParameters$data.type == 'cdtstation'){
-            cb.en.etp <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Etp, width = largeur1)
+            cb.en.etp <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Etp, width = largeur1)
+            addTo_all_Combobox_List(cb.en.etp)
         }else{
             cb.en.etp <- tkentry(frameInData, textvariable = input.Etp, width = largeur2)
         }
@@ -219,13 +220,12 @@ SPEICalcPanelCmd <- function(){
         ############
 
         tkconfigure(bt.prec, command = function(){
-            if(GeneralParameters$data.type == 'cdtstation'){
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            if(data_type == 'cdtstation'){
                 dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(input.Prec) <- dat.opfiles[[1]]
-                    lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
                 }
             }else{
                 path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -236,13 +236,12 @@ SPEICalcPanelCmd <- function(){
         ############
 
         tkconfigure(bt.etp, command = function(){
-            if(GeneralParameters$data.type == 'cdtstation'){
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            if(data_type == 'cdtstation'){
                 dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(input.Etp) <- dat.opfiles[[1]]
-                    lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
                 }
             }else{
                 path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
@@ -259,13 +258,18 @@ SPEICalcPanelCmd <- function(){
             tkdestroy(cb.en.prec)
             tclvalue(input.Prec) <- ''
 
+            data_type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
+            set.plot.type(data_type)
+
             ###
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(data_type == 'cdtstation'){
                 tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['3a']]
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['3b']]
 
-                cb.en.etp <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Etp, width = largeur1)
-                cb.en.prec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur1)
+                cb.en.etp <<- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Etp, width = largeur1)
+                addTo_all_Combobox_List(cb.en.etp)
+                cb.en.prec <<- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Prec, width = largeur1)
+                addTo_all_Combobox_List(cb.en.prec)
 
                 helpWidget(cb.en.etp, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
                 helpWidget(cb.en.prec, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
@@ -277,9 +281,7 @@ SPEICalcPanelCmd <- function(){
                     dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                     if(!is.null(dat.opfiles)){
                         update.OpenFiles('ascii', dat.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(input.Etp) <- dat.opfiles[[1]]
-                        lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
 
@@ -287,20 +289,18 @@ SPEICalcPanelCmd <- function(){
                     dat.opfiles <- getOpenFiles(.cdtEnv$tcl$main$win)
                     if(!is.null(dat.opfiles)){
                         update.OpenFiles('ascii', dat.opfiles)
-                        listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                         tclvalue(input.Prec) <- dat.opfiles[[1]]
-                        lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
                     }
                 })
             }
 
             ###
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(data_type == 'cdtdataset'){
                 tclvalue(txt.INEtp.var) <- lang.dlg[['label']][['4a']]
                 tclvalue(txt.INPrec.var) <- lang.dlg[['label']][['4b']]
 
-                cb.en.etp <- tkentry(frameInData, textvariable = input.Etp, width = largeur2)
-                cb.en.prec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
+                cb.en.etp <<- tkentry(frameInData, textvariable = input.Etp, width = largeur2)
+                cb.en.prec <<- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
 
                 helpWidget(cb.en.etp, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
                 helpWidget(cb.en.prec, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
@@ -487,7 +487,8 @@ SPEICalcPanelCmd <- function(){
         ######
 
         tkconfigure(bt.outSPI, command = function(){
-            if(GeneralParameters$monitoring){
+            monitoring <- switch(tclvalue(monitoring), '0' = FALSE, '1' = TRUE)
+            if(monitoring){
                 path.rds <- tclvalue(tkgetOpenFile(initialdir = getwd(), filetypes = .cdtEnv$tcl$data$filetypes6))
                 tclvalue(outSPIdir) <- if(path.rds %in% c("", "NA") | is.na(path.rds)) "" else path.rds
             }else{
@@ -506,11 +507,11 @@ SPEICalcPanelCmd <- function(){
             GeneralParameters$intstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(timeSteps))]
             GeneralParameters$data.type <- datatypeVAL[CbdatatypeVAL %in% trimws(tclvalue(DataType))]
 
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[1]){
+            if(GeneralParameters$data.type == 'cdtstation'){
                 GeneralParameters$cdtstation$etp <- trimws(tclvalue(input.Etp))
                 GeneralParameters$cdtstation$prec <- trimws(tclvalue(input.Prec))
             }
-            if(trimws(tclvalue(DataType)) == CbdatatypeVAL[2]){
+            if(GeneralParameters$data.type == 'cdtdataset'){
                 GeneralParameters$cdtdataset$etp <- trimws(tclvalue(input.Etp))
                 GeneralParameters$cdtdataset$prec <- trimws(tclvalue(input.Prec))
             }
@@ -529,12 +530,8 @@ SPEICalcPanelCmd <- function(){
 
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch({
+            ret <- tryCatch2({
                                 computeSPEIProcs(GeneralParameters)
-                            },
-                            warning = function(w){
-                                warningFun(w)
-                                return(0)
                             },
                             error = function(e) errorFun(e),
                             finally = {
@@ -546,12 +543,11 @@ SPEICalcPanelCmd <- function(){
                 if(ret == 0){
                     Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, "s")
 
-                    .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                     .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
+                    set.plot.type(.cdtData$EnvData$output$params$data.type)
                     ###################
 
                     widgets.Station.Pixel()
-                    set.plot.type()
                     ret <- try(set.Data.Scales(), silent = TRUE)
                     if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -613,12 +609,11 @@ SPEICalcPanelCmd <- function(){
 
                 .cdtData$EnvData$output <- OutSPIdata
                 .cdtData$EnvData$PathData <- dirname(trimws(tclvalue(file.dataIndex)))
-                .cdtData$EnvData$plot.maps$data.type <- .cdtData$EnvData$output$params$data.type
                 .cdtData$EnvData$plot.maps[c('lon', 'lat', 'id')] <- .cdtData$EnvData$output$data[c('lon', 'lat', 'id')]
+                set.plot.type(.cdtData$EnvData$output$params$data.type)
                 ###################
 
                 widgets.Station.Pixel()
-                set.plot.type()
                 ret <- try(set.Data.Scales(), silent = TRUE)
                 if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
 
@@ -675,9 +670,6 @@ SPEICalcPanelCmd <- function(){
                 }
             }
             .cdtData$EnvData$dataMapOp <- MapGraph.MapOptions(.cdtData$EnvData$dataMapOp)
-
-            if(trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type)) == "Points")
-                .cdtData$EnvData$tab$pointSize <- .cdtData$EnvData$dataMapOp$pointSize
         })
 
         ###############
@@ -735,28 +727,8 @@ SPEICalcPanelCmd <- function(){
 
         ##############################################
 
-        framePlotType <- tkframe(subfr2)
-
-        .cdtData$EnvData$plot.maps$plot.type <- tclVar("Pixels")
-
-        txt.plotType <- tklabel(framePlotType, text = lang.dlg[['label']][['12']], anchor = 'e', justify = 'right')
-        cb.plotType <- ttkcombobox(framePlotType, values = "Pixels", textvariable = .cdtData$EnvData$plot.maps$plot.type, justify = 'center', width = largeur9)
-
-        tkgrid(txt.plotType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.plotType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-        ###############
-
-        tkbind(cb.plotType, "<<ComboboxSelected>>", function(){
-            if(trimws(tclvalue(.cdtData$EnvData$spi.date)) != "")
-                get.Data.Map()
-        })
-
-        ##############################################
-
         tkgrid(frameDataExist, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameSPIMap, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-        tkgrid(framePlotType, row = 2, column = 0, sticky = '', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -862,65 +834,7 @@ SPEICalcPanelCmd <- function(){
 
         ##############################################
 
-        frameSHP <- ttklabelframe(subfr4, text = lang.dlg[['label']][['16']], relief = 'groove')
-
-        .cdtData$EnvData$shp$add.shp <- tclVar(FALSE)
-        file.plotShp <- tclVar()
-        stateSHP <- "disabled"
-
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shp$add.shp, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(listOpenFiles), textvariable = file.plotShp, width = largeur1, state = stateSHP)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
-
-        ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
-
-        ########
-        tkconfigure(bt.addshp, command = function(){
-            shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
-            if(!is.null(shp.opfiles)){
-                update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-
-                tkconfigure(cb.addshp, values = unlist(listOpenFiles))
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shp$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-            }
-        })
-
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$SHPOp <- MapGraph.GraphOptions.LineSHP(.cdtData$EnvData$SHPOp)
-        })
-
-        #################
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shp$ocrds <- NULL
-            else
-                .cdtData$EnvData$shp$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            stateSHP <- if(tclvalue(.cdtData$EnvData$shp$add.shp) == "1") "disabled" else "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-            tkconfigure(bt.addshpOpt, state = stateSHP)
-        })
-
-        ##############################################
-
+        frameSHP <- create_shpLayer_frame(subfr4)
         tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
@@ -992,18 +906,20 @@ SPEICalcPanelCmd <- function(){
 
     #################
 
-    set.plot.type <- function(){
-        if(.cdtData$EnvData$output$params$data.type == "cdtstation")
-        {
-            plot.type <- c("Pixels", "Points")
-            .cdtData$EnvData$plot.maps$.data.type <- "Points"
-
-            .cdtData$EnvData$dataMapOp$pointSize <- 1.0
-        }else{
-            plot.type <- c("Pixels", "FilledContour")
-            .cdtData$EnvData$plot.maps$.data.type <- "Grid"
+    set.plot.type <- function(data_type){
+        if(data_type == 'cdtstation'){
+            .data.type <- "Points"
+            plot_type <- list(values = c("Pixels", "Points"), var = "Pixels")
         }
-        tkconfigure(cb.plotType, values = plot.type)
+
+        if(data_type == 'cdtdataset'){
+            .data.type <- "Grid"
+            plot_type <- list(values = c("Pixels", "FilledContour"), var = "Pixels")
+        }
+
+        .cdtData$EnvData$dataMapOp$plotType <- plot_type
+        .cdtData$EnvData$plot.maps$.data.type <- .data.type
+        .cdtData$EnvData$plot.maps$data.type <- data_type
     }
 
     #################
@@ -1092,7 +1008,7 @@ SPEICalcPanelCmd <- function(){
                 if(.cdtData$EnvData$varData$spi$this.daty == this.daty) readVarData <- FALSE
 
         if(.cdtData$EnvData$output$params$data.type == "cdtstation"){
-            change.plot <- trimws(tclvalue(.cdtData$EnvData$plot.maps$plot.type))
+            change.plot <- .cdtData$EnvData$dataMapOp$plotType$var
 
             if(!readVarData)
                 if(.cdtData$EnvData$change.plot != change.plot) readVarData <- TRUE
