@@ -480,13 +480,32 @@ compute_RainySeasonData <- function(GeneralParameters){
 
         ###################
         ## Dry Spell
+        dryspell_def <- GeneralParameters$plotVar$dryspell
         DRYSPELLS <- lapply(seq(ncol(PREC)), function(j){
             rr <- PREC[, j]
             rrs <- unlist(rr)
             rrs <- utils::relist(!is.na(rrs) & rrs < GeneralParameters$dryday, rr)
             rr <- lapply(rrs, rle)
             rr <- lapply(rr, function(x) x$lengths[x$values])
-            rr[sapply(rr, length) == 0] <- 0
+            rr <- lapply(rr, function(x){
+                if(length(x) == 0) return(0)
+                d <- lapply(x, function(d){
+                    if(d == 2 * dryspell_def){
+                        return(rep(dryspell_def, 2))
+                    }else if(d > 2 * dryspell_def){
+                        n <- floor(d/dryspell_def)
+                        s <- rep(dryspell_def, n)
+                        if(sum(s) != d){
+                            l <- length(s)
+                            s[l] <- s[l] + (d - sum(s))
+                        }
+                        return(s)
+                    }else{
+                        return(d)
+                    }
+                })
+                do.call(c, d)
+            })
             rr
         })
         DRYSPELLS <- do.call(cbind, DRYSPELLS)

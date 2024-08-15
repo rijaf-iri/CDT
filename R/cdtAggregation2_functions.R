@@ -93,7 +93,12 @@ cdt.daily.statistics <- function(MAT, STATS = "tot.rain",
         wspl <- lapply(seq(ncol(wetday)), function(j){
             x <- rle(wetday[, j])
             x <- x$lengths[x$values]
-            if(length(x) > 0) length(which(x >= pars$drywet.spell)) else 0
+            n <- 0
+            if(length(x) > 0){
+                id <- which(x >= pars$drywet.spell)
+                n <- sum(floor(x[id]/pars$drywet.spell))
+            }
+            n
         })
         res <- do.call(c, wspl)
     }
@@ -102,7 +107,12 @@ cdt.daily.statistics <- function(MAT, STATS = "tot.rain",
         dspl <- lapply(seq(ncol(dryday)), function(j){
             x <- rle(dryday[, j])
             x <- x$lengths[x$values]
-            if(length(x) > 0) length(which(x >= pars$drywet.spell)) else 0
+            n <- 0
+            if(length(x) > 0){
+                id <- which(x >= pars$drywet.spell)
+                n <- sum(floor(x[id]/pars$drywet.spell))
+            }
+            n
         })
         res <- do.call(c, dspl)
     }

@@ -163,7 +163,7 @@ dailyRainAnalysisPanelCmd <- function(){
         txt.INPrec.var <- tclVar(txt.INPrec)
 
         txt.datatype <- tklabel(frameInData, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
-        cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
+        cb.datatype <- ttkcombobox(frameInData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0, justify = 'center')
 
         txt.INPrec <- tklabel(frameInData, text = tclvalue(txt.INPrec.var), textvariable = txt.INPrec.var, anchor = 'w', justify = 'left')
         if(GeneralParameters$data.type == 'cdtstation'){
