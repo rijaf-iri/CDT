@@ -83,9 +83,36 @@
         </combobox>
         <combobox id="4">
             <option id="1">
-                <text lang="en"> Variable From Maps </text>
+                <text lang="en"> Onset </text>
             </option>
             <option id="2">
+                <text lang="en"> Cessation </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Season Length </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Seasonal Rainfall Amounts </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Dry Spells </text>
+            </option>
+            <option id="6">
+                <text lang="en"> Longest Dry Spell </text>
+            </option>
+            <option id="7">
+                <text lang="en"> Number of rain day </text>
+            </option>
+            <option id="8">
+                <text lang="en"> Maximum daily rain </text>
+            </option>
+            <option id="9">
+                <text lang="en"> Total rain when RR > 95th Percentile </text>
+            </option>
+            <option id="10">
+                <text lang="en"> Number of day when RR > 95th Percentile </text>
+            </option>
+            <option id="11">
                 <text lang="en"> Daily Rainfall Data </text>
             </option>
         </combobox>
