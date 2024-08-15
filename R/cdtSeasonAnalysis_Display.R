@@ -192,8 +192,8 @@ SeasonAnalysis.plot.ClimMaps <- function(){
 SeasonAnalysis.plot.TSGraph <- function(){
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
     dryspl <- .cdtData$EnvData$plotVar$dryspell
-    varPICSA <- .cdtData$EnvData$plotVar$varPICSA
-    
+    varPICSA <- .cdtData$EnvData$plot.maps$varTSp
+
     cdtParallelCond <- .cdtData$Config$parallel
 
     if(.cdtData$EnvData$output$data.type == "cdtstation"){
@@ -203,7 +203,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
             return(NULL)
         }
 
-        if(.cdtData$EnvData$plot.maps$varTSp == "maps"){
+        if(varPICSA != "raints"){
             don <- .cdtData$EnvData$tsdata$data[, ixy]
             if(varPICSA == "dryspell"){
                 nval <- sapply(don, function(x) (length(x) == 1) & is.na(x[1]))
@@ -221,16 +221,16 @@ SeasonAnalysis.plot.TSGraph <- function(){
         .cdtData$EnvData$location <- paste0("Station: ", .cdtData$EnvData$output$data$id[ixy])
     }else{
         tsdata.dir <- switch(varPICSA,
-                            "onset" = "Onset_days",
-                            "cessation" = "Cessation_days",
-                            "lengthSeas" = "Season_length",
-                            "totrainSeas" = "Seasonal_rain_amount",
-                            "nbrainSeas" = "Number_rainy_day",
-                            "max24hrain" = "Maximum_rain_daily",
-                            "totrain95P" = "Total_rain_above_Perc95th",
-                            "nbrain95P" = "Number_day_above_Perc95th",
-                            "longdryspell" = "Dry_Spells",
-                            "dryspell" = "Dry_Spells")
+                             "onset" = "Onset_days",
+                             "cessation" = "Cessation_days",
+                             "lengthSeas" = "Season_length",
+                             "totrainSeas" = "Seasonal_rain_amount",
+                             "nbrainSeas" = "Number_rainy_day",
+                             "max24hrain" = "Maximum_rain_daily",
+                             "totrain95P" = "Total_rain_above_Perc95th",
+                             "nbrain95P" = "Number_day_above_Perc95th",
+                             "longdryspell" = "Dry_Spells",
+                             "dryspell" = "Dry_Spells")
 
         cdtdataset <- .cdtData$EnvData$cdtdataset
         xlon <- cdtdataset$coords$mat$x
@@ -249,7 +249,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
         }
         ixy <- ilo + length(xlon) * (ila - 1)
 
-        if(.cdtData$EnvData$plot.maps$varTSp == "maps"){
+        if(varPICSA != "raints"){
             don <- readCdtDatasetChunk.locations(ixy, cdtdataset$fileInfo, cdtdataset, chunkDir = tsdata.dir, parllCond = cdtParallelCond, do.par = FALSE)
 
             if(varPICSA == "dryspell"){
@@ -272,7 +272,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
         .cdtData$EnvData$location <- paste0("Longitude: ", round(ilon, 5), ", Latitude: ", round(ilat, 5))
     }
 
-    if(.cdtData$EnvData$plot.maps$varTSp == "raints"){
+    if(varPICSA == "raints"){
         ret <- picsa.plot.daily(dates, don, .cdtData$EnvData$location, .cdtData$EnvData$output$params$dryday)
         return(ret)
     }

@@ -11,7 +11,6 @@ SeasonAnalysisPanelCmd <- function(){
         largeur7 <- 7
         largeur8 <- 27
         largeur9 <- 22
-        largeur10 <- 20
         largeur11 <- 30
         largeur12 <- 10
     }else{
@@ -25,7 +24,6 @@ SeasonAnalysisPanelCmd <- function(){
         largeur7 <- 7
         largeur8 <- 27
         largeur9 <- 22
-        largeur10 <- 20
         largeur11 <- 30
         largeur12 <- 10
     }
@@ -40,7 +38,8 @@ SeasonAnalysisPanelCmd <- function(){
     GeneralParameters$plotVar <- list(varPICSA = 'totrainSeas', dryspell = 5, yearseas = '')
     GeneralParameters$analysis <- list(method = 'mean', trend = 'trendEY', mth.perc = 95,
                                        low.thres = "0", up.thres = "200")
-    GeneralParameters$graph <- list(varTSp = 'maps', typeTSp = 'line')
+
+    GeneralParameters$graph <- list(varTSp = 'onset', typeTSp = 'line')
 
     .cdtData$EnvData$TSMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
                                      userCol = list(custom = FALSE, color = NULL),
@@ -806,7 +805,10 @@ SeasonAnalysisPanelCmd <- function(){
         framePICSATSGRAPH <- ttklabelframe(subfr4, text = lang.dlg[['label']][['21']], relief = 'groove')
 
         CbvarTSPLOTVAL <- lang.dlg[['combobox']][['4']]
-        varTSPLOTVAL <- c('maps', 'raints')
+        varTSPLOTVAL <- c('onset', 'cessation', 'lengthSeas', 'totrainSeas',
+                          'dryspell', 'longdryspell', 'nbrainSeas', 'max24hrain',
+                          'totrain95P', 'nbrain95P', 'raints')
+
         varTSp <- tclVar()
         tclvalue(varTSp) <- CbvarTSPLOTVAL[varTSPLOTVAL %in% GeneralParameters$graph$varTSp]
 
@@ -822,11 +824,11 @@ SeasonAnalysisPanelCmd <- function(){
         .cdtData$EnvData$plot.maps$tercileTSp <- tclVar(FALSE)
         .cdtData$EnvData$plot.maps$trendTSp <- tclVar(FALSE)
 
-        stateTsp <- if(GeneralParameters$graph$varTSp == "maps") "normal" else "disabled"
+        stateTsp <- if(GeneralParameters$graph$varTSp != "raints") "normal" else "disabled"
         stateType <- if(GeneralParameters$graph$typeTSp %in% c("line", "eline") &&
-                        GeneralParameters$graph$varTSp == "maps") "normal" else "disabled"
+                        GeneralParameters$graph$varTSp != "raints") "normal" else "disabled"
 
-        cb.varTSp <- ttkcombobox(framePICSATSGRAPH, values = CbvarTSPLOTVAL, textvariable = varTSp, justify = 'center', width = largeur10)
+        cb.varTSp <- ttkcombobox(framePICSATSGRAPH, values = CbvarTSPLOTVAL, textvariable = varTSp, justify = 'center', width = largeur4)
         cb.typeTSp <- ttkcombobox(framePICSATSGRAPH, values = CbtypeTSPLOTVAL, textvariable = typeTSp, justify = 'center', width = largeur11, state = stateTsp)
 
         bt.TsGraph.plot <- ttkbutton(framePICSATSGRAPH, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
@@ -840,8 +842,8 @@ SeasonAnalysisPanelCmd <- function(){
 
         #################
 
-        tkgrid(cb.varTSp, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(cb.typeTSp, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 10, ipadx = 1, ipady = 1)
+        tkgrid(cb.varTSp, row = 0, column = 1, sticky = '', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.typeTSp, row = 1, column = 1, sticky = '', rowspan = 1, columnspan = 8, padx = 1, pady = 10, ipadx = 1, ipady = 1)
         tkgrid(bt.TsGraph.Opt, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.TsGraph.plot, row = 2, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frTS1, row = 3, column = 0, sticky = '', rowspan = 1, columnspan = 10, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -882,12 +884,12 @@ SeasonAnalysisPanelCmd <- function(){
             .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
             .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
-            stateTsp <- if(.cdtData$EnvData$plot.maps$varTSp == "maps") "normal" else "disabled"
+            stateTsp <- if(.cdtData$EnvData$plot.maps$varTSp != "raints") "normal" else "disabled"
             tkconfigure(cb.typeTSp, state = stateTsp)
             tkconfigure(bt.TsGraph.Opt, state = stateTsp)
 
             stateType <- if(.cdtData$EnvData$plot.maps$typeTSp %in% c('line', 'eline') &&
-                            .cdtData$EnvData$plot.maps$varTSp == "maps") "normal" else "disabled"
+                            .cdtData$EnvData$plot.maps$varTSp != "raints") "normal" else "disabled"
             tkconfigure(chk.meanTSp, state = stateType)
             tkconfigure(chk.tercTSp, state = stateType)
             tkconfigure(chk.trendTSp, state = stateType)
@@ -898,7 +900,7 @@ SeasonAnalysisPanelCmd <- function(){
             .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
             stateType <- if(.cdtData$EnvData$plot.maps$typeTSp %in% c('line', 'eline') &&
-                            .cdtData$EnvData$plot.maps$varTSp == "maps") "normal" else "disabled"
+                            .cdtData$EnvData$plot.maps$varTSp != "raints") "normal" else "disabled"
             tkconfigure(chk.meanTSp, state = stateType)
             tkconfigure(chk.tercTSp, state = stateType)
             tkconfigure(chk.trendTSp, state = stateType)
@@ -962,7 +964,7 @@ SeasonAnalysisPanelCmd <- function(){
             txt.stnSel <- tklabel(frTS2, text = lang.dlg[['label']][['24']], anchor = 'w', justify = 'left')
             bt.stnID.prev <- ttkbutton(frTS2, text = "<<", width = largeur7)
             bt.stnID.next <- ttkbutton(frTS2, text = ">>", width = largeur7)
-            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur6)
+            cb.stnID <- ttkcombobox(frTS2, values = stnIDTSPLOT, textvariable = .cdtData$EnvData$plot.maps$stnIDTSp, width = largeur6, justify = 'center')
             tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp) <- stnIDTSPLOT[1]
 
             tkgrid(txt.stnSel, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
