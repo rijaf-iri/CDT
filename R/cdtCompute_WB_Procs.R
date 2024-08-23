@@ -188,7 +188,9 @@ computeWBProcs <- function(){
 
             jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$swhc$file)
             swhc <- .cdtData$OpenFiles$Data[[jfile]][[2]]$z
-        }else swhc <- .cdtData$GalParams$swhc$cap.max
+        }else{
+            swhc <- .cdtData$GalParams$swhc$cap.max
+        }
 
         if(.cdtData$GalParams$wb$multi){
             wb1 <- getNCDFSampleData(.cdtData$GalParams$wb$file)
@@ -207,7 +209,9 @@ computeWBProcs <- function(){
 
             jfile <- getIndex.AllOpenFiles(.cdtData$GalParams$wb$file)
             wb1 <- .cdtData$OpenFiles$Data[[jfile]][[2]]$z
-        }else wb1 <- .cdtData$GalParams$wb$wb1
+        }else{
+            wb1 <- .cdtData$GalParams$wb$wb1
+        }
 
         ##################
 

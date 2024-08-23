@@ -1,6 +1,5 @@
 
 computeWB_getParams <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur1 <- 38
         largeur2 <- 61
@@ -54,8 +53,10 @@ computeWB_getParams <- function(){
         txt.etp <- tklabel(frameInData, text = tclvalue(txt.INEtp.var), textvariable = txt.INEtp.var, anchor = 'w', justify = 'left')
 
         if(data.type == 'cdtstation'){
-            cb.en.prec <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Prec, width = largeur3)
-            cb.en.etp <- ttkcombobox(frameInData, values = unlist(listOpenFiles), textvariable = input.Etp, width = largeur3)
+            cb.en.prec <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Prec, width = largeur3)
+            cb.en.etp <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.Etp, width = largeur3)
+            addTo_all_Combobox_List(cb.en.prec)
+            addTo_all_Combobox_List(cb.en.etp)
         }else{
             cb.en.prec <- tkentry(frameInData, textvariable = input.Prec, width = largeur2)
             cb.en.etp <- tkentry(frameInData, textvariable = input.Etp, width = largeur2)
@@ -96,9 +97,7 @@ computeWB_getParams <- function(){
                 tcl('wm', 'attributes', tt, topmost = TRUE)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(input.Prec) <- dat.opfiles[[1]]
-                    lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
                 }
             }else{
                 tcl('wm', 'attributes', tt, topmost = FALSE)
@@ -117,9 +116,7 @@ computeWB_getParams <- function(){
                 tcl('wm', 'attributes', tt, topmost = TRUE)
                 if(!is.null(dat.opfiles)){
                     update.OpenFiles('ascii', dat.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
                     tclvalue(input.Etp) <- dat.opfiles[[1]]
-                    lapply(list(cb.en.etp, cb.en.prec), tkconfigure, values = unlist(listOpenFiles))
                 }
             }else{
                 tcl('wm', 'attributes', tt, topmost = FALSE)

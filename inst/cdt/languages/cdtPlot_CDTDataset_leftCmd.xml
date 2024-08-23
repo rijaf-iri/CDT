@@ -50,6 +50,9 @@
         <label id="9">
             <text lang="en"> Spatial Average (Padding) </text>
         </label>
+        <label id="10">
+            <text lang="en"> Click on the map to get the coordinates\non which the graph will be displayed </text>
+        </label>
     </widget>
     <help>
         <content id="1">
@@ -90,6 +93,12 @@
         </content>
         <content id="7">
             <text lang="en"> xlim must be an integer value </text>
+        </content>
+        <content id="8">
+            <text lang="en"> No data on the graph to save </text>
+        </content>
+        <content id="9">
+            <text lang="en"> Folder to save the data does not exist </text>
         </content>
     </message>
 </panel_cmd>

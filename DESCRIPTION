@@ -60,4 +60,4 @@ Imports:
 StagedInstall: no
 URL: https://github.com/rijaf-iri/CDT
 BugReports: https://github.com/rijaf-iri/CDT/issues
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2

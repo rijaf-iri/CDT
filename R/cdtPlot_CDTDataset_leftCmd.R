@@ -133,16 +133,13 @@ PlotCDTDatasetCmd <- function(){
                     return(NULL)
                 }
 
-                AttrTable <- names(shpf[[2]]@data)
+                shpData <- sf::st_drop_geometry(shpf[[2]])
+                AttrTable <- names(shpData)
                 tkconfigure(cb.attrshp, values = AttrTable)
                 tclvalue(shpAttr) <- AttrTable[1]
 
                 .cdtData$EnvData$shp$data <- shpf
                 .cdtData$EnvData$shp$ocrds <- getBoundaries(shpf[[2]])
-
-                .cdtData$EnvData$plot.maps$shp$display <- TRUE
-                .cdtData$EnvData$plot.maps$shp$shp <- shpf[[2]]
-                .cdtData$EnvData$plot.maps$shp$field <- cb.attrshp
             }else return(NULL)
 
             ret <- try(get.CDT.dataset.Idx(), silent = TRUE)
@@ -155,8 +152,10 @@ PlotCDTDatasetCmd <- function(){
 
         tkconfigure(bt.TableAttr, command = function(){
             shpf <- .cdtData$EnvData$shp$data
-            if(!is.null(shpf))
-                .cdtData$EnvData$tab$TableAttr <- tableNotebookTab_unik(shpf[[2]]@data, .cdtData$EnvData$tab$TableAttr, shpf[[1]], 10)
+            if(!is.null(shpf)){
+                shpData <- sf::st_drop_geometry(shpf[[2]])
+                .cdtData$EnvData$tab$TableAttr <- tableNotebookTab_unik(shpData, .cdtData$EnvData$tab$TableAttr, shpf[[1]], 10)
+            }
         })
 
         ########
@@ -178,25 +177,31 @@ PlotCDTDatasetCmd <- function(){
                 return(NULL)
             }
 
-            AttrTable <- names(shpf[[2]]@data)
+            shpData <- sf::st_drop_geometry(shpf[[2]])
+            AttrTable <- names(shpData)
             tkconfigure(cb.attrshp, values = AttrTable)
             tclvalue(shpAttr) <- AttrTable[1]
 
             .cdtData$EnvData$shp$data <- shpf
             .cdtData$EnvData$shp$ocrds <- getBoundaries(shpf[[2]])
 
-            .cdtData$EnvData$plot.maps$shp$display <- TRUE
-            .cdtData$EnvData$plot.maps$shp$shp <- shpf[[2]]
-            .cdtData$EnvData$plot.maps$shp$field <- cb.attrshp
-
             ret <- try(get.CDT.dataset.Idx(), silent = TRUE)
             if(inherits(ret, "try-error") | is.null(ret)) return(NULL)
         })
+
+        ##############################################
+
+        frameInfoMap <- tkframe(subfr1, relief = 'groove', borderwidth = 2, background = 'white')
+        
+        txt.infoMap <- tklabel(frameInfoMap, text = lang.dlg[['label']][['10']], anchor = 'w', justify = 'left', bg = 'white')
+
+        tkgrid(txt.infoMap)
 
         ############################################
 
         tkgrid(frameData, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameSHP, row = 1, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(frameInfoMap, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 
@@ -298,7 +303,45 @@ PlotCDTDatasetCmd <- function(){
 
         ############################################
 
+        bt.getData <- ttkbutton(subfr2, text = .cdtEnv$tcl$lang$global[['button']][['7']])
+
+        tkgrid(bt.getData)
+
+        #################
+
+        .cdtData$EnvData$plotData <- NULL
+
+        tkconfigure(bt.getData, command = function(){
+            if(is.null(.cdtData$EnvData$plotData)){
+                Insert.Messages.Out(lang.dlg[['message']][['8']], TRUE, 'w')
+                return(NULL)
+            }
+
+            tcl('wm', 'attributes', .cdtEnv$tcl$main$win, topmost = FALSE)
+            file2save <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypesA)
+            tcl('wm', 'attributes', .cdtEnv$tcl$main$win, topmost = TRUE)
+
+            if(!dir.exists(dirname(file2save))){
+                Insert.Messages.Out(lang.dlg[['message']][['9']], TRUE, 'e')
+                return(NULL)
+            }
+
+            lon <- cbind('Longitude', .cdtData$EnvData$plotData$lon)
+            lat <- cbind('Latitude', .cdtData$EnvData$plotData$lat)
+            sep <- c('', '')
+            out <- rbind(sep, lon, lat)
+            headr <- c('Dates', 'Data')
+            out <- rbind(out, sep, headr)
+            dat <- cbind(.cdtData$EnvData$plotData$dates, .cdtData$EnvData$plotData$data)
+            out <- rbind(out, dat)
+
+            utils::write.table(out, file2save, sep = ",", na = "", col.names = FALSE, row.names = FALSE, quote = FALSE)
+        })
+
+        ############################################
+
         tkgrid(frameGraph, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(bt.getData, row = 1, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
 
     #######################################################################################################
 

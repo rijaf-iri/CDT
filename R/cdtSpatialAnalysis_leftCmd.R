@@ -283,7 +283,7 @@ spatialAnalysisPanelCmd <- function(){
             if(data_type == 'cdtstation'){
                 tclvalue(fileINdir) <- lang.dlg[['label']][['3']]
 
-                cb.stnfl <<- ttkcombobox(frameData, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur1)
+                cb.stnfl <<- ttkcombobox(frameData, values = unlist(openFile_ttkcomboList()), textvariable = file.stnfl, width = largeur1)
                 addTo_all_Combobox_List(cb.stnfl)
 
                 #######

@@ -55,6 +55,8 @@ CDTdataset.Plot.Graph <- function(){
     don <- as.numeric(xyloc$data)
     daty <- xyloc$date
 
+    .cdtData$EnvData$plotData <- list(lon = xloc, lat = yloc, dates = daty, data = don)
+
     nchar.daty <- nchar(daty)
     nchar.daty <- if(all(nchar.daty[1] == nchar.daty)) nchar.daty[1] else 0
     known.data.tstep <- switch(cdtdataset$TimeStep,

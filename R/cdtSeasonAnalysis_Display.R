@@ -32,7 +32,7 @@ legendLabel.SeasonAnalysis1 <- function(lab.breaks, varSeas, statClim, start.dat
 
 SeasonAnalysis.plot.TSMaps <- function(){
     TSMapOp <- .cdtData$EnvData$TSMapOp
-    don <- .cdtData$EnvData$tsdata
+    don <- .cdtData$EnvData$tsMap
 
     if(!TSMapOp$title$user){
         .titre <- switch(.cdtData$EnvData$plotVar$varPICSA,
@@ -50,6 +50,7 @@ SeasonAnalysis.plot.TSMaps <- function(){
                                          paste0("Dry spells - ", drydef, " or more consecutive days")
                                       }
                         )
+        .titre <- paste(.titre, '[', .cdtData$EnvData$plotVar$yearseas, ']')
     }else .titre <- TSMapOp$title$title
 
     #################
@@ -191,27 +192,48 @@ SeasonAnalysis.plot.ClimMaps <- function(){
 
 SeasonAnalysis.plot.TSGraph <- function(){
     TSGraphOp <- .cdtData$EnvData$TSGraphOp
-    dryspl <- .cdtData$EnvData$plotVar$dryspell
+    dryspl <- .cdtData$EnvData$plot.maps$dryspell
     varPICSA <- .cdtData$EnvData$plot.maps$varTSp
-
+    data_type <- .cdtData$EnvData$output$data.type
     cdtParallelCond <- .cdtData$Config$parallel
 
-    if(.cdtData$EnvData$output$data.type == "cdtstation"){
-        ixy <- which(.cdtData$EnvData$output$data$id == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
+    long_dryspell <- if(data_type == "cdtstation") "Longest_dry_spell" else "Dry_Spells"
+    tsdata.dir <- switch(varPICSA,
+                         'onset' = "Onset_days",
+                         'cessation' = "Cessation_days",
+                         'lengthSeas' = "Season_length",
+                         'totrainSeas' = "Seasonal_rain_amount",
+                         'nbrainSeas' = "Number_rainy_day",
+                         'max24hrain' = "Maximum_rain_daily",
+                         'totrain95P' = "Total_rain_above_Perc95th",
+                         'nbrain95P' = "Number_day_above_Perc95th",
+                         'longdryspell' = long_dryspell,
+                         'dryspell' = "Dry_Spells")
+
+    if(data_type == "cdtstation"){
+        stnID <- trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp))
+        ixy <- which(.cdtData$EnvData$output$data$id == stnID)
         if(length(ixy) == 0){
             Insert.Messages.Out(.cdtData$EnvData$message[['23']], TRUE, 'e')
             return(NULL)
         }
 
         if(varPICSA != "raints"){
-            don <- .cdtData$EnvData$tsdata$data[, ixy]
+            tsdata.path <- file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET")
+            filetsdata <- file.path(tsdata.path, paste0(tsdata.dir, ".rds"))
+            if(!file.exists(filetsdata)){
+                Insert.Messages.Out(paste(filetsdata, .cdtData$EnvData$message[['5']]), TRUE, 'e')
+                return(NULL)
+            }
+            don <- readRDS(filetsdata)
+            don <- don[, ixy]
             if(varPICSA == "dryspell"){
                 nval <- sapply(don, function(x) (length(x) == 1) & is.na(x[1]))
-                don <- sapply(don, function(x) sum(!is.na(x) & x >= dryspl))
+                don <- sapply(don, count_dryspell_number, ds = dryspl)
                 don[nval] <- NA
             }else don <- as.numeric(don)
 
-            dates <- .cdtData$EnvData$tsdata$date
+            dates <- format(.cdtData$EnvData$output$start.date, '%Y%m%d')
             daty <- as.numeric(substr(dates, 1, 4))
         }else{
             don <- .cdtData$EnvData$daily.precip[, ixy]
@@ -220,18 +242,6 @@ SeasonAnalysis.plot.TSGraph <- function(){
 
         .cdtData$EnvData$location <- paste0("Station: ", .cdtData$EnvData$output$data$id[ixy])
     }else{
-        tsdata.dir <- switch(varPICSA,
-                             "onset" = "Onset_days",
-                             "cessation" = "Cessation_days",
-                             "lengthSeas" = "Season_length",
-                             "totrainSeas" = "Seasonal_rain_amount",
-                             "nbrainSeas" = "Number_rainy_day",
-                             "max24hrain" = "Maximum_rain_daily",
-                             "totrain95P" = "Total_rain_above_Perc95th",
-                             "nbrain95P" = "Number_day_above_Perc95th",
-                             "longdryspell" = "Dry_Spells",
-                             "dryspell" = "Dry_Spells")
-
         cdtdataset <- .cdtData$EnvData$cdtdataset
         xlon <- cdtdataset$coords$mat$x
         xlat <- cdtdataset$coords$mat$y
@@ -254,7 +264,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
 
             if(varPICSA == "dryspell"){
                 nval <- sapply(don$data[, 1], function(x) (length(x) == 1) & is.na(x[1]))
-                don <- sapply(don$data[, 1], function(x) sum(!is.na(x) & x >= dryspl))
+                don <- sapply(don$data[, 1], count_dryspell_number, ds = dryspl)
                 don[nval] <- NA
             }else if(varPICSA == "longdryspell"){
                 don <- sapply(don$data[, 1], max, na.rm = TRUE)
@@ -272,12 +282,14 @@ SeasonAnalysis.plot.TSGraph <- function(){
         .cdtData$EnvData$location <- paste0("Longitude: ", round(ilon, 5), ", Latitude: ", round(ilat, 5))
     }
 
+    ######### plot yearly rain
+
     if(varPICSA == "raints"){
         ret <- picsa.plot.daily(dates, don, .cdtData$EnvData$location, .cdtData$EnvData$output$params$dryday)
         return(ret)
     }
 
-    #########
+    ######### plot other params
 
     if(varPICSA == "onset"){
         xlab0 <- ''
@@ -356,7 +368,7 @@ SeasonAnalysis.plot.TSGraph <- function(){
 
     #### ENSO
     if(GRAPHTYPE %in% c("eline", "ebar", "eproba")){
-        if(.cdtData$EnvData$output$data.type == "cdtstation"){
+        if(data_type == "cdtstation"){
             onset <- readRDS(file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET", "Onset_days.rds"))
             onset <- as.numeric(onset[, ixy])
             cessat <- readRDS(file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET", "Cessation_days.rds"))

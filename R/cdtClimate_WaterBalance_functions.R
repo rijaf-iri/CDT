@@ -1,8 +1,10 @@
 
 ## Water balance
 Water.Balance <- function(rain, etp, capacity.max = 100, wb1 = 0){
-    rain[is.na(rain)] <- 0
-    etp[is.na(etp)] <- 0
+    rr_na <- is.na(rain)
+    et_na <- is.na(etp)
+    rain[rr_na] <- 0
+    etp[et_na] <- 0
 
     ndays <- nrow(rain)
     nbstn <- ncol(rain)
@@ -18,6 +20,9 @@ Water.Balance <- function(rain, etp, capacity.max = 100, wb1 = 0){
         water.balance[iday, ] <- water.balance[iday-1, ] + rain[iday, ] - etp[iday, ]
         water.balance[iday, ] <- pmax(minwb, pmin(maxwb, water.balance[iday, ]))
     }
+
+    ina <- colSums(!rr_na & !et_na) == 0
+    water.balance[, ina] <- NA
 
     return(water.balance)
 }
