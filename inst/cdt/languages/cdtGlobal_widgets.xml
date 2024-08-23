@@ -25,6 +25,10 @@
             <text lang="en"> Load Data </text>
             <text lang="fr"> Charger Données </text>
         </button>
+        <button id="7">
+            <text lang="en"> Get Displayed Data </text>
+            <text lang="fr"> Obtenir les Données </text>
+        </button>
         <label id="1">
             <text lang="en"> Open Files </text>
             <text lang="fr"> Fichiers Ouverts </text>

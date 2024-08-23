@@ -652,7 +652,10 @@ probability.exceeding.mat <- function(x, thres){
 
 #############################################
 
+# https://stackoverflow.com/a/48102268
 ecdf_plot_smooth <- function(x, adj = 0.1){
+    x <- x[!is.na(x)]
+    if(length(x) == 0) return(NULL)
     ex <- 0.01 * diff(range(x))
     xmin <- min(x) - ex
     xmax <- max(x) + ex
@@ -662,6 +665,8 @@ ecdf_plot_smooth <- function(x, adj = 0.1){
 }
 
 ecdf_plot_ts <- function(x){
+    x <- x[!is.na(x)]
+    if(length(x) == 0) return(NULL)
     fn <- stats::ecdf(x)
     x <- sort(x)
     y <- 100 * (1 - fn(x))

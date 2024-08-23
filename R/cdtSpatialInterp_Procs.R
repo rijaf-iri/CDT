@@ -263,7 +263,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
             kappa <- c(0.05, seq(0.2, 2, 0.1), 5, 10)
             nugget0 <- min(exp.var$gamma)
             range0 <- 0.5 * max(exp.var$dist)
-            sill0 <- mean(c(max(exp.var$gamma), median(exp.var$gamma)))
+            sill0 <- mean(c(max(exp.var$gamma), stats::median(exp.var$gamma)))
             psill0 <- sill0 - nugget0
 
             vgm_list <- lapply(interp$vgm.model, function(vg){
@@ -333,7 +333,7 @@ interpStationsProcs <- function(GeneralParameters, GUI = TRUE){
             kappa <- c(0.05, seq(0.2, 2, 0.1), 5, 10)
             nugget0 <- min(exp.var$gamma)
             range0 <- 0.5 * max(exp.var$dist)
-            sill0 <- mean(c(max(exp.var$gamma), median(exp.var$gamma)))
+            sill0 <- mean(c(max(exp.var$gamma), stats::median(exp.var$gamma)))
             psill0 <- sill0 - nugget0
 
             vgm_list <- lapply(interp$vgm.model, function(vg){

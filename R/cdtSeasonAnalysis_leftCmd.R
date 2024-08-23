@@ -596,8 +596,8 @@ SeasonAnalysisPanelCmd <- function(){
         #################
 
         tkconfigure(bt.TsMap.Opt, command = function(){
-            if(!is.null(.cdtData$EnvData$tsdata)){
-                atlevel <- pretty(.cdtData$EnvData$tsdata$z, n = 10, min.n = 7)
+            if(!is.null(.cdtData$EnvData$tsMap)){
+                atlevel <- pretty(.cdtData$EnvData$tsMap$z, n = 10, min.n = 7)
                 if(is.null(.cdtData$EnvData$TSMapOp$userLvl$levels)){
                     .cdtData$EnvData$TSMapOp$userLvl$levels <- atlevel
                 }else{
@@ -615,8 +615,8 @@ SeasonAnalysisPanelCmd <- function(){
         tkconfigure(bt.TsMap.plot, command = function(){
             get.analysis.method()
 
-            if(!is.null(.cdtData$EnvData$tsdata)){
-                ret <- read.PicsaTSData()
+            if(!is.null(.cdtData$EnvData$tsMap)){
+                ret <- read.tsMapData()
                 if(is.null(ret)) return(NULL)
 
                 SeasonAnalysis.Display.TSMaps()
@@ -626,7 +626,7 @@ SeasonAnalysisPanelCmd <- function(){
         tkconfigure(bt.TsMap.prev, command = function(){
             get.analysis.method()
 
-            if(!is.null(.cdtData$EnvData$tsdata)){
+            if(!is.null(.cdtData$EnvData$tsMap)){
                 val.TsMap.year <- format(.cdtData$EnvData$output$start.date, '%Y')
                 iyear <- which(val.TsMap.year == .cdtData$EnvData$plotVar$yearseas)
                 iyear <- iyear - 1
@@ -634,7 +634,7 @@ SeasonAnalysisPanelCmd <- function(){
                 tclvalue(var.TsMap.year) <- val.TsMap.year[iyear]
                 .cdtData$EnvData$plotVar$yearseas <- val.TsMap.year[iyear]
 
-                ret <- read.PicsaTSData()
+                ret <- read.tsMapData()
                 if(is.null(ret)) return(NULL)
 
                 SeasonAnalysis.Display.TSMaps()
@@ -644,7 +644,7 @@ SeasonAnalysisPanelCmd <- function(){
         tkconfigure(bt.TsMap.next, command = function(){
             get.analysis.method()
 
-            if(!is.null(.cdtData$EnvData$tsdata)){
+            if(!is.null(.cdtData$EnvData$tsMap)){
                 val.TsMap.year <- format(.cdtData$EnvData$output$start.date, '%Y')
                 iyear <- which(val.TsMap.year == .cdtData$EnvData$plotVar$yearseas)
                 iyear <- iyear + 1
@@ -652,11 +652,15 @@ SeasonAnalysisPanelCmd <- function(){
                 tclvalue(var.TsMap.year) <- val.TsMap.year[iyear]
                 .cdtData$EnvData$plotVar$yearseas <- val.TsMap.year[iyear]
 
-                ret <- read.PicsaTSData()
+                ret <- read.tsMapData()
                 if(is.null(ret)) return(NULL)
 
                 SeasonAnalysis.Display.TSMaps()
             }
+        })
+
+        tkbind(cb.TsMap.year, "<<ComboboxSelected>>", function(){
+            .cdtData$EnvData$plotVar$yearseas <- trimws(tclvalue(var.TsMap.year))
         })
 
         #################
@@ -668,7 +672,7 @@ SeasonAnalysisPanelCmd <- function(){
             tkconfigure(spin.TsMap.dryspell, state = stateDrySpl)
 
             if(!is.null(.cdtData$EnvData$output)){
-                ret <- read.PicsaTSData()
+                ret <- read.tsMapData()
                 if(is.null(ret)) return(NULL)
             }
         })
@@ -812,6 +816,7 @@ SeasonAnalysisPanelCmd <- function(){
         varTSp <- tclVar()
         tclvalue(varTSp) <- CbvarTSPLOTVAL[varTSPLOTVAL %in% GeneralParameters$graph$varTSp]
 
+        .cdtData$EnvData$plot.maps$dryspell <- GeneralParameters$plotVar$dryspell
         .cdtData$EnvData$plot.maps$varTSp <- GeneralParameters$graph$varTSp
 
         CbtypeTSPLOTVAL <- lang.dlg[['combobox']][['5']]
@@ -828,7 +833,12 @@ SeasonAnalysisPanelCmd <- function(){
         stateType <- if(GeneralParameters$graph$typeTSp %in% c("line", "eline") &&
                         GeneralParameters$graph$varTSp != "raints") "normal" else "disabled"
 
-        cb.varTSp <- ttkcombobox(framePICSATSGRAPH, values = CbvarTSPLOTVAL, textvariable = varTSp, justify = 'center', width = largeur4)
+        width_varTSp <- if(GeneralParameters$graph$varTSp == 'dryspell') 3 else 0
+
+        cb.varTSp <- ttkcombobox(framePICSATSGRAPH, values = CbvarTSPLOTVAL, textvariable = varTSp, justify = 'center', width = largeur4 - width_varTSp)
+        spin.varTSp <- ttkspinbox(framePICSATSGRAPH, from = 1, to = 50, increment = 1, justify = 'center', width = 2)
+        tkset(spin.varTSp, GeneralParameters$plotVar$dryspell)
+
         cb.typeTSp <- ttkcombobox(framePICSATSGRAPH, values = CbtypeTSPLOTVAL, textvariable = typeTSp, justify = 'center', width = largeur11, state = stateTsp)
 
         bt.TsGraph.plot <- ttkbutton(framePICSATSGRAPH, text = .cdtEnv$tcl$lang$global[['button']][['3']], width = largeur5)
@@ -842,7 +852,10 @@ SeasonAnalysisPanelCmd <- function(){
 
         #################
 
-        tkgrid(cb.varTSp, row = 0, column = 1, sticky = '', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(cb.varTSp, row = 0, column = 1, sticky = '', rowspan = 1, columnspan = 7, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        if(GeneralParameters$graph$varTSp == 'dryspell'){
+            tkgrid(spin.varTSp, row = 0, column = 8, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        }
         tkgrid(cb.typeTSp, row = 1, column = 1, sticky = '', rowspan = 1, columnspan = 8, padx = 1, pady = 10, ipadx = 1, ipady = 1)
         tkgrid(bt.TsGraph.Opt, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(bt.TsGraph.plot, row = 2, column = 5, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -872,6 +885,11 @@ SeasonAnalysisPanelCmd <- function(){
             .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
             .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
+            if(.cdtData$EnvData$plot.maps$varTSp == "dryspell"){
+                dryspl <- as.numeric(trimws(tclvalue(tkget(spin.varTSp))))
+                .cdtData$EnvData$plot.maps$dryspell <- dryspl
+            }
+
             if(!is.null(.cdtData$EnvData$output)){
                 imgContainer <- CDT.Display.Graph(SeasonAnalysis.plot.TSGraph, .cdtData$EnvData$tab$Tsplot, 'Time-Series-Plot')
                 .cdtData$EnvData$tab$Tsplot <- imageNotebookTab_unik(imgContainer, .cdtData$EnvData$tab$Tsplot)
@@ -893,6 +911,17 @@ SeasonAnalysisPanelCmd <- function(){
             tkconfigure(chk.meanTSp, state = stateType)
             tkconfigure(chk.tercTSp, state = stateType)
             tkconfigure(chk.trendTSp, state = stateType)
+
+            width_varTSp <- if(.cdtData$EnvData$plot.maps$varTSp == "dryspell") 3 else 0
+            tkconfigure(cb.varTSp, width = largeur4 - width_varTSp)
+
+            tkdestroy(spin.varTSp)
+            spin.varTSp <<- ttkspinbox(framePICSATSGRAPH, from = 1, to = 50, increment = 1, justify = 'center', width = 2)
+            tkset(spin.varTSp, .cdtData$EnvData$plot.maps$dryspell)
+
+            if(.cdtData$EnvData$plot.maps$varTSp == "dryspell"){
+                tkgrid(spin.varTSp, row = 0, column = 8, sticky = 'e', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            }
         })
 
         tkbind(cb.typeTSp, "<<ComboboxSelected>>", function(){
@@ -977,6 +1006,11 @@ SeasonAnalysisPanelCmd <- function(){
                 .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
                 .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
 
+                if(.cdtData$EnvData$plot.maps$varTSp == "dryspell"){
+                    dryspl <- as.numeric(trimws(tclvalue(tkget(spin.varTSp))))
+                    .cdtData$EnvData$plot.maps$dryspell <- dryspl
+                }
+
                 if(!is.null(.cdtData$EnvData$output)){
                     istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
                     istn <- istn - 1
@@ -991,6 +1025,11 @@ SeasonAnalysisPanelCmd <- function(){
             tkconfigure(bt.stnID.next, command = function(){
                 .cdtData$EnvData$plot.maps$typeTSp <- typeTSPLOTVAL[CbtypeTSPLOTVAL %in% trimws(tclvalue(typeTSp))]
                 .cdtData$EnvData$plot.maps$varTSp <- varTSPLOTVAL[CbvarTSPLOTVAL %in% trimws(tclvalue(varTSp))]
+
+                if(.cdtData$EnvData$plot.maps$varTSp == "dryspell"){
+                    dryspl <- as.numeric(trimws(tclvalue(tkget(spin.varTSp))))
+                    .cdtData$EnvData$plot.maps$dryspell <- dryspl
+                }
 
                 if(!is.null(.cdtData$EnvData$output)){
                     istn <- which(stnIDTSPLOT == trimws(tclvalue(.cdtData$EnvData$plot.maps$stnIDTSp)))
@@ -1055,18 +1094,6 @@ SeasonAnalysisPanelCmd <- function(){
         xlow <- trimws(tclvalue(freqLowClimAna))
         xup <- trimws(tclvalue(freqUpClimAna))
 
-        # if(.cdtData$EnvData$plotVar$varPICSA %in% c("onset", "cessation")){
-        #     dlo <- try(as.POSIXlt(as.Date(paste(2015, xlow, sep = '-'))), silent = TRUE)
-        #     dup <- try(as.POSIXlt(as.Date(paste(2015, xup, sep = '-'))), silent = TRUE)
-        #     if(inherits(dlo, "try-error") | inherits(dup, "try-error"))
-        #         Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, 'e')
-        # }else{
-        #     dlow <- as.numeric(xlow)
-        #     dup <- as.numeric(xup)
-        #     if(is.na(xlow) | is.na(xup))
-        #         Insert.Messages.Out(lang.dlg[['message']][['6']], TRUE, 'e')
-        # }
-
         .cdtData$EnvData$analysis$low.thres <- xlow
         .cdtData$EnvData$analysis$up.thres <- xup
     }
@@ -1080,7 +1107,7 @@ SeasonAnalysisPanelCmd <- function(){
         .cdtData$EnvData$plotVar$yearseas <- tclvalue(var.TsMap.year)
 
         ###################
-        ret <- read.PicsaTSData()
+        ret <- read.tsMapData()
         if(is.null(ret)) return(NULL)
 
         ###################
@@ -1107,12 +1134,13 @@ SeasonAnalysisPanelCmd <- function(){
             return(NULL)
         }
 
+        ### daily rainfall
         .cdtData$EnvData$daily.precip <- readRDS(file.daily.rr)
     }
 
     #######################################################################################################
 
-    read.PicsaTSData <- function(){
+    read.tsMapData <- function(){
         tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
         tcl('update')
         on.exit({
@@ -1149,61 +1177,58 @@ SeasonAnalysisPanelCmd <- function(){
             change.plot <- .cdtData$EnvData$TSMapOp$plotType$var
 
             ########
+            readTsMap <- list(filetsdata, idaty)
+
             readTsData <- TRUE
-            if(!is.null(.cdtData$EnvData$tsdata))
-                if(!is.null(.cdtData$EnvData$filetsdata))
-                    if(.cdtData$EnvData$filetsdata == filetsdata) readTsData <- FALSE
+            if(!is.null(.cdtData$EnvData$readTsMap))
+                if(isTRUE(all.equal(.cdtData$EnvData$readTsMap, readTsMap))) readTsData <- FALSE
 
             if(readTsData){
-                .cdtData$EnvData$tsdata <- list(date = start.date, data = readRDS(filetsdata))
-                .cdtData$EnvData$filetsdata <- filetsdata
+                tsMap_data <- readRDS(filetsdata)
+                idt <- which(start.date == idaty)
+                .cdtData$EnvData$tsMap_data <- tsMap_data[idt, ]
+
+                .cdtData$EnvData$readTsMap <- readTsMap
             }
 
             ########
+            rasterTsMap <- list(filetsdata, idaty, dryspl, change.plot,
+                                .cdtData$EnvData$plotVar$varPICSA)
+
             rasterTsData <- TRUE
-            if(!readTsData)
-                if(!is.null(.cdtData$EnvData$rasterTsData))
-                    if(.cdtData$EnvData$filetsdata == filetsdata)
-                        if(.cdtData$EnvData$rasterTsData == idaty) rasterTsData <- FALSE
-
-            if(.cdtData$EnvData$plotVar$varPICSA == "dryspell")
-                if(!is.null(.cdtData$EnvData$oldDryspell))
-                    if(.cdtData$EnvData$oldDryspell != dryspl & !rasterTsData) rasterTsData <- TRUE
-
-            if(!rasterTsData)
-                if(.cdtData$EnvData$change.plot.rasterTsData != change.plot) rasterTsData <- TRUE
+            if(!is.null(.cdtData$EnvData$rasterTsMap))
+                if(isTRUE(all.equal(.cdtData$EnvData$rasterTsMap, rasterTsMap))) rasterTsData <- FALSE
 
             if(rasterTsData){
                 X0 <- .cdtData$EnvData$output$data$lon
                 Y0 <- .cdtData$EnvData$output$data$lat
-                idt <- which(.cdtData$EnvData$tsdata$date == idaty)
                 if(.cdtData$EnvData$plotVar$varPICSA == "dryspell"){
-                    tmp <- .cdtData$EnvData$tsdata$data[idt, ]
+                    tmp <- .cdtData$EnvData$tsMap_data
                     nval <- sapply(tmp, function(x) (length(x) == 1) & is.na(x[1]))
-                    tmp <- sapply(tmp, function(x) sum(!is.na(x) & x >= dryspl))
+                    tmp <- sapply(tmp, count_dryspell_number, ds = dryspl)
                     tmp[nval] <- NA
                     rm(nval)
                     .cdtData$EnvData$oldDryspell <- dryspl
-                }else tmp <- as.numeric(.cdtData$EnvData$tsdata$data[idt, ])
+                }else{
+                    tmp <- as.numeric(.cdtData$EnvData$tsMap_data)
+                }
 
                 if(change.plot == "Pixels"){
                     nx <- nx_ny_as.image(diff(range(X0)))
                     ny <- nx_ny_as.image(diff(range(Y0)))
                     tmp <- cdt.as.image(tmp, nx = nx, ny = ny, pts.xy = cbind(X0, Y0))
-                    .cdtData$EnvData$tsdata$x <- tmp$x
-                    .cdtData$EnvData$tsdata$y <- tmp$y
-                    .cdtData$EnvData$tsdata$z <- tmp$z
+                    .cdtData$EnvData$tsMap$x <- tmp$x
+                    .cdtData$EnvData$tsMap$y <- tmp$y
+                    .cdtData$EnvData$tsMap$z <- tmp$z
                 }
 
                 if(change.plot == "Points"){
-                    .cdtData$EnvData$tsdata$x <- X0
-                    .cdtData$EnvData$tsdata$y <- Y0
-                    .cdtData$EnvData$tsdata$z <- tmp
+                    .cdtData$EnvData$tsMap$x <- X0
+                    .cdtData$EnvData$tsMap$y <- Y0
+                    .cdtData$EnvData$tsMap$z <- tmp
                 }
 
-                .cdtData$EnvData$rasterTsData <- idaty
-                .cdtData$EnvData$change.plot.rasterTsData <- change.plot
-                rm(tmp)
+                .cdtData$EnvData$rasterTsMap <- rasterTsMap
             }
         }else{
             if(.cdtData$EnvData$plotVar$varPICSA == "dryspell"){
@@ -1220,36 +1245,33 @@ SeasonAnalysisPanelCmd <- function(){
                 return(NULL)
             }
 
-            readTsData <- TRUE
-            if(!is.null(.cdtData$EnvData$tsdata))
-                if(!is.null(.cdtData$EnvData$filetsdata))
-                    if(.cdtData$EnvData$filetsdata == filetsdata) readTsData <- FALSE
+            ########
+            rasterTsMap <- list(filetsdata, idaty, dryspl,
+                                .cdtData$EnvData$plotVar$varPICSA)
 
-            if(.cdtData$EnvData$plotVar$varPICSA == "dryspell")
-                if(!is.null(.cdtData$EnvData$oldDryspell))
-                    if(.cdtData$EnvData$oldDryspell != dryspl & !readTsData) readTsData <- TRUE
+            readTsData <- TRUE
+            if(!is.null(.cdtData$EnvData$rasterTsMap))
+                if(isTRUE(all.equal(.cdtData$EnvData$rasterTsMap, rasterTsMap))) rasterTsData <- FALSE
 
             if(readTsData){
                 if(.cdtData$EnvData$plotVar$varPICSA == "dryspell"){
                     cdtParallelCond <- .cdtData$Config$parallel
-                    .cdtData$EnvData$tsdata <- readCdtDatasetChunk.sepdir.dates.order(tsdata.index, tsdata.path, idaty,
+                    .cdtData$EnvData$tsMap <- readCdtDatasetChunk.sepdir.dates.order(tsdata.index, tsdata.path, idaty,
                                                                                       cdtParallelCond, onedate = TRUE)
-                    zdim <- dim(.cdtData$EnvData$tsdata$z)
-                    nval <- sapply(.cdtData$EnvData$tsdata$z, function(x) (length(x) == 1) & is.na(x[1]))
-                    zval <- sapply(.cdtData$EnvData$tsdata$z, function(x) sum(!is.na(x) & x >= dryspl))
+                    zdim <- dim(.cdtData$EnvData$tsMap$z)
+                    nval <- sapply(.cdtData$EnvData$tsMap$z, function(x) (length(x) == 1) & is.na(x[1]))
+                    zval <- sapply(.cdtData$EnvData$tsMap$z, count_dryspell_number, ds = dryspl)
                     zval[nval] <- NA
                     dim(zval) <- zdim
-                    .cdtData$EnvData$tsdata$z <- zval
-                    rm(nval, zval)
-                    .cdtData$EnvData$oldDryspell <- dryspl
+                    .cdtData$EnvData$tsMap$z <- zval
                 }else{
                     nc <- ncdf4::nc_open(filetsdata)
-                    .cdtData$EnvData$tsdata$x <- nc$dim[[1]]$vals
-                    .cdtData$EnvData$tsdata$y <- nc$dim[[2]]$vals
-                    .cdtData$EnvData$tsdata$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
+                    .cdtData$EnvData$tsMap$x <- nc$dim[[1]]$vals
+                    .cdtData$EnvData$tsMap$y <- nc$dim[[2]]$vals
+                    .cdtData$EnvData$tsMap$z <- ncdf4::ncvar_get(nc, varid = nc$var[[1]]$name)
                     ncdf4::nc_close(nc)
                 }
-                .cdtData$EnvData$filetsdata <- filetsdata
+                .cdtData$EnvData$rasterTsMap <- rasterTsMap
             }
 
             if(is.null(.cdtData$EnvData$cdtdataset)){
@@ -1257,12 +1279,6 @@ SeasonAnalysisPanelCmd <- function(){
                 .cdtData$EnvData$cdtdataset <- readRDS(tsdata.index)
                 .cdtData$EnvData$cdtdataset$fileInfo <- tsdata.index
             }
-        }
-
-        if(is.null(.cdtData$EnvData$ONI)){
-            ONI <- readRDS(file.path(.cdtDir$Root, 'data', 'ONI_1950-present.rds'))
-            .cdtData$EnvData$ONI$date <- format(addMonths(as.Date(paste0(ONI$ts[, 1], "-15")), 1), "%Y%m")
-            .cdtData$EnvData$ONI$data <- ONI$ts[, 3]
         }
 
         return(0)
@@ -1304,34 +1320,19 @@ SeasonAnalysisPanelCmd <- function(){
             change.plot <- .cdtData$EnvData$climMapOp$plotType$var
 
             ########
+            StatCalc <- list(.cdtData$EnvData$analysis, filetsdata, dryspl,
+                             .cdtData$EnvData$plotVar$varPICSA, change.plot)
+
             calcClim <- TRUE
-            if(!is.null(.cdtData$EnvData$climdata))
-                if(!is.null(.cdtData$EnvData$filetsdata1))
-                    if(.cdtData$EnvData$filetsdata1 == filetsdata)
-                        if(.cdtData$EnvData$StatCalc == .cdtData$EnvData$analysis$method) calcClim <- FALSE
-
-            trendUnit <- .cdtData$EnvData$analysis$trend
-            if(.cdtData$EnvData$analysis$method == "trend")
-                if(!is.null(.cdtData$EnvData$trendUnit))
-                    if(.cdtData$EnvData$trendUnit != trendUnit & !calcClim) calcClim <- TRUE
-
-            if(.cdtData$EnvData$plotVar$varPICSA == 'dryspell')
-                if(!is.null(.cdtData$EnvData$oldDryspell1))
-                    if(.cdtData$EnvData$oldDryspell1 != dryspl & !calcClim) calcClim <- TRUE
-
-            if(.cdtData$EnvData$plotVar$varPICSA == 'longdryspell')
-                if(!is.null(.cdtData$EnvData$oldDryspell2))
-                    if(.cdtData$EnvData$oldDryspell2 != dryspl & !calcClim) calcClim <- TRUE
-
-            if(!calcClim)
-                if(.cdtData$EnvData$change.plot.calcClim != change.plot) calcClim <- TRUE
+            if(!is.null(.cdtData$EnvData$StatCalc))
+                if(isTRUE(all.equal(.cdtData$EnvData$StatCalc, StatCalc))) calcClim <- FALSE
 
             if(calcClim){
                 don <- readRDS(filetsdata)
                 if(.cdtData$EnvData$plotVar$varPICSA == 'dryspell'){
                     ndim <- dim(don)
                     nval <- sapply(don, function(x) (length(x) == 1) & is.na(x[1]))
-                    don <- sapply(don, function(x) sum(!is.na(x) & x >= dryspl))
+                    don <- sapply(don, count_dryspell_number, ds = dryspl)
                     don[nval] <- NA
                     dim(don) <- ndim
                     rm(nval)
@@ -1365,11 +1366,7 @@ SeasonAnalysisPanelCmd <- function(){
                     .cdtData$EnvData$climdata$z <- don
                 }
 
-                .cdtData$EnvData$filetsdata1 <- filetsdata
-                .cdtData$EnvData$StatCalc <- .cdtData$EnvData$analysis$method
-                if(.cdtData$EnvData$analysis$method == "trend") .cdtData$EnvData$trendUnit <- trendUnit
-                .cdtData$EnvData$change.plot.calcClim <- change.plot
-                rm(don)
+                .cdtData$EnvData$StatCalc <- StatCalc
             }
         }else{
             tsdata.path <- file.path(.cdtData$EnvData$PathPicsa, "CDTDATASET", tsdata.dir)
@@ -1381,24 +1378,13 @@ SeasonAnalysisPanelCmd <- function(){
                 return(NULL)
             }
 
+            ############
+            StatCalc <- list(.cdtData$EnvData$analysis, filetsdata, 
+                             .cdtData$EnvData$plotVar$varPICSA, dryspl)
+
             calcClim <- TRUE
-            if(!is.null(.cdtData$EnvData$climdata))
-                if(!is.null(.cdtData$EnvData$filetsdata1))
-                    if(.cdtData$EnvData$filetsdata1 == filetsdata)
-                        if(.cdtData$EnvData$StatCalc == .cdtData$EnvData$analysis$method) calcClim <- FALSE
-
-            trendUnit <- trimws(tclvalue(.cdtData$EnvData$trend))
-            if(.cdtData$EnvData$analysis$method == "trend")
-                if(!is.null(.cdtData$EnvData$trendUnit))
-                    if(.cdtData$EnvData$trendUnit != trendUnit & !calcClim) calcClim <- TRUE
-
-            if(.cdtData$EnvData$plotVar$varPICSA == 'dryspell')
-                if(!is.null(.cdtData$EnvData$oldDryspell1))
-                    if(.cdtData$EnvData$oldDryspell1 != dryspl & !calcClim) calcClim <- TRUE
-
-            if(.cdtData$EnvData$plotVar$varPICSA == 'longdryspell')
-                if(!is.null(.cdtData$EnvData$oldDryspell2))
-                    if(.cdtData$EnvData$oldDryspell2 != dryspl & !calcClim) calcClim <- TRUE
+            if(!is.null(.cdtData$EnvData$StatCalc))
+                if(isTRUE(all.equal(.cdtData$EnvData$StatCalc, StatCalc))) calcClim <- FALSE
 
             if(calcClim){
                 index <- readRDS(tsdata.index)
@@ -1421,7 +1407,7 @@ SeasonAnalysisPanelCmd <- function(){
                     if(EnvData$plotVar$varPICSA == 'dryspell'){
                         ndim <- dim(don)
                         nval <- sapply(don, function(x) (length(x) == 1) & is.na(x[1]))
-                        don <- sapply(don, function(x) sum(!is.na(x) & x >= dryspl))
+                        don <- sapply(don, count_dryspell_number, ds = dryspl)
                         don[nval] <- NA
                         dim(don) <- ndim
                         rm(nval)
@@ -1443,13 +1429,8 @@ SeasonAnalysisPanelCmd <- function(){
                 .cdtData$EnvData$climdata$x <- index$coords$mat$x
                 .cdtData$EnvData$climdata$y <- index$coords$mat$y
                 .cdtData$EnvData$climdata$z <- don
-                
-                rm(don, index)
-                if(.cdtData$EnvData$plotVar$varPICSA == 'dryspell') .cdtData$EnvData$oldDryspell1 <- dryspl
-                if(.cdtData$EnvData$plotVar$varPICSA == 'longdryspell') .cdtData$EnvData$oldDryspell2 <- dryspl
-                if(.cdtData$EnvData$analysis$method == "trend") .cdtData$EnvData$trendUnit <- trendUnit
-                .cdtData$EnvData$filetsdata1 <- filetsdata
-                .cdtData$EnvData$StatCalc <- .cdtData$EnvData$analysis$method
+
+                .cdtData$EnvData$StatCalc <- StatCalc
             }
         }
 
@@ -1483,6 +1464,11 @@ SeasonAnalysisPanelCmd <- function(){
     ###################################
 
     statisticFunction <- function(don, EnvData = .cdtData$EnvData){
+        out <- rep(NA, ncol(don))
+        dNA <- colSums(!is.na(don))/nrow(don) < 0.5
+        if(all(dNA)) return(out)
+        don <- don[, !dNA, drop = FALSE]
+
         start.dateYear <- as.numeric(format(EnvData$output$start.date, '%Y'))
 
         if(EnvData$analysis$method == 'mean'){
@@ -1524,7 +1510,7 @@ SeasonAnalysisPanelCmd <- function(){
                 dlo <- try(as.POSIXlt(as.Date(paste(start.dateYear, xlow, sep = '-'))), silent = TRUE)
                 dup <- try(as.POSIXlt(as.Date(paste(start.dateYear, xup, sep = '-'))), silent = TRUE)
                 if(inherits(dlo, "try-error") | inherits(dup, "try-error")) return(rep(NA, ncol(don)))
-                if(is.na(dlo) | is.na(dup)) return(rep(NA, ncol(don)))
+                if(all(is.na(dlo)) | all(is.na(dup))) return(rep(NA, ncol(don)))
 
                 ix <- dlo > dup
                 dup$year[ix] <- dup$year[ix] + 1
@@ -1539,7 +1525,18 @@ SeasonAnalysisPanelCmd <- function(){
             don <- colSums(don >= xlow & don <= xup, na.rm = TRUE)
         }
 
-        return(don)
+        out[!dNA] <- don
+
+        return(out)
+    }
+
+    ###################################
+
+    ### ENSO data
+    if(is.null(.cdtData$EnvData$ONI)){
+        ONI <- readRDS(file.path(.cdtDir$Root, 'data', 'ONI_1950-present.rds'))
+        .cdtData$EnvData$ONI$date <- format(addMonths(as.Date(paste0(ONI$ts[, 1], "-15")), 1), "%Y%m")
+        .cdtData$EnvData$ONI$data <- ONI$ts[, 3]
     }
 
     #######################################################################################################

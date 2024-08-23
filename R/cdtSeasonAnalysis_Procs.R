@@ -1,4 +1,41 @@
 
+count_dryspell_number <- function(x, ds){
+    x <- x[!is.na(x)]
+    if(length(x) == 0) return(NA)
+    x <- x[x >= ds]
+    if(length(x) == 0) return(0)
+    sum(floor(x/ds))
+}
+
+count_dryspell_number0 <- function(x, ds){
+    x <- x[!is.na(x)]
+    if(length(x) == 0) return(NA)
+    x <- x[x >= ds]
+    length(x)
+}
+
+split_dryspell_vector <- function(x, ds){
+    ret <- lapply(x, function(d){
+        if(is.na(d)) return(NA)
+        if(d == 2 * ds){
+            return(rep(ds, 2))
+        }else if(d > 2 * ds){
+            n <- floor(d/ds)
+            s <- rep(ds, n)
+            if(sum(s) != d){
+                l <- length(s)
+                s[l] <- s[l] + (d - sum(s))
+            }
+            return(s)
+        }else{
+            return(d)
+        }
+    })
+    do.call(c, ret)
+}
+
+##########################################
+
 compute_RainySeasonData <- function(GeneralParameters){
     message <- .cdtData$EnvData$message
 
@@ -480,32 +517,13 @@ compute_RainySeasonData <- function(GeneralParameters){
 
         ###################
         ## Dry Spell
-        dryspell_def <- GeneralParameters$plotVar$dryspell
         DRYSPELLS <- lapply(seq(ncol(PREC)), function(j){
             rr <- PREC[, j]
             rrs <- unlist(rr)
             rrs <- utils::relist(!is.na(rrs) & rrs < GeneralParameters$dryday, rr)
             rr <- lapply(rrs, rle)
             rr <- lapply(rr, function(x) x$lengths[x$values])
-            rr <- lapply(rr, function(x){
-                if(length(x) == 0) return(0)
-                d <- lapply(x, function(d){
-                    if(d == 2 * dryspell_def){
-                        return(rep(dryspell_def, 2))
-                    }else if(d > 2 * dryspell_def){
-                        n <- floor(d/dryspell_def)
-                        s <- rep(dryspell_def, n)
-                        if(sum(s) != d){
-                            l <- length(s)
-                            s[l] <- s[l] + (d - sum(s))
-                        }
-                        return(s)
-                    }else{
-                        return(d)
-                    }
-                })
-                do.call(c, d)
-            })
+            rr[sapply(rr, length) == 0] <- 0
             rr
         })
         DRYSPELLS <- do.call(cbind, DRYSPELLS)
@@ -531,7 +549,7 @@ compute_RainySeasonData <- function(GeneralParameters){
         rm(DRYSPELLmax)
 
         #########
-        DRYSPELL5 <- sapply(DRYSPELLS, function(x) sum(!is.na(x) & x >= 5))
+        DRYSPELL5 <- sapply(DRYSPELLS, count_dryspell_number, ds = 5)
         dim(DRYSPELL5) <- dim(PREC)
         DRYSPELL5[is.na(FracDaily)] <- NA
 
@@ -541,7 +559,7 @@ compute_RainySeasonData <- function(GeneralParameters){
         rm(DRYSPELL5)
 
         #########
-        DRYSPELL7 <- sapply(DRYSPELLS, function(x) sum(!is.na(x) & x >= 7))
+        DRYSPELL7 <- sapply(DRYSPELLS, count_dryspell_number, ds = 7)
         dim(DRYSPELL7) <- dim(PREC)
         DRYSPELL7[is.na(FracDaily)] <- NA
 
@@ -551,7 +569,7 @@ compute_RainySeasonData <- function(GeneralParameters){
         rm(DRYSPELL7)
 
         #########
-        DRYSPELL10 <- sapply(DRYSPELLS, function(x) sum(!is.na(x) & x >= 10))
+        DRYSPELL10 <- sapply(DRYSPELLS, count_dryspell_number, ds = 10)
         dim(DRYSPELL10) <- dim(PREC)
         DRYSPELL10[is.na(FracDaily)] <- NA
 
@@ -561,7 +579,7 @@ compute_RainySeasonData <- function(GeneralParameters){
         rm(DRYSPELL10)
 
         #########
-        DRYSPELL15 <- sapply(DRYSPELLS, function(x) sum(!is.na(x) & x >= 15))
+        DRYSPELL15 <- sapply(DRYSPELLS, count_dryspell_number, ds = 15)
         dim(DRYSPELL15) <- dim(PREC)
         DRYSPELL15[is.na(FracDaily)] <- NA
 
@@ -1008,7 +1026,7 @@ compute_RainySeasonData <- function(GeneralParameters){
 
             drySpell <- readCdtDatasetChunk.sepdir.dates.order(datafileIdx, Dry_Spells.Dir, dates, cdtParallelCond)
 
-            drySpell7 <- sapply(drySpell, function(x) sum(!is.na(x) & x >= 7))
+            drySpell7 <- sapply(drySpell, count_dryspell_number, ds = 7)
             dim(drySpell7) <- dim(drySpell)
             drySpell7[is.na(drySpell7)] <- -99
             nc.drySpell7 <- ncdf4::ncvar_def("dryspell7", "count", xy.dim, -99, 'Number of Dry Spells greater than 7 consecutive days', "short", shuffle = TRUE, compression = 9)

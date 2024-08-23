@@ -2,12 +2,6 @@
 dailyRainAnalysisCalcProcs <- function(GeneralParameters){
     message <- .cdtData$EnvData$message
 
-    if(!dir.exists(GeneralParameters$output)){
-        Insert.Messages.Out(paste(GeneralParameters$output, message[['5']]), TRUE, 'e')
-        return(NULL)
-    }
-
-    #############
     fcdtdataset <- GeneralParameters$cdtdataset
     fcdtstation <- GeneralParameters$cdtstation
 
@@ -80,6 +74,8 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
         daty <- don$dateInfo$date
     }
 
+    #######################
+
     year <- as.numeric(substr(daty, 1, 4))
     if(pars.seas$all.years){
         start.year <- min(year, na.rm = TRUE)
@@ -88,9 +84,6 @@ dailyRainAnalysisCalcProcs <- function(GeneralParameters){
 
     iyear <- year >= start.year & year <= end.year
     daty <- daty[iyear]
-
-    # if(GeneralParameters$data.type == "cdtstation")
-    #     don$data <- don$data[iyear, , drop = FALSE]
 
     index <- cdt.index.DailySeason(daty, start.mon, start.day, end.mon, end.day)
 
