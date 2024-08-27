@@ -1511,34 +1511,34 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
     })
 
     #######
+    frameSmooth <- tkframe(frameGraphPlot)
+
+    bt.smooth <- ttkbutton(frameSmooth, text = lang.dlg[['button']][['1']])
+
+    tkgrid(bt.smooth, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #######
+    tkconfigure(bt.smooth, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        climGraphOpt$proba$plot$smooth <<- GraphOptions.Smooth.ECDF(climGraphOpt$proba$plot$smooth, tt)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+    })
+
+    #######
     tkgrid(txt.pltType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.pltType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(framepltLine, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(framepltPoints, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameSmooth, row = 1, column = 0, sticky = '', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     #####################
 
-    frameGraphProba <- ttklabelframe(frDialog, text = lang.dlg[['label']][['14']], relief = 'groove')
+    bt.fitDistr <- ttkbutton(frDialog, text = lang.dlg[['button']][['2']])
 
-    is.probaTheo <- tclVar(climGraphOpt$proba$proba$theoretical)
-    col.probaTheo <- tclVar(climGraphOpt$proba$proba$col)
-
-    chk.probaTheo <- tkcheckbutton(frameGraphProba, variable = is.probaTheo, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-    txt.probaTheoC <- tklabel(frameGraphProba, text = lang.dlg[['label']][['9']], anchor = 'e', justify = 'right')
-    bt.probaTheoC <- tkbutton(frameGraphProba, bg = tclvalue(col.probaTheo), width = width.col)
-    txt.probaTheoW <- tklabel(frameGraphProba, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
-    spin.probaTheoW <- ttkspinbox(frameGraphProba, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
-    tkset(spin.probaTheoW, climGraphOpt$proba$proba$lwd)
-
-    tkgrid(chk.probaTheo, tklabel(frameGraphProba, width = 5), txt.probaTheoC, bt.probaTheoC, txt.probaTheoW, spin.probaTheoW)
-
-    #######
-    tkconfigure(bt.probaTheoC, command = function(){
-        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.probaTheo), title = lang.dlg[['label']][['13']])))
-        if(nchar(loko) > 0){
-            tkconfigure(bt.probaTheoC, bg = loko)
-            tclvalue(col.probaTheo) <- loko
-        }
+    tkconfigure(bt.fitDistr, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        climGraphOpt$proba$proba <<- GraphOptions.theoretical.CDF(climGraphOpt$proba$proba, tt)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
     #####################
@@ -1546,7 +1546,7 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
     tkgrid(frameGraphAxLabs, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frameGraphTitle, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frameGraphPlot, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frameGraphProba, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.fitDistr, row = 4, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 10, ipady = 1)
 
     #####################
     bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
@@ -1577,10 +1577,6 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
         climGraphOpt$proba$plot$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.pltLineW))))
         climGraphOpt$proba$plot$col$points <<- tclvalue(plot.col.points)
         climGraphOpt$proba$plot$cex <<- as.numeric(trimws(tclvalue(tkget(spin.pltPointS))))
-
-        climGraphOpt$proba$proba$theoretical <<- switch(tclvalue(is.probaTheo), '0' = FALSE, '1' = TRUE)
-        climGraphOpt$proba$proba$col <<- tclvalue(col.probaTheo)
-        climGraphOpt$proba$proba$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.probaTheoW))))
 
         tkgrab.release(tt)
         tkdestroy(tt)
@@ -1620,6 +1616,321 @@ MapGraph.GraphOptions.Proba <- function(climGraphOpt, parent.win = .cdtEnv$tcl$m
     })
     tkwait.window(tt)
     return(climGraphOpt)
+}
+
+##################################################################
+
+GraphOptions.Smooth.ECDF <- function(smoothOpt, parent.win){
+    if(WindowsOS()){
+        width.col <- 3
+        width.spin <- 4
+    }else{
+        width.col <- 1
+        width.spin <- 4
+    }
+
+    ###################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtGraphOptions.SmoothECDF_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    ###################
+
+    tt <- tktoplevel()
+    tkgrab.set(tt)
+    tkfocus(tt)
+
+    frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
+    frButt <- tkframe(tt)
+
+    ###################
+
+    smooth.ecdf <- tclVar(smoothOpt$smooth)
+
+    chk.smooth <- tkcheckbutton(frDialog, variable = smooth.ecdf, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+
+    ###################
+    frameAdj <- tkframe(frDialog)
+
+    txt.Adj <- tklabel(frameAdj, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
+    spin.Adj <- ttkspinbox(frameAdj, from = 0.1, to = 3.0, increment = 0.1, justify = 'center', width = 3)
+    tkset(spin.Adj, smoothOpt$adj)
+
+    tkgrid(txt.Adj, spin.Adj)
+
+    ###################
+    frameFun <- tkframe(frDialog)
+
+    smooth.fun <- tclVar(smoothOpt$fun)
+
+    txt.Fun <- tklabel(frameFun, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
+    cb.Fun <- ttkcombobox(frameFun, values = 1:2, textvariable = smooth.fun, width = 2)
+
+    tkgrid(txt.Fun, cb.Fun)
+
+    ###################
+    frameCol <- ttklabelframe(frDialog, text = lang.dlg[['label']][['2']], relief = 'groove')
+
+    line.color <- tclVar(smoothOpt$col)
+
+    txt.lineC <- tklabel(frameCol, text = lang.dlg[['label']][['3']], anchor = 'e', justify = 'right')
+    bt.lineC <- tkbutton(frameCol, bg = tclvalue(line.color), width = width.col)
+    txt.lineW <- tklabel(frameCol, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
+    spin.lineW <- ttkspinbox(frameCol, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.lineW, smoothOpt$lwd)
+
+    tkgrid(txt.lineC, bt.lineC, txt.lineW, spin.lineW)
+
+    #######
+    tkconfigure(bt.lineC, command = function(){
+        tcl_loko <- tcl("tk_chooseColor", initialcolor = tclvalue(line.color), title = lang.dlg[['label']][['4']])
+        loko <- trimws(tclvalue(tcl_loko))
+        if(nchar(loko) > 0){
+            tkconfigure(bt.lineC, bg = loko)
+            tclvalue(line.color) <- loko
+        }
+    })
+
+    ###################
+
+    disp.ecdf <- tclVar(smoothOpt$disp)
+
+    chk.disp <- tkcheckbutton(frDialog, variable = disp.ecdf, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+
+    #####################
+
+    tkgrid(chk.smooth, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameAdj, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameFun, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameCol, row = 2, column = 0, sticky = '', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(chk.disp, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+    bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+    bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+
+    tkconfigure(bt.opt.OK, command = function(){
+        smoothOpt$smooth <<- switch(tclvalue(smooth.ecdf), '0' = FALSE, '1' = TRUE)
+        smoothOpt$disp <<- switch(tclvalue(disp.ecdf), '0' = FALSE, '1' = TRUE)
+        smoothOpt$adj <<- as.numeric(trimws(tclvalue(tkget(spin.Adj))))
+        smoothOpt$col <<- tclvalue(line.color)
+        smoothOpt$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.lineW))))
+        smoothOpt$fun <<- as.integer(trimws(tclvalue(smooth.fun)))
+
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkconfigure(bt.opt.CA, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkgrid(bt.opt.OK, row = 0, column = 0, padx = 5, pady = 1, ipadx = 1, sticky = 'w')
+    tkgrid(bt.opt.CA, row = 0, column = 1, padx = 5, pady = 1, ipadx = 1, sticky = 'e')
+
+    ###############################################################
+
+    tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkwm.withdraw(tt)
+    tcl('update')
+    tt.w <- as.integer(tkwinfo("reqwidth", tt))
+    tt.h <- as.integer(tkwinfo("reqheight", tt))
+    tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+    tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+    tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+    tkwm.transient(tt)
+    tkwm.title(tt, lang.dlg[['title']])
+    tkwm.deiconify(tt)
+
+    ##################################################################
+    tkfocus(tt)
+    tkbind(tt, "<Destroy>", function(){
+        tkgrab.release(tt)
+        tkfocus(parent.win)
+    })
+    tkwait.window(tt)
+    return(smoothOpt)
+}
+
+##################################################################
+
+GraphOptions.theoretical.CDF <- function(theoCDFOpt, parent.win){
+    if(WindowsOS()){
+        largeur1 <- 45
+        largeur2 <- 30
+        largeur3 <- 21
+        width.col <- 3
+        width.spin <- 4
+    }else{
+        largeur1 <- 45
+        largeur2 <- 30
+        largeur3 <- 20
+        width.col <- 1
+        width.spin <- 4
+    }
+
+    ###################
+
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtGraphOptions.theoreticalCDF_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    ###################
+
+    tt <- tktoplevel()
+    tkgrab.set(tt)
+    tkfocus(tt)
+
+    frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
+    frButt <- tkframe(tt)
+
+    ###################
+
+    frameTheo <- tkframe(frDialog)
+
+    is.probaTheo <- tclVar(theoCDFOpt$theoretical)
+    col.probaTheo <- tclVar(theoCDFOpt$col)
+
+    chk.probaTheo <- tkcheckbutton(frameTheo, variable = is.probaTheo, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+    txt.probaTheoC <- tklabel(frameTheo, text = lang.dlg[['label']][['1']], anchor = 'e', justify = 'right')
+    bt.probaTheoC <- tkbutton(frameTheo, bg = tclvalue(col.probaTheo), width = width.col)
+    txt.probaTheoW <- tklabel(frameTheo, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
+    spin.probaTheoW <- ttkspinbox(frameTheo, from = 0.5, to = 4, increment = 0.1, justify = 'center', width = width.spin)
+    tkset(spin.probaTheoW, theoCDFOpt$lwd)
+
+    space.probaTheoW <- tklabel(frameTheo, width = 5)
+
+    tkgrid(chk.probaTheo, space.probaTheoW, txt.probaTheoC, bt.probaTheoC, txt.probaTheoW, spin.probaTheoW)
+
+    #######
+    tkconfigure(bt.probaTheoC, command = function(){
+        loko <- trimws(tclvalue(tcl("tk_chooseColor", initialcolor = tclvalue(col.probaTheo), title = lang.dlg[['label']][['6']])))
+        if(nchar(loko) > 0){
+            tkconfigure(bt.probaTheoC, bg = loko)
+            tclvalue(col.probaTheo) <- loko
+        }
+    })
+
+    #######
+    frameDistr <- tkframe(frDialog)
+
+    txt.distr <- tklabel(frameDistr, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
+
+    yscr.distr <- tkscrollbar(frameDistr, repeatinterval = 4, command = function(...) tkyview(text.distr, ...))
+    text.distr <- tktext(frameDistr, bg = "white", wrap = "word", height = 2, width = largeur1,
+                            yscrollcommand = function(...) tkset(yscr.distr, ...))
+
+    tkgrid(txt.distr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(text.distr, yscr.distr)
+    tkgrid.configure(yscr.distr, sticky = "ns")
+    tkgrid.configure(text.distr, sticky = 'nswe')
+
+    if(length(theoCDFOpt$distr) > 0)
+        for(j in seq_along(theoCDFOpt$distr))
+            tkinsert(text.distr, "end", paste0(theoCDFOpt$distr[j], ', '))
+
+    #######
+    frameMethod <- tkframe(frDialog)
+
+    CbmethodVAL <- lang.dlg[['combobox']][['1']]
+    methodVAL <- c('mle', 'mme', 'qme', 'mge', 'mse')
+    mthd.probaTheo <- tclVar()
+    tclvalue(mthd.probaTheo) <- CbmethodVAL[methodVAL %in% theoCDFOpt$method]
+
+    txt.mthd <- tklabel(frameMethod, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
+    cb.mthd <- ttkcombobox(frameMethod, values = CbmethodVAL, textvariable = mthd.probaTheo, justify = 'center', width = largeur2)
+
+    tkgrid(txt.mthd, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.mthd, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #######
+    frameGof <- tkframe(frDialog)
+
+    CbgofVAL <- lang.dlg[['combobox']][['2']]
+    gofVAL <- c('ad', 'ks', 'cvm', 'aic', 'bic')
+    gof.probaTheo <- tclVar()
+    tclvalue(gof.probaTheo) <- CbgofVAL[gofVAL %in% theoCDFOpt$gof.stat]
+
+    txt.gof <- tklabel(frameGof, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
+    space.gof <- tklabel(frameGof, width = largeur3)
+    cb.gof <- ttkcombobox(frameGof, values = CbgofVAL, textvariable = gof.probaTheo, justify = 'center', width = largeur2)
+
+    tkgrid(txt.gof, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(space.gof, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.gof, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #######
+
+    tkgrid(frameTheo, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameDistr, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameMethod, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frameGof, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    #####################
+    bt.opt.OK <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['1']])
+    bt.opt.CA <- ttkbutton(frButt, text = .cdtEnv$tcl$lang$global[['button']][['2']])
+
+    tkconfigure(bt.opt.OK, command = function(){
+        theoCDFOpt$theoretical <<- switch(tclvalue(is.probaTheo), '0' = FALSE, '1' = TRUE)
+        theoCDFOpt$col <<- tclvalue(col.probaTheo)
+        theoCDFOpt$lwd <<- as.numeric(trimws(tclvalue(tkget(spin.probaTheoW))))
+
+        theoCDFOpt$method <<- methodVAL[CbmethodVAL %in% trimws(tclvalue(mthd.probaTheo))]
+        theoCDFOpt$gof.stat <<- gofVAL[CbgofVAL %in% trimws(tclvalue(gof.probaTheo))]
+
+        ndistr <- tclvalue(tkget(text.distr, "0.0", "end"))
+        ndistr <- gsub("[\t\r\n]", "", ndistr)
+        ndistr <- gsub('\\s+', '', ndistr)
+        ndistr <- strsplit(ndistr, ",")[[1]]
+        ndistr <- ndistr[!is.na(ndistr) | ndistr != '']
+        if(length(ndistr) == 0){
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1']], icon = "warning", type = "ok")
+            tkwait.window(tt)
+        }
+        theoCDFOpt$distr <<- ndistr
+
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkconfigure(bt.opt.CA, command = function(){
+        tkgrab.release(tt)
+        tkdestroy(tt)
+        tkfocus(parent.win)
+    })
+
+    tkgrid(bt.opt.OK, row = 0, column = 0, padx = 5, pady = 1, ipadx = 1, sticky = 'w')
+    tkgrid(bt.opt.CA, row = 0, column = 1, padx = 5, pady = 1, ipadx = 1, sticky = 'e')
+
+    ###############################################################
+
+    tkgrid(frDialog, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frButt, row = 1, column = 1, sticky = 'se', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkwm.withdraw(tt)
+    tcl('update')
+    tt.w <- as.integer(tkwinfo("reqwidth", tt))
+    tt.h <- as.integer(tkwinfo("reqheight", tt))
+    tt.x <- as.integer(.cdtEnv$tcl$data$width.scr*0.5 - tt.w*0.5)
+    tt.y <- as.integer(.cdtEnv$tcl$data$height.scr*0.5 - tt.h*0.5)
+    tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
+    tkwm.transient(tt)
+    tkwm.title(tt, lang.dlg[['title']])
+    tkwm.deiconify(tt)
+
+    ##################################################################
+    tkfocus(tt)
+    tkbind(tt, "<Destroy>", function(){
+        tkgrab.release(tt)
+        tkfocus(parent.win)
+    })
+    tkwait.window(tt)
+    return(theoCDFOpt)
 }
 
 #######################################################################################################

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Theoretical CDF Options </text>
+    </title>
+    <widget>
+        <combobox id="1">
+            <option id="1">
+                <text lang="en"> Maximum likelihood estimation </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Moment matching estimation </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Quantile matching estimation </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Maximizing goodness-of-fit estimation </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Minimizing distance estimation </text>
+            </option>
+        </combobox>
+        <combobox id="2">
+            <option id="1">
+                <text lang="en"> Anderson-Darling statistics </text>
+            </option>
+            <option id="2">
+                <text lang="en"> Kolmogorov-Smirnov statistic </text>
+            </option>
+            <option id="3">
+                <text lang="en"> Cramer-von Mises statistic </text>
+            </option>
+            <option id="4">
+                <text lang="en"> Akaike's Information Criterion </text>
+            </option>
+            <option id="5">
+                <text lang="en"> Bayesian Information Criterion </text>
+            </option>
+        </combobox>
+        <checkbutton id="1">
+            <text lang="en"> Plot theoretical CDF </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Color </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Width </text>
+        </label>
+        <label id="3">
+            <text lang="en"> List of distributions to be fitted </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Distribution fitting method </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Goodness-of-fit statistics/criteria </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Color Selection </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> Need at least one distribution function </text>
+        </content>
+    </message>
+</dialog_box>

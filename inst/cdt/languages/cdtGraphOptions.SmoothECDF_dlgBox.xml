@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> Smooth ECDF Options </text>
+    </title>
+    <widget>
+        <checkbutton id="1">
+            <text lang="en"> Smooth Empirical Cumulative Distribution Curve </text>
+        </checkbutton>
+        <checkbutton id="2">
+            <text lang="en"> Display the non-smoothed ECDF Curve </text>
+        </checkbutton>
+        <label id="1">
+            <text lang="en"> Adjust </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Line </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Color </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Width </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Color Selection </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Smoothing Function </text>
+        </label>
+    </widget>
+</dialog_box>

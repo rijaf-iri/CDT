@@ -61,7 +61,7 @@ SeasonAnalysisPanelCmd <- function(){
 
     .cdtData$EnvData$TSGraphOp <- list(
                             anomaly = list(
-                                    anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1981, endYr.anom = 2010),
+                                    anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1991, endYr.anom = 2020),
                                     xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),
                                     ylim = list(is.min = FALSE, min = -100, is.max = FALSE, max = 100),
                                     axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
@@ -95,10 +95,11 @@ SeasonAnalysisPanelCmd <- function(){
                                 ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                 axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                 title = list(is.title = FALSE, title = '', position = 'top'),
-                                plot = list(type = 'both',
+                                plot = list(type = 'both', lwd = 2, cex = 0.8,
                                     col = list(line = "red", points = "blue"),
-                                    lwd = 2, cex = 0.8),
-                                proba = list(theoretical = TRUE, col = 'black', lwd = 2)
+                                    smooth = list(smooth = FALSE, disp = TRUE, adj = 1, col = 'gray', lwd = 2, fun = 1)),
+                                proba = list(theoretical = FALSE, col = 'black', lwd = 2, gof.stat = 'ad', method = 'mle',
+                                             distr = c("norm", "snorm", "lnorm", "gamma", "exp", "weibull", "gumbel"))
                                 ),
                             line.enso = list(
                                 xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2017),

@@ -8,7 +8,7 @@ warningFun <- function(w){
 
 errorFun <- function(e){
     txt <- as.character(e)
-    retE <- gsub('[\r\n]', '', txt)
+    retE <- gsub('[\r\n]', ' ', txt)
     Insert.Messages.Out(retE, format = TRUE, type = "error")
     return(NULL)
 }
