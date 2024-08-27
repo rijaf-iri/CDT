@@ -327,35 +327,31 @@ spatialAnalysis.plotTSGraph <- function(){
 
     #########
 
-    if(GRAPHTYPE == 'line'){
+    if(GRAPHTYPE %in% c("line", "eline")){
         legends <- NULL
+        nmp <- c("add", "lwd", "col", "text")
         if(optsgph$legend$is$mean){
-            legends$add$mean <- optsgph$legend$add$mean
-            legends$col$mean <- optsgph$legend$col$mean
-            legends$text$mean <- optsgph$legend$text$mean
-            legends$lwd$mean <- optsgph$legend$lwd$mean
+            legends <- append.list(legends, lapply(optsgph$legend[nmp], '[', 'mean'))
         }else{
             if(tclvalue(.cdtData$EnvData$plot.maps$averageTSp) == "1") legends$add$mean <- TRUE
         }
         if(optsgph$legend$is$linear){
-            legends$add$linear <- optsgph$legend$add$linear
-            legends$col$linear <- optsgph$legend$col$linear
-            legends$text$linear <- optsgph$legend$text$linear
-            legends$lwd$linear <- optsgph$legend$lwd$linear
+            legends <- append.list(legends, lapply(optsgph$legend[nmp], '[', 'linear'))
         }else{
             if(tclvalue(.cdtData$EnvData$plot.maps$trendTSp) == "1") legends$add$linear <- TRUE
         }
         if(optsgph$legend$is$tercile){
-            legends$add$tercile <- optsgph$legend$add$tercile
-            legends$col$tercile1 <- optsgph$legend$col$tercile1
-            legends$text$tercile1 <- optsgph$legend$text$tercile1
-            legends$col$tercile2 <- optsgph$legend$col$tercile2
-            legends$text$tercile2 <- optsgph$legend$text$tercile2
-            legends$lwd$tercile <- optsgph$legend$lwd$tercile
+            legends <- append.list(legends, lapply(optsgph$legend[nmp[1:2]], '[', 'tercile'))
+            legends <- append.list(legends, lapply(optsgph$legend[nmp[3:4]], '[', 'tercile1'))
+            legends <- append.list(legends, lapply(optsgph$legend[nmp[3:4]], '[', 'tercile2'))
         }else{
             if(tclvalue(.cdtData$EnvData$plot.maps$tercileTSp) == "1") legends$add$tercile <- TRUE
         }
+    }
 
+    #########
+
+    if(GRAPHTYPE == 'line'){
         ret <- graphs.plot.line(daty, don, xlim = xlim, ylim = ylim,
                         xlab = xlab, ylab = ylab, ylab.sub = NULL,
                         title = titre, title.position = titre.pos, axis.font = 1,
@@ -373,35 +369,6 @@ spatialAnalysis.plotTSGraph <- function(){
 
     if(GRAPHTYPE == 'eline'){
         oni <- oni[idt]
-
-        legends <- NULL
-        if(optsgph$legend$is$mean){
-            legends$add$mean <- optsgph$legend$add$mean
-            legends$col$mean <- optsgph$legend$col$mean
-            legends$text$mean <- optsgph$legend$text$mean
-            legends$lwd$mean <- optsgph$legend$lwd$mean
-        }else{
-            if(tclvalue(.cdtData$EnvData$plot.maps$averageTSp) == "1") legends$add$mean <- TRUE
-        }
-        if(optsgph$legend$is$linear){
-            legends$add$linear <- optsgph$legend$add$linear
-            legends$col$linear <- optsgph$legend$col$linear
-            legends$text$linear <- optsgph$legend$text$linear
-            legends$lwd$linear <- optsgph$legend$lwd$linear
-        }else{
-            if(tclvalue(.cdtData$EnvData$plot.maps$trendTSp) == "1") legends$add$linear <- TRUE
-        }
-        if(optsgph$legend$is$tercile){
-            legends$add$tercile <- optsgph$legend$add$tercile
-            legends$col$tercile1 <- optsgph$legend$col$tercile1
-            legends$text$tercile1 <- optsgph$legend$text$tercile1
-            legends$col$tercile2 <- optsgph$legend$col$tercile2
-            legends$text$tercile2 <- optsgph$legend$text$tercile2
-            legends$lwd$tercile <- optsgph$legend$lwd$tercile
-        }else{
-            if(tclvalue(.cdtData$EnvData$plot.maps$tercileTSp) == "1") legends$add$tercile <- TRUE
-        }
-
         ret <- graphs.plot.line.ENSO(daty, don, oni, xlim = xlim, ylim = ylim,
                             xlab = xlab, ylab = ylab, ylab.sub = NULL,
                             title = titre, title.position = titre.pos, axis.font = 1,
@@ -438,8 +405,7 @@ spatialAnalysis.plotTSGraph <- function(){
         ret <- graphs.plot.proba(don, xlim = xlim, ylim = ylim,
                         xlab = xlab, xlab.sub = NULL, ylab = ylab,
                         title = titre, title.position = titre.pos, axis.font = 1,
-                        proba = list(theoretical = optsgph$proba$theoretical),
-                        plotp = optsgph$proba, plotl = optsgph$plot,
+                        proba = optsgph$proba, plotl = optsgph$plot,
                         location = .cdtData$EnvData$location)
     }
 

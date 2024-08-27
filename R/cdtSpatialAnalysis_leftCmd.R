@@ -49,7 +49,7 @@ spatialAnalysisPanelCmd <- function(){
                                              probs.thres = 200),
                               aggr.series = list(aggr.fun = "sum", opr.fun = ">=", opr.thres = 1,
                                                  min.frac = list(unique = TRUE, all = 0.95, month = rep(0.95, 12))),
-                              use.years = list(all.years = TRUE, start.year = 1981, end.year = 2021,
+                              use.years = list(all.years = TRUE, start.year = 1981, end.year = 2024,
                                                nseq.years = FALSE, custom.years = NA),
                               out.series = list(tstep = 'monthly', start.mon = 1, length.mon = 3),
                               use.month = list(start.month = 1, end.month = 12,
@@ -81,21 +81,21 @@ spatialAnalysisPanelCmd <- function(){
     .cdtData$EnvData$TSGraphOp <- list(
                                     anomaly = list(
                                             anom = list(perc.anom = FALSE, basePeriod = FALSE, startYr.anom = 1991, endYr.anom = 2020),
-                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
+                                            xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2024),
                                             ylim = list(is.min = FALSE, min = -100, is.max = FALSE, max = 100),
                                             axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                             title = list(is.title = FALSE, title = '', position = 'top'),
                                             colors = list(negative = "blue", positive = "red")
                                             ),
                                     bar = list(
-                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
+                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2024),
                                         ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                         axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                         title = list(is.title = FALSE, title = '', position = 'top'),
                                         colors = list(col = "darkblue")
                                         ),
                                     line = list(
-                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
+                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2024),
                                         ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                         axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                         title = list(is.title = FALSE, title = '', position = 'top'),
@@ -114,13 +114,14 @@ spatialAnalysisPanelCmd <- function(){
                                         ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                         axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                         title = list(is.title = FALSE, title = '', position = 'top'),
-                                        plot = list(type = 'both',
+                                        plot = list(type = 'both', lwd = 2, cex = 0.8,
                                             col = list(line = "red", points = "blue"),
-                                            lwd = 2, cex = 0.8),
-                                        proba = list(theoretical = TRUE, col = 'black', lwd = 2)
+                                            smooth = list(smooth = FALSE, disp = TRUE, adj = 1, col = 'gray', lwd = 2, fun = 1)),
+                                        proba = list(theoretical = FALSE, col = 'black', lwd = 2, gof.stat = 'ad', method = 'mle',
+                                                     distr = c("norm", "snorm", "lnorm", "gamma", "exp", "weibull", "gumbel"))
                                         ),
                                     line.enso = list(
-                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
+                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2024),
                                         ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                         axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                         title = list(is.title = FALSE, title = '', position = 'top'),
@@ -134,7 +135,7 @@ spatialAnalysisPanelCmd <- function(){
                                             lwd = list(mean = 2, tercile = 2, linear = 2))
                                         ),
                                     bar.enso = list(
-                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2021),
+                                        xlim = list(is.min = FALSE, min = 1981, is.max = FALSE, max = 2024),
                                         ylim = list(is.min = FALSE, min = 0, is.max = FALSE, max = 100),
                                         axislabs = list(is.xlab = FALSE, xlab = '', is.ylab = FALSE, ylab = ''),
                                         title = list(is.title = FALSE, title = '', position = 'top'),
@@ -198,7 +199,7 @@ spatialAnalysisPanelCmd <- function(){
         periodVAL <- c('daily', 'pentad', 'dekadal', 'monthly')
         tclvalue(timeSteps) <- CbperiodVAL[periodVAL %in% GeneralParameters$in.tstep]
 
-        cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, width = largeur0)
+        cb.fperiod <- ttkcombobox(frameTimeS, values = CbperiodVAL, textvariable = timeSteps, justify = 'center', width = largeur0)
 
         tkgrid(cb.fperiod, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
@@ -232,7 +233,7 @@ spatialAnalysisPanelCmd <- function(){
         fileINdir <- tclVar(txt.INData)
 
         txt.datatype <- tklabel(frameData, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
-        cb.datatype <- ttkcombobox(frameData, values = CbdatatypeVAL, textvariable = DataType, width = largeur0)
+        cb.datatype <- ttkcombobox(frameData, values = CbdatatypeVAL, textvariable = DataType, justify = 'center', width = largeur0)
         txt.stnfl <- tklabel(frameData, text = tclvalue(fileINdir), textvariable = fileINdir, anchor = 'w', justify = 'left')
         if(GeneralParameters$data.type == 'cdtstation'){
             cb.stnfl <- ttkcombobox(frameData, values = unlist(openFile_ttkcomboList()), textvariable = file.stnfl, width = largeur1)
@@ -359,7 +360,7 @@ spatialAnalysisPanelCmd <- function(){
         tclvalue(out.tstep) <- CboutSeriesVAL[outSeriesVAL %in% GeneralParameters$out.series$tstep]
 
         txt.outTS <- tklabel(frameOut, text = lang.dlg[['label']][['33']], anchor = 'e', justify = 'right')
-        cb.outTS <- ttkcombobox(frameOut, values = CboutSeriesVAL, textvariable = out.tstep, width = largeur3)
+        cb.outTS <- ttkcombobox(frameOut, values = CboutSeriesVAL, textvariable = out.tstep, justify = 'center', width = largeur3)
 
         helpWidget(cb.outTS, lang.dlg[['tooltip']][['9']], lang.dlg[['status']][['9']])
 

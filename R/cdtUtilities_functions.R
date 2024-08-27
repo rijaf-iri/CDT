@@ -392,6 +392,9 @@ km2deg <- function(km, lat){
 ## append two lists by name, concatenate
 append.list <- function (l1, l2)
 {
+    if(is.null(l1)) return(l2)
+    if(is.null(l2)) return(l1)
+
     stopifnot(is.list(l1), is.list(l2))
     lnames <- names(l1)
     for(v in names(l2)){

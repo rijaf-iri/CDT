@@ -551,20 +551,18 @@ graphs.plot.bar.Anomaly <- function(x, y, period = c(1981, 2010), percent = TRUE
 graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
                             xlab = '', xlab.sub = NULL, ylab = "Probability of Exceeding",
                             title = '', title.position = 'bottom', axis.font = 1,
-                            proba = NULL, plotl = NULL, plotp = NULL, location = NULL)
+                            proba = NULL, plotl = NULL, location = NULL)
 {
-    if(is.null(plotl$type)) plotl$type <- 'both'
-    if(is.null(plotl$col$line)) plotl$col$line <- "blue"
-    if(is.null(plotl$col$points)) plotl$col$points <- "lightblue"
-    if(is.null(plotl$lwd)) plotl$lwd <- 2
-    if(is.null(plotl$cex)) plotl$cex <- 0.8
+    plotl0 <- list(type = 'both', lwd = 2, cex = 0.8,
+                   col = list(line = "blue", points = "lightblue"),
+                   smooth = list(smooth = FALSE, disp = TRUE, adj = 1,
+                                 col = 'gray', lwd = 2, fun = 1))
+    plotl <- init.default.list.args(plotl, plotl0)
 
-    if(is.null(plotp$col)) plotp$col <- "black"
-    if(is.null(plotp$lwd)) plotp$lwd <- 2
-
-    if(is.null(proba$theoretical)) proba$theoretical <- FALSE
-    if(is.null(proba$gof.c)) proba$gof.c <- 'ad'
-    if(is.null(proba$distr)) proba$distr <- c("norm", "snorm", "lnorm", "gamma", "exp", "weibull", "gumbel")
+    ####
+    proba0 <- list(theoretical = TRUE, col = 'black', lwd = 2, gof.stat = 'ad', method = 'mle',
+                   distr = c("norm", "snorm", "lnorm", "gamma", "exp", "weibull", "gumbel"))
+    proba <- init.default.list.args(proba, proba0)
 
     ####
     dat <- dat[!is.na(dat)]
@@ -639,32 +637,29 @@ graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
     graphics::mtext(ylab, side = 2, line = 3, cex = 1.2)
 
     ####
-    # fn <- stats::ecdf(dat)
-    # x <- sort(dat)
-    # y <- 100 * (1 - fn(x))
 
-    pexc <- ecdf_plot_ts(dat)
-    x <- pexc$x
-    y <- pexc$y
+    if(plotl$smooth$smooth){
+        smooth_fun <- get(paste0('ecdf_plot_smooth', plotl$smooth$fun), mode = "function")
+        secdf <- smooth_fun(dat, adj = plotl$smooth$adj)
+        graphics::lines(secdf$x, secdf$y, type = 'l', col = plotl$smooth$col, lwd = plotl$smooth$lwd)
+    }
 
-    # if(smooth){
-    #     pexc <- ecdf_plot_smooth(dat, adj = 0.1)
-    #     x <- pexc$x
-    #     y <- pexc$y
-    # }
-
-    ####
-    if(plotl$type == 'both') graphics::lines(x, y, type = 'o', col = plotl$col$line, lwd = plotl$lwd,
-                                    pch = 21, bg = plotl$col$points, cex = plotl$cex)
-    if(plotl$type == 'line') graphics::lines(x, y, type = 'l', col = plotl$col$line, lwd = plotl$lwd)
+    pecdf <- ecdf_plot_ts(dat)
+    plot_proba0 <- !plotl$smooth$smooth
+    plot_proba1 <- plotl$smooth$disp && plotl$smooth$smooth
+    if(plot_proba0 || plot_proba1){
+        if(plotl$type == 'both') graphics::lines(pecdf$x, pecdf$y, type = 'o', col = plotl$col$line, lwd = plotl$lwd,
+                                                 pch = 21, bg = plotl$col$points, cex = plotl$cex)
+        if(plotl$type == 'line') graphics::lines(pecdf$x, pecdf$y, type = 'l', col = plotl$col$line, lwd = plotl$lwd)
+    }
 
     ####
     if(proba$theoretical){
-        fit.distrs <- fit.distributions(x, proba$distr)
+        fit.distrs <- fit.distributions(pecdf$x, proba$distr, proba$method)
         if(!is.null(fit.distrs)){
             gof <- try(fitdistrplus::gofstat(fit.distrs), silent = TRUE)
             if(!inherits(gof, "try-error")){
-                imin <- which.min(gof[[proba$gof.c]])
+                imin <- which.min(gof[[proba$gof.stat]])
                 plotTheo <- TRUE
             }else plotTheo <- FALSE
         }else plotTheo <- FALSE
@@ -676,7 +671,11 @@ graphs.plot.proba <- function(dat, xlim = NULL, ylim = NULL, origindate = NULL,
                 foo <- get(paste0("p", selected.distr), mode = "function")
                 do.call(foo, c(list(q = x), selected.pars))
             }
-            graphics::curve(100 * (1 - pdists(x)), from = xlim[1], to = xlim[2], add = TRUE, lwd = plotp$lwd, col = plotp$col)
+            ex <- 0.05 * (xlim[2] - xlim[1])
+            xmin <- xlim[1] - ex
+            xmax <- xlim[2] + ex
+            graphics::curve(100 * (1 - pdists(x)), from = xmin, to = xmax,
+                            add = TRUE, lwd = proba$lwd, col = proba$col)
             graphics::legend("topright", 
                 c(paste0("distr: ", selected.distr), sapply(seq_along(selected.pars),
                         function(j) paste0(names(selected.pars)[j], ": ", round(selected.pars[[j]], 5)))),

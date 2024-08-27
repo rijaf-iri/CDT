@@ -12,9 +12,12 @@
                 <text lang="en"> Bottom </text>
             </option>
         </combobox>
-        <checkbutton id="1">
-            <text lang="en"> Plot theoretical CDF </text>
-        </checkbutton>
+        <button id="1">
+            <text lang="en"> Smooth Empirical Cumulative Distribution Curve </text>
+        </button>
+        <button id="2">
+            <text lang="en"> Fit Theoretical Cumulative Distribution Function </text>
+        </button>
         <label id="1">
             <text lang="en"> X axis ranges </text>
         </label>
@@ -53,9 +56,6 @@
         </label>
         <label id="13">
             <text lang="en"> Color Selection </text>
-        </label>
-        <label id="14">
-            <text lang="en"> Theoretical CDF </text>
         </label>
     </widget>
 </dialog_box>

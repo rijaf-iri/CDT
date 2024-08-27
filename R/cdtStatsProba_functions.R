@@ -386,19 +386,92 @@ bernweibull_distr_params <- function(mat, thres = 1){
 
 #############################################
 
+memp <- function(x, order) mean(x^order)
+
+mgumbel <- function(order, loc, scale){
+    euler <- 0.5772156649015323
+    ret <- 1
+    if(order == 1){
+        ret <- loc + euler * scale
+    }
+    if (order == 2){
+       ret <- ((pi * scale)^2)/6 + (loc + euler * scale)^2
+    }
+    return(ret)
+}
+
+mweibull <- function(order, shape, scale){
+    scale^order * gamma(1.0 + order / shape)
+}
+
+msnorm <- function(order, mean, sd, xi){
+    return(1)
+}
+
+# mlnorm <- function(order, meanlog, sdlog){
+#     exp(order * (meanlog + 0.5 * order * sdlog^2))
+# }
+
+# mexp <- function(order, rate){
+#     scale <- 1/rate
+#     scale^order * gamma(1.0 + order)
+# }
+
+# mgamma <- function(order, shape, scale){
+#     scale^order * gamma(order + shape) / gamma(shape)
+# }
+
+#############################################
+
 ## Fitting empirical distributions to theoretical models
 fit.distributions <- function(x, distr = c("norm", "snorm", "lnorm",
                               "gamma", "exp", "weibull", "gumbel"),
-                              method = 'mle', ...)
+                              method = 'mle', ..., GUI = TRUE)
 {
     fit.distr <- lapply(distr, function(dm){
-        if(dm %in% c("lnorm", "gamma", "weibull") & any(x <= 0)) return(NULL)
+        if(dm %in% c("lnorm", "gamma", "weibull") & any(x <= 0)){
+            msg <- 'Values must be positives for: "lnorm", "gamma", "weibull"'
+            if(GUI){
+                Insert.Messages.Out(msg, TRUE, "w")
+            }else{
+                warning(msg)
+            }
+            return(NULL)
+        }
         start.pars <- do.call(paste0("start", dm), list(x))
-        fit.mod <- try(fitdistrplus::fitdist(x, dm, method = method, start = start.pars, ...), silent = TRUE)
+        if(method == 'mme'){
+            order <- seq(length(start.pars))
+            fit.mod <- try(fitdistrplus::fitdist(x, dm, method = method, order = order, memp = "memp", start = start.pars, ...), silent = TRUE)
+        }else if(method == 'qme'){
+            probs <- seq(0.1 , 0.9 , length.out = length(start.pars))
+            fit.mod <- try(fitdistrplus::fitdist(x, dm, method = method, probs = probs, start = start.pars, ...), silent = TRUE)
+        }else{
+            fit.mod <- try(fitdistrplus::fitdist(x, dm, method = method, start = start.pars, ...), silent = TRUE)
+        }
         fit.mod
     })
-    idist <- sapply(fit.distr, function(d) if(!is.null(d)) !inherits(d, "try-error") else FALSE)
-    fit.distr <- if(any(idist)) fit.distr[idist] else NULL
+    inull <- sapply(fit.distr, is.null)
+    if(all(inull)) return(NULL)
+    fit.distr <- fit.distr[!inull]
+    nm.distr <- distr[!inull]
+    ierr <- sapply(fit.distr, function(d) inherits(d, "try-error"))
+    if(any(ierr)){
+        err.distr <- fit.distr[ierr]
+        nm.distr <- nm.distr[ierr]
+        for(e in seq_along(err.distr)){
+            msg <- as.character(err.distr[e])
+            msg <- gsub('[\n\r]', ' ', msg)
+            msg <- paste0("Distribution (", nm.distr[e], "); ", msg)
+            if(GUI){
+                Insert.Messages.Out(msg, TRUE, "w")
+            }else{
+                print(paste('ERROR:', msg))
+            }
+        }
+    }
+    if(all(ierr)) return(NULL)
+    fit.distr <- fit.distr[!ierr]
+
     return(fit.distr)
 }
 
@@ -652,23 +725,60 @@ probability.exceeding.mat <- function(x, thres){
 
 #############################################
 
-# https://stackoverflow.com/a/48102268
-ecdf_plot_smooth <- function(x, adj = 0.1){
-    x <- x[!is.na(x)]
-    if(length(x) == 0) return(NULL)
-    ex <- 0.01 * diff(range(x))
-    xmin <- min(x) - ex
-    xmax <- max(x) + ex
-    dens <- stats::density(x, adjust = adj, from = xmin, to = xmax)
-    y <- 100 * (1 - (cumsum(dens$y) / sum(dens$y)))
-    return(list(x = dens$x, y = y))
-}
-
 ecdf_plot_ts <- function(x){
     x <- x[!is.na(x)]
     if(length(x) == 0) return(NULL)
     fn <- stats::ecdf(x)
     x <- sort(x)
+
     y <- 100 * (1 - fn(x))
+
+    return(list(x = x, y = y))
+}
+
+# https://stackoverflow.com/a/48102268
+ecdf_plot_smooth1 <- function(x, adj = 1.0){
+    x <- x[!is.na(x)]
+    if(length(x) == 0) return(NULL)
+
+    ex <- 0.05 * diff(range(x))
+    xmin <- min(x) - ex
+    xmax <- max(x) + ex
+    dens <- stats::density(x, adjust = adj, from = xmin, to = xmax)
+
+    cdf <- cumsum(dens$y) / sum(dens$y)
+
+    y <- 100 * (1 - cdf)
+
+    return(list(x = dens$x, y = y))
+}
+
+# extend: Extend range of density estimate beyond data
+ecdf_plot_smooth2 <- function(x, adj = 1.0, extend = FALSE){
+    x <- x[!is.na(x)]
+    if(length(x) == 0) return(NULL)
+    dens <- stats::density(x, adjust = adj)
+
+    # Integrate a pdf to get a cdf
+    nl <- length(dens$y) + 1
+    lh <- c(0, dens$y)
+    rh <- c(dens$y, 0)
+    df <- diff(dens$x)
+    df <- c(df[1], df, df[nl - 2])
+
+    area <- df * (lh + rh) / 2
+    cdf <- cumsum(area)
+    cdf <- cdf / cdf[nl]
+
+    x <- dens$x
+    if(extend){
+        x <- c(x[1] - df[1], x, x[nl - 1] + df[nl])
+        y <- c(0, cdf)
+    }else{
+        y <- cdf[-nl]
+    }
+
+    y <- 100 * (1 - y)
+
     return(list(x = x, y = y))
 }
