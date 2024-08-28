@@ -24,10 +24,10 @@ SpatialInterpPanelCmd <- function(){
 
     ###################
 
-    date.range <- list(start.year = 2021, start.mon = 1, start.dek = 1,
+    date.range <- list(start.year = 2024, start.mon = 1, start.dek = 1,
                        start.pen = 1, start.day = 1,
                        start.hour = 0, start.min = 0,
-                       end.year = 2021, end.mon = 1, end.dek = 1,
+                       end.year = 2024, end.mon = 1, end.dek = 1,
                        end.pen = 1, end.day = 1,
                        end.hour = 0, end.min = 0)
 
@@ -44,7 +44,7 @@ SpatialInterpPanelCmd <- function(){
                                            ),
                              negative = list(set = FALSE, value = 0),
                              blank = list(blank = FALSE, shpf = ""),
-                             date = list(year = 2021, mon = 1, day = 1,
+                             date = list(year = 2024, mon = 1, day = 1,
                                           hour = 1, min = 0, other = ""))
 
     .cdtData$EnvData$dataMapOp <- list(presetCol = list(color = 'tim.colors', reverse = FALSE),
@@ -306,9 +306,7 @@ SpatialInterpPanelCmd <- function(){
         tkgrid(en.negval, row = 0, column = 1, sticky = 'w', pady = 1, ipadx = 1, ipady = 1)
 
         tkbind(chk.negval, "<Button-1>", function(){
-            if(tclvalue(interpData) == '0'){
-                statenegval <- if(tclvalue(set.neg.value) == "0")  'normal' else 'disabled'
-            }else statenegval <- 'disabled'
+            statenegval <- if(tclvalue(set.neg.value) == "0")  'normal' else 'disabled'
             tkconfigure(en.negval, state = statenegval)
         })
 
@@ -321,13 +319,15 @@ SpatialInterpPanelCmd <- function(){
         stateSHP <- if(GeneralParameters$blank$blank) "normal" else "disabled"
 
         chk.blankgrid <- tkcheckbutton(frameBlank, variable = blankGrid, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
+        bt.blankOpt <- ttkbutton(frameBlank, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
         cb.blankgrid <- ttkcombobox(frameBlank, values = unlist(openFile_ttkcomboList()), textvariable = file.blankShp, width = largeur1, state = stateSHP)
         addTo_all_Combobox_List(cb.blankgrid)
         bt.blankgrid <- tkbutton(frameBlank, text = "...", state = stateSHP)
 
         ########
-        tkgrid(chk.blankgrid, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(cb.blankgrid, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1)
+        tkgrid(chk.blankgrid, row = 0, column = 0, sticky = 'w', rowspan = 1, columnspan = 5, padx = 1, pady = 1)
+        tkgrid(bt.blankOpt, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1)
+        tkgrid(cb.blankgrid, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
         tkgrid(bt.blankgrid, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
@@ -341,11 +341,14 @@ SpatialInterpPanelCmd <- function(){
         })
 
         tkbind(chk.blankgrid, "<Button-1>", function(){
-            if(tclvalue(interpData) == '0'){
-                stateSHP <- if(tclvalue(blankGrid) == "1") "disabled" else "normal"
-            }else stateSHP <- "disabled"
+            stateSHP <- if(tclvalue(blankGrid) == "1") "disabled" else "normal"
             tkconfigure(cb.blankgrid, state = stateSHP)
             tkconfigure(bt.blankgrid, state = stateSHP)
+            tkconfigure(bt.blankOpt, state = stateSHP)
+        })
+
+        tkconfigure(bt.blankOpt, command = function(){
+            blankNcdf_Options(.cdtEnv$tcl$main$win)
         })
 
         ##############################################
@@ -640,9 +643,14 @@ SpatialInterpPanelCmd <- function(){
         tkbind(cb.Map.panel, "<<ComboboxSelected>>", function(){
             .cdtData$EnvData$map$panelMap <- panelNumber[panelMaps %in% trimws(tclvalue(panelMapVar))]
 
-            statetypeMapPLOT1 <- if(.cdtData$EnvData$map$panelMap == "one") "disabled" else "normal"
-            tkconfigure(cb.Map.type1, state = statetypeMapPLOT1)
-            tkconfigure(bt.Map.pOpt, state = statetypeMapPLOT1)
+            if(.cdtData$EnvData$map$panelMap == "one"){
+                typeMapPLOT1 <<- "Points"
+                tclvalue(typeMap1Var) <- "Points"
+                .cdtData$EnvData$map$typeMap1 <- "Points"
+            }else{
+                typeMapPLOT1 <<- c("Points", "Pixels")
+            }
+            tkconfigure(cb.Map.type1, values = typeMapPLOT1)
         })
 
         ##############

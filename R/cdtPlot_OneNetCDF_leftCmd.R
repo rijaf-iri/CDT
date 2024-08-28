@@ -21,7 +21,7 @@ PlotOneNetCDFFileCmd <- function(){
                                      bbox = .cdtData$Config$region)
     .cdtData$EnvData$plot.maps$data.type <- "cdtnetcdf"
 
-    .cdtData$EnvData$shapefile$options <- list(col = "black", lwd = 1.5)
+    # .cdtData$EnvData$shapefile$options <- list(col = "black", lwd = 1.5)
 
     ###################
 
@@ -35,11 +35,15 @@ PlotOneNetCDFFileCmd <- function(){
 
     tknote.cmd <- bwNoteBook(.cdtEnv$tcl$main$cmd.frame)
     cmd.tab1 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['1']])
+    cmd.tab2 <- bwAddTab(tknote.cmd, text = lang.dlg[['tab_title']][['2']])
 
     bwRaiseTab(tknote.cmd, cmd.tab1)
 
     tkgrid.columnconfigure(cmd.tab1, 0, weight = 1)
+    tkgrid.columnconfigure(cmd.tab2, 0, weight = 1)
+
     tkgrid.rowconfigure(cmd.tab1, 0, weight = 1)
+    tkgrid.rowconfigure(cmd.tab2, 0, weight = 1)
 
     #######################################################################################################
 
@@ -120,93 +124,67 @@ PlotOneNetCDFFileCmd <- function(){
 
         ##############################################
 
-        frameBlank <- tkframe(subfr1)
+        frameBlank <- tkframe(subfr1, relief = 'groove', borderwidth = 2)
 
         blankGrid <- tclVar(0)
-
-        chk.grid <- tkcheckbutton(frameBlank, variable = blankGrid, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
-        tkgrid(chk.grid)
-
-        tkbind(chk.grid, "<Button-1>", function(){
-            if(tclvalue(blankGrid) == "1"){
-                stateSHP <- if(tclvalue(.cdtData$EnvData$shapefile$addshp) == "0") "disabled" else "normal"
-            }else stateSHP <- "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-        })
-
-        ##############################################
-
-        frameSHP <- ttklabelframe(subfr1, text = lang.dlg[['label']][['2']], relief = 'groove')
-
-        .cdtData$EnvData$shapefile$addshp <- tclVar(0)
-        file.plotShp <- tclVar()
+        file.blankShp <- tclVar()
         stateSHP <- "disabled"
 
-        chk.addshp <- tkcheckbutton(frameSHP, variable = .cdtData$EnvData$shapefile$addshp, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
-        bt.addshpOpt <- ttkbutton(frameSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
-        cb.addshp <- ttkcombobox(frameSHP, values = unlist(openFile_ttkcomboList()), textvariable = file.plotShp, width = largeur0, state = stateSHP)
-        addTo_all_Combobox_List(cb.addshp)
-        bt.addshp <- tkbutton(frameSHP, text = "...", state = stateSHP)
+        chk.grid <- tkcheckbutton(frameBlank, variable = blankGrid, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
+        txt.blankShp <- tklabel(frameBlank, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
+        bt.blankOpt <- ttkbutton(frameBlank, text = .cdtEnv$tcl$lang$global[['button']][['4']], state = stateSHP)
+        cb.blankShp <- ttkcombobox(frameBlank, values = unlist(openFile_ttkcomboList()), textvariable = file.blankShp, width = largeur0, state = stateSHP)
+        addTo_all_Combobox_List(cb.blankShp)
+        bt.blankShp <- tkbutton(frameBlank, text = "...", state = stateSHP)
 
         ########
-        tkgrid(chk.addshp, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
-        tkgrid(bt.addshpOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
-        tkgrid(cb.addshp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
-        tkgrid(bt.addshp, row = 1, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
+        tkgrid(chk.grid, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 5)
+        tkgrid(txt.blankShp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1)
+        tkgrid(bt.blankOpt, row = 1, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1)
+        tkgrid(cb.blankShp, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 1, pady = 1)
+        tkgrid(bt.blankShp, row = 2, column = 7, sticky = 'w', rowspan = 1, columnspan = 1, padx = 0, pady = 1)
 
         ########
 
-        helpWidget(cb.addshp, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
-        helpWidget(bt.addshp, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+        helpWidget(cb.blankShp, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+        helpWidget(bt.blankShp, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
         ########
-        tkconfigure(bt.addshp, command = function(){
+
+        tkbind(chk.grid, "<Button-1>", function(){
+            stateSHP <- if(tclvalue(blankGrid) == "1") "disabled" else "normal"
+            tkconfigure(cb.blankShp, state = stateSHP)
+            tkconfigure(bt.blankShp, state = stateSHP)
+            tkconfigure(bt.blankOpt, state = stateSHP)
+        })
+
+        tkconfigure(bt.blankShp, command = function(){
             shp.opfiles <- getOpenShp(.cdtEnv$tcl$main$win)
             if(!is.null(shp.opfiles)){
                 update.OpenFiles('shp', shp.opfiles)
-                tclvalue(file.plotShp) <- shp.opfiles[[1]]
-
-                shpofile <- getShpOpenData(file.plotShp)
-                if(is.null(shpofile))
-                    .cdtData$EnvData$shapefile$ocrds <- NULL
-                else
-                    .cdtData$EnvData$shapefile$ocrds <- getBoundaries(shpofile[[2]])
+                tclvalue(file.blankShp) <- shp.opfiles[[1]]
             }
         })
 
-        ########
-
-        tkconfigure(bt.addshpOpt, command = function(){
-            .cdtData$EnvData$shapefile$options <- MapGraph.LineSHPOptions(.cdtData$EnvData$shapefile$options)
-        })
-
-        #################
-        tkbind(cb.addshp, "<<ComboboxSelected>>", function(){
-            shpofile <- getShpOpenData(file.plotShp)
-            if(is.null(shpofile))
-                .cdtData$EnvData$shapefile$ocrds <- NULL
-            else
-                .cdtData$EnvData$shapefile$ocrds <- getBoundaries(shpofile[[2]])
-        })
-
-        tkbind(chk.addshp, "<Button-1>", function(){
-            if(tclvalue(.cdtData$EnvData$shapefile$addshp) == "1"){
-                stateSHP <- if(tclvalue(blankGrid) == "0") "disabled" else "normal"
-            }else stateSHP <- "normal"
-            tkconfigure(cb.addshp, state = stateSHP)
-            tkconfigure(bt.addshp, state = stateSHP)
-
-            stateSHP1 <- if(tclvalue(.cdtData$EnvData$shapefile$addshp) == "1") "disabled" else "normal"
-            tkconfigure(bt.addshpOpt, state = stateSHP1)
+        tkconfigure(bt.blankOpt, command = function(){
+            blankNcdf_Options(.cdtEnv$tcl$main$win)
         })
 
         ############################################
 
         tkgrid(frameNC, row = 0, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(frameMap, row = 1, column = 0, sticky = '', padx = 1, pady = 5, ipadx = 1, ipady = 1)
-        tkgrid(frameBlank, row = 2, column = 0, sticky = 'we', padx = 1, pady = 1, ipadx = 1, ipady = 1)
-        tkgrid(frameSHP, row = 3, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
+        tkgrid(frameBlank, row = 2, column = 0, sticky = 'we', padx = 1, pady = 5, ipadx = 1, ipady = 1)
+
+    #######################################################################################################
+
+    #Tab2
+    subfr2 <- bwTabScrollableFrame(cmd.tab2)
+
+        ##############################################
+
+        frameSHP <- create_shpLayer_frame(subfr2)
+        tkgrid(frameSHP, row = 0, column = 0, sticky = 'we', pady = 1)
 
     #######################################################################################################
 
@@ -218,7 +196,7 @@ PlotOneNetCDFFileCmd <- function(){
             tcl('update')
         })
 
-        loaded.nc <- list(trimws(tclvalue(ncdf.file)), tclvalue(blankGrid))
+        loaded.nc <- list(trimws(tclvalue(ncdf.file)), tclvalue(blankGrid), blanking.options())
 
         getNCFiles <- TRUE
         if(!is.null(.cdtData$EnvData$loaded.nc))
@@ -231,7 +209,7 @@ PlotOneNetCDFFileCmd <- function(){
             .cdtData$EnvData$varinfo <- ncdata[[2]]$varinfo
 
             if(tclvalue(blankGrid) == "1"){
-                shpdata <- getShpOpenData(file.plotShp)[[2]]
+                shpdata <- getShpOpenData(file.blankShp)[[2]]
                 if(is.null(shpdata)){
                     Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "e")
                     return(NULL)
