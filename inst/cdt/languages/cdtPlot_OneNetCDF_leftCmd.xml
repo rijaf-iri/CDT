@@ -4,19 +4,19 @@
         <tab id="1">
             <text lang="en"> Plot netCDF Data </text>
         </tab>
+        <tab id="2">
+            <text lang="en"> Layers </text>
+        </tab>
     </tab_title>
     <widget>
         <checkbutton id="1">
             <text lang="en"> Blank grid outside the shapefile boundaries </text>
         </checkbutton>
-        <checkbutton id="2">
-            <text lang="en"> Add Shapefile to Map </text>
-        </checkbutton>
         <label id="1">
             <text lang="en"> netCDF data file </text>
         </label>
         <label id="2">
-            <text lang="en"> Shapefile </text>
+            <text lang="en"> Shapefile used to blank </text>
         </label>
     </widget>
     <help>

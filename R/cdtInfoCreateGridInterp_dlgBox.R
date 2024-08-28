@@ -1,6 +1,5 @@
 
 createGridInterpolation <- function(parent.win, Parameters, group = 1){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 25
         largeur1 <- 44
@@ -47,12 +46,13 @@ createGridInterpolation <- function(parent.win, Parameters, group = 1){
 
     txt.CreateGrd0 <- tklabel(frGrid, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
     txt.CreateGrd1 <- tklabel(frGrid, text = lang.dlg[['label']][['2']], anchor = 'e', justify = 'right')
-    cb.CreateGrd <- ttkcombobox(frGrid, values = cb.createGird, textvariable = varCreateGrd, width = largeur0)
+    cb.CreateGrd <- ttkcombobox(frGrid, values = cb.createGird, textvariable = varCreateGrd, justify = 'center', width = largeur0)
     bt.CreateGrd <- ttkbutton(frGrid, text = lang.dlg[['button']][['1']], state = stategrd)
     frameGrdNC <- tkframe(frGrid)
 
     txt.grdNC <- tklabel(frameGrdNC, text = lang.dlg[['label']][['3']],  anchor = 'w', justify = 'left')
-    cb.grdNC <- ttkcombobox(frameGrdNC, values = unlist(listOpenFiles), textvariable = file.grdNC, state = stategrNC, width = largeur1)
+    cb.grdNC <- ttkcombobox(frameGrdNC, values = unlist(openFile_ttkcomboList()), textvariable = file.grdNC, state = stategrNC, width = largeur1)
+    addTo_all_Combobox_List(cb.grdNC)
     bt.grdNC <- tkbutton(frameGrdNC, text = "...", state = stategrNC)
 
     ####
@@ -86,9 +86,7 @@ createGridInterpolation <- function(parent.win, Parameters, group = 1){
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(!is.null(nc.opfiles)){
             update.OpenFiles('netcdf', nc.opfiles)
-            listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
             tclvalue(file.grdNC) <- nc.opfiles[[1]]
-            tkconfigure(cb.grdNC, values = unlist(listOpenFiles))
         }
     })
 

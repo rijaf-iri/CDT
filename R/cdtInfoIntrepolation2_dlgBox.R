@@ -1,6 +1,5 @@
 
 getInterpolationPars2 <- function(parent.win, Parameters){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 35
         largeur1 <- 50
@@ -155,7 +154,8 @@ getInterpolationPars2 <- function(parent.win, Parameters){
                            tclvalue(aspect.auxvar) == "1") "normal" else "disabled"
 
             txt.grddem <- tklabel(frDEM, text = lang.dlg[['label']][['5']],  anchor = 'w', justify = 'left')
-            cb.grddem <- ttkcombobox(frDEM, values = unlist(listOpenFiles), textvariable = demfile.var, width = largeur1, state = statedem)
+            cb.grddem <- ttkcombobox(frDEM, values = unlist(openFile_ttkcomboList()), textvariable = demfile.var, width = largeur1, state = statedem)
+            addTo_all_Combobox_List(cb.grddem)
             bt.grddem <- tkbutton(frDEM, text = "...", state = statedem)
 
             tkgrid(txt.grddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -192,9 +192,7 @@ getInterpolationPars2 <- function(parent.win, Parameters){
                 tcl('wm', 'attributes', tt, topmost = TRUE)
                 if(!is.null(nc.opfiles)){
                     update.OpenFiles('netcdf', nc.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                     tclvalue(demfile.var) <- nc.opfiles[[1]]
-                    tkconfigure(cb.grddem, values = unlist(listOpenFiles))
                 }
             })
 
@@ -266,7 +264,8 @@ getInterpolationPars2 <- function(parent.win, Parameters){
 
             frDEM <- tkframe(frInterpP, relief = 'sunken', borderwidth = 2)
             txt.grddem <- tklabel(frDEM, text = lang.dlg[['label']][['5']],  anchor = 'w', justify = 'left')
-            cb.grddem <- ttkcombobox(frDEM, values = unlist(listOpenFiles), textvariable = demfile.var, width = largeur1)
+            cb.grddem <- ttkcombobox(frDEM, values = unlist(openFile_ttkcomboList()), textvariable = demfile.var, width = largeur1)
+            addTo_all_Combobox_List(cb.grddem)
             bt.grddem <- tkbutton(frDEM, text = "...")
 
             tkgrid(txt.grddem, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -284,9 +283,7 @@ getInterpolationPars2 <- function(parent.win, Parameters){
                 tcl('wm', 'attributes', tt, topmost = TRUE)
                 if(!is.null(nc.opfiles)){
                     update.OpenFiles('netcdf', nc.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                     tclvalue(demfile.var) <- nc.opfiles[[1]]
-                    tkconfigure(cb.grddem, values = unlist(listOpenFiles))
                 }
             })
 

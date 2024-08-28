@@ -1,6 +1,5 @@
 
 blankNcdf_GetInfo <- function(){
-    listOpenFiles <- openFile_ttkcomboList()
     if(WindowsOS()){
         largeur0 <- 44
         largeur1 <- 46
@@ -41,18 +40,20 @@ blankNcdf_GetInfo <- function(){
     txtfiledir <- lang.dlg[['label']][[idx]]
     fileINdir <- tclVar(txtfiledir)
 
-    cb.nbncf <- ttkcombobox(frNCDF, values = NBNCF, textvariable = nbcnfile, width = largeur2)
+    cb.nbncf <- ttkcombobox(frNCDF, values = NBNCF, textvariable = nbcnfile, justify = 'center', width = largeur2)
 
     txt.ncfldir <- tklabel(frNCDF, text = tclvalue(fileINdir), textvariable = fileINdir, anchor = 'w', justify = 'left')
     if(.cdtData$GalParams$nbnc == "one"){
-        cb.ncfldir <- ttkcombobox(frNCDF, values = unlist(listOpenFiles), textvariable = ncfiledir, width = largeur0)
+        cb.ncfldir <- ttkcombobox(frNCDF, values = unlist(openFile_ttkcomboList()), textvariable = ncfiledir, width = largeur0)
+        addTo_all_Combobox_List(cb.ncfldir)
     }else{
         cb.ncfldir <- tkentry(frNCDF, textvariable = ncfiledir, width = largeur1)
     }
     bt.ncfldir <- tkbutton(frNCDF, text = "...")
 
     txt.ncsample <- tklabel(frNCDF, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
-    cb.ncsample <- ttkcombobox(frNCDF, values = unlist(listOpenFiles), textvariable = ncsample, width = largeur0, state = statesample)
+    cb.ncsample <- ttkcombobox(frNCDF, values = unlist(openFile_ttkcomboList()), textvariable = ncsample, width = largeur0, state = statesample)
+    addTo_all_Combobox_List(cb.ncsample)
     bt.ncsample <- tkbutton(frNCDF, text = "...", state = statesample)
 
     tkgrid(cb.nbncf, row = 0, column = 0, sticky = '', rowspan = 1, columnspan = 5, padx = 1, pady = 5, ipadx = 1, ipady = 1)
@@ -75,10 +76,7 @@ blankNcdf_GetInfo <- function(){
             tcl('wm', 'attributes', tt, topmost = TRUE)
             if(!is.null(nc.opfiles)){
                 update.OpenFiles('netcdf', nc.opfiles)
-                listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                 tclvalue(ncfiledir) <- nc.opfiles[[1]]
-
-                lapply(list(cb.ncfldir, cb.ncsample, cb.blank), tkconfigure, values = unlist(listOpenFiles))
             }
         }else{
             tcl('wm', 'attributes', tt, topmost = FALSE)
@@ -95,13 +93,7 @@ blankNcdf_GetInfo <- function(){
         tcl('wm', 'attributes', tt, topmost = TRUE)
         if(!is.null(nc.opfiles)){
             update.OpenFiles('netcdf', nc.opfiles)
-            listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
             tclvalue(ncsample) <- nc.opfiles[[1]]
-
-            nbnc <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
-            setCB <- list(cb.ncfldir, cb.ncsample, cb.blank)
-            if(nbnc == 'several') setCB <- setCB[-1]
-            lapply(setCB, tkconfigure, values = unlist(listOpenFiles))
         }
     })
 
@@ -113,7 +105,7 @@ blankNcdf_GetInfo <- function(){
         if(nbnc == 'one'){
             tclvalue(fileINdir) <- lang.dlg[['label']][['1']]
 
-            cb.ncfldir <- ttkcombobox(frNCDF, values = unlist(listOpenFiles), textvariable = ncfiledir, width = largeur0)
+            cb.ncfldir <<- ttkcombobox(frNCDF, values = unlist(openFile_ttkcomboList()), textvariable = ncfiledir, width = largeur0)
 
             #######
             tkconfigure(bt.ncfldir, command = function(){
@@ -122,10 +114,7 @@ blankNcdf_GetInfo <- function(){
                 tcl('wm', 'attributes', tt, topmost = TRUE)
                 if(!is.null(nc.opfiles)){
                     update.OpenFiles('netcdf', nc.opfiles)
-                    listOpenFiles[[length(listOpenFiles) + 1]] <<- nc.opfiles[[1]]
                     tclvalue(ncfiledir) <- nc.opfiles[[1]]
-
-                    lapply(list(cb.ncfldir, cb.ncsample, cb.blank), tkconfigure, values = unlist(listOpenFiles))
                 }
             })
 
@@ -137,7 +126,7 @@ blankNcdf_GetInfo <- function(){
         if(nbnc == 'several'){
             tclvalue(fileINdir) <- lang.dlg[['label']][['2']]
 
-            cb.ncfldir <- tkentry(frNCDF, textvariable = ncfiledir, width = largeur1)
+            cb.ncfldir <<- tkentry(frNCDF, textvariable = ncfiledir, width = largeur1)
 
             #######
             tkconfigure(bt.ncfldir, command = function(){
@@ -164,12 +153,15 @@ blankNcdf_GetInfo <- function(){
     blank.shpf <- tclVar(.cdtData$GalParams$shpf)
 
     txt.blank <- tklabel(frSHP, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
-    cb.blank <- ttkcombobox(frSHP, values = unlist(listOpenFiles), textvariable = blank.shpf, width = largeur0)
+    bt.blankOpt <- ttkbutton(frSHP, text = .cdtEnv$tcl$lang$global[['button']][['4']])
+    cb.blank <- ttkcombobox(frSHP, values = unlist(openFile_ttkcomboList()), textvariable = blank.shpf, width = largeur0)
+    addTo_all_Combobox_List(cb.blank)
     bt.blank <- tkbutton(frSHP, text = "...")
 
-    tkgrid(txt.blank, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(cb.blank, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.blank, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.blank, row = 0, column = 0, sticky = 'w', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.blankOpt, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(cb.blank, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 7, padx = 0, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.blank, row = 1, column = 7, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 1, ipadx = 1, ipady = 1)
 
     helpWidget(cb.blank, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(bt.blank, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -183,13 +175,11 @@ blankNcdf_GetInfo <- function(){
         if(!is.null(shp.opfiles)){
             update.OpenFiles('shp', shp.opfiles)
             tclvalue(blank.shpf) <- shp.opfiles[[1]]
-            listOpenFiles[[length(listOpenFiles) + 1]] <<- shp.opfiles[[1]]
-
-            nbnc <- NBNC[NBNCF %in% trimws(tclvalue(nbcnfile))]
-            setCB <- list(cb.ncfldir, cb.ncsample, cb.blank)
-            if(nbnc == 'several') setCB <- setCB[-1]
-            lapply(setCB, tkconfigure, values = unlist(listOpenFiles))
         }
+    })
+
+    tkconfigure(bt.blankOpt, command = function(){
+        blankNcdf_Options(tt)
     })
 
     ############################################
