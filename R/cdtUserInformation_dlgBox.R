@@ -14,6 +14,17 @@ cdtUserInfo <- function(){
     frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
     frButt <- tkframe(tt)
 
+    userCountFile <- file.path(.cdtDir$dirLocal, 'config', '.user_count')
+    countOpen <- 1
+    if(file.exists(userCountFile)){
+        tmp <- readRDS(userCountFile)
+        countOpen <- tmp + 1
+        if(countOpen > 3){
+            tkwm.protocol(tt, "WM_DELETE_WINDOW", function(){return(NULL)})
+        }
+    }
+    saveRDS(countOpen, file = userCountFile)
+
     #####################
 
     user_cntr_file <- file.path(.cdtDir$Root, "data", "UserInfo_Countries.rds")
@@ -123,6 +134,8 @@ cdtUserInfo <- function(){
             user_info$position <<- rep.position
             user_info$country <<- rep.country
 
+            if(file.exists(userCountFile)) unlink(userCountFile)
+
             tkgrab.release(tt)
             tkdestroy(tt)
             tkfocus(.cdtEnv$tcl$main$win)
@@ -159,4 +172,3 @@ cdtUserInfo <- function(){
     tkwait.window(tt)
     return(user_info)
 }
-

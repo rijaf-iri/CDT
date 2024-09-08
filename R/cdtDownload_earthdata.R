@@ -10,14 +10,24 @@ earthdata.curlopts <- function(work_dir, login){
     cat('', file = cfile)
 
     if(tolower(Sys.info()["sysname"]) == "windows"){
-        isrtools <- devtools::find_rtools()
+        isrtools <- pkgbuild::find_rtools()
         if(!isrtools){
             stop('Unable to find Rtools.')
         }
-        rtools_pth <- pkgbuild::rtools_path()
-        rtools_pth <- rev(split_path(rtools_pth[1]))
-        rtools_pth <- file.path(rtools_pth[1], rtools_pth[2])
-        curl_cmd <- file.path(rtools_pth, 'usr', 'bin', 'curl.exe')
+
+        r_version <- R.Version()
+        r_major <- r_version$major
+        r_minor <- strsplit(r_version$minor, '\\.')[[1]][1]
+        r_version <- as.numeric(paste0(r_major, '.', r_minor))
+        if(r_version < 4.0){
+            stop('CDT requires R version 4.0.0 or higher.')
+        }
+        rt_v <- if(r_version < 4.2) '40' else paste0(r_major, r_minor)
+        env_rtools <- grepl(paste0('rtools', rt_v), Sys.getenv('PATH'))
+        if(!env_rtools){
+            stop("Rtools is not in your PATH environment variable.")
+        }
+        curl_cmd <- 'curl'
         error_msg <- "Unable to find curl."
     }else{
         curl_cmd <- 'curl'
