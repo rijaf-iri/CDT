@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialog_box>
+    <title>
+        <text lang="en"> User information </text>
+    </title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Submit </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Select or search country </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Full name </text>
+        </label>
+        <label id="3">
+            <text lang="en"> Email </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Institution or Organization </text>
+        </label>
+        <label id="5">
+            <text lang="en"> Position </text>
+        </label>
+        <label id="6">
+            <text lang="en"> Country </text>
+        </label>
+    </widget>
+    <message>
+        <content id="1">
+            <text lang="en"> We would like to ask you to fill the forms above to identify all CDT users, with the objective of improving CDT functions. </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Please provide your full name </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Please provide your email </text>
+        </content>
+        <content id="4">
+            <text lang="en"> Invalid email address </text>
+        </content>
+        <content id="5">
+            <text lang="en"> Please provide your institution </text>
+        </content>
+        <content id="6">
+            <text lang="en"> Please provide your position </text>
+        </content>
+        <content id="7">
+            <text lang="en"> Please select your country from drop down list </text>
+        </content>
+    </message>
+</dialog_box>

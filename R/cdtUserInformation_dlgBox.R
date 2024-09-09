@@ -6,11 +6,17 @@ cdtUserInfo <- function(){
         largeur0 <- 42
     }
 
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtUserInformation_dlgBox.xml")
+    lang.dlg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+
+    #####################
+
     tt <- tktoplevel()
     tkgrab.set(tt)
     tkfocus(tt)
 
     #####################
+
     frDialog <- tkframe(tt, relief = 'raised', borderwidth = 2)
     frButt <- tkframe(tt)
 
@@ -29,7 +35,7 @@ cdtUserInfo <- function(){
 
     user_cntr_file <- file.path(.cdtDir$Root, "data", "UserInfo_Countries.rds")
     user_countries <- readRDS(user_cntr_file)
-    placeholder <- 'Select or search country'
+    placeholder <- lang.dlg[['label']][['1']]
 
     var.fullname <- tclVar()
     var.email <- tclVar()
@@ -37,15 +43,15 @@ cdtUserInfo <- function(){
     var.position <- tclVar()
     var.country <- tclVar()
 
-    txt.fullname <- tklabel(frDialog, text = "Full name", anchor = 'w', justify = 'left')
+    txt.fullname <- tklabel(frDialog, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
     en.fullname <- tkentry(frDialog, textvariable = var.fullname)
-    txt.email <- tklabel(frDialog, text = "Email", anchor = 'w', justify = 'left')
+    txt.email <- tklabel(frDialog, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
     en.email <- tkentry(frDialog, textvariable = var.email)
-    txt.institut <- tklabel(frDialog, text = "Institution or Organization", anchor = 'w', justify = 'left')
+    txt.institut <- tklabel(frDialog, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
     en.institut <- tkentry(frDialog, textvariable = var.institution)
-    txt.position <- tklabel(frDialog, text = "Position", anchor = 'w', justify = 'left')
+    txt.position <- tklabel(frDialog, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
     en.position <- tkentry(frDialog, textvariable = var.position)
-    txt.country <- tklabel(frDialog, text = "Country", anchor = 'w', justify = 'left')
+    txt.country <- tklabel(frDialog, text = lang.dlg[['label']][['6']], anchor = 'w', justify = 'left')
     cb.country <- ttkcombobox_search(frDialog, values = user_countries, textvariable = var.country, placeholder = placeholder)
     frameDescrp <- tkframe(frDialog, relief = 'groove', borderwidth = 2)
 
@@ -68,7 +74,7 @@ cdtUserInfo <- function(){
     #                     command = function(...) tkxview(txta, ...))
     yscr <- tkscrollbar(frameDescrp, repeatinterval = 5,
                         command = function(...) tkyview(txta, ...))
-    txta <- tktext(frameDescrp, bg = "white", font = "courier", wrap = "none",
+    txta <- tktext(frameDescrp, bg = "white", font = "courier", wrap = "word",
                    height = 4, width = largeur0,
                    # xscrollcommand = function(...) tkset(xscr, ...),
                    yscrollcommand = function(...) tkset(yscr, ...))
@@ -82,20 +88,14 @@ cdtUserInfo <- function(){
     tcl("update", "idletasks")
 
     ####
-    infos <- c("We would like to ask you to fill the",
-               "forms above to identify all CDT users,",
-               "with the objective of improving",
-               "CDT functions.")
-
     font4 <- tkfont.create(family = "courier", size = 11)
     tktag.configure(txta, "font4f", font = font4)
-    for(i in seq_along(infos))
-        tkinsert(txta, "end", paste(infos[i], "\n"), "font4f")
+    tkinsert(txta, "end", lang.dlg[['message']][['1']], "font4f")
     tkconfigure(txta, state = 'disabled')
 
     #####################
 
-    bt.OK <- ttkbutton(frButt, text = "Submit")
+    bt.OK <- ttkbutton(frButt, text = lang.dlg[['button']][['1']])
 
     user_info <- NULL
 
@@ -110,22 +110,22 @@ cdtUserInfo <- function(){
         isEmailOK <- grepl(format_email, rep.email, ignore.case = TRUE)
 
         if(rep.fullname == "" | nchar(rep.fullname) < 4){
-            cdt.tkmessageBox(tt, message = "Please provide your full name", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(rep.email == ""){
-            cdt.tkmessageBox(tt, message = "Please provide your email", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['3']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(!isEmailOK){
-            cdt.tkmessageBox(tt, message = "Invalid email address", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['4']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(rep.institution == "" | nchar(rep.institution) < 3){
-            cdt.tkmessageBox(tt, message = "Please provide your institution", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['5']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(rep.position == "" | nchar(rep.position) < 4){
-            cdt.tkmessageBox(tt, message = "Please provide your position", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['6']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else if(!rep.country %in% user_countries){
-            cdt.tkmessageBox(tt, message = "Please select your country", icon = "warning", type = "ok")
+            cdt.tkmessageBox(tt, message = lang.dlg[['message']][['7']], icon = "warning", type = "ok")
             tkwait.window(tt)
         }else{
             user_info$fullname <<- rep.fullname
@@ -157,7 +157,7 @@ cdtUserInfo <- function(){
     tt.y <- as.integer(.cdtEnv$tcl$data$height.scr * 0.5 - tt.h * 0.5)
     tkwm.geometry(tt, paste0('+', tt.x, '+', tt.y))
     tkwm.transient(tt)
-    tkwm.title(tt, "User information")
+    tkwm.title(tt, lang.dlg[['title']])
     tkwm.deiconify(tt)
     tcl('wm', 'attributes', tt, topmost = TRUE)
 

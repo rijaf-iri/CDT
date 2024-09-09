@@ -39,5 +39,9 @@
             <text lang="en"> Select latitude variable </text>
             <text lang="fr"> Sélectionnez la variable de latitude </text>
         </content>
+        <content id="4">
+            <text lang="en"> The longitude and latitude must have at least 2 grid points </text>
+            <text lang="fr"> Le longitude et latitude doivent avoir au moins 2 points de grille </text>
+        </content>
     </message>
 </dialog_box>
