@@ -188,8 +188,20 @@ preview.data.nc <- function(parent.win, openncf){
                 idy <- which(d.dim == trimws(tclvalue(Y.dim)))
                 lon <- var.dim.val[[ivar]][[idx]]
                 lat <- var.dim.val[[ivar]][[idy]]
-                varid <- as.character(var.info[ivar, 1])
 
+                if(length(lon) == 1 || length(lat) == 1){
+                    Insert.Messages.Out(lang.dlg[['message']][['4']], TRUE, 'e')
+
+                    retval <<- NULL
+
+                    tkgrab.release(tt)
+                    tkdestroy(tt)
+                    tkfocus(parent.win)
+                    ncdf4::nc_close(nc)
+                    return(NULL)
+                }
+
+                varid <- as.character(var.info[ivar, 1])
                 d.dim.info <- d.dim.info[c(idx, idy), , drop = FALSE]
 
                 dat <- ncdf4::ncvar_get(nc, varid = varid)
