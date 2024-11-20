@@ -33,7 +33,7 @@ nasa_power_ag_daily.coverage <- function(GalParams){
     return(out)
 }
 
-nasa_power_ag_daily.download <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
+nasa_power_ag_daily.download <- function(GalParams, nbfile = 2, GUI = TRUE, verbose = TRUE){
     slon <- c(GalParams$bbox$minlon, GalParams$bbox$maxlon)
     slat <- c(GalParams$bbox$minlat, GalParams$bbox$maxlat)
 
@@ -143,23 +143,26 @@ nasa_power_ag_daily.download <- function(GalParams, nbfile = 3, GUI = TRUE, verb
     return(ret)
 }
 
-nasa_power_ag_daily.download.data <- function(lnk, dest, ncfl, pars, opts, GUI = TRUE){
+nasa_power_ag_daily.download.data <- function(lnk, dest, ncfl, pars, opts){
     on.exit(lapply(dest, unlink))
 
     dest <- dest[[1]]
     lnk <- lnk[[1]]
 
     xx <- basename(ncfl)
+    tmpdir <- dirname(dirname(ncfl))
+    error_files <- paste0(basename(dirname(ncfl)), '_error.txt')
+    error_files <- file.path(tmpdir, error_files)
 
     dc <- lapply(seq_along(lnk), function(j){
-         ret <- try(curl::curl_download(lnk[j], dest[j]), silent = TRUE)
-         rc <- 0
-         if(inherits(ret, "try-error")){
+        ret <- try(curl::curl_download(lnk[j], dest[j]), silent = TRUE)
+        rc <- 0
+        if(inherits(ret, "try-error")){
             msg <- gsub('[\r\n]', '', ret[1])
-            Insert.Messages.Out(msg, TRUE, "w", GUI)
+            cat(msg, file = error_files, sep = '\n', append = TRUE)
             rc <- 1
-         }
-         rc
+        }
+        rc
     })
 
     if(all(unlist(dc) == 0)){

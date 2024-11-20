@@ -13,10 +13,10 @@ cmorph2xnrt-gb,CMORPH2x NRT (Global),https://ftp.cpc.ncep.noaa.gov/precip/CMORPH
 gpm.imerg.f-gb,GPM L3 IMERG V07 Final (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHH_07/summary,,https://urs.earthdata.nasa.gov
 ,,https://pmm.nasa.gov/data-access/downloads/gpm,,
 ,,,,
-gpm.imerg.l-gb,GPM L3 IMERG V06 Late (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_06/summary,,https://urs.earthdata.nasa.gov
+gpm.imerg.l-gb,GPM L3 IMERG V07 Late (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHL_06/summary,,https://urs.earthdata.nasa.gov
 ,,https://pmm.nasa.gov/data-access/downloads/gpm,,
 ,,,,
-gpm.imerg.e-gb,GPM L3 IMERG V06 Early (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHE_06/summary,,https://urs.earthdata.nasa.gov
+gpm.imerg.e-gb,GPM L3 IMERG V07 Early (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGHHE_06/summary,,https://urs.earthdata.nasa.gov
 ,,https://pmm.nasa.gov/data-access/downloads/gpm,,
 ,,,,
 persiann.pdir-gb,PERSIANN PDIR-Now (Global),https://chrsdata.eng.uci.edu,,

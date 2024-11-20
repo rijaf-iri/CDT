@@ -42,7 +42,7 @@ merra2_hourly.coverage.earthdata <- function(GalParams){
     return(out)
 }
 
-merra2_hourly.download.earthdata <- function(GalParams, nbfile = 3, GUI = TRUE, verbose = TRUE){
+merra2_hourly.download.earthdata <- function(GalParams, nbfile = 2, GUI = TRUE, verbose = TRUE){
     xlon <- seq(-180., 180., 0.625)
     xlat <- seq(-90., 90., 0.5)
 
@@ -177,9 +177,14 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 3, GUI = TRUE, 
     return(ret)
 }
 
-merra2_dods.download.data <- function(lnk, dest, ncfl, opts, handle, GUI = TRUE){
+merra2_dods.download.data <- function(lnk, dest, ncfl, opts, handle){
     on.exit(unlink(dest))
     xx <- basename(dest)
+
+    tmpdir <- dirname(dirname(dest))
+    error_files <- paste0(basename(dirname(dest)), '_error.txt')
+    error_files <- file.path(tmpdir, error_files)
+
     dc <- try(curl::curl_download(lnk, dest, handle = handle), silent = TRUE)
 
     if(!inherits(dc, "try-error")){
@@ -187,7 +192,7 @@ merra2_dods.download.data <- function(lnk, dest, ncfl, opts, handle, GUI = TRUE)
         if(ret == 0) xx <- NULL
     }else{
         msg <- gsub('[\r\n]', '', dc[1])
-        Insert.Messages.Out(msg, TRUE, "w", GUI)
+        cat(msg, file = error_files, sep = '\n', append = TRUE)
     }
 
     return(xx)

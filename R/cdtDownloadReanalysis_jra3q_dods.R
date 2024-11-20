@@ -57,7 +57,7 @@ jra3q_dods.rda.ucar.dates <- function(url, type){
     return(ret)
 }
 
-jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 4, GUI = TRUE, verbose = TRUE){
+jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 2, GUI = TRUE, verbose = TRUE){
     crd_file <- file.path(.cdtDir$Root, "data", "JRA3Q_Coords.rds")
     crd_gauss <- readRDS(crd_file)
     xlat <- crd_gauss$lat

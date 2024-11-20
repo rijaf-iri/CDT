@@ -106,7 +106,7 @@ merra2,MERRA-2,disc.gsfc.nasa.gov - Hourly,tair,Air temperature,https://disc.gsf
 ,,,tair,Air temperature,,,
 ,,,prcp,Maximum total precipitation,,,
 ,,,,,,,
-era5,ERA5,cds.climate.copernicus.eu - ERA5 - Hourly,tmax,Maximum temperature,https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview,https://cds.climate.copernicus.eu/user/login,hourly
+era5,ERA5,cds.climate.copernicus.eu - ERA5 - Hourly,tmax,Maximum temperature,https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels?tab=overview,https://cds.climate.copernicus.eu/profile,hourly
 ,,,tmin,Minimum temperature,https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-single-levels-preliminary-back-extension?tab=overview,,
 ,,,tair,Air temperature,https://confluence.ecmwf.int/display/CKB/ERA5%3A+data+documentation,,
 ,,,wind,Wind data,,,
@@ -126,7 +126,7 @@ era5,ERA5,cds.climate.copernicus.eu - ERA5 - Hourly,tmax,Maximum temperature,htt
 ,,,heat_avg,Heat flux data - Average,,,
 ,,,heat_acc,Heat flux data - Accumulation,,,
 ,,,,,,,
-,,cds.climate.copernicus.eu - ERA5-Land - Hourly,tair,Air temperature,https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview,https://cds.climate.copernicus.eu/user/login,hourly
+,,cds.climate.copernicus.eu - ERA5-Land - Hourly,tair,Air temperature,https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=overview,https://cds.climate.copernicus.eu/profile,hourly
 ,,,wind,Wind data,https://confluence.ecmwf.int/display/CKB/ERA5-Land%3A+data+documentation,,
 ,,,hum,Humidity data,,,
 ,,,pres,Pressure at surface,,,

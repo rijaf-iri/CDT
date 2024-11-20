@@ -1,3 +1,43 @@
+#' Open CDS profile web page.
+#'
+#' Open Climate Data Store profile web page in the default browser.
+#' 
+#' @export
+
+open_cds_profile <- function(){
+    url <- "https://cds.climate.copernicus.eu/profile"
+    utils::browseURL(url)
+}
+
+#' Save CDS personal access token.
+#'
+#' Save CDS personal access token into a local file.
+#'
+#' @param key CDS personal access token.
+#' 
+#' @examples
+#' 
+#' \dontrun{
+#' library(CDT)
+#' save_cds_personal_token('10xasdxf2-ws12a-xdfs-zx3x-z1z2z3z4z5z')
+#' }
+#' 
+#' @export
+
+save_cds_personal_token <- function(key){
+    if(missing(key)){
+        stop("The personal access token is not supplied.")
+    }
+    fileL <- file.path(.cdtDir$dirLocal, "config", "auth")
+    if(!file.exists(fileL)){
+        auth <- new.env()
+        auth$era5$pat <- key
+    }else{
+        auth <- readRDS(fileL)
+        auth$era5$pat <- key
+    }
+    saveRDS(auth, fileL)
+}
 
 era5.cds.coverage <- function(GalParams){
     if(GalParams$src == "cds.climate.copernicus.eu - ERA5 - Hourly"){

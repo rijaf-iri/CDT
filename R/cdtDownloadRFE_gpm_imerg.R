@@ -126,20 +126,41 @@ gpm_imerg.info.gesdisc <- function(GalParams){
                 ncvarid <- 'precipitation'
                 ncformat <- "imerg_final_%s%s%s%s%s.nc"
                 type <- "FINAL"
+                # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHH.07/2024/182/3B-HHR.MS.MRG.3IMERG.20240630-S233000-E235959.1410.V07B.HDF5
             }else if(GalParams$rfe.src == "gpm.imerg.l-gb"){
-                version <- '06'
-                dataset <- "GPM_3IMERGHHL.06"
-                nc4format <- "3B-HHR-L.MS.MRG.3IMERG.%s-S%s-E%s.%s.V06B.HDF5.nc4"
-                ncvarid <- 'precipitationCal'
+                ## version 6
+                # version <- '06'
+                # dataset <- "GPM_3IMERGHHL.06"
+                # nc4format <- "3B-HHR-L.MS.MRG.3IMERG.%s-S%s-E%s.%s.V06B.HDF5.nc4"
+                # ncvarid <- 'precipitationCal'
+                # ncformat <- "imerg_late_%s%s%s%s%s.nc"
+                # type <- "LATE"
+                # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHHL.06/2024/154/3B-HHR-L.MS.MRG.3IMERG.20240602-S183000-E185959.1110.V06E.HDF5
+                ## version 7
+                version <- '07'
+                dataset <- "GPM_3IMERGHHL.07"
+                nc4format <- "3B-HHR-L.MS.MRG.3IMERG.%s-S%s-E%s.%s.V07B.HDF5.nc4"
+                ncvarid <- 'precipitation'
                 ncformat <- "imerg_late_%s%s%s%s%s.nc"
                 type <- "LATE"
+                # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHHL.07/2024/324/3B-HHR-L.MS.MRG.3IMERG.20241119-S123000-E125959.0750.V07B.HDF5
             }else if(GalParams$rfe.src == "gpm.imerg.e-gb"){
-                version <- '06'
-                dataset <- "GPM_3IMERGHHE.06"
-                nc4format <- "3B-HHR-E.MS.MRG.3IMERG.%s-S%s-E%s.%s.V06B.HDF5.nc4"
-                ncvarid <- 'precipitationCal'
+                ## version 6
+                # version <- '06'
+                # dataset <- "GPM_3IMERGHHE.06"
+                # nc4format <- "3B-HHR-E.MS.MRG.3IMERG.%s-S%s-E%s.%s.V06B.HDF5.nc4"
+                # ncvarid <- 'precipitationCal'
+                # ncformat <- "imerg_early_%s%s%s%s%s.nc"
+                # type <- "EARLY"
+                # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHHE.06/2024/155/3B-HHR-E.MS.MRG.3IMERG.20240603-S043000-E045959.0270.V06E.HDF5
+                ## version 7
+                version <- '07'
+                dataset <- "GPM_3IMERGHHE.07"
+                nc4format <- "3B-HHR-E.MS.MRG.3IMERG.%s-S%s-E%s.%s.V07B.HDF5.nc4"
+                ncvarid <- 'precipitation'
                 ncformat <- "imerg_early_%s%s%s%s%s.nc"
                 type <- "EARLY"
+                # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGHHE.07/2024/324/3B-HHR-E.MS.MRG.3IMERG.20241119-S223000-E225959.1350.V07B.HDF5
             }else return(NULL)
 
             dd <- paste0(rdate[, 1], rdate[, 2], rdate[, 3])
@@ -156,19 +177,19 @@ gpm_imerg.info.gesdisc <- function(GalParams){
             data.tres <- paste0(GalParams$minhour, GalParams$tstep)
             unitfactor <- 0.5
 
-            ## exception minor version
-            if(GalParams$rfe.src %in% c("gpm.imerg.l-gb", "gpm.imerg.e-gb")){
-                breaks <- switch(GalParams$rfe.src,
-                            "gpm.imerg.l-gb" = c('20220508 153000', '20230701 133000', '20231108 013000'),
-                            "gpm.imerg.e-gb" = c('20220509 013000', '20230701 233000', '20231108 123000')
-                            )
-                breaks <- as.POSIXct(breaks, format = '%Y%m%d %H%M%S', tz = 'UTC')
-                times <- apply(rdate[, 1:5], 1, paste, collapse = "")
-                times <- as.POSIXct(times, format = '%Y%m%d%H%M', tz = 'UTC')
-                ix <- findInterval(times, breaks, rightmost.closed = FALSE, left.open = TRUE)
-                minorv <- c('B', 'C', 'D', 'E')
-                substr(nc4files, 57, 57) <- minorv[ix + 1]
-            }
+            ## version 6: exception minor version
+            # if(GalParams$rfe.src %in% c("gpm.imerg.l-gb", "gpm.imerg.e-gb")){
+            #     breaks <- switch(GalParams$rfe.src,
+            #                 "gpm.imerg.l-gb" = c('20220508 153000', '20230701 133000', '20231108 013000'),
+            #                 "gpm.imerg.e-gb" = c('20220509 013000', '20230701 233000', '20231108 123000')
+            #                 )
+            #     breaks <- as.POSIXct(breaks, format = '%Y%m%d %H%M%S', tz = 'UTC')
+            #     times <- apply(rdate[, 1:5], 1, paste, collapse = "")
+            #     times <- as.POSIXct(times, format = '%Y%m%d%H%M', tz = 'UTC')
+            #     ix <- findInterval(times, breaks, rightmost.closed = FALSE, left.open = TRUE)
+            #     minorv <- c('B', 'C', 'D', 'E')
+            #     substr(nc4files, 57, 57) <- minorv[ix + 1]
+            # }
         }else return(NULL)
     }else if(GalParams$tstep == "daily"){
         if(GalParams$rfe.src == "gpm.imerg.f-gb"){
@@ -184,20 +205,41 @@ gpm_imerg.info.gesdisc <- function(GalParams){
             ncvarid <- 'precipitation'
             ncformat <- "imerg_final_%s%s%s.nc"
             type <- "FINAL"
+            # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDF.07/2024/06/3B-DAY.MS.MRG.3IMERG.20240630-S000000-E235959.V07B.nc4
         }else if(GalParams$rfe.src == "gpm.imerg.l-gb"){
-            version <- '06'
-            dataset <- "GPM_3IMERGDL.06"
-            nc4format <- "3B-DAY-L.MS.MRG.3IMERG.%s-S000000-E235959.V06.nc4.nc4"
-            ncvarid <- 'precipitationCal'
+            ## version 6
+            # version <- '06'
+            # dataset <- "GPM_3IMERGDL.06"
+            # nc4format <- "3B-DAY-L.MS.MRG.3IMERG.%s-S000000-E235959.V06.nc4.nc4"
+            # ncvarid <- 'precipitationCal'
+            # ncformat <- "imerg_late_%s%s%s.nc"
+            # type <- "LATE"
+            # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDL.06/2024/06/3B-DAY-L.MS.MRG.3IMERG.20240601-S000000-E235959.V06.nc4
+            ## version 7
+            version <- '07'
+            dataset <- "GPM_3IMERGDL.07"
+            nc4format <- "3B-DAY-L.MS.MRG.3IMERG.%s-S000000-E235959.V07B.nc4.nc4"
+            ncvarid <- 'precipitation'
             ncformat <- "imerg_late_%s%s%s.nc"
             type <- "LATE"
+            # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDL.07/2024/11/3B-DAY-L.MS.MRG.3IMERG.20241118-S000000-E235959.V07B.nc4
         }else if(GalParams$rfe.src == "gpm.imerg.e-gb"){
-            version <- '06'
-            dataset <- "GPM_3IMERGDE.06"
-            nc4format <- "3B-DAY-E.MS.MRG.3IMERG.%s-S000000-E235959.V06.nc4.nc4"
-            ncvarid <- 'precipitationCal'
+            ## version 6
+            # version <- '06'
+            # dataset <- "GPM_3IMERGDE.06"
+            # nc4format <- "3B-DAY-E.MS.MRG.3IMERG.%s-S000000-E235959.V06.nc4.nc4"
+            # ncvarid <- 'precipitationCal'
+            # ncformat <- "imerg_early_%s%s%s.nc"
+            # type <- "EARLY"
+            # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDE.06/2024/06/3B-DAY-E.MS.MRG.3IMERG.20240602-S000000-E235959.V06.nc4
+            ## version 7
+            version <- '07'
+            dataset <- "GPM_3IMERGDE.07"
+            nc4format <- "3B-DAY-E.MS.MRG.3IMERG.%s-S000000-E235959.V07B.nc4.nc4"
+            ncvarid <- 'precipitation'
             ncformat <- "imerg_early_%s%s%s.nc"
             type <- "EARLY"
+            # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGDE.07/2024/11/3B-DAY-E.MS.MRG.3IMERG.20241118-S000000-E235959.V07B.nc4
         }else return(NULL)
 
         dd <- paste0(rdate[, 1], rdate[, 2], rdate[, 3])
@@ -220,6 +262,7 @@ gpm_imerg.info.gesdisc <- function(GalParams){
         ncvarid <- 'precipitation'
         ncformat <- "imerg_final_%s%s.nc"
         type <- "FINAL"
+        # https://gpm1.gesdisc.eosdis.nasa.gov/opendap/GPM_L3/GPM_3IMERGM.07/2024/3B-MO.MS.MRG.3IMERG.20240601-S000000-E235959.06.V07B.HDF5
 
         dd <- paste0(rdate[, 1], rdate[, 2], "01")
         nc4files <- sprintf(nc4format, dd, rdate[, 2])
