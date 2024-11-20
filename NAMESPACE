@@ -40,6 +40,8 @@ export(ET0_Penman_Monteith_FAO_station)
 export(ET0_Penman_Monteith_FAO_netcdf)
 
 export(connect_tidyverse_api)
+export(open_cds_profile)
+export(save_cds_personal_token)
 
 ###
 importFrom(latticeExtra, xyplot.list)

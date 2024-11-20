@@ -60,10 +60,10 @@ cmorphv0.xraw-gb,CMORPH V0.x RAW (Global),https://iridl.ldeo.columbia.edu/SOURCE
 gpm.imerg.f-gb,GPM L3 IMERG V07 Final (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDF_07/summary,,https://urs.earthdata.nasa.gov
 ,,https://pmm.nasa.gov/data-access/downloads/gpm,,
 ,,,,
-gpm.imerg.l-gb,GPM L3 IMERG V06 Late (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDL_06/summary,,https://urs.earthdata.nasa.gov
+gpm.imerg.l-gb,GPM L3 IMERG V07 Late (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDL_07/summary,,https://urs.earthdata.nasa.gov
 ,,https://pmm.nasa.gov/data-access/downloads/gpm,,
 ,,,,
-gpm.imerg.e-gb,GPM L3 IMERG V06 Early (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDE_06/summary,,https://urs.earthdata.nasa.gov
+gpm.imerg.e-gb,GPM L3 IMERG V07 Early (Global),https://disc.gsfc.nasa.gov/datasets/GPM_3IMERGDE_07/summary,,https://urs.earthdata.nasa.gov
 ,,https://pmm.nasa.gov/data-access/downloads/gpm,,
 ,,,,
 gsmap.nrtv8.00-gb,GSMaP NRT (00-23 UTC) V8 (Global),https://sharaku.eorc.jaxa.jp/GSMaP/guide.html,,https://sharaku.eorc.jaxa.jp/GSMaP/registration.html
