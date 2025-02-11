@@ -17,14 +17,36 @@ reanal.product.info <- function(prod, src){
 
 reanal.need.usrpwd <- function(prod, src){
     src_opts <- .cdtData$EnvData$rnlProd[[prod]]$pars[[src]]
-
-    usrpwd <- FALSE
+    reg <- FALSE
     if(length(src_opts$registration) > 0){
-        usrpwd <- if(src_opts$registration == "") FALSE else TRUE
+        reg <- if(src_opts$registration == "") FALSE else TRUE
     }
     urllog <- src_opts$registration
+    lab <- NULL
+    saved_auth <- FALSE
+    cred <- list(usr = '', pwd = '')
+    if(reg){
+        if(prod == 'era5'){
+            lab <- '5-3'
+        }
+        if(prod == 'merra2'){
+            lab <- '5-1'
+        }
 
-    list(usrpwd = usrpwd, urllog = urllog)
+        fileL <- file.path(.cdtDir$dirLocal, "config", "auth")
+        if(file.exists(fileL)){
+            auth <- readRDS(fileL)
+            cred <- auth[[prod]][[src]]
+            if(!is.null(cred)){
+                saved_auth <- TRUE
+                .cdtData$GalParams$login$usr <- cred$usr
+                .cdtData$GalParams$login$pwd <- cred$pwd
+            }
+        }
+    }
+
+    list(usr = reg, pwd = src_opts$password, url = urllog,
+         lab = lab, auth = saved_auth, cred = cred)
 }
 
 get_reanalysis.products <- function(){
@@ -63,12 +85,23 @@ get_reanalysis.products <- function(){
             y5[y5 == ""] <- NA
             y5 <- y5[!is.na(y5)]
             if(length(y5) == 0) y5 <- ""
-            y6 <- trimws(y$timestep)
+
+            y6 <- trimws(y$password)
             y6[y6 == ""] <- NA
             y6 <- y6[!is.na(y6)]
+            if(length(y6) == 0){
+                y6 <- FALSE
+            }else{
+                y6 <- as.logical(y6)
+            }
+
+            y7 <- trimws(y$timestep)
+            y7[y7 == ""] <- NA
+            y7 <- y7[!is.na(y7)]
 
             list(opt_name = y1, par_name = y2, var_name = y3,
-                 source = y4, registration = y5, timestep = y6)
+                 source = y4, registration = y5, password = y6,
+                 timestep = y7)
         })
 
         opt_name <- sapply(yy, '[[', 'opt_name')
@@ -143,13 +176,6 @@ download_Reanalysis <- function(){
     varsVAL <- reanal_opts$pars[[.cdtData$GalParams$src]]$par_name
     tclvalue(downVar) <- CbvarsVAL[varsVAL %in% .cdtData$GalParams$var]
 
-    #######
-    need.pwd <- reanal.need.usrpwd(.cdtData$GalParams$prod, .cdtData$GalParams$src)
-    statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
-    url.log <- tclVar(need.pwd$urllog)
-    username <- tclVar(.cdtData$GalParams$login$usr)
-    password <- tclVar(.cdtData$GalParams$login$pwd)
-
     ###########################
 
     frREAN <- tkframe(frRNLPROD)
@@ -164,30 +190,144 @@ download_Reanalysis <- function(){
 
     bt.range <- ttkbutton(frRNLPROD, text = lang.dlg[['button']][['3']])
 
-    ####
-    frLOGIN <- tkframe(frRNLPROD)
-    txt.log1 <- tklabel(frLOGIN, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
-    txt.log2 <- tklabel(frLOGIN, text = tclvalue(url.log), textvariable = url.log, anchor = 'w', justify = 'left')
+    ###########################
 
-    fgKolRegistr <- as.character(tkcget(txt.log2, '-foreground'))
-    bgKolRegistr <- as.character(tkcget(txt.log2, '-background'))
-    if(need.pwd$usrpwd){
-        fgKol <- "blue"
-        bgKol <- "white"
-    }else{
-        fgKol <- fgKolRegistr
-        bgKol <- bgKolRegistr
+    displayAuth <- function(prod, src){
+        tkdestroy(frAUTHcont)
+        tkconfigure(frAUTH, height = 1, width = 1)
+        tcl('update')
+
+        need.pwd <- reanal.need.usrpwd(prod, src)
+
+        ######
+        if(need.pwd$usr){
+            frAUTHcont <<- tkframe(frAUTH)
+
+            ######
+
+            frLOGIN <- tkframe(frAUTHcont)
+
+            url.log <- tclVar(need.pwd$url)
+
+            txt.log1 <- tklabel(frLOGIN, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
+            txt.log2 <- tklabel(frLOGIN, text = tclvalue(url.log), textvariable = url.log, anchor = 'w', justify = 'left')
+
+            fgKolRegistr <- as.character(tkcget(txt.log2, '-foreground'))
+            bgKolRegistr <- as.character(tkcget(txt.log2, '-background'))
+            if(need.pwd$usr){
+                fgKol <- "blue"
+                bgKol <- "white"
+            }else{
+                fgKol <- fgKolRegistr
+                bgKol <- bgKolRegistr
+            }
+            tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
+
+            tkgrid(txt.log1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            tkgrid(txt.log2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+            ######
+
+            tkbind(txt.log2, "<Button-1>", function(){
+                utils::browseURL(need.pwd$url)
+            })
+
+            tkbind(txt.log2, "<Enter>", function(){
+                tkconfigure(txt.log2, relief = 'groove', borderwidth = 2, cursor = 'hand2')
+            })
+
+            tkbind(txt.log2, "<Leave>", function(){
+                tkconfigure(txt.log2, relief = 'flat', borderwidth = 0, cursor = '')
+            })
+
+            ######
+            frSAVED <- tkframe(frAUTHcont)
+
+            if(need.pwd$auth){
+                statec <- 'normal'
+                tclvalue(saved.auth) <- need.pwd$auth
+            }else{
+                statec <- 'disabled'
+                tclvalue(saved.auth) <- FALSE
+            }
+
+            chk.saved.auth <- tkcheckbutton(frSAVED, variable = saved.auth, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left', state = statec)
+
+            tkgrid(chk.saved.auth, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+            tkbind(chk.saved.auth, "<Button-1>", function(){
+                if(tclvalue(saved.auth) == "0"){
+                    if(need.pwd$auth){
+                        statep <- 'disabled'
+                        tclvalue(username) <- need.pwd$cred$usr
+                        tclvalue(password) <- need.pwd$cred$pwd
+                    }else{
+                        statep <- 'normal'
+                        tclvalue(username) <- ""
+                        tclvalue(password) <- ""
+                        Insert.Messages.Out(lang.dlg[['message']][['14']], TRUE, "w")
+                    }
+                }else{
+                    statep <- 'normal'
+                    tclvalue(username) <- ""
+                    tclvalue(password) <- ""
+                }
+
+                tkconfigure(en.usr, state = statep)
+                tkconfigure(en.pwd, state = statep)
+            })
+
+            ######
+
+            frUSER <- tkframe(frAUTHcont)
+
+            if(need.pwd$auth){
+                statep <- 'disabled'
+                tclvalue(username) <- need.pwd$cred$usr
+                tclvalue(password) <- need.pwd$cred$pwd
+            }else{
+                statep <- 'normal'
+                tclvalue(username) <- ""
+                tclvalue(password) <- ""
+            }
+
+            txt.usr <- tklabel(frUSER, text = lang.dlg[['label']][[need.pwd$lab]], anchor = 'e', justify = 'right')
+            en.usr <- tkentry(frUSER, textvariable = username, width = largeur6, state = statep, justify = "left")
+            txt.pwd <- tklabel(frUSER, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
+            en.pwd <- tkentry(frUSER, textvariable = password, show = "*", width = largeur7, state = statep, justify = "left")
+
+            if(need.pwd$pwd){
+                tkgrid(txt.usr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+                tkgrid(en.usr, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+                tkgrid(txt.pwd, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+                tkgrid(en.pwd, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+            }else{
+                tkgrid(txt.usr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+                tkgrid(en.usr, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 6, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+                tkconfigure(en.usr, width = largeur6 + largeur7)
+            }
+
+            ######
+            tkgrid(frLOGIN, sticky = 'we')
+            tkgrid(frSAVED, sticky = 'we')
+            tkgrid(frUSER, sticky = 'we')
+
+            tkgrid(frAUTHcont, sticky = 'we')
+        }
     }
-    tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
 
-    ####
-    frUSER <- tkframe(frRNLPROD)
-    txt.usr <- tklabel(frUSER, text = lang.dlg[['label']][['5']], anchor = 'e', justify = 'right')
-    en.usr <- tkentry(frUSER, textvariable = username, state = statepwd, width = largeur6, justify = "left")
-    txt.pwd <- tklabel(frUSER, text = lang.dlg[['label']][['6']], anchor = 'e', justify = 'right')
-    en.pwd <- tkentry(frUSER, textvariable = password, show = "*", state = statepwd, width = largeur7, justify = "left")
+    ######
+    frAUTH <- tkframe(frRNLPROD)
+    frAUTHcont <- tkframe(frAUTH)
 
-    ####
+    username <- tclVar(.cdtData$GalParams$login$usr)
+    password <- tclVar(.cdtData$GalParams$login$pwd)
+    saved.auth <- tclVar(FALSE)
+
+    displayAuth(.cdtData$GalParams$prod, .cdtData$GalParams$src)
+
+    ###########################
+
     bt.info <- ttkbutton(frRNLPROD, text = lang.dlg[['button']][['4']])
     bt.tcover <- ttkbutton(frRNLPROD, text = lang.dlg[['button']][['5']])
 
@@ -221,8 +361,19 @@ download_Reanalysis <- function(){
         .cdtData$GalParams$src <- trimws(tclvalue(reanalSrc))
         .cdtData$GalParams$reanalysis <- trimws(tclvalue(reanalProd))
 
-        .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
-        .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
+        if(tclvalue(saved.auth) == "0"){
+            .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
+            .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
+
+            fileL <- file.path(.cdtDir$dirLocal, "config", "auth")
+            if(!file.exists(fileL)){
+                auth <- new.env()
+            }else{
+                auth <- readRDS(fileL)
+            }
+            auth[[.cdtData$GalParams$prod]][[.cdtData$GalParams$src]] <- .cdtData$GalParams$login
+            saveRDS(auth, fileL)
+        }
 
         if(testConnection()){
             Insert.Messages.Out(lang.dlg[['message']][['11']], TRUE, "i")
@@ -257,23 +408,16 @@ download_Reanalysis <- function(){
     tkgrid(txt.vars, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(cb.vars, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(txt.log1, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.log2, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-    tkgrid(txt.usr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.usr, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.pwd, row = 0, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.pwd, row = 0, column = 6, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    #############
 
     tkgrid(frREAN, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(frVARDATE, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(bt.range, row = 1, column = 5, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(frLOGIN, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(frUSER, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(frAUTH, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 8, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
-    tkgrid(bt.info, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
-    tkgrid(bt.tcover, row = 4, column = 4, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(bt.info, row = 3, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
+    tkgrid(bt.tcover, row = 3, column = 4, sticky = 'we', rowspan = 1, columnspan = 4, padx = 1, pady = 5, ipadx = 1, ipady = 1)
 
     helpWidget(cb.vars, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
     helpWidget(cb.prod, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
@@ -291,23 +435,10 @@ download_Reanalysis <- function(){
         tclvalue(reanalSrc) <- CbsrcVAL[1]
 
         ########
+
         src <- trimws(tclvalue(reanalSrc))
 
-        need.pwd <- reanal.need.usrpwd(prod, src)
-        statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
-
-        tclvalue(url.log) <- need.pwd$urllog
-        tkconfigure(en.usr, state = statepwd)
-        tkconfigure(en.pwd, state = statepwd)
-
-        if(need.pwd$usrpwd){
-            fgKol <- "blue"
-            bgKol <- "white"
-        }else{
-            fgKol <- fgKolRegistr
-            bgKol <- bgKolRegistr
-        }
-        tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
+        displayAuth(prod, src)
 
         ########
         CbvarsVAL <<- reanal_opts$pars[[src]]$var_name
@@ -330,45 +461,7 @@ download_Reanalysis <- function(){
         if(!trimws(tclvalue(downVar)) %in% CbvarsVAL)
             tclvalue(downVar) <- CbvarsVAL[1]
 
-        ########
-        need.pwd <- reanal.need.usrpwd(prod, src)
-        statepwd <- if(need.pwd$usrpwd) "normal" else "disabled"
-
-        tclvalue(url.log) <- need.pwd$urllog
-        tkconfigure(en.usr, state = statepwd)
-        tkconfigure(en.pwd, state = statepwd)
-
-        if(need.pwd$usrpwd){
-            fgKol <- "blue"
-            bgKol <- "white"
-        }else{
-            fgKol <- fgKolRegistr
-            bgKol <- bgKolRegistr
-        }
-        tkconfigure(txt.log2, foreground = fgKol, background = bgKol)
-    })
-
-    ####
-    tkbind(txt.log2, "<Button-1>", function(){
-        prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
-        src <- trimws(tclvalue(reanalSrc))
-        need.pwd <- reanal.need.usrpwd(prod, src)
-        if(need.pwd$usrpwd){
-            utils::browseURL(need.pwd$urllog)
-        }
-    })
-
-    tkbind(txt.log2, "<Enter>", function(){
-        prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
-        src <- trimws(tclvalue(reanalSrc))
-        need.pwd <- reanal.need.usrpwd(prod, src)
-        if(need.pwd$usrpwd){
-            tkconfigure(txt.log2, relief = 'groove', borderwidth = 2, cursor = 'hand2')
-        }
-    })
-
-    tkbind(txt.log2, "<Leave>", function(){
-        tkconfigure(txt.log2, relief = 'flat', borderwidth = 0, cursor = '')
+        displayAuth(prod, src)
     })
 
     ###################################################
@@ -462,8 +555,19 @@ download_Reanalysis <- function(){
             .cdtData$GalParams$prod <- prodVAL[CbprodVAL %in% trimws(tclvalue(reanalProd))]
             .cdtData$GalParams$src <- trimws(tclvalue(reanalSrc))
 
-            .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
-            .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
+            if(tclvalue(saved.auth) == "0"){
+                .cdtData$GalParams$login$usr <- trimws(tclvalue(username))
+                .cdtData$GalParams$login$pwd <- trimws(tclvalue(password))
+
+                fileL <- file.path(.cdtDir$dirLocal, "config", "auth")
+                if(!file.exists(fileL)){
+                    auth <- new.env()
+                }else{
+                    auth <- readRDS(fileL)
+                }
+                auth[[.cdtData$GalParams$prod]][[.cdtData$GalParams$src]] <- .cdtData$GalParams$login
+                saveRDS(auth, fileL)
+            }
 
             .cdtData$GalParams$dir2save <- trimws(tclvalue(dir2save))
 

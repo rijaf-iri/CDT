@@ -4,21 +4,21 @@
 #' 
 #' @param cdtdata_info named list, providing the information about the CDT dataset.
 #' \itemize{
-#' \item{\code{dir}: }{character, full path to the directory to save the created CDT dataset.}
-#' \item{\code{name}: }{character, name of the dataset to use.}
+#' \item \code{dir}: character, full path to the directory to save the created CDT dataset.
+#' \item \code{name}: character, name of the dataset to use.
 #' }
 #' @param netcdf_data named list, providing the input netCDF data to be converted to a CDT dataset format.
 #' \itemize{
-#' \item{\code{timestep}: }{character, the time step of the netCDF data.}
-#' \item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
-#' \item{\code{format}: }{character, format of the netCDF file names. Example: \code{'precip_\%S.nc'}}
+#' \item \code{timestep}: character, the time step of the netCDF data.
+#' \item \code{dir}: character, full path to the directory containing the netCDF files.
+#' \item \code{format}: character, format of the netCDF file names. Example: \code{'precip_\%S.nc'}
 #' }
 #' @param ncvar_info named list, providing the name of the variable and longitude, latitude, time of the netCDF data.
 #' \itemize{
-#' \item{\code{varid}: }{character, the name of the variable to be converted.}
-#' \item{\code{lon_dim}: }{character, the name of the longitude dimension.}
-#' \item{\code{lat_dim}: }{character, the name of the latitude dimension.}
-#' \item{\code{time_dim}: }{character, the name of the time dimension.}
+#' \item \code{varid}: character, the name of the variable to be converted.
+#' \item \code{lon_dim}: character, the name of the longitude dimension.
+#' \item \code{lat_dim}: character, the name of the latitude dimension.
+#' \item \code{time_dim}: character, the name of the time dimension.
 #' }
 #' @param extra_ncdim named list, providing the values of the dimensions other than the longitude,
 #' latitude and time to be extracted if the netCDF data contains more than 3 dimensions. For example,

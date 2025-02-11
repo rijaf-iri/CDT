@@ -264,6 +264,110 @@ readNetCDFData2Points <- function(ncInfo, stnCoords, GUI = TRUE){
     do.call(rbind, ncdata)
 }
 
+readNetCDFData2Points_wind <- function(ncInfo, stnCoords, oneNetCDF, GUI = TRUE){
+    ncCoords <- ncInfo$ncinfo[c('lon', 'lat')]
+    ijx <- grid2pointINDEX(stnCoords, ncCoords)
+
+    ncInfo <- ncInfo
+    oneNetCDF <- oneNetCDF
+    if(oneNetCDF){
+        checkerFile <- file.path(dirname(ncInfo$UV$ncfiles[1]), '.checker')
+        parsL <- doparallel.cond(length(which(ncInfo$UV$exist)) >= 50)
+        seq_ncfiles <- seq_along(ncInfo$UV$ncfiles)
+    }else{
+        checkerFile <- file.path(dirname(ncInfo$V$ncfiles[1]), '.checker')
+        parsL <- doparallel.cond(length(which(ncInfo$V$exist)) >= 50)
+        seq_ncfiles <- seq_along(ncInfo$V$ncfiles)
+    }
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    ncdata <- cdt.foreach(seq_ncfiles, parsL, GUI,
+                          progress = TRUE, FUN = function(jj)
+    {
+        if(file.exists(checkerFile)) return(list(data = NULL, msg = NULL))
+
+        u_xvar <- NA
+        v_xvar <- NA
+        if(oneNetCDF){
+            if(ncInfo$UV$exist[jj]){
+                nc <- try(ncdf4::nc_open(ncInfo$UV$ncfiles[jj]), silent = TRUE)
+                if(inherits(nc, "try-error")){
+                    write('', checkerFile)
+                    msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo$UV$ncfiles[jj])
+                    return(list(data = NULL, msg = msg))
+                }
+                u_xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varidU)
+                v_xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varidV)
+                ncdf4::nc_close(nc)
+                if(ncInfo$ncinfo$UV$nx != nrow(u_xvar) |
+                   ncInfo$ncinfo$UV$ny != ncol(u_xvar)){
+                    write('', checkerFile)
+                    msg <- paste('Grids do not match', ncInfo$UV$ncfiles[jj])
+                    return(list(data = NULL, msg = msg))
+                }
+                u_xvar <- transposeNCDFData(u_xvar, ncInfo$ncinfo$UV)
+                u_xvar <- u_xvar[ijx]
+                v_xvar <- transposeNCDFData(v_xvar, ncInfo$ncinfo$UV)
+                v_xvar <- v_xvar[ijx]
+            }
+        }else{
+            tmp <- lapply(c('U', 'V'), function(uv){
+                out <- list(data = NA, msg = NULL)
+                if(ncInfo[[uv]]$exist[jj]){
+                    nc <- try(ncdf4::nc_open(ncInfo[[uv]]$ncfiles[jj]), silent = TRUE)
+                    if(inherits(nc, "try-error")){
+                        write('', checkerFile)
+                        msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo[[uv]]$ncfiles[jj])
+                        return(list(data = NULL, msg = msg))
+                    }
+                    varid <- paste0('varid', uv)
+                    xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo[[varid]])
+                    ncdf4::nc_close(nc)
+                    if(ncInfo$ncinfo[[uv]]$nx != nrow(xvar) |
+                       ncInfo$ncinfo[[uv]]$ny != ncol(xvar)){
+                        write('', checkerFile)
+                        msg <- paste('Grids do not match', ncInfo[[uv]]$ncfiles[jj])
+                        return(list(data = NULL, msg = msg))
+                    }
+                    xvar <- transposeNCDFData(xvar, ncInfo$ncinfo[[uv]])
+                    xvar <- xvar[ijx]
+                    out <- list(data = xvar, msg = NULL)
+                }
+                return(out)
+            })
+
+            msgs <- lapply(tmp, '[[', 'msg')
+            inull <- !sapply(msgs, is.null)
+            if(any(inull)){
+                msgs <- unlist(msgs[inull])
+                return(list(data = NULL, msg = msgs))
+            }
+            tmp <- lapply(tmp, '[[', 'data')
+            u_xvar <- tmp[[1]]
+            v_xvar <- tmp[[2]]
+        }
+
+        return(list(data = list(U = u_xvar, V = v_xvar), msg = NULL))
+    })
+
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    msgs <- lapply(ncdata, '[[', 'msg')
+    inull <- !sapply(msgs, is.null)
+    if(any(inull)){
+        msgs <- unlist(msgs[inull])
+        for(j in seq_along(msgs)) Insert.Messages.Out(msgs[j], TRUE, "e", GUI)
+        stop('Extracting netCDF data at station locations failed.')
+    }
+
+    ncdata <- lapply(ncdata, '[[', 'data')
+    u_grd <- lapply(ncdata, '[[', 'U')
+    u_grd <- do.call(rbind, u_grd)
+    v_grd <- lapply(ncdata, '[[', 'V')
+    v_grd <- do.call(rbind, v_grd)
+    list(U = u_grd, V = v_grd)
+}
+
 readNetCDFData2AggrBox <- function(ncInfo, boxregion, spmethod = 'bilinear', GUI = TRUE){
     rlon <- range(ncInfo$ncinfo$lon)
     dlon <- floor(diff(rlon)/boxregion$blon)
@@ -352,6 +456,172 @@ readNetCDFData2AggrBox <- function(ncInfo, boxregion, spmethod = 'bilinear', GUI
     list(lon = xlon, lat = xlat, spbox = spxybox, data = ncdata)
 }
 
+readNetCDFData2AggrBox_wind <- function(ncInfo, boxregion, spmethod = 'bilinear', oneNetCDF = TRUE, GUI = TRUE){
+    rlon <- range(ncInfo$ncinfo$lon)
+    rlat <- range(ncInfo$ncinfo$lat)
+    dlon <- floor(diff(rlon)/boxregion$blon)
+    dlat <- floor(diff(rlat)/boxregion$blat)
+    xlon <- seq(rlon[1], rlon[2], length.out = dlon)
+    xlat <- seq(rlat[1], rlat[2], length.out = dlat)
+
+    boxCoords <- list(lon = xlon, lat = xlat)
+    ncCoords <- ncInfo$ncinfo[c('lon', 'lat')]
+    spxybox <- defSpatialPixels(boxCoords)
+    spxybox <- methods::as(spxybox, "SpatialPolygons")
+
+    if(spmethod == 'weightedAverage'){
+        spxygrd <- defSpatialPixels(ncCoords)
+        spxygrd$z <- seq_along(spxygrd)
+        spxygrd <- raster::raster(spxygrd)
+        ij2xtr <- raster::extract(spxygrd, spxybox, weights = TRUE,
+                                  normalizeWeights = TRUE, cellnumbers = TRUE)
+    }
+
+    ####
+    ncInfo <- ncInfo
+    spmethod <- spmethod
+    oneNetCDF <- oneNetCDF
+
+    if(oneNetCDF){
+        checkerFile <- file.path(dirname(ncInfo$UV$ncfiles[1]), '.checker')
+        parsL <- doparallel.cond(length(which(ncInfo$UV$exist)) >= 50)
+        seq_ncfiles <- seq_along(ncInfo$UV$ncfiles)
+    }else{
+        checkerFile <- file.path(dirname(ncInfo$V$ncfiles[1]), '.checker')
+        parsL <- doparallel.cond(length(which(ncInfo$V$exist)) >= 50)
+        seq_ncfiles <- seq_along(ncInfo$V$ncfiles)
+    }
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    ncdata <- cdt.foreach(seq_ncfiles, parsL, GUI,
+                          progress = TRUE, FUN = function(jj)
+    {
+        if(file.exists(checkerFile)) return(list(data = NULL, msg = NULL))
+
+        u_xvar <- NA
+        v_xvar <- NA
+        if(oneNetCDF){
+            if(ncInfo$UV$exist[jj]){
+                nc <- try(ncdf4::nc_open(ncInfo$UV$ncfiles[jj]), silent = TRUE)
+                if(inherits(nc, "try-error")){
+                    write('', checkerFile)
+                    msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo$UV$ncfiles[jj])
+                    return(list(data = NULL, msg = msg))
+                }
+                u_xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varidU)
+                v_xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varidV)
+                ncdf4::nc_close(nc)
+                if(ncInfo$ncinfo$UV$nx != nrow(u_xvar) |
+                   ncInfo$ncinfo$UV$ny != ncol(u_xvar)){
+                    write('', checkerFile)
+                    msg <- paste('Grids do not match', ncInfo$UV$ncfiles[jj])
+                    return(list(data = NULL, msg = msg))
+                }
+                u_xvar <- transposeNCDFData(u_xvar, ncInfo$ncinfo$UV)
+                v_xvar <- transposeNCDFData(v_xvar, ncInfo$ncinfo$UV)
+                wind_xvar <- list(u_xvar, v_xvar)
+
+                if(spmethod == 'bilinear'){
+                    tmp <- lapply(wind_xvar, function(uv_xvar){
+                        tmp <- c(ncCoords, list(z = uv_xvar))
+                        xvar <- cdt.interp.surface.grid(tmp, boxCoords)
+                        c(xvar$z)
+                    })
+                }else{
+                    tmp <- lapply(wind_xvar, function(uv_xvar){
+                        xvar <- sapply(seq_along(ij2xtr), function(ii){
+                            ix <- ij2xtr[[ii]]
+                            mat <- uv_xvar[ix[, "value"]]
+                            if(nrow(ix) > 1){
+                                mat <- mat * ix[, "weight"]
+                                mat <- mat[!is.na(mat)]
+                                mat <- if(length(mat) > 0) sum(mat) else NA
+                            }
+                            return(mat)
+                        })
+                        return(xvar)
+                    })
+                }
+
+                u_xvar <- tmp[[1]]
+                v_xvar <- tmp[[2]]
+            }
+        }else{
+            tmp <- lapply(c('U', 'V'), function(uv){
+                out <- list(data = NA, msg = NULL)
+                if(ncInfo[[uv]]$exist[jj]){
+                    nc <- try(ncdf4::nc_open(ncInfo[[uv]]$ncfiles[jj]), silent = TRUE)
+                    if(inherits(nc, "try-error")){
+                        write('', checkerFile)
+                        msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo[[uv]]$ncfiles[jj])
+                        return(list(data = NULL, msg = msg))
+                    }
+                    varid <- paste0('varid', uv)
+                    xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo[[varid]])
+                    ncdf4::nc_close(nc)
+                    if(ncInfo$ncinfo[[uv]]$nx != nrow(xvar) |
+                       ncInfo$ncinfo[[uv]]$ny != ncol(xvar)){
+                        write('', checkerFile)
+                        msg <- paste('Grids do not match', ncInfo[[uv]]$ncfiles[jj])
+                        return(list(data = NULL, msg = msg))
+                    }
+                    xvar <- transposeNCDFData(xvar, ncInfo$ncinfo[[uv]])
+
+                    if(spmethod == 'bilinear'){
+                        tmp <- c(ncCoords, list(z = xvar))
+                        xvar <- cdt.interp.surface.grid(tmp, boxCoords)
+                        xvar <- c(xvar$z)
+                    }else{
+                        xvar <- sapply(seq_along(ij2xtr), function(ii){
+                            ix <- ij2xtr[[ii]]
+                            mat <- xvar[ix[, "value"]]
+                            if(nrow(ix) > 1){
+                                mat <- mat * ix[, "weight"]
+                                mat <- mat[!is.na(mat)]
+                                mat <- if(length(mat) > 0) sum(mat) else NA
+                            }
+                            return(mat)
+                        })
+                    }
+                    out <- list(data = xvar, msg = NULL)
+                }
+                return(out)
+            })
+
+            msgs <- lapply(tmp, '[[', 'msg')
+            inull <- !sapply(msgs, is.null)
+            if(any(inull)){
+                msgs <- unlist(msgs[inull])
+                return(list(data = NULL, msg = msgs))
+            }
+            tmp <- lapply(tmp, '[[', 'data')
+            u_xvar <- tmp[[1]]
+            v_xvar <- tmp[[2]]
+        }
+
+        return(list(data = list(U = u_xvar, V = v_xvar), msg = NULL))
+    })
+
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    msgs <- lapply(ncdata, '[[', 'msg')
+    inull <- !sapply(msgs, is.null)
+    if(any(inull)){
+        msgs <- unlist(msgs[inull])
+        for(j in seq_along(msgs)) Insert.Messages.Out(msgs[j], TRUE, "e", GUI)
+        stop('Aggregating netCDF data into box failed.')
+    }
+
+    ncdata <- lapply(ncdata, '[[', 'data')
+    u_grd <- lapply(ncdata, '[[', 'U')
+    u_grd <- do.call(rbind, u_grd)
+    v_grd <- lapply(ncdata, '[[', 'V')
+    v_grd <- do.call(rbind, v_grd)
+    ncdata <- list(U = u_grd, V = v_grd)
+
+    list(lon = xlon, lat = xlat, spbox = spxybox, data = ncdata)
+}
+
 readNetCDFData2Directory <- function(ncInfo, datadir, GUI = TRUE){
     ncCoords <- ncInfo$ncinfo[c('lon', 'lat')]
     newCoords <- ncInfo$ncgrid[c('lon', 'lat')]
@@ -431,6 +701,167 @@ readNetCDFData2Directory <- function(ncInfo, datadir, GUI = TRUE){
         con <- gzfile(datafile, open = "wb", compression = 9)
         cat(tmp, file = con, sep = '\n')
         close(con)
+    })
+
+    Insert.Messages.Out("Compressing chunks data done", TRUE, "s", GUI)
+
+    out <- list(lon = ncInfo$ncgrid$lon, lat = ncInfo$ncgrid$lat, chunks = chunks)
+
+    indexfile <- file.path(datadir, 'index.rds')
+    saveRDS(out, file = indexfile)
+
+    return(out)
+}
+
+readNetCDFData2Directory_wind <- function(ncInfo, datadir, oneNetCDF = TRUE, GUI = TRUE){
+    ncCoords <- ncInfo$ncinfo[c('lon', 'lat')]
+    newCoords <- ncInfo$ncgrid[c('lon', 'lat')]
+    crdGRD <- expand.grid(newCoords)
+    seqGRD <- seq(nrow(crdGRD))
+    chunks <- split(seqGRD, ceiling(seqGRD / 500))
+
+    ####
+    ncInfo <- ncInfo
+    oneNetCDF <- oneNetCDF
+    datadir <- datadir
+
+    datadirU <- file.path(datadir, 'U')
+    dir.create(datadirU, showWarnings = FALSE, recursive = TRUE)
+    datadirV <- file.path(datadir, 'V')
+    dir.create(datadirV, showWarnings = FALSE, recursive = TRUE)
+    datadirUV <- c(datadirU, datadirV)
+
+    if(oneNetCDF){
+        checkerFile <- file.path(dirname(ncInfo$UV$ncfiles[1]), '.checker')
+        parsL <- doparallel.cond(length(which(ncInfo$UV$exist)) >= 50)
+        seq_ncfiles <- seq_along(ncInfo$UV$ncfiles)
+    }else{
+        checkerFile <- file.path(dirname(ncInfo$V$ncfiles[1]), '.checker')
+        parsL <- doparallel.cond(length(which(ncInfo$V$exist)) >= 50)
+        seq_ncfiles <- seq_along(ncInfo$V$ncfiles)
+    }
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    msgs <- cdt.foreach(seq_ncfiles, parsL, GUI,
+                          progress = TRUE, FUN = function(jj)
+    {
+        if(file.exists(checkerFile)) return(NULL)
+
+        if(oneNetCDF){
+            if(ncInfo$UV$exist[jj]){
+                nc <- try(ncdf4::nc_open(ncInfo$UV$ncfiles[jj]), silent = TRUE)
+                if(inherits(nc, "try-error")){
+                    write('', checkerFile)
+                    msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo$UV$ncfiles[jj])
+                    return(msg)
+                }
+                u_xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varidU)
+                v_xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo$varidV)
+                ncdf4::nc_close(nc)
+                if(ncInfo$ncinfo$UV$nx != nrow(u_xvar) |
+                   ncInfo$ncinfo$UV$ny != ncol(u_xvar)){
+                    write('', checkerFile)
+                    msg <- paste('Grids do not match', ncInfo$UV$ncfiles[jj])
+                    return(msg)
+                }
+                u_xvar <- transposeNCDFData(u_xvar, ncInfo$ncinfo$UV)
+                v_xvar <- transposeNCDFData(v_xvar, ncInfo$ncinfo$UV)
+                wind_xvar <- list(u_xvar, v_xvar)
+
+                if(ncInfo$ncgrid$regrid){
+                    wind_xvar <- lapply(wind_xvar, function(uv_xvar){
+                        tmp <- c(ncCoords, list(z = uv_xvar))
+                        xvar <- cdt.interp.surface.grid(tmp, newCoords)
+                        xvar$z
+                    })
+                }
+
+                lchunks <- sample(seq_along(chunks), length(chunks))
+                for(l in lchunks){
+                    for(k in 1:2){
+                        tmp <- round(wind_xvar[[k]][chunks[[l]]], 2)
+                        tmp <- c(ncInfo$UV$dates[jj], tmp)
+                        tmp <- paste0(tmp, collapse = ',')
+                        tmp <- paste0(tmp, '\n')
+                        datafile <- file.path(datadirUV[k], paste0('chunk_', l))
+                        cat(tmp, file = datafile, sep = '\n', append = TRUE)
+                    }
+                }
+            }
+        }else{
+            msgs <- lapply(c('U', 'V'), function(uv){
+                if(ncInfo[[uv]]$exist[jj]){
+                    nc <- try(ncdf4::nc_open(ncInfo[[uv]]$ncfiles[jj]), silent = TRUE)
+                    if(inherits(nc, "try-error")){
+                        write('', checkerFile)
+                        msg <- paste(as.character(nc), '\n', 'Unable to open', ncInfo[[uv]]$ncfiles[jj])
+                        return(msg)
+                    }
+
+                    varid <- paste0('varid', uv)
+                    xvar <- ncdf4::ncvar_get(nc, varid = ncInfo$ncinfo[[varid]])
+                    ncdf4::nc_close(nc)
+                    if(ncInfo$ncinfo[[uv]]$nx != nrow(xvar) |
+                       ncInfo$ncinfo[[uv]]$ny != ncol(xvar)){
+                        write('', checkerFile)
+                        msg <- paste('Grids do not match', ncInfo[[uv]]$ncfiles[jj])
+                        return(msg)
+                    }
+                    xvar <- transposeNCDFData(xvar, ncInfo$ncinfo[[uv]])
+
+                    if(ncInfo$ncgrid$regrid){
+                        tmp <- c(ncCoords, list(z = xvar))
+                        xvar <- cdt.interp.surface.grid(tmp, newCoords)
+                        xvar <- xvar$z
+                    }
+
+                    lchunks <- sample(seq_along(chunks), length(chunks))
+                    for(l in lchunks){
+                        tmp <- round(xvar[chunks[[l]]], 2)
+                        tmp <- c(ncInfo[[uv]]$dates[jj], tmp)
+                        tmp <- paste0(tmp, collapse = ',')
+                        tmp <- paste0(tmp, '\n')
+                        datafile <- file.path(datadir, uv, paste0('chunk_', l))
+                        cat(tmp, file = datafile, sep = '\n', append = TRUE)
+                    }
+                }
+                return(NULL)
+            })
+
+            inull <- !sapply(msgs, is.null)
+            if(any(inull)){
+                return(unlist(msgs[inull]))
+            }
+        }
+
+        return(NULL)
+    })
+
+    if(file.exists(checkerFile)) unlink(checkerFile)
+
+    inull <- !sapply(msgs, is.null)
+    if(any(inull)){
+        msgs <- unlist(msgs[inull])
+        for(j in seq_along(msgs)) Insert.Messages.Out(msgs[j], TRUE, "e", GUI)
+        stop('Formatting netCDF data into chunks failed.')
+    }
+
+    Insert.Messages.Out("Compress chunks data", TRUE, "i", GUI)
+
+    parsL <- doparallel.cond(length(chunks) >= 50)
+    ret <- cdt.foreach(seq_along(chunks), parsL, GUI,
+                       progress = TRUE, FUN = function(j)
+    {
+        for(uv in c('U', 'V')){
+            datafile <- file.path(datadir, uv, paste0('chunk_', j))
+            tmp <- readLines(datafile)
+            unlink(datafile)
+            tmp <- trimws(tmp)
+            tmp <- tmp[tmp != ""]
+            con <- gzfile(datafile, open = "wb", compression = 9)
+            cat(tmp, file = con, sep = '\n')
+            close(con)
+        }
     })
 
     Insert.Messages.Out("Compressing chunks data done", TRUE, "s", GUI)

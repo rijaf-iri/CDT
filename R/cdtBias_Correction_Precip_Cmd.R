@@ -7,9 +7,9 @@
 #' The list includes an element \code{from} with available options \code{"range"}, \code{"file"} or \code{"dates"}, and 
 #'  an element \code{pars} which is a named list specifying the parameters related to \code{from}:
 #' \itemize{
-#' \item{\strong{"range"}: }{\code{pars} specifies the start and end dates to merge. \cr
-#' Example: \code{pars = list(start = "2018011", end = "2018123")}}
-#' \item{\strong{"file"}: }{\code{pars} specifies the full path to the file containing the dates to merge.
+#' \item \strong{"range"}: \code{pars} specifies the start and end dates to merge. \cr
+#' Example: \code{pars = list(start = "2018011", end = "2018123")}
+#' \item \strong{"file"}: \code{pars} specifies the full path to the file containing the dates to merge.
 #'  Example: \code{pars = list(file = "/home/data/files/dates.txt")}\cr
 #' The contents of the file are as follows:\cr
 #' ## cat /home/data/files/dates.txt \cr
@@ -17,31 +17,29 @@
 #' 2020012\cr
 #' 2020013\cr
 #' ......
-#' }
-#' \item{\strong{"dates"}: }{\code{pars} specifies a vector containing the dates to merge. \cr
-#' Example: \code{pars = list(dates = c("2020011", "2020012", 2020091, 2020113))}}
+#' \item \strong{"dates"}: \code{pars} specifies a vector containing the dates to merge. \cr
+#' Example: \code{pars = list(dates = c("2020011", "2020012", 2020091, 2020113))}
 #' } 
 #' @param netcdf.data named list, providing the input netCDF dataset to be corrected.
 #' \itemize{
-#' \item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
-#' \item{\code{format}: }{character, format of the netCDF file names}
-#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data}
-#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
-#' Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
-#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+#' \item \code{dir}: character, full path to the directory containing the netCDF files.
+#' \item \code{format}: character, format of the netCDF file names
+#' \item \code{varid}: character, name of the variable to read from the netCDF data
+#' \item \code{ilon}: integer, order for the longitude dimension of the variable. 
+#' Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2
+#' \item \code{ilat}: integer, order for the latitude dimension of the variable.
 #' }
 #' @param bias.method named list, indicating the bias parameters.
 #' \itemize{
-#' \item{\code{"method"}: }{character, the bias method. Valid options: \code{"mbvar"}, \code{"mbmon"}, \code{"qmdist"} or \code{"qmecdf"}.
+#' \item \code{"method"}: character, the bias method. Valid options: \code{"mbvar"}, \code{"mbmon"}, \code{"qmdist"} or \code{"qmecdf"}.
 #'  \itemize{
-#'   \item{\strong{"mbvar"}: }{Multiplicative Bias Time Step Variable}
-#'   \item{\strong{"mbmon"}: }{Multiplicative Bias for Each Month}
-#'   \item{\strong{"qmdist"}: }{Quantile Mapping with Empirical Distribution}
-#'   \item{\strong{"qmecdf"}: }{Quantile Mapping with Fitted Distribution}
+#'   \item \strong{"mbvar"}: Multiplicative Bias Time Step Variable
+#'   \item \strong{"mbmon"}: Multiplicative Bias for Each Month
+#'   \item \strong{"qmdist"}: Quantile Mapping with Empirical Distribution
+#'   \item \strong{"qmecdf"}: Quantile Mapping with Fitted Distribution
 #'  }
-#' }
-#' \item{\code{"dir"}: }{character, full path to the directory containing the bias coefficients in netCDF format}
-#' \item{\code{format}: }{character, format of the bias netCDF file names}
+#' \item \code{"dir"}: character, full path to the directory containing the bias coefficients in netCDF format
+#' \item \code{format}: character, format of the bias netCDF file names
 #' }
 #' @param output named list, indicating the directory to save the bias corrected data and the format of the bias corrected netCDF file name.
 #' @param GUI logical, indicating whether or not the output message should be displayed on CDT GUI. If \code{TRUE}, CDT GUI must be open.

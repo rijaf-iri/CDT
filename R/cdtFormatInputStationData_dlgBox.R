@@ -2,11 +2,11 @@
 Format_CDT_Input_Station_Data <- function(){
     if(WindowsOS()){
         largeur0 <- 48
-        largeur1 <- 24
+        largeur1 <- 19
         largeur2 <- 23
     }else{
         largeur0 <- 45
-        largeur1 <- 24
+        largeur1 <- 19
         largeur2 <- 23
     }
 
@@ -27,24 +27,37 @@ Format_CDT_Input_Station_Data <- function(){
     frDate <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
 
     file.period <- tclVar()
-    cb.periodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][c(3, 5, 6)]
-    periodVAL <- c('daily', 'dekadal', 'monthly')
+    cb.periodVAL <- .cdtEnv$tcl$lang$global[['combobox']][['1']][c(2, 3, 5, 6)]
+    periodVAL <- c('hourly', 'daily', 'dekadal', 'monthly')
     tclvalue(file.period) <- cb.periodVAL[periodVAL %in% .cdtData$GalParams$tstep]
 
+    retminhr <- set.hour.minute(.cdtData$GalParams$tstep, .cdtData$GalParams$minhour)
+    minhour.tclVar <- tclVar(retminhr$val)
+
     #########
-    cb.period <- ttkcombobox(frDate, values = cb.periodVAL, textvariable = file.period, width = largeur1)
+    cb.period <- ttkcombobox(frDate, values = cb.periodVAL, textvariable = file.period, width = largeur1, justify = 'center')
+    cb.minhour <- ttkcombobox(frDate, values = retminhr$cb, textvariable = minhour.tclVar, state = retminhr$state, width = 2, justify = 'center')
     bt.period <- ttkbutton(frDate, text = lang.dlg[['button']][['1']], width = largeur2)
+
+    tkgrid(cb.period, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(cb.minhour, row = 0, column = 1, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(bt.period, row = 0, column = 2, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
+
+    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+    helpWidget(bt.period, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
 
     tkconfigure(bt.period, command = function(){
         tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
         .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
     })
 
-    tkgrid(cb.period, row = 0, column = 0, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(bt.period, row = 0, column = 1, sticky = 'we', padx = 1, pady = 3, ipadx = 1, ipady = 1)
-
-    helpWidget(cb.period, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
-    helpWidget(bt.period, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+    tkbind(cb.period, "<<ComboboxSelected>>", function(){
+        tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        retminhr <- set.hour.minute(tstep, minhour)
+        tkconfigure(cb.minhour, values = retminhr$cb, state = retminhr$state)
+        tclvalue(minhour.tclVar) <- retminhr$val
+    })
 
     ############################################
     frMinPerc <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2)
@@ -67,32 +80,44 @@ Format_CDT_Input_Station_Data <- function(){
     FilesTYPEin <- c('Multiple', 'Single')
     tclvalue(data.type) <- FilesTYPE[FilesTYPEin %in% .cdtData$GalParams$data.type]
 
-    cb.dataType <- ttkcombobox(frData, values = FilesTYPE, textvariable = data.type, width = largeur1)
-    bt.dataType <- ttkbutton(frData, text = lang.dlg[['button']][['2']], width = largeur2)
+    fr.dataType <- tkframe(frData)
+    txt.dataType <- tklabel(fr.dataType, text = "", width = 2)
+    cb.dataType <- ttkcombobox(fr.dataType, values = FilesTYPE, textvariable = data.type, width = largeur1, justify = 'center')
+    bt.dataType <- ttkbutton(fr.dataType, text = lang.dlg[['button']][['2']], width = largeur2)
 
-    if(tclvalue(data.type) == FilesTYPE[1]) dataType.Fun <- multipleFileCDTFormat
-    if(tclvalue(data.type) == FilesTYPE[2]) dataType.Fun <- singleFileCDTFormat
+    tkgrid(txt.dataType, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(cb.dataType, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(bt.dataType, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
+    tkgrid(fr.dataType)
+
+    helpWidget(frData, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
 
     settingdone <- NULL
     tkconfigure(bt.dataType, command = function(){
+        tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
+        minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
+        datatype <- FilesTYPEin[FilesTYPE %in% trimws(tclvalue(data.type))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        dataType.Fun(tt, cb.periodVAL, tclvalue(file.period))
+        if(datatype == 'Multiple'){
+            multipleFileCDTFormat(tt, tstep)
+        }else{
+            singleFileCDTFormat(tt, tstep, minhour)
+        }
         tcl('wm', 'attributes', tt, topmost = TRUE)
         settingdone <<- 1
     })
 
-    tkgrid(cb.dataType, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-    tkgrid(bt.dataType, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 3, ipadx = 1, ipady = 1)
-
-    helpWidget(frData, lang.dlg[['tooltip']][['6']], lang.dlg[['status']][['6']])
-
-    tkbind(cb.dataType,"<<ComboboxSelected>>", function(){
-        if(tclvalue(data.type) == FilesTYPE[1]) dataType.Fun <- multipleFileCDTFormat
-        if(tclvalue(data.type) == FilesTYPE[2]) dataType.Fun <- singleFileCDTFormat
-
+    tkbind(cb.dataType, "<<ComboboxSelected>>", function(){
         tkconfigure(bt.dataType, command = function(){
+            datatype <- FilesTYPEin[FilesTYPE %in% trimws(tclvalue(data.type))]
+            tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
+            minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             tcl('wm', 'attributes', tt, topmost = FALSE)
-            dataType.Fun(tt, cb.periodVAL, tclvalue(file.period))
+            if(datatype == 'Multiple'){
+                multipleFileCDTFormat(tt, tstep)
+            }else{
+                singleFileCDTFormat(tt, tstep, minhour)
+            }
             tcl('wm', 'attributes', tt, topmost = TRUE)
             settingdone <<- 1
         })
@@ -109,21 +134,21 @@ Format_CDT_Input_Station_Data <- function(){
 
     #####
 
-    tkconfigure(bt.file.save, command = function(){
-        tcl('wm', 'attributes', tt, topmost = FALSE)
-        file2save1 <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypesA)
-        tcl('wm', 'attributes', tt, topmost = TRUE)
-        tclvalue(file.save1) <- if(is.na(file2save1)) .cdtData$GalParams$IO.files$File2Save else file2save1
-    })
-
-    #####
-
     tkgrid(txt.file.save, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(en.file.save, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
     tkgrid(bt.file.save, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 0, pady = 0, ipadx = 1, ipady = 1)
 
     helpWidget(en.file.save, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
     helpWidget(bt.file.save, lang.dlg[['tooltip']][['5']], lang.dlg[['status']][['5']])
+
+    #####
+
+    tkconfigure(bt.file.save, command = function(){
+        tcl('wm', 'attributes', tt, topmost = FALSE)
+        file2save1 <- tk_get_SaveFile(filetypes = .cdtEnv$tcl$data$filetypesA)
+        tcl('wm', 'attributes', tt, topmost = TRUE)
+        tclvalue(file.save1) <- if(is.na(file2save1)) .cdtData$GalParams$IO.files$File2Save else file2save1
+    })
 
     ############################################
     tkgrid(frDate, row = 0, column = 0, sticky = 'we', padx = 5, pady = 3, ipadx = 1, ipady = 1)
@@ -144,6 +169,7 @@ Format_CDT_Input_Station_Data <- function(){
             tkwait.window(tt)
         }else{
             .cdtData$GalParams$tstep <- periodVAL[cb.periodVAL %in% trimws(tclvalue(file.period))]
+            .cdtData$GalParams$minhour <- as.numeric(trimws(tclvalue(minhour.tclVar)))
             .cdtData$GalParams$data.type <- FilesTYPEin[FilesTYPE %in% trimws(tclvalue(data.type))]
 
             .cdtData$GalParams$IO.files$File2Save <- trimws(tclvalue(file.save1))
@@ -195,8 +221,7 @@ Format_CDT_Input_Station_Data <- function(){
 
 ################################################################
 
-multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
-    listOpenFiles <- openFile_ttkcomboList()
+multipleFileCDTFormat <- function(top.win, tstep){
     if(WindowsOS()){
         largeur0 <- 40
         largeur1 <- 16
@@ -243,22 +268,26 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
 
     rbdtfrmt <- tclVar(.cdtData$GalParams$Multiple.File$date.format)
 
-    if(tstep == tstep.list[1]){
+    if(tstep == 'hourly'){
+        txtdtfrmt1 <- "YYYYMMDDHH"
+        txtdtfrmt2 <- "YYYY MM DD HH"
+    }
+    if(tstep == 'daily'){
         txtdtfrmt1 <- "YYYYMMDD"
         txtdtfrmt2 <- "YYYY MM DD"
     }
-    if(tstep == tstep.list[2]){
+    if(tstep == 'dekadal'){
         txtdtfrmt1 <- "YYYYMMD"
         txtdtfrmt2 <- "YYYY MM D"
     }
-    if(tstep == tstep.list[3]){
+    if(tstep == 'monthly'){
         txtdtfrmt1 <- "YYYYMM"
         txtdtfrmt2 <- "YYYY MM"
     }
 
     dtfrmt1 <- tkradiobutton(fr.fileformat2, text = txtdtfrmt1, anchor = 'w', justify = 'left')
     dtfrmt2 <- tkradiobutton(fr.fileformat2, text = txtdtfrmt2, anchor = 'w', justify = 'left', width = largeur1)
-    dtfrmt3 <- tklabel(fr.fileformat2, text = '')
+    dtfrmt3 <- tklabel(fr.fileformat2, text = lang.dlg[['label']][['6']], justify = 'left')
 
     tkconfigure(dtfrmt1, variable = rbdtfrmt, value = "1")
     tkconfigure(dtfrmt2, variable = rbdtfrmt, value = "3")
@@ -269,6 +298,13 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
 
     helpWidget(dtfrmt1, lang.dlg[['tooltip']][['3']], lang.dlg[['status']][['3']])
     helpWidget(dtfrmt2, lang.dlg[['tooltip']][['4']], lang.dlg[['status']][['4']])
+
+    tkbind(dtfrmt1, "<Button-1>", function(){
+        tkconfigure(dtfrmt3, text = lang.dlg[['label']][['6']])
+    })
+    tkbind(dtfrmt2, "<Button-1>", function(){
+        tkconfigure(dtfrmt3, text = lang.dlg[['label']][['7']])
+    })
 
     ###################
     tkgrid(fr.fileformat1, row = 0, column = 0, sticky = 'nswe', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -288,11 +324,13 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
     bt.dir.stn <- tkbutton(frInput, text = "...")
 
     txt.file.stn.sample <- tklabel(frInput, text = lang.dlg[['label']][['4']], anchor = 'w', justify = 'left')
-    cb.file.stn.sample <- ttkcombobox(frInput, values = unlist(listOpenFiles), textvariable = file.sample, width = largeur0)
+    cb.file.stn.sample <- ttkcombobox(frInput, values = unlist(openFile_ttkcomboList()), textvariable = file.sample, width = largeur0)
+    addTo_all_Combobox_List(cb.file.stn.sample)
     bt.file.stn.sample <- tkbutton(frInput, text = "...")
 
     txt.file.stn.info <- tklabel(frInput, text = lang.dlg[['label']][['5']], anchor = 'w', justify = 'left')
-    cb.file.stn.info <- ttkcombobox(frInput, values = unlist(listOpenFiles), textvariable = file.coords, width = largeur0)
+    cb.file.stn.info <- ttkcombobox(frInput, values = unlist(openFile_ttkcomboList()), textvariable = file.coords, width = largeur0)
+    addTo_all_Combobox_List(cb.file.stn.info)
     bt.file.stn.info <- tkbutton(frInput, text = "...")
 
     chk.include.elv <- tkcheckbutton(frInput, variable = include.elv, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
@@ -311,9 +349,7 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
         tcl('wm', 'attributes', tt1, topmost = TRUE)
         if(!is.null(dat.opfiles)){
             update.OpenFiles('ascii', dat.opfiles)
-            listOpenFiles[[length(listOpenFiles) + 1]] <<- dat.opfiles[[1]]
             tclvalue(file.sample) <- dat.opfiles[[1]]
-            lapply(list(cb.file.stn.sample, cb.file.stn.info), tkconfigure, values = unlist(listOpenFiles))
         }
     })
 
@@ -323,9 +359,7 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
         tcl('wm', 'attributes', tt1, topmost = TRUE)
         if(!is.null(dat.opfiles)){
             update.OpenFiles('ascii', dat.opfiles)
-            listOpenFiles[[length(listOpenFiles)+1]] <<- dat.opfiles[[1]]
             tclvalue(file.coords) <- dat.opfiles[[1]]
-            lapply(list(cb.file.stn.sample, cb.file.stn.info), tkconfigure, values = unlist(listOpenFiles))
         }
     })
 
@@ -420,8 +454,7 @@ multipleFileCDTFormat <- function(top.win, tstep.list, tstep){
 
 ################################################################
 
-singleFileCDTFormat <- function(top.win, tstep.list, tstep){
-    listOpenFiles <- openFile_ttkcomboList()
+singleFileCDTFormat <- function(top.win, tstep, minhour){
     if(WindowsOS()){
         largeur0 <- 43
         largeur1 <- 20
@@ -453,12 +486,14 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
 
     statecrds <- if(tclvalue(coords.infile) == '1') 'disabled' else 'normal'
     txt.stnfl <- tklabel(frInput, text = lang.dlg[['label']][['1']], anchor = 'w', justify = 'left')
-    cb.stnfl <- ttkcombobox(frInput, values = unlist(listOpenFiles), textvariable = file.stnfl, width = largeur0)
+    cb.stnfl <- ttkcombobox(frInput, values = unlist(openFile_ttkcomboList()), textvariable = file.stnfl, width = largeur0)
+    addTo_all_Combobox_List(cb.stnfl)
     bt.stnfl <- tkbutton(frInput, text = "...")
 
     chk.coords.infile <- tkcheckbutton(frInput, variable = coords.infile, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
     txt.coords <- tklabel(frInput, text = lang.dlg[['label']][['2']], anchor = 'w', justify = 'left')
-    cb.coords <- ttkcombobox(frInput, values = unlist(listOpenFiles), textvariable = file.coords, state = statecrds, width = largeur0)
+    cb.coords <- ttkcombobox(frInput, values = unlist(openFile_ttkcomboList()), textvariable = file.coords, state = statecrds, width = largeur0)
+    addTo_all_Combobox_List(cb.coords)
     bt.coords <- tkbutton(frInput, text = "...", state = statecrds)
 
     chk.include.elv <- tkcheckbutton(frInput, variable = include.elv, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
@@ -470,9 +505,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
         tcl('wm', 'attributes', tt1, topmost = TRUE)
         if(!is.null(dat.opfiles)){
             update.OpenFiles('ascii', dat.opfiles)
-            listOpenFiles[[length(listOpenFiles)+1]] <<- dat.opfiles[[1]]
             tclvalue(file.stnfl) <- dat.opfiles[[1]]
-            lapply(list(cb.stnfl, cb.coords), tkconfigure, values = unlist(listOpenFiles))
         }
     })
 
@@ -482,9 +515,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
         tcl('wm', 'attributes', tt1, topmost = TRUE)
         if(!is.null(dat.opfiles)){
             update.OpenFiles('ascii', dat.opfiles)
-            listOpenFiles[[length(listOpenFiles)+1]] <<- dat.opfiles[[1]]
             tclvalue(file.coords) <- dat.opfiles[[1]]
-            lapply(list(cb.stnfl, cb.coords), tkconfigure, values = unlist(listOpenFiles))
         }
     })
 
@@ -537,29 +568,67 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     stn.year <- tclVar(.cdtData$GalParams$Single.File$col.year)
     stn.mon <- tclVar(.cdtData$GalParams$Single.File$col.month)
     stn.day <- tclVar(.cdtData$GalParams$Single.File$col.day.dek)
+    stn.hour <- tclVar(.cdtData$GalParams$Single.File$col.hour)
     stn.data <- tclVar(.cdtData$GalParams$Single.File$col.start.data)
 
     nb.column <- tclVar()
-    if(tstep == tstep.list[1]){
+
+    if(tstep == "hourly"){
+        if(minhour == 1){
+            cb.nbcolVAL <- c('1 column', '24 columns')
+            tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
+                                            '1' = cb.nbcolVAL[1],
+                                            '24' = cb.nbcolVAL[2],
+                                                cb.nbcolVAL[2])
+        }
+        if(minhour == 3){
+            cb.nbcolVAL <- c('1 column', '8 columns')
+            tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
+                                            '1' = cb.nbcolVAL[1],
+                                            '8' = cb.nbcolVAL[2],
+                                                cb.nbcolVAL[2])
+        }
+        if(minhour == 6){
+            cb.nbcolVAL <- c('1 column', '4 columns')
+            tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
+                                            '1' = cb.nbcolVAL[1],
+                                            '4' = cb.nbcolVAL[2],
+                                                cb.nbcolVAL[2])
+        }
+        if(minhour == 12){
+            cb.nbcolVAL <- c('1 column', '2 columns')
+            tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
+                                            '1' = cb.nbcolVAL[1],
+                                            '2' = cb.nbcolVAL[2],
+                                                cb.nbcolVAL[2])
+        }
+
+        statedaydek <- 'normal'
+        statemon <- 'normal'
+        statehour <- if(tclvalue(nb.column) == '1 column') 'normal' else 'disabled'
+    }
+    if(tstep == "daily"){
         cb.nbcolVAL <- c('1 column', '31 columns')
         tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
                                         '1' = cb.nbcolVAL[1],
                                         '31' = cb.nbcolVAL[2],
                                             cb.nbcolVAL[2])
+        statehour <- 'disabled'
         statemon <- 'normal'
         statedaydek <- if(tclvalue(nb.column) == '1 column') 'normal' else 'disabled'
     }
-    if(tstep == tstep.list[2]){
+    if(tstep == "dekadal"){
         cb.nbcolVAL <- c('1 column', '3 columns', '36 columns')
         tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
                                         '1' = cb.nbcolVAL[1],
                                         '3' = cb.nbcolVAL[2],
                                         '36' = cb.nbcolVAL[3],
                                             cb.nbcolVAL[3])
+        statehour <- 'disabled'
         statemon <- if(tclvalue(nb.column) == '36 columns') 'disabled' else 'normal'
         statedaydek <- if(tclvalue(nb.column) == '1 column') 'normal' else 'disabled'
     }
-    if(tstep == tstep.list[3]){
+    if(tstep == "monthly"){
         cb.nbcolVAL <- c('1 column', '12 columns')
         tclvalue(nb.column) <- switch(trimws(.cdtData$GalParams$Single.File$nb.column),
                                         '1' = cb.nbcolVAL[1],
@@ -567,6 +636,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
                                             cb.nbcolVAL[2])
         statemon <- if(tclvalue(nb.column) == '12 columns') 'disabled' else 'normal'
         statedaydek <- 'disabled'
+        statehour <- 'disabled'
     }
 
     stateCrds <- if(.cdtData$GalParams$Single.File$coords.included) 'normal' else 'disabled'
@@ -576,7 +646,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     }else stateElv <- 'disabled'
 
     txt.nb.col <- tklabel(frColIdx, text = lang.dlg[['label']][['4']], anchor = 'e', justify = 'right')
-    cb.nb.col <- ttkcombobox(frColIdx, values = cb.nbcolVAL, textvariable = nb.column, width = largeur1)
+    cb.nb.col <- ttkcombobox(frColIdx, values = cb.nbcolVAL, textvariable = nb.column, width = largeur1, justify = 'center')
 
     txt.col.idx <- tklabel(frColIdx, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
 
@@ -588,6 +658,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     txt.col.year <- tklabel(frColIdx, text = 'COL.YEAR', anchor = 'e', justify = 'right')
     txt.col.mon <- tklabel(frColIdx, text = 'COL.MONTH', anchor = 'e', justify = 'right')
     txt.col.day <- tklabel(frColIdx, text = 'COL.DAY/DEK', anchor = 'e', justify = 'right')
+    txt.col.hour <- tklabel(frColIdx, text = 'COL.HOUR', anchor = 'e', justify = 'right')
 
     en.col.id <- tkentry(frColIdx, textvariable = stn.id, width = 4)
     en.col.data <- tkentry(frColIdx, textvariable = stn.data, width = 4)
@@ -597,6 +668,7 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     en.col.year <- tkentry(frColIdx, textvariable = stn.year, width = 3)
     en.col.mon <- tkentry(frColIdx, textvariable = stn.mon, width = 3, state = statemon)
     en.col.day <- tkentry(frColIdx, textvariable = stn.day, width = 3, state = statedaydek)
+    en.col.hour <- tkentry(frColIdx, textvariable = stn.hour, width = 3, state = statehour)
 
     ###################
     tkgrid(txt.nb.col, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 5, ipadx = 1, ipady = 1)
@@ -606,8 +678,6 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
 
     tkgrid(txt.col.id, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.col.id, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(txt.col.data, row = 4, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(en.col.data, row = 4, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     tkgrid(txt.col.lon, row = 2, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.col.lon, row = 2, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -622,6 +692,11 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     tkgrid(en.col.mon, row = 3, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(txt.col.day, row = 4, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
     tkgrid(en.col.day, row = 4, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+    tkgrid(txt.col.data, row = 5, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.col.data, row = 5, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(txt.col.hour, row = 5, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(en.col.hour, row = 5, column = 5, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
 
     ###
 
@@ -647,20 +722,30 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
     })
 
     tkbind(cb.nb.col, "<<ComboboxSelected>>", function(){
-        if(tstep == tstep.list[1]){
+        if(tstep == "hourly"){
+            statemon <- 'normal'
+            statedaydek <- 'normal'
+            statehour <- if(tclvalue(nb.column) == '1 column') 'normal' else 'disabled'
+        }
+
+        if(tstep == "daily"){
+            statehour <- 'disabled'
             statemon <- 'normal'
             statedaydek <- if(tclvalue(nb.column) == '1 column') 'normal' else 'disabled'
         }
-        if(tstep == tstep.list[2]){
+        if(tstep == "dekadal"){
+            statehour <- 'disabled'
             statemon <- if(tclvalue(nb.column) == '36 columns') 'disabled' else 'normal'
             statedaydek <- if(tclvalue(nb.column) == '1 column') 'normal' else 'disabled'
         }
-        if(tstep == tstep.list[3]){
+        if(tstep == "monthly"){
+            statehour <- 'disabled'
             statemon <- if(tclvalue(nb.column) == '12 columns') 'disabled' else 'normal'
             statedaydek <- 'disabled'
         }
         tkconfigure(en.col.mon, state = statemon)
         tkconfigure(en.col.day, state = statedaydek)
+        tkconfigure(en.col.hour, state = statehour)
     })
 
     ###################
@@ -691,16 +776,35 @@ singleFileCDTFormat <- function(top.win, tstep.list, tstep){
             .cdtData$GalParams$Single.File$col.year <- as.numeric(trimws(tclvalue(stn.year)))
             .cdtData$GalParams$Single.File$col.month <- as.numeric(trimws(tclvalue(stn.mon)))
             .cdtData$GalParams$Single.File$col.day.dek <- as.numeric(trimws(tclvalue(stn.day)))
+            .cdtData$GalParams$Single.File$col.hour <- as.numeric(trimws(tclvalue(stn.hour)))
             .cdtData$GalParams$Single.File$col.start.data <- as.numeric(trimws(tclvalue(stn.data)))
-            if(tstep == tstep.list[1]){
+            if(tstep == "hourly"){
+                if(minhour == 1){
+                    .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
+                                                                    '1 column' = 1, '24 columns' = 24)
+                }
+                if(minhour == 3){
+                    .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
+                                                                    '1 column' = 1, '8 columns' = 8)
+                }
+                if(minhour == 6){
+                    .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
+                                                                    '1 column' = 1, '4 columns' = 4)
+                }
+                if(minhour == 12){
+                    .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
+                                                                    '1 column' = 1, '2 columns' = 2)
+                }
+            }
+            if(tstep == "daily"){
                 .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
                                                                 '1 column' = 1, '31 columns' = 31)
             }
-            if(tstep == tstep.list[2]){
+            if(tstep == "dekadal"){
                 .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
                                                                 '1 column' = 1, '3 columns' = 3, '36 columns' = 36)
             }
-            if(tstep == tstep.list[3]){
+            if(tstep == "monthly"){
                 .cdtData$GalParams$Single.File$nb.column <- switch(trimws(tclvalue(nb.column)),
                                                                 '1 column' = 1, '12 columns' = 12)
             }

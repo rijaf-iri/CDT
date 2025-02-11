@@ -31,6 +31,38 @@ cdtBiasCoefficients <- function(stnData, ncInfo, demData, params, variable, outd
     return(0)
 }
 
+cdtBiasCoefficientsWind <- function(stnData, ncInfo, demData, params, outdir, GUI = TRUE){
+    xml.dlg <- file.path(.cdtDir$dirLocal, "languages", "cdtBias_Coefficient_functions1.xml")
+    lang.msg <- cdtLanguageParse(xml.dlg, .cdtData$Config$lang.iso)
+    lang.msg <- lang.msg[['message']]
+
+    if(params$BIAS$method %in% c("mbvar", "mbmon")){
+        coefData <- biasCoefficients_MBIAS_wind(stnData, ncInfo, params, lang.msg, GUI)
+        interp_biasCoeff_MBIAS_wind(coefData, demData, outdir, lang.msg, GUI)
+    }
+
+    if(params$BIAS$method == "qmdist"){
+        if(params$BIAS$ts.support == "points"){
+            coefData <- biasCoefficients_QMDIST_PTS_wind(stnData, ncInfo, params, outdir, lang.msg, GUI)
+            if(is.null(coefData)) return(NULL)
+            interp_distrParms_QMDIST_wind(coefData, demData, outdir, lang.msg, GUI)
+        }else{
+            coefData <- biasCoefficients_QMDIST_BOX_wind(stnData, ncInfo, params, lang.msg, GUI)
+            write_distrParms_QMDIST_wind(coefData, outdir, lang.msg, GUI)
+        }
+    }
+
+    if(params$BIAS$method == "qmecdf"){
+        coefData <- biasCoefficients_QMECDF_wind(stnData, ncInfo, params, lang.msg, GUI)
+        write_distrParms_QMECDF_wind(coefData, outdir, lang.msg, GUI)
+    }
+
+    coefData$variable <- "wind"
+    saveRDS(coefData, file = file.path(outdir, "BIAS_PARAMS_DATA.rds"))
+
+    return(0)
+}
+
 get_biasInterp_params <- function(stnCoords, grdCoords, demData, parsInterp){
     ixs <- NULL
     elvNA <- NULL

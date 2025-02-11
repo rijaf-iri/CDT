@@ -24,8 +24,8 @@ pressure_conversion_netcdf(
 \arguments{
 \item{convert}{character, the direction of conversion. Valid options: \code{"sfc2msl"} and \code{"msl2sfc"}.
 \itemize{
-\item{\code{"sfc2msl"}: }{conversion from surface to mean sea level pressure.}
-\item{\code{"msl2sfc"}: }{conversion from mean sea level to surface pressure.}
+\item \code{"sfc2msl"}: conversion from surface to mean sea level pressure.
+\item \code{"msl2sfc"}: conversion from mean sea level to surface pressure.
 }}
 
 \item{start.date}{character, the start date of the data to be converted in the form \code{YYYY-MM-DD}.}
@@ -35,18 +35,18 @@ pressure_conversion_netcdf(
 \item{pres.data}{named list, providing the pressure netCDF dataset. Units: hPa. 
 Surface pressure or mean sea level pressure, depending on \code{convert}.
 \itemize{
-\item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
-\item{\code{format}: }{character, format of the netCDF file names}
-\item{\code{varid}: }{character, name of the variable to read from the netCDF data}
-\item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
-Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
-\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+\item \code{dir}: character, full path to the directory containing the netCDF files.
+\item \code{format}: character, format of the netCDF file names
+\item \code{varid}: character, name of the variable to read from the netCDF data
+\item \code{ilon}: integer, order for the longitude dimension of the variable. 
+Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{ilon} must be 2
+\item \code{ilat}: integer, order for the latitude dimension of the variable.
 }}
 
 \item{temp.from}{character, source of temperature data. Valid options: \code{"minmax"} and \code{"mean"}.
 \itemize{
-\item{\code{"minmax"}: }{the mean temperature is computed from tme minimum and maximum temperature.}
-\item{\code{"mean"}: }{the temperature data is from a mean temperature data.}
+\item \code{"minmax"}: the mean temperature is computed from tme minimum and maximum temperature.
+\item \code{"mean"}: the temperature data is from a mean temperature data.
 }}
 
 \item{tmax.data}{named list, if \code{temp.from} is equal to \code{"minmax"}, 
@@ -63,16 +63,16 @@ See \code{pres.data} for the elements of the list.}
 
 \item{elev.data}{named list, providing the Digital Elevation Model in netCDF format. Units: meters.
 \itemize{
-\item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
-\item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
-\item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
-\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+\item \code{file}: character, full path to the netCDF file containing the elevation data.
+\item \code{varid}: character, name of the variable to read from the netCDF data.
+\item \code{ilon}: integer, order for the longitude dimension of the variable.
+\item \code{ilat}: integer, order for the latitude dimension of the variable.
 }}
 
 \item{output}{named list, the elements of the list are
 \itemize{
-\item{\code{dir}: }{character, full path to the directory to save the converted pressure}
-\item{\code{format}: }{character, format of the output netCDF file names, the dates are represented by \code{\%S}}
+\item \code{dir}: character, full path to the directory to save the converted pressure
+\item \code{format}: character, format of the output netCDF file names, the dates are represented by \code{\%S}
 }}
 }
 \description{

@@ -3,16 +3,16 @@
 #' Function to compute daily reference evapotranspiration using the FAO Penman-Monteith equation.
 #' @param tmax.data named list, providing the maximum temperature data in CDT station data format. Units: degree Celsius.
 #' \itemize{
-#' \item{\code{file}: }{character, full path to the file containing the stations data}
-#' \item{\code{sep}: }{character, column separator of the data}
-#' \item{\code{na.strings}: }{character, missing values flag}
+#' \item \code{file}: character, full path to the file containing the stations data
+#' \item \code{sep}:  character, column separator of the data
+#' \item \code{na.strings}: character, missing values flag
 #' }
 #' @param tmin.data named list, providing the minimum temperature data in CDT station data format. Units: degree Celsius.
 #' See \code{tmax.data} for the elements of the list.
 #' @param rh.from character, source of relative humidity data. Valid options: \code{"minmax"} and \code{"mean"}.
 #' \itemize{
-#' \item{\code{"minmax"}: }{the humidity data are from the minimum and maximum relative humidity.}
-#' \item{\code{"mean"}: }{the humidity data is from a mean relative humidity data.}
+#' \item \code{"minmax"}: the humidity data are from the minimum and maximum relative humidity.
+#' \item \code{"mean"}: the humidity data is from a mean relative humidity data.
 #' }
 #' @param rhmax.data named list, if \code{rh.from} is equal to \code{"minmax"},
 #' providing the maximum relative humidity data in CDT station data format. Units: percentage.
@@ -31,30 +31,30 @@
 #' See \code{tmax.data} for the elements of the list.
 #' @param elev.from character, source of the elevation data. Valid options: \code{"inputPresData"}, \code{"cdtCrdFile"} and \code{"netcdfDEM"}.
 #' \itemize{
-#' \item{\code{"inputTmaxData"}: }{the elevation data is from the maximum temperature data.}
-#' \item{\code{"cdtCrdFile"}: }{the elevation data is from a CDT coordinates file. The ID must be the same as the maximum temperature data.}
-#' \item{\code{"netcdfDEM"}: }{the elevation data is from the pressure data.}
+#' \item \code{"inputTmaxData"}: the elevation data is from the maximum temperature data.
+#' \item \code{"cdtCrdFile"}: the elevation data is from a CDT coordinates file. The ID must be the same as the maximum temperature data.
+#' \item \code{"netcdfDEM"}: the elevation data is from the pressure data.
 #' }
 #' Default is \code{"netcdfDEM"}.
 #' @param elev.data named list, if \code{elev.from} is equal to \code{"cdtCrdFile"},
 #' set the elements of the list providing the CDT coordinate file containing the elevation data. Units: meters.
 #' \itemize{
-#' \item{\code{file}: }{character, full path to the CDT coordinate file}
-#' \item{\code{sep}: }{character, column separator of the data}
-#' \item{\code{na.strings}: }{character, missing values flag}
+#' \item \code{file}: character, full path to the CDT coordinate file
+#' \item \code{sep}: character, column separator of the data
+#' \item \code{na.strings}: character, missing values flag
 #' }
 #' If \code{elev.from} is equal to \code{"netcdfDEM"} set the elements of the list providing the Digital Elevation Model in netCDF format. Units: meters.
 #' \itemize{
-#' \item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
-#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
-#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
-#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+#' \item \code{file}: character, full path to the netCDF file containing the elevation data.
+#' \item \code{varid}: character, name of the variable to read from the netCDF data.
+#' \item \code{ilon}: integer, order for the longitude dimension of the variable.
+#' \item \code{ilat}: integer, order for the latitude dimension of the variable.
 #' }
 #' @param output named list, the elements of the list are
 #' \itemize{
-#' \item{\code{file}: }{character, full path to the file to save the calculated reference evapotranspiration}
-#' \item{\code{sep}: }{character, column separator of the data}
-#' \item{\code{na.strings}: }{character, missing values flag}
+#' \item \code{file}: character, full path to the file to save the calculated reference evapotranspiration
+#' \item \code{sep}: character, column separator of the data
+#' \item \code{na.strings}: character, missing values flag
 #' }
 #' 
 #' @references 
@@ -357,19 +357,19 @@ ET0_Penman_Monteith_FAO_station <- function(
 #' @param end.date character, the end date of the data to be calculated in the form \code{YYYY-MM-DD}.
 #' @param tmax.data named list, providing the maximum temperature netCDF dataset. Units: degree Celsius.
 #' \itemize{
-#' \item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
-#' \item{\code{format}: }{character, format of the netCDF file names}
-#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data}
-#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
-#' Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
-#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+#' \item \code{dir}: character, full path to the directory containing the netCDF files.
+#' \item \code{format}: character, format of the netCDF file names
+#' \item \code{varid}: character, name of the variable to read from the netCDF data
+#' \item \code{ilon}: integer, order for the longitude dimension of the variable. 
+#' Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{ilon} must be 2
+#' \item \code{ilat}: integer, order for the latitude dimension of the variable.
 #' }
 #' @param tmin.data named list, providing the minimum temperature netCDF dataset. Units: degree Celsius.
 #' See \code{tmax.data} for the elements of the list.
 #' @param rh.from character, source of relative humidity data. Valid options: \code{"minmax"} and \code{"mean"}.
 #' \itemize{
-#' \item{\code{"minmax"}: }{the humidity data are from the minimum and maximum relative humidity.}
-#' \item{\code{"mean"}: }{the humidity data is from a mean relative humidity data.}
+#' \item \code{"minmax"}: the humidity data are from the minimum and maximum relative humidity.
+#' \item \code{"mean"}: the humidity data is from a mean relative humidity data.
 #' }
 #' @param rhmax.data named list, if \code{rh.from} is equal to \code{"minmax"},
 #' providing the maximum relative humidity netCDF dataset. Units: percentage.
@@ -388,15 +388,15 @@ ET0_Penman_Monteith_FAO_station <- function(
 #' See \code{tmax.data} for the elements of the list.
 #' @param elev.data named list, providing the Digital Elevation Model in netCDF format. Units: meters.
 #' \itemize{
-#' \item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
-#' \item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
-#' \item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
-#' \item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+#' \item \code{file}: character, full path to the netCDF file containing the elevation data.
+#' \item \code{varid}: character, name of the variable to read from the netCDF data.
+#' \item \code{ilon}: integer, order for the longitude dimension of the variable.
+#' \item \code{ilat}: integer, order for the latitude dimension of the variable.
 #' }
 #' @param output named list, the elements of the list are
 #' \itemize{
-#' \item{\code{dir}: }{character, full path to the directory to save the calculated reference evapotranspiration}
-#' \item{\code{format}: }{character, format of the output netCDF file names, the dates are represented by \code{\%S}}
+#' \item \code{dir}: character, full path to the directory to save the calculated reference evapotranspiration
+#' \item \code{format}: character, format of the output netCDF file names, the dates are represented by \code{\%S}
 #' }
 #' 
 #' @references 

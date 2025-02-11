@@ -267,7 +267,7 @@ removeBiasGetInfoWind <- function(){
     tkconfigure(bt.DateRange, command = function(){
         tstep <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
         tcl('wm', 'attributes', tt, topmost = FALSE)
-        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep)
+        .cdtData$GalParams[["date.range"]] <- getInfoDateRange(tt, .cdtData$GalParams[["date.range"]], tstep, TRUE)
         tcl('wm', 'attributes', tt, topmost = TRUE)
     })
 
@@ -420,7 +420,7 @@ removeBiasGetInfoWind <- function(){
             .cdtData$GalParams$INPUT.S$dir <- trimws(tclvalue(dir.NC_S))
             .cdtData$GalParams$output$format.S <- trimws(tclvalue(outFrmtS))
 
-            if(.cdtData$GalParams$STN.S == ""){
+            if(.cdtData$GalParams$INPUT.S$dir %in% c("", "NA")){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-1']], icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
@@ -454,6 +454,7 @@ removeBiasGetInfoWind <- function(){
         }
 
         .cdtData$GalParams$message <- lang.dlg[['message']]
+        .cdtData$GalParams$bias_list <- list(val = val.biasMthd, txt = cb.biasMthd)
 
         tkgrab.release(tt)
         tkdestroy(tt)

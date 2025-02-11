@@ -122,6 +122,9 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 2, GUI = TRUE, 
     }
 
     #######
+    # new
+    # https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/hyrax/MERRA2/M2T1NXSLV.5.12.4/1981/12/contents.html
+    # old
     opendap_url <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2"
     merra2_version <- "5.12.4"
 

@@ -43,6 +43,31 @@ mergingWindData <- function(){
 
     ##################
 
+    out_params <- .cdtData$GalParams
+    out_params <- out_params[!names(out_params) %in% "message"]
+    if(is_wind_speed){
+        out_params[c('STN.U', 'STN.V', 'one.ncdf', 'INPUT.UV', 'INPUT.U', 'INPUT.V')] <- NULL
+        out_params$output$format.UV <- NULL
+        out_params$output$format.U <- NULL
+        out_params$output$format.V <- NULL
+    }else{
+        if(uv_one_netcdf){
+            out_params[c('STN.S', 'INPUT.S', 'INPUT.U', 'INPUT.V')] <- NULL
+            out_params$output$format.U <- NULL
+            out_params$output$format.V <- NULL
+        }else{
+            out_params[c('STN.S', 'INPUT.S', 'INPUT.UV')] <- NULL
+            out_params$output$format.UV <- NULL
+        }
+        out_params$output$format.S <- NULL
+    }
+
+    out_params$merging_options <- mrgOpts
+    out_params$blanking_options <- blanking.options()
+    saveRDS(out_params, file.path(outdir, 'merging_parameters.rds'))
+
+    ##################
+
     Insert.Messages.Out(message[['17']], TRUE, "i")
 
     ## station data
@@ -284,28 +309,6 @@ mergingWindData <- function(){
                               params = .cdtData$GalParams, demData = demData, 
                               outdir = outdir, mask = outMask)
     }
-
-    out_params <- .cdtData$GalParams
-    out_params <- out_params[!names(out_params) %in% "message"]
-    if(is_wind_speed){
-        out_params[c('STN.U', 'STN.V', 'one.ncdf', 'INPUT.UV', 'INPUT.U', 'INPUT.V')] <- NULL
-        out_params$output$format.UV <- NULL
-        out_params$output$format.U <- NULL
-        out_params$output$format.V <- NULL
-    }else{
-        if(uv_one_netcdf){
-            out_params[c('STN.S', 'INPUT.S', 'INPUT.U', 'INPUT.V')] <- NULL
-            out_params$output$format.U <- NULL
-            out_params$output$format.V <- NULL
-        }else{
-            out_params[c('STN.S', 'INPUT.S', 'INPUT.UV')] <- NULL
-            out_params$output$format.UV <- NULL
-        }
-        out_params$output$format.S <- NULL
-    }
-
-    out_params$options <- mrgOpts
-    saveRDS(out_params, file.path(outdir, 'merging_parameters.rds'))
 
     if(!is.null(ret)){
         if(ret != 0){

@@ -16,12 +16,11 @@ Functions to handle the width of buffer outside the polygons boundaries.
 \details{
 Available options are
 \itemize{ 
-   \item{\code{bufferOption}: }{character, options are \code{"default"} or \code{"user"}.
+   \item \code{bufferOption}: character, options are \code{"default"} or \code{"user"}.
         \itemize{
-             \item{\code{"default"}: }{a buffer of 4 times of the spatial resolution of the gridded data is used}
-             \item{\code{"user"}: }{the width of the buffer will be defined by the user in \code{bufferWidth}}
+             \item \code{"default"}: a buffer of 4 times of the spatial resolution of the gridded data is used
+             \item \code{"user"}: the width of the buffer will be defined by the user in \code{bufferWidth}
            }
-        }
-   \item{\code{bufferWidth}: }{numeric, the width of the buffer outside the polygons in decimal degree}
+   \item \code{bufferWidth}: numeric, the width of the buffer outside the polygons in decimal degree
 }
 }

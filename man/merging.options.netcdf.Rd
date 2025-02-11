@@ -9,26 +9,26 @@ merging.options.netcdf(variable, values)
 \arguments{
 \item{variable}{character, name of the climate variable to merge. Available options: \code{"rain"}, \code{"temp"}, \code{"rh"}, \code{"pres"}, \code{"prmsl"}, \code{"rad"}, \code{"wspd"}, \code{"ugrd"}, \code{"vgrd"}.
 \itemize{
-\item{\code{"rain"}: }{rainfall data}
-\item{\code{"temp"}: }{temperature data}
-\item{\code{"rh"}: }{relative humidity data}
-\item{\code{"pres"}: }{surface pressure data}
-\item{\code{"prmsl"}: }{pressure at mean sea level}
-\item{\code{"rad"}: }{radiation data}
-\item{\code{"wspd"}: }{wind speed data}
-\item{\code{"ugrd"}: }{zonal wind components, E-W speed}
-\item{\code{"vgrd"}: }{meridional wind components, N-S speed}
+\item \code{"rain"}: rainfall data
+\item \code{"temp"}: temperature data
+\item \code{"rh"}: relative humidity data
+\item \code{"pres"}: surface pressure data
+\item \code{"prmsl"}: pressure at mean sea level
+\item \code{"rad"}: radiation data
+\item \code{"wspd"}: wind speed data
+\item \code{"ugrd"}: zonal wind components, E-W speed
+\item \code{"vgrd"}: meridional wind components, N-S speed
 }}
 
 \item{values}{named list, giving the netCDF variable definition and data limits.
 The elements of the list are
 \itemize{
-\item{\code{name}: }{character, name of the variable to be created}
-\item{\code{units}: }{character, the units of the variable}
-\item{\code{longname}: }{character, longer name for the variable}
-\item{\code{standardname}: }{character, standard name for the variable}
-\item{\code{min}: }{numeric, possible minimum value of the dataset}
-\item{\code{max}: }{numeric, possible maximum value of the dataset}
+\item \code{name}: character, name of the variable to be created
+\item \code{units}: character, the units of the variable
+\item \code{longname}: character, longer name for the variable
+\item \code{standardname}: character, standard name for the variable
+\item \code{min}: numeric, possible minimum value of the dataset
+\item \code{max}: numeric, possible maximum value of the dataset
 }}
 }
 \description{
@@ -42,7 +42,7 @@ merging.options.netcdf('rain', values = list(name = 'precip', units = 'mm/day',
                            longname = 'Daily precipitation', standardname = 'Precipitation',
                            min = 0, max = 120))
 
-## Partial elemts
+## Partial elements
 merging.options.netcdf('temp', values = list(name = 'tmax', longname = 'Daily maximum temperature'))
 }
 

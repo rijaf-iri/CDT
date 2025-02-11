@@ -18,22 +18,22 @@ cdtComputeSeasonal_cdtstn(
 \arguments{
 \item{season.def}{named list, season definition.
 \itemize{
-  \item{\code{start.month}: }{integer, start month of the season}
-  \item{\code{season.length}: }{integer, length of the season}
+  \item \code{start.month}: integer, start month of the season
+  \item \code{season.length}: integer, length of the season
 }}
 
 \item{period}{named list, the period of data to compute.
 \itemize{
-  \item{\code{start.year}: }{integer, start year of the period}
-  \item{\code{end.year}: }{integer, the end year}
+  \item \code{start.year}: integer, start year of the period
+  \item \code{end.year}: integer, the end year
 }}
 
 \item{station.data}{named list, stations data info.
 \itemize{
-  \item{\code{time.step}: }{character, the time step of the station data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}}
-  \item{\code{file}: }{character, full path to the file containing the CDT data}
-  \item{\code{sep}: }{character, the column's separator of the data}
-  \item{\code{na.strings}: }{character, the missing values flag}
+  \item \code{time.step}: character, the time step of the station data. Available options: \code{"daily"}, \code{"pentad"}, \code{"dekadal"}, \code{"monthly"}
+  \item \code{file}: character, full path to the file containing the CDT data
+  \item \code{sep}: character, the column's separator of the data
+  \item \code{na.strings}: character, the missing values flag
 }}
 
 \item{season.min.frac}{numeric, used to aggregate the seasonal data, minimum fraction of non-missing values for each season.}

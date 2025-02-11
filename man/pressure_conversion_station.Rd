@@ -19,21 +19,21 @@ pressure_conversion_station(
 \arguments{
 \item{convert}{character, the direction of conversion. Valid options: \code{"sfc2msl"} and \code{"msl2sfc"}.
 \itemize{
-\item{\code{"sfc2msl"}: }{conversion from surface to mean sea level pressure.}
-\item{\code{"msl2sfc"}: }{conversion from mean sea level to surface pressure.}
+\item \code{"sfc2msl"}: conversion from surface to mean sea level pressure.
+\item \code{"msl2sfc"}: conversion from mean sea level to surface pressure.
 }}
 
 \item{pres.data}{named list, providing the pressure data in CDT station data format. Units: hPa.
 \itemize{
-\item{\code{file}: }{character, full path to the file containing the stations data}
-\item{\code{sep}: }{character, column separator of the data}
-\item{\code{na.strings}: }{character, missing values flag}
+\item \code{file}: character, full path to the file containing the stations data
+\item \code{sep}: character, column separator of the data
+\item \code{na.strings}: character, missing values flag
 }}
 
 \item{temp.from}{character, source of temperature data. Valid options: \code{"minmax"} and \code{"mean"}.
 \itemize{
-\item{\code{"minmax"}: }{the mean temperature is computed from the minimum and maximum temperature.}
-\item{\code{"mean"}: }{the temperature data is from a mean temperature data.}
+\item \code{"minmax"}: the mean temperature is computed from the minimum and maximum temperature.
+\item \code{"mean"}: the temperature data is from a mean temperature data.
 }}
 
 \item{tmax.data}{named list, if \code{temp.from} is equal to \code{"minmax"}, 
@@ -50,32 +50,32 @@ See \code{pres.data} for the elements of the list.}
 
 \item{elev.from}{character, source of the elevation data. Valid options: \code{"inputPresData"}, \code{"cdtCrdFile"} and \code{"netcdfDEM"}.
 \itemize{
-\item{\code{"inputPresData"}: }{the elevation data is from the pressure data.}
-\item{\code{"cdtCrdFile"}: }{the elevation data is from a CDT coordinates file. The ID must be the same as the pressure data.}
-\item{\code{"netcdfDEM"}: }{the elevation data is from the pressure data.}
+\item \code{"inputPresData"}: the elevation data is from the pressure data.
+\item \code{"cdtCrdFile"}: the elevation data is from a CDT coordinates file. The ID must be the same as the pressure data.
+\item \code{"netcdfDEM"}: the elevation data is from the pressure data.
 }
 Default is \code{"netcdfDEM"}.}
 
 \item{elev.data}{named list, if \code{elev.from} is equal to \code{"cdtCrdFile"},
 providing the CDT coordinate file containing the elevation data. Units: meters.
 \itemize{
-\item{\code{file}: }{character, full path to the CDT coordinate file}
-\item{\code{sep}: }{character, column separator of the data}
-\item{\code{na.strings}: }{character, missing values flag}
+\item \code{file}: character, full path to the CDT coordinate file
+\item \code{sep}: character, column separator of the data
+\item \code{na.strings}: character, missing values flag
 }
 If \code{elev.from} is equal to \code{"netcdfDEM"} set the elements of the list providing the Digital Elevation Model in netCDF format. Units: meters.
 \itemize{
-\item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
-\item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
-\item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
-\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+\item \code{file}: character, full path to the netCDF file containing the elevation data.
+\item \code{varid}: character, name of the variable to read from the netCDF data.
+\item \code{ilon}: integer, order for the longitude dimension of the variable.
+\item \code{ilat}: integer, order for the latitude dimension of the variable.
 }}
 
 \item{output}{named list, the elements of the list are
 \itemize{
-\item{\code{file}: }{character, full path to the file to save the converted pressure}
-\item{\code{sep}: }{character, column separator of the data}
-\item{\code{na.strings}: }{character, missing values flag}
+\item \code{file}: character, full path to the file to save the converted pressure
+\item \code{sep}: character, column separator of the data
+\item \code{na.strings}: character, missing values flag
 }}
 }
 \description{
