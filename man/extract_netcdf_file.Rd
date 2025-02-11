@@ -13,24 +13,23 @@ extract_netcdf_file(
 \arguments{
 \item{ncdf_data}{named list, providing the input netCDF file to extract.
 \itemize{
-\item{\code{file}: }{character, full path to the netCDF file.}
-\item{\code{varid}: }{character, name of the variable to read from the netCDF data}
-\item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
-Example: if the variable "temp" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
-\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+\item \code{file}: character, full path to the netCDF file.
+\item \code{varid}: character, name of the variable to read from the netCDF data
+\item \code{ilon}: integer, order for the longitude dimension of the variable. 
+Example: if the variable "temp" has the dimension order [Lat, Lon] then \code{ilon} must be 2
+\item \code{ilat}: integer, order for the latitude dimension of the variable.
 }}
 
 \item{crd_points}{named list, providing the coordinates over which the data will be extracted.
 \itemize{
-\item{\code{type}: }{character, the type of file containing the coordinates of the points. Valid options: \code{"cdtStnData"}, \code{"cdtCrdFile"}.
+\item \code{type}: character, the type of file containing the coordinates of the points. Valid options: \code{"cdtStnData"}, \code{"cdtCrdFile"}.
  \itemize{
-  \item{\strong{"cdtStnData"}: }{the coordinates are from a CDT station data file}
-  \item{\strong{"cdtCrdFile"}: }{the coordinates are from a CDT coordinates file}
+  \item \strong{"cdtStnData"}: the coordinates are from a CDT station data file
+  \item \strong{"cdtCrdFile"}: the coordinates are from a CDT coordinates file
  }
-}
-\item{\code{file}: }{character, full path to the file containing the coordinates}
-\item{\code{sep}: }{character, column separator of the data}
-\item{\code{na.strings}: }{character, missing values flag}
+\item \code{file}: character, full path to the file containing the coordinates
+\item \code{sep}: character, column separator of the data
+\item \code{na.strings}: character, missing values flag
 }}
 
 \item{out_file}{character, full path to the file in which the extracted data will be saved.

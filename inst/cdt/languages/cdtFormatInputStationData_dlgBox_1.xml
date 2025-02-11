@@ -39,6 +39,12 @@
             <text lang="en"> Station Coordinates File </text>
             <text lang="fr"> Fichier de coordonnées de station </text>
         </label>
+        <label id="6">
+            <text lang="en"> Date in one column </text>
+        </label>
+        <label id="7">
+            <text lang="en"> Date in different columns </text>
+        </label>
     </widget>
     <help>
         <content id="1">

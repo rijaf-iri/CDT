@@ -1,57 +1,15 @@
-#' Open CDS profile web page.
-#'
-#' Open Climate Data Store profile web page in the default browser.
-#' 
-#' @export
-
-open_cds_profile <- function(){
-    url <- "https://cds.climate.copernicus.eu/profile"
-    utils::browseURL(url)
-}
-
-#' Save CDS personal access token.
-#'
-#' Save CDS personal access token into a local file.
-#'
-#' @param key CDS personal access token.
-#' 
-#' @examples
-#' 
-#' \dontrun{
-#' library(CDT)
-#' save_cds_personal_token('10xasdxf2-ws12a-xdfs-zx3x-z1z2z3z4z5z')
-#' }
-#' 
-#' @export
-
-save_cds_personal_token <- function(key){
-    if(missing(key)){
-        stop("The personal access token is not supplied.")
-    }
-    fileL <- file.path(.cdtDir$dirLocal, "config", "auth")
-    if(!file.exists(fileL)){
-        auth <- new.env()
-        auth$era5$pat <- key
-    }else{
-        auth <- readRDS(fileL)
-        auth$era5$pat <- key
-    }
-    saveRDS(auth, fileL)
-}
 
 era5.cds.coverage <- function(GalParams){
     if(GalParams$src == "cds.climate.copernicus.eu - ERA5 - Hourly"){
         r_name <- "Fifth generation ECMWF reanalysis (ERA5) on single levels"
         endpoint <- "reanalysis-era5-single-levels"
-        start <- '1940-01-01 00:00:00'
     }else{
         r_name <- "Fifth generation ECMWF reanalysis (ERA5-Land)"
         endpoint <- "reanalysis-era5-land"
-        start <- '1950-01-01 00:00:00'
     }
-    out <- list(name = r_name, timestep = "hourly", start = start)
+    out <- list(name = r_name, timestep = "hourly")
     base_url <- "https://cds.climate.copernicus.eu"
-    api_pth <- "api/v2.ui/resources"
+    api_pth <- "api/catalogue/v1/collections"
     url <- file.path(base_url, api_pth, endpoint)
     ret <- httr::GET(url)
     if(httr::status_code(ret) != 200){
@@ -59,20 +17,17 @@ era5.cds.coverage <- function(GalParams){
         return(out)
     }
     ret <- httr::content(ret)
-    end_d <- ret$structured_data$temporalCoverage
-    end_d <- strsplit(end_d, '/')
-    end_d <- paste(end_d[[1]][2], '23:00:00')
-    out$end <- end_d
+    start_d <- ret$extent$temporal$interval[[1]][[1]]
+    start_d <- as.POSIXct(start_d, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+    out$start <- format(start_d, "%Y-%m-%d %H:%M:%S")
+    end_d <- ret$extent$temporal$interval[[1]][[2]]
+    end_d <- as.POSIXct(end_d, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+    out$end <- format(end_d, "%Y-%m-%d %H:%M:%S")
 
     return(out)
 }
 
 era5.cds.download <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
-    url <- "https://cds.climate.copernicus.eu"
-    api_url <- paste(url, "api", "v2", sep = "/")
-    api_key <- era5.cds.get.apikey(url, GalParams$login$usr, GalParams$login$pwd)
-    if(is.null(api_key)) return(NULL)
-
     area <- GalParams$bbox[c('maxlat', 'minlon', 'minlat', 'maxlon')]
     area <- paste(unlist(area), collapse = "/")
 
@@ -113,23 +68,28 @@ era5.cds.download <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE)
 
     opts <- get_reanalysis.variables(era5_prod$pars.file)
     opts <- opts[[GalParams$var]]
+
     opts$convert <- NULL
     if(!is.null(opts$units_fun)){
-        opts$convert <- list(fun = as.character(opts$units_fun),
-                             args = as.character(opts$units_args))
+        uvar <- opts$varid[match(opts$units_var, opts$nc_name)]
+        opts$convert <- list(fun = trimws(as.character(opts$units_fun)),
+                             args = trimws(as.character(opts$units_args)),
+                             var = uvar)
     }
 
     request <- list(
+        dataset_short_name = "reanalysis-era5-single-levels",
         product_type = 'reanalysis',
         format = 'netcdf',
+        download_format = 'unarchived',
         variable = opts$api_var,
         area = area
     )
 
-    api_url <- paste(url, "api", "v2", sep = "/")
-    api_endpoints <- paste(api_url, "resources", era5_prod$resource, sep = "/")
+    api_url <- "https://cds.climate.copernicus.eu/api"
+    api_endpoints <- file.path(api_url, "retrieve/v1/processes", request$dataset_short_name, "execute")
 
-    pars <- list(api_key = api_key, request = request, api_url = api_url,
+    pars <- list(api_pat = GalParams$login$usr, request = request, api_url = api_url,
                  api_endpoints = api_endpoints, opts = opts)
 
     ######################
@@ -151,50 +111,71 @@ era5.download.data <- function(lnk, dest, ncfl, pars){
     xx <- basename(dest)
 
     request <- c(pars$request, lnk[[1]])
-    user <- pars$api_key$uid
-    key <- pars$api_key$key
 
     Insert.Messages.Out(paste("Sending request:", basename(ncfl), '...'), TRUE, "i")
 
-    res <- era5.cds.send.request(pars$api_endpoints, user, key, request)
+    res <- era5.cds.send.request(pars$api_endpoints, pars$api_pat, request)
     if(is.null(res)) return(xx)
 
     resc <- httr::content(res)
-    task_status <- resc$state
+    task_status <- resc$status
     if(task_status == "failed"){
         Insert.Messages.Out("INFO Request failed", TRUE, "e")
         Insert.Messages.Out(paste('Message:', resc$message), TRUE, "e")
         Insert.Messages.Out(paste('Reason', resc$reason), TRUE, "e")
+        Insert.Messages.Out(paste('Detail', resc$detail), TRUE, "e")
         return(xx)
     }
     if(task_status == "queued"){
         Insert.Messages.Out("INFO Request is queued", TRUE, "i")
         Insert.Messages.Out("INFO Request is running ....", TRUE, "i")
     }
-    task_url <- paste(pars$api_url, "tasks", resc$request_id, sep = "/")
+    if(task_status == "accepted"){
+        Insert.Messages.Out("INFO Request is accepted", TRUE, "i")
+        Insert.Messages.Out("INFO Request is running ....", TRUE, "i")
+    }
 
-    while(task_status != "completed"){
-        Sys.sleep(5)
-        res <- era5.cds.retrieve.task(task_url, user, key)
-        if(is.null(res)) break
+    task_url <- resc$links[[2]]$href
+    count <- 0
+
+    while(task_status != "successful"){
+        Sys.sleep(3)
+        res <- era5.cds.retrieve.task(task_url, pars$api_pat)
+        if(is.null(res)){
+            if(count > 10){
+                break
+            }else{
+                next
+                count <- count + 1
+            }
+            
+        }
+        if(httr::status_code(res) > 300){
+            if(count > 10){
+                break
+            }else{
+                next
+                count <- count + 1
+            }
+        }
         resc <- httr::content(res)
-        if(httr::status_code(res) > 300) break
-        task_status <- resc$state
+        task_status <- resc$status
+        if(task_status == "successful"){
+            task_url <- resc$links[[2]]$href
+            job_url <- resc$links[[1]]$href
+        }else{
+            task_url <- resc$links[[1]]$href
+        }
     }
 
-    if(task_status != "completed") return(xx)
+    if(task_status != "successful") return(xx)
 
-    ## write to disk
-    Insert.Messages.Out(paste("Downloading data:", basename(ncfl)), TRUE, "i")
-    res <- httr::GET(resc$location, httr::write_disk(dest, overwrite = TRUE))
-    if(httr::status_code(res) != 200){
-        Insert.Messages.Out(paste("Downloading", basename(ncfl), "failed"), TRUE, "e")
-        Insert.Messages.Out(httr::content(res,'text'))
-        return(xx)
-    }
+    res <- era5.cds.write.data(task_url, dest, pars$api_pat)
+    if(is.null(res)) return(xx)
 
     ## delete task
-    res <- era5.cds.delete.task(task_url, user, key)
+    res <- era5.cds.delete.task(job_url, pars$api_pat)
+
     ret <- era5.cds.format.data(dest, pars$opts)
     if(ret == 0) xx <- NULL
 
@@ -205,8 +186,8 @@ era5.cds.format.data <- function(ncfl, pars){
     nc <- ncdf4::nc_open(ncfl)
     lon <- nc$dim[['longitude']]$vals
     lat <- nc$dim[['latitude']]$vals
-    time <- nc$dim[['time']]$vals
-    t_unit <- nc$dim[['time']]$units
+    time <- nc$dim[['valid_time']]$vals
+    t_unit <- nc$dim[['valid_time']]$units
     val <- lapply(pars$varid, function(v){
         ncdf4::ncvar_get(nc, v, collapse_degen = FALSE)
     })
@@ -228,20 +209,21 @@ era5.cds.format.data <- function(ncfl, pars){
     oy <- order(lat)
     lat <- lat[oy]
 
-    val <- lapply(val, function(v){
-        x <- v[ox, oy, , drop = FALSE]
+    val <- lapply(pars$varid, function(v){
+        x <- val[[v]]
+        x <- x[ox, oy, , drop = FALSE]
         x[is.nan(x)] <- NA
         if(!is.null(pars$convert)){
-            x <- eval_function(pars$convert$fun, pars$convert$args, x)
+            if(v %in% pars$convert$var){
+                ip <- pars$convert$var %in% v
+                x <- eval_function(pars$convert$fun[ip], pars$convert$args[ip], x)
+            }
         }
         x
     })
+    names(val) <- pars$varid
 
     if(pars$cdt_var == "hum"){
-        val[['t2m']] <- val[['t2m']] - 273.15
-        val[['d2m']] <- val[['d2m']] - 273.15
-        val[['sp']] <- val[['sp']] / 100
-
         rh <- relative_humidity(val[['t2m']], val[['d2m']])
         spfh <- specific_humidity(val[['d2m']], val[['sp']])
         val <- c(val, list(rn = rh, q = spfh))
@@ -259,86 +241,91 @@ era5.cds.format.data <- function(ncfl, pars){
     return(0)
 }
 
-era5.cds.get.apikey <- function(url, usr, pwd){
-    url_user <- paste0(url, "/user/login?destination=user")
-    url_api <- paste0(url, "/api/v2.ui/users/me")
-
-    page_session <- rvest::html_session(url_user)
-    page_form <- rvest::html_form(page_session)[[1]]
-    fill_form <- rvest::set_values(page_form, name = usr, pass = pwd)
-    session <- rvest::submit_form(page_session, fill_form)
-    if(httr::status_code(session) != 200){
-        rep <- rawToChar(session$response$content)
-        Insert.Messages.Out(rep)
-        return(NULL)
+era5.cds.send.request <- function(url_api, pat, request){
+    httr_headers <- httr::add_headers("PRIVATE-TOKEN" = pat)
+    res <- try(httr::VERB("POST", url_api, httr_headers,
+                          body = list(inputs = request),
+                          encode = "json"),
+               silent = TRUE)
+    if(inherits(res, "try-error")){
+        Insert.Messages.Out(gsub('[\r\n]', '', res[1]), TRUE, "e")
+        res <- NULL
     }
-
-    apikey <- rvest::jump_to(session, url_api)
-    if(httr::status_code(apikey) != 200){
-        rep <- rawToChar(apikey$response$content)
-        rep <- jsonlite::fromJSON(rep)
-        Insert.Messages.Out(paste('Failed to get api key', rep$url), TRUE, "e")
-        Insert.Messages.Out(paste('Message:', rep$message), TRUE, "e")
-        Insert.Messages.Out(paste('Reason', rep$reason), TRUE, "e")
-        return(NULL)
-    }
-
-    objkey <- readBin(apikey$response$content, what = "json")
-    objkey <- jsonlite::fromJSON(objkey)
-
-    list(uid = objkey$uid, key = objkey$api_key)
-}
-
-era5.cds.send.request <- function(url_api, user, key, request){
-    res <- httr::POST(
-                      url_api,
-                      httr::authenticate(user, key),
-                      httr::add_headers("Accept" = "application/json",
-                                        "Content-Type" = "application/json"),
-                      body = request,
-                      encode = "json"
-                    )
     if (httr::http_error(res)){
         rep <- httr::content(res)
-        Insert.Messages.Out(paste('Failed: sending request to', rep$url), TRUE, "e")
-        Insert.Messages.Out(paste('Message:', rep$message), TRUE, "e")
-        Insert.Messages.Out(paste('Reason', rep$reason), TRUE, "e")
+        Insert.Messages.Out(paste('Failed: sending request to', rep$instance), TRUE, "e")
+        Insert.Messages.Out(paste('Message:', rep$title), TRUE, "e")
+        Insert.Messages.Out(paste('Detail', rep$detail), TRUE, "e")
         res <- NULL
     }
 
     return(res)
 }
 
-era5.cds.retrieve.task <- function(task_url, user, key){
-    res <- httr::GET(
-                     task_url,
-                     httr::authenticate(user, key),
-                     httr::add_headers("Accept" = "application/json",
-                                       "Content-Type" = "application/json")
-                    )
+era5.cds.retrieve.task <- function(task_url, pat){
+    httr_headers <- httr::add_headers("PRIVATE-TOKEN" = pat)
+    res <- try(httr::GET(task_url, httr_headers, encode = "json"), silent = TRUE)
+    if(inherits(res, "try-error")){
+        Insert.Messages.Out(gsub('[\r\n]', '', res[1]), TRUE, "e")
+        res <- NULL
+    }
     if(httr::http_error(res)){
         rep <- httr::content(res)
         Insert.Messages.Out('Retrieving task failed', TRUE, "e")
-        Insert.Messages.Out(paste('Message:', rep$message), TRUE, "e")
-        Insert.Messages.Out(paste('Reason', rep$reason), TRUE, "e")
+        Insert.Messages.Out(paste('Message:', rep$title), TRUE, "e")
+        Insert.Messages.Out(paste('Detail', rep$detail), TRUE, "e")
         res <- NULL
     }
 
     return(res)
 }
 
-era5.cds.delete.task <- function(task_url, user, key){
-    res <- httr::DELETE(
-                        task_url,
-                        httr::authenticate(user, key),
-                        httr::add_headers("Accept" = "application/json",
-                                          "Content-Type" = "application/json")
-                      )
+era5.cds.get.nclink <- function(task_url, pat){
+    httr_headers <- httr::add_headers("PRIVATE-TOKEN" = pat)
+    res <- try(httr::GET(task_url, httr_headers, encode = "json"), silent = TRUE)
+    if(inherits(res, "try-error")){
+        Insert.Messages.Out(gsub('[\r\n]', '', res[1]), TRUE, "e")
+        res <- NULL
+    }
+    if(httr::http_error(res)){
+        rep <- httr::content(res)
+        Insert.Messages.Out('Retrieving netcdf file failed', TRUE, "e")
+        Insert.Messages.Out(paste('Message:', rep$title), TRUE, "e")
+        Insert.Messages.Out(paste('Detail', rep$detail), TRUE, "e")
+        res <- NULL
+    }
+    rep <- httr::content(res)
+    res <- rep$asset$value$href
+    return(res)
+}
+
+era5.cds.write.data <- function(task_url, dest, pat){
+    nc_url <- era5.cds.get.nclink(task_url, pat)
+    if(is.null(nc_url)) return(NULL)
+
+    ## write to disk
+    Insert.Messages.Out(paste("Downloading data:", basename(dest)), TRUE, "i")
+    res <- httr::GET(nc_url, httr::write_disk(dest, overwrite = TRUE))
+    if(httr::status_code(res) != 200){
+        Insert.Messages.Out(paste("Downloading", basename(dest), "failed"), TRUE, "e")
+        Insert.Messages.Out(httr::content(res, 'text'))
+        return(NULL)
+    }
+
+    return(res)
+}
+
+era5.cds.delete.task <- function(job_url, pat){
+    httr_headers <- httr::add_headers("PRIVATE-TOKEN" = pat)
+    res <- try(httr::DELETE(job_url, httr_headers), silent = TRUE)
+    if(inherits(res, "try-error")){
+        Insert.Messages.Out(gsub('[\r\n]', '', res[1]), TRUE, "e")
+        res <- NULL
+    }
     if(httr::http_error(res)){
         rep <- httr::content(res)
         Insert.Messages.Out('Deleting task failed', TRUE, "w")
-        Insert.Messages.Out(paste('Message:', rep$message), TRUE, "w")
-        Insert.Messages.Out(paste('Reason', rep$reason), TRUE, "w")
+        Insert.Messages.Out(paste('Detail:', rep$detail), TRUE, "w")
         res <- NULL
     }
 

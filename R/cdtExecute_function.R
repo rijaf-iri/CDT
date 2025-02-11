@@ -221,26 +221,20 @@ Execute_Function <- function(){
 
     ###############################
 
-    climData <- c('rain', 'temp', 'rh', 'pres', 'rad', 'wspd', 'ugrd', 'vgrd')
+    climData <- c('rain', 'temp', 'rh', 'pres', 'rad', 'wind', 'wspd', 'ugrd', 'vgrd')
 
     ## Compute bias coefficients
     if(.cdtData$GalParams$action %in% paste0('coefbias.', climData))
     {
-        ret <- try(computeBiasCoeffClimData(), silent = TRUE)
-
+        if(.cdtData$GalParams$action == 'coefbias.wind'){
+            ret <- try(computeBiasCoeffWind(), silent = TRUE)
+        }else{
+            ret <- try(computeBiasCoeffClimData(), silent = TRUE)
+        }
         msg0 <- .cdtData$GalParams[['message']][['5']]
         msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
-
-    # ## Wind
-    # if(.cdtData$GalParams$action == 'coefbias.wind'){
-    #     ret <- try(computeBiasCoeffWind(), silent = TRUE)
-
-    #     msg0 <- .cdtData$GalParams[['message']][['5']]
-    #     msg1 <- .cdtData$GalParams[['message']][['6']]
-    #     Execute_end_msg(ret, msg0, msg1)
-    # }
 
     ###############################
 
@@ -248,21 +242,15 @@ Execute_Function <- function(){
 
     if(.cdtData$GalParams$action %in% paste0('rmbias.', climData))
     {
-        ret <- try(biasCorrectionClimData(), silent = TRUE)
-
+        if(.cdtData$GalParams$action == 'rmbias.wind'){
+            ret <- try(biasCorrectionWind(), silent = TRUE)
+        }else{
+            ret <- try(biasCorrectionClimData(), silent = TRUE)
+        }
         msg0 <- .cdtData$GalParams[['message']][['5']]
         msg1 <- .cdtData$GalParams[['message']][['6']]
         Execute_end_msg(ret, msg0, msg1)
     }
-
-    # ## wind
-    # if(.cdtData$GalParams$action == 'rmbias.wind'){
-    #     ret <- try(biasCorrectionWind(), silent = TRUE)
-
-    #     msg0 <- .cdtData$GalParams[['message']][['5']]
-    #     msg1 <- .cdtData$GalParams[['message']][['6']]
-    #     Execute_end_msg(ret, msg0, msg1)
-    # }
 
     ###############################
 
@@ -270,17 +258,17 @@ Execute_Function <- function(){
 
     if(.cdtData$GalParams$action %in% paste0('merge.', climData))
     {
-        ret <- try(mergingClimData(), silent = TRUE)
-        msg0 <- .cdtData$GalParams[['message']][['8']]
-        msg1 <- .cdtData$GalParams[['message']][['9']]
-        Execute_end_msg(ret, msg0, msg1)
-    }
+        ## wind
+        if(.cdtData$GalParams$action == 'merge.wind'){
+            ret <- try(mergingWindData(), silent = TRUE)
+            msg0 <- .cdtData$GalParams[['message']][['14']]
+            msg1 <- .cdtData$GalParams[['message']][['15']]
+        }else{
+            ret <- try(mergingClimData(), silent = TRUE)
+            msg0 <- .cdtData$GalParams[['message']][['8']]
+            msg1 <- .cdtData$GalParams[['message']][['9']]
+        }
 
-    ## wind
-    if(.cdtData$GalParams$action == 'merge.wind'){
-        ret <- try(mergingWindData(), silent = TRUE)
-        msg0 <- .cdtData$GalParams[['message']][['14']]
-        msg1 <- .cdtData$GalParams[['message']][['15']]
         Execute_end_msg(ret, msg0, msg1)
     }
 

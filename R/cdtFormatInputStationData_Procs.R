@@ -4,19 +4,22 @@ formatCDTDataMultiple.Files <- function(){
     tcl("update")
 
     tstep <- .cdtData$GalParams$tstep
-    if(tstep == "daily"){
-        is <- "start.day"
-        ie <- 'end.day'
-    }else{
+    minhour <- .cdtData$GalParams$minhour
+    if(tstep == "dekadal"){
         is <- "start.dek"
         ie <- 'end.dek'
+    }else{
+        is <- "start.day"
+        ie <- 'end.day'
     }
     istart.yrs <- .cdtData$GalParams$date.range$start.year
     istart.mon <- .cdtData$GalParams$date.range$start.mon
     istart.day <- .cdtData$GalParams$date.range[[is]]
+    istart.hour <- .cdtData$GalParams$date.range$start.hour
     iend.yrs <- .cdtData$GalParams$date.range$end.year
     iend.mon <- .cdtData$GalParams$date.range$end.mon
     iend.day <- .cdtData$GalParams$date.range[[ie]]
+    iend.hour <- .cdtData$GalParams$date.range$end.hour
     min.perc <- .cdtData$GalParams$min.perc / 100
 
     filefrmt <- .cdtData$GalParams$Multiple.File$file.format
@@ -91,6 +94,21 @@ formatCDTDataMultiple.Files <- function(){
     miss.stn$not.read <- if(any(donne.null)) infoheadI1[donne.null, , drop = FALSE] else NULL
     infoheadI1 <- infoheadI1[!donne.null, ]
 
+    if(tstep == 'hourly'){
+        if(minhour != 1){
+            ms <- istart.hour %% minhour
+            sh <- istart.hour - ms
+            me <- iend.hour %% minhour
+            eh <- iend.hour + (minhour - me)
+        }else{
+            sh <- istart.hour
+            eh <- iend.hour
+        }
+        istart <- as.POSIXct(paste(istart.yrs, istart.mon, istart.day, sh, sep = '-'), format = '%Y-%m-%d-%H', tz = 'UTC')
+        iend <- as.POSIXct(paste(iend.yrs, iend.mon, iend.day, eh, sep = '-'), format = '%Y-%m-%d-%H', tz = 'UTC')
+        hstep <- if(minhour == 1) 'hour' else paste(minhour, 'hour')
+        odates <- format(seq(istart, iend, hstep), '%Y%m%d%H')
+    }
     if(tstep == 'daily'){
         istart <- as.Date(paste(istart.yrs, istart.mon, istart.day, sep = '-'))
         iend <- as.Date(paste(iend.yrs, iend.mon, iend.day, sep = '-'))
@@ -117,9 +135,9 @@ formatCDTDataMultiple.Files <- function(){
                     })
         donne <- do.call(cbind, donne)
         per.var <- 1 - (colSums(is.na(donne)) / length(odates)) >= min.perc
-        donne <- donne[, per.var]
+        donne <- donne[, per.var, drop = FALSE]
         miss.stn$less.data <- infoheadI1[!per.var, , drop = FALSE]
-        infoheadI1 <- infoheadI1[per.var, ]
+        infoheadI1 <- infoheadI1[per.var, , drop = FALSE]
         donne <- rbind(t(rbind(capition, infoheadI1)), cbind(odates, donne))
         donne[is.na(donne)] <- donneInfo[[3]]$miss.val
         writeFiles(donne, File2Save)
@@ -222,20 +240,23 @@ formatCDTDataSingle.File <- function(GeneralParameters){
     tcl("update")
 
     tstep <- .cdtData$GalParams$tstep
-    if(tstep == "daily"){
-        is <- "start.day"
-        ie <- 'end.day'
-    }else{
+    minhour <- .cdtData$GalParams$minhour
+    if(tstep == "dekadal"){
         is <- "start.dek"
         ie <- 'end.dek'
+    }else{
+        is <- "start.day"
+        ie <- 'end.day'
     }
 
     istart.yrs <- .cdtData$GalParams$date.range$start.year
     istart.mon <- .cdtData$GalParams$date.range$start.mon
     istart.day <- .cdtData$GalParams$date.range[[is]]
+    istart.hour <- .cdtData$GalParams$date.range$start.hour
     iend.yrs <- .cdtData$GalParams$date.range$end.year
     iend.mon <- .cdtData$GalParams$date.range$end.mon
     iend.day <- .cdtData$GalParams$date.range[[ie]]
+    iend.hour <- .cdtData$GalParams$date.range$end.hour
     min.perc <- .cdtData$GalParams$min.perc/100
 
     include.elev <- .cdtData$GalParams$Single.File$include.elev
@@ -248,6 +269,7 @@ formatCDTDataSingle.File <- function(GeneralParameters){
     col.yr <- .cdtData$GalParams$Single.File$col.year
     col.mo <- .cdtData$GalParams$Single.File$col.month
     col.dy <- .cdtData$GalParams$Single.File$col.day.dek
+    col.hr <- .cdtData$GalParams$Single.File$col.hour
     col.dat <- .cdtData$GalParams$Single.File$col.start.data
     nb.column <- .cdtData$GalParams$Single.File$nb.column
 
@@ -261,6 +283,13 @@ formatCDTDataSingle.File <- function(GeneralParameters){
     donne[donne == ""] <- NA
     donne <- donne[rowSums(!is.na(donne)) > 0, , drop = FALSE]
 
+    if(tstep == 'hourly'){
+        if(nb.column == 1){
+            ina <- is.na(donne[, col.id]) | is.na(donne[, col.yr]) | is.na(donne[, col.mo]) | is.na(donne[, col.dy]) | is.na(donne[, col.hr])
+        }else{
+            ina <- is.na(donne[, col.id]) | is.na(donne[, col.yr]) | is.na(donne[, col.mo]) | is.na(donne[, col.dy])
+        }
+    }
     if(tstep == 'daily'){
         if(nb.column == 1)
             ina <- is.na(donne[, col.id]) | is.na(donne[, col.yr]) | is.na(donne[, col.mo]) | is.na(donne[, col.dy])
@@ -329,6 +358,28 @@ formatCDTDataSingle.File <- function(GeneralParameters){
         capition <- c('Stations', 'LON', 'LAT', paste(toupper(tstep), 'ELV', sep = '/'))
     }
 
+    if(tstep == 'hourly'){
+        if(minhour != 1){
+            ms <- istart.hour %% minhour
+            sh <- istart.hour - ms
+            me <- iend.hour %% minhour
+            eh <- iend.hour + (minhour - me)
+        }else{
+            sh <- istart.hour
+            eh <- iend.hour
+        }
+        istart <- as.POSIXct(paste(istart.yrs, istart.mon, istart.day, sh, sep = '-'), format = '%Y-%m-%d-%H', tz = 'UTC')
+        iend <- as.POSIXct(paste(iend.yrs, iend.mon, iend.day, eh, sep = '-'), format = '%Y-%m-%d-%H', tz = 'UTC')
+        hstep <- if(minhour == 1) 'hour' else paste(minhour, 'hour')
+        odates <- format(seq(istart, iend, hstep), '%Y%m%d%H')
+        if(nb.column == 1){
+            xdonne <- donne[, c(col.id, col.yr, col.mo, col.dy, col.hr)]
+            donne <- donne[, col.dat, drop = FALSE]
+        }else{
+            xdonne <- donne[, c(col.id, col.yr, col.mo, col.dy)]
+            donne <- donne[, col.dat + (0:(nb.column - 1))]
+        }
+    }
     if(tstep == 'daily'){
         istart <- as.Date(paste(istart.yrs, istart.mon, istart.day, sep = '-'))
         iend <- as.Date(paste(iend.yrs, iend.mon, iend.day, sep = '-'))
@@ -400,6 +451,14 @@ formatCDTDataSingle.File <- function(GeneralParameters){
         don <- c(t(don))
         xdaty <- xdonne[ix, , drop = FALSE]
 
+        if(tstep == 'hourly'){
+            if(nb.column > 1){
+                daty <- as.POSIXct(paste(paste(rep(paste(xdaty[, 2], xdaty[, 3], xdaty[, 4], sep = '-'), each = nb.column),
+                                   rep(0:(nb.column - 1), nrow(xdaty)), sep = '-')), format = '%Y-%m-%d-%H', tz = 'UTC')
+            }else{
+                daty <- as.POSIXct(paste(xdaty[, 2], xdaty[, 3], xdaty[, 4], xdaty[, 5], sep = '-'), format = '%Y-%m-%d-%H', tz = 'UTC')
+            }
+        }
         if(tstep == 'daily'){
             if(nb.column == 1)
                 daty <- as.Date(paste(xdaty[, 2], xdaty[, 3], xdaty[, 4], sep = '-'))
@@ -431,6 +490,7 @@ formatCDTDataSingle.File <- function(GeneralParameters){
         don <- don[order(daty)]
         daty <- daty[order(daty)]
 
+        if(tstep == 'hourly') daty <- format(daty, '%Y%m%d%H')
         if(tstep == 'daily') daty <- format(daty, '%Y%m%d')
         if(tstep == 'dekadal') daty <- paste0(format(daty, '%Y%m'), as.numeric(format(daty, '%d')))
         if(tstep == 'monthly') daty <- format(daty, '%Y%m')

@@ -30,19 +30,19 @@ cdt.init.params <- function(action, tstep){
 
     ## Format CDTs Input station Data
     if(action == 'cdtInput.stn'){
-    IO.files <- list(STN.sample.file = "", STN.dir = "",
-                     STN.single.file = "", STN.coords.file = "",
-                     File2Save = "")
-    Multiple.File <- list(file.format = 1, date.format = 1, include.elev = FALSE)
-    Single.File <- list(coords.included = TRUE, nb.column = 31, col.stn.id = 1,
-                        col.stn.lon = 2, col.stn.lat = 3, col.stn.elv = 4,
-                        col.year = 5, col.month = 6, col.day.dek = 7,
-                        col.start.data = 8, include.elev = FALSE)
-    ret.params <- list(action = action, tstep = tstep,
-                       IO.files = IO.files, date.range = date.range,
-                       min.perc = 1, data.type = "Multiple",
-                       Multiple.File = Multiple.File,
-                       Single.File = Single.File)
+        IO.files <- list(STN.sample.file = "", STN.dir = "",
+                         STN.single.file = "", STN.coords.file = "",
+                         File2Save = "")
+        Multiple.File <- list(file.format = 1, date.format = 1, include.elev = FALSE)
+        Single.File <- list(coords.included = TRUE, nb.column = 31, col.stn.id = 1,
+                            col.stn.lon = 2, col.stn.lat = 3, col.stn.elv = 4,
+                            col.year = 5, col.month = 6, col.day.dek = 7, col.hour = 8,
+                            col.start.data = 9, include.elev = FALSE)
+        ret.params <- list(action = action, tstep = tstep, minhour = 1,
+                           IO.files = IO.files, date.range = date.range,
+                           min.perc = 1, data.type = "Multiple",
+                           Multiple.File = Multiple.File,
+                           Single.File = Single.File)
     }
 
     ## Merge CDTs station Data

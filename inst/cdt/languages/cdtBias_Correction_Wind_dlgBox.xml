@@ -36,7 +36,7 @@
             <text lang="en"> Bias method </text>
         </label>
         <label id="2">
-            <text lang="en"> Directory of bias files </text>
+            <text lang="en"> Directory of bias files (BIAS_DATA) </text>
         </label>
         <label id="3-1">
             <text lang="en"> Directory of the netCDF wind speed files </text>
@@ -88,18 +88,18 @@
         </content>
         <content id="3">
             <status>
-                <text lang="en"> Select the method used to calculate the Bias Coefficients </text>
+                <text lang="en"> Select the method used to calculate the Bias Factors or Parameters </text>
             </status>
             <tooltip>
-                <text lang="en"> Select the method used to calculate the Bias Coefficients </text>
+                <text lang="en"> Select the method used to calculate the Bias Factors or Parameters </text>
             </tooltip>
         </content>
         <content id="4">
             <status>
-                <text lang="en"> Enter the full path to the directory containing the bias files </text>
+                <text lang="en"> Enter the full path to the directory "BIAS_DATA" containing the bias files </text>
             </status>
             <tooltip>
-                <text lang="en"> Enter the full path to the directory containing the bias files </text>
+                <text lang="en"> Enter the full path to the directory "BIAS_DATA" containing the bias files </text>
             </tooltip>
         </content>
         <content id="5-0">
@@ -230,11 +230,35 @@
         <content id="7">
             <text lang="en"> Bias correction ... </text>
         </content>
-        <content id="8">
-            <text lang="en"> No netCDF data sample found </text>
+        <content id="8-1">
+            <text lang="en"> No wind speed netCDF data sample found </text>
         </content>
-        <content id="9">
-            <text lang="en"> netCDF data not found </text>
+        <content id="8-2">
+            <text lang="en"> No wind U and V components netCDF data sample found </text>
+        </content>
+        <content id="8-3">
+            <text lang="en"> No wind U component netCDF data sample found </text>
+        </content>
+        <content id="8-4">
+            <text lang="en"> No wind V component netCDF data sample found </text>
+        </content>
+        <content id="8-5">
+            <text lang="en"> The grid of the wind U and V components do not match </text>
+        </content>
+        <content id="9-1">
+            <text lang="en"> Wind speed netCDF files not found </text>
+        </content>
+        <content id="9-2">
+            <text lang="en"> Wind U and V components netCDF files not found </text>
+        </content>
+        <content id="9-3">
+            <text lang="en"> Wind U component netCDF files not found </text>
+        </content>
+        <content id="9-4">
+            <text lang="en"> Wind V component netCDF files not found </text>
+        </content>
+        <content id="9-5">
+            <text lang="en"> The netCDF dates of the wind U and V components do not overlap </text>
         </content>
         <content id="10">
             <text lang="en"> Bias and netCDF data are in the different region </text>

@@ -42,8 +42,20 @@
             <text lang="fr"> Login to : </text>
         </label>
         <label id="5">
+            <text lang="en"> Use previous saved credential </text>
+            <text lang="fr"> Use previous saved credential </text>
+        </label>
+        <label id="5-1">
             <text lang="en"> Username </text>
             <text lang="fr"> Username </text>
+        </label>
+        <label id="5-2">
+            <text lang="en"> Email </text>
+            <text lang="fr"> Email </text>
+        </label>
+        <label id="5-3">
+            <text lang="en"> Personal Access Token </text>
+            <text lang="fr"> Personal Access Token </text>
         </label>
         <label id="6">
             <text lang="en"> Password </text>
@@ -217,6 +229,9 @@
         </content>
         <content id="13">
             <text lang="en"> Checking temporal coverage done </text>
+        </content>
+        <content id="14">
+            <text lang="en"> No credential saved yet </text>
         </content>
     </message>
 </dialog_box>

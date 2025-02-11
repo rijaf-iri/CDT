@@ -19,31 +19,30 @@ convert2CPTFormat(
 
 \item{station.data}{named list, providing the station data to convert in CDT format.
 \itemize{
-\item{\code{file}: }{character, full path to the file containing the stations data}
-\item{\code{sep}: }{character, column separator of the data}
-\item{\code{na.strings}: }{character, missing values flag}
+\item \code{file}: character, full path to the file containing the stations data
+\item \code{sep}: character, column separator of the data
+\item \code{na.strings}: character, missing values flag
 }}
 
 \item{netcdf.data}{named list, providing the input netCDF dataset to convert.
 \itemize{
-\item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
-\item{\code{format}: }{character, format of the netCDF file names.\cr
+\item \code{dir}: character, full path to the directory containing the netCDF files.
+\item \code{format}: character, format of the netCDF file names.\cr
 Replace the year, month, dekad, pentad or day by Year: \code{\%Y}; Month: \code{\%M}; Dekad: \code{\%T}; Pentad: \code{\%P}; Day: \code{\%D}.\cr
 Example: \cr
 \code{outTS_1981-07_1982-06.nc => outTS_\%Y-\%M_\%Y-\%M.nc} \cr
 \code{onset_19830901.nc  => onset_\%Y\%M\%D.nc}
-}
-\item{\code{varid}: }{character, name of the variable to read from the netCDF data}
-\item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
-Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
-\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+\item \code{varid}: character, name of the variable to read from the netCDF data
+\item \code{ilon}: integer, order for the longitude dimension of the variable. 
+Example: if the variable "precip" has the dimension order [Lat, Lon] then \code{ilon} must be 2
+\item \code{ilat}: integer, order for the latitude dimension of the variable.
 }}
 
 \item{cpt.varinfo}{named list, information about the field of the output CPT file.
 \itemize{
-\item{\code{name}: }{character, the field name}
-\item{\code{units}: }{character, the units}
-\item{\code{missval}: }{character, missing values flag}
+\item \code{name}: character, the field name
+\item \code{units}: character, the units
+\item \code{missval}: character, missing values flag
 }}
 
 \item{output.file}{character, full path to the file to save the CPT data format.}

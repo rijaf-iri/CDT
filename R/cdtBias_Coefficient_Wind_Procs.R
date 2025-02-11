@@ -1,24 +1,126 @@
 
 computeBiasCoeffWind <- function(){
     message <- .cdtData$GalParams[['message']]
-    outdir <- file.path(.cdtData$GalParams$output$dir, paste0('BIAS_Data_',
-                        tools::file_path_sans_ext(.cdtData$GalParams$STN.file)))
+
+    is_wind_speed <- .cdtData$GalParams$wvar == 'speed'
+    uv_one_netcdf <- .cdtData$GalParams$one.ncdf
+
+    if(is_wind_speed){
+        dirBias <- 'BIAS_DATA_WSPD'
+    }else{
+        dirBias <- 'BIAS_DATA_WIND'
+    }
+    outdir <- file.path(.cdtData$GalParams$output$dir, dirBias)
+
+    if(dir.exists(outdir)){
+        tmp <- list.files(.cdtData$GalParams$output$dir, paste0('^', dirBias, '_[0-9]+'), include.dirs = TRUE)
+        if(length(tmp) == 0){
+            tmp <- 1
+        }else{
+            tmp <- gsub(paste0(dirBias, "_"), "", tmp)
+            tmp <- max(as.numeric(tmp)) + 1
+        }
+        outdir <- file.path(.cdtData$GalParams$output$dir, paste0(dirBias, "_", tmp))
+    }
     dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
 
     Insert.Messages.Out(message[['7']], TRUE, "i")
 
-    #######get data
-    stnData <- getStnOpenData(.cdtData$GalParams$STN.file)
-    stnData <- getCDTdataAndDisplayMsg(stnData, .cdtData$GalParams$period,
-                                       .cdtData$GalParams$STN.file)
-    if(is.null(stnData)) return(NULL)
+    #######
+    ## get station data
+    if(is_wind_speed){
+        stnData <- getStnOpenData(.cdtData$GalParams$STN.S)
+        stnData <- getCDTdataAndDisplayMsg(stnData, .cdtData$GalParams$period,
+                                           .cdtData$GalParams$STN.S)
+        if(is.null(stnData)) return(NULL)
+    }else{
+        stnU <- getStnOpenData(.cdtData$GalParams$STN.U)
+        stnU <- getCDTdataAndDisplayMsg(stnU, .cdtData$GalParams$period,
+                                        .cdtData$GalParams$STN.U)
+        if(is.null(stnU)){
+            Insert.Messages.Out(message[['13']], TRUE, 'e')
+            return(NULL)
+        }
+        stnV <- getStnOpenData(.cdtData$GalParams$STN.V)
+        stnV <- getCDTdataAndDisplayMsg(stnV, .cdtData$GalParams$period,
+                                        .cdtData$GalParams$STN.V)
+        if(is.null(stnV)){
+            Insert.Messages.Out(message[['14']], TRUE, 'e')
+            return(NULL)
+        }
+
+        if(length(stnU$id) != length(stnV$id)){
+            Insert.Messages.Out(message[['15']], TRUE, 'e')
+            return(NULL)
+        }
+        if(any(stnU$id != stnV$id)){
+            Insert.Messages.Out(message[['15']], TRUE, 'e')
+            return(NULL)
+        }
+
+        stn_daty <- intersect(stnU$dates, stnV$dates)
+        if(length(stn_daty) == 0){
+            Insert.Messages.Out(message[['16']], TRUE, 'e')
+            return(NULL)
+        }
+
+        stnData <- stnU[c('id', 'lon', 'lat', 'elv')]
+        stnData$dates <- stn_daty
+        stnData$U <- stnU$data[match(stn_daty, stnU$dates), , drop = FALSE]
+        stnData$V <- stnV$data[match(stn_daty, stnV$dates), , drop = FALSE]
+    }
 
     ##################
-    ## RFE sample file
-    rfeDataInfo <- getNCDFSampleData(.cdtData$GalParams$INPUT$sample)
-    if(is.null(rfeDataInfo)){
-        Insert.Messages.Out(message[['8']], TRUE, 'e')
-        return(NULL)
+    ## NetCDF sample file
+
+    if(is_wind_speed){
+        ncDataInfo <- getNCDFSampleData(.cdtData$GalParams$INPUT.S$sample)
+        if(is.null(ncDataInfo)){
+            Insert.Messages.Out(message[['8-1']], TRUE, 'e')
+            return(NULL)
+        }
+    }else{
+        if(uv_one_netcdf){
+            ncUVInfo <- getNCDFSampleData(.cdtData$GalParams$INPUT.UV$sample)
+            if(is.null(ncUVInfo)){
+                Insert.Messages.Out(message[['8-2']], TRUE, 'e')
+                return(NULL)
+            }
+
+            ncDataInfo <- NULL
+            ncDataInfo$lon <- ncUVInfo$lon
+            ncDataInfo$lat <- ncUVInfo$lat
+            ncDataInfo$UV <- ncUVInfo[!names(ncUVInfo) %in% c('lon', 'lat')]
+            ncDataInfo$varidU <- .cdtData$GalParams$INPUT.UV$U
+            ncDataInfo$varidV <- .cdtData$GalParams$INPUT.UV$V
+        }else{
+            ncUInfo <- getNCDFSampleData(.cdtData$GalParams$INPUT.U$sample)
+            if(is.null(ncUInfo)){
+                Insert.Messages.Out(message[['8-3']], TRUE, 'e')
+                return(NULL)
+            }
+            ncVInfo <- getNCDFSampleData(.cdtData$GalParams$INPUT.V$sample)
+            if(is.null(ncVInfo)){
+                Insert.Messages.Out(message[['8-4']], TRUE, 'e')
+                return(NULL)
+            }
+
+            diff_grid <- is.diffSpatialPixelsObj(defSpatialPixels(ncUInfo[c('lon', 'lat')]),
+                                                 defSpatialPixels(ncVInfo[c('lon', 'lat')]),
+                                                 tol = 1e-07)
+            if(diff_grid){
+                Insert.Messages.Out(message[['8-5']], TRUE, 'e')
+                return(NULL)
+            }
+
+            ncDataInfo <- NULL
+            ncDataInfo$lon <- ncUInfo$lon
+            ncDataInfo$lat <- ncUInfo$lat
+            ncDataInfo$U <- ncUInfo[!names(ncUInfo) %in% c('lon', 'lat')]
+            ncDataInfo$V <- ncVInfo[!names(ncVInfo) %in% c('lon', 'lat')]
+            ncDataInfo$varidU <- ncUInfo$varinfo$name
+            ncDataInfo$varidV <- ncVInfo$varinfo$name
+        }
     }
 
     ##################
@@ -39,8 +141,8 @@ computeBiasCoeffWind <- function(){
     ##Create grid for interpolation
 
     if(.cdtData$GalParams$grid$from == "data"){
-        grd.lon <- rfeDataInfo$lon
-        grd.lat <- rfeDataInfo$lat
+        grd.lon <- ncDataInfo$lon
+        grd.lat <- ncDataInfo$lat
     }
 
     if(.cdtData$GalParams$grid$from == "new"){
@@ -76,23 +178,62 @@ computeBiasCoeffWind <- function(){
     }
 
     ##################
-    ## Get RFE data info
+    ## Get NetCDF data info
 
-    ncInfoBias <- ncInfo.no.date.range(.cdtData$GalParams$INPUT,
-                                       .cdtData$GalParams$period)
-    if(is.null(ncInfoBias)){
-        Insert.Messages.Out(message[['11']], TRUE, "e")
-        return(NULL)
+    if(is_wind_speed){
+        ncInfoBias <- ncInfo.no.date.range(.cdtData$GalParams$INPUT.S,
+                                           .cdtData$GalParams$period)
+        if(is.null(ncInfoBias)){
+            Insert.Messages.Out(message[['11-1']], TRUE, "e")
+            return(NULL)
+        }
+    }else{
+        if(uv_one_netcdf){
+            ncInfoUV <- ncInfo.no.date.range(.cdtData$GalParams$INPUT.UV,
+                                             .cdtData$GalParams$period)
+            if(is.null(ncInfoUV)){
+                Insert.Messages.Out(message[['11-2']], TRUE, "e")
+                return(NULL)
+            }
+            ncInfoBias <- NULL
+            ncInfoBias$UV <- ncInfoUV
+        }else{
+            ncInfoU <- ncInfo.no.date.range(.cdtData$GalParams$INPUT.U,
+                                            .cdtData$GalParams$period)
+            if(is.null(ncInfoU)){
+                Insert.Messages.Out(message[['11-3']], TRUE, "e")
+                return(NULL)
+            }
+            ncInfoV <- ncInfo.no.date.range(.cdtData$GalParams$INPUT.V,
+                                            .cdtData$GalParams$period)
+            if(is.null(ncInfoV)){
+                Insert.Messages.Out(message[['11-4']], TRUE, "e")
+                return(NULL)
+            }
+
+            nc_daty <- intersect(ncInfoU$dates[ncInfoU$exist], ncInfoV$dates[ncInfoV$exist])
+            if(length(nc_daty) == 0){
+                Insert.Messages.Out(message[['17']], TRUE, 'e')
+                return(NULL)
+            }
+
+            ncInfoBias <- NULL
+            itU <- match(nc_daty, ncInfoU$dates)
+            ncInfoBias$U <- lapply(ncInfoU, function(x) x[itU])
+            itV <- match(nc_daty, ncInfoV$dates)
+            ncInfoBias$V <- lapply(ncInfoV, function(x) x[itV])
+        }
     }
-    ncInfoBias$ncinfo <- rfeDataInfo
+
+    ncInfoBias$ncinfo <- ncDataInfo
 
     ##################
-    ## Regrid RFE
+    ## Regrid NetCDF data
 
-    is.regridRFE <- is.diffSpatialPixelsObj(defSpatialPixels(xy.grid),
-                                           defSpatialPixels(rfeDataInfo),
+    is.regridNC <- is.diffSpatialPixelsObj(defSpatialPixels(xy.grid),
+                                           defSpatialPixels(ncDataInfo),
                                            tol = 1e-07)
-    ncInfoBias$ncgrid <- c(list(regrid = is.regridRFE), xy.grid,
+    ncInfoBias$ncgrid <- c(list(regrid = is.regridNC), xy.grid,
                            list(nlon = length(xy.grid$lon),
                                 nlat = length(xy.grid$lat)))
 
@@ -104,8 +245,16 @@ computeBiasCoeffWind <- function(){
     minyear <- .cdtData$GalParams$base.period$min.year
 
     years.stn <- as.numeric(substr(stnData$dates, 1, 4))
-    years.rfe <- as.numeric(substr(ncInfoBias$dates[ncInfoBias$exist], 1, 4))
-    years <- intersect(years.stn, years.rfe)
+    if(is_wind_speed){
+        years.nc <- as.numeric(substr(ncInfoBias$dates[ncInfoBias$exist], 1, 4))
+    }else{
+        if(uv_one_netcdf){
+            years.nc <- as.numeric(substr(ncInfoBias$UV$dates[ncInfoBias$UV$exist], 1, 4))
+        }else{
+            years.nc <- as.numeric(substr(ncInfoBias$U$dates[ncInfoBias$U$exist], 1, 4))
+        }  
+    }
+    years <- intersect(years.stn, years.nc)
 
     if(length(unique(years)) < minyear){
         Insert.Messages.Out(message[['12']], TRUE, 'e')
@@ -114,19 +263,44 @@ computeBiasCoeffWind <- function(){
 
     iyrUse <- if(allyears) rep(TRUE, length(years)) else years >= year1 & years <= year2
     ystn <- years.stn %in% years[iyrUse]
-    yrfe <- years.rfe %in% years[iyrUse]
+    ync <- years.nc %in% years[iyrUse]
 
-    stnData$data <- stnData$data[ystn, , drop = FALSE]
-    stnData$dates <- stnData$dates[ystn]
-    ncInfoBias$dates <- ncInfoBias$dates[yrfe]
-    ncInfoBias$ncfiles <- ncInfoBias$ncfiles[yrfe]
-    ncInfoBias$exist <- ncInfoBias$exist[yrfe]
+    if(is_wind_speed){
+        stnData$data <- stnData$data[ystn, , drop = FALSE]
+        stnData$dates <- stnData$dates[ystn]
 
-    # bias.pars <- ComputeBiasCoefficients(stnData = stnData, ncInfo = ncInfoBias,
-    #                                      params = .cdtData$GalParams, variable = "rain",
-    #                                      outdir = outdir)
-    # ret <- InterpolateBiasCoefficients(bias.pars, xy.grid, variable = "rain",
-    #                                    outdir = outdir, demData = demData)
+        ncInfoBias$dates <- ncInfoBias$dates[ync]
+        ncInfoBias$ncfiles <- ncInfoBias$ncfiles[ync]
+        ncInfoBias$exist <- ncInfoBias$exist[ync]
+    }else{
+        stnData$U <- stnData$U[ystn, , drop = FALSE]
+        stnData$V <- stnData$V[ystn, , drop = FALSE]
+        stnData$dates <- stnData$dates[ystn]
+        if(uv_one_netcdf){
+            ncInfoBias$UV$dates <- ncInfoBias$UV$dates[ync]
+            ncInfoBias$UV$ncfiles <- ncInfoBias$UV$ncfiles[ync]
+            ncInfoBias$UV$exist <- ncInfoBias$UV$exist[ync]
+        }else{
+            ncInfoBias$U$dates <- ncInfoBias$U$dates[ync]
+            ncInfoBias$U$ncfiles <- ncInfoBias$U$ncfiles[ync]
+            ncInfoBias$U$exist <- ncInfoBias$U$exist[ync]
+
+            ncInfoBias$V$dates <- ncInfoBias$V$dates[ync]
+            ncInfoBias$V$ncfiles <- ncInfoBias$V$ncfiles[ync]
+            ncInfoBias$V$exist <- ncInfoBias$V$exist[ync]
+        }
+    }
+
+    ##################
+
+    if(is_wind_speed){
+        ret <- cdtBiasCoefficients(stnData = stnData, ncInfo = ncInfoBias, demData = demData,
+                                   params = .cdtData$GalParams, variable = "wspd", outdir = outdir)
+    }else{
+        ret <- cdtBiasCoefficientsWind(stnData = stnData, ncInfo = ncInfoBias, demData = demData,
+                                       params = .cdtData$GalParams, outdir = outdir)
+    }
+
     ret <- 0
     if(!is.null(ret)){
         if(ret == 0) return(0)

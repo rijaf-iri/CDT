@@ -5,11 +5,13 @@ biasCoeffGetInfoWind <- function(){
         largeur1 <- 43
         largeur2 <- 45
         largeur3 <- 35
+        largeur4 <- 20
     }else{
         largeur0 <- 22
         largeur1 <- 41
         largeur2 <- 42
         largeur3 <- 35
+        largeur4 <- 20
     }
 
     ####################################
@@ -26,38 +28,131 @@ biasCoeffGetInfoWind <- function(){
     frMRG0 <- tkframe(tt, relief = 'raised', borderwidth = 2, padx = 3, pady = 3)
     frMRG1 <- tkframe(tt)
 
-    cbLists <- new.env()
-    cbLists$cb <- list()
-
     ####################################
 
-    region.box <- function(biasmthd){
+    region.box <- function(frBox, h){
+        txt.boxrg <- tklabel(frBox, text = paste(lang.dlg[['label']][['1']], ":"), width = largeur4, anchor = 'e', justify = 'right')
+        txt.boxlo <- tklabel(frBox, text = lang.dlg[['label']][['2']])
+        en.boxlo <- tkentry(frBox, textvariable = box.lon, width = 4)
+        txt.boxla <- tklabel(frBox, text = lang.dlg[['label']][['3']])
+        en.boxla <- tkentry(frBox, textvariable = box.lat, width = 4)
+
+        tkgrid(txt.boxrg, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.boxlo, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.boxlo, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(txt.boxla, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        tkgrid(en.boxla, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+        helpWidget(en.boxlo, lang.dlg[['tooltip']][[h]], lang.dlg[['status']][[h]])
+        helpWidget(en.boxla, lang.dlg[['tooltip']][[h]], lang.dlg[['status']][[h]])
+    }
+
+    ncdata.chunks <- function(frBox){
+        stateC <- if(tclvalue(chunks.exist) == "1") 'normal' else 'disabled'
+
+        chk.ncdata <- tkcheckbutton(frBox, variable = chunks.exist, text = lang.dlg[['checkbutton']][['3']], anchor = 'w', justify = 'left')
+        txt.ncdata <- tklabel(frBox, text = lang.dlg[['label']][['10']], anchor = 'e', justify = 'right')
+        en.ncdata <- tkentry(frBox, textvariable = chunks.dir, width = largeur2, state = stateC)
+        bt.ncdata <- tkbutton(frBox, text = "...", state = stateC)
+
+        tkgrid(chk.ncdata, row = 0, column = 0, sticky = 'w', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(txt.ncdata, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+        tkgrid(en.ncdata, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, pady = 1, ipady = 1)
+        tkgrid(bt.ncdata, row = 2, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, pady = 1, ipady = 1)
+
+        helpWidget(chk.ncdata, lang.dlg[['tooltip']][['17']], lang.dlg[['status']][['17']])
+        helpWidget(en.ncdata, lang.dlg[['tooltip']][['18']], lang.dlg[['status']][['18']])
+        helpWidget(bt.ncdata, lang.dlg[['tooltip']][['19']], lang.dlg[['status']][['19']])
+
+        tkconfigure(bt.ncdata, command = function(){
+            tcl('wm', 'attributes', tt, topmost = FALSE)
+            dirnc <- tk_choose.dir(getwd(), "")
+            tcl('wm', 'attributes', tt, topmost = TRUE)
+            tclvalue(chunks.dir) <- if(!is.na(dirnc)) dirnc else ""
+        })
+
+        tkbind(chk.ncdata, "<Button-1>", function(){
+            stateC <- if(tclvalue(chunks.exist) == "0") 'normal' else 'disabled'
+            tkconfigure(en.ncdata, state = stateC)
+            tkconfigure(bt.ncdata, state = stateC)
+
+            stateNC <- if(tclvalue(chunks.exist) == "1") 'normal' else 'disabled'
+            ncdata.chunks_bind(stateNC)
+        })
+    }
+
+
+    ncdata.chunks_bind <- function(stateNC){
+        wvar <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
+        widgets_class <- c('Button', 'TButton', 'Entry')
+
+        fr_child <- tkwinfo("children", fr.windVar)
+        fr_child <- as.character(fr_child)
+
+        if(wvar == "speed"){
+            fr_child <- fr_child[-(1:3)]
+            for(id in fr_child){
+                id_class <- as.character(tkwinfo('class', id))
+                if(id_class %in% widgets_class) tkconfigure(id, state = stateNC)
+            }
+        }else{
+            for(id in fr_child){
+                id_class <- as.character(tkwinfo('class', id))
+                if(id_class != "Frame") next
+                fr_uv <- tkwinfo("children", id)
+                fr_uv <- as.character(fr_uv)
+                for(el in fr_uv){
+                    el_class <- as.character(tkwinfo('class', el))
+                    if(el_class %in% widgets_class) tkconfigure(el, state = stateNC)
+                }
+            }
+        }
+    }
+
+    bias_method_inputs <- function(biasmthd){
         tkdestroy(fr.biasOpts)
         fr.biasOpts <<- tkframe(frameBias)
 
         if(biasmthd == "qmecdf"){
-            txt.boxrg <- tklabel(fr.biasOpts, text = paste(lang.dlg[['label']][['1']], ":"))
-            txt.boxlo <- tklabel(fr.biasOpts, text = lang.dlg[['label']][['2']])
-            en.boxlo <- tkentry(fr.biasOpts, textvariable = box.lon, width = 4)
-            txt.boxla <- tklabel(fr.biasOpts, text = lang.dlg[['label']][['3']])
-            en.boxla <- tkentry(fr.biasOpts, textvariable = box.lat, width = 4)
-
-            tkgrid(txt.boxrg, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(txt.boxlo, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(en.boxlo, row = 0, column = 2, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(txt.boxla, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-            tkgrid(en.boxla, row = 0, column = 4, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
-
-            helpWidget(en.boxlo, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
-            helpWidget(en.boxla, lang.dlg[['tooltip']][['1']], lang.dlg[['status']][['1']])
+            region.box(fr.biasOpts, '1')
         }
-        # if(biasmthd == "qmdist"){
-        #     chk.adtest <- tkcheckbutton(fr.biasOpts, variable = stat.test, text = lang.dlg[['checkbutton']][['1']], anchor = 'w', justify = 'left')
 
-        #     tkgrid(chk.adtest, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+        if(biasmthd == "qmdist"){
+            txt.distr <- tklabel(fr.biasOpts, text = lang.dlg[['label']][['11']], anchor = 'e', justify = 'right')
+            cb.distr <- ttkcombobox(fr.biasOpts, values = cb.distrName, textvariable = distr.name, width = largeur0, justify = 'center')
+            txt.supp <- tklabel(fr.biasOpts, text = lang.dlg[['label']][['12']], anchor = 'e', justify = 'right')
+            cb.supp <- ttkcombobox(fr.biasOpts, values = cb.tsSupport, textvariable = ts.support, width = largeur0, justify = 'center')
+            fr.box <- tkframe(fr.biasOpts, relief = 'groove', borderwidth = 2)
 
-        #     helpWidget(chk.adtest, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
-        # }
+            tsSupp <- val.tsSupport[cb.tsSupport %in% trimws(tclvalue(ts.support))]
+            if(tsSupp == "rectbox") region.box(fr.box, '16') else ncdata.chunks(fr.box)
+
+            tkgrid(txt.distr, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+            tkgrid(cb.distr, row = 0, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+            tkgrid(txt.supp, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+            tkgrid(cb.supp, row = 1, column = 1, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 2, ipadx = 1, ipady = 1)
+            tkgrid(fr.box, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+            helpWidget(cb.distr, lang.dlg[['tooltip']][['2']], lang.dlg[['status']][['2']])
+            helpWidget(cb.supp, lang.dlg[['tooltip']][['15']], lang.dlg[['status']][['15']])
+
+            tkbind(cb.supp, "<<ComboboxSelected>>", function(){
+                tsSupp <- val.tsSupport[cb.tsSupport %in% trimws(tclvalue(ts.support))]
+                tkdestroy(fr.box)
+
+                fr.box <<- tkframe(fr.biasOpts, relief = 'groove', borderwidth = 2)
+                if(tsSupp == "rectbox") region.box(fr.box, '16') else ncdata.chunks(fr.box)
+                tkgrid(fr.box, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
+
+                if(tsSupp == "points"){
+                    stateNC <- if(tclvalue(chunks.exist) == "0") 'normal' else 'disabled'
+                }else stateNC <- 'normal'
+                ncdata.chunks_bind(stateNC)
+
+                stateInterp <- if(tsSupp == 'rectbox') "disabled" else "normal"
+                tkconfigure(bt.bias.interp, state = stateInterp)
+            })
+        }
 
         if(biasmthd %in% c("qmecdf", "qmdist"))
             tkgrid(fr.biasOpts, row = 2, column = 0, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -69,15 +164,20 @@ biasCoeffGetInfoWind <- function(){
         tkdestroy(fr.windVar)
         fr.windVar <<- tkframe(frInputData)
 
+        bsmethod <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
+        tsSupp <- val.tsSupport[cb.tsSupport %in% trimws(tclvalue(ts.support))]
+        chunksexist <- if(tclvalue(chunks.exist) == '1') TRUE else FALSE
+
+        stateNC <- if(bsmethod == 'qmdist' && tsSupp == 'points' && chunksexist) 'disabled' else 'normal'
+
         txt.stnS <- tklabel(fr.windVar, text = lang.dlg[['label']][['4-1']], anchor = 'w', justify = 'left')
         cb.stnS <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_S, width = largeur1)
+        addTo_all_Combobox_List(cb.stnS)
         bt.stnS <- tkbutton(fr.windVar, text = "...")
         txt.ncS <- tklabel(fr.windVar, text = lang.dlg[['label']][['5-1']], anchor = 'w', justify = 'left')
-        set.ncS <- ttkbutton(fr.windVar, text = .cdtEnv$tcl$lang$global[['button']][['5']])
-        en.ncS <- tkentry(fr.windVar, textvariable = dir.NC_S, width = largeur2)
-        bt.ncS <- tkbutton(fr.windVar, text = "...")
-
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnS
+        set.ncS <- ttkbutton(fr.windVar, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateNC)
+        en.ncS <- tkentry(fr.windVar, textvariable = dir.NC_S, width = largeur2, state = stateNC)
+        bt.ncS <- tkbutton(fr.windVar, text = "...", state = stateNC)
 
         tkgrid(txt.stnS, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
         tkgrid(cb.stnS, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 4, padx = 0, pady = 1, ipadx = 1, ipady = 1)
@@ -103,11 +203,6 @@ biasCoeffGetInfoWind <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(file.STN_S) <- dat.opfiles[[1]]
-
-                lapply(cbLists$cb, function(x){
-                    if(as.integer(tkwinfo('exists', x)) == 1)
-                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                })
             }
         })
 
@@ -129,14 +224,20 @@ biasCoeffGetInfoWind <- function(){
     }
 
     getwindData <- function(){
+        bsmethod <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
+        tsSupp <- val.tsSupport[cb.tsSupport %in% trimws(tclvalue(ts.support))]
+        chunksexist <- if(tclvalue(chunks.exist) == '1') TRUE else FALSE
+
+        stateNC <- if(bsmethod == 'qmdist' && tsSupp == 'points' && chunksexist) 'disabled' else 'normal'
+
         getwindUVone <- function(){
             tkdestroy(fr.windUV)
             fr.windUV <<- tkframe(fr.windVar)
 
             txt.ncUV <- tklabel(fr.windUV, text = lang.dlg[['label']][['5-4']], anchor = 'w', justify = 'left')
-            set.ncUV <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']])
-            en.ncUV <- tkentry(fr.windUV, textvariable = dir.NC_UV, width = largeur2)
-            bt.ncUV <- tkbutton(fr.windUV, text = "...")
+            set.ncUV <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateNC)
+            en.ncUV <- tkentry(fr.windUV, textvariable = dir.NC_UV, width = largeur2, state = stateNC)
+            bt.ncUV <- tkbutton(fr.windUV, text = "...", state = stateNC)
 
             tkgrid(txt.ncUV, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(set.ncUV, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -172,14 +273,14 @@ biasCoeffGetInfoWind <- function(){
             fr.windUV <<- tkframe(fr.windVar)
 
             txt.ncU <- tklabel(fr.windUV, text = lang.dlg[['label']][['5-2']], anchor = 'w', justify = 'left')
-            set.ncU <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']])
-            en.ncU <- tkentry(fr.windUV, textvariable = dir.NC_U, width = largeur2)
-            bt.ncU <- tkbutton(fr.windUV, text = "...")
+            set.ncU <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateNC)
+            en.ncU <- tkentry(fr.windUV, textvariable = dir.NC_U, width = largeur2, state = stateNC)
+            bt.ncU <- tkbutton(fr.windUV, text = "...", state = stateNC)
 
             txt.ncV <- tklabel(fr.windUV, text = lang.dlg[['label']][['5-3']], anchor = 'w', justify = 'left')
-            set.ncV <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']])
-            en.ncV <- tkentry(fr.windUV, textvariable = dir.NC_V, width = largeur2)
-            bt.ncV <- tkbutton(fr.windUV, text = "...")
+            set.ncV <- ttkbutton(fr.windUV, text = .cdtEnv$tcl$lang$global[['button']][['5']], state = stateNC)
+            en.ncV <- tkentry(fr.windUV, textvariable = dir.NC_V, width = largeur2, state = stateNC)
+            bt.ncV <- tkbutton(fr.windUV, text = "...", state = stateNC)
 
             tkgrid(txt.ncU, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 3, padx = 1, pady = 1, ipadx = 1, ipady = 1)
             tkgrid(set.ncU, row = 0, column = 3, sticky = 'we', rowspan = 1, columnspan = 2, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -239,17 +340,16 @@ biasCoeffGetInfoWind <- function(){
 
         txt.stnU <- tklabel(fr.windVar, text = lang.dlg[['label']][['4-2']], anchor = 'w', justify = 'left')
         cb.stnU <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_U, width = largeur1)
+        addTo_all_Combobox_List(cb.stnU)
         bt.stnU <- tkbutton(fr.windVar, text = "...")
 
         txt.stnV <- tklabel(fr.windVar, text = lang.dlg[['label']][['4-3']], anchor = 'w', justify = 'left')
         cb.stnV <- ttkcombobox(fr.windVar, values = unlist(openFile_ttkcomboList()), textvariable = file.STN_V, width = largeur1)
+        addTo_all_Combobox_List(cb.stnV)
         bt.stnV <- tkbutton(fr.windVar, text = "...")
 
         chk.windUV <- tkcheckbutton(fr.windVar, variable = windUV, text = lang.dlg[['checkbutton']][['2']], anchor = 'w', justify = 'left')
         fr.windUV <- tkframe(fr.windVar)
-
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnU
-        cbLists$cb[[length(cbLists$cb) + 1]] <- cb.stnV
 
         #####
         tkgrid(txt.stnU, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -277,11 +377,6 @@ biasCoeffGetInfoWind <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(file.STN_U) <- dat.opfiles[[1]]
-
-                lapply(cbLists$cb, function(x){
-                    if(as.integer(tkwinfo('exists', x)) == 1)
-                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                })
             }
         })
 
@@ -292,11 +387,6 @@ biasCoeffGetInfoWind <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(file.STN_V) <- dat.opfiles[[1]]
-
-                lapply(cbLists$cb, function(x){
-                    if(as.integer(tkwinfo('exists', x)) == 1)
-                        tkconfigure(x, values = unlist(openFile_ttkcomboList()))
-                })
             }
         })
 
@@ -306,6 +396,38 @@ biasCoeffGetInfoWind <- function(){
 
         tkgrid(fr.windVar, row = 1, column = 0, sticky = 'we', rowspan = 1, columnspan = 2)
     }
+
+    ####################################
+
+    cb.biasMthd <- lang.dlg[['combobox']][['1']]
+    val.biasMthd <- c("mbvar", "mbmon", "qmdist", "qmecdf")
+    bias.method <- tclVar()
+    tclvalue(bias.method) <- cb.biasMthd[val.biasMthd %in% .cdtData$GalParams$BIAS$method]
+
+    min.length <- tclVar(.cdtData$GalParams$BIAS$min.length)
+    box.lon <- tclVar(.cdtData$GalParams$BIAS$blon)
+    box.lat <- tclVar(.cdtData$GalParams$BIAS$blat)
+
+    cb.distrName <- lang.dlg[['combobox']][['4']]
+    val.distrName <- c('norm', 'lnorm', 'snorm', 'gamma', 'exp', 'weibull', 'gumbel',
+                       'berngamma', 'bernexp', 'bernlnorm', 'bernweibull')
+    distr.name <- tclVar()
+    tclvalue(distr.name) <- cb.distrName[val.distrName %in% .cdtData$GalParams$BIAS$distr.name]
+
+    cb.tsSupport <- lang.dlg[['combobox']][['3']]
+    val.tsSupport <- c('rectbox', 'points')
+    ts.support <- tclVar()
+    tclvalue(ts.support) <- cb.tsSupport[val.tsSupport %in% .cdtData$GalParams$BIAS$ts.support]
+
+    chunks.exist <- tclVar(.cdtData$GalParams$BIAS$chunks.exist)
+    chunks.dir <- tclVar(.cdtData$GalParams$BIAS$chunks.dir)
+
+    #############
+
+    frameBias <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2, pady = 3)
+
+    txt.bias <- tklabel(frameBias, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
+    cb.bias <- ttkcombobox(frameBias, values = cb.biasMthd, textvariable = bias.method, width = largeur3)
 
     ####################################
 
@@ -403,31 +525,15 @@ biasCoeffGetInfoWind <- function(){
 
     ####################################
 
-    frameBias <- tkframe(frMRG0, relief = 'sunken', borderwidth = 2, pady = 3)
-
-    cb.biasMthd <- lang.dlg[['combobox']][['1']]
-    val.biasMthd <- c("mbvar", "mbmon", "qmdist", "qmecdf")
-
-    bias.method <- tclVar()
-    tclvalue(bias.method) <- cb.biasMthd[val.biasMthd %in% .cdtData$GalParams$BIAS$method]
-
-    min.length <- tclVar(.cdtData$GalParams$BIAS$min.length)
-    box.lon <- tclVar(.cdtData$GalParams$BIAS$blon)
-    box.lat <- tclVar(.cdtData$GalParams$BIAS$blat)
-    # stat.test <- tclVar(.cdtData$GalParams$BIAS$stat.test)
-
-    txt.bias <- tklabel(frameBias, text = lang.dlg[['label']][['7']], anchor = 'e', justify = 'right')
-    cb.bias <- ttkcombobox(frameBias, values = cb.biasMthd, textvariable = bias.method, width = largeur3)
-
     fr.minstn <- tkframe(frameBias)
     txt.minstn <- tklabel(fr.minstn, text = lang.dlg[['label']][['8']], anchor = 'e', justify = 'right')
-    en.minstn <- tkentry(fr.minstn, textvariable = min.length, width = 4)
+    en.minstn <- tkentry(fr.minstn, textvariable = min.length, width = 6)
 
     ########
 
     fr.biasOpts <- tkframe(frameBias)
 
-    region.box(.cdtData$GalParams$BIAS$method)
+    bias_method_inputs(.cdtData$GalParams$BIAS$method)
 
     ########
     tkgrid(txt.minstn, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 1, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -445,11 +551,21 @@ biasCoeffGetInfoWind <- function(){
 
     tkbind(cb.bias, "<<ComboboxSelected>>", function(){
         bsmethod <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
+        bias_method_inputs(bsmethod)
 
-        region.box(bsmethod)
-
-        stateInterp <- if(bsmethod == "qmecdf") "disabled" else "normal"
+        tsSupp <- val.tsSupport[cb.tsSupport %in% trimws(tclvalue(ts.support))]
+        if(bsmethod %in% c("qmdist", "qmecdf")){
+            if(bsmethod == "qmecdf") stateInterp <- "disabled"
+            if(bsmethod == "qmdist"){
+                stateInterp <- if(tsSupp == 'rectbox') "disabled" else "normal"
+            }
+        }else{
+            stateInterp <- "normal"
+        }
         tkconfigure(bt.bias.interp, state = stateInterp)
+
+        stateNC <- if(bsmethod == "qmdist" && tsSupp == 'points') 'disabled' else 'normal'
+        ncdata.chunks_bind(stateNC)
     })
 
     ####################################
@@ -485,10 +601,26 @@ biasCoeffGetInfoWind <- function(){
 
     ############################################
 
+    bt.prm.Opt <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['4']])
     bt.prm.OK <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['1']])
     bt.prm.CA <- ttkbutton(frMRG1, text = .cdtEnv$tcl$lang$global[['button']][['2']])
 
     #######
+
+    tkconfigure(bt.prm.Opt, command = function(){
+        tssupp <- val.tsSupport[cb.tsSupport %in% trimws(tclvalue(ts.support))]
+        biasmth <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
+        distname <- val.distrName[cb.distrName %in% trimws(tclvalue(distr.name))]
+        distList <- c('berngamma', 'bernexp', 'bernlnorm', 'bernweibull')
+        bernoulli <- biasmth == "qmdist" && distname %in% distList
+        interp <- (biasmth %in% c("mbvar", "mbmon") ||
+                  (biasmth == "qmdist" && tssupp == "points")) &&
+                  .cdtData$GalParams$interp$method %in% c('idw', 'okr')
+        mbias <- biasmth %in% c("mbvar", "mbmon")
+        rectbox <- biasmth == "qmecdf" || (biasmth == "qmdist" && tssupp == "rectbox")
+
+        biasCoeff_Options(tt, mbias, bernoulli, interp, rectbox)
+    })
 
     tkconfigure(bt.prm.OK, command = function(){
         .cdtData$GalParams$output$dir <- trimws(tclvalue(dir2save))
@@ -500,6 +632,20 @@ biasCoeffGetInfoWind <- function(){
 
         .cdtData$GalParams$period <- periodVAL[CbperiodVAL %in% trimws(tclvalue(file.period))]
 
+        .cdtData$GalParams$BIAS$method <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
+        .cdtData$GalParams$BIAS$min.length <- as.numeric(trimws(tclvalue(min.length)))
+        .cdtData$GalParams$BIAS$blon <- as.numeric(trimws(tclvalue(box.lon)))
+        .cdtData$GalParams$BIAS$blat <- as.numeric(trimws(tclvalue(box.lat)))
+        .cdtData$GalParams$BIAS$distr.name <- val.distrName[cb.distrName %in% trimws(tclvalue(distr.name))]
+        .cdtData$GalParams$BIAS$ts.support <- val.tsSupport[cb.tsSupport %in% trimws(tclvalue(ts.support))]
+
+        .cdtData$GalParams$BIAS$chunks.exist <- if(tclvalue(chunks.exist) == '1') TRUE else FALSE
+        .cdtData$GalParams$BIAS$chunks.dir <- trimws(tclvalue(chunks.dir))
+
+        disableNC <- .cdtData$GalParams$BIAS$method == "qmdist" &&
+                     .cdtData$GalParams$BIAS$ts.support == "points" &&
+                     .cdtData$GalParams$BIAS$chunks.exist
+
         .cdtData$GalParams$wvar <- valWindVar[cbWindVar %in% trimws(tclvalue(windVar))]
         if(.cdtData$GalParams$wvar == "speed"){
             .cdtData$GalParams$STN.S <- trimws(tclvalue(file.STN_S))
@@ -509,7 +655,8 @@ biasCoeffGetInfoWind <- function(){
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['1-1']], icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
-            if(.cdtData$GalParams$INPUT.S$dir %in% c("", "NA")){
+            if(.cdtData$GalParams$INPUT.S$dir %in% c("", "NA") && !disableNC)
+            {
                 cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-1']], icon = "warning", type = "ok")
                 tkwait.window(tt)
             }
@@ -530,7 +677,8 @@ biasCoeffGetInfoWind <- function(){
             if(.cdtData$GalParams$one.ncdf){
                 .cdtData$GalParams$INPUT.UV$dir <- trimws(tclvalue(dir.NC_UV))
 
-                if(.cdtData$GalParams$INPUT.UV$dir %in% c("", "NA")){
+                if(.cdtData$GalParams$INPUT.UV$dir %in% c("", "NA") &&  !disableNC)
+                {
                     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-2']], icon = "warning", type = "ok")
                     tkwait.window(tt)
                 }
@@ -538,22 +686,18 @@ biasCoeffGetInfoWind <- function(){
                 .cdtData$GalParams$INPUT.U$dir <- trimws(tclvalue(dir.NC_U))
                 .cdtData$GalParams$INPUT.V$dir <- trimws(tclvalue(dir.NC_V))
 
-                if(.cdtData$GalParams$INPUT.U$dir %in% c("", "NA")){
+                if(.cdtData$GalParams$INPUT.U$dir %in% c("", "NA") &&  !disableNC)
+                {
                     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-3']], icon = "warning", type = "ok")
                     tkwait.window(tt)
                 }
-                if(.cdtData$GalParams$INPUT.V$dir %in% c("", "NA")){
+                if(.cdtData$GalParams$INPUT.V$dir %in% c("", "NA") && !disableNC)
+                {
                     cdt.tkmessageBox(tt, message = lang.dlg[['message']][['2-4']], icon = "warning", type = "ok")
                     tkwait.window(tt)
                 }
             }
         }
-
-        .cdtData$GalParams$BIAS$method <- val.biasMthd[cb.biasMthd %in% trimws(tclvalue(bias.method))]
-        .cdtData$GalParams$BIAS$min.length <- as.numeric(trimws(tclvalue(min.length)))
-        .cdtData$GalParams$BIAS$blon <- as.numeric(trimws(tclvalue(box.lon)))
-        .cdtData$GalParams$BIAS$blat <- as.numeric(trimws(tclvalue(box.lat)))
-        # .cdtData$GalParams$BIAS$stat.test <- switch(tclvalue(stat.test), '0' = FALSE, '1' = TRUE)
 
         .cdtData$GalParams$message <- lang.dlg[['message']]
 
@@ -568,8 +712,9 @@ biasCoeffGetInfoWind <- function(){
         tkfocus(.cdtEnv$tcl$main$win)
     })
 
-    tkgrid(bt.prm.OK, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
-    tkgrid(bt.prm.CA, row = 0, column = 1, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.Opt, row = 0, column = 0, sticky = 'w', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.OK, row = 0, column = 1, sticky = '', padx = 5, pady = 1, ipadx = 1, ipady = 1)
+    tkgrid(bt.prm.CA, row = 0, column = 2, sticky = 'e', padx = 5, pady = 1, ipadx = 1, ipady = 1)
 
     ############################################
     

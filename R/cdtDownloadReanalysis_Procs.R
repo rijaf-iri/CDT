@@ -154,6 +154,8 @@ get_reanalysis.variables <- function(rfile){
     xx <- lapply(seq_along(ix), function(i){
         x <- opts[ix[i]:ie[i], ]
         x <- as.list(x)
+        x$units_var <- x$nc_name
+        x$units_var[is.na(x$units_fun)] <- NA
         lapply(x, function(v){
             v <- v[!is.na(v)]
             if(length(v) == 0) v <- NULL
@@ -162,5 +164,50 @@ get_reanalysis.variables <- function(rfile){
     })
     names(xx) <- sapply(xx, '[[', 'cdt_var')
     return(xx)
+}
+
+reanalysis_products <- function(){
+    reanalysis <- get_reanalysis_products()
+    reanalysis[is.na(reanalysis)] <- ''
+    return(reanalysis[, c('reanalysis', 'sources')])
+}
+
+reanalysis_variables_table <- function(reanalysis, source){
+    dirRA <- file.path(.cdtDir$Root, 'reanalysis')
+    rn <- get_reanalysis_products()
+    rn <- as.data.frame(lapply(rn, trimws))
+    rn <- as.data.frame(lapply(rn, function(x) ifelse(x == '', NA, x)))
+    ir <- which(rn$reanalysis == trimws(reanalysis))
+    if(ir == nrow(rn)){
+        rn <- rn[ir, ]
+    }else{
+        il <- which(!is.na(rn$reanalysis[(ir + 1):nrow(rn)]))[1]
+        if(is.na(il)){
+            rn <- rn[ir:nrow(rn), ]
+        }else{
+            rn <- rn[ir:(ir + il - 1), ]
+        }
+    }
+    iv <- which(rn$sources == trimws(source))
+    if(length(iv) == 0){
+        stop(paste0('The reanalysis "', reanalysis,
+                    '" from source "', source,
+                    '" is not available'))
+    }
+
+    vFile <- file.path(dirRA, rn$file[iv])
+    opts <- utils::read.table(vFile, sep = ',', header = TRUE, na.strings = '',
+                              stringsAsFactors = FALSE)
+    opts[is.na(opts)] <- ''
+    return(opts)
+}
+
+
+get_reanalysis_products <- function(){
+    dirRA <- file.path(.cdtDir$Root, 'reanalysis')
+    rFile <- file.path(dirRA, 'reanalysis_products.csv')
+    rn <- utils::read.table(rFile, sep = ',', header = TRUE, na.strings = '',
+                            stringsAsFactors = FALSE)
+    return(rn)
 }
 

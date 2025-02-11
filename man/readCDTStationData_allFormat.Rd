@@ -16,12 +16,12 @@ readCDTStationData_allFormat(file, sep = ",", na.strings = "-99")
 \value{
 A CDT stations data objects. It is a list object with elements
 \itemize{
-  \item{\strong{id}: }{Vector of the points/stations id}
-  \item{\strong{lon}: }{Vector of the points/stations longitude}
-  \item{\strong{lat}: }{Vector of the points/stations latitude}
-  \item{\strong{elv}: }{Vector of the points/stations elevation, NULL if there is no elevation data}
-  \item{\strong{dates}: }{Vector of the dates or times of the data}
-  \item{\strong{data}: }{Matrix of the data, row indicates the dates and column the stations}
+  \item \strong{id}: Vector of the points/stations id
+  \item \strong{lon}: Vector of the points/stations longitude
+  \item \strong{lat}: Vector of the points/stations latitude
+  \item \strong{elv}: Vector of the points/stations elevation, NULL if there is no elevation data
+  \item \strong{dates}: Vector of the dates or times of the data
+  \item\strong{data}: Matrix of the data, row indicates the dates and column the stations
 }
 }
 \description{

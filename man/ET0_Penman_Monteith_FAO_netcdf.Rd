@@ -35,12 +35,12 @@ ET0_Penman_Monteith_FAO_netcdf(
 
 \item{tmax.data}{named list, providing the maximum temperature netCDF dataset. Units: degree Celsius.
 \itemize{
-\item{\code{dir}: }{character, full path to the directory containing the netCDF files.}
-\item{\code{format}: }{character, format of the netCDF file names}
-\item{\code{varid}: }{character, name of the variable to read from the netCDF data}
-\item{\code{ilon}: }{integer, order for the longitude dimension of the variable. 
-Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{ilon} must be 2}
-\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+\item \code{dir}: character, full path to the directory containing the netCDF files.
+\item \code{format}: character, format of the netCDF file names
+\item \code{varid}: character, name of the variable to read from the netCDF data
+\item \code{ilon}: integer, order for the longitude dimension of the variable. 
+Example: if the variable "pres" has the dimension order [Lat, Lon] then \code{ilon} must be 2
+\item \code{ilat}: integer, order for the latitude dimension of the variable.
 }}
 
 \item{tmin.data}{named list, providing the minimum temperature netCDF dataset. Units: degree Celsius.
@@ -48,8 +48,8 @@ See \code{tmax.data} for the elements of the list.}
 
 \item{rh.from}{character, source of relative humidity data. Valid options: \code{"minmax"} and \code{"mean"}.
 \itemize{
-\item{\code{"minmax"}: }{the humidity data are from the minimum and maximum relative humidity.}
-\item{\code{"mean"}: }{the humidity data is from a mean relative humidity data.}
+\item \code{"minmax"}: the humidity data are from the minimum and maximum relative humidity.
+\item \code{"mean"}: the humidity data is from a mean relative humidity data.
 }}
 
 \item{rhmax.data}{named list, if \code{rh.from} is equal to \code{"minmax"},
@@ -75,16 +75,16 @@ See \code{tmax.data} for the elements of the list.}
 
 \item{elev.data}{named list, providing the Digital Elevation Model in netCDF format. Units: meters.
 \itemize{
-\item{\code{file}: }{character, full path to the netCDF file containing the elevation data.}
-\item{\code{varid}: }{character, name of the variable to read from the netCDF data.}
-\item{\code{ilon}: }{integer, order for the longitude dimension of the variable.}
-\item{\code{ilat}: }{integer, order for the latitude dimension of the variable.}
+\item \code{file}: character, full path to the netCDF file containing the elevation data.
+\item \code{varid}: character, name of the variable to read from the netCDF data.
+\item \code{ilon}: integer, order for the longitude dimension of the variable.
+\item \code{ilat}: integer, order for the latitude dimension of the variable.
 }}
 
 \item{output}{named list, the elements of the list are
 \itemize{
-\item{\code{dir}: }{character, full path to the directory to save the calculated reference evapotranspiration}
-\item{\code{format}: }{character, format of the output netCDF file names, the dates are represented by \code{\%S}}
+\item \code{dir}: character, full path to the directory to save the calculated reference evapotranspiration
+\item \code{format}: character, format of the output netCDF file names, the dates are represented by \code{\%S}
 }}
 }
 \description{

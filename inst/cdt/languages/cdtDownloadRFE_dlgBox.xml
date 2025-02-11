@@ -49,6 +49,18 @@
             <text lang="en"> Username </text>
             <text lang="fr"> Username </text>
         </label>
+        <label id="6-1">
+            <text lang="en"> Username </text>
+            <text lang="fr"> Username </text>
+        </label>
+        <label id="6-2">
+            <text lang="en"> Email </text>
+            <text lang="fr"> Email </text>
+        </label>
+        <label id="6-3">
+            <text lang="en"> Personal Access Token </text>
+            <text lang="fr"> Personal Access Token </text>
+        </label>
         <label id="7">
             <text lang="en"> Password </text>
             <text lang="fr"> Password </text>

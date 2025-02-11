@@ -36,6 +36,14 @@ mergingClimData <- function(){
 
     ##################
 
+    out_params <- .cdtData$GalParams
+    out_params <- out_params[!names(out_params) %in% c("settingSNC", "message")]
+    out_params$merging_options <- mrgOpts
+    out_params$blanking_options <- blanking.options()
+    saveRDS(out_params, file.path(outdir, 'merging_parameters.rds'))
+
+    ##################
+
     Insert.Messages.Out(message[['11']], TRUE, "i")
 
     ## station data
@@ -141,11 +149,6 @@ mergingClimData <- function(){
 
     ret <- cdtMerging(stnData = stnData, ncInfo = ncInfo, xy.grid = xy.grid, params = .cdtData$GalParams,
                       variable = varClim, demData = demData, outdir = outdir, mask = outMask)
-
-    out_params <- .cdtData$GalParams
-    out_params <- out_params[!names(out_params) %in% c("settingSNC", "message")]
-    out_params$options <- mrgOpts
-    saveRDS(out_params, file.path(outdir, 'merging_parameters.rds'))
 
     if(!is.null(ret)){
         if(ret != 0){
