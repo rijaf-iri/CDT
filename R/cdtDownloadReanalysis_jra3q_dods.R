@@ -1,7 +1,29 @@
 
+## NetcdfSubset netcdf
+# https://thredds.rda.ucar.edu/thredds/ncss/grid/files/g/d640000/
+# minmax_surf/202410/
+# jra3q.minmax_surf.0_0_0.tmpmax2m-hgt-fc-gauss.2024100100_2024103123.nc?
+# var=tmpmax2m-hgt-fc-gauss&north=-11.5&west=42&east=52&south=-26&horizStride=1&
+# time_start=2024-10-01T00:00:00Z&time_end=2024-10-31T23:00:00Z&timeStride=1&
+# accept=netcdf4-classic&addLatLon=true
+#---
+# accept=netcdf4ext&addLatLon=true
+
+## opendap ascii
+# https://thredds.rda.ucar.edu/thredds/dodsC/files/g/d640000/
+# minmax_surf/202410/
+# jra3q.minmax_surf.0_0_0.tmpmax2m-hgt-fc-gauss.2024100100_2024103123.nc.ascii?
+# tmpmax2m-hgt-fc-gauss[0:1:743][271:1:308][112:1:138]
+#---
+# 2024103100_2024103105 [720:1:725]
+# 2024103106_2024103111 [726:1:731]
+# 2024103112_2024103117 [732:1:737]
+# 2024103118_2024103123 [738:1:743]
+
 jra3q_dods.coverage.rda.ucar <- function(GalParams){
     out <- list(name = "Japanese Reanalysis for Three Quarters of a Century", timestep = "hourly")
-    jra3q_dods <- "https://thredds.rda.ucar.edu/thredds/catalog/files/g/ds640.0/"
+    # jra3q_dods <- "https://thredds.rda.ucar.edu/thredds/catalog/files/g/ds640.0/"
+    jra3q_dods <- "https://thredds.rda.ucar.edu/thredds/catalog/files/g/d640000/"
 
     opts <- get_reanalysis.variables('jra3q_dods_options.csv')
     opts <- opts[[GalParams$var]]
@@ -140,7 +162,8 @@ jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 2, GUI = TRUE, verb
 
     #############
 
-    jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/files/g/ds640.0"
+    # jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/files/g/ds640.0"
+    jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/files/g/d640000"
     req_depth <- if(soil_data) '[0:1:6]' else NULL
 
     urls <- lapply(seq_along(query_time), function(j){
