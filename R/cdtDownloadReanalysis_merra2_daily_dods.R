@@ -2,6 +2,7 @@
 merra2_daily.coverage.earthdata <- function(GalParams){
     out <- list(name = "The second Modern-Era Retrospective analysis for Research and Applications (MERRA-2)", timestep = "daily")
 
+    # opendap_url <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/hyrax/MERRA2"
     opendap_url <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2"
     dataset <- "M2SDNXSLV.5.12.4"
     streams <- 400
@@ -60,6 +61,7 @@ merra2_daily.download.earthdata <- function(GalParams, nbfile = 3, GUI = TRUE, v
         labels = c(100, 200, 300, 400), 
         include.lowest = TRUE, right = FALSE)
 
+    # opendap <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/hyrax/MERRA2"
     opendap <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2"
     dataset <- "M2SDNXSLV.5.12.4"
     nc4EndPt <- paste0("MERRA2_", streams, ".statD_2d_slv_Nx.", daty, ".nc4.nc4")

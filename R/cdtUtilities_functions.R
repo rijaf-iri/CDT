@@ -648,6 +648,8 @@ extract_filename_dates <- function(filenames, fileformat){
             ret <- gsub(pattern, '', filenames)
         }
     }
+    check <- grepl('[^[:digit:]]', ret)
+    if(any(check)) stop('Unambiguous netCDF file names format.')
 
     return(ret)
 }
@@ -660,6 +662,8 @@ extract_filename_dates.1 <- function(filenames, fileformat){
         for(j in 2:length(txt))
             ret <- gsub(txt[j], "", ret)
     }
+    check <- grepl('[^[:digit:]]', ret)
+    if(any(check)) stop('Unambiguous netCDF file names format.')
 
     return(ret)
 }
