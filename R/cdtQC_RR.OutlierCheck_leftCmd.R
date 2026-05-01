@@ -100,6 +100,7 @@ qcRROutlierCheckPanelCmd <- function(){
 
         txt.infile <- tklabel(frameInData, text = lang.dlg[['label']][['3']], anchor = 'w', justify = 'left')
         cb.infile <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.file, width = largeur1)
+        addTo_all_Combobox_List(cb.infile)
         bt.infile <- tkbutton(frameInData, text = "...")
 
         tkgrid(txt.infile, row = 0, column = 0, sticky = 'we', rowspan = 1, columnspan = 5, padx = 1, pady = 1, ipadx = 1, ipady = 1)
@@ -116,12 +117,7 @@ qcRROutlierCheckPanelCmd <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(input.file) <- dat.opfiles[[1]]
-                tkconfigure(cb.infile, values = unlist(openFile_ttkcomboList()))
             }
-        })
-
-        tkbind(cb.infile, "<Button-1>", function(){
-            tkconfigure(cb.infile, values = unlist(openFile_ttkcomboList()))
         })
 
         #######################
@@ -169,21 +165,11 @@ qcRROutlierCheckPanelCmd <- function(){
 
             Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")
 
-            if(!dir.exists(GeneralParameters$outdir)){
-                msgdir <- paste(GeneralParameters$outdir, lang.dlg[['message']][['6']])
-                Insert.Messages.Out(msgdir, TRUE, "e")
-                return(NULL)
-            }
-
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch(
+            ret <- tryCatch2(
                 {
                     qcRROutliersCheckProcs(GeneralParameters)
-                },
-                warning = function(w){
-                    warningFun(w)
-                    return(0)
                 },
                 error = function(e) errorFun(e),
                 finally = {

@@ -192,6 +192,14 @@ fews.info.cpc.noaa <- function(GalParams){
         dirname <- "RFEv2"
         region <- "africa"
         arc <- FALSE
+    # }else if(GalParams$rfe.src == "rfev2-af-dekad"){
+    #     dirpath <- "newalgo_est_dekad"
+    #     fileformat <- "10day_precip.bin.%s%s%s.gz"
+    #     type <- "bin"
+    #     ncformat <- "rfev2_%s%s%s.nc"
+    #     dirname <- "RFEv2"
+    #     region <- "africa"
+    #     arc <- FALSE
     }else if(GalParams$rfe.src == "rfev2-sa"){
         dirpath <- "S.Asia/data"
         fileformat <- "cpc_rfe_v2.0_sa_dly.bin.%s%s%s.gz"

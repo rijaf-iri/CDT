@@ -101,10 +101,8 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 2, GUI = TRUE, 
 
     #######
     ## assimilation stream version
-    query_stream <- cut(as.numeric(query_years), 
-        breaks = c(1980, 1992, 2001, 2011, 2100),
-        labels = c(100, 200, 300, 400), 
-        include.lowest = TRUE, right = FALSE)
+    qdates <- as.Date(query_dates, '%Y%m%d')
+    query_stream <- merra2_runid_svv(qdates)
 
     ########
     if(GalParams$src == "disc.gsfc.nasa.gov - Hourly"){
@@ -122,9 +120,8 @@ merra2_hourly.download.earthdata <- function(GalParams, nbfile = 2, GUI = TRUE, 
     }
 
     #######
-    # new
     # https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/hyrax/MERRA2/M2T1NXSLV.5.12.4/1981/12/contents.html
-    # old
+    # opendap_url <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/hyrax/MERRA2"
     opendap_url <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2"
     merra2_version <- "5.12.4"
 

@@ -50,16 +50,13 @@ merra2_daily.download.earthdata <- function(GalParams, nbfile = 3, GUI = TRUE, v
     daty <- seq.format.date.time('daily', GalParams$date.range)
     if(is.null(daty)) return(-2)
 
+    #######
+    ## assimilation stream version
+    streams <- merra2_runid_svv(daty)
+
     years <- format(daty, "%Y")
     month <- format(daty, "%m")
     daty <- format(daty, "%Y%m%d")
-
-    #######
-    ## assimilation stream version
-    streams <- cut(as.numeric(years), 
-        breaks = c(1980, 1992, 2001, 2011, 2100),
-        labels = c(100, 200, 300, 400), 
-        include.lowest = TRUE, right = FALSE)
 
     # opendap <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/hyrax/MERRA2"
     opendap <- "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2"
@@ -147,7 +144,7 @@ merra2_daily.format.data <- function(ncfl){
     ncgrd <- ncdf4::ncvar_def(info$name, info$units, list(dx, dy), missval,
                               info$longname, "float", compression = 9)
     if(varid == 'TPRECMAX'){
-        val <- val * 86400 
+        val <- val * 86400
     }else{
         val <- val - 273.15
     }

@@ -8,7 +8,12 @@ qcRROutliersCheckProcs <- function(GeneralParameters){
     if(is.null(don)) return(NULL)
 
     ###################
-    outdir <- file.path(GeneralParameters$outdir, "RR.OUTLIERS.CHECK_data")
+    if(!dir.exists(GeneralParameters$outdir)){
+        outdir <- getwd()
+    }else{
+        outdir <- GeneralParameters$outdir
+    }
+    outdir <- file.path(outdir, "RR.OUTLIERS.CHECK_data")
     dataCDTdir <- file.path(outdir, 'CDTDATASET')
     dir.create(dataCDTdir, showWarnings = FALSE, recursive = TRUE)
     dataSTNdir <- file.path(outdir, 'CDTSTATIONS')

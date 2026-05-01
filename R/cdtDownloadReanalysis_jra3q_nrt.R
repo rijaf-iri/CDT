@@ -66,7 +66,9 @@ jra3q_nrt.download.rda.ucar <- function(GalParams, nbfile = 1, GUI = TRUE, verbo
     opts <- get_reanalysis.variables('jra3q_nrt_options.csv')
     opts <- opts[[GalParams$var]]
 
-    jra_nrt <- "https://data.rda.ucar.edu/ds640.1"
+    # jra_nrt <- "https://data.rda.ucar.edu/ds640.1"
+    # jra_nrt <- "https://osdf-director.osg-htc.org/ncar/gdex/d640001"
+    jra_nrt <- "https://xsod14.cr.cnaf.infn.it:8443/ncar/gdex/d640001"
     filenames <- paste0(opts$grib_path, ".", ymdh)
     urls <- file.path(jra_nrt, opts$grib_path, yrmo, filenames)
     ncfiles <- sprintf(paste0(GalParams$var, "_%s.nc"), ymdh)

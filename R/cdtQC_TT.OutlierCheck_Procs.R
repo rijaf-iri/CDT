@@ -37,8 +37,14 @@ qcTTOutliersCheckProcs <- function(GeneralParameters){
         Insert.Messages.Out(message[['18']], TRUE, "w")
 
     ###################
+    if(!dir.exists(GeneralParameters$outdir)){
+        outdir <- getwd()
+    }else{
+        outdir <- GeneralParameters$outdir
+    }
+
     sfdir <- if(GeneralParameters$qc.tmax) "TMAX" else "TMIN"
-    outdir <- file.path(GeneralParameters$outdir, paste0(sfdir, ".OUTLIERS.CHECK_data"))
+    outdir <- file.path(outdir, paste0(sfdir, ".OUTLIERS.CHECK_data"))
     dataCDTdir <- file.path(outdir, 'CDTDATASET')
     dir.create(dataCDTdir, showWarnings = FALSE, recursive = TRUE)
     dataSTNdir <- file.path(outdir, 'CDTSTATIONS')

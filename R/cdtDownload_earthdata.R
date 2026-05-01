@@ -111,3 +111,19 @@ opendap.gesdisc.dates <- function(url, type, fileformat = NA, datetype = NA, dir
 
     return(ret)
 }
+
+merra2_runid_svv <- function(dates){
+    # SVv: S and Vv denote 
+    # the production Stream and the Version numbers
+    SVv <- rep(NA, length(dates))
+    SVv[dates <= as.Date('1991-12-31')] <- 100
+    SVv[dates >= as.Date('1992-01-01') & dates <= as.Date('2000-12-31')] <- 200
+    SVv[dates >= as.Date('2001-01-01') & dates <= as.Date('2010-12-31')] <- 300
+    SVv[dates >= as.Date('2011-01-01') & dates <= as.Date('2020-08-31')] <- 400
+    SVv[dates >= as.Date('2020-09-01') & dates <= as.Date('2020-09-30')] <- 401
+    SVv[dates >= as.Date('2020-10-01') & dates <= as.Date('2021-05-31')] <- 400
+    SVv[dates >= as.Date('2021-06-01') & dates <= as.Date('2021-09-30')] <- 401
+    SVv[dates >= as.Date('2021-10-01')] <- 400
+
+    return(SVv)
+}
