@@ -1035,7 +1035,7 @@ climatologiesCalcPanelCmd <- function(){
             readClimIdx <- TRUE
             if(!is.null(.cdtData$EnvData$cdtdataset))
                 if(!is.null(.cdtData$EnvData$fileClimIdx))
-                    if(.cdtData$EnvData$fileClimIdx == fileClimIdx) rreadClimIdx <- FALSE
+                    if(.cdtData$EnvData$fileClimIdx == fileClimIdx) readClimIdx <- FALSE
             if(readClimIdx){
                 .cdtData$EnvData$cdtdataset <- readRDS(fileClimIdx)
                 .cdtData$EnvData$cdtdataset$fileInfo <- fileClimIdx

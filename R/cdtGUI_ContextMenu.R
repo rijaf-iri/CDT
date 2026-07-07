@@ -524,18 +524,18 @@ cdtMainContextMenu <- function(){
         })
 
         # ##########
-        # tkadd(menu.qchom, "separator")
+        tkadd(menu.qchom, "separator")
 
-        # tkadd(menu.qchom, "command", label = lang.menu[["quality.control"]][["5"]],
-        #       command = function()
-        # {
-        #     refreshCDT(staterun = "disabled")
-        #     spinbox.state(state = 'normal')
-        #     if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
-        #         # qcTTOutlierCheckPanelCmd()
-        #         .cdtEnv$tcl$data$lcmd.frame <- 1
-        #     }
-        # })
+        tkadd(menu.qchom, "command", label = lang.menu[["quality.control"]][["5"]],
+              command = function()
+        {
+            refreshCDT(staterun = "disabled")
+            spinbox.state(state = 'normal')
+            if(is.null(.cdtEnv$tcl$data$lcmd.frame)){
+                qcInvalidDataCheckPanelCmd()
+                .cdtEnv$tcl$data$lcmd.frame <- 1
+            }
+        })
 
         # tkadd(menu.qchom, "command", label = lang.menu[["quality.control"]][["6"]],
         #       command = function()

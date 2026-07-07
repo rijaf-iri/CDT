@@ -23,7 +23,8 @@
 jra3q_dods.coverage.rda.ucar <- function(GalParams){
     out <- list(name = "Japanese Reanalysis for Three Quarters of a Century", timestep = "hourly")
     # jra3q_dods <- "https://thredds.rda.ucar.edu/thredds/catalog/files/g/ds640.0/"
-    jra3q_dods <- "https://thredds.rda.ucar.edu/thredds/catalog/files/g/d640000/"
+    # jra3q_dods <- "https://thredds.rda.ucar.edu/thredds/catalog/files/g/d640000/"
+    jra3q_dods <- "https://tds.gdex.ucar.edu/thredds/catalog/files/g/d640000/"
 
     opts <- get_reanalysis.variables('jra3q_dods_options.csv')
     opts <- opts[[GalParams$var]]
@@ -102,6 +103,8 @@ jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 2, GUI = TRUE, verb
 
     query_lon <- lapply(ilon, function(x) paste0("[", x[1], ":", 1, ":", x[2], "]"))
     query_lat <- paste0("[", ilat[1], ":", 1, ":", ilat[2], "]")
+    query_lon <- lapply(query_lon, urltools::url_encode)
+    query_lat <- urltools::url_encode(query_lat)
 
     #############
 
@@ -156,6 +159,7 @@ jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 2, GUI = TRUE, verb
     start_mon <- unname(do.call(c, lapply(req_time, '[[', 'smon')))
     end_mon <- unname(do.call(c, lapply(req_time, '[[', 'emon')))
     query_time <- unname(do.call(c, lapply(req_time, '[[', 'qtime')))
+    query_time <- urltools::url_encode(query_time)
     filenames <- unname(do.call(c, lapply(req_time, '[[', 'fname')))
     ncfiles_time <- filenames
     pth_yrmo <- substr(start_mon, 1, 6)
@@ -163,8 +167,9 @@ jra3q_dods.download.rda.ucar <- function(GalParams, nbfile = 2, GUI = TRUE, verb
     #############
 
     # jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/files/g/ds640.0"
-    jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/files/g/d640000"
-    req_depth <- if(soil_data) '[0:1:6]' else NULL
+    # jra_dods <- "https://thredds.rda.ucar.edu/thredds/dodsC/files/g/d640000"
+    jra_dods <- "https://tds.gdex.ucar.edu/thredds/dodsC/files/g/d640000"
+    req_depth <- if(soil_data) urltools::url_encode('[0:1:6]') else NULL
 
     urls <- lapply(seq_along(query_time), function(j){
         lapply(seq_along(opts$jra_var), function(l){

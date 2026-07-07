@@ -20,7 +20,7 @@ download.oni.cpc.ncep.noaa <- function(GUI = FALSE){
     }
     Insert.Messages.Out(lang.dlg[['message']][['2']], TRUE, 'i', GUI)
 
-    url.oni <- "https://origin.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php"
+    url.oni <- "https://cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php"
     page.oni <- xml2::read_html(url.oni)
     tbl.oni <- rvest::html_nodes(page.oni, "table")
     tbl.oni <- rvest::html_table(tbl.oni[9], fill = TRUE)

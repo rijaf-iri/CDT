@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<panel_cmd>
+    <tab_title>
+        <tab id="1">
+            <text lang="en"> Input Data </text>
+        </tab>
+        <tab id="2">
+            <text lang="en"> Invalid Data </text>
+        </tab>
+        <tab id="3">
+            <text lang="en"> Equal Observations </text>
+        </tab>
+    </tab_title>
+    <widget>
+        <button id="1">
+            <text lang="en"> Check Data </text>
+        </button>
+        <label id="1">
+            <text lang="en"> Time step of input data </text>
+        </label>
+        <label id="2">
+            <text lang="en"> Station Data </text>
+        </label>
+        <label id="3">
+            <text lang="en"> File containing stations input data </text>
+        </label>
+        <label id="4">
+            <text lang="en"> Directory to save the outputs </text>
+        </label>
+    </widget>
+    <help>
+        <content id="1">
+            <status>
+                <text lang="en"> Select the time step of the data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the time step of the data </text>
+            </tooltip>
+        </content>
+        <content id="2">
+            <status>
+                <text lang="en"> Select the file containing the input data </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Select the file containing the input data </text>
+            </tooltip>
+        </content>
+        <content id="3">
+            <status>
+                <text lang="en"> Browse file if not listed </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Browse file if not listed </text>
+            </tooltip>
+        </content>
+        <content id="4">
+            <status>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </status>
+            <tooltip>
+                <text lang="en"> Enter the full path to directory to save outputs </text>
+            </tooltip>
+        </content>
+        <content id="5">
+            <status>
+                <text lang="en"> or browse here </text>
+            </status>
+            <tooltip>
+                <text lang="en"> or browse here </text>
+            </tooltip>
+        </content>
+    </help>
+    <message>
+        <content id="1">
+            <text lang="en"> Check invalid data ...... </text>
+        </content>
+        <content id="2">
+            <text lang="en"> Checking invalid data finished successfully </text>
+        </content>
+        <content id="3">
+            <text lang="en"> Checking invalid data failed </text>
+        </content>
+    </message>
+</panel_cmd>

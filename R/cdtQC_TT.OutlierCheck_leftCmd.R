@@ -110,9 +110,11 @@ qcTTOutlierCheckPanelCmd <- function(){
         frameVar <- tkframe(frameInData)
         txt.infile1 <- tklabel(frameInData, text = tclvalue(txt.INfile1.var), textvariable = txt.INfile1.var, anchor = 'w', justify = 'left')
         cb.infile1 <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.file1, width = largeur1)
+        addTo_all_Combobox_List(cb.infile1)
         bt.infile1 <- tkbutton(frameInData, text = "...")
         txt.infile2 <- tklabel(frameInData, text = tclvalue(txt.INfile2.var), textvariable = txt.INfile2.var, anchor = 'w', justify = 'left')
         cb.infile2 <- ttkcombobox(frameInData, values = unlist(openFile_ttkcomboList()), textvariable = input.file2, width = largeur1)
+        addTo_all_Combobox_List(cb.infile2)
         bt.infile2 <- tkbutton(frameInData, text = "...")
 
         txt.vartxtn <- tklabel(frameVar, text = lang.dlg[['label']][['3-1']], anchor = 'w', justify = 'left')
@@ -154,7 +156,6 @@ qcTTOutlierCheckPanelCmd <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(input.file1) <- dat.opfiles[[1]]
-                tkconfigure(cb.infile1, values = unlist(openFile_ttkcomboList()))
             }
         })
 
@@ -163,16 +164,7 @@ qcTTOutlierCheckPanelCmd <- function(){
             if(!is.null(dat.opfiles)){
                 update.OpenFiles('ascii', dat.opfiles)
                 tclvalue(input.file2) <- dat.opfiles[[1]]
-                tkconfigure(cb.infile2, values = unlist(openFile_ttkcomboList()))
             }
-        })
-
-        tkbind(cb.infile1, "<Button-1>", function(){
-            tkconfigure(cb.infile1, values = unlist(openFile_ttkcomboList()))
-        })
-
-        tkbind(cb.infile2, "<Button-1>", function(){
-            tkconfigure(cb.infile2, values = unlist(openFile_ttkcomboList()))
         })
 
         #######################
@@ -222,21 +214,11 @@ qcTTOutlierCheckPanelCmd <- function(){
 
             Insert.Messages.Out(lang.dlg[['message']][['1']], TRUE, "i")
 
-            if(!dir.exists(GeneralParameters$outdir)){
-                msgdir <- paste(GeneralParameters$outdir, lang.dlg[['message']][['6']])
-                Insert.Messages.Out(msgdir, TRUE, "e")
-                return(NULL)
-            }
-
             tkconfigure(.cdtEnv$tcl$main$win, cursor = 'watch')
             tcl('update')
-            ret <- tryCatch(
+            ret <- tryCatch2(
                 {
                     qcTTOutliersCheckProcs(GeneralParameters)
-                },
-                warning = function(w){
-                    warningFun(w)
-                    return(0)
                 },
                 error = function(e) errorFun(e),
                 finally = {

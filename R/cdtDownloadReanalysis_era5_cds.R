@@ -18,10 +18,12 @@ era5.cds.coverage <- function(GalParams){
     }
     ret <- httr::content(ret)
     start_d <- ret$extent$temporal$interval[[1]][[1]]
-    start_d <- as.POSIXct(start_d, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+    # start_d <- as.POSIXct(start_d, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+    start_d <- as.POSIXct(start_d, format = "%Y-%m-%dT%H:%M:%S+00:00", tz = "UTC")
     out$start <- format(start_d, "%Y-%m-%d %H:%M:%S")
     end_d <- ret$extent$temporal$interval[[1]][[2]]
-    end_d <- as.POSIXct(end_d, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+    # end_d <- as.POSIXct(end_d, format = "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+    end_d <- as.POSIXct(end_d, format = "%Y-%m-%dT%H:%M:%S+00:00", tz = "UTC")
     out$end <- format(end_d, "%Y-%m-%d %H:%M:%S")
 
     return(out)
@@ -29,7 +31,7 @@ era5.cds.coverage <- function(GalParams){
 
 era5.cds.download <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE){
     area <- GalParams$bbox[c('maxlat', 'minlon', 'minlat', 'maxlon')]
-    area <- paste(unlist(area), collapse = "/")
+    area <- as.vector(unlist(area))
 
     seqTime <- seq.format.date.time('hourly', GalParams$date.range, 1)
     if(is.null(seqTime)) return(NULL)
@@ -78,19 +80,28 @@ era5.cds.download <- function(GalParams, nbfile = 1, GUI = TRUE, verbose = TRUE)
     }
 
     request <- list(
-        dataset_short_name = "reanalysis-era5-single-levels",
         product_type = 'reanalysis',
-        format = 'netcdf',
+        data_format = 'netcdf',
         download_format = 'unarchived',
         variable = opts$api_var,
         area = area
     )
 
     api_url <- "https://cds.climate.copernicus.eu/api"
-    api_endpoints <- file.path(api_url, "retrieve/v1/processes", request$dataset_short_name, "execute")
+    api_endpoints <- file.path(
+        api_url,
+        "retrieve/v1/processes",
+        era5_prod$resource,
+        "execute"
+    )
 
-    pars <- list(api_pat = GalParams$login$usr, request = request, api_url = api_url,
-                 api_endpoints = api_endpoints, opts = opts)
+    pars <- list(
+        api_pat = GalParams$login$usr,
+        request = request,
+        api_url = api_url,
+        api_endpoints = api_endpoints,
+        opts = opts
+    )
 
     ######################
 
@@ -121,9 +132,10 @@ era5.download.data <- function(lnk, dest, ncfl, pars){
     task_status <- resc$status
     if(task_status == "failed"){
         Insert.Messages.Out("INFO Request failed", TRUE, "e")
-        Insert.Messages.Out(paste('Message:', resc$message), TRUE, "e")
-        Insert.Messages.Out(paste('Reason', resc$reason), TRUE, "e")
-        Insert.Messages.Out(paste('Detail', resc$detail), TRUE, "e")
+        Insert.Messages.Out(paste('Message:\n', resc$message), TRUE, "e")
+        Insert.Messages.Out(paste('Reason:\n', resc$reason), TRUE, "e")
+        Insert.Messages.Out(paste('Detail:\n', resc$detail), TRUE, "e")
+        Insert.Messages.Out(paste('Traceback:\n', resc$traceback), TRUE, "e")
         return(xx)
     }
     if(task_status == "queued"){
@@ -136,6 +148,7 @@ era5.download.data <- function(lnk, dest, ncfl, pars){
     }
 
     task_url <- resc$links[[2]]$href
+    job_url <- resc$links[[2]]$href
     count <- 0
 
     while(task_status != "successful"){
@@ -163,6 +176,12 @@ era5.download.data <- function(lnk, dest, ncfl, pars){
         if(task_status == "successful"){
             task_url <- resc$links[[2]]$href
             job_url <- resc$links[[1]]$href
+        }else if(task_status == "failed"){
+            task_url <- resc$links[[2]]$href
+            job_url <- resc$links[[1]]$href
+            res <- era5.cds.retrieve.task(task_url, pars$api_pat)
+            res <- era5.cds.delete.task(job_url, pars$api_pat)
+            break
         }else{
             task_url <- resc$links[[1]]$href
         }
@@ -251,11 +270,11 @@ era5.cds.send.request <- function(url_api, pat, request){
         Insert.Messages.Out(gsub('[\r\n]', '', res[1]), TRUE, "e")
         res <- NULL
     }
-    if (httr::http_error(res)){
+    if(httr::http_error(res)){
         rep <- httr::content(res)
         Insert.Messages.Out(paste('Failed: sending request to', rep$instance), TRUE, "e")
-        Insert.Messages.Out(paste('Message:', rep$title), TRUE, "e")
-        Insert.Messages.Out(paste('Detail', rep$detail), TRUE, "e")
+        Insert.Messages.Out(paste('Message:\n', rep$title), TRUE, "e")
+        Insert.Messages.Out(paste('Detail:\n', rep$detail), TRUE, "e")
         res <- NULL
     }
 
@@ -272,8 +291,9 @@ era5.cds.retrieve.task <- function(task_url, pat){
     if(httr::http_error(res)){
         rep <- httr::content(res)
         Insert.Messages.Out('Retrieving task failed', TRUE, "e")
-        Insert.Messages.Out(paste('Message:', rep$title), TRUE, "e")
-        Insert.Messages.Out(paste('Detail', rep$detail), TRUE, "e")
+        Insert.Messages.Out(paste('Message:\n', rep$title), TRUE, "e")
+        Insert.Messages.Out(paste('Detail:\n', rep$detail), TRUE, "e")
+        Insert.Messages.Out(paste('Traceback:\n', rep$traceback), TRUE, "e")
         res <- NULL
     }
 
@@ -290,8 +310,8 @@ era5.cds.get.nclink <- function(task_url, pat){
     if(httr::http_error(res)){
         rep <- httr::content(res)
         Insert.Messages.Out('Retrieving netcdf file failed', TRUE, "e")
-        Insert.Messages.Out(paste('Message:', rep$title), TRUE, "e")
-        Insert.Messages.Out(paste('Detail', rep$detail), TRUE, "e")
+        Insert.Messages.Out(paste('Message:\n', rep$title), TRUE, "e")
+        Insert.Messages.Out(paste('Detail:\n', rep$detail), TRUE, "e")
         res <- NULL
     }
     rep <- httr::content(res)
@@ -325,7 +345,7 @@ era5.cds.delete.task <- function(job_url, pat){
     if(httr::http_error(res)){
         rep <- httr::content(res)
         Insert.Messages.Out('Deleting task failed', TRUE, "w")
-        Insert.Messages.Out(paste('Detail:', rep$detail), TRUE, "w")
+        Insert.Messages.Out(paste('Detail:\n', rep$detail), TRUE, "w")
         res <- NULL
     }
 
