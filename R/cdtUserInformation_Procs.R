@@ -8,13 +8,13 @@ cdtUserInformation <- function(){
             if(testConnection()){
                 sendForms <- TRUE
             }else{
-                userForms$sent <- FALSE
-                saveRDS(userForms, userInfoFile)
                 sendForms <- FALSE
             }
         }else{
             sendForms <- FALSE
         }
+        userForms$sent <- FALSE
+        saveRDS(userForms, userInfoFile)
     }else{
         userForms <- readRDS(userInfoFile)
         if(userForms$sent){
